@@ -1,0 +1,450 @@
+N FINREC_FUN
+C |- (!f. (!b. ((!x. (!y. (!s. ((~ (x = y)) ==> (((f x) ((f y) s)) = ((f y) ((f x) s))))))) ==> (?g. (((g EMPTY) = b) /\ (!s. (!x. (((FINITE s) /\ (x IN s)) ==> ((g s) = ((f x) (g (s DELETE x))))))))))))
+T c==> ! ! ! c==> c~ c= b0 b1 c= * * f0 b0 * * f0 b1 b2 * * f0 b1 * * f0 b0 b2 c? / c/\ c= * b0 part cEMPTY f1 ! ! c==> c/\ cFINITE b1 cIN b2 b1 c= * b0 b1 * * f0 b2 * b0 * * part cDELETE b1 b2
+D TRUTH
+A |- T
+T cT
+D num_INDUCTION
+A |- (!P. (((P (NUMERAL _0)) /\ (!n. ((P n) ==> (P (SUC n))))) ==> (!n. (P n))))
+T c==> c/\ * f0 cNUMERAL c_0 ! c==> * f0 b0 * f0 cSUC b0 ! * f0 b0
+D IN
+A |- (!P. (!x. ((x IN P) = (P x))))
+T c= cIN f0 f1 * f1 f0
+D SUBSET
+A |- (!s. (!t. ((s SUBSET t) = (!x. ((x IN s) ==> (x IN t))))))
+T c= cSUBSET f0 f1 ! c==> cIN b0 f0 cIN b0 f1
+D FINITE_RULES
+A |- ((FINITE EMPTY) /\ (!x. (!s. ((FINITE s) ==> (FINITE (x INSERT s))))))
+T c/\ cFINITE part cEMPTY ! ! c==> cFINITE b1 cFINITE * * part cINSERT b0 b1
+D NOT_IN_EMPTY
+A |- (!x. (~ (x IN EMPTY)))
+T c~ cIN f0 part cEMPTY
+D IN_DELETE
+A |- (!s. (!x. (!y. ((x IN (s DELETE y)) = ((x IN s) /\ (~ (x = y)))))))
+T c= cIN f0 * * part cDELETE f1 f2 c/\ cIN f0 f1 c~ c= f0 f2
+D FINITE_SUBSET
+A |- (!s. (!t. (((FINITE t) /\ (s SUBSET t)) ==> (FINITE s))))
+T c==> c/\ cFINITE f0 cSUBSET f1 f0 cFINITE f1
+D FINREC
+A |- (((((((FINREC f) b) s) a) (NUMERAL _0)) = ((s = EMPTY) /\ (a = b))) /\ ((((((FINREC f) b) s) a) (SUC n)) = (?x. (?c. ((x IN s) /\ ((((((FINREC f) b) (s DELETE x)) c) n) /\ (a = ((f x) c))))))))
+T c/\ c= cFINREC f0 f1 f2 f3 cNUMERAL c_0 c/\ c= f2 part cEMPTY c= f3 f1 c= cFINREC f0 f1 f2 f3 cSUC f4 c? / c? / c/\ cIN b0 f2 c/\ cFINREC f0 f1 * * part cDELETE f2 b0 b1 f4 c= f3 * * f0 b0 b1
+D FINREC_SUC_LEMMA
+A |- (!f. (!b. ((!x. (!y. (!s. ((~ (x = y)) ==> (((f x) ((f y) s)) = ((f y) ((f x) s))))))) ==> (!n. (!s. (!z. ((((((FINREC f) b) s) z) (SUC n)) ==> (!x. ((x IN s) ==> (?w. ((((((FINREC f) b) (s DELETE x)) w) n) /\ (z = ((f x) w)))))))))))))
+T c==> ! ! ! c==> c~ c= b0 b1 c= * * f0 b0 * * f0 b1 b2 * * f0 b1 * * f0 b0 b2 ! ! ! c==> cFINREC f0 f1 b1 b2 cSUC b0 ! c==> cIN b3 b1 c? / c/\ cFINREC f0 f1 * * part cDELETE b1 b3 b4 b0 c= b2 * * f0 b3 b4
+D FINREC_UNIQUE_LEMMA
+A |- (!f. (!b. ((!x. (!y. (!s. ((~ (x = y)) ==> (((f x) ((f y) s)) = ((f y) ((f x) s))))))) ==> (!n1. (!n2. (!s. (!a1. (!a2. (((((((FINREC f) b) s) a1) n1) /\ (((((FINREC f) b) s) a2) n2)) ==> ((a1 = a2) /\ (n1 = n2)))))))))))
+T c==> ! ! ! c==> c~ c= b0 b1 c= * * f0 b0 * * f0 b1 b2 * * f0 b1 * * f0 b0 b2 ! ! ! ! ! c==> c/\ cFINREC f0 f1 b2 b3 b0 cFINREC f0 f1 b2 b4 b1 c/\ c= b3 b4 c= b0 b1
+D FINREC_EXISTS_LEMMA
+A |- (!f. (!b. (!s. ((FINITE s) ==> (?a. (?n. (((((FINREC f) b) s) a) n)))))))
+T c==> cFINITE f0 c? / c? / cFINREC f1 f2 f0 b0 b1
+D FINREC_FUN_LEMMA
+A |- (!P. (!R. (((!s. ((P s) ==> (?a. (?n. (((R s) a) n))))) /\ (!n1. (!n2. (!s. (!a1. (!a2. (((((R s) a1) n1) /\ (((R s) a2) n2)) ==> ((a1 = a2) /\ (n1 = n2))))))))) ==> (?f. (!s. (!a. ((P s) ==> ((?n. (((R s) a) n)) = ((f s) = a)))))))))
+T c==> c/\ ! c==> * f0 b0 c? / c? / * * * f1 b0 b1 b2 ! ! ! ! ! c==> c/\ * * * f1 b2 b3 b0 * * * f1 b2 b4 b1 c/\ c= b3 b4 c= b0 b1 c? / ! ! c==> * f0 b1 c= c? / * * * f1 b1 b2 b3 c= * b0 b1 b2
++ |- ((!x'. (((s x') /\ (~ (x' = x))) ==> (s x'))) = (!x'. ((x' IN (s DELETE x)) ==> (x' IN s))))
+T c= ! c==> c/\ * f0 b0 c~ c= b0 f1 * f0 b0 ! c==> cIN b0 * * part cDELETE f0 f1 cIN b0 f0
+- (!x. (!y. (!s. ((~ (x = y)) ==> (((f x) ((f y) s)) = ((f y) ((f x) s))))))) |- ((\y. (!s. ((~ (x = y)) ==> (((f x) ((f y) s)) = ((f y) ((f x) s)))))) y)
+T c==> ! ! ! c==> c~ c= b0 b1 c= * * f0 b0 * * f0 b1 b2 * * f0 b1 * * f0 b0 b2 * / ! c==> c~ c= f1 b0 c= * * f0 f1 * * f0 b0 b1 * * f0 b0 * * f0 f1 b1 f2
++ (FINITE s) |- ((FINITE s) = T)
+T c==> cFINITE f0 c= cFINITE f0 cT
++ (!x. (!y. (!s. ((~ (x = y)) ==> (((f x) ((f y) s)) = ((f y) ((f x) s))))))), (!s. (!a. ((FINITE s) ==> ((?n. (((((FINREC f) b) s) a) n)) = ((g s) = a))))) |- (((g EMPTY) = b) /\ (!s. (!x. (((FINITE s) /\ (x IN s)) ==> ((g s) = ((f x) (g (s DELETE x))))))))
+T c==> ! ! ! c==> c~ c= b0 b1 c= * * f0 b0 * * f0 b1 b2 * * f0 b1 * * f0 b0 b2 c==> ! ! c==> cFINITE b0 c= c? / cFINREC f0 f1 b0 b1 b2 c= * f2 b0 b1 c/\ c= * f2 part cEMPTY f1 ! ! c==> c/\ cFINITE b0 cIN b1 b0 c= * f2 b0 * * f0 b1 * f2 * * part cDELETE b0 b1
++ |- (FINITE EMPTY)
+T cFINITE part cEMPTY
++ ((!s. ((FINITE s) ==> (?a. (?n. (((((FINREC f) b) s) a) n))))) /\ (!n1. (!n2. (!s. (!a1. (!a2. (((((((FINREC f) b) s) a1) n1) /\ (((((FINREC f) b) s) a2) n2)) ==> ((a1 = a2) /\ (n1 = n2))))))))) |- (((?f. (!s. (!a. ((FINITE s) ==> ((?n. (((((FINREC f) b) s) a) n)) = ((f s) = a)))))) ==> (?g. (((g EMPTY) = b) /\ (!s. (!x. (((FINITE s) /\ (x IN s)) ==> ((g s) = ((f x) (g (s DELETE x)))))))))) = (?g. (((g EMPTY) = b) /\ (!s. (!x. (((FINITE s) /\ (x IN s)) ==> ((g s) = ((f x) (g (s DELETE x))))))))))
+T c==> c/\ ! c==> cFINITE b0 c? / c? / cFINREC f0 f1 b0 b1 b2 ! ! ! ! ! c==> c/\ cFINREC f0 f1 b2 b3 b0 cFINREC f0 f1 b2 b4 b1 c/\ c= b3 b4 c= b0 b1 c= c==> c? / ! ! c==> cFINITE b1 c= c? / cFINREC f0 f1 b1 b2 b3 c= * b0 b1 b2 c? / c/\ c= * b0 part cEMPTY f1 ! ! c==> c/\ cFINITE b1 cIN b2 b1 c= * b0 b1 * * f0 b2 * b0 * * part cDELETE b1 b2 c? / c/\ c= * b0 part cEMPTY f1 ! ! c==> c/\ cFINITE b1 cIN b2 b1 c= * b0 b1 * * f0 b2 * b0 * * part cDELETE b1 b2
+- |- ((FINITE s) ==> (FINITE (x INSERT s)))
+T c==> cFINITE f0 cFINITE * * part cINSERT f1 f0
++ (!x. (!y. (!s. ((~ (x = y)) ==> (((f x) ((f y) s)) = ((f y) ((f x) s))))))), (((((FINREC f) b) s) (g s)) (SUC n)) |- (((!x. ((x IN s) ==> (?w. ((((((FINREC f) b) (s DELETE x)) w) n) /\ ((g s) = ((f x) w)))))) ==> ((\x. ((x IN s) ==> (?w. ((((((FINREC f) b) (s DELETE x)) w) n) /\ ((g s) = ((f x) w)))))) x)) = ((\x. ((x IN s) ==> (?w. ((((((FINREC f) b) (s DELETE x)) w) n) /\ ((g s) = ((f x) w)))))) x))
+T c==> ! ! ! c==> c~ c= b0 b1 c= * * f0 b0 * * f0 b1 b2 * * f0 b1 * * f0 b0 b2 c==> cFINREC f0 f1 f2 * f3 f2 cSUC f4 c= c==> ! c==> cIN b0 f2 c? / c/\ cFINREC f0 f1 * * part cDELETE f2 b0 b1 f4 c= * f3 f2 * * f0 b0 b1 * / c==> cIN b0 f2 c? / c/\ cFINREC f0 f1 * * part cDELETE f2 b0 b1 f4 c= * f3 f2 * * f0 b0 b1 f5 * / c==> cIN b0 f2 c? / c/\ cFINREC f0 f1 * * part cDELETE f2 b0 b1 f4 c= * f3 f2 * * f0 b0 b1 f5
++ (!a. ((?n. (((((FINREC f) b) s) a) n)) = ((g s) = a))) |- (((((g s) = (g s)) = (?n. (((((FINREC f) b) s) (g s)) n))) ==> (?n. (((((FINREC f) b) s) ((f x) (g (s DELETE x)))) n))) = (?n. (((((FINREC f) b) s) ((f x) (g (s DELETE x)))) n)))
+T c==> ! c= c? / cFINREC f0 f1 f2 b0 b1 c= * f3 f2 b0 c= c==> c= c= * f3 f2 * f3 f2 c? / cFINREC f0 f1 f2 * f3 f2 b0 c? / cFINREC f0 f1 f2 * * f0 f4 * f3 * * part cDELETE f2 f4 b0 c? / cFINREC f0 f1 f2 * * f0 f4 * f3 * * part cDELETE f2 f4 b0
++ ((s = EMPTY) /\ (?n. (((((FINREC f) b) s) b) n))) |- (T = ((x IN s) ==> (?n. (((((FINREC f) b) s) ((f x) (g (s DELETE x)))) n))))
+T c==> c/\ c= f0 part cEMPTY c? / cFINREC f1 f2 f0 f2 b0 c= cT c==> cIN f3 f0 c? / cFINREC f1 f2 f0 * * f1 f3 * f4 * * part cDELETE f0 f3 b0
+- ((~ (!x'. (((s x') /\ (~ (x' = x))) ==> (s x')))) ==> F), (((~ (!x'. (((s x') /\ (~ (x' = x))) ==> (s x')))) ==> F) ==> ((~ (!x'. (((s x') /\ (~ (x' = x))) ==> (s x')))) ==> F)) |- (((~ (!x'. (((s x') /\ (~ (x' = x))) ==> (s x')))) ==> F) /\ ((~ (!x'. (((s x') /\ (~ (x' = x))) ==> (s x')))) ==> F))
+T c==> c==> c~ ! c==> c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF c==> c==> c==> c~ ! c==> c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF c==> c~ ! c==> c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF c/\ c==> c~ ! c==> c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF c==> c~ ! c==> c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF
++ (!s. (!a. ((FINITE s) ==> ((?n. (((((FINREC f) b) s) a) n)) = ((g s) = a))))), (FINITE s) |- (((\w. ((((((FINREC f) b) (s DELETE x)) w) n) /\ (?n. (((((FINREC f) b) s) ((f x) w)) n)))) w) ==> (?n. (((((FINREC f) b) s) ((f x) (g (s DELETE x)))) n)))
+T c==> ! ! c==> cFINITE b0 c= c? / cFINREC f0 f1 b0 b1 b2 c= * f2 b0 b1 c==> cFINITE f3 c==> * / c/\ cFINREC f0 f1 * * part cDELETE f3 f4 b0 f5 c? / cFINREC f0 f1 f3 * * f0 f4 b0 b1 f6 c? / cFINREC f0 f1 f3 * * f0 f4 * f2 * * part cDELETE f3 f4 b0
++ (!x. (!y. (!s. ((~ (x = y)) ==> (((f x) ((f y) s)) = ((f y) ((f x) s))))))) |- (((!s. ((FINITE s) ==> (?a. (?n. (((((FINREC f) b) s) a) n))))) /\ (!n1. (!n2. (!s. (!a1. (!a2. (((((((FINREC f) b) s) a1) n1) /\ (((((FINREC f) b) s) a2) n2)) ==> ((a1 = a2) /\ (n1 = n2))))))))) ==> (?g. (((g EMPTY) = b) /\ (!s. (!x. (((FINITE s) /\ (x IN s)) ==> ((g s) = ((f x) (g (s DELETE x))))))))))
+T c==> ! ! ! c==> c~ c= b0 b1 c= * * f0 b0 * * f0 b1 b2 * * f0 b1 * * f0 b0 b2 c==> c/\ ! c==> cFINITE b0 c? / c? / cFINREC f0 f1 b0 b1 b2 ! ! ! ! ! c==> c/\ cFINREC f0 f1 b2 b3 b0 cFINREC f0 f1 b2 b4 b1 c/\ c= b3 b4 c= b0 b1 c? / c/\ c= * b0 part cEMPTY f1 ! ! c==> c/\ cFINITE b1 cIN b2 b1 c= * b0 b1 * * f0 b2 * b0 * * part cDELETE b1 b2
+- |- ((\t1. (!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))))) t1)
+T * / ! ! c= c\/ b0 c\/ b1 b2 c\/ c\/ b0 b1 b2 f0
++ (!f. (!b. ((!x. (!y. (!s. ((~ (x = y)) ==> (((f x) ((f y) s)) = ((f y) ((f x) s))))))) ==> (!n1. (!n2. (!s. (!a1. (!a2. (((((((FINREC f) b) s) a1) n1) /\ (((((FINREC f) b) s) a2) n2)) ==> ((a1 = a2) /\ (n1 = n2))))))))))) |- ((\b. ((!x. (!y. (!s. ((~ (x = y)) ==> (((f x) ((f y) s)) = ((f y) ((f x) s))))))) ==> (!n1. (!n2. (!s. (!a1. (!a2. (((((((FINREC f) b) s) a1) n1) /\ (((((FINREC f) b) s) a2) n2)) ==> ((a1 = a2) /\ (n1 = n2)))))))))) b)
+T c==> ! ! c==> ! ! ! c==> c~ c= b2 b3 c= * * b0 b2 * * b0 b3 b4 * * b0 b3 * * b0 b2 b4 ! ! ! ! ! c==> c/\ cFINREC b0 b1 b4 b5 b2 cFINREC b0 b1 b4 b6 b3 c/\ c= b5 b6 c= b2 b3 * / c==> ! ! ! c==> c~ c= b1 b2 c= * * f0 b1 * * f0 b2 b3 * * f0 b2 * * f0 b1 b3 ! ! ! ! ! c==> c/\ cFINREC f0 b0 b3 b4 b1 cFINREC f0 b0 b3 b5 b2 c/\ c= b4 b5 c= b1 b2 f1
++ (FINITE s) |- (((?t. ((FINITE t) /\ ((s DELETE x) SUBSET t))) ==> (FINITE (s DELETE x))) = (FINITE (s DELETE x)))
+T c==> cFINITE f0 c= c==> c? / c/\ cFINITE b0 cSUBSET * * part cDELETE f0 f1 b0 cFINITE * * part cDELETE f0 f1 cFINITE * * part cDELETE f0 f1
++ |- (((?n. (((((FINREC f) b) s) (g s)) n)) ==> (?n. (((((FINREC f) b) s) ((f x) (g (s DELETE x)))) n))) = ((((g s) = (g s)) = (?n. (((((FINREC f) b) s) (g s)) n))) ==> (?n. (((((FINREC f) b) s) ((f x) (g (s DELETE x)))) n))))
+T c= c==> c? / cFINREC f0 f1 f2 * f3 f2 b0 c? / cFINREC f0 f1 f2 * * f0 f4 * f3 * * part cDELETE f2 f4 b0 c==> c= c= * f3 f2 * f3 f2 c? / cFINREC f0 f1 f2 * f3 f2 b0 c? / cFINREC f0 f1 f2 * * f0 f4 * f3 * * part cDELETE f2 f4 b0
++ (!s. (!t. (((FINITE t) /\ (s SUBSET t)) ==> (FINITE s)))) |- ((?t. ((FINITE t) /\ (s SUBSET t))) ==> (FINITE s))
+T c==> ! ! c==> c/\ cFINITE b1 cSUBSET b0 b1 cFINITE b0 c==> c? / c/\ cFINITE b0 cSUBSET f0 b0 cFINITE f0
++ |- (((!f. (!b. ((!x. (!y. (!s. ((~ (x = y)) ==> (((f x) ((f y) s)) = ((f y) ((f x) s))))))) ==> (!n. (!s. (!z. ((((((FINREC f) b) s) z) (SUC n)) ==> (!x. ((x IN s) ==> (?w. ((((((FINREC f) b) (s DELETE x)) w) n) /\ (z = ((f x) w))))))))))))) ==> (!f. ((!x. (!y. (!s. ((~ (x = y)) ==> (((f x) ((f y) s)) = ((f y) ((f x) s))))))) ==> (!b. (!n. (!s. (!z. ((((((FINREC f) b) s) z) (SUC n)) ==> (!x. ((x IN s) ==> (?w. ((((((FINREC f) b) (s DELETE x)) w) n) /\ (z = ((f x) w)))))))))))))) = (!f. ((!x. (!y. (!s. ((~ (x = y)) ==> (((f x) ((f y) s)) = ((f y) ((f x) s))))))) ==> (!b. (!n. (!s. (!z. ((((((FINREC f) b) s) z) (SUC n)) ==> (!x. ((x IN s) ==> (?w. ((((((FINREC f) b) (s DELETE x)) w) n) /\ (z = ((f x) w))))))))))))))
+T c= c==> ! ! c==> ! ! ! c==> c~ c= b2 b3 c= * * b0 b2 * * b0 b3 b4 * * b0 b3 * * b0 b2 b4 ! ! ! c==> cFINREC b0 b1 b3 b4 cSUC b2 ! c==> cIN b5 b3 c? / c/\ cFINREC b0 b1 * * part cDELETE b3 b5 b6 b2 c= b4 * * b0 b5 b6 ! c==> ! ! ! c==> c~ c= b1 b2 c= * * b0 b1 * * b0 b2 b3 * * b0 b2 * * b0 b1 b3 ! ! ! ! c==> cFINREC b0 b1 b3 b4 cSUC b2 ! c==> cIN b5 b3 c? / c/\ cFINREC b0 b1 * * part cDELETE b3 b5 b6 b2 c= b4 * * b0 b5 b6 ! c==> ! ! ! c==> c~ c= b1 b2 c= * * b0 b1 * * b0 b2 b3 * * b0 b2 * * b0 b1 b3 ! ! ! ! c==> cFINREC b0 b1 b3 b4 cSUC b2 ! c==> cIN b5 b3 c? / c/\ cFINREC b0 b1 * * part cDELETE b3 b5 b6 b2 c= b4 * * b0 b5 b6
+- (!x. (!y. (!s. ((~ (x = y)) ==> (((f x) ((f y) s)) = ((f y) ((f x) s))))))) |- ((!x. (!y. (!s. ((~ (x = y)) ==> (((f x) ((f y) s)) = ((f y) ((f x) s))))))) /\ (!x. (!y. ((~ (x = y)) ==> (!s. (((f x) ((f y) s)) = ((f y) ((f x) s))))))))
+T c==> ! ! ! c==> c~ c= b0 b1 c= * * f0 b0 * * f0 b1 b2 * * f0 b1 * * f0 b0 b2 c/\ ! ! ! c==> c~ c= b0 b1 c= * * f0 b0 * * f0 b1 b2 * * f0 b1 * * f0 b0 b2 ! ! c==> c~ c= b0 b1 ! c= * * f0 b0 * * f0 b1 b2 * * f0 b1 * * f0 b0 b2
++ (!x. (!y. (!s. ((~ (x = y)) ==> (((f x) ((f y) s)) = ((f y) ((f x) s))))))), (!f. (!b. ((!x. (!y. (!s. ((~ (x = y)) ==> (((f x) ((f y) s)) = ((f y) ((f x) s))))))) ==> (!n. (!s. (!z. ((((((FINREC f) b) s) z) (SUC n)) ==> (!x. ((x IN s) ==> (?w. ((((((FINREC f) b) (s DELETE x)) w) n) /\ (z = ((f x) w))))))))))))) |- (!b. (!n. (!s. (!z. ((((((FINREC f) b) s) z) (SUC n)) ==> (!x. ((x IN s) ==> (?w. ((((((FINREC f) b) (s DELETE x)) w) n) /\ (z = ((f x) w)))))))))))
+T c==> ! ! ! c==> c~ c= b0 b1 c= * * f0 b0 * * f0 b1 b2 * * f0 b1 * * f0 b0 b2 c==> ! ! c==> ! ! ! c==> c~ c= b2 b3 c= * * b0 b2 * * b0 b3 b4 * * b0 b3 * * b0 b2 b4 ! ! ! c==> cFINREC b0 b1 b3 b4 cSUC b2 ! c==> cIN b5 b3 c? / c/\ cFINREC b0 b1 * * part cDELETE b3 b5 b6 b2 c= b4 * * b0 b5 b6 ! ! ! ! c==> cFINREC f0 b0 b2 b3 cSUC b1 ! c==> cIN b4 b2 c? / c/\ cFINREC f0 b0 * * part cDELETE b2 b4 b5 b1 c= b3 * * f0 b4 b5
+- (!s. (!a. ((FINITE s) ==> ((?n. (((((FINREC f) b) s) a) n)) = ((g s) = a))))) |- ((!s. (!a. ((FINITE s) ==> ((?n. (((((FINREC f) b) s) a) n)) = ((g s) = a))))) /\ (!s. ((FINITE s) ==> (!a. ((?n. (((((FINREC f) b) s) a) n)) = ((g s) = a))))))
+T c==> ! ! c==> cFINITE b0 c= c? / cFINREC f0 f1 b0 b1 b2 c= * f2 b0 b1 c/\ ! ! c==> cFINITE b0 c= c? / cFINREC f0 f1 b0 b1 b2 c= * f2 b0 b1 ! c==> cFINITE b0 ! c= c? / cFINREC f0 f1 b0 b1 b2 c= * f2 b0 b1
+- |- (((~ (!x'. (((s x') /\ (~ (x' = x))) ==> (s x')))) ==> F) = (!x'. (((s x') /\ (~ (x' = x))) ==> (s x'))))
+T c= c==> c~ ! c==> c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF ! c==> c/\ * f0 b0 c~ c= b0 f1 * f0 b0
++ (!s. (!t. (((FINITE t) /\ (s SUBSET t)) ==> (FINITE s)))), ((FINITE t) /\ (s SUBSET t)) |- (FINITE s)
+T c==> ! ! c==> c/\ cFINITE b1 cSUBSET b0 b1 cFINITE b0 c==> c/\ cFINITE f0 cSUBSET f1 f0 cFINITE f1
++ (!x. (!y. (!s. ((~ (x = y)) ==> (((f x) ((f y) s)) = ((f y) ((f x) s))))))) |- ((\z. ((((((FINREC f) b) s) z) (SUC n)) ==> (!x. ((x IN s) ==> (?w. ((((((FINREC f) b) (s DELETE x)) w) n) /\ (z = ((f x) w)))))))) z)
+T c==> ! ! ! c==> c~ c= b0 b1 c= * * f0 b0 * * f0 b1 b2 * * f0 b1 * * f0 b0 b2 * / c==> cFINREC f0 f1 f2 b0 cSUC f3 ! c==> cIN b1 f2 c? / c/\ cFINREC f0 f1 * * part cDELETE f2 b1 b2 f3 c= b0 * * f0 b1 b2 f4
++ (!x. (!y. (!s. ((~ (x = y)) ==> (((f x) ((f y) s)) = ((f y) ((f x) s))))))), (!a. ((?n. (((((FINREC f) b) s) a) n)) = ((g s) = a))), (!s. (!a. ((FINITE s) ==> ((?n. (((((FINREC f) b) s) a) n)) = ((g s) = a))))), (FINITE s), (x IN s) |- (((((((((FINREC f) b) s) (g s)) (NUMERAL _0)) ==> (?n. (((((FINREC f) b) s) ((f x) (g (s DELETE x)))) n))) /\ (!n. (((((((FINREC f) b) s) (g s)) n) ==> (?n. (((((FINREC f) b) s) ((f x) (g (s DELETE x)))) n))) ==> ((((((FINREC f) b) s) (g s)) (SUC n)) ==> (?n. (((((FINREC f) b) s) ((f x) (g (s DELETE x)))) n)))))) ==> (!n. ((((((FINREC f) b) s) (g s)) n) ==> (?n. (((((FINREC f) b) s) ((f x) (g (s DELETE x)))) n))))) = (!n. ((((((FINREC f) b) s) (g s)) n) ==> (?n. (((((FINREC f) b) s) ((f x) (g (s DELETE x)))) n)))))
+T c==> ! ! ! c==> c~ c= b0 b1 c= * * f0 b0 * * f0 b1 b2 * * f0 b1 * * f0 b0 b2 c==> ! c= c? / cFINREC f0 f1 f2 b0 b1 c= * f3 f2 b0 c==> ! ! c==> cFINITE b0 c= c? / cFINREC f0 f1 b0 b1 b2 c= * f3 b0 b1 c==> cFINITE f2 c==> cIN f4 f2 c= c==> c/\ c==> cFINREC f0 f1 f2 * f3 f2 cNUMERAL c_0 c? / cFINREC f0 f1 f2 * * f0 f4 * f3 * * part cDELETE f2 f4 b0 ! c==> c==> cFINREC f0 f1 f2 * f3 f2 b0 c? / cFINREC f0 f1 f2 * * f0 f4 * f3 * * part cDELETE f2 f4 b1 c==> cFINREC f0 f1 f2 * f3 f2 cSUC b0 c? / cFINREC f0 f1 f2 * * f0 f4 * f3 * * part cDELETE f2 f4 b1 ! c==> cFINREC f0 f1 f2 * f3 f2 b0 c? / cFINREC f0 f1 f2 * * f0 f4 * f3 * * part cDELETE f2 f4 b1 ! c==> cFINREC f0 f1 f2 * f3 f2 b0 c? / cFINREC f0 f1 f2 * * f0 f4 * f3 * * part cDELETE f2 f4 b1
++ (!s. (!a. ((FINITE s) ==> ((?n. (((((FINREC f) b) s) a) n)) = ((g s) = a))))), (FINITE EMPTY) |- (((!a. (((g EMPTY) = a) = (?n. (((((FINREC f) b) EMPTY) a) n)))) ==> ((\a. (((g EMPTY) = a) = (?n. (((((FINREC f) b) EMPTY) a) n)))) a)) = ((\a. (((g EMPTY) = a) = (?n. (((((FINREC f) b) EMPTY) a) n)))) a))
+T c==> ! ! c==> cFINITE b0 c= c? / cFINREC f0 f1 b0 b1 b2 c= * f2 b0 b1 c==> cFINITE part cEMPTY c= c==> ! c= c= * f2 part cEMPTY b0 c? / cFINREC f0 f1 part cEMPTY b0 b1 * / c= c= * f2 part cEMPTY b0 c? / cFINREC f0 f1 part cEMPTY b0 b1 f3 * / c= c= * f2 part cEMPTY b0 c? / cFINREC f0 f1 part cEMPTY b0 b1 f3
+- ((((((FINREC f) b) s) (g s)) n) ==> (?n. (((((FINREC f) b) s) ((f x) (g (s DELETE x)))) n))) |- (((((((FINREC f) b) s) (g s)) n) ==> (?n. (((((FINREC f) b) s) ((f x) (g (s DELETE x)))) n))) = T)
+T c==> c==> cFINREC f0 f1 f2 * f3 f2 f4 c? / cFINREC f0 f1 f2 * * f0 f5 * f3 * * part cDELETE f2 f5 b0 c= c==> cFINREC f0 f1 f2 * f3 f2 f4 c? / cFINREC f0 f1 f2 * * f0 f5 * f3 * * part cDELETE f2 f5 b0 cT
+- (?n. (((((FINREC f) b) s) ((f x) w)) n)) |- (T = (?n. (((((FINREC f) b) s) ((f x) w)) n)))
+T c==> c? / cFINREC f0 f1 f2 * * f0 f3 f4 b0 c= cT c? / cFINREC f0 f1 f2 * * f0 f3 f4 b0
++ (!x. (!y. (!s. ((~ (x = y)) ==> (((f x) ((f y) s)) = ((f y) ((f x) s))))))) |- (((\f. (!s. (!a. ((FINITE s) ==> ((?n. (((((FINREC f) b) s) a) n)) = ((f s) = a)))))) g) ==> (?g. (((g EMPTY) = b) /\ (!s. (!x. (((FINITE s) /\ (x IN s)) ==> ((g s) = ((f x) (g (s DELETE x))))))))))
+T c==> ! ! ! c==> c~ c= b0 b1 c= * * f0 b0 * * f0 b1 b2 * * f0 b1 * * f0 b0 b2 c==> * / ! ! c==> cFINITE b1 c= c? / cFINREC f0 f1 b1 b2 b3 c= * b0 b1 b2 f2 c? / c/\ c= * b0 part cEMPTY f1 ! ! c==> c/\ cFINITE b1 cIN b2 b1 c= * b0 b1 * * f0 b2 * b0 * * part cDELETE b1 b2
++ (!x. (!y. (!s. ((~ (x = y)) ==> (((f x) ((f y) s)) = ((f y) ((f x) s))))))), (!a. ((?n. (((((FINREC f) b) s) a) n)) = ((g s) = a))), (!s. (!a. ((FINITE s) ==> ((?n. (((((FINREC f) b) s) a) n)) = ((g s) = a))))), (FINITE s), (x IN s) |- ((g s) = ((f x) (g (s DELETE x))))
+T c==> ! ! ! c==> c~ c= b0 b1 c= * * f0 b0 * * f0 b1 b2 * * f0 b1 * * f0 b0 b2 c==> ! c= c? / cFINREC f0 f1 f2 b0 b1 c= * f3 f2 b0 c==> ! ! c==> cFINITE b0 c= c? / cFINREC f0 f1 b0 b1 b2 c= * f3 b0 b1 c==> cFINITE f2 c==> cIN f4 f2 c= * f3 f2 * * f0 f4 * f3 * * part cDELETE f2 f4
++ |- ((s DELETE x) SUBSET s)
+T cSUBSET * * part cDELETE f0 f1 f0
++ (!x. (!y. (!s. ((~ (x = y)) ==> (((f x) ((f y) s)) = ((f y) ((f x) s))))))) |- ((((((FINREC f) b) s) z) (SUC n)) ==> (!x. ((x IN s) ==> (?w. ((((((FINREC f) b) (s DELETE x)) w) n) /\ (z = ((f x) w)))))))
+T c==> ! ! ! c==> c~ c= b0 b1 c= * * f0 b0 * * f0 b1 b2 * * f0 b1 * * f0 b0 b2 c==> cFINREC f0 f1 f2 f3 cSUC f4 ! c==> cIN b0 f2 c? / c/\ cFINREC f0 f1 * * part cDELETE f2 b0 b1 f4 c= f3 * * f0 b0 b1
++ |- (((?n. (P n)) ==> Q) = (!n. ((P n) ==> Q)))
+T c= c==> c? / * f0 b0 f1 ! c==> * f0 b0 f1
+- (((((FINREC f) b) (s DELETE x)) w) n) |- ((((((FINREC f) b) (s DELETE x)) w) n) = T)
+T c==> cFINREC f0 f1 * * part cDELETE f2 f3 f4 f5 c= cFINREC f0 f1 * * part cDELETE f2 f3 f4 f5 cT
++ (!x. (!y. (!s. ((~ (x = y)) ==> (((f x) ((f y) s)) = ((f y) ((f x) s))))))), (!s. (!a. ((FINITE s) ==> ((?n. (((((FINREC f) b) s) a) n)) = ((g s) = a))))), (FINITE s), ((FINITE s) /\ (x IN s)) |- ((g s) = ((f x) (g (s DELETE x))))
+T c==> ! ! ! c==> c~ c= b0 b1 c= * * f0 b0 * * f0 b1 b2 * * f0 b1 * * f0 b0 b2 c==> ! ! c==> cFINITE b0 c= c? / cFINREC f0 f1 b0 b1 b2 c= * f2 b0 b1 c==> cFINITE f3 c==> c/\ cFINITE f3 cIN f4 f3 c= * f2 f3 * * f0 f4 * f2 * * part cDELETE f3 f4
+- (!x. (!y. (!s. ((~ (x = y)) ==> (((f x) ((f y) s)) = ((f y) ((f x) s))))))) |- (((!y. (!s. ((~ (x = y)) ==> (((f x) ((f y) s)) = ((f y) ((f x) s)))))) ==> ((\y. (!s. ((~ (x = y)) ==> (((f x) ((f y) s)) = ((f y) ((f x) s)))))) y)) = ((\y. (!s. ((~ (x = y)) ==> (((f x) ((f y) s)) = ((f y) ((f x) s)))))) y))
+T c==> ! ! ! c==> c~ c= b0 b1 c= * * f0 b0 * * f0 b1 b2 * * f0 b1 * * f0 b0 b2 c= c==> ! ! c==> c~ c= f1 b0 c= * * f0 f1 * * f0 b0 b1 * * f0 b0 * * f0 f1 b1 * / ! c==> c~ c= f1 b0 c= * * f0 f1 * * f0 b0 b1 * * f0 b0 * * f0 f1 b1 f2 * / ! c==> c~ c= f1 b0 c= * * f0 f1 * * f0 b0 b1 * * f0 b0 * * f0 f1 b1 f2
+- (!s. (!a. ((FINITE s) ==> ((?n. (((((FINREC f) b) s) a) n)) = ((g s) = a))))), (?w. ((((((FINREC f) b) (s DELETE x)) w) n) /\ (?n. (((((FINREC f) b) s) ((f x) w)) n)))), (FINITE s) |- ((?w. ((((((FINREC f) b) (s DELETE x)) w) n) /\ (?n. (((((FINREC f) b) s) ((f x) w)) n)))) /\ (?n. (((((FINREC f) b) s) ((f x) (g (s DELETE x)))) n)))
+T c==> ! ! c==> cFINITE b0 c= c? / cFINREC f0 f1 b0 b1 b2 c= * f2 b0 b1 c==> c? / c/\ cFINREC f0 f1 * * part cDELETE f3 f4 b0 f5 c? / cFINREC f0 f1 f3 * * f0 f4 b0 b1 c==> cFINITE f3 c/\ c? / c/\ cFINREC f0 f1 * * part cDELETE f3 f4 b0 f5 c? / cFINREC f0 f1 f3 * * f0 f4 b0 b1 c? / cFINREC f0 f1 f3 * * f0 f4 * f2 * * part cDELETE f3 f4 b0
++ (!s. (!a. ((FINITE s) ==> ((?n. (((((FINREC f) b) s) a) n)) = ((g s) = a))))), (FINITE s) |- ((((\w. ((((((FINREC f) b) (s DELETE x)) w) n) /\ (?n. (((((FINREC f) b) s) ((f x) w)) n)))) w) ==> (?n. (((((FINREC f) b) s) ((f x) (g (s DELETE x)))) n))) = T)
+T c==> ! ! c==> cFINITE b0 c= c? / cFINREC f0 f1 b0 b1 b2 c= * f2 b0 b1 c==> cFINITE f3 c= c==> * / c/\ cFINREC f0 f1 * * part cDELETE f3 f4 b0 f5 c? / cFINREC f0 f1 f3 * * f0 f4 b0 b1 f6 c? / cFINREC f0 f1 f3 * * f0 f4 * f2 * * part cDELETE f3 f4 b0 cT
+- (!s. (!a. ((FINITE s) ==> ((?n. (((((FINREC f) b) s) a) n)) = ((g s) = a))))) |- ((\s. ((FINITE s) ==> (!a. ((?n. (((((FINREC f) b) s) a) n)) = ((g s) = a))))) s)
+T c==> ! ! c==> cFINITE b0 c= c? / cFINREC f0 f1 b0 b1 b2 c= * f2 b0 b1 * / c==> cFINITE b0 ! c= c? / cFINREC f0 f1 b0 b1 b2 c= * f2 b0 b1 f3
++ (!s. (!a. ((FINITE s) ==> ((?n. (((((FINREC f) b) s) a) n)) = ((g s) = a))))), (FINITE s) |- (!w. (((\w. ((((((FINREC f) b) (s DELETE x)) w) n) /\ (?n. (((((FINREC f) b) s) ((f x) w)) n)))) w) ==> (?n. (((((FINREC f) b) s) ((f x) (g (s DELETE x)))) n))))
+T c==> ! ! c==> cFINITE b0 c= c? / cFINREC f0 f1 b0 b1 b2 c= * f2 b0 b1 c==> cFINITE f3 ! c==> * / c/\ cFINREC f0 f1 * * part cDELETE f3 f4 b1 f5 c? / cFINREC f0 f1 f3 * * f0 f4 b1 b1 b0 c? / cFINREC f0 f1 f3 * * f0 f4 * f2 * * part cDELETE f3 f4 b1
+- |- ((t ==> t) = T)
+T c= c==> f0 f0 cT
++ |- ((\n. (((((FINREC f) b) EMPTY) b) n)) (NUMERAL _0))
+T * / cFINREC f0 f1 part cEMPTY f1 b0 cNUMERAL c_0
++ (?t. ((FINITE t) /\ (s SUBSET t))) |- ((!s. (!t. (((FINITE t) /\ (s SUBSET t)) ==> (FINITE s)))) ==> (FINITE s))
+T c==> c? / c/\ cFINITE b0 cSUBSET f0 b0 c==> ! ! c==> c/\ cFINITE b1 cSUBSET b0 b1 cFINITE b0 cFINITE f0
++ |- (((!f. ((!x. (!y. (!s. ((~ (x = y)) ==> (((f x) ((f y) s)) = ((f y) ((f x) s))))))) ==> (!b. (!n. (!s. (!z. ((((((FINREC f) b) s) z) (SUC n)) ==> (!x. ((x IN s) ==> (?w. ((((((FINREC f) b) (s DELETE x)) w) n) /\ (z = ((f x) w))))))))))))) ==> ((\f. ((!x. (!y. (!s. ((~ (x = y)) ==> (((f x) ((f y) s)) = ((f y) ((f x) s))))))) ==> (!b. (!n. (!s. (!z. ((((((FINREC f) b) s) z) (SUC n)) ==> (!x. ((x IN s) ==> (?w. ((((((FINREC f) b) (s DELETE x)) w) n) /\ (z = ((f x) w))))))))))))) f)) = ((\f. ((!x. (!y. (!s. ((~ (x = y)) ==> (((f x) ((f y) s)) = ((f y) ((f x) s))))))) ==> (!b. (!n. (!s. (!z. ((((((FINREC f) b) s) z) (SUC n)) ==> (!x. ((x IN s) ==> (?w. ((((((FINREC f) b) (s DELETE x)) w) n) /\ (z = ((f x) w))))))))))))) f))
+T c= c==> ! c==> ! ! ! c==> c~ c= b1 b2 c= * * b0 b1 * * b0 b2 b3 * * b0 b2 * * b0 b1 b3 ! ! ! ! c==> cFINREC b0 b1 b3 b4 cSUC b2 ! c==> cIN b5 b3 c? / c/\ cFINREC b0 b1 * * part cDELETE b3 b5 b6 b2 c= b4 * * b0 b5 b6 * / c==> ! ! ! c==> c~ c= b1 b2 c= * * b0 b1 * * b0 b2 b3 * * b0 b2 * * b0 b1 b3 ! ! ! ! c==> cFINREC b0 b1 b3 b4 cSUC b2 ! c==> cIN b5 b3 c? / c/\ cFINREC b0 b1 * * part cDELETE b3 b5 b6 b2 c= b4 * * b0 b5 b6 f0 * / c==> ! ! ! c==> c~ c= b1 b2 c= * * b0 b1 * * b0 b2 b3 * * b0 b2 * * b0 b1 b3 ! ! ! ! c==> cFINREC b0 b1 b3 b4 cSUC b2 ! c==> cIN b5 b3 c? / c/\ cFINREC b0 b1 * * part cDELETE b3 b5 b6 b2 c= b4 * * b0 b5 b6 f0
+- ((s = EMPTY) /\ (?n. (((((FINREC f) b) s) b) n))) |- ((?n. (((((FINREC f) b) s) b) n)) = T)
+T c==> c/\ c= f0 part cEMPTY c? / cFINREC f1 f2 f0 f2 b0 c= c? / cFINREC f1 f2 f0 f2 b0 cT
++ (!x. (!y. (!s. ((~ (x = y)) ==> (((f x) ((f y) s)) = ((f y) ((f x) s))))))) |- (((!n. (!s. (!z. ((((((FINREC f) b) s) z) (SUC n)) ==> (!x. ((x IN s) ==> (?w. ((((((FINREC f) b) (s DELETE x)) w) n) /\ (z = ((f x) w)))))))))) ==> ((\n. (!s. (!z. ((((((FINREC f) b) s) z) (SUC n)) ==> (!x. ((x IN s) ==> (?w. ((((((FINREC f) b) (s DELETE x)) w) n) /\ (z = ((f x) w)))))))))) n)) = ((\n. (!s. (!z. ((((((FINREC f) b) s) z) (SUC n)) ==> (!x. ((x IN s) ==> (?w. ((((((FINREC f) b) (s DELETE x)) w) n) /\ (z = ((f x) w)))))))))) n))
+T c==> ! ! ! c==> c~ c= b0 b1 c= * * f0 b0 * * f0 b1 b2 * * f0 b1 * * f0 b0 b2 c= c==> ! ! ! c==> cFINREC f0 f1 b1 b2 cSUC b0 ! c==> cIN b3 b1 c? / c/\ cFINREC f0 f1 * * part cDELETE b1 b3 b4 b0 c= b2 * * f0 b3 b4 * / ! ! c==> cFINREC f0 f1 b1 b2 cSUC b0 ! c==> cIN b3 b1 c? / c/\ cFINREC f0 f1 * * part cDELETE b1 b3 b4 b0 c= b2 * * f0 b3 b4 f2 * / ! ! c==> cFINREC f0 f1 b1 b2 cSUC b0 ! c==> cIN b3 b1 c? / c/\ cFINREC f0 f1 * * part cDELETE b1 b3 b4 b0 c= b2 * * f0 b3 b4 f2
++ |- ((((((FINREC f) b) s) a) (NUMERAL _0)) = ((s = EMPTY) /\ (a = b)))
+T c= cFINREC f0 f1 f2 f3 cNUMERAL c_0 c/\ c= f2 part cEMPTY c= f3 f1
++ (FINITE s) |- ((\t. ((FINITE t) /\ ((s DELETE x) SUBSET t))) s)
+T c==> cFINITE f0 * / c/\ cFINITE b0 cSUBSET * * part cDELETE f0 f1 b0 f0
+- (!x. (!y. (!s. ((~ (x = y)) ==> (((f x) ((f y) s)) = ((f y) ((f x) s))))))) |- ((\y. ((~ (x = y)) ==> (!s. (((f x) ((f y) s)) = ((f y) ((f x) s)))))) y)
+T c==> ! ! ! c==> c~ c= b0 b1 c= * * f0 b0 * * f0 b1 b2 * * f0 b1 * * f0 b0 b2 * / c==> c~ c= f1 b0 ! c= * * f0 f1 * * f0 b0 b1 * * f0 b0 * * f0 f1 b1 f2
+- |- ((\t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))) t3)
+T * / c= c\/ f0 c\/ f1 b0 c\/ c\/ f0 f1 b0 f2
++ ((?n. (((((FINREC f) b) EMPTY) a) n)) = ((g EMPTY) = a)) |- (((g EMPTY) = a) = (?n. (((((FINREC f) b) EMPTY) a) n)))
+T c==> c= c? / cFINREC f0 f1 part cEMPTY f2 b0 c= * f3 part cEMPTY f2 c= c= * f3 part cEMPTY f2 c? / cFINREC f0 f1 part cEMPTY f2 b0
++ (!f. (!b. ((!x. (!y. (!s. ((~ (x = y)) ==> (((f x) ((f y) s)) = ((f y) ((f x) s))))))) ==> (!n. (!s. (!z. ((((((FINREC f) b) s) z) (SUC n)) ==> (!x. ((x IN s) ==> (?w. ((((((FINREC f) b) (s DELETE x)) w) n) /\ (z = ((f x) w))))))))))))) |- (((!b. ((!x. (!y. (!s. ((~ (x = y)) ==> (((f x) ((f y) s)) = ((f y) ((f x) s))))))) ==> (!n. (!s. (!z. ((((((FINREC f) b) s) z) (SUC n)) ==> (!x. ((x IN s) ==> (?w. ((((((FINREC f) b) (s DELETE x)) w) n) /\ (z = ((f x) w)))))))))))) ==> ((\b. ((!x. (!y. (!s. ((~ (x = y)) ==> (((f x) ((f y) s)) = ((f y) ((f x) s))))))) ==> (!n. (!s. (!z. ((((((FINREC f) b) s) z) (SUC n)) ==> (!x. ((x IN s) ==> (?w. ((((((FINREC f) b) (s DELETE x)) w) n) /\ (z = ((f x) w)))))))))))) b)) = ((\b. ((!x. (!y. (!s. ((~ (x = y)) ==> (((f x) ((f y) s)) = ((f y) ((f x) s))))))) ==> (!n. (!s. (!z. ((((((FINREC f) b) s) z) (SUC n)) ==> (!x. ((x IN s) ==> (?w. ((((((FINREC f) b) (s DELETE x)) w) n) /\ (z = ((f x) w)))))))))))) b))
+T c==> ! ! c==> ! ! ! c==> c~ c= b2 b3 c= * * b0 b2 * * b0 b3 b4 * * b0 b3 * * b0 b2 b4 ! ! ! c==> cFINREC b0 b1 b3 b4 cSUC b2 ! c==> cIN b5 b3 c? / c/\ cFINREC b0 b1 * * part cDELETE b3 b5 b6 b2 c= b4 * * b0 b5 b6 c= c==> ! c==> ! ! ! c==> c~ c= b1 b2 c= * * f0 b1 * * f0 b2 b3 * * f0 b2 * * f0 b1 b3 ! ! ! c==> cFINREC f0 b0 b2 b3 cSUC b1 ! c==> cIN b4 b2 c? / c/\ cFINREC f0 b0 * * part cDELETE b2 b4 b5 b1 c= b3 * * f0 b4 b5 * / c==> ! ! ! c==> c~ c= b1 b2 c= * * f0 b1 * * f0 b2 b3 * * f0 b2 * * f0 b1 b3 ! ! ! c==> cFINREC f0 b0 b2 b3 cSUC b1 ! c==> cIN b4 b2 c? / c/\ cFINREC f0 b0 * * part cDELETE b2 b4 b5 b1 c= b3 * * f0 b4 b5 f1 * / c==> ! ! ! c==> c~ c= b1 b2 c= * * f0 b1 * * f0 b2 b3 * * f0 b2 * * f0 b1 b3 ! ! ! c==> cFINREC f0 b0 b2 b3 cSUC b1 ! c==> cIN b4 b2 c? / c/\ cFINREC f0 b0 * * part cDELETE b2 b4 b5 b1 c= b3 * * f0 b4 b5 f1
+- |- ((FINITE EMPTY) = T)
+T c= cFINITE part cEMPTY cT
+- |- (((~ p) ==> p) = p)
+T c= c==> c~ f0 f0 f0
++ (!a. ((?n. (((((FINREC f) b) s) a) n)) = ((g s) = a))) |- (!a. (((g s) = a) = (?n. (((((FINREC f) b) s) a) n))))
+T c==> ! c= c? / cFINREC f0 f1 f2 b0 b1 c= * f3 f2 b0 ! c= c= * f3 f2 b0 c? / cFINREC f0 f1 f2 b0 b1
+- |- (((x = x) ==> p) = p)
+T c= c==> c= f0 f0 f1 f1
+- (!x. (!y. (!s. ((~ (x = y)) ==> (((f x) ((f y) s)) = ((f y) ((f x) s))))))), (~ (x = y)) |- ((((f x) ((f y) s)) = ((f y) ((f x) s))) = T)
+T c==> ! ! ! c==> c~ c= b0 b1 c= * * f0 b0 * * f0 b1 b2 * * f0 b1 * * f0 b0 b2 c==> c~ c= f1 f2 c= c= * * f0 f1 * * f0 f2 f3 * * f0 f2 * * f0 f1 f3 cT
++ (!s. (!a. ((FINITE s) ==> ((?n. (((((FINREC f) b) s) a) n)) = ((g s) = a))))), (FINITE s), ((((((FINREC f) b) (s DELETE x)) w) n) /\ (?n. (((((FINREC f) b) s) ((f x) w)) n))), (((((FINREC f) b) (s DELETE x)) w) n) |- (?n. (((((FINREC f) b) s) ((f x) (g (s DELETE x)))) n))
+T c==> ! ! c==> cFINITE b0 c= c? / cFINREC f0 f1 b0 b1 b2 c= * f2 b0 b1 c==> cFINITE f3 c==> c/\ cFINREC f0 f1 * * part cDELETE f3 f4 f5 f6 c? / cFINREC f0 f1 f3 * * f0 f4 f5 b0 c==> cFINREC f0 f1 * * part cDELETE f3 f4 f5 f6 c? / cFINREC f0 f1 f3 * * f0 f4 * f2 * * part cDELETE f3 f4 b0
+- |- ((!x. t) = t)
+T c= ! f0 f0
+- |- (T = (FINITE EMPTY))
+T c= cT cFINITE part cEMPTY
++ |- ((\Q. (((?x. (P x)) ==> Q) = (!x. ((P x) ==> Q)))) Q)
+T * / c= c==> c? / * f0 b1 b0 ! c==> * f0 b1 b0 f1
++ (!a. ((?n. (((((FINREC f) b) s) a) n)) = ((g s) = a))) |- ((((s = EMPTY) /\ (?n. (((((FINREC f) b) s) b) n))) ==> (?n. (((((FINREC f) b) s) ((f x) (g (s DELETE x)))) n))) = ((((((FINREC f) b) s) (g s)) (NUMERAL _0)) ==> (?n. (((((FINREC f) b) s) ((f x) (g (s DELETE x)))) n))))
+T c==> ! c= c? / cFINREC f0 f1 f2 b0 b1 c= * f3 f2 b0 c= c==> c/\ c= f2 part cEMPTY c? / cFINREC f0 f1 f2 f1 b0 c? / cFINREC f0 f1 f2 * * f0 f4 * f3 * * part cDELETE f2 f4 b0 c==> cFINREC f0 f1 f2 * f3 f2 cNUMERAL c_0 c? / cFINREC f0 f1 f2 * * f0 f4 * f3 * * part cDELETE f2 f4 b0
++ (!f. (!b. ((!x. (!y. (!s. ((~ (x = y)) ==> (((f x) ((f y) s)) = ((f y) ((f x) s))))))) ==> (!n. (!s. (!z. ((((((FINREC f) b) s) z) (SUC n)) ==> (!x. ((x IN s) ==> (?w. ((((((FINREC f) b) (s DELETE x)) w) n) /\ (z = ((f x) w))))))))))))) |- ((\b. ((!x. (!y. (!s. ((~ (x = y)) ==> (((f x) ((f y) s)) = ((f y) ((f x) s))))))) ==> (!n. (!s. (!z. ((((((FINREC f) b) s) z) (SUC n)) ==> (!x. ((x IN s) ==> (?w. ((((((FINREC f) b) (s DELETE x)) w) n) /\ (z = ((f x) w)))))))))))) b)
+T c==> ! ! c==> ! ! ! c==> c~ c= b2 b3 c= * * b0 b2 * * b0 b3 b4 * * b0 b3 * * b0 b2 b4 ! ! ! c==> cFINREC b0 b1 b3 b4 cSUC b2 ! c==> cIN b5 b3 c? / c/\ cFINREC b0 b1 * * part cDELETE b3 b5 b6 b2 c= b4 * * b0 b5 b6 * / c==> ! ! ! c==> c~ c= b1 b2 c= * * f0 b1 * * f0 b2 b3 * * f0 b2 * * f0 b1 b3 ! ! ! c==> cFINREC f0 b0 b2 b3 cSUC b1 ! c==> cIN b4 b2 c? / c/\ cFINREC f0 b0 * * part cDELETE b2 b4 b5 b1 c= b3 * * f0 b4 b5 f1
++ |- (((!P. (!Q. (((?x. (P x)) ==> Q) = (!x. ((P x) ==> Q))))) ==> ((\P. (!Q. (((?x. (P x)) ==> Q) = (!x. ((P x) ==> Q))))) P)) = ((\P. (!Q. (((?x. (P x)) ==> Q) = (!x. ((P x) ==> Q))))) P))
+T c= c==> ! ! c= c==> c? / * b0 b2 b1 ! c==> * b0 b2 b1 * / ! c= c==> c? / * b0 b2 b1 ! c==> * b0 b2 b1 f0 * / ! c= c==> c? / * b0 b2 b1 ! c==> * b0 b2 b1 f0
++ (!s. (!a. ((FINITE s) ==> ((?n. (((((FINREC f) b) s) a) n)) = ((g s) = a))))), (FINITE s), ((\w. ((((((FINREC f) b) (s DELETE x)) w) n) /\ (?n. (((((FINREC f) b) s) ((f x) w)) n)))) w) |- (((\w. ((((((FINREC f) b) (s DELETE x)) w) n) /\ (?n. (((((FINREC f) b) s) ((f x) w)) n)))) w) /\ (?n. (((((FINREC f) b) s) ((f x) (g (s DELETE x)))) n)))
+T c==> ! ! c==> cFINITE b0 c= c? / cFINREC f0 f1 b0 b1 b2 c= * f2 b0 b1 c==> cFINITE f3 c==> * / c/\ cFINREC f0 f1 * * part cDELETE f3 f4 b0 f5 c? / cFINREC f0 f1 f3 * * f0 f4 b0 b1 f6 c/\ * / c/\ cFINREC f0 f1 * * part cDELETE f3 f4 b0 f5 c? / cFINREC f0 f1 f3 * * f0 f4 b0 b1 f6 c? / cFINREC f0 f1 f3 * * f0 f4 * f2 * * part cDELETE f3 f4 b0
+- |- ((t ==> F) = (~ t))
+T c= c==> f0 cF c~ f0
++ ((s = EMPTY) /\ (?n. (((((FINREC f) b) s) b) n))), (x IN s) |- (?n. (((((FINREC f) b) s) ((f x) (g (s DELETE x)))) n))
+T c==> c/\ c= f0 part cEMPTY c? / cFINREC f1 f2 f0 f2 b0 c==> cIN f3 f0 c? / cFINREC f1 f2 f0 * * f1 f3 * f4 * * part cDELETE f0 f3 b0
++ (!x. (!y. (!s. ((~ (x = y)) ==> (((f x) ((f y) s)) = ((f y) ((f x) s))))))) |- (((!x. (((\f. (!s. (!a. ((FINITE s) ==> ((?n. (((((FINREC f) b) s) a) n)) = ((f s) = a)))))) x) ==> (?g. (((g EMPTY) = b) /\ (!s. (!x. (((FINITE s) /\ (x IN s)) ==> ((g s) = ((f x) (g (s DELETE x))))))))))) ==> ((?f. (!s. (!a. ((FINITE s) ==> ((?n. (((((FINREC f) b) s) a) n)) = ((f s) = a)))))) ==> (?g. (((g EMPTY) = b) /\ (!s. (!x. (((FINITE s) /\ (x IN s)) ==> ((g s) = ((f x) (g (s DELETE x))))))))))) = ((?f. (!s. (!a. ((FINITE s) ==> ((?n. (((((FINREC f) b) s) a) n)) = ((f s) = a)))))) ==> (?g. (((g EMPTY) = b) /\ (!s. (!x. (((FINITE s) /\ (x IN s)) ==> ((g s) = ((f x) (g (s DELETE x)))))))))))
+T c==> ! ! ! c==> c~ c= b0 b1 c= * * f0 b0 * * f0 b1 b2 * * f0 b1 * * f0 b0 b2 c= c==> ! c==> * / ! ! c==> cFINITE b2 c= c? / cFINREC f0 f1 b2 b3 b4 c= * b1 b2 b3 b0 c? / c/\ c= * b1 part cEMPTY f1 ! ! c==> c/\ cFINITE b2 cIN b3 b2 c= * b1 b2 * * f0 b3 * b1 * * part cDELETE b2 b3 c==> c? / ! ! c==> cFINITE b1 c= c? / cFINREC f0 f1 b1 b2 b3 c= * b0 b1 b2 c? / c/\ c= * b0 part cEMPTY f1 ! ! c==> c/\ cFINITE b1 cIN b2 b1 c= * b0 b1 * * f0 b2 * b0 * * part cDELETE b1 b2 c==> c? / ! ! c==> cFINITE b1 c= c? / cFINREC f0 f1 b1 b2 b3 c= * b0 b1 b2 c? / c/\ c= * b0 part cEMPTY f1 ! ! c==> c/\ cFINITE b1 cIN b2 b1 c= * b0 b1 * * f0 b2 * b0 * * part cDELETE b1 b2
+- (!x. (!y. (!s. ((~ (x = y)) ==> (((f x) ((f y) s)) = ((f y) ((f x) s))))))) |- ((!y. ((~ (x = y)) ==> (!s. (((f x) ((f y) s)) = ((f y) ((f x) s)))))) = T)
+T c==> ! ! ! c==> c~ c= b0 b1 c= * * f0 b0 * * f0 b1 b2 * * f0 b1 * * f0 b0 b2 c= ! c==> c~ c= f1 b0 ! c= * * f0 f1 * * f0 b0 b1 * * f0 b0 * * f0 f1 b1 cT
++ (!s. (!a. ((FINITE s) ==> ((?n. (((((FINREC f) b) s) a) n)) = ((g s) = a))))), (FINITE (s DELETE x)), (((((FINREC f) b) (s DELETE x)) w) n) |- ((g (s DELETE x)) = w)
+T c==> ! ! c==> cFINITE b0 c= c? / cFINREC f0 f1 b0 b1 b2 c= * f2 b0 b1 c==> cFINITE * * part cDELETE f3 f4 c==> cFINREC f0 f1 * * part cDELETE f3 f4 f5 f6 c= * f2 * * part cDELETE f3 f4 f5
+- |- (p = ((~ p) ==> F))
+T c= f0 c==> c~ f0 cF
++ (!s. (!a. ((FINITE s) ==> ((?n. (((((FINREC f) b) s) a) n)) = ((g s) = a))))), (FINITE (s DELETE x)) |- (((!a. (((g (s DELETE x)) = a) = (?n. (((((FINREC f) b) (s DELETE x)) a) n)))) ==> ((g (s DELETE x)) = w)) = ((g (s DELETE x)) = w))
+T c==> ! ! c==> cFINITE b0 c= c? / cFINREC f0 f1 b0 b1 b2 c= * f2 b0 b1 c==> cFINITE * * part cDELETE f3 f4 c= c==> ! c= c= * f2 * * part cDELETE f3 f4 b0 c? / cFINREC f0 f1 * * part cDELETE f3 f4 b0 b1 c= * f2 * * part cDELETE f3 f4 f5 c= * f2 * * part cDELETE f3 f4 f5
+- |- ((?w. t) = t)
+T c= c? / f0 f0
++ (x IN s) |- ((x IN s) = T)
+T c==> cIN f0 f1 c= cIN f0 f1 cT
+- (!x. (!y. (!s. ((~ (x = y)) ==> (((f x) ((f y) s)) = ((f y) ((f x) s))))))) |- (((!s. ((~ (x = y)) ==> (((f x) ((f y) s)) = ((f y) ((f x) s))))) ==> ((\s. ((~ (x = y)) ==> (((f x) ((f y) s)) = ((f y) ((f x) s))))) s)) = ((\s. ((~ (x = y)) ==> (((f x) ((f y) s)) = ((f y) ((f x) s))))) s))
+T c==> ! ! ! c==> c~ c= b0 b1 c= * * f0 b0 * * f0 b1 b2 * * f0 b1 * * f0 b0 b2 c= c==> ! c==> c~ c= f1 f2 c= * * f0 f1 * * f0 f2 b0 * * f0 f2 * * f0 f1 b0 * / c==> c~ c= f1 f2 c= * * f0 f1 * * f0 f2 b0 * * f0 f2 * * f0 f1 b0 f3 * / c==> c~ c= f1 f2 c= * * f0 f1 * * f0 f2 b0 * * f0 f2 * * f0 f1 b0 f3
++ |- (((!f. (!b. ((!x. (!y. (!s. ((~ (x = y)) ==> (((f x) ((f y) s)) = ((f y) ((f x) s))))))) ==> (!n1. (!n2. (!s. (!a1. (!a2. (((((((FINREC f) b) s) a1) n1) /\ (((((FINREC f) b) s) a2) n2)) ==> ((a1 = a2) /\ (n1 = n2))))))))))) ==> (!f. ((!x. (!y. (!s. ((~ (x = y)) ==> (((f x) ((f y) s)) = ((f y) ((f x) s))))))) ==> (!b. (!n1. (!n2. (!s. (!a1. (!a2. (((((((FINREC f) b) s) a1) n1) /\ (((((FINREC f) b) s) a2) n2)) ==> ((a1 = a2) /\ (n1 = n2)))))))))))) = (!f. ((!x. (!y. (!s. ((~ (x = y)) ==> (((f x) ((f y) s)) = ((f y) ((f x) s))))))) ==> (!b. (!n1. (!n2. (!s. (!a1. (!a2. (((((((FINREC f) b) s) a1) n1) /\ (((((FINREC f) b) s) a2) n2)) ==> ((a1 = a2) /\ (n1 = n2))))))))))))
+T c= c==> ! ! c==> ! ! ! c==> c~ c= b2 b3 c= * * b0 b2 * * b0 b3 b4 * * b0 b3 * * b0 b2 b4 ! ! ! ! ! c==> c/\ cFINREC b0 b1 b4 b5 b2 cFINREC b0 b1 b4 b6 b3 c/\ c= b5 b6 c= b2 b3 ! c==> ! ! ! c==> c~ c= b1 b2 c= * * b0 b1 * * b0 b2 b3 * * b0 b2 * * b0 b1 b3 ! ! ! ! ! ! c==> c/\ cFINREC b0 b1 b4 b5 b2 cFINREC b0 b1 b4 b6 b3 c/\ c= b5 b6 c= b2 b3 ! c==> ! ! ! c==> c~ c= b1 b2 c= * * b0 b1 * * b0 b2 b3 * * b0 b2 * * b0 b1 b3 ! ! ! ! ! ! c==> c/\ cFINREC b0 b1 b4 b5 b2 cFINREC b0 b1 b4 b6 b3 c/\ c= b5 b6 c= b2 b3
++ (!x. (!y. (!s. ((~ (x = y)) ==> (((f x) ((f y) s)) = ((f y) ((f x) s))))))) |- ((!s. (!a. ((FINITE s) ==> ((?n. (((((FINREC f) b) s) a) n)) = ((g s) = a))))) ==> (?g. (((g EMPTY) = b) /\ (!s. (!x. (((FINITE s) /\ (x IN s)) ==> ((g s) = ((f x) (g (s DELETE x))))))))))
+T c==> ! ! ! c==> c~ c= b0 b1 c= * * f0 b0 * * f0 b1 b2 * * f0 b1 * * f0 b0 b2 c==> ! ! c==> cFINITE b0 c= c? / cFINREC f0 f1 b0 b1 b2 c= * f2 b0 b1 c? / c/\ c= * b0 part cEMPTY f1 ! ! c==> c/\ cFINITE b1 cIN b2 b1 c= * b0 b1 * * f0 b2 * b0 * * part cDELETE b1 b2
++ |- ((((((FINREC f) b) (s DELETE x)) w) n) = ((\n. (((((FINREC f) b) (s DELETE x)) w) n)) n))
+T c= cFINREC f0 f1 * * part cDELETE f2 f3 f4 f5 * / cFINREC f0 f1 * * part cDELETE f2 f3 f4 b0 f5
++ |- (((!x. (((\t. ((FINITE t) /\ (s SUBSET t))) x) ==> ((!s. (!t. (((FINITE t) /\ (s SUBSET t)) ==> (FINITE s)))) ==> (FINITE s)))) ==> ((?t. ((FINITE t) /\ (s SUBSET t))) ==> ((!s. (!t. (((FINITE t) /\ (s SUBSET t)) ==> (FINITE s)))) ==> (FINITE s)))) = ((?t. ((FINITE t) /\ (s SUBSET t))) ==> ((!s. (!t. (((FINITE t) /\ (s SUBSET t)) ==> (FINITE s)))) ==> (FINITE s))))
+T c= c==> ! c==> * / c/\ cFINITE b1 cSUBSET f0 b1 b0 c==> ! ! c==> c/\ cFINITE b2 cSUBSET b1 b2 cFINITE b1 cFINITE f0 c==> c? / c/\ cFINITE b0 cSUBSET f0 b0 c==> ! ! c==> c/\ cFINITE b1 cSUBSET b0 b1 cFINITE b0 cFINITE f0 c==> c? / c/\ cFINITE b0 cSUBSET f0 b0 c==> ! ! c==> c/\ cFINITE b1 cSUBSET b0 b1 cFINITE b0 cFINITE f0
++ (!x. (!y. (!s. ((~ (x = y)) ==> (((f x) ((f y) s)) = ((f y) ((f x) s))))))), (!f. (!b. ((!x. (!y. (!s. ((~ (x = y)) ==> (((f x) ((f y) s)) = ((f y) ((f x) s))))))) ==> (!n1. (!n2. (!s. (!a1. (!a2. (((((((FINREC f) b) s) a1) n1) /\ (((((FINREC f) b) s) a2) n2)) ==> ((a1 = a2) /\ (n1 = n2))))))))))) |- ((!x. (!y. (!s. ((~ (x = y)) ==> (((f x) ((f y) s)) = ((f y) ((f x) s))))))) /\ (!b. (!n1. (!n2. (!s. (!a1. (!a2. (((((((FINREC f) b) s) a1) n1) /\ (((((FINREC f) b) s) a2) n2)) ==> ((a1 = a2) /\ (n1 = n2))))))))))
+T c==> ! ! ! c==> c~ c= b0 b1 c= * * f0 b0 * * f0 b1 b2 * * f0 b1 * * f0 b0 b2 c==> ! ! c==> ! ! ! c==> c~ c= b2 b3 c= * * b0 b2 * * b0 b3 b4 * * b0 b3 * * b0 b2 b4 ! ! ! ! ! c==> c/\ cFINREC b0 b1 b4 b5 b2 cFINREC b0 b1 b4 b6 b3 c/\ c= b5 b6 c= b2 b3 c/\ ! ! ! c==> c~ c= b0 b1 c= * * f0 b0 * * f0 b1 b2 * * f0 b1 * * f0 b0 b2 ! ! ! ! ! ! c==> c/\ cFINREC f0 b0 b3 b4 b1 cFINREC f0 b0 b3 b5 b2 c/\ c= b4 b5 c= b1 b2
+- ((~ (!x'. (((s x') /\ (~ (x' = x))) ==> (s x')))) ==> F) |- ((((~ (!x'. (((s x') /\ (~ (x' = x))) ==> (s x')))) ==> F) ==> ((~ (!x'. (((s x') /\ (~ (x' = x))) ==> (s x')))) ==> F)) ==> ((~ (!x'. (((s x') /\ (~ (x' = x))) ==> (s x')))) ==> F))
+T c==> c==> c~ ! c==> c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF c==> c==> c==> c~ ! c==> c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF c==> c~ ! c==> c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF c==> c~ ! c==> c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF
++ (!s. (!a. ((FINITE s) ==> ((?n. (((((FINREC f) b) s) a) n)) = ((g s) = a))))) |- ((FINITE s) ==> (!a. ((?n. (((((FINREC f) b) s) a) n)) = ((g s) = a))))
+T c==> ! ! c==> cFINITE b0 c= c? / cFINREC f0 f1 b0 b1 b2 c= * f2 b0 b1 c==> cFINITE f3 ! c= c? / cFINREC f0 f1 f3 b0 b1 c= * f2 f3 b0
+- |- ((!x'. (((s x') /\ (~ (x' = x))) ==> (s x'))) = T)
+T c= ! c==> c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cT
++ (!s. (!a. ((FINITE s) ==> ((?n. (((((FINREC f) b) s) a) n)) = ((g s) = a))))), (FINITE s) |- (((((((FINREC f) b) (s DELETE x)) w) n) /\ (?n. (((((FINREC f) b) s) ((f x) w)) n))) ==> (?n. (((((FINREC f) b) s) ((f x) (g (s DELETE x)))) n)))
+T c==> ! ! c==> cFINITE b0 c= c? / cFINREC f0 f1 b0 b1 b2 c= * f2 b0 b1 c==> cFINITE f3 c==> c/\ cFINREC f0 f1 * * part cDELETE f3 f4 f5 f6 c? / cFINREC f0 f1 f3 * * f0 f4 f5 b0 c? / cFINREC f0 f1 f3 * * f0 f4 * f2 * * part cDELETE f3 f4 b0
+- |- ((((((FINREC f) b) s) a) (SUC n)) = (?x. (?c. ((x IN s) /\ ((((((FINREC f) b) (s DELETE x)) c) n) /\ (a = ((f x) c)))))))
+T c= cFINREC f0 f1 f2 f3 cSUC f4 c? / c? / c/\ cIN b0 f2 c/\ cFINREC f0 f1 * * part cDELETE f2 b0 b1 f4 c= f3 * * f0 b0 b1
++ (!a. ((?n. (((((FINREC f) b) s) a) n)) = ((g s) = a))), (!s. (!a. ((FINITE s) ==> ((?n. (((((FINREC f) b) s) a) n)) = ((g s) = a))))), (FINITE s), (x IN s) |- (((x IN s) ==> (?w. ((((((FINREC f) b) (s DELETE x)) w) n) /\ ((g s) = ((f x) w))))) ==> (?n. (((((FINREC f) b) s) ((f x) (g (s DELETE x)))) n)))
+T c==> ! c= c? / cFINREC f0 f1 f2 b0 b1 c= * f3 f2 b0 c==> ! ! c==> cFINITE b0 c= c? / cFINREC f0 f1 b0 b1 b2 c= * f3 b0 b1 c==> cFINITE f2 c==> cIN f4 f2 c==> c==> cIN f4 f2 c? / c/\ cFINREC f0 f1 * * part cDELETE f2 f4 b0 f5 c= * f3 f2 * * f0 f4 b0 c? / cFINREC f0 f1 f2 * * f0 f4 * f3 * * part cDELETE f2 f4 b0
++ (!a. ((?n. (((((FINREC f) b) s) a) n)) = ((g s) = a))) |- (((g s) = a) = (?n. (((((FINREC f) b) s) a) n)))
+T c==> ! c= c? / cFINREC f0 f1 f2 b0 b1 c= * f3 f2 b0 c= c= * f3 f2 f4 c? / cFINREC f0 f1 f2 f4 b0
+- |- (((FINITE s) ==> (FINITE (x INSERT s))) = T)
+T c= c==> cFINITE f0 cFINITE * * part cINSERT f1 f0 cT
++ |- ((T ==> t) = t)
+T c= c==> cT f0 f0
++ (x IN s) |- (((s = EMPTY) /\ (?n. (((((FINREC f) b) s) b) n))) ==> (?n. (((((FINREC f) b) s) ((f x) (g (s DELETE x)))) n)))
+T c==> cIN f0 f1 c==> c/\ c= f1 part cEMPTY c? / cFINREC f2 f3 f1 f3 b0 c? / cFINREC f2 f3 f1 * * f2 f0 * f4 * * part cDELETE f1 f0 b0
+- |- ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))
+T c= c\/ f0 c\/ f1 f2 c\/ c\/ f0 f1 f2
++ (!x. (!y. (!s. ((~ (x = y)) ==> (((f x) ((f y) s)) = ((f y) ((f x) s))))))), (!n1. (!n2. (!s. (!a1. (!a2. (((((((FINREC f) b) s) a1) n1) /\ (((((FINREC f) b) s) a2) n2)) ==> ((a1 = a2) /\ (n1 = n2)))))))) |- ((!n1. (!n2. (!s. (!a1. (!a2. (((((((FINREC f) b) s) a1) n1) /\ (((((FINREC f) b) s) a2) n2)) ==> ((a1 = a2) /\ (n1 = n2)))))))) /\ (?g. (((g EMPTY) = b) /\ (!s. (!x. (((FINITE s) /\ (x IN s)) ==> ((g s) = ((f x) (g (s DELETE x))))))))))
+T c==> ! ! ! c==> c~ c= b0 b1 c= * * f0 b0 * * f0 b1 b2 * * f0 b1 * * f0 b0 b2 c==> ! ! ! ! ! c==> c/\ cFINREC f0 f1 b2 b3 b0 cFINREC f0 f1 b2 b4 b1 c/\ c= b3 b4 c= b0 b1 c/\ ! ! ! ! ! c==> c/\ cFINREC f0 f1 b2 b3 b0 cFINREC f0 f1 b2 b4 b1 c/\ c= b3 b4 c= b0 b1 c? / c/\ c= * b0 part cEMPTY f1 ! ! c==> c/\ cFINITE b1 cIN b2 b1 c= * b0 b1 * * f0 b2 * b0 * * part cDELETE b1 b2
++ |- (?n. (((((FINREC f) b) EMPTY) b) n))
+T c? / cFINREC f0 f1 part cEMPTY f1 b0
++ (!s. (!a. ((FINITE s) ==> ((?n. (((((FINREC f) b) s) a) n)) = ((g s) = a))))), (FINITE s) |- (((!x. (((\w. ((((((FINREC f) b) (s DELETE x)) w) n) /\ (?n. (((((FINREC f) b) s) ((f x) w)) n)))) x) ==> (?n. (((((FINREC f) b) s) ((f x) (g (s DELETE x)))) n)))) ==> ((?w. ((((((FINREC f) b) (s DELETE x)) w) n) /\ (?n. (((((FINREC f) b) s) ((f x) w)) n)))) ==> (?n. (((((FINREC f) b) s) ((f x) (g (s DELETE x)))) n)))) = ((?w. ((((((FINREC f) b) (s DELETE x)) w) n) /\ (?n. (((((FINREC f) b) s) ((f x) w)) n)))) ==> (?n. (((((FINREC f) b) s) ((f x) (g (s DELETE x)))) n))))
+T c==> ! ! c==> cFINITE b0 c= c? / cFINREC f0 f1 b0 b1 b2 c= * f2 b0 b1 c==> cFINITE f3 c= c==> ! c==> * / c/\ cFINREC f0 f1 * * part cDELETE f3 f4 b1 f5 c? / cFINREC f0 f1 f3 * * f0 f4 b1 b2 b0 c? / cFINREC f0 f1 f3 * * f0 f4 * f2 * * part cDELETE f3 f4 b1 c==> c? / c/\ cFINREC f0 f1 * * part cDELETE f3 f4 b0 f5 c? / cFINREC f0 f1 f3 * * f0 f4 b0 b1 c? / cFINREC f0 f1 f3 * * f0 f4 * f2 * * part cDELETE f3 f4 b0 c==> c? / c/\ cFINREC f0 f1 * * part cDELETE f3 f4 b0 f5 c? / cFINREC f0 f1 f3 * * f0 f4 b0 b1 c? / cFINREC f0 f1 f3 * * f0 f4 * f2 * * part cDELETE f3 f4 b0
+- |- (((!s. (!x. ((~ (!x'. (((s x') /\ (~ (x' = x))) ==> (s x')))) ==> F))) ==> ((\s. (!x. ((~ (!x'. (((s x') /\ (~ (x' = x))) ==> (s x')))) ==> F))) s)) = ((\s. (!x. ((~ (!x'. (((s x') /\ (~ (x' = x))) ==> (s x')))) ==> F))) s))
+T c= c==> ! ! c==> c~ ! c==> c/\ * b0 b2 c~ c= b2 b1 * b0 b2 cF * / ! c==> c~ ! c==> c/\ * b0 b2 c~ c= b2 b1 * b0 b2 cF f0 * / ! c==> c~ ! c==> c/\ * b0 b2 c~ c= b2 b1 * b0 b2 cF f0
++ (!x. (!y. (!s. ((~ (x = y)) ==> (((f x) ((f y) s)) = ((f y) ((f x) s))))))) |- ((((\f. (!s. (!a. ((FINITE s) ==> ((?n. (((((FINREC f) b) s) a) n)) = ((f s) = a)))))) g) ==> (?g. (((g EMPTY) = b) /\ (!s. (!x. (((FINITE s) /\ (x IN s)) ==> ((g s) = ((f x) (g (s DELETE x)))))))))) = T)
+T c==> ! ! ! c==> c~ c= b0 b1 c= * * f0 b0 * * f0 b1 b2 * * f0 b1 * * f0 b0 b2 c= c==> * / ! ! c==> cFINITE b1 c= c? / cFINREC f0 f1 b1 b2 b3 c= * b0 b1 b2 f2 c? / c/\ c= * b0 part cEMPTY f1 ! ! c==> c/\ cFINITE b1 cIN b2 b1 c= * b0 b1 * * f0 b2 * b0 * * part cDELETE b1 b2 cT
++ (!s. (!t. (((FINITE t) /\ (s SUBSET t)) ==> (FINITE s)))) |- (((!t. (((FINITE t) /\ (s SUBSET t)) ==> (FINITE s))) ==> ((\t. (((FINITE t) /\ (s SUBSET t)) ==> (FINITE s))) t)) = ((\t. (((FINITE t) /\ (s SUBSET t)) ==> (FINITE s))) t))
+T c==> ! ! c==> c/\ cFINITE b1 cSUBSET b0 b1 cFINITE b0 c= c==> ! c==> c/\ cFINITE b0 cSUBSET f0 b0 cFINITE f0 * / c==> c/\ cFINITE b0 cSUBSET f0 b0 cFINITE f0 f1 * / c==> c/\ cFINITE b0 cSUBSET f0 b0 cFINITE f0 f1
+- (!x. (!y. (!s. ((~ (x = y)) ==> (((f x) ((f y) s)) = ((f y) ((f x) s))))))) |- (!y. ((~ (x = y)) ==> (!s. (((f x) ((f y) s)) = ((f y) ((f x) s))))))
+T c==> ! ! ! c==> c~ c= b0 b1 c= * * f0 b0 * * f0 b1 b2 * * f0 b1 * * f0 b0 b2 ! c==> c~ c= f1 b0 ! c= * * f0 f1 * * f0 b0 b1 * * f0 b0 * * f0 f1 b1
++ (((g (s DELETE x)) = a) = (?n. (((((FINREC f) b) (s DELETE x)) a) n))) |- ((?n. (((((FINREC f) b) (s DELETE x)) a) n)) = ((g (s DELETE x)) = a))
+T c==> c= c= * f0 * * part cDELETE f1 f2 f3 c? / cFINREC f4 f5 * * part cDELETE f1 f2 f3 b0 c= c? / cFINREC f4 f5 * * part cDELETE f1 f2 f3 b0 c= * f0 * * part cDELETE f1 f2 f3
++ (!s. (!a. ((FINITE s) ==> ((?n. (((((FINREC f) b) s) a) n)) = ((g s) = a))))), (FINITE s), (((((FINREC f) b) (s DELETE x)) w) n) |- ((g (s DELETE x)) = w)
+T c==> ! ! c==> cFINITE b0 c= c? / cFINREC f0 f1 b0 b1 b2 c= * f2 b0 b1 c==> cFINITE f3 c==> cFINREC f0 f1 * * part cDELETE f3 f4 f5 f6 c= * f2 * * part cDELETE f3 f4 f5
+- |- ((!x. (!x'. (((s x') /\ (~ (x' = x))) ==> (s x')))) = T)
+T c= ! ! c==> c/\ * f0 b1 c~ c= b1 b0 * f0 b1 cT
++ |- (((!x. (~ (x IN EMPTY))) ==> ((\x. (~ (x IN EMPTY))) x)) = ((\x. (~ (x IN EMPTY))) x))
+T c= c==> ! c~ cIN b0 part cEMPTY * / c~ cIN b0 part cEMPTY f0 * / c~ cIN b0 part cEMPTY f0
+- (~ (s x')) |- ((s x') ==> F)
+T c==> c~ * f0 f1 c==> * f0 f1 cF
++ (!s. (!t. (((FINITE t) /\ (s SUBSET t)) ==> (FINITE s)))) |- (((?t. ((FINITE t) /\ (s SUBSET t))) ==> (FINITE s)) = T)
+T c==> ! ! c==> c/\ cFINITE b1 cSUBSET b0 b1 cFINITE b0 c= c==> c? / c/\ cFINITE b0 cSUBSET f0 b0 cFINITE f0 cT
++ (!x. (!y. (!s. ((~ (x = y)) ==> (((f x) ((f y) s)) = ((f y) ((f x) s))))))), (!a. ((?n. (((((FINREC f) b) s) a) n)) = ((g s) = a))), (!s. (!a. ((FINITE s) ==> ((?n. (((((FINREC f) b) s) a) n)) = ((g s) = a))))), (FINITE s), (x IN s) |- (((((((FINREC f) b) s) (g s)) (NUMERAL _0)) ==> (?n. (((((FINREC f) b) s) ((f x) (g (s DELETE x)))) n))) /\ (!n. (((((((FINREC f) b) s) (g s)) n) ==> (?n. (((((FINREC f) b) s) ((f x) (g (s DELETE x)))) n))) ==> ((((((FINREC f) b) s) (g s)) (SUC n)) ==> (?n. (((((FINREC f) b) s) ((f x) (g (s DELETE x)))) n))))))
+T c==> ! ! ! c==> c~ c= b0 b1 c= * * f0 b0 * * f0 b1 b2 * * f0 b1 * * f0 b0 b2 c==> ! c= c? / cFINREC f0 f1 f2 b0 b1 c= * f3 f2 b0 c==> ! ! c==> cFINITE b0 c= c? / cFINREC f0 f1 b0 b1 b2 c= * f3 b0 b1 c==> cFINITE f2 c==> cIN f4 f2 c/\ c==> cFINREC f0 f1 f2 * f3 f2 cNUMERAL c_0 c? / cFINREC f0 f1 f2 * * f0 f4 * f3 * * part cDELETE f2 f4 b0 ! c==> c==> cFINREC f0 f1 f2 * f3 f2 b0 c? / cFINREC f0 f1 f2 * * f0 f4 * f3 * * part cDELETE f2 f4 b1 c==> cFINREC f0 f1 f2 * f3 f2 cSUC b0 c? / cFINREC f0 f1 f2 * * f0 f4 * f3 * * part cDELETE f2 f4 b1
++ |- ((\f. ((!x. (!y. (!s. ((~ (x = y)) ==> (((f x) ((f y) s)) = ((f y) ((f x) s))))))) ==> (!b. (!n1. (!n2. (!s. (!a1. (!a2. (((((((FINREC f) b) s) a1) n1) /\ (((((FINREC f) b) s) a2) n2)) ==> ((a1 = a2) /\ (n1 = n2))))))))))) f)
+T * / c==> ! ! ! c==> c~ c= b1 b2 c= * * b0 b1 * * b0 b2 b3 * * b0 b2 * * b0 b1 b3 ! ! ! ! ! ! c==> c/\ cFINREC b0 b1 b4 b5 b2 cFINREC b0 b1 b4 b6 b3 c/\ c= b5 b6 c= b2 b3 f0
++ |- (((!b. (!s. ((FINITE s) ==> (?a. (?n. (((((FINREC f) b) s) a) n)))))) ==> ((\b. (!s. ((FINITE s) ==> (?a. (?n. (((((FINREC f) b) s) a) n)))))) b)) = ((\b. (!s. ((FINITE s) ==> (?a. (?n. (((((FINREC f) b) s) a) n)))))) b))
+T c= c==> ! ! c==> cFINITE b1 c? / c? / cFINREC f0 b0 b1 b2 b3 * / ! c==> cFINITE b1 c? / c? / cFINREC f0 b0 b1 b2 b3 f1 * / ! c==> cFINITE b1 c? / c? / cFINREC f0 b0 b1 b2 b3 f1
+- (!x. (!y. (!s. ((~ (x = y)) ==> (((f x) ((f y) s)) = ((f y) ((f x) s))))))), (~ (x = y)) |- (((f x) ((f y) s)) = ((f y) ((f x) s)))
+T c==> ! ! ! c==> c~ c= b0 b1 c= * * f0 b0 * * f0 b1 b2 * * f0 b1 * * f0 b0 b2 c==> c~ c= f1 f2 c= * * f0 f1 * * f0 f2 f3 * * f0 f2 * * f0 f1 f3
+- |- ((_33036 = _33037) ==> ((s _33037) \/ (~ (s _33036))))
+T c==> c= f0 f1 c\/ * f2 f1 c~ * f2 f0
++ |- ((\f. ((!x. (!y. (!s. ((~ (x = y)) ==> (((f x) ((f y) s)) = ((f y) ((f x) s))))))) ==> (!b. (!n. (!s. (!z. ((((((FINREC f) b) s) z) (SUC n)) ==> (!x. ((x IN s) ==> (?w. ((((((FINREC f) b) (s DELETE x)) w) n) /\ (z = ((f x) w))))))))))))) f)
+T * / c==> ! ! ! c==> c~ c= b1 b2 c= * * b0 b1 * * b0 b2 b3 * * b0 b2 * * b0 b1 b3 ! ! ! ! c==> cFINREC b0 b1 b3 b4 cSUC b2 ! c==> cIN b5 b3 c? / c/\ cFINREC b0 b1 * * part cDELETE b3 b5 b6 b2 c= b4 * * b0 b5 b6 f0
++ (!x. (!y. (!s. ((~ (x = y)) ==> (((f x) ((f y) s)) = ((f y) ((f x) s))))))), (!f. (!b. ((!x. (!y. (!s. ((~ (x = y)) ==> (((f x) ((f y) s)) = ((f y) ((f x) s))))))) ==> (!n. (!s. (!z. ((((((FINREC f) b) s) z) (SUC n)) ==> (!x. ((x IN s) ==> (?w. ((((((FINREC f) b) (s DELETE x)) w) n) /\ (z = ((f x) w))))))))))))) |- (!n. (!s. (!z. ((((((FINREC f) b) s) z) (SUC n)) ==> (!x. ((x IN s) ==> (?w. ((((((FINREC f) b) (s DELETE x)) w) n) /\ (z = ((f x) w))))))))))
+T c==> ! ! ! c==> c~ c= b0 b1 c= * * f0 b0 * * f0 b1 b2 * * f0 b1 * * f0 b0 b2 c==> ! ! c==> ! ! ! c==> c~ c= b2 b3 c= * * b0 b2 * * b0 b3 b4 * * b0 b3 * * b0 b2 b4 ! ! ! c==> cFINREC b0 b1 b3 b4 cSUC b2 ! c==> cIN b5 b3 c? / c/\ cFINREC b0 b1 * * part cDELETE b3 b5 b6 b2 c= b4 * * b0 b5 b6 ! ! ! c==> cFINREC f0 f1 b1 b2 cSUC b0 ! c==> cIN b3 b1 c? / c/\ cFINREC f0 f1 * * part cDELETE b1 b3 b4 b0 c= b2 * * f0 b3 b4
++ |- (T = (((((FINREC f) b) EMPTY) b) (NUMERAL _0)))
+T c= cT cFINREC f0 f1 part cEMPTY f1 cNUMERAL c_0
++ (!x. (!y. (!s. ((~ (x = y)) ==> (((f x) ((f y) s)) = ((f y) ((f x) s))))))), (!s. (!a. ((FINITE s) ==> ((?n. (((((FINREC f) b) s) a) n)) = ((g s) = a))))) |- ((!x. (((FINITE s) /\ (x IN s)) ==> ((g s) = ((f x) (g (s DELETE x)))))) = T)
+T c==> ! ! ! c==> c~ c= b0 b1 c= * * f0 b0 * * f0 b1 b2 * * f0 b1 * * f0 b0 b2 c==> ! ! c==> cFINITE b0 c= c? / cFINREC f0 f1 b0 b1 b2 c= * f2 b0 b1 c= ! c==> c/\ cFINITE f3 cIN b0 f3 c= * f2 f3 * * f0 b0 * f2 * * part cDELETE f3 b0 cT
+- |- ((\t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3)))) t2)
+T * / ! c= c\/ f0 c\/ b0 b1 c\/ c\/ f0 b0 b1 f1
++ (((((FINREC f) b) (s DELETE x)) w) n) |- ((\n. (((((FINREC f) b) (s DELETE x)) w) n)) n)
+T c==> cFINREC f0 f1 * * part cDELETE f2 f3 f4 f5 * / cFINREC f0 f1 * * part cDELETE f2 f3 f4 b0 f5
+- |- (((~ (s x')) ==> F) = (s x'))
+T c= c==> c~ * f0 f1 cF * f0 f1
++ (!s. (!a. ((FINITE s) ==> ((?n. (((((FINREC f) b) s) a) n)) = ((g s) = a))))), (?n. (((((FINREC f) b) s) ((f x) w)) n)), (FINITE s), (((((FINREC f) b) (s DELETE x)) w) n) |- (?n. (((((FINREC f) b) s) ((f x) (g (s DELETE x)))) n))
+T c==> ! ! c==> cFINITE b0 c= c? / cFINREC f0 f1 b0 b1 b2 c= * f2 b0 b1 c==> c? / cFINREC f0 f1 f3 * * f0 f4 f5 b0 c==> cFINITE f3 c==> cFINREC f0 f1 * * part cDELETE f3 f4 f5 f6 c? / cFINREC f0 f1 f3 * * f0 f4 * f2 * * part cDELETE f3 f4 b0
++ (!s. (!a. ((FINITE s) ==> ((?n. (((((FINREC f) b) s) a) n)) = ((g s) = a))))) |- ((\a. ((FINITE s) ==> ((?n. (((((FINREC f) b) s) a) n)) = ((g s) = a)))) a)
+T c==> ! ! c==> cFINITE b0 c= c? / cFINREC f0 f1 b0 b1 b2 c= * f2 b0 b1 * / c==> cFINITE f3 c= c? / cFINREC f0 f1 f3 b0 b1 c= * f2 f3 b0 f4
++ (!f. (!b. ((!x. (!y. (!s. ((~ (x = y)) ==> (((f x) ((f y) s)) = ((f y) ((f x) s))))))) ==> (!n1. (!n2. (!s. (!a1. (!a2. (((((((FINREC f) b) s) a1) n1) /\ (((((FINREC f) b) s) a2) n2)) ==> ((a1 = a2) /\ (n1 = n2))))))))))) |- ((!x. (!y. (!s. ((~ (x = y)) ==> (((f x) ((f y) s)) = ((f y) ((f x) s))))))) ==> (!b. (!n1. (!n2. (!s. (!a1. (!a2. (((((((FINREC f) b) s) a1) n1) /\ (((((FINREC f) b) s) a2) n2)) ==> ((a1 = a2) /\ (n1 = n2))))))))))
+T c==> ! ! c==> ! ! ! c==> c~ c= b2 b3 c= * * b0 b2 * * b0 b3 b4 * * b0 b3 * * b0 b2 b4 ! ! ! ! ! c==> c/\ cFINREC b0 b1 b4 b5 b2 cFINREC b0 b1 b4 b6 b3 c/\ c= b5 b6 c= b2 b3 c==> ! ! ! c==> c~ c= b0 b1 c= * * f0 b0 * * f0 b1 b2 * * f0 b1 * * f0 b0 b2 ! ! ! ! ! ! c==> c/\ cFINREC f0 b0 b3 b4 b1 cFINREC f0 b0 b3 b5 b2 c/\ c= b4 b5 c= b1 b2
++ (!x. (!y. (!s. ((~ (x = y)) ==> (((f x) ((f y) s)) = ((f y) ((f x) s))))))), (!a. ((?n. (((((FINREC f) b) s) a) n)) = ((g s) = a))), (!s. (!a. ((FINITE s) ==> ((?n. (((((FINREC f) b) s) a) n)) = ((g s) = a))))), (FINITE s), (x IN s) |- ((?n. (((((FINREC f) b) s) (g s)) n)) ==> (?n. (((((FINREC f) b) s) ((f x) (g (s DELETE x)))) n)))
+T c==> ! ! ! c==> c~ c= b0 b1 c= * * f0 b0 * * f0 b1 b2 * * f0 b1 * * f0 b0 b2 c==> ! c= c? / cFINREC f0 f1 f2 b0 b1 c= * f3 f2 b0 c==> ! ! c==> cFINITE b0 c= c? / cFINREC f0 f1 b0 b1 b2 c= * f3 b0 b1 c==> cFINITE f2 c==> cIN f4 f2 c==> c? / cFINREC f0 f1 f2 * f3 f2 b0 c? / cFINREC f0 f1 f2 * * f0 f4 * f3 * * part cDELETE f2 f4 b0
++ |- (((~ (x IN EMPTY)) ==> ((x IN EMPTY) = F)) = ((x IN EMPTY) = F))
+T c= c==> c~ cIN f0 part cEMPTY c= cIN f0 part cEMPTY cF c= cIN f0 part cEMPTY cF
++ (!x. (!y. (!s. ((~ (x = y)) ==> (((f x) ((f y) s)) = ((f y) ((f x) s))))))) |- (!b. (!n1. (!n2. (!s. (!a1. (!a2. (((((((FINREC f) b) s) a1) n1) /\ (((((FINREC f) b) s) a2) n2)) ==> ((a1 = a2) /\ (n1 = n2)))))))))
+T c==> ! ! ! c==> c~ c= b0 b1 c= * * f0 b0 * * f0 b1 b2 * * f0 b1 * * f0 b0 b2 ! ! ! ! ! ! c==> c/\ cFINREC f0 b0 b3 b4 b1 cFINREC f0 b0 b3 b5 b2 c/\ c= b4 b5 c= b1 b2
+- (!x. (!y. (!s. ((~ (x = y)) ==> (((f x) ((f y) s)) = ((f y) ((f x) s))))))) |- (((~ (x = y)) ==> (((f x) ((f y) s)) = ((f y) ((f x) s)))) = T)
+T c==> ! ! ! c==> c~ c= b0 b1 c= * * f0 b0 * * f0 b1 b2 * * f0 b1 * * f0 b0 b2 c= c==> c~ c= f1 f2 c= * * f0 f1 * * f0 f2 f3 * * f0 f2 * * f0 f1 f3 cT
+- |- (((!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3)))) ==> ((\t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3)))) t2)) = ((\t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3)))) t2))
+T c= c==> ! ! c= c\/ f0 c\/ b0 b1 c\/ c\/ f0 b0 b1 * / ! c= c\/ f0 c\/ b0 b1 c\/ c\/ f0 b0 b1 f1 * / ! c= c\/ f0 c\/ b0 b1 c\/ c\/ f0 b0 b1 f1
++ (!s. (!a. ((FINITE s) ==> ((?n. (((((FINREC f) b) s) a) n)) = ((g s) = a))))), (FINITE EMPTY) |- (!a. ((?n. (((((FINREC f) b) EMPTY) a) n)) = ((g EMPTY) = a)))
+T c==> ! ! c==> cFINITE b0 c= c? / cFINREC f0 f1 b0 b1 b2 c= * f2 b0 b1 c==> cFINITE part cEMPTY ! c= c? / cFINREC f0 f1 part cEMPTY b0 b1 c= * f2 part cEMPTY b0
++ (!s. (!a. ((FINITE s) ==> ((?n. (((((FINREC f) b) s) a) n)) = ((g s) = a))))) |- ((!s. (!x. (((FINITE s) /\ (x IN s)) ==> ((g s) = ((f x) (g (s DELETE x))))))) = (((g EMPTY) = b) /\ (!s. (!x. (((FINITE s) /\ (x IN s)) ==> ((g s) = ((f x) (g (s DELETE x)))))))))
+T c==> ! ! c==> cFINITE b0 c= c? / cFINREC f0 f1 b0 b1 b2 c= * f2 b0 b1 c= ! ! c==> c/\ cFINITE b0 cIN b1 b0 c= * f2 b0 * * f0 b1 * f2 * * part cDELETE b0 b1 c/\ c= * f2 part cEMPTY f1 ! ! c==> c/\ cFINITE b0 cIN b1 b0 c= * f2 b0 * * f0 b1 * f2 * * part cDELETE b0 b1
+- (!x. (!y. (!s. ((~ (x = y)) ==> (((f x) ((f y) s)) = ((f y) ((f x) s))))))) |- (!y. (!s. ((~ (x = y)) ==> (((f x) ((f y) s)) = ((f y) ((f x) s))))))
+T c==> ! ! ! c==> c~ c= b0 b1 c= * * f0 b0 * * f0 b1 b2 * * f0 b1 * * f0 b0 b2 ! ! c==> c~ c= f1 b0 c= * * f0 f1 * * f0 b0 b1 * * f0 b0 * * f0 f1 b1
+- (((((FINREC f) b) (s DELETE x)) w) n) |- (T = (((((FINREC f) b) (s DELETE x)) w) n))
+T c==> cFINREC f0 f1 * * part cDELETE f2 f3 f4 f5 c= cT cFINREC f0 f1 * * part cDELETE f2 f3 f4 f5
++ (!x. (!y. (!s. ((~ (x = y)) ==> (((f x) ((f y) s)) = ((f y) ((f x) s))))))), (!s. (!a. ((FINITE s) ==> ((?n. (((((FINREC f) b) s) a) n)) = ((g s) = a))))) |- (!x. (((FINITE s) /\ (x IN s)) ==> ((g s) = ((f x) (g (s DELETE x))))))
+T c==> ! ! ! c==> c~ c= b0 b1 c= * * f0 b0 * * f0 b1 b2 * * f0 b1 * * f0 b0 b2 c==> ! ! c==> cFINITE b0 c= c? / cFINREC f0 f1 b0 b1 b2 c= * f2 b0 b1 ! c==> c/\ cFINITE f3 cIN b0 f3 c= * f2 f3 * * f0 b0 * f2 * * part cDELETE f3 b0
++ (!f. (!b. ((!x. (!y. (!s. ((~ (x = y)) ==> (((f x) ((f y) s)) = ((f y) ((f x) s))))))) ==> (!n. (!s. (!z. ((((((FINREC f) b) s) z) (SUC n)) ==> (!x. ((x IN s) ==> (?w. ((((((FINREC f) b) (s DELETE x)) w) n) /\ (z = ((f x) w))))))))))))) |- (((!x. (!y. (!s. ((~ (x = y)) ==> (((f x) ((f y) s)) = ((f y) ((f x) s))))))) ==> (!b. (!n. (!s. (!z. ((((((FINREC f) b) s) z) (SUC n)) ==> (!x. ((x IN s) ==> (?w. ((((((FINREC f) b) (s DELETE x)) w) n) /\ (z = ((f x) w)))))))))))) = T)
+T c==> ! ! c==> ! ! ! c==> c~ c= b2 b3 c= * * b0 b2 * * b0 b3 b4 * * b0 b3 * * b0 b2 b4 ! ! ! c==> cFINREC b0 b1 b3 b4 cSUC b2 ! c==> cIN b5 b3 c? / c/\ cFINREC b0 b1 * * part cDELETE b3 b5 b6 b2 c= b4 * * b0 b5 b6 c= c==> ! ! ! c==> c~ c= b0 b1 c= * * f0 b0 * * f0 b1 b2 * * f0 b1 * * f0 b0 b2 ! ! ! ! c==> cFINREC f0 b0 b2 b3 cSUC b1 ! c==> cIN b4 b2 c? / c/\ cFINREC f0 b0 * * part cDELETE b2 b4 b5 b1 c= b3 * * f0 b4 b5 cT
++ (!f. (!b. ((!x. (!y. (!s. ((~ (x = y)) ==> (((f x) ((f y) s)) = ((f y) ((f x) s))))))) ==> (!n1. (!n2. (!s. (!a1. (!a2. (((((((FINREC f) b) s) a1) n1) /\ (((((FINREC f) b) s) a2) n2)) ==> ((a1 = a2) /\ (n1 = n2))))))))))) |- (((!b. ((!x. (!y. (!s. ((~ (x = y)) ==> (((f x) ((f y) s)) = ((f y) ((f x) s))))))) ==> (!n1. (!n2. (!s. (!a1. (!a2. (((((((FINREC f) b) s) a1) n1) /\ (((((FINREC f) b) s) a2) n2)) ==> ((a1 = a2) /\ (n1 = n2)))))))))) ==> ((\b. ((!x. (!y. (!s. ((~ (x = y)) ==> (((f x) ((f y) s)) = ((f y) ((f x) s))))))) ==> (!n1. (!n2. (!s. (!a1. (!a2. (((((((FINREC f) b) s) a1) n1) /\ (((((FINREC f) b) s) a2) n2)) ==> ((a1 = a2) /\ (n1 = n2)))))))))) b)) = ((\b. ((!x. (!y. (!s. ((~ (x = y)) ==> (((f x) ((f y) s)) = ((f y) ((f x) s))))))) ==> (!n1. (!n2. (!s. (!a1. (!a2. (((((((FINREC f) b) s) a1) n1) /\ (((((FINREC f) b) s) a2) n2)) ==> ((a1 = a2) /\ (n1 = n2)))))))))) b))
+T c==> ! ! c==> ! ! ! c==> c~ c= b2 b3 c= * * b0 b2 * * b0 b3 b4 * * b0 b3 * * b0 b2 b4 ! ! ! ! ! c==> c/\ cFINREC b0 b1 b4 b5 b2 cFINREC b0 b1 b4 b6 b3 c/\ c= b5 b6 c= b2 b3 c= c==> ! c==> ! ! ! c==> c~ c= b1 b2 c= * * f0 b1 * * f0 b2 b3 * * f0 b2 * * f0 b1 b3 ! ! ! ! ! c==> c/\ cFINREC f0 b0 b3 b4 b1 cFINREC f0 b0 b3 b5 b2 c/\ c= b4 b5 c= b1 b2 * / c==> ! ! ! c==> c~ c= b1 b2 c= * * f0 b1 * * f0 b2 b3 * * f0 b2 * * f0 b1 b3 ! ! ! ! ! c==> c/\ cFINREC f0 b0 b3 b4 b1 cFINREC f0 b0 b3 b5 b2 c/\ c= b4 b5 c= b1 b2 f1 * / c==> ! ! ! c==> c~ c= b1 b2 c= * * f0 b1 * * f0 b2 b3 * * f0 b2 * * f0 b1 b3 ! ! ! ! ! c==> c/\ cFINREC f0 b0 b3 b4 b1 cFINREC f0 b0 b3 b5 b2 c/\ c= b4 b5 c= b1 b2 f1
++ |- ((\P. (!Q. (((?x. (P x)) ==> Q) = (!x. ((P x) ==> Q))))) P)
+T * / ! c= c==> c? / * b0 b2 b1 ! c==> * b0 b2 b1 f0
++ |- ((x = x) = T)
+T c= c= f0 f0 cT
++ (!x. (!y. (!s. ((~ (x = y)) ==> (((f x) ((f y) s)) = ((f y) ((f x) s))))))), (((((FINREC f) b) s) (g s)) (SUC n)) |- ((x IN s) ==> (?w. ((((((FINREC f) b) (s DELETE x)) w) n) /\ ((g s) = ((f x) w)))))
+T c==> ! ! ! c==> c~ c= b0 b1 c= * * f0 b0 * * f0 b1 b2 * * f0 b1 * * f0 b0 b2 c==> cFINREC f0 f1 f2 * f3 f2 cSUC f4 c==> cIN f5 f2 c? / c/\ cFINREC f0 f1 * * part cDELETE f2 f5 b0 f4 c= * f3 f2 * * f0 f5 b0
+- (!s. (!a. ((FINITE s) ==> ((?n. (((((FINREC f) b) s) a) n)) = ((g s) = a))))) |- (((FINITE s) ==> ((?n. (((((FINREC f) b) s) a) n)) = ((g s) = a))) = T)
+T c==> ! ! c==> cFINITE b0 c= c? / cFINREC f0 f1 b0 b1 b2 c= * f2 b0 b1 c= c==> cFINITE f3 c= c? / cFINREC f0 f1 f3 f4 b0 c= * f2 f3 f4 cT
++ (!x. (!y. (!s. ((~ (x = y)) ==> (((f x) ((f y) s)) = ((f y) ((f x) s))))))) |- (((!b. (!n1. (!n2. (!s. (!a1. (!a2. (((((((FINREC f) b) s) a1) n1) /\ (((((FINREC f) b) s) a2) n2)) ==> ((a1 = a2) /\ (n1 = n2))))))))) ==> (?g. (((g EMPTY) = b) /\ (!s. (!x. (((FINITE s) /\ (x IN s)) ==> ((g s) = ((f x) (g (s DELETE x)))))))))) = (?g. (((g EMPTY) = b) /\ (!s. (!x. (((FINITE s) /\ (x IN s)) ==> ((g s) = ((f x) (g (s DELETE x))))))))))
+T c==> ! ! ! c==> c~ c= b0 b1 c= * * f0 b0 * * f0 b1 b2 * * f0 b1 * * f0 b0 b2 c= c==> ! ! ! ! ! ! c==> c/\ cFINREC f0 b0 b3 b4 b1 cFINREC f0 b0 b3 b5 b2 c/\ c= b4 b5 c= b1 b2 c? / c/\ c= * b0 part cEMPTY f1 ! ! c==> c/\ cFINITE b1 cIN b2 b1 c= * b0 b1 * * f0 b2 * b0 * * part cDELETE b1 b2 c? / c/\ c= * b0 part cEMPTY f1 ! ! c==> c/\ cFINITE b1 cIN b2 b1 c= * b0 b1 * * f0 b2 * b0 * * part cDELETE b1 b2
++ (!x. (!y. (!s. ((~ (x = y)) ==> (((f x) ((f y) s)) = ((f y) ((f x) s))))))), (!a. ((?n. (((((FINREC f) b) s) a) n)) = ((g s) = a))), (!s. (!a. ((FINITE s) ==> ((?n. (((((FINREC f) b) s) a) n)) = ((g s) = a))))), (FINITE s), (x IN s), (((((FINREC f) b) s) (g s)) (SUC n)) |- ((((((FINREC f) b) s) (g s)) (SUC n)) /\ (?n. (((((FINREC f) b) s) ((f x) (g (s DELETE x)))) n)))
+T c==> ! ! ! c==> c~ c= b0 b1 c= * * f0 b0 * * f0 b1 b2 * * f0 b1 * * f0 b0 b2 c==> ! c= c? / cFINREC f0 f1 f2 b0 b1 c= * f3 f2 b0 c==> ! ! c==> cFINITE b0 c= c? / cFINREC f0 f1 b0 b1 b2 c= * f3 b0 b1 c==> cFINITE f2 c==> cIN f4 f2 c==> cFINREC f0 f1 f2 * f3 f2 cSUC f5 c/\ cFINREC f0 f1 f2 * f3 f2 cSUC f5 c? / cFINREC f0 f1 f2 * * f0 f4 * f3 * * part cDELETE f2 f4 b0
++ |- (((?n. (((((FINREC f) b) s) (g s)) n)) ==> (?n. (((((FINREC f) b) s) ((f x) (g (s DELETE x)))) n))) = (!n. ((((((FINREC f) b) s) (g s)) n) ==> (?n. (((((FINREC f) b) s) ((f x) (g (s DELETE x)))) n)))))
+T c= c==> c? / cFINREC f0 f1 f2 * f3 f2 b0 c? / cFINREC f0 f1 f2 * * f0 f4 * f3 * * part cDELETE f2 f4 b0 ! c==> cFINREC f0 f1 f2 * f3 f2 b0 c? / cFINREC f0 f1 f2 * * f0 f4 * f3 * * part cDELETE f2 f4 b1
+- (!x. (!y. (!s. ((~ (x = y)) ==> (((f x) ((f y) s)) = ((f y) ((f x) s))))))) |- (!s. ((~ (x = y)) ==> (((f x) ((f y) s)) = ((f y) ((f x) s)))))
+T c==> ! ! ! c==> c~ c= b0 b1 c= * * f0 b0 * * f0 b1 b2 * * f0 b1 * * f0 b0 b2 ! c==> c~ c= f1 f2 c= * * f0 f1 * * f0 f2 b0 * * f0 f2 * * f0 f1 b0
+- (~ (s x')), ((s x') /\ (~ (x' = x))) |- ((~ (s x')) /\ F)
+T c==> c~ * f0 f1 c==> c/\ * f0 f1 c~ c= f1 f2 c/\ c~ * f0 f1 cF
+- |- ((a ==> b) = ((~ a) \/ b))
+T c= c==> f0 f1 c\/ c~ f0 f1
+- |- ((\x. ((~ (!x'. (((s x') /\ (~ (x' = x))) ==> (s x')))) ==> F)) x)
+T * / c==> c~ ! c==> c/\ * f0 b1 c~ c= b1 b0 * f0 b1 cF f1
++ (!a. ((?n. (((((FINREC f) b) s) a) n)) = ((g s) = a))) |- (((!a. (((g s) = a) = (?n. (((((FINREC f) b) s) a) n)))) ==> ((\a. (((g s) = a) = (?n. (((((FINREC f) b) s) a) n)))) a)) = ((\a. (((g s) = a) = (?n. (((((FINREC f) b) s) a) n)))) a))
+T c==> ! c= c? / cFINREC f0 f1 f2 b0 b1 c= * f3 f2 b0 c= c==> ! c= c= * f3 f2 b0 c? / cFINREC f0 f1 f2 b0 b1 * / c= c= * f3 f2 b0 c? / cFINREC f0 f1 f2 b0 b1 f4 * / c= c= * f3 f2 b0 c? / cFINREC f0 f1 f2 b0 b1 f4
++ |- (((!P. (!R. (((!s. ((P s) ==> (?a. (?n. (((R s) a) n))))) /\ (!n1. (!n2. (!s. (!a1. (!a2. (((((R s) a1) n1) /\ (((R s) a2) n2)) ==> ((a1 = a2) /\ (n1 = n2))))))))) ==> (?f. (!s. (!a. ((P s) ==> ((?n. (((R s) a) n)) = ((f s) = a))))))))) ==> ((\P. (!R. (((!s. ((P s) ==> (?a. (?n. (((R s) a) n))))) /\ (!n1. (!n2. (!s. (!a1. (!a2. (((((R s) a1) n1) /\ (((R s) a2) n2)) ==> ((a1 = a2) /\ (n1 = n2))))))))) ==> (?f. (!s. (!a. ((P s) ==> ((?n. (((R s) a) n)) = ((f s) = a))))))))) P)) = ((\P. (!R. (((!s. ((P s) ==> (?a. (?n. (((R s) a) n))))) /\ (!n1. (!n2. (!s. (!a1. (!a2. (((((R s) a1) n1) /\ (((R s) a2) n2)) ==> ((a1 = a2) /\ (n1 = n2))))))))) ==> (?f. (!s. (!a. ((P s) ==> ((?n. (((R s) a) n)) = ((f s) = a))))))))) P))
+T c= c==> ! ! c==> c/\ ! c==> * b0 b2 c? / c? / * * * b1 b2 b3 b4 ! ! ! ! ! c==> c/\ * * * b1 b4 b5 b2 * * * b1 b4 b6 b3 c/\ c= b5 b6 c= b2 b3 c? / ! ! c==> * b0 b3 c= c? / * * * b1 b3 b4 b5 c= * b2 b3 b4 * / ! c==> c/\ ! c==> * b0 b2 c? / c? / * * * b1 b2 b3 b4 ! ! ! ! ! c==> c/\ * * * b1 b4 b5 b2 * * * b1 b4 b6 b3 c/\ c= b5 b6 c= b2 b3 c? / ! ! c==> * b0 b3 c= c? / * * * b1 b3 b4 b5 c= * b2 b3 b4 f0 * / ! c==> c/\ ! c==> * b0 b2 c? / c? / * * * b1 b2 b3 b4 ! ! ! ! ! c==> c/\ * * * b1 b4 b5 b2 * * * b1 b4 b6 b3 c/\ c= b5 b6 c= b2 b3 c? / ! ! c==> * b0 b3 c= c? / * * * b1 b3 b4 b5 c= * b2 b3 b4 f0
++ (!x. (!y. (!s. ((~ (x = y)) ==> (((f x) ((f y) s)) = ((f y) ((f x) s))))))), (!a. ((?n. (((((FINREC f) b) s) a) n)) = ((g s) = a))), (!s. (!a. ((FINITE s) ==> ((?n. (((((FINREC f) b) s) a) n)) = ((g s) = a))))), (FINITE s), ((((((FINREC f) b) s) (g s)) n) ==> (?n. (((((FINREC f) b) s) ((f x) (g (s DELETE x)))) n))), (x IN s) |- (((((((FINREC f) b) s) (g s)) n) ==> (?n. (((((FINREC f) b) s) ((f x) (g (s DELETE x)))) n))) /\ ((((((FINREC f) b) s) (g s)) (SUC n)) ==> (?n. (((((FINREC f) b) s) ((f x) (g (s DELETE x)))) n))))
+T c==> ! ! ! c==> c~ c= b0 b1 c= * * f0 b0 * * f0 b1 b2 * * f0 b1 * * f0 b0 b2 c==> ! c= c? / cFINREC f0 f1 f2 b0 b1 c= * f3 f2 b0 c==> ! ! c==> cFINITE b0 c= c? / cFINREC f0 f1 b0 b1 b2 c= * f3 b0 b1 c==> cFINITE f2 c==> c==> cFINREC f0 f1 f2 * f3 f2 f4 c? / cFINREC f0 f1 f2 * * f0 f5 * f3 * * part cDELETE f2 f5 b0 c==> cIN f5 f2 c/\ c==> cFINREC f0 f1 f2 * f3 f2 f4 c? / cFINREC f0 f1 f2 * * f0 f5 * f3 * * part cDELETE f2 f5 b0 c==> cFINREC f0 f1 f2 * f3 f2 cSUC f4 c? / cFINREC f0 f1 f2 * * f0 f5 * f3 * * part cDELETE f2 f5 b0
+- (!x. (!y. (!s. ((~ (x = y)) ==> (((f x) ((f y) s)) = ((f y) ((f x) s))))))) |- ((\x. (!y. (!s. ((~ (x = y)) ==> (((f x) ((f y) s)) = ((f y) ((f x) s))))))) x)
+T c==> ! ! ! c==> c~ c= b0 b1 c= * * f0 b0 * * f0 b1 b2 * * f0 b1 * * f0 b0 b2 * / ! ! c==> c~ c= b0 b1 c= * * f0 b0 * * f0 b1 b2 * * f0 b1 * * f0 b0 b2 f1
++ |- ((\P. (!R. (((!s. ((P s) ==> (?a. (?n. (((R s) a) n))))) /\ (!n1. (!n2. (!s. (!a1. (!a2. (((((R s) a1) n1) /\ (((R s) a2) n2)) ==> ((a1 = a2) /\ (n1 = n2))))))))) ==> (?f. (!s. (!a. ((P s) ==> ((?n. (((R s) a) n)) = ((f s) = a))))))))) P)
+T * / ! c==> c/\ ! c==> * b0 b2 c? / c? / * * * b1 b2 b3 b4 ! ! ! ! ! c==> c/\ * * * b1 b4 b5 b2 * * * b1 b4 b6 b3 c/\ c= b5 b6 c= b2 b3 c? / ! ! c==> * b0 b3 c= c? / * * * b1 b3 b4 b5 c= * b2 b3 b4 f0
++ (!x. (!y. (!s. ((~ (x = y)) ==> (((f x) ((f y) s)) = ((f y) ((f x) s))))))), (!f. (!b. ((!x. (!y. (!s. ((~ (x = y)) ==> (((f x) ((f y) s)) = ((f y) ((f x) s))))))) ==> (!n. (!s. (!z. ((((((FINREC f) b) s) z) (SUC n)) ==> (!x. ((x IN s) ==> (?w. ((((((FINREC f) b) (s DELETE x)) w) n) /\ (z = ((f x) w))))))))))))) |- ((!n. (!s. (!z. ((((((FINREC f) b) s) z) (SUC n)) ==> (!x. ((x IN s) ==> (?w. ((((((FINREC f) b) (s DELETE x)) w) n) /\ (z = ((f x) w)))))))))) = T)
+T c==> ! ! ! c==> c~ c= b0 b1 c= * * f0 b0 * * f0 b1 b2 * * f0 b1 * * f0 b0 b2 c==> ! ! c==> ! ! ! c==> c~ c= b2 b3 c= * * b0 b2 * * b0 b3 b4 * * b0 b3 * * b0 b2 b4 ! ! ! c==> cFINREC b0 b1 b3 b4 cSUC b2 ! c==> cIN b5 b3 c? / c/\ cFINREC b0 b1 * * part cDELETE b3 b5 b6 b2 c= b4 * * b0 b5 b6 c= ! ! ! c==> cFINREC f0 f1 b1 b2 cSUC b0 ! c==> cIN b3 b1 c? / c/\ cFINREC f0 f1 * * part cDELETE b1 b3 b4 b0 c= b2 * * f0 b3 b4 cT
++ (!x. (!y. (!s. ((~ (x = y)) ==> (((f x) ((f y) s)) = ((f y) ((f x) s))))))), (!a. ((?n. (((((FINREC f) b) s) a) n)) = ((g s) = a))), (!s. (!a. ((FINITE s) ==> ((?n. (((((FINREC f) b) s) a) n)) = ((g s) = a))))), (FINITE s), (x IN s) |- (((((((FINREC f) b) s) (g s)) n) ==> (?n. (((((FINREC f) b) s) ((f x) (g (s DELETE x)))) n))) ==> ((((((FINREC f) b) s) (g s)) (SUC n)) ==> (?n. (((((FINREC f) b) s) ((f x) (g (s DELETE x)))) n))))
+T c==> ! ! ! c==> c~ c= b0 b1 c= * * f0 b0 * * f0 b1 b2 * * f0 b1 * * f0 b0 b2 c==> ! c= c? / cFINREC f0 f1 f2 b0 b1 c= * f3 f2 b0 c==> ! ! c==> cFINITE b0 c= c? / cFINREC f0 f1 b0 b1 b2 c= * f3 b0 b1 c==> cFINITE f2 c==> cIN f4 f2 c==> c==> cFINREC f0 f1 f2 * f3 f2 f5 c? / cFINREC f0 f1 f2 * * f0 f4 * f3 * * part cDELETE f2 f4 b0 c==> cFINREC f0 f1 f2 * f3 f2 cSUC f5 c? / cFINREC f0 f1 f2 * * f0 f4 * f3 * * part cDELETE f2 f4 b0
++ (!a. ((?n. (((((FINREC f) b) s) a) n)) = ((g s) = a))), (x IN s) |- ((!n. (((((((FINREC f) b) s) (g s)) n) ==> (?n. (((((FINREC f) b) s) ((f x) (g (s DELETE x)))) n))) ==> ((((((FINREC f) b) s) (g s)) (SUC n)) ==> (?n. (((((FINREC f) b) s) ((f x) (g (s DELETE x)))) n))))) = (((((((FINREC f) b) s) (g s)) (NUMERAL _0)) ==> (?n. (((((FINREC f) b) s) ((f x) (g (s DELETE x)))) n))) /\ (!n. (((((((FINREC f) b) s) (g s)) n) ==> (?n. (((((FINREC f) b) s) ((f x) (g (s DELETE x)))) n))) ==> ((((((FINREC f) b) s) (g s)) (SUC n)) ==> (?n. (((((FINREC f) b) s) ((f x) (g (s DELETE x)))) n)))))))
+T c==> ! c= c? / cFINREC f0 f1 f2 b0 b1 c= * f3 f2 b0 c==> cIN f4 f2 c= ! c==> c==> cFINREC f0 f1 f2 * f3 f2 b0 c? / cFINREC f0 f1 f2 * * f0 f4 * f3 * * part cDELETE f2 f4 b1 c==> cFINREC f0 f1 f2 * f3 f2 cSUC b0 c? / cFINREC f0 f1 f2 * * f0 f4 * f3 * * part cDELETE f2 f4 b1 c/\ c==> cFINREC f0 f1 f2 * f3 f2 cNUMERAL c_0 c? / cFINREC f0 f1 f2 * * f0 f4 * f3 * * part cDELETE f2 f4 b0 ! c==> c==> cFINREC f0 f1 f2 * f3 f2 b0 c? / cFINREC f0 f1 f2 * * f0 f4 * f3 * * part cDELETE f2 f4 b1 c==> cFINREC f0 f1 f2 * f3 f2 cSUC b0 c? / cFINREC f0 f1 f2 * * f0 f4 * f3 * * part cDELETE f2 f4 b1
+- ((s x') /\ (~ (x' = x))) |- ((~ (s x')) ==> F)
+T c==> c/\ * f0 f1 c~ c= f1 f2 c==> c~ * f0 f1 cF
++ (!x. (!y. (!s. ((~ (x = y)) ==> (((f x) ((f y) s)) = ((f y) ((f x) s))))))), (!s. (!a. ((FINITE s) ==> ((?n. (((((FINREC f) b) s) a) n)) = ((g s) = a))))), (FINITE s), (x IN s) |- ((g s) = ((f x) (g (s DELETE x))))
+T c==> ! ! ! c==> c~ c= b0 b1 c= * * f0 b0 * * f0 b1 b2 * * f0 b1 * * f0 b0 b2 c==> ! ! c==> cFINITE b0 c= c? / cFINREC f0 f1 b0 b1 b2 c= * f2 b0 b1 c==> cFINITE f3 c==> cIN f4 f3 c= * f2 f3 * * f0 f4 * f2 * * part cDELETE f3 f4
+- |- (((~ (!x'. (((s x') /\ (~ (x' = x))) ==> (s x')))) ==> F) ==> ((~ (!x'. (((s x') /\ (~ (x' = x))) ==> (s x')))) ==> F))
+T c==> c==> c~ ! c==> c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF c==> c~ ! c==> c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF
++ (?n. (((((FINREC f) b) s) ((f x) w)) n)), ((g (s DELETE x)) = w) |- (?n. (((((FINREC f) b) s) ((f x) (g (s DELETE x)))) n))
+T c==> c? / cFINREC f0 f1 f2 * * f0 f3 f4 b0 c==> c= * f5 * * part cDELETE f2 f3 f4 c? / cFINREC f0 f1 f2 * * f0 f3 * f5 * * part cDELETE f2 f3 b0
+- (_33036 = _33037) |- ((_33036 = _33037) /\ ((s _33037) \/ (~ (s _33036))))
+T c==> c= f0 f1 c/\ c= f0 f1 c\/ * f2 f1 c~ * f2 f0
+- |- (((t1 \/ t2) \/ t3) = (t1 \/ (t2 \/ t3)))
+T c= c\/ c\/ f0 f1 f2 c\/ f0 c\/ f1 f2
+- |- ((\s. ((FINITE s) ==> (FINITE (x INSERT s)))) s)
+T * / c==> cFINITE b0 cFINITE * * part cINSERT f0 b0 f1
+- (~ (s x')), ((s x') /\ (~ (x' = x))) |- ((~ (s x')) /\ (s x'))
+T c==> c~ * f0 f1 c==> c/\ * f0 f1 c~ c= f1 f2 c/\ c~ * f0 f1 * f0 f1
+- (!x. (!y. (!s. ((~ (x = y)) ==> (((f x) ((f y) s)) = ((f y) ((f x) s))))))) |- ((\x. (!y. ((~ (x = y)) ==> (!s. (((f x) ((f y) s)) = ((f y) ((f x) s))))))) x)
+T c==> ! ! ! c==> c~ c= b0 b1 c= * * f0 b0 * * f0 b1 b2 * * f0 b1 * * f0 b0 b2 * / ! c==> c~ c= b0 b1 ! c= * * f0 b0 * * f0 b1 b2 * * f0 b1 * * f0 b0 b2 f1
+- (~ (s x')), ((s x') /\ (~ (x' = x))) |- ((~ F) ==> F)
+T c==> c~ * f0 f1 c==> c/\ * f0 f1 c~ c= f1 f2 c==> c~ cF cF
+- (!x. (!y. (!s. ((~ (x = y)) ==> (((f x) ((f y) s)) = ((f y) ((f x) s))))))) |- ((\s. ((~ (x = y)) ==> (((f x) ((f y) s)) = ((f y) ((f x) s))))) s)
+T c==> ! ! ! c==> c~ c= b0 b1 c= * * f0 b0 * * f0 b1 b2 * * f0 b1 * * f0 b0 b2 * / c==> c~ c= f1 f2 c= * * f0 f1 * * f0 f2 b0 * * f0 f2 * * f0 f1 b0 f3
+- (?n. (((((FINREC f) b) s) ((f x) w)) n)) |- ((?n. (((((FINREC f) b) s) ((f x) w)) n)) = T)
+T c==> c? / cFINREC f0 f1 f2 * * f0 f3 f4 b0 c= c? / cFINREC f0 f1 f2 * * f0 f3 f4 b0 cT
+- |- ((((~ (!x'. (((s x') /\ (~ (x' = x))) ==> (s x')))) ==> F) ==> ((~ (!x'. (((s x') /\ (~ (x' = x))) ==> (s x')))) ==> F)) ==> (((~ (!x'. (((s x') /\ (~ (x' = x))) ==> (s x')))) ==> F) ==> ((~ (!x'. (((s x') /\ (~ (x' = x))) ==> (s x')))) ==> F)))
+T c==> c==> c==> c~ ! c==> c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF c==> c~ ! c==> c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF c==> c==> c~ ! c==> c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF c==> c~ ! c==> c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF
+- (!x. (!y. (!s. ((~ (x = y)) ==> (((f x) ((f y) s)) = ((f y) ((f x) s))))))), (?f. (!s. (!a. ((FINITE s) ==> ((?n. (((((FINREC f) b) s) a) n)) = ((f s) = a)))))) |- ((?f. (!s. (!a. ((FINITE s) ==> ((?n. (((((FINREC f) b) s) a) n)) = ((f s) = a)))))) /\ (?g. (((g EMPTY) = b) /\ (!s. (!x. (((FINITE s) /\ (x IN s)) ==> ((g s) = ((f x) (g (s DELETE x))))))))))
+T c==> ! ! ! c==> c~ c= b0 b1 c= * * f0 b0 * * f0 b1 b2 * * f0 b1 * * f0 b0 b2 c==> c? / ! ! c==> cFINITE b1 c= c? / cFINREC f0 f1 b1 b2 b3 c= * b0 b1 b2 c/\ c? / ! ! c==> cFINITE b1 c= c? / cFINREC f0 f1 b1 b2 b3 c= * b0 b1 b2 c? / c/\ c= * b0 part cEMPTY f1 ! ! c==> c/\ cFINITE b1 cIN b2 b1 c= * b0 b1 * * f0 b2 * b0 * * part cDELETE b1 b2
+- (!x. (!y. (!s. ((~ (x = y)) ==> (((f x) ((f y) s)) = ((f y) ((f x) s))))))), (~ (x = y)) |- ((~ (x = y)) /\ (!s. (((f x) ((f y) s)) = ((f y) ((f x) s)))))
+T c==> ! ! ! c==> c~ c= b0 b1 c= * * f0 b0 * * f0 b1 b2 * * f0 b1 * * f0 b0 b2 c==> c~ c= f1 f2 c/\ c~ c= f1 f2 ! c= * * f0 f1 * * f0 f2 b0 * * f0 f2 * * f0 f1 b0
+- |- ((!s. (!a. ((FINITE s) ==> ((?n. (((((FINREC f) b) s) a) n)) = ((g s) = a))))) ==> (!s. ((FINITE s) ==> (!a. ((?n. (((((FINREC f) b) s) a) n)) = ((g s) = a))))))
+T c==> ! ! c==> cFINITE b0 c= c? / cFINREC f0 f1 b0 b1 b2 c= * f2 b0 b1 ! c==> cFINITE b0 ! c= c? / cFINREC f0 f1 b0 b1 b2 c= * f2 b0 b1
+- |- (((!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))) ==> ((\t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))) t3)) = ((\t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))) t3))
+T c= c==> ! c= c\/ f0 c\/ f1 b0 c\/ c\/ f0 f1 b0 * / c= c\/ f0 c\/ f1 b0 c\/ c\/ f0 f1 b0 f2 * / c= c\/ f0 c\/ f1 b0 c\/ c\/ f0 f1 b0 f2
+- |- ((t /\ t) = t)
+T c= c/\ f0 f0 f0
+- |- ((a = b) ==> (b \/ (~ a)))
+T c==> c= f0 f1 c\/ f1 c~ f0
+- (!s. (!a. ((FINITE s) ==> ((?n. (((((FINREC f) b) s) a) n)) = ((g s) = a))))), (?w. ((((((FINREC f) b) (s DELETE x)) w) n) /\ (?n. (((((FINREC f) b) s) ((f x) w)) n)))), (FINITE s) |- (?n. (((((FINREC f) b) s) ((f x) (g (s DELETE x)))) n))
+T c==> ! ! c==> cFINITE b0 c= c? / cFINREC f0 f1 b0 b1 b2 c= * f2 b0 b1 c==> c? / c/\ cFINREC f0 f1 * * part cDELETE f3 f4 b0 f5 c? / cFINREC f0 f1 f3 * * f0 f4 b0 b1 c==> cFINITE f3 c? / cFINREC f0 f1 f3 * * f0 f4 * f2 * * part cDELETE f3 f4 b0
+- (~ F), (~ (s x')), ((s x') /\ (~ (x' = x))) |- ((~ F) /\ F)
+T c==> c~ cF c==> c~ * f0 f1 c==> c/\ * f0 f1 c~ c= f1 f2 c/\ c~ cF cF
+- |- (((!x. (!s. ((FINITE s) ==> (FINITE (x INSERT s))))) ==> ((\x. (!s. ((FINITE s) ==> (FINITE (x INSERT s))))) x)) = ((\x. (!s. ((FINITE s) ==> (FINITE (x INSERT s))))) x))
+T c= c==> ! ! c==> cFINITE b1 cFINITE * * part cINSERT b0 b1 * / ! c==> cFINITE b1 cFINITE * * part cINSERT b0 b1 f0 * / ! c==> cFINITE b1 cFINITE * * part cINSERT b0 b1 f0
+- ((s x') /\ (~ (x' = x))) |- (((s x') ==> F) = F)
+T c==> c/\ * f0 f1 c~ c= f1 f2 c= c==> * f0 f1 cF cF
+- |- ((\s. (!x. ((~ (!x'. (((s x') /\ (~ (x' = x))) ==> (s x')))) ==> F))) s)
+T * / ! c==> c~ ! c==> c/\ * b0 b2 c~ c= b2 b1 * b0 b2 cF f0
+- (!s. (!a. ((FINITE s) ==> ((?n. (((((FINREC f) b) s) a) n)) = ((g s) = a))))), (FINITE (s DELETE x)), (((((FINREC f) b) (s DELETE x)) w) n) |- ((FINITE (s DELETE x)) /\ ((g (s DELETE x)) = w))
+T c==> ! ! c==> cFINITE b0 c= c? / cFINREC f0 f1 b0 b1 b2 c= * f2 b0 b1 c==> cFINITE * * part cDELETE f3 f4 c==> cFINREC f0 f1 * * part cDELETE f3 f4 f5 f6 c/\ cFINITE * * part cDELETE f3 f4 c= * f2 * * part cDELETE f3 f4 f5
+- |- ((!s. (!x. (!x'. (((s x') /\ (~ (x' = x))) ==> (s x'))))) = (!s. (!x. ((~ (!x'. (((s x') /\ (~ (x' = x))) ==> (s x')))) ==> F))))
+T c= ! ! ! c==> c/\ * b0 b2 c~ c= b2 b1 * b0 b2 ! ! c==> c~ ! c==> c/\ * b0 b2 c~ c= b2 b1 * b0 b2 cF
+- (!x. (!y. (!s. ((~ (x = y)) ==> (((f x) ((f y) s)) = ((f y) ((f x) s))))))) |- (((~ (x = y)) ==> (!s. (((f x) ((f y) s)) = ((f y) ((f x) s))))) = T)
+T c==> ! ! ! c==> c~ c= b0 b1 c= * * f0 b0 * * f0 b1 b2 * * f0 b1 * * f0 b0 b2 c= c==> c~ c= f1 f2 ! c= * * f0 f1 * * f0 f2 b0 * * f0 f2 * * f0 f1 b0 cT
+- |- (((!s. ((FINITE s) ==> (FINITE (x INSERT s)))) ==> ((\s. ((FINITE s) ==> (FINITE (x INSERT s)))) s)) = ((\s. ((FINITE s) ==> (FINITE (x INSERT s)))) s))
+T c= c==> ! c==> cFINITE b0 cFINITE * * part cINSERT f0 b0 * / c==> cFINITE b0 cFINITE * * part cINSERT f0 b0 f1 * / c==> cFINITE b0 cFINITE * * part cINSERT f0 b0 f1
+- (~ (!x'. (((s x') /\ (~ (x' = x))) ==> (s x')))) |- ((~ (!x'. (((s x') /\ (~ (x' = x))) ==> (s x')))) /\ F)
+T c==> c~ ! c==> c/\ * f0 b0 c~ c= b0 f1 * f0 b0 c/\ c~ ! c==> c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF
+- (!s. (!a. ((FINITE s) ==> ((?n. (((((FINREC f) b) s) a) n)) = ((g s) = a))))) |- (((!s. ((FINITE s) ==> (!a. ((?n. (((((FINREC f) b) s) a) n)) = ((g s) = a))))) ==> ((\s. ((FINITE s) ==> (!a. ((?n. (((((FINREC f) b) s) a) n)) = ((g s) = a))))) s)) = ((\s. ((FINITE s) ==> (!a. ((?n. (((((FINREC f) b) s) a) n)) = ((g s) = a))))) s))
+T c==> ! ! c==> cFINITE b0 c= c? / cFINREC f0 f1 b0 b1 b2 c= * f2 b0 b1 c= c==> ! c==> cFINITE b0 ! c= c? / cFINREC f0 f1 b0 b1 b2 c= * f2 b0 b1 * / c==> cFINITE b0 ! c= c? / cFINREC f0 f1 b0 b1 b2 c= * f2 b0 b1 f3 * / c==> cFINITE b0 ! c= c? / cFINREC f0 f1 b0 b1 b2 c= * f2 b0 b1 f3
+- |- ((!x'. (P x')) = ((P T) /\ (P F)))
+T c= ! * f0 b0 c/\ * f0 cT * f0 cF
+- (~ (!x'. (((s x') /\ (~ (x' = x))) ==> (s x')))) |- F
+T c==> c~ ! c==> c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF
+- (~ (s x')), ((s x') /\ (~ (x' = x))) |- F
+T c==> c~ * f0 f1 c==> c/\ * f0 f1 c~ c= f1 f2 cF
+- (!x. (!y. (!s. ((~ (x = y)) ==> (((f x) ((f y) s)) = ((f y) ((f x) s))))))) |- ((~ (x = y)) ==> (!s. (((f x) ((f y) s)) = ((f y) ((f x) s)))))
+T c==> ! ! ! c==> c~ c= b0 b1 c= * * f0 b0 * * f0 b1 b2 * * f0 b1 * * f0 b0 b2 c==> c~ c= f1 f2 ! c= * * f0 f1 * * f0 f2 b0 * * f0 f2 * * f0 f1 b0
+- |- (((!t1. (!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))))) ==> ((\t1. (!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))))) t1)) = ((\t1. (!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))))) t1))
+T c= c==> ! ! ! c= c\/ b0 c\/ b1 b2 c\/ c\/ b0 b1 b2 * / ! ! c= c\/ b0 c\/ b1 b2 c\/ c\/ b0 b1 b2 f0 * / ! ! c= c\/ b0 c\/ b1 b2 c\/ c\/ b0 b1 b2 f0
+- |- ((~ (~ t)) = t)
+T c= c~ c~ f0 f0
+- ((s x') /\ (~ (x' = x))) |- ((~ (s x')) ==> (s x'))
+T c==> c/\ * f0 f1 c~ c= f1 f2 c==> c~ * f0 f1 * f0 f1
+- ((~ (!x'. (((s x') /\ (~ (x' = x))) ==> (s x')))) ==> F), (((~ (!x'. (((s x') /\ (~ (x' = x))) ==> (s x')))) ==> F) ==> ((~ (!x'. (((s x') /\ (~ (x' = x))) ==> (s x')))) ==> F)) |- ((((~ (!x'. (((s x') /\ (~ (x' = x))) ==> (s x')))) ==> F) ==> ((~ (!x'. (((s x') /\ (~ (x' = x))) ==> (s x')))) ==> F)) /\ ((~ (!x'. (((s x') /\ (~ (x' = x))) ==> (s x')))) ==> F))
+T c==> c==> c~ ! c==> c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF c==> c==> c==> c~ ! c==> c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF c==> c~ ! c==> c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF c/\ c==> c==> c~ ! c==> c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF c==> c~ ! c==> c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF c==> c~ ! c==> c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF
+- ((~ (!x'. (((s x') /\ (~ (x' = x))) ==> (s x')))) ==> F) |- (((~ (!x'. (((s x') /\ (~ (x' = x))) ==> (s x')))) ==> F) /\ ((~ (!x'. (((s x') /\ (~ (x' = x))) ==> (s x')))) ==> F))
+T c==> c==> c~ ! c==> c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF c/\ c==> c~ ! c==> c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF c==> c~ ! c==> c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF
+- (((~ (!x'. (((s x') /\ (~ (x' = x))) ==> (s x')))) ==> F) ==> ((~ (!x'. (((s x') /\ (~ (x' = x))) ==> (s x')))) ==> F)) |- ((((~ (!x'. (((s x') /\ (~ (x' = x))) ==> (s x')))) ==> F) ==> ((~ (!x'. (((s x') /\ (~ (x' = x))) ==> (s x')))) ==> F)) /\ (((~ (!x'. (((s x') /\ (~ (x' = x))) ==> (s x')))) ==> F) ==> ((~ (!x'. (((s x') /\ (~ (x' = x))) ==> (s x')))) ==> F)))
+T c==> c==> c==> c~ ! c==> c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF c==> c~ ! c==> c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF c/\ c==> c==> c~ ! c==> c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF c==> c~ ! c==> c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF c==> c==> c~ ! c==> c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF c==> c~ ! c==> c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF
+- (!x. (!y. (!s. ((~ (x = y)) ==> (((f x) ((f y) s)) = ((f y) ((f x) s))))))) |- (((!x. (!y. ((~ (x = y)) ==> (!s. (((f x) ((f y) s)) = ((f y) ((f x) s))))))) ==> ((\x. (!y. ((~ (x = y)) ==> (!s. (((f x) ((f y) s)) = ((f y) ((f x) s))))))) x)) = ((\x. (!y. ((~ (x = y)) ==> (!s. (((f x) ((f y) s)) = ((f y) ((f x) s))))))) x))
+T c==> ! ! ! c==> c~ c= b0 b1 c= * * f0 b0 * * f0 b1 b2 * * f0 b1 * * f0 b0 b2 c= c==> ! ! c==> c~ c= b0 b1 ! c= * * f0 b0 * * f0 b1 b2 * * f0 b1 * * f0 b0 b2 * / ! c==> c~ c= b0 b1 ! c= * * f0 b0 * * f0 b1 b2 * * f0 b1 * * f0 b0 b2 f1 * / ! c==> c~ c= b0 b1 ! c= * * f0 b0 * * f0 b1 b2 * * f0 b1 * * f0 b0 b2 f1
+- (!s. (!a. ((FINITE s) ==> ((?n. (((((FINREC f) b) s) a) n)) = ((g s) = a))))), (((((FINREC f) b) (s DELETE x)) w) n) |- ((FINITE (s DELETE x)) ==> ((g (s DELETE x)) = w))
+T c==> ! ! c==> cFINITE b0 c= c? / cFINREC f0 f1 b0 b1 b2 c= * f2 b0 b1 c==> cFINREC f0 f1 * * part cDELETE f3 f4 f5 f6 c==> cFINITE * * part cDELETE f3 f4 c= * f2 * * part cDELETE f3 f4 f5
+- (_33036 = _33037) |- ((((s _33036) = (s _33037)) ==> ((s _33037) \/ (~ (s _33036)))) = ((s _33037) \/ (~ (s _33036))))
+T c==> c= f0 f1 c= c==> c= * f2 f0 * f2 f1 c\/ * f2 f1 c~ * f2 f0 c\/ * f2 f1 c~ * f2 f0
+- |- ((~ (_33036 = _33037)) \/ ((s _33037) \/ (~ (s _33036))))
+T c\/ c~ c= f0 f1 c\/ * f2 f1 c~ * f2 f0
+- |- ((~ p) = (p ==> F))
+T c= c~ f0 c==> f0 cF
+- |- (((((~ (!x'. (((s x') /\ (~ (x' = x))) ==> (s x')))) ==> F) ==> ((~ (!x'. (((s x') /\ (~ (x' = x))) ==> (s x')))) ==> F)) ==> (((~ (!x'. (((s x') /\ (~ (x' = x))) ==> (s x')))) ==> F) ==> ((~ (!x'. (((s x') /\ (~ (x' = x))) ==> (s x')))) ==> F))) = (((~ (!x'. (((s x') /\ (~ (x' = x))) ==> (s x')))) ==> F) ==> ((~ (!x'. (((s x') /\ (~ (x' = x))) ==> (s x')))) ==> F)))
+T c= c==> c==> c==> c~ ! c==> c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF c==> c~ ! c==> c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF c==> c==> c~ ! c==> c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF c==> c~ ! c==> c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF c==> c==> c~ ! c==> c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF c==> c~ ! c==> c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF
+- (!x. (!y. (!s. ((~ (x = y)) ==> (((f x) ((f y) s)) = ((f y) ((f x) s))))))) |- (((!y. ((~ (x = y)) ==> (!s. (((f x) ((f y) s)) = ((f y) ((f x) s)))))) ==> ((\y. ((~ (x = y)) ==> (!s. (((f x) ((f y) s)) = ((f y) ((f x) s)))))) y)) = ((\y. ((~ (x = y)) ==> (!s. (((f x) ((f y) s)) = ((f y) ((f x) s)))))) y))
+T c==> ! ! ! c==> c~ c= b0 b1 c= * * f0 b0 * * f0 b1 b2 * * f0 b1 * * f0 b0 b2 c= c==> ! c==> c~ c= f1 b0 ! c= * * f0 f1 * * f0 b0 b1 * * f0 b0 * * f0 f1 b1 * / c==> c~ c= f1 b0 ! c= * * f0 f1 * * f0 b0 b1 * * f0 b0 * * f0 f1 b1 f2 * / c==> c~ c= f1 b0 ! c= * * f0 f1 * * f0 b0 b1 * * f0 b0 * * f0 f1 b1 f2
+- (!x. (!y. (!s. ((~ (x = y)) ==> (((f x) ((f y) s)) = ((f y) ((f x) s))))))) |- (((((((FINREC f) b) s) z) (SUC n)) ==> (!x. ((x IN s) ==> (?w. ((((((FINREC f) b) (s DELETE x)) w) n) /\ (z = ((f x) w))))))) = T)
+T c==> ! ! ! c==> c~ c= b0 b1 c= * * f0 b0 * * f0 b1 b2 * * f0 b1 * * f0 b0 b2 c= c==> cFINREC f0 f1 f2 f3 cSUC f4 ! c==> cIN b0 f2 c? / c/\ cFINREC f0 f1 * * part cDELETE f2 b0 b1 f4 c= f3 * * f0 b0 b1 cT
+- |- ((((~ (!x'. (((s x') /\ (~ (x' = x))) ==> (s x')))) ==> F) ==> ((~ (!x'. (((s x') /\ (~ (x' = x))) ==> (s x')))) ==> F)) = ((~ (!x'. (((s x') /\ (~ (x' = x))) ==> (s x')))) ==> F))
+T c= c==> c==> c~ ! c==> c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF c==> c~ ! c==> c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF c==> c~ ! c==> c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF
+- (!s. (!a. ((FINITE s) ==> ((?n. (((((FINREC f) b) s) a) n)) = ((g s) = a))))) |- (((FINITE s) ==> (!a. ((?n. (((((FINREC f) b) s) a) n)) = ((g s) = a)))) = T)
+T c==> ! ! c==> cFINITE b0 c= c? / cFINREC f0 f1 b0 b1 b2 c= * f2 b0 b1 c= c==> cFINITE f3 ! c= c? / cFINREC f0 f1 f3 b0 b1 c= * f2 f3 b0 cT
+- |- (((!x. ((~ (!x'. (((s x') /\ (~ (x' = x))) ==> (s x')))) ==> F)) ==> ((\x. ((~ (!x'. (((s x') /\ (~ (x' = x))) ==> (s x')))) ==> F)) x)) = ((\x. ((~ (!x'. (((s x') /\ (~ (x' = x))) ==> (s x')))) ==> F)) x))
+T c= c==> ! c==> c~ ! c==> c/\ * f0 b1 c~ c= b1 b0 * f0 b1 cF * / c==> c~ ! c==> c/\ * f0 b1 c~ c= b1 b0 * f0 b1 cF f1 * / c==> c~ ! c==> c/\ * f0 b1 c~ c= b1 b0 * f0 b1 cF f1
+- |- ((!x. (!y. (!s. ((~ (x = y)) ==> (((f x) ((f y) s)) = ((f y) ((f x) s))))))) ==> (!x. (!y. ((~ (x = y)) ==> (!s. (((f x) ((f y) s)) = ((f y) ((f x) s))))))))
+T c==> ! ! ! c==> c~ c= b0 b1 c= * * f0 b0 * * f0 b1 b2 * * f0 b1 * * f0 b0 b2 ! ! c==> c~ c= b0 b1 ! c= * * f0 b0 * * f0 b1 b2 * * f0 b1 * * f0 b0 b2
+- |- ((\x. (!s. ((FINITE s) ==> (FINITE (x INSERT s))))) x)
+T * / ! c==> cFINITE b1 cFINITE * * part cINSERT b0 b1 f0

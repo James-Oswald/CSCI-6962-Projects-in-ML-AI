@@ -1,0 +1,23 @@
+N MATRIX_TRANSP_MULTIPLE_INV_RIGHT
+C |- (!A. ((transp A) = ((matrix_mul (transp A)) ((matrix_mul A) (matrix_inv A)))))
+T c= ctransp f0 cmatrix_mul ctransp f0 cmatrix_mul f0 cmatrix_inv f0
+D MATRIX_MUL_ASSOC
+A |- (!A. (!B. (!C. (((matrix_mul A) ((matrix_mul B) C)) = ((matrix_mul ((matrix_mul A) B)) C)))))
+T c= cmatrix_mul f0 cmatrix_mul f1 f2 cmatrix_mul cmatrix_mul f0 f1 f2
+D MATRIX_TRANSP_MUL
+A |- (!A. (!B. ((transp ((matrix_mul A) B)) = ((matrix_mul (transp B)) (transp A)))))
+T c= ctransp cmatrix_mul f0 f1 cmatrix_mul ctransp f1 ctransp f0
+D MATRIX_INV_MUL_INNER
+A |- (!A. (((matrix_mul A) ((matrix_mul (matrix_inv A)) A)) = A))
+T c= cmatrix_mul f0 cmatrix_mul cmatrix_inv f0 f0 f0
+D SYMMETRIC_MATRIX_INV_RMUL
+A |- (!A. ((transp ((matrix_mul A) (matrix_inv A))) = ((matrix_mul A) (matrix_inv A))))
+T c= ctransp cmatrix_mul f0 cmatrix_inv f0 cmatrix_mul f0 cmatrix_inv f0
++ |- (((!A. (!B. ((transp ((matrix_mul A) B)) = ((matrix_mul (transp B)) (transp A))))) ==> ((\A. (!B. ((transp ((matrix_mul A) B)) = ((matrix_mul (transp B)) (transp A))))) A)) = ((\A. (!B. ((transp ((matrix_mul A) B)) = ((matrix_mul (transp B)) (transp A))))) A))
+T c= c==> ! ! c= ctransp cmatrix_mul b0 b1 cmatrix_mul ctransp b1 ctransp b0 * / ! c= ctransp cmatrix_mul b0 b1 cmatrix_mul ctransp b1 ctransp b0 f0 * / ! c= ctransp cmatrix_mul b0 b1 cmatrix_mul ctransp b1 ctransp b0 f0
+- |- (T = (((matrix_mul (transp A)) ((matrix_mul A) (matrix_inv A))) = ((matrix_mul ((matrix_mul (transp A)) A)) (matrix_inv A))))
+T c= cT c= cmatrix_mul ctransp f0 cmatrix_mul f0 cmatrix_inv f0 cmatrix_mul cmatrix_mul ctransp f0 f0 cmatrix_inv f0
++ |- (A = ((matrix_mul A) ((matrix_mul (matrix_inv A)) A)))
+T c= f0 cmatrix_mul f0 cmatrix_mul cmatrix_inv f0 f0
+- |- ((x = x) = T)
+T c= c= f0 f0 cT

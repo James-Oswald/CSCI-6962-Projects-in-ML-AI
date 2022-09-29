@@ -1,0 +1,210 @@
+N Seq.flatten_cat
+C |- (!ss1. (!ss2. ((flatten ((cat ss1) ss2)) = ((cat (flatten ss1)) (flatten ss2)))))
+T c= cflatten ccat f0 f1 ccat cflatten f0 cflatten f1
+D list_INDUCT
+A |- (!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x))))
+T c==> c/\ * f0 cNIL ! ! c==> * f0 b1 * f0 cCONS b0 b1 ! * f0 b0
+D Seq.cat
+A |- (!x. (!t. (!s2. ((((cat NIL) s2) = s2) /\ (((cat ((CONS x) t)) s2) = ((CONS x) ((cat t) s2)))))))
+T c/\ c= ccat cNIL f0 f0 c= ccat cCONS f1 f2 f0 cCONS f1 ccat f2 f0
+D Seq.catA
+A |- (!s1. (!s2. (!s3. (((cat s1) ((cat s2) s3)) = ((cat ((cat s1) s2)) s3)))))
+T c= ccat f0 ccat f1 f2 ccat ccat f0 f1 f2
+D Seq.flatten0
+A |- ((flatten NIL) = NIL)
+T c= cflatten cNIL cNIL
+D Seq.flatten_cons
+A |- (!s. (!ss. ((flatten ((CONS s) ss)) = ((cat s) (flatten ss)))))
+T c= cflatten cCONS f0 f1 ccat f0 cflatten f1
++ |- (((flatten ((CONS s) ((cat ss1) ss2))) = ((cat (flatten ((CONS s) ss1))) (flatten ss2))) = ((flatten ((cat ((CONS s) ss1)) ss2)) = ((cat (flatten ((CONS s) ss1))) (flatten ss2))))
+T c= c= cflatten cCONS f0 ccat f1 f2 ccat cflatten cCONS f0 f1 cflatten f2 c= cflatten ccat cCONS f0 f1 f2 ccat cflatten cCONS f0 f1 cflatten f2
++ |- ((\s2. ((((cat NIL) s2) = s2) /\ (((cat ((CONS x) t)) s2) = ((CONS x) ((cat t) s2))))) s2)
+T * / c/\ c= ccat cNIL b0 b0 c= ccat cCONS f0 f1 b0 cCONS f0 ccat f1 b0 f2
+- |- ((\ss. ((sizel (flatten ss)) = (sumn (shape ss)))) ss1)
+T * / c= csizel cflatten b0 csumn cshape b0 f0
++ |- ((\t. (!s2. ((((cat NIL) s2) = s2) /\ (((cat ((CONS x) t)) s2) = ((CONS x) ((cat t) s2)))))) t)
+T * / ! c/\ c= ccat cNIL b1 b1 c= ccat cCONS f0 b0 b1 cCONS f0 ccat b0 b1 f1
+- ((!x. (P ==> (Q x))) = (P ==> (!x. (Q x)))) |- ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))
+T c==> c= ! c==> f0 * f1 b0 c==> f0 ! * f1 b0 c= c==> f0 ! * f1 b0 ! c==> f0 * f1 b0
++ |- (((flatten ((cat NIL) ss2)) = ((cat NIL) (flatten ss2))) = ((flatten ((cat NIL) ss2)) = ((cat (flatten NIL)) (flatten ss2))))
+T c= c= cflatten ccat cNIL f0 ccat cNIL cflatten f0 c= cflatten ccat cNIL f0 ccat cflatten cNIL cflatten f0
++ |- (((!ss1. ((flatten ((cat ss1) ss2)) = ((cat (flatten ss1)) (flatten ss2)))) ==> ((\ss1. ((flatten ((cat ss1) ss2)) = ((cat (flatten ss1)) (flatten ss2)))) ss11)) = ((\ss1. ((flatten ((cat ss1) ss2)) = ((cat (flatten ss1)) (flatten ss2)))) ss11))
+T c= c==> ! c= cflatten ccat b0 f0 ccat cflatten b0 cflatten f0 * / c= cflatten ccat b0 f0 ccat cflatten b0 cflatten f0 f1 * / c= cflatten ccat b0 f0 ccat cflatten b0 cflatten f0 f1
++ |- (((!s1. (!s2. (!s3. (((cat s1) ((cat s2) s3)) = ((cat ((cat s1) s2)) s3))))) ==> ((\s1. (!s2. (!s3. (((cat s1) ((cat s2) s3)) = ((cat ((cat s1) s2)) s3))))) s1)) = ((\s1. (!s2. (!s3. (((cat s1) ((cat s2) s3)) = ((cat ((cat s1) s2)) s3))))) s1))
+T c= c==> ! ! ! c= ccat b0 ccat b1 b2 ccat ccat b0 b1 b2 * / ! ! c= ccat b0 ccat b1 b2 ccat ccat b0 b1 b2 f0 * / ! ! c= ccat b0 ccat b1 b2 ccat ccat b0 b1 b2 f0
+- |- ((\P. (!Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x)))))) P)
+T * / ! c= c==> b0 ! * b1 b2 ! c==> b0 * b1 b2 f0
++ |- (((!s3. (((cat s1) ((cat s2) s3)) = ((cat ((cat s1) s2)) s3))) ==> ((\s3. (((cat s1) ((cat s2) s3)) = ((cat ((cat s1) s2)) s3))) s3)) = ((\s3. (((cat s1) ((cat s2) s3)) = ((cat ((cat s1) s2)) s3))) s3))
+T c= c==> ! c= ccat f0 ccat f1 b0 ccat ccat f0 f1 b0 * / c= ccat f0 ccat f1 b0 ccat ccat f0 f1 b0 f2 * / c= ccat f0 ccat f1 b0 ccat ccat f0 f1 b0 f2
+- |- ((sizel (flatten ss)) = (sumn (shape ss)))
+T c= csizel cflatten f0 csumn cshape f0
++ |- (((((flatten ((cat NIL) ss2)) = ((cat (flatten NIL)) (flatten ss2))) /\ (!a0. (!a1. (((flatten ((cat a1) ss2)) = ((cat (flatten a1)) (flatten ss2))) ==> ((flatten ((cat ((CONS a0) a1)) ss2)) = ((cat (flatten ((CONS a0) a1))) (flatten ss2))))))) ==> (!ss1. ((flatten ((cat ss1) ss2)) = ((cat (flatten ss1)) (flatten ss2))))) = (!ss1. ((flatten ((cat ss1) ss2)) = ((cat (flatten ss1)) (flatten ss2)))))
+T c= c==> c/\ c= cflatten ccat cNIL f0 ccat cflatten cNIL cflatten f0 ! ! c==> c= cflatten ccat b1 f0 ccat cflatten b1 cflatten f0 c= cflatten ccat cCONS b0 b1 f0 ccat cflatten cCONS b0 b1 cflatten f0 ! c= cflatten ccat b0 f0 ccat cflatten b0 cflatten f0 ! c= cflatten ccat b0 f0 ccat cflatten b0 cflatten f0
++ |- (((cat ((CONS x) t)) s2) = ((CONS x) ((cat t) s2)))
+T c= ccat cCONS f0 f1 f2 cCONS f0 ccat f1 f2
++ |- ((\P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))) P)
+T * / c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 f0
++ |- (((?ss11. (ss1 = ss11)) ==> ((flatten ((cat ss1) ss2)) = ((cat (flatten ss1)) (flatten ss2)))) = ((flatten ((cat ss1) ss2)) = ((cat (flatten ss1)) (flatten ss2))))
+T c= c==> c? / c= f0 b0 c= cflatten ccat f0 f1 ccat cflatten f0 cflatten f1 c= cflatten ccat f0 f1 ccat cflatten f0 cflatten f1
+- |- (((?ss1. (ss = ss1)) ==> ((sizel (flatten ss)) = (sumn (shape ss)))) = ((sizel (flatten ss)) = (sumn (shape ss))))
+T c= c==> c? / c= f0 b0 c= csizel cflatten f0 csumn cshape f0 c= csizel cflatten f0 csumn cshape f0
++ ((flatten ((cat ss1) ss2)) = ((cat (flatten ss1)) (flatten ss2))) |- (((cat s) (flatten ((cat ss1) ss2))) = ((cat ((cat s) (flatten ss1))) (flatten ss2)))
+T c==> c= cflatten ccat f0 f1 ccat cflatten f0 cflatten f1 c= ccat f2 cflatten ccat f0 f1 ccat ccat f2 cflatten f0 cflatten f1
++ |- ((\s2. (!s3. (((cat s1) ((cat s2) s3)) = ((cat ((cat s1) s2)) s3)))) s2)
+T * / ! c= ccat f0 ccat b0 b1 ccat ccat f0 b0 b1 f1
++ ((flatten ((cat ss1) ss2)) = ((cat (flatten ss1)) (flatten ss2))) |- ((((cat s) ((cat (flatten ss1)) (flatten ss2))) = ((cat ((cat s) (flatten ss1))) (flatten ss2))) = (((cat s) (flatten ((cat ss1) ss2))) = ((cat ((cat s) (flatten ss1))) (flatten ss2))))
+T c==> c= cflatten ccat f0 f1 ccat cflatten f0 cflatten f1 c= c= ccat f2 ccat cflatten f0 cflatten f1 ccat ccat f2 cflatten f0 cflatten f1 c= ccat f2 cflatten ccat f0 f1 ccat ccat f2 cflatten f0 cflatten f1
+- (ss = ss1) |- ((ss = ss1) /\ ((sizel (flatten ss)) = (sumn (shape ss))))
+T c==> c= f0 f1 c/\ c= f0 f1 c= csizel cflatten f0 csumn cshape f0
++ |- ((!ss2. ((flatten ((cat ss1) ss2)) = ((cat (flatten ss1)) (flatten ss2)))) = T)
+T c= ! c= cflatten ccat f0 b0 ccat cflatten f0 cflatten b0 cT
+- |- (!ss1. (((\ss1. (ss = ss1)) ss1) ==> ((sizel (flatten ss)) = (sumn (shape ss)))))
+T c==> * / c= f0 b0 f1 c= csizel cflatten f0 csumn cshape f0
+- |- (!ss11. (((\ss11. (ss1 = ss11)) ss11) ==> (?ss11. (ss1 = ss11))))
+T c==> * / c= f0 b0 f1 c? / c= f0 b0
++ |- ((\s1. (!s2. (!s3. (((cat s1) ((cat s2) s3)) = ((cat ((cat s1) s2)) s3))))) s1)
+T * / ! ! c= ccat b0 ccat b1 b2 ccat ccat b0 b1 b2 f0
++ |- ((\ss11. (ss1 = ss11)) ss1)
+T * / c= f0 b0 f0
+- (!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))), ((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) |- ((!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))) /\ (!x. (P x)))
+T c==> ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 c==> c/\ * f0 cNIL ! ! c==> * f0 b1 * f0 cCONS b0 b1 c/\ ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 ! * f0 b0
++ |- (!ss11. (((\ss11. (ss1 = ss11)) ss11) ==> ((flatten ((cat ss1) ss2)) = ((cat (flatten ss1)) (flatten ss2)))))
+T c==> * / c= f0 b0 f1 c= cflatten ccat f0 f2 ccat cflatten f0 cflatten f2
++ |- (((!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))) ==> ((\P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))) P)) = ((\P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))) P))
+T c= c==> ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 * / c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 f0 * / c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 f0
+- (!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))), ((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) |- (!x. (P x))
+T c==> ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 c==> c/\ * f0 cNIL ! ! c==> * f0 b1 * f0 cCONS b0 b1 ! * f0 b0
+- |- (T = (((cat ((cat s) (flatten ss1))) (flatten ss2)) = ((cat ((cat s) (flatten ss1))) (flatten ss2))))
+T c= cT c= ccat ccat f0 cflatten f1 cflatten f2 ccat ccat f0 cflatten f1 cflatten f2
++ |- (((!s2. (!s3. (((cat s1) ((cat s2) s3)) = ((cat ((cat s1) s2)) s3)))) ==> ((\s2. (!s3. (((cat s1) ((cat s2) s3)) = ((cat ((cat s1) s2)) s3)))) s2)) = ((\s2. (!s3. (((cat s1) ((cat s2) s3)) = ((cat ((cat s1) s2)) s3)))) s2))
+T c= c==> ! ! c= ccat f0 ccat b0 b1 ccat ccat f0 b0 b1 * / ! c= ccat f0 ccat b0 b1 ccat ccat f0 b0 b1 f1 * / ! c= ccat f0 ccat b0 b1 ccat ccat f0 b0 b1 f1
++ |- (((flatten ((cat NIL) ss2)) = ((cat (flatten NIL)) (flatten ss2))) /\ (!a0. (!a1. (((flatten ((cat a1) ss2)) = ((cat (flatten a1)) (flatten ss2))) ==> ((flatten ((cat ((CONS a0) a1)) ss2)) = ((cat (flatten ((CONS a0) a1))) (flatten ss2)))))))
+T c/\ c= cflatten ccat cNIL f0 ccat cflatten cNIL cflatten f0 ! ! c==> c= cflatten ccat b1 f0 ccat cflatten b1 cflatten f0 c= cflatten ccat cCONS b0 b1 f0 ccat cflatten cCONS b0 b1 cflatten f0
++ ((\ss11. (ss1 = ss11)) ss11) |- (((ss1 = ss11) ==> ((flatten ((cat ss1) ss2)) = ((cat (flatten ss1)) (flatten ss2)))) = ((flatten ((cat ss1) ss2)) = ((cat (flatten ss1)) (flatten ss2))))
+T c==> * / c= f0 b0 f1 c= c==> c= f0 f1 c= cflatten ccat f0 f2 ccat cflatten f0 cflatten f2 c= cflatten ccat f0 f2 ccat cflatten f0 cflatten f2
++ |- (!a0. (!a1. (((flatten ((cat a1) ss2)) = ((cat (flatten a1)) (flatten ss2))) ==> ((flatten ((cat ((CONS a0) a1)) ss2)) = ((cat (flatten ((CONS a0) a1))) (flatten ss2))))))
+T c==> c= cflatten ccat f0 f1 ccat cflatten f0 cflatten f1 c= cflatten ccat cCONS f2 f0 f1 ccat cflatten cCONS f2 f0 cflatten f1
+- |- ((ss1 = ss11) = ((\ss11. (ss1 = ss11)) ss11))
+T c= c= f0 f1 * / c= f0 b0 f1
+- |- (T = ((flatten ss2) = (flatten ss2)))
+T c= cT c= cflatten f0 cflatten f0
++ |- (((flatten ((cat ss1) ss2)) = ((cat (flatten ss1)) (flatten ss2))) = T)
+T c= c= cflatten ccat f0 f1 ccat cflatten f0 cflatten f1 cT
+- |- (((!ss. ((sizel (flatten ss)) = (sumn (shape ss)))) ==> ((\ss. ((sizel (flatten ss)) = (sumn (shape ss)))) ss1)) = ((\ss. ((sizel (flatten ss)) = (sumn (shape ss)))) ss1))
+T c= c==> ! c= csizel cflatten b0 csumn cshape b0 * / c= csizel cflatten b0 csumn cshape b0 f0 * / c= csizel cflatten b0 csumn cshape b0 f0
+- |- (((!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))) ==> (!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x))))) = (!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))))
+T c= c==> ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1
+- (ss = ss1) |- ((sizel (flatten ss1)) = (sumn (shape ss1)))
+T c==> c= f0 f1 c= csizel cflatten f1 csumn cshape f1
++ |- (((!s. (!ss. ((flatten ((CONS s) ss)) = ((cat s) (flatten ss))))) ==> ((\s. (!ss. ((flatten ((CONS s) ss)) = ((cat s) (flatten ss))))) s)) = ((\s. (!ss. ((flatten ((CONS s) ss)) = ((cat s) (flatten ss))))) s))
+T c= c==> ! ! c= cflatten cCONS b0 b1 ccat b0 cflatten b1 * / ! c= cflatten cCONS b0 b1 ccat b0 cflatten b1 f0 * / ! c= cflatten cCONS b0 b1 ccat b0 cflatten b1 f0
++ (ss1 = ss11) |- (((flatten ((cat ss11) ss2)) = ((cat (flatten ss11)) (flatten ss2))) = ((flatten ((cat ss11) ss2)) = ((cat (flatten ss1)) (flatten ss2))))
+T c==> c= f0 f1 c= c= cflatten ccat f1 f2 ccat cflatten f1 cflatten f2 c= cflatten ccat f1 f2 ccat cflatten f0 cflatten f2
+- (!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))), ((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) |- (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) /\ (!x. (P x)))
+T c==> ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 c==> c/\ * f0 cNIL ! ! c==> * f0 b1 * f0 cCONS b0 b1 c/\ c/\ * f0 cNIL ! ! c==> * f0 b1 * f0 cCONS b0 b1 ! * f0 b0
++ |- (((cat NIL) s2) = s2)
+T c= ccat cNIL f0 f0
+- ((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) |- ((!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))) ==> (!x. (P x)))
+T c==> c/\ * f0 cNIL ! ! c==> * f0 b1 * f0 cCONS b0 b1 c==> ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 ! * f0 b0
++ |- ((flatten ((cat NIL) ss2)) = ((cat NIL) (flatten ss2)))
+T c= cflatten ccat cNIL f0 ccat cNIL cflatten f0
+- |- ((?ss11. (ss1 = ss11)) ==> (?ss11. (ss1 = ss11)))
+T c==> c? / c= f0 b0 c? / c= f0 b0
+- |- ((x = x) = T)
+T c= c= f0 f0 cT
+- |- ((\Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))) Q)
+T * / c= c==> f0 ! * b0 b1 ! c==> f0 * b0 b1 f1
+- (!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))) |- ((\P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))) P)
+T c==> ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 * / c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 f0
+- (ss1 = ss11) |- (ss11 = ss1)
+T c==> c= f0 f1 c= f1 f0
+- ((\ss11. (ss1 = ss11)) ss11) |- (((ss1 = ss11) ==> (?ss11. (ss1 = ss11))) = (?ss11. (ss1 = ss11)))
+T c==> * / c= f0 b0 f1 c= c==> c= f0 f1 c? / c= f0 b0 c? / c= f0 b0
++ |- ((((cat s) (flatten ((cat ss1) ss2))) = ((cat ((cat s) (flatten ss1))) (flatten ss2))) = ((flatten ((CONS s) ((cat ss1) ss2))) = ((cat (flatten ((CONS s) ss1))) (flatten ss2))))
+T c= c= ccat f0 cflatten ccat f1 f2 ccat ccat f0 cflatten f1 cflatten f2 c= cflatten cCONS f0 ccat f1 f2 ccat cflatten cCONS f0 f1 cflatten f2
+- |- ((!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))) ==> (!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))))
+T c==> ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1
++ |- ((ss1 = ss1) = ((\ss11. (ss1 = ss11)) ss1))
+T c= c= f0 f0 * / c= f0 b0 f0
++ |- ((!a1. (((flatten ((cat a1) ss2)) = ((cat (flatten a1)) (flatten ss2))) ==> ((flatten ((cat ((CONS s) a1)) ss2)) = ((cat (flatten ((CONS s) a1))) (flatten ss2))))) = T)
+T c= ! c==> c= cflatten ccat b0 f0 ccat cflatten b0 cflatten f0 c= cflatten ccat cCONS f1 b0 f0 ccat cflatten cCONS f1 b0 cflatten f0 cT
++ |- ((!a0. (!a1. (((flatten ((cat a1) ss2)) = ((cat (flatten a1)) (flatten ss2))) ==> ((flatten ((cat ((CONS a0) a1)) ss2)) = ((cat (flatten ((CONS a0) a1))) (flatten ss2)))))) = (((flatten ((cat NIL) ss2)) = ((cat (flatten NIL)) (flatten ss2))) /\ (!a0. (!a1. (((flatten ((cat a1) ss2)) = ((cat (flatten a1)) (flatten ss2))) ==> ((flatten ((cat ((CONS a0) a1)) ss2)) = ((cat (flatten ((CONS a0) a1))) (flatten ss2))))))))
+T c= ! ! c==> c= cflatten ccat b1 f0 ccat cflatten b1 cflatten f0 c= cflatten ccat cCONS b0 b1 f0 ccat cflatten cCONS b0 b1 cflatten f0 c/\ c= cflatten ccat cNIL f0 ccat cflatten cNIL cflatten f0 ! ! c==> c= cflatten ccat b1 f0 ccat cflatten b1 cflatten f0 c= cflatten ccat cCONS b0 b1 f0 ccat cflatten cCONS b0 b1 cflatten f0
++ |- (((!s2. ((((cat NIL) s2) = s2) /\ (((cat ((CONS x) t)) s2) = ((CONS x) ((cat t) s2))))) ==> ((\s2. ((((cat NIL) s2) = s2) /\ (((cat ((CONS x) t)) s2) = ((CONS x) ((cat t) s2))))) s2)) = ((\s2. ((((cat NIL) s2) = s2) /\ (((cat ((CONS x) t)) s2) = ((CONS x) ((cat t) s2))))) s2))
+T c= c==> ! c/\ c= ccat cNIL b0 b0 c= ccat cCONS f0 f1 b0 cCONS f0 ccat f1 b0 * / c/\ c= ccat cNIL b0 b0 c= ccat cCONS f0 f1 b0 cCONS f0 ccat f1 b0 f2 * / c/\ c= ccat cNIL b0 b0 c= ccat cCONS f0 f1 b0 cCONS f0 ccat f1 b0 f2
++ ((flatten ((cat ss1) ss2)) = ((cat (flatten ss1)) (flatten ss2))) |- ((flatten ((CONS s) ((cat ss1) ss2))) = ((cat (flatten ((CONS s) ss1))) (flatten ss2)))
+T c==> c= cflatten ccat f0 f1 ccat cflatten f0 cflatten f1 c= cflatten cCONS f2 ccat f0 f1 ccat cflatten cCONS f2 f0 cflatten f1
++ |- ((\s3. (((cat s1) ((cat s2) s3)) = ((cat ((cat s1) s2)) s3))) s3)
+T * / c= ccat f0 ccat f1 b0 ccat ccat f0 f1 b0 f2
+- (ss = ss1) |- ((sizel (flatten ss1)) = (sumn (shape ss)))
+T c==> c= f0 f1 c= csizel cflatten f1 csumn cshape f0
+- (ss1 = ss11) |- (((flatten ((cat ss11) ss2)) = ((cat (flatten ss11)) (flatten ss2))) = ((flatten ((cat ss1) ss2)) = ((cat (flatten ss1)) (flatten ss2))))
+T c==> c= f0 f1 c= c= cflatten ccat f1 f2 ccat cflatten f1 cflatten f2 c= cflatten ccat f0 f2 ccat cflatten f0 cflatten f2
+- |- (((!P. (!Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x)))))) ==> ((\P. (!Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x)))))) P)) = ((\P. (!Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x)))))) P))
+T c= c==> ! ! c= c==> b0 ! * b1 b2 ! c==> b0 * b1 b2 * / ! c= c==> b0 ! * b1 b2 ! c==> b0 * b1 b2 f0 * / ! c= c==> b0 ! * b1 b2 ! c==> b0 * b1 b2 f0
+- (ss1 = ss11) |- ((ss1 = ss11) /\ (?ss11. (ss1 = ss11)))
+T c==> c= f0 f1 c/\ c= f0 f1 c? / c= f0 b0
+- (ss1 = ss11) |- ((flatten ((cat ss11) ss2)) = ((cat (flatten ss11)) (flatten ss2)))
+T c==> c= f0 f1 c= cflatten ccat f1 f2 ccat cflatten f1 cflatten f2
+- ((\ss11. (ss1 = ss11)) ss11) |- (((\ss11. (ss1 = ss11)) ss11) /\ (?ss11. (ss1 = ss11)))
+T c==> * / c= f0 b0 f1 c/\ * / c= f0 b0 f1 c? / c= f0 b0
+- |- ((((\ss1. (ss = ss1)) ss1) ==> ((sizel (flatten ss)) = (sumn (shape ss)))) = T)
+T c= c==> * / c= f0 b0 f1 c= csizel cflatten f0 csumn cshape f0 cT
++ ((\ss11. (ss1 = ss11)) ss11) |- (((\ss11. (ss1 = ss11)) ss11) /\ ((flatten ((cat ss1) ss2)) = ((cat (flatten ss1)) (flatten ss2))))
+T c==> * / c= f0 b0 f1 c/\ * / c= f0 b0 f1 c= cflatten ccat f0 f2 ccat cflatten f0 cflatten f2
+- |- ((ss = ss1) ==> ((sizel (flatten ss)) = (sumn (shape ss))))
+T c==> c= f0 f1 c= csizel cflatten f0 csumn cshape f0
++ |- ((\s. (!ss. ((flatten ((CONS s) ss)) = ((cat s) (flatten ss))))) s)
+T * / ! c= cflatten cCONS b0 b1 ccat b0 cflatten b1 f0
++ (ss1 = ss11) |- ((ss1 = ss11) /\ ((flatten ((cat ss1) ss2)) = ((cat (flatten ss1)) (flatten ss2))))
+T c==> c= f0 f1 c/\ c= f0 f1 c= cflatten ccat f0 f2 ccat cflatten f0 cflatten f2
+- |- (((!x. (((\ss1. (ss = ss1)) x) ==> ((sizel (flatten ss)) = (sumn (shape ss))))) ==> ((?ss1. (ss = ss1)) ==> ((sizel (flatten ss)) = (sumn (shape ss))))) = ((?ss1. (ss = ss1)) ==> ((sizel (flatten ss)) = (sumn (shape ss)))))
+T c= c==> ! c==> * / c= f0 b1 b0 c= csizel cflatten f0 csumn cshape f0 c==> c? / c= f0 b0 c= csizel cflatten f0 csumn cshape f0 c==> c? / c= f0 b0 c= csizel cflatten f0 csumn cshape f0
++ |- (((!x. (!t. (!s2. ((((cat NIL) s2) = s2) /\ (((cat ((CONS x) t)) s2) = ((CONS x) ((cat t) s2))))))) ==> ((\x. (!t. (!s2. ((((cat NIL) s2) = s2) /\ (((cat ((CONS x) t)) s2) = ((CONS x) ((cat t) s2))))))) x)) = ((\x. (!t. (!s2. ((((cat NIL) s2) = s2) /\ (((cat ((CONS x) t)) s2) = ((CONS x) ((cat t) s2))))))) x))
+T c= c==> ! ! ! c/\ c= ccat cNIL b2 b2 c= ccat cCONS b0 b1 b2 cCONS b0 ccat b1 b2 * / ! ! c/\ c= ccat cNIL b2 b2 c= ccat cCONS b0 b1 b2 cCONS b0 ccat b1 b2 f0 * / ! ! c/\ c= ccat cNIL b2 b2 c= ccat cCONS b0 b1 b2 cCONS b0 ccat b1 b2 f0
+- |- (((!x. (((\ss11. (ss1 = ss11)) x) ==> (?ss11. (ss1 = ss11)))) ==> ((?ss11. (ss1 = ss11)) ==> (?ss11. (ss1 = ss11)))) = ((?ss11. (ss1 = ss11)) ==> (?ss11. (ss1 = ss11))))
+T c= c==> ! c==> * / c= f0 b1 b0 c? / c= f0 b1 c==> c? / c= f0 b0 c? / c= f0 b0 c==> c? / c= f0 b0 c? / c= f0 b0
+- |- ((((cat ((cat s) (flatten ss1))) (flatten ss2)) = ((cat ((cat s) (flatten ss1))) (flatten ss2))) = (((cat s) ((cat (flatten ss1)) (flatten ss2))) = ((cat ((cat s) (flatten ss1))) (flatten ss2))))
+T c= c= ccat ccat f0 cflatten f1 cflatten f2 ccat ccat f0 cflatten f1 cflatten f2 c= ccat f0 ccat cflatten f1 cflatten f2 ccat ccat f0 cflatten f1 cflatten f2
+- |- ((?ss1. (ss = ss1)) ==> ((sizel (flatten ss)) = (sumn (shape ss))))
+T c==> c? / c= f0 b0 c= csizel cflatten f0 csumn cshape f0
+- |- ((ss1 = ss11) ==> (?ss11. (ss1 = ss11)))
+T c==> c= f0 f1 c? / c= f0 b0
++ (ss1 = ss11) |- (((flatten ((cat ss11) ss2)) = ((cat (flatten ss1)) (flatten ss2))) = ((flatten ((cat ss1) ss2)) = ((cat (flatten ss1)) (flatten ss2))))
+T c==> c= f0 f1 c= c= cflatten ccat f1 f2 ccat cflatten f0 cflatten f2 c= cflatten ccat f0 f2 ccat cflatten f0 cflatten f2
++ (ss1 = ss11) |- ((flatten ((cat ss11) ss2)) = ((cat (flatten ss1)) (flatten ss2)))
+T c==> c= f0 f1 c= cflatten ccat f1 f2 ccat cflatten f0 cflatten f2
++ |- ((ss1 = ss11) ==> ((flatten ((cat ss1) ss2)) = ((cat (flatten ss1)) (flatten ss2))))
+T c==> c= f0 f1 c= cflatten ccat f0 f2 ccat cflatten f0 cflatten f2
+- ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x)))) |- ((!x. (P ==> (Q x))) = (P ==> (!x. (Q x))))
+T c==> c= c==> f0 ! * f1 b0 ! c==> f0 * f1 b0 c= ! c==> f0 * f1 b0 c==> f0 ! * f1 b0
+- (!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))) |- ((((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x))) = T)
+T c==> ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 c= c==> c/\ * f0 cNIL ! ! c==> * f0 b1 * f0 cCONS b0 b1 ! * f0 b0 cT
++ |- (((!x. (((\ss11. (ss1 = ss11)) x) ==> ((flatten ((cat ss1) ss2)) = ((cat (flatten ss1)) (flatten ss2))))) ==> ((?ss11. (ss1 = ss11)) ==> ((flatten ((cat ss1) ss2)) = ((cat (flatten ss1)) (flatten ss2))))) = ((?ss11. (ss1 = ss11)) ==> ((flatten ((cat ss1) ss2)) = ((cat (flatten ss1)) (flatten ss2)))))
+T c= c==> ! c==> * / c= f0 b1 b0 c= cflatten ccat f0 f1 ccat cflatten f0 cflatten f1 c==> c? / c= f0 b0 c= cflatten ccat f0 f1 ccat cflatten f0 cflatten f1 c==> c? / c= f0 b0 c= cflatten ccat f0 f1 ccat cflatten f0 cflatten f1
++ |- (((!ss. ((flatten ((CONS s) ss)) = ((cat s) (flatten ss)))) ==> ((\ss. ((flatten ((CONS s) ss)) = ((cat s) (flatten ss)))) ss)) = ((\ss. ((flatten ((CONS s) ss)) = ((cat s) (flatten ss)))) ss))
+T c= c==> ! c= cflatten cCONS f0 b0 ccat f0 cflatten b0 * / c= cflatten cCONS f0 b0 ccat f0 cflatten b0 f1 * / c= cflatten cCONS f0 b0 ccat f0 cflatten b0 f1
+- (ss1 = ss11) |- ((\ss11. (ss1 = ss11)) ss11)
+T c==> c= f0 f1 * / c= f0 b0 f1
++ |- ((?ss11. (ss1 = ss11)) ==> ((flatten ((cat ss1) ss2)) = ((cat (flatten ss1)) (flatten ss2))))
+T c==> c? / c= f0 b0 c= cflatten ccat f0 f1 ccat cflatten f0 cflatten f1
+- ((\ss1. (ss = ss1)) ss1) |- (((\ss1. (ss = ss1)) ss1) /\ ((sizel (flatten ss)) = (sumn (shape ss))))
+T c==> * / c= f0 b0 f1 c/\ * / c= f0 b0 f1 c= csizel cflatten f0 csumn cshape f0
++ |- (((flatten ss2) = (flatten ss2)) = ((flatten ((cat NIL) ss2)) = ((cat NIL) (flatten ss2))))
+T c= c= cflatten f0 cflatten f0 c= cflatten ccat cNIL f0 ccat cNIL cflatten f0
++ ((flatten ((cat ss1) ss2)) = ((cat (flatten ss1)) (flatten ss2))) |- (((flatten ((cat ss1) ss2)) = ((cat (flatten ss1)) (flatten ss2))) /\ ((flatten ((cat ((CONS s) ss1)) ss2)) = ((cat (flatten ((CONS s) ss1))) (flatten ss2))))
+T c==> c= cflatten ccat f0 f1 ccat cflatten f0 cflatten f1 c/\ c= cflatten ccat f0 f1 ccat cflatten f0 cflatten f1 c= cflatten ccat cCONS f2 f0 f1 ccat cflatten cCONS f2 f0 cflatten f1
+- |- ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))
+T c= c==> f0 ! * f1 b0 ! c==> f0 * f1 b0
+- |- (((sizel (flatten ss)) = (sumn (shape ss))) = T)
+T c= c= csizel cflatten f0 csumn cshape f0 cT
++ |- (?ss11. (ss1 = ss11))
+T c? / c= f0 b0
+- |- (((!Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))) ==> ((\Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))) Q)) = ((\Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))) Q))
+T c= c==> ! c= c==> f0 ! * b0 b1 ! c==> f0 * b0 b1 * / c= c==> f0 ! * b0 b1 ! c==> f0 * b0 b1 f1 * / c= c==> f0 ! * b0 b1 ! c==> f0 * b0 b1 f1
+- |- ((((\ss11. (ss1 = ss11)) ss11) ==> (?ss11. (ss1 = ss11))) = T)
+T c= c==> * / c= f0 b0 f1 c? / c= f0 b0 cT
+- ((\ss1. (ss = ss1)) ss1) |- (((ss = ss1) ==> ((sizel (flatten ss)) = (sumn (shape ss)))) = ((sizel (flatten ss)) = (sumn (shape ss))))
+T c==> * / c= f0 b0 f1 c= c==> c= f0 f1 c= csizel cflatten f0 csumn cshape f0 c= csizel cflatten f0 csumn cshape f0
+- (!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))) |- ((!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))) /\ (!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))))
+T c==> ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 c/\ ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1

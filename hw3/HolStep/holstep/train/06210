@@ -1,0 +1,47 @@
+N POSITIVE_SEMIDEFINITE_SIMILAR
+C |- (!A. (!B. ((positive_semidefinite A) ==> (positive_semidefinite ((matrix_mul (transp B)) ((matrix_mul A) B))))))
+T c==> cpositive_semidefinite f0 cpositive_semidefinite cmatrix_mul ctransp f1 cmatrix_mul f0 f1
+D TRUTH
+A |- T
+T cT
+D MATRIX_MUL_ASSOC
+A |- (!A. (!B. (!C. (((matrix_mul A) ((matrix_mul B) C)) = ((matrix_mul ((matrix_mul A) B)) C)))))
+T c= cmatrix_mul f0 cmatrix_mul f1 f2 cmatrix_mul cmatrix_mul f0 f1 f2
+D MATRIX_VECTOR_MUL_ASSOC
+A |- (!A. (!B. (!x. (((matrix_vector_mul A) ((matrix_vector_mul B) x)) = ((matrix_vector_mul ((matrix_mul A) B)) x)))))
+T c= cmatrix_vector_mul f0 cmatrix_vector_mul f1 f2 cmatrix_vector_mul cmatrix_mul f0 f1 f2
+D MATRIX_TRANSP_MUL
+A |- (!A. (!B. ((transp ((matrix_mul A) B)) = ((matrix_mul (transp B)) (transp A)))))
+T c= ctransp cmatrix_mul f0 f1 cmatrix_mul ctransp f1 ctransp f0
+D DOT_LMUL_MATRIX
+A |- (!A. (!x. (!y. (((dot ((vector_matrix_mul x) A)) y) = ((dot x) ((matrix_vector_mul A) y))))))
+T c= cdot cvector_matrix_mul f0 f1 f2 cdot f0 cmatrix_vector_mul f1 f2
+D TRANSP_TRANSP
+A |- (!A. ((transp (transp A)) = A))
+T c= ctransp ctransp f0 f0
+D MATRIX_VECTOR_MUL_TRANSP
+A |- (!A. (!x. (((matrix_vector_mul A) x) = ((vector_matrix_mul x) (transp A)))))
+T c= cmatrix_vector_mul f0 f1 cvector_matrix_mul f1 ctransp f0
+D positive_semidefinite
+A |- (!A. ((positive_semidefinite A) = (((transp A) = A) /\ (!x. ((real_le (real_of_num (NUMERAL _0))) ((dot x) ((matrix_vector_mul A) x)))))))
+T c= cpositive_semidefinite f0 c/\ c= ctransp f0 f0 ! creal_le creal_of_num cNUMERAL c_0 cdot b0 cmatrix_vector_mul f0 b0
++ |- (((matrix_mul ((matrix_mul A) B)) C) = ((matrix_mul A) ((matrix_mul B) C)))
+T c= cmatrix_mul cmatrix_mul f0 f1 f2 cmatrix_mul f0 cmatrix_mul f1 f2
++ (((matrix_vector_mul A) x) = ((vector_matrix_mul x) (transp A))) |- (((vector_matrix_mul x) (transp A)) = ((matrix_vector_mul A) x))
+T c==> c= cmatrix_vector_mul f0 f1 cvector_matrix_mul f1 ctransp f0 c= cvector_matrix_mul f1 ctransp f0 cmatrix_vector_mul f0 f1
++ |- (((!A. (!B. (!C. (((matrix_mul ((matrix_mul A) B)) C) = ((matrix_mul A) ((matrix_mul B) C)))))) ==> ((\A. (!B. (!C. (((matrix_mul ((matrix_mul A) B)) C) = ((matrix_mul A) ((matrix_mul B) C)))))) A)) = ((\A. (!B. (!C. (((matrix_mul ((matrix_mul A) B)) C) = ((matrix_mul A) ((matrix_mul B) C)))))) A))
+T c= c==> ! ! ! c= cmatrix_mul cmatrix_mul b0 b1 b2 cmatrix_mul b0 cmatrix_mul b1 b2 * / ! ! c= cmatrix_mul cmatrix_mul b0 b1 b2 cmatrix_mul b0 cmatrix_mul b1 b2 f0 * / ! ! c= cmatrix_mul cmatrix_mul b0 b1 b2 cmatrix_mul b0 cmatrix_mul b1 b2 f0
++ |- (((!A. (!B. ((transp ((matrix_mul A) B)) = ((matrix_mul (transp B)) (transp A))))) ==> ((\A. (!B. ((transp ((matrix_mul A) B)) = ((matrix_mul (transp B)) (transp A))))) A)) = ((\A. (!B. ((transp ((matrix_mul A) B)) = ((matrix_mul (transp B)) (transp A))))) A))
+T c= c==> ! ! c= ctransp cmatrix_mul b0 b1 cmatrix_mul ctransp b1 ctransp b0 * / ! c= ctransp cmatrix_mul b0 b1 cmatrix_mul ctransp b1 ctransp b0 f0 * / ! c= ctransp cmatrix_mul b0 b1 cmatrix_mul ctransp b1 ctransp b0 f0
++ |- (((!x. (((matrix_vector_mul ((matrix_mul A) B)) x) = ((matrix_vector_mul A) ((matrix_vector_mul B) x)))) ==> ((\x. (((matrix_vector_mul ((matrix_mul A) B)) x) = ((matrix_vector_mul A) ((matrix_vector_mul B) x)))) x)) = ((\x. (((matrix_vector_mul ((matrix_mul A) B)) x) = ((matrix_vector_mul A) ((matrix_vector_mul B) x)))) x))
+T c= c==> ! c= cmatrix_vector_mul cmatrix_mul f0 f1 b0 cmatrix_vector_mul f0 cmatrix_vector_mul f1 b0 * / c= cmatrix_vector_mul cmatrix_mul f0 f1 b0 cmatrix_vector_mul f0 cmatrix_vector_mul f1 b0 f2 * / c= cmatrix_vector_mul cmatrix_mul f0 f1 b0 cmatrix_vector_mul f0 cmatrix_vector_mul f1 b0 f2
+- |- ((t ==> t) = T)
+T c= c==> f0 f0 cT
+- |- ((!x. t) = t)
+T c= ! f0 f0
+- ((transp A) = A) |- (T = ((transp ((matrix_mul (transp B)) ((matrix_mul A) B))) = ((matrix_mul (transp B)) ((matrix_mul A) B))))
+T c==> c= ctransp f0 f0 c= cT c= ctransp cmatrix_mul ctransp f1 cmatrix_mul f0 f1 cmatrix_mul ctransp f1 cmatrix_mul f0 f1
+- |- ((x = x) = T)
+T c= c= f0 f0 cT
+- |- ((t /\ t) = t)
+T c= c/\ f0 f0 f0

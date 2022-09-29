@@ -1,0 +1,97 @@
+N REAL_OF_NUM_BINOM
+C |- (!n. (!k. ((real_of_num (binom (n , k))) = (((COND (k <= n)) ((real_div (real_of_num (FACT n))) ((real_mul (real_of_num (FACT (n - k)))) (real_of_num (FACT k))))) (real_of_num (NUMERAL _0))))))
+T c= creal_of_num cbinom c, f0 f1 cCOND c<= f1 f0 creal_div creal_of_num cFACT f0 creal_mul creal_of_num cFACT c- f0 f1 creal_of_num cFACT f1 creal_of_num cNUMERAL c_0
+D TRUTH
+A |- T
+T cT
+D COND_ELIM_THM
+A |- ((P (((COND c) x) y)) = ((c ==> (P x)) /\ ((~ c) ==> (P y))))
+T c= * f0 cCOND f1 f2 f3 c/\ c==> f1 * f0 f2 c==> c~ f1 * f0 f3
+D Ssrnat.addnC
+A |- (!m. (!n. ((m + n) = (n + m))))
+T c= c+ f0 f1 c+ f1 f0
+D MULT_AC
+A |- (((m * n) = (n * m)) /\ ((((m * n) * p) = (m * (n * p))) /\ ((m * (n * p)) = (n * (m * p)))))
+T c/\ c= c* f0 f1 c* f1 f0 c/\ c= c* c* f0 f1 f2 c* f0 c* f1 f2 c= c* f0 c* f1 f2 c* f1 c* f0 f2
+D NOT_LE
+A |- (!m. (!n. ((~ (m <= n)) = (n < m))))
+T c= c~ c<= f0 f1 c< f1 f0
+D LE_EXISTS
+A |- (!m. (!n. ((m <= n) = (?d. (n = (m + d))))))
+T c= c<= f0 f1 c? / c= f1 c+ f0 b0
+D ADD_SUB2
+A |- (!m. (!n. (((m + n) - m) = n)))
+T c= c- c+ f0 f1 f0 f1
+D Ssrnat.fact_gt0
+A |- (!n. ((NUMERAL _0) < (FACT n)))
+T c< cNUMERAL c_0 cFACT f0
+D REAL_OF_NUM_MUL
+A |- (!m. (!n. (((real_mul (real_of_num m)) (real_of_num n)) = (real_of_num (m * n)))))
+T c= creal_mul creal_of_num f0 creal_of_num f1 creal_of_num c* f0 f1
+D Float.REAL_LT
+A |- (!m. (!n. (((real_lt (real_of_num m)) (real_of_num n)) = (m < n))))
+T c= creal_lt creal_of_num f0 creal_of_num f1 c< f0 f1
+D Real_ext.REAL_PROP_POS_MUL2
+A |- (!x. (!y. ((((real_lt (real_of_num (NUMERAL _0))) x) /\ ((real_lt (real_of_num (NUMERAL _0))) y)) ==> ((real_lt (real_of_num (NUMERAL _0))) ((real_mul x) y)))))
+T c==> c/\ creal_lt creal_of_num cNUMERAL c_0 f0 creal_lt creal_of_num cNUMERAL c_0 f1 creal_lt creal_of_num cNUMERAL c_0 creal_mul f0 f1
+D REAL_EQ_RDIV_EQ
+A |- (!x. (!y. (!z. (((real_lt (real_of_num (NUMERAL _0))) z) ==> ((x = ((real_div y) z)) = (((real_mul x) z) = y))))))
+T c==> creal_lt creal_of_num cNUMERAL c_0 f0 c= c= f1 creal_div f2 f0 c= creal_mul f1 f0 f2
+D BINOM_LT
+A |- (!n. (!k. ((n < k) ==> ((binom (n , k)) = (NUMERAL _0)))))
+T c==> c< f0 f1 c= cbinom c, f0 f1 cNUMERAL c_0
+D BINOM_FACT
+A |- (!n. (!k. (((FACT n) * ((FACT k) * (binom ((n + k) , k)))) = (FACT (n + k)))))
+T c= c* cFACT f0 c* cFACT f1 cbinom c, c+ f0 f1 f1 cFACT c+ f0 f1
++ |- ((((real_lt (real_of_num (NUMERAL _0))) x) /\ ((real_lt (real_of_num (NUMERAL _0))) y)) ==> (((real_lt (real_of_num (NUMERAL _0))) ((real_mul x) y)) = T))
+T c==> c/\ creal_lt creal_of_num cNUMERAL c_0 f0 creal_lt creal_of_num cNUMERAL c_0 f1 c= creal_lt creal_of_num cNUMERAL c_0 creal_mul f0 f1 cT
++ ((n < m) = (~ (m <= n))) |- ((~ (m <= n)) = (n < m))
+T c==> c= c< f0 f1 c~ c<= f1 f0 c= c~ c<= f1 f0 c< f0 f1
++ |- (((!n. (((real_mul (real_of_num m)) (real_of_num n)) = (real_of_num (m * n)))) ==> ((\n. (((real_mul (real_of_num m)) (real_of_num n)) = (real_of_num (m * n)))) n)) = ((\n. (((real_mul (real_of_num m)) (real_of_num n)) = (real_of_num (m * n)))) n))
+T c= c==> ! c= creal_mul creal_of_num f0 creal_of_num b0 creal_of_num c* f0 b0 * / c= creal_mul creal_of_num f0 creal_of_num b0 creal_of_num c* f0 b0 f1 * / c= creal_mul creal_of_num f0 creal_of_num b0 creal_of_num c* f0 b0 f1
++ (~ (k <= n)) |- (T = (n < k))
+T c==> c~ c<= f0 f1 c= cT c< f1 f0
++ |- ((\x. (!y. ((((real_lt (real_of_num (NUMERAL _0))) x) /\ ((real_lt (real_of_num (NUMERAL _0))) y)) ==> ((real_lt (real_of_num (NUMERAL _0))) ((real_mul x) y))))) x)
+T * / ! c==> c/\ creal_lt creal_of_num cNUMERAL c_0 b0 creal_lt creal_of_num cNUMERAL c_0 b1 creal_lt creal_of_num cNUMERAL c_0 creal_mul b0 b1 f0
++ |- (((real_lt (real_of_num (NUMERAL _0))) (real_of_num (FACT (n - k)))) /\ ((real_lt (real_of_num (NUMERAL _0))) (real_of_num (FACT k))))
+T c/\ creal_lt creal_of_num cNUMERAL c_0 creal_of_num cFACT c- f0 f1 creal_lt creal_of_num cNUMERAL c_0 creal_of_num cFACT f1
++ |- (((!n. ((m + n) = (n + m))) ==> ((\n. ((m + n) = (n + m))) n)) = ((\n. ((m + n) = (n + m))) n))
+T c= c==> ! c= c+ f0 b0 c+ b0 f0 * / c= c+ f0 b0 c+ b0 f0 f1 * / c= c+ f0 b0 c+ b0 f0 f1
++ |- ((!k. ((real_of_num (binom (n , k))) = (((COND (k <= n)) ((real_div (real_of_num (FACT n))) ((real_mul (real_of_num (FACT (n - k)))) (real_of_num (FACT k))))) (real_of_num (NUMERAL _0))))) = T)
+T c= ! c= creal_of_num cbinom c, f0 b0 cCOND c<= b0 f0 creal_div creal_of_num cFACT f0 creal_mul creal_of_num cFACT c- f0 b0 creal_of_num cFACT b0 creal_of_num cNUMERAL c_0 cT
++ |- (((!k. ((n < k) ==> ((binom (n , k)) = (NUMERAL _0)))) ==> ((\k. ((n < k) ==> ((binom (n , k)) = (NUMERAL _0)))) k)) = ((\k. ((n < k) ==> ((binom (n , k)) = (NUMERAL _0)))) k))
+T c= c==> ! c==> c< f0 b0 c= cbinom c, f0 b0 cNUMERAL c_0 * / c==> c< f0 b0 c= cbinom c, f0 b0 cNUMERAL c_0 f1 * / c==> c< f0 b0 c= cbinom c, f0 b0 cNUMERAL c_0 f1
++ |- ((~ (k <= n)) ==> ((real_of_num (binom (n , k))) = (real_of_num (NUMERAL _0))))
+T c==> c~ c<= f0 f1 c= creal_of_num cbinom c, f1 f0 creal_of_num cNUMERAL c_0
++ |- ((n < m) = (~ (m <= n)))
+T c= c< f0 f1 c~ c<= f1 f0
++ |- ((\y. (!z. (((real_lt (real_of_num (NUMERAL _0))) z) ==> ((x = ((real_div y) z)) = (((real_mul x) z) = y))))) y)
+T * / ! c==> creal_lt creal_of_num cNUMERAL c_0 b1 c= c= f0 creal_div b0 b1 c= creal_mul f0 b1 b0 f1
++ |- (((real_mul (real_of_num (binom ((k + d) , k)))) ((real_mul (real_of_num (FACT d))) (real_of_num (FACT k)))) = (real_of_num (FACT (k + d))))
+T c= creal_mul creal_of_num cbinom c, c+ f0 f1 f0 creal_mul creal_of_num cFACT f1 creal_of_num cFACT f0 creal_of_num cFACT c+ f0 f1
+- |- ((?d. t) = t)
+T c= c? / f0 f0
+- |- (T = (((real_mul (real_of_num (binom ((d + k) , k)))) ((real_mul (real_of_num (FACT d))) (real_of_num (FACT k)))) = (real_of_num ((FACT d) * ((FACT k) * (binom ((d + k) , k)))))))
+T c= cT c= creal_mul creal_of_num cbinom c, c+ f0 f1 f1 creal_mul creal_of_num cFACT f0 creal_of_num cFACT f1 creal_of_num c* cFACT f0 c* cFACT f1 cbinom c, c+ f0 f1 f1
+- (~ (k <= n)) |- (((real_of_num (binom (n , k))) = (real_of_num (NUMERAL _0))) = ((real_of_num (binom (n , k))) = (real_of_num (NUMERAL _0))))
+T c==> c~ c<= f0 f1 c= c= creal_of_num cbinom c, f1 f0 creal_of_num cNUMERAL c_0 c= creal_of_num cbinom c, f1 f0 creal_of_num cNUMERAL c_0
+- (~ (k <= n)) |- (T = ((real_of_num (binom (n , k))) = (real_of_num (NUMERAL _0))))
+T c==> c~ c<= f0 f1 c= cT c= creal_of_num cbinom c, f1 f0 creal_of_num cNUMERAL c_0
+- |- ((x = x) = T)
+T c= c= f0 f0 cT
+- (k <= n) |- (((real_of_num (binom (n , k))) = ((real_div (real_of_num (FACT n))) ((real_mul (real_of_num (FACT (n - k)))) (real_of_num (FACT k))))) = ((real_of_num (binom (n , k))) = ((real_div (real_of_num (FACT n))) ((real_mul (real_of_num (FACT (n - k)))) (real_of_num (FACT k))))))
+T c==> c<= f0 f1 c= c= creal_of_num cbinom c, f1 f0 creal_div creal_of_num cFACT f1 creal_mul creal_of_num cFACT c- f1 f0 creal_of_num cFACT f0 c= creal_of_num cbinom c, f1 f0 creal_div creal_of_num cFACT f1 creal_mul creal_of_num cFACT c- f1 f0 creal_of_num cFACT f0
+- ((real_lt (real_of_num (NUMERAL _0))) z) |- (((real_lt (real_of_num (NUMERAL _0))) z) /\ ((x = ((real_div y) z)) = (((real_mul x) z) = y)))
+T c==> creal_lt creal_of_num cNUMERAL c_0 f0 c/\ creal_lt creal_of_num cNUMERAL c_0 f0 c= c= f1 creal_div f2 f0 c= creal_mul f1 f0 f2
+- |- ((t /\ t) = t)
+T c= c/\ f0 f0 f0
+- |- ((~ T) = F)
+T c= c~ cT cF
+- (k <= n) |- (F = (n < k))
+T c==> c<= f0 f1 c= cF c< f1 f0
+- (n < k) |- ((n < k) /\ ((binom (n , k)) = (NUMERAL _0)))
+T c==> c< f0 f1 c/\ c< f0 f1 c= cbinom c, f0 f1 cNUMERAL c_0
+- |- (((m * n) * p) = (m * (n * p)))
+T c= c* c* f0 f1 f2 c* f0 c* f1 f2
+- (k <= n) |- ((k <= n) = T)
+T c==> c<= f0 f1 c= c<= f0 f1 cT

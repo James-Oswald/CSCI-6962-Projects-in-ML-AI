@@ -1,0 +1,292 @@
+N NUMPAIR_INJ
+C |- (!x1. (!y1. (!x2. (!y2. ((((NUMPAIR x1) y1) = ((NUMPAIR x2) y2)) = ((x1 = x2) /\ (y1 = y2)))))))
+T c= c= cNUMPAIR f0 f1 cNUMPAIR f2 f3 c/\ c= f0 f2 c= f1 f3
+D TRUTH
+A |- T
+T cT
+D EQ_ADD_RCANCEL
+A |- (!m. (!n. (!p. (((m + p) = (n + p)) = (m = n)))))
+T c= c= c+ f0 f1 c+ f2 f1 c= f0 f2
+D EQ_MULT_LCANCEL
+A |- (!m. (!n. (!p. (((m * n) = (m * p)) = ((m = (NUMERAL _0)) \/ (n = p))))))
+T c= c= c* f0 f1 c* f0 f2 c\/ c= f0 cNUMERAL c_0 c= f1 f2
+D EXP_EQ_0
+A |- (!m. (!n. (((m EXP n) = (NUMERAL _0)) = ((m = (NUMERAL _0)) /\ (~ (n = (NUMERAL _0)))))))
+T c= c= cEXP f0 f1 cNUMERAL c_0 c/\ c= f0 cNUMERAL c_0 c~ c= f1 cNUMERAL c_0
+D ARITH_EQ
+A |- ((!m. (!n. (((NUMERAL m) = (NUMERAL n)) = (m = n)))) /\ (((_0 = _0) = T) /\ ((!n. (((BIT0 n) = _0) = (n = _0))) /\ ((!n. (((BIT1 n) = _0) = F)) /\ ((!n. ((_0 = (BIT0 n)) = (_0 = n))) /\ ((!n. ((_0 = (BIT1 n)) = F)) /\ ((!m. (!n. (((BIT0 m) = (BIT0 n)) = (m = n)))) /\ ((!m. (!n. (((BIT0 m) = (BIT1 n)) = F))) /\ ((!m. (!n. (((BIT1 m) = (BIT0 n)) = F))) /\ (!m. (!n. (((BIT1 m) = (BIT1 n)) = (m = n)))))))))))))
+T c/\ ! ! c= c= cNUMERAL b0 cNUMERAL b1 c= b0 b1 c/\ c= c= c_0 c_0 cT c/\ ! c= c= cBIT0 b0 c_0 c= b0 c_0 c/\ ! c= c= cBIT1 b0 c_0 cF c/\ ! c= c= c_0 cBIT0 b0 c= c_0 b0 c/\ ! c= c= c_0 cBIT1 b0 cF c/\ ! ! c= c= cBIT0 b0 cBIT0 b1 c= b0 b1 c/\ ! ! c= c= cBIT0 b0 cBIT1 b1 cF c/\ ! ! c= c= cBIT1 b0 cBIT0 b1 cF ! ! c= c= cBIT1 b0 cBIT1 b1 c= b0 b1
+D NUMPAIR
+A |- (!x. (!y. (((NUMPAIR x) y) = (((NUMERAL (BIT0 (BIT1 _0))) EXP x) * (((NUMERAL (BIT0 (BIT1 _0))) * y) + (NUMERAL (BIT1 _0)))))))
+T c= cNUMPAIR f0 f1 c* cEXP cNUMERAL cBIT0 cBIT1 c_0 f0 c+ c* cNUMERAL cBIT0 cBIT1 c_0 f1 cNUMERAL cBIT1 c_0
+D NUMPAIR_INJ_LEMMA
+A |- (!x1. (!y1. (!x2. (!y2. ((((NUMPAIR x1) y1) = ((NUMPAIR x2) y2)) ==> (x1 = x2))))))
+T c==> c= cNUMPAIR f0 f1 cNUMPAIR f2 f3 c= f0 f2
+- |- ((\m. (!n. (((BIT0 m) <= (BIT0 n)) = (m <= n)))) m)
+T * / ! c= c<= cBIT0 b0 cBIT0 b1 c<= b0 b1 f0
+- |- (((!n. (((BIT0 n) + _0) = (BIT0 n))) ==> ((\n. (((BIT0 n) + _0) = (BIT0 n))) n)) = ((\n. (((BIT0 n) + _0) = (BIT0 n))) n))
+T c= c==> ! c= c+ cBIT0 b0 c_0 cBIT0 b0 * / c= c+ cBIT0 b0 c_0 cBIT0 b0 f0 * / c= c+ cBIT0 b0 c_0 cBIT0 b0 f0
+- |- (((BIT0 m) EXP (BIT0 n)) = (((BIT0 m) EXP n) * ((BIT0 m) EXP n)))
+T c= cEXP cBIT0 f0 cBIT0 f1 c* cEXP cBIT0 f0 f1 cEXP cBIT0 f0 f1
+- |- (((!m. (!n. (((NUMERAL n) >= (NUMERAL m)) = (n >= m)))) ==> ((\m. (!n. (((NUMERAL n) >= (NUMERAL m)) = (n >= m)))) m)) = ((\m. (!n. (((NUMERAL n) >= (NUMERAL m)) = (n >= m)))) m))
+T c= c==> ! ! c= c>= cNUMERAL b1 cNUMERAL b0 c>= b1 b0 * / ! c= c>= cNUMERAL b1 cNUMERAL b0 c>= b1 b0 f0 * / ! c= c>= cNUMERAL b1 cNUMERAL b0 c>= b1 b0 f0
+- |- ((!m. (!n. (((BIT0 m) + (BIT1 n)) = (BIT1 (m + n))))) /\ ((!m. (!n. (((BIT1 m) + (BIT0 n)) = (BIT1 (m + n))))) /\ (!m. (!n. (((BIT1 m) + (BIT1 n)) = (BIT0 (SUC (m + n))))))))
+T c/\ ! ! c= c+ cBIT0 b0 cBIT1 b1 cBIT1 c+ b0 b1 c/\ ! ! c= c+ cBIT1 b0 cBIT0 b1 cBIT1 c+ b0 b1 ! ! c= c+ cBIT1 b0 cBIT1 b1 cBIT0 cSUC c+ b0 b1
+- |- (((!n. (((BIT1 n) * _0) = _0)) ==> ((\n. (((BIT1 n) * _0) = _0)) n)) = ((\n. (((BIT1 n) * _0) = _0)) n))
+T c= c==> ! c= c* cBIT1 b0 c_0 c_0 * / c= c* cBIT1 b0 c_0 c_0 f0 * / c= c* cBIT1 b0 c_0 c_0 f0
+- |- (((BIT0 m) = (BIT1 n)) = F)
+T c= c= cBIT0 f0 cBIT1 f1 cF
+- |- (((!n. (((BIT0 n) * _0) = _0)) ==> ((\n. (((BIT0 n) * _0) = _0)) n)) = ((\n. (((BIT0 n) * _0) = _0)) n))
+T c= c==> ! c= c* cBIT0 b0 c_0 c_0 * / c= c* cBIT0 b0 c_0 c_0 f0 * / c= c* cBIT0 b0 c_0 c_0 f0
+- |- (((!n. ((BIT1 n) > _0)) ==> ((\n. ((BIT1 n) > _0)) n)) = ((\n. ((BIT1 n) > _0)) n))
+T c= c==> ! c> cBIT1 b0 c_0 * / c> cBIT1 b0 c_0 f0 * / c> cBIT1 b0 c_0 f0
+- |- (((BIT0 m) + (BIT1 n)) = (BIT1 (m + n)))
+T c= c+ cBIT0 f0 cBIT1 f1 cBIT1 c+ f0 f1
++ |- ((!x2. (!y2. ((((NUMPAIR x1) y1) = ((NUMPAIR x2) y2)) = ((x1 = x2) /\ (y1 = y2))))) = T)
+T c= ! ! c= c= cNUMPAIR f0 f1 cNUMPAIR b0 b1 c/\ c= f0 b0 c= f1 b1 cT
+- |- ((SUC _0) = (BIT1 _0))
+T c= cSUC c_0 cBIT1 c_0
+- |- (((!m. (!n. (((BIT0 m) < (BIT1 n)) = (m <= n)))) ==> ((\m. (!n. (((BIT0 m) < (BIT1 n)) = (m <= n)))) m)) = ((\m. (!n. (((BIT0 m) < (BIT1 n)) = (m <= n)))) m))
+T c= c==> ! ! c= c< cBIT0 b0 cBIT1 b1 c<= b0 b1 * / ! c= c< cBIT0 b0 cBIT1 b1 c<= b0 b1 f0 * / ! c= c< cBIT0 b0 cBIT1 b1 c<= b0 b1 f0
+- |- ((_0 <= (BIT0 n)) = T)
+T c= c<= c_0 cBIT0 f0 cT
+- |- (((BIT1 m) = (BIT0 n)) = F)
+T c= c= cBIT1 f0 cBIT0 f1 cF
++ |- ((\y1. (!x2. (!y2. ((((NUMPAIR x1) y1) = ((NUMPAIR x2) y2)) ==> (x1 = x2))))) y1)
+T * / ! ! c==> c= cNUMPAIR f0 b0 cNUMPAIR b1 b2 c= f0 b1 f1
+- |- ((!m. (!n. (((BIT0 n) > (BIT0 m)) = (n > m)))) /\ ((!m. (!n. (((BIT1 n) > (BIT0 m)) = (n >= m)))) /\ ((!m. (!n. (((BIT0 n) > (BIT1 m)) = (n > m)))) /\ (!m. (!n. (((BIT1 n) > (BIT1 m)) = (n > m)))))))
+T c/\ ! ! c= c> cBIT0 b1 cBIT0 b0 c> b1 b0 c/\ ! ! c= c> cBIT1 b1 cBIT0 b0 c>= b1 b0 c/\ ! ! c= c> cBIT0 b1 cBIT1 b0 c> b1 b0 ! ! c= c> cBIT1 b1 cBIT1 b0 c> b1 b0
+- |- (((PRE _0) = _0) /\ ((!n. ((PRE (BIT0 n)) = (((COND (n = _0)) _0) (BIT1 (PRE n))))) /\ (!n. ((PRE (BIT1 n)) = (BIT0 n)))))
+T c/\ c= cPRE c_0 c_0 c/\ ! c= cPRE cBIT0 b0 cCOND c= b0 c_0 c_0 cBIT1 cPRE b0 ! c= cPRE cBIT1 b0 cBIT0 b0
+- |- (((BIT0 m) * (BIT0 n)) = (BIT0 (BIT0 (m * n))))
+T c= c* cBIT0 f0 cBIT0 f1 cBIT0 cBIT0 c* f0 f1
++ |- ((!n. (((BIT1 n) = _0) = F)) /\ ((!n. ((_0 = (BIT0 n)) = (_0 = n))) /\ ((!n. ((_0 = (BIT1 n)) = F)) /\ ((!m. (!n. (((BIT0 m) = (BIT0 n)) = (m = n)))) /\ ((!m. (!n. (((BIT0 m) = (BIT1 n)) = F))) /\ ((!m. (!n. (((BIT1 m) = (BIT0 n)) = F))) /\ (!m. (!n. (((BIT1 m) = (BIT1 n)) = (m = n))))))))))
+T c/\ ! c= c= cBIT1 b0 c_0 cF c/\ ! c= c= c_0 cBIT0 b0 c= c_0 b0 c/\ ! c= c= c_0 cBIT1 b0 cF c/\ ! ! c= c= cBIT0 b0 cBIT0 b1 c= b0 b1 c/\ ! ! c= c= cBIT0 b0 cBIT1 b1 cF c/\ ! ! c= c= cBIT1 b0 cBIT0 b1 cF ! ! c= c= cBIT1 b0 cBIT1 b1 c= b0 b1
+- |- (((BIT1 m) < (BIT0 n)) = (m < n))
+T c= c< cBIT1 f0 cBIT0 f1 c< f0 f1
+- |- ((\m. (!n. (((BIT0 m) EXP (BIT1 n)) = ((BIT0 m) * (((BIT0 m) EXP n) * ((BIT0 m) EXP n)))))) m)
+T * / ! c= cEXP cBIT0 b0 cBIT1 b1 c* cBIT0 b0 c* cEXP cBIT0 b0 b1 cEXP cBIT0 b0 b1 f0
++ |- (((!p. (((m * n) = (m * p)) = ((m = (NUMERAL _0)) \/ (n = p)))) ==> ((\p. (((m * n) = (m * p)) = ((m = (NUMERAL _0)) \/ (n = p)))) p)) = ((\p. (((m * n) = (m * p)) = ((m = (NUMERAL _0)) \/ (n = p)))) p))
+T c= c==> ! c= c= c* f0 f1 c* f0 b0 c\/ c= f0 cNUMERAL c_0 c= f1 b0 * / c= c= c* f0 f1 c* f0 b0 c\/ c= f0 cNUMERAL c_0 c= f1 b0 f2 * / c= c= c* f0 f1 c* f0 b0 c\/ c= f0 cNUMERAL c_0 c= f1 b0 f2
+- |- (((!m. (!n. (((BIT0 m) - (BIT0 n)) = (BIT0 (m - n))))) ==> ((\m. (!n. (((BIT0 m) - (BIT0 n)) = (BIT0 (m - n))))) m)) = ((\m. (!n. (((BIT0 m) - (BIT0 n)) = (BIT0 (m - n))))) m))
+T c= c==> ! ! c= c- cBIT0 b0 cBIT0 b1 cBIT0 c- b0 b1 * / ! c= c- cBIT0 b0 cBIT0 b1 cBIT0 c- b0 b1 f0 * / ! c= c- cBIT0 b0 cBIT0 b1 cBIT0 c- b0 b1 f0
+- |- ((_0 EXP (BIT0 n)) = ((_0 EXP n) * (_0 EXP n)))
+T c= cEXP c_0 cBIT0 f0 c* cEXP c_0 f0 cEXP c_0 f0
+- |- (((NUMERAL m) EXP (NUMERAL n)) = (NUMERAL (m EXP n)))
+T c= cEXP cNUMERAL f0 cNUMERAL f1 cNUMERAL cEXP f0 f1
+- |- (((!n. ((SUC (BIT0 n)) = (BIT1 n))) ==> ((\n. ((SUC (BIT0 n)) = (BIT1 n))) n)) = ((\n. ((SUC (BIT0 n)) = (BIT1 n))) n))
+T c= c==> ! c= cSUC cBIT0 b0 cBIT1 b0 * / c= cSUC cBIT0 b0 cBIT1 b0 f0 * / c= cSUC cBIT0 b0 cBIT1 b0 f0
+- |- ((!n. ((EVEN (BIT0 n)) = T)) /\ (!n. ((EVEN (BIT1 n)) = F)))
+T c/\ ! c= cEVEN cBIT0 b0 cT ! c= cEVEN cBIT1 b0 cF
+- |- (((!n. ((ODD (BIT0 n)) = F)) ==> ((\n. ((ODD (BIT0 n)) = F)) n)) = ((\n. ((ODD (BIT0 n)) = F)) n))
+T c= c==> ! c= cODD cBIT0 b0 cF * / c= cODD cBIT0 b0 cF f0 * / c= cODD cBIT0 b0 cF f0
+- |- ((\m. (((BIT1 m) EXP _0) = (BIT1 _0))) m)
+T * / c= cEXP cBIT1 b0 c_0 cBIT1 c_0 f0
+- |- (((!n. (((BIT1 m) EXP (BIT0 n)) = (((BIT1 m) EXP n) * ((BIT1 m) EXP n)))) ==> ((\n. (((BIT1 m) EXP (BIT0 n)) = (((BIT1 m) EXP n) * ((BIT1 m) EXP n)))) n)) = ((\n. (((BIT1 m) EXP (BIT0 n)) = (((BIT1 m) EXP n) * ((BIT1 m) EXP n)))) n))
+T c= c==> ! c= cEXP cBIT1 f0 cBIT0 b0 c* cEXP cBIT1 f0 b0 cEXP cBIT1 f0 b0 * / c= cEXP cBIT1 f0 cBIT0 b0 c* cEXP cBIT1 f0 b0 cEXP cBIT1 f0 b0 f1 * / c= cEXP cBIT1 f0 cBIT0 b0 c* cEXP cBIT1 f0 b0 cEXP cBIT1 f0 b0 f1
+- |- (((!n. ((_0 * (BIT0 n)) = _0)) ==> ((\n. ((_0 * (BIT0 n)) = _0)) n)) = ((\n. ((_0 * (BIT0 n)) = _0)) n))
+T c= c==> ! c= c* c_0 cBIT0 b0 c_0 * / c= c* c_0 cBIT0 b0 c_0 f0 * / c= c* c_0 cBIT0 b0 c_0 f0
++ |- (((!y. (((NUMPAIR x) y) = (((NUMERAL (BIT0 (BIT1 _0))) EXP x) * (((NUMERAL (BIT0 (BIT1 _0))) * y) + (NUMERAL (BIT1 _0)))))) ==> ((\y. (((NUMPAIR x) y) = (((NUMERAL (BIT0 (BIT1 _0))) EXP x) * (((NUMERAL (BIT0 (BIT1 _0))) * y) + (NUMERAL (BIT1 _0)))))) y)) = ((\y. (((NUMPAIR x) y) = (((NUMERAL (BIT0 (BIT1 _0))) EXP x) * (((NUMERAL (BIT0 (BIT1 _0))) * y) + (NUMERAL (BIT1 _0)))))) y))
+T c= c==> ! c= cNUMPAIR f0 b0 c* cEXP cNUMERAL cBIT0 cBIT1 c_0 f0 c+ c* cNUMERAL cBIT0 cBIT1 c_0 b0 cNUMERAL cBIT1 c_0 * / c= cNUMPAIR f0 b0 c* cEXP cNUMERAL cBIT0 cBIT1 c_0 f0 c+ c* cNUMERAL cBIT0 cBIT1 c_0 b0 cNUMERAL cBIT1 c_0 f1 * / c= cNUMPAIR f0 b0 c* cEXP cNUMERAL cBIT0 cBIT1 c_0 f0 c+ c* cNUMERAL cBIT0 cBIT1 c_0 b0 cNUMERAL cBIT1 c_0 f1
+- |- (((!n. ((EVEN (BIT1 n)) = F)) ==> ((\n. ((EVEN (BIT1 n)) = F)) n)) = ((\n. ((EVEN (BIT1 n)) = F)) n))
+T c= c==> ! c= cEVEN cBIT1 b0 cF * / c= cEVEN cBIT1 b0 cF f0 * / c= cEVEN cBIT1 b0 cF f0
+- |- (((!m. (!n. (((BIT1 m) + (BIT0 n)) = (BIT1 (m + n))))) ==> ((\m. (!n. (((BIT1 m) + (BIT0 n)) = (BIT1 (m + n))))) m)) = ((\m. (!n. (((BIT1 m) + (BIT0 n)) = (BIT1 (m + n))))) m))
+T c= c==> ! ! c= c+ cBIT1 b0 cBIT0 b1 cBIT1 c+ b0 b1 * / ! c= c+ cBIT1 b0 cBIT0 b1 cBIT1 c+ b0 b1 f0 * / ! c= c+ cBIT1 b0 cBIT0 b1 cBIT1 c+ b0 b1 f0
+- |- (((!m. (!n. (((BIT1 m) EXP (BIT1 n)) = ((BIT1 m) * (((BIT1 m) EXP n) * ((BIT1 m) EXP n)))))) ==> ((\m. (!n. (((BIT1 m) EXP (BIT1 n)) = ((BIT1 m) * (((BIT1 m) EXP n) * ((BIT1 m) EXP n)))))) m)) = ((\m. (!n. (((BIT1 m) EXP (BIT1 n)) = ((BIT1 m) * (((BIT1 m) EXP n) * ((BIT1 m) EXP n)))))) m))
+T c= c==> ! ! c= cEXP cBIT1 b0 cBIT1 b1 c* cBIT1 b0 c* cEXP cBIT1 b0 b1 cEXP cBIT1 b0 b1 * / ! c= cEXP cBIT1 b0 cBIT1 b1 c* cBIT1 b0 c* cEXP cBIT1 b0 b1 cEXP cBIT1 b0 b1 f0 * / ! c= cEXP cBIT1 b0 cBIT1 b1 c* cBIT1 b0 c* cEXP cBIT1 b0 b1 cEXP cBIT1 b0 b1 f0
+- |- ((\n. (((BIT0 m) < (BIT0 n)) = (m < n))) n)
+T * / c= c< cBIT0 f0 cBIT0 b0 c< f0 b0 f1
+- |- ((\n. (((NUMERAL m) * (NUMERAL n)) = (NUMERAL (m * n)))) n)
+T * / c= c* cNUMERAL f0 cNUMERAL b0 cNUMERAL c* f0 b0 f1
+- |- ((\n. ((_0 EXP (BIT0 n)) = ((_0 EXP n) * (_0 EXP n)))) n)
+T * / c= cEXP c_0 cBIT0 b0 c* cEXP c_0 b0 cEXP c_0 b0 f0
+- |- ((!n. ((_0 EXP (BIT0 n)) = ((_0 EXP n) * (_0 EXP n)))) /\ ((!m. (!n. (((BIT0 m) EXP (BIT0 n)) = (((BIT0 m) EXP n) * ((BIT0 m) EXP n))))) /\ ((!m. (!n. (((BIT1 m) EXP (BIT0 n)) = (((BIT1 m) EXP n) * ((BIT1 m) EXP n))))) /\ ((!n. ((_0 EXP (BIT1 n)) = _0)) /\ ((!m. (!n. (((BIT0 m) EXP (BIT1 n)) = ((BIT0 m) * (((BIT0 m) EXP n) * ((BIT0 m) EXP n)))))) /\ (!m. (!n. (((BIT1 m) EXP (BIT1 n)) = ((BIT1 m) * (((BIT1 m) EXP n) * ((BIT1 m) EXP n)))))))))))
+T c/\ ! c= cEXP c_0 cBIT0 b0 c* cEXP c_0 b0 cEXP c_0 b0 c/\ ! ! c= cEXP cBIT0 b0 cBIT0 b1 c* cEXP cBIT0 b0 b1 cEXP cBIT0 b0 b1 c/\ ! ! c= cEXP cBIT1 b0 cBIT0 b1 c* cEXP cBIT1 b0 b1 cEXP cBIT1 b0 b1 c/\ ! c= cEXP c_0 cBIT1 b0 c_0 c/\ ! ! c= cEXP cBIT0 b0 cBIT1 b1 c* cBIT0 b0 c* cEXP cBIT0 b0 b1 cEXP cBIT0 b0 b1 ! ! c= cEXP cBIT1 b0 cBIT1 b1 c* cBIT1 b0 c* cEXP cBIT1 b0 b1 cEXP cBIT1 b0 b1
+- |- ((!n. ((_0 >= (BIT0 n)) = (_0 >= n))) /\ ((!n. (~ (_0 >= (BIT1 n)))) /\ ((!n. ((BIT0 n) >= _0)) /\ ((!n. ((BIT1 n) >= _0)) /\ ((!m. (!n. (((BIT0 n) >= (BIT0 m)) = (n >= m)))) /\ ((!m. (!n. (((BIT1 n) >= (BIT0 m)) = (n >= m)))) /\ ((!m. (!n. (((BIT0 n) >= (BIT1 m)) = (n > m)))) /\ (!m. (!n. (((BIT1 n) >= (BIT1 m)) = (n >= m)))))))))))
+T c/\ ! c= c>= c_0 cBIT0 b0 c>= c_0 b0 c/\ ! c~ c>= c_0 cBIT1 b0 c/\ ! c>= cBIT0 b0 c_0 c/\ ! c>= cBIT1 b0 c_0 c/\ ! ! c= c>= cBIT0 b1 cBIT0 b0 c>= b1 b0 c/\ ! ! c= c>= cBIT1 b1 cBIT0 b0 c>= b1 b0 c/\ ! ! c= c>= cBIT0 b1 cBIT1 b0 c> b1 b0 ! ! c= c>= cBIT1 b1 cBIT1 b0 c>= b1 b0
+- |- ((_0 < _0) = F)
+T c= c< c_0 c_0 cF
+- |- (((!n. (((BIT1 n) < _0) = F)) ==> ((\n. (((BIT1 n) < _0) = F)) n)) = ((\n. (((BIT1 n) < _0) = F)) n))
+T c= c==> ! c= c< cBIT1 b0 c_0 cF * / c= c< cBIT1 b0 c_0 cF f0 * / c= c< cBIT1 b0 c_0 cF f0
+- |- ((_0 + (BIT0 n)) = (BIT0 n))
+T c= c+ c_0 cBIT0 f0 cBIT0 f0
+- |- ((!m. (!n. (((BIT0 m) = (BIT0 n)) = (m = n)))) /\ ((!m. (!n. (((BIT0 m) = (BIT1 n)) = F))) /\ ((!m. (!n. (((BIT1 m) = (BIT0 n)) = F))) /\ (!m. (!n. (((BIT1 m) = (BIT1 n)) = (m = n)))))))
+T c/\ ! ! c= c= cBIT0 b0 cBIT0 b1 c= b0 b1 c/\ ! ! c= c= cBIT0 b0 cBIT1 b1 cF c/\ ! ! c= c= cBIT1 b0 cBIT0 b1 cF ! ! c= c= cBIT1 b0 cBIT1 b1 c= b0 b1
+- |- ((!m. (!n. (((BIT0 m) EXP (BIT1 n)) = ((BIT0 m) * (((BIT0 m) EXP n) * ((BIT0 m) EXP n)))))) /\ (!m. (!n. (((BIT1 m) EXP (BIT1 n)) = ((BIT1 m) * (((BIT1 m) EXP n) * ((BIT1 m) EXP n)))))))
+T c/\ ! ! c= cEXP cBIT0 b0 cBIT1 b1 c* cBIT0 b0 c* cEXP cBIT0 b0 b1 cEXP cBIT0 b0 b1 ! ! c= cEXP cBIT1 b0 cBIT1 b1 c* cBIT1 b0 c* cEXP cBIT1 b0 b1 cEXP cBIT1 b0 b1
+- |- ((\n. ((BIT0 n) >= _0)) n)
+T * / c>= cBIT0 b0 c_0 f0
+- |- (((BIT1 n) - _0) = (BIT1 n))
+T c= c- cBIT1 f0 c_0 cBIT1 f0
+- |- (((!n. ((_0 - (BIT0 n)) = _0)) ==> ((\n. ((_0 - (BIT0 n)) = _0)) n)) = ((\n. ((_0 - (BIT0 n)) = _0)) n))
+T c= c==> ! c= c- c_0 cBIT0 b0 c_0 * / c= c- c_0 cBIT0 b0 c_0 f0 * / c= c- c_0 cBIT0 b0 c_0 f0
+- |- (((!n. ((SUC (NUMERAL n)) = (NUMERAL (SUC n)))) ==> ((\n. ((SUC (NUMERAL n)) = (NUMERAL (SUC n)))) n)) = ((\n. ((SUC (NUMERAL n)) = (NUMERAL (SUC n)))) n))
+T c= c==> ! c= cSUC cNUMERAL b0 cNUMERAL cSUC b0 * / c= cSUC cNUMERAL b0 cNUMERAL cSUC b0 f0 * / c= cSUC cNUMERAL b0 cNUMERAL cSUC b0 f0
+- |- ((\m. (!n. (((BIT0 m) * (BIT0 n)) = (BIT0 (BIT0 (m * n)))))) m)
+T * / ! c= c* cBIT0 b0 cBIT0 b1 cBIT0 cBIT0 c* b0 b1 f0
+- |- ((!n. ((_0 + (BIT1 n)) = (BIT1 n))) /\ ((!n. (((BIT0 n) + _0) = (BIT0 n))) /\ ((!n. (((BIT1 n) + _0) = (BIT1 n))) /\ ((!m. (!n. (((BIT0 m) + (BIT0 n)) = (BIT0 (m + n))))) /\ ((!m. (!n. (((BIT0 m) + (BIT1 n)) = (BIT1 (m + n))))) /\ ((!m. (!n. (((BIT1 m) + (BIT0 n)) = (BIT1 (m + n))))) /\ (!m. (!n. (((BIT1 m) + (BIT1 n)) = (BIT0 (SUC (m + n))))))))))))
+T c/\ ! c= c+ c_0 cBIT1 b0 cBIT1 b0 c/\ ! c= c+ cBIT0 b0 c_0 cBIT0 b0 c/\ ! c= c+ cBIT1 b0 c_0 cBIT1 b0 c/\ ! ! c= c+ cBIT0 b0 cBIT0 b1 cBIT0 c+ b0 b1 c/\ ! ! c= c+ cBIT0 b0 cBIT1 b1 cBIT1 c+ b0 b1 c/\ ! ! c= c+ cBIT1 b0 cBIT0 b1 cBIT1 c+ b0 b1 ! ! c= c+ cBIT1 b0 cBIT1 b1 cBIT0 cSUC c+ b0 b1
+- |- (((!n. (((BIT1 n) <= _0) = F)) ==> ((\n. (((BIT1 n) <= _0) = F)) n)) = ((\n. (((BIT1 n) <= _0) = F)) n))
+T c= c==> ! c= c<= cBIT1 b0 c_0 cF * / c= c<= cBIT1 b0 c_0 cF f0 * / c= c<= cBIT1 b0 c_0 cF f0
+- |- ((\n. (((BIT1 n) >= (BIT1 m)) = (n >= m))) n)
+T * / c= c>= cBIT1 b0 cBIT1 f0 c>= b0 f0 f1
++ |- (((!n. (!p. (((m * n) = (m * p)) = ((m = (NUMERAL _0)) \/ (n = p))))) ==> ((\n. (!p. (((m * n) = (m * p)) = ((m = (NUMERAL _0)) \/ (n = p))))) n)) = ((\n. (!p. (((m * n) = (m * p)) = ((m = (NUMERAL _0)) \/ (n = p))))) n))
+T c= c==> ! ! c= c= c* f0 b0 c* f0 b1 c\/ c= f0 cNUMERAL c_0 c= b0 b1 * / ! c= c= c* f0 b0 c* f0 b1 c\/ c= f0 cNUMERAL c_0 c= b0 b1 f1 * / ! c= c= c* f0 b0 c* f0 b1 c\/ c= f0 cNUMERAL c_0 c= b0 b1 f1
+- |- ((!m. (!n. (((BIT0 n) >= (BIT0 m)) = (n >= m)))) /\ ((!m. (!n. (((BIT1 n) >= (BIT0 m)) = (n >= m)))) /\ ((!m. (!n. (((BIT0 n) >= (BIT1 m)) = (n > m)))) /\ (!m. (!n. (((BIT1 n) >= (BIT1 m)) = (n >= m)))))))
+T c/\ ! ! c= c>= cBIT0 b1 cBIT0 b0 c>= b1 b0 c/\ ! ! c= c>= cBIT1 b1 cBIT0 b0 c>= b1 b0 c/\ ! ! c= c>= cBIT0 b1 cBIT1 b0 c> b1 b0 ! ! c= c>= cBIT1 b1 cBIT1 b0 c>= b1 b0
+- |- ((\n. (~ (_0 >= (BIT1 n)))) n)
+T * / c~ c>= c_0 cBIT1 b0 f0
+- |- (((!n. ((_0 + (BIT0 n)) = (BIT0 n))) ==> ((\n. ((_0 + (BIT0 n)) = (BIT0 n))) n)) = ((\n. ((_0 + (BIT0 n)) = (BIT0 n))) n))
+T c= c==> ! c= c+ c_0 cBIT0 b0 cBIT0 b0 * / c= c+ c_0 cBIT0 b0 cBIT0 b0 f0 * / c= c+ c_0 cBIT0 b0 cBIT0 b0 f0
+- |- (((!n. (((BIT1 m) - (BIT0 n)) = (((COND (n <= m)) (BIT1 (m - n))) _0))) ==> ((\n. (((BIT1 m) - (BIT0 n)) = (((COND (n <= m)) (BIT1 (m - n))) _0))) n)) = ((\n. (((BIT1 m) - (BIT0 n)) = (((COND (n <= m)) (BIT1 (m - n))) _0))) n))
+T c= c==> ! c= c- cBIT1 f0 cBIT0 b0 cCOND c<= b0 f0 cBIT1 c- f0 b0 c_0 * / c= c- cBIT1 f0 cBIT0 b0 cCOND c<= b0 f0 cBIT1 c- f0 b0 c_0 f1 * / c= c- cBIT1 f0 cBIT0 b0 cCOND c<= b0 f0 cBIT1 c- f0 b0 c_0 f1
+- |- (((!m. (!n. (((BIT1 m) = (BIT0 n)) = F))) ==> ((\m. (!n. (((BIT1 m) = (BIT0 n)) = F))) m)) = ((\m. (!n. (((BIT1 m) = (BIT0 n)) = F))) m))
+T c= c==> ! ! c= c= cBIT1 b0 cBIT0 b1 cF * / ! c= c= cBIT1 b0 cBIT0 b1 cF f0 * / ! c= c= cBIT1 b0 cBIT0 b1 cF f0
+- |- ((\n. (((BIT1 m) - (BIT0 n)) = (((COND (n <= m)) (BIT1 (m - n))) _0))) n)
+T * / c= c- cBIT1 f0 cBIT0 b0 cCOND c<= b0 f0 cBIT1 c- f0 b0 c_0 f1
+- |- ((SUC (BIT1 n)) = (BIT0 (SUC n)))
+T c= cSUC cBIT1 f0 cBIT0 cSUC f0
+- |- (((BIT1 m) < (BIT1 n)) = (m < n))
+T c= c< cBIT1 f0 cBIT1 f1 c< f0 f1
++ |- ((t ==> t) = T)
+T c= c==> f0 f0 cT
+- |- ((\m. (!n. (((BIT1 m) - (BIT0 n)) = (((COND (n <= m)) (BIT1 (m - n))) _0)))) m)
+T * / ! c= c- cBIT1 b0 cBIT0 b1 cCOND c<= b1 b0 cBIT1 c- b0 b1 c_0 f0
+- |- (((!m. (!n. (((BIT1 m) * (BIT1 n)) = ((BIT1 m) + ((BIT0 n) + (BIT0 (BIT0 (m * n)))))))) ==> ((\m. (!n. (((BIT1 m) * (BIT1 n)) = ((BIT1 m) + ((BIT0 n) + (BIT0 (BIT0 (m * n)))))))) m)) = ((\m. (!n. (((BIT1 m) * (BIT1 n)) = ((BIT1 m) + ((BIT0 n) + (BIT0 (BIT0 (m * n)))))))) m))
+T c= c==> ! ! c= c* cBIT1 b0 cBIT1 b1 c+ cBIT1 b0 c+ cBIT0 b1 cBIT0 cBIT0 c* b0 b1 * / ! c= c* cBIT1 b0 cBIT1 b1 c+ cBIT1 b0 c+ cBIT0 b1 cBIT0 cBIT0 c* b0 b1 f0 * / ! c= c* cBIT1 b0 cBIT1 b1 c+ cBIT1 b0 c+ cBIT0 b1 cBIT0 cBIT0 c* b0 b1 f0
+- |- ((t \/ t) = t)
+T c= c\/ f0 f0 f0
+- |- ((NUMERAL (NUMERAL _0)) = (NUMERAL _0))
+T c= cNUMERAL cNUMERAL c_0 cNUMERAL c_0
+- |- (((!n. ((PRE (BIT1 n)) = (BIT0 n))) ==> ((\n. ((PRE (BIT1 n)) = (BIT0 n))) n)) = ((\n. ((PRE (BIT1 n)) = (BIT0 n))) n))
+T c= c==> ! c= cPRE cBIT1 b0 cBIT0 b0 * / c= cPRE cBIT1 b0 cBIT0 b0 f0 * / c= cPRE cBIT1 b0 cBIT0 b0 f0
+- |- (((!n. (((NUMERAL m) + (NUMERAL n)) = (NUMERAL (m + n)))) ==> ((\n. (((NUMERAL m) + (NUMERAL n)) = (NUMERAL (m + n)))) n)) = ((\n. (((NUMERAL m) + (NUMERAL n)) = (NUMERAL (m + n)))) n))
+T c= c==> ! c= c+ cNUMERAL f0 cNUMERAL b0 cNUMERAL c+ f0 b0 * / c= c+ cNUMERAL f0 cNUMERAL b0 cNUMERAL c+ f0 b0 f1 * / c= c+ cNUMERAL f0 cNUMERAL b0 cNUMERAL c+ f0 b0 f1
+- |- (((BIT1 m) <= (BIT1 n)) = (m <= n))
+T c= c<= cBIT1 f0 cBIT1 f1 c<= f0 f1
+- |- (((!m. (!n. (((BIT1 m) - (BIT0 n)) = (((COND (n <= m)) (BIT1 (m - n))) _0)))) ==> ((\m. (!n. (((BIT1 m) - (BIT0 n)) = (((COND (n <= m)) (BIT1 (m - n))) _0)))) m)) = ((\m. (!n. (((BIT1 m) - (BIT0 n)) = (((COND (n <= m)) (BIT1 (m - n))) _0)))) m))
+T c= c==> ! ! c= c- cBIT1 b0 cBIT0 b1 cCOND c<= b1 b0 cBIT1 c- b0 b1 c_0 * / ! c= c- cBIT1 b0 cBIT0 b1 cCOND c<= b1 b0 cBIT1 c- b0 b1 c_0 f0 * / ! c= c- cBIT1 b0 cBIT0 b1 cCOND c<= b1 b0 cBIT1 c- b0 b1 c_0 f0
+- |- (((EVEN _0) = T) /\ ((!n. ((EVEN (BIT0 n)) = T)) /\ (!n. ((EVEN (BIT1 n)) = F))))
+T c/\ c= cEVEN c_0 cT c/\ ! c= cEVEN cBIT0 b0 cT ! c= cEVEN cBIT1 b0 cF
+- |- (((!m. (!n. (((BIT1 m) * (BIT0 n)) = ((BIT0 n) + (BIT0 (BIT0 (m * n))))))) ==> ((\m. (!n. (((BIT1 m) * (BIT0 n)) = ((BIT0 n) + (BIT0 (BIT0 (m * n))))))) m)) = ((\m. (!n. (((BIT1 m) * (BIT0 n)) = ((BIT0 n) + (BIT0 (BIT0 (m * n))))))) m))
+T c= c==> ! ! c= c* cBIT1 b0 cBIT0 b1 c+ cBIT0 b1 cBIT0 cBIT0 c* b0 b1 * / ! c= c* cBIT1 b0 cBIT0 b1 c+ cBIT0 b1 cBIT0 cBIT0 c* b0 b1 f0 * / ! c= c* cBIT1 b0 cBIT0 b1 c+ cBIT0 b1 cBIT0 cBIT0 c* b0 b1 f0
++ |- (((!n. (!p. (((m + p) = (n + p)) = (m = n)))) ==> ((\n. (!p. (((m + p) = (n + p)) = (m = n)))) n)) = ((\n. (!p. (((m + p) = (n + p)) = (m = n)))) n))
+T c= c==> ! ! c= c= c+ f0 b1 c+ b0 b1 c= f0 b0 * / ! c= c= c+ f0 b1 c+ b0 b1 c= f0 b0 f1 * / ! c= c= c+ f0 b1 c+ b0 b1 c= f0 b0 f1
++ |- (((!x1. (!y1. (!x2. (!y2. ((((NUMPAIR x1) y1) = ((NUMPAIR x2) y2)) ==> (x1 = x2)))))) ==> ((\x1. (!y1. (!x2. (!y2. ((((NUMPAIR x1) y1) = ((NUMPAIR x2) y2)) ==> (x1 = x2)))))) x1)) = ((\x1. (!y1. (!x2. (!y2. ((((NUMPAIR x1) y1) = ((NUMPAIR x2) y2)) ==> (x1 = x2)))))) x1))
+T c= c==> ! ! ! ! c==> c= cNUMPAIR b0 b1 cNUMPAIR b2 b3 c= b0 b2 * / ! ! ! c==> c= cNUMPAIR b0 b1 cNUMPAIR b2 b3 c= b0 b2 f0 * / ! ! ! c==> c= cNUMPAIR b0 b1 cNUMPAIR b2 b3 c= b0 b2 f0
++ |- (((((NUMPAIR x1) y1) = ((NUMPAIR x2) y2)) ==> ((x1 = x2) /\ (y1 = y2))) /\ (((x1 = x2) /\ (y1 = y2)) ==> (((NUMPAIR x1) y1) = ((NUMPAIR x2) y2))))
+T c/\ c==> c= cNUMPAIR f0 f1 cNUMPAIR f2 f3 c/\ c= f0 f2 c= f1 f3 c==> c/\ c= f0 f2 c= f1 f3 c= cNUMPAIR f0 f1 cNUMPAIR f2 f3
++ |- (((!p. (((m + p) = (n + p)) = (m = n))) ==> ((\p. (((m + p) = (n + p)) = (m = n))) p)) = ((\p. (((m + p) = (n + p)) = (m = n))) p))
+T c= c==> ! c= c= c+ f0 b0 c+ f1 b0 c= f0 f1 * / c= c= c+ f0 b0 c+ f1 b0 c= f0 f1 f2 * / c= c= c+ f0 b0 c+ f1 b0 c= f0 f1 f2
++ |- (((_0 = _0) = T) /\ ((!n. (((BIT0 n) = _0) = (n = _0))) /\ ((!n. (((BIT1 n) = _0) = F)) /\ ((!n. ((_0 = (BIT0 n)) = (_0 = n))) /\ ((!n. ((_0 = (BIT1 n)) = F)) /\ ((!m. (!n. (((BIT0 m) = (BIT0 n)) = (m = n)))) /\ ((!m. (!n. (((BIT0 m) = (BIT1 n)) = F))) /\ ((!m. (!n. (((BIT1 m) = (BIT0 n)) = F))) /\ (!m. (!n. (((BIT1 m) = (BIT1 n)) = (m = n))))))))))))
+T c/\ c= c= c_0 c_0 cT c/\ ! c= c= cBIT0 b0 c_0 c= b0 c_0 c/\ ! c= c= cBIT1 b0 c_0 cF c/\ ! c= c= c_0 cBIT0 b0 c= c_0 b0 c/\ ! c= c= c_0 cBIT1 b0 cF c/\ ! ! c= c= cBIT0 b0 cBIT0 b1 c= b0 b1 c/\ ! ! c= c= cBIT0 b0 cBIT1 b1 cF c/\ ! ! c= c= cBIT1 b0 cBIT0 b1 cF ! ! c= c= cBIT1 b0 cBIT1 b1 c= b0 b1
++ (((NUMPAIR x1) y1) = ((NUMPAIR x2) y2)) |- (((NUMPAIR x2) y1) = ((NUMPAIR x2) y2))
+T c==> c= cNUMPAIR f0 f1 cNUMPAIR f2 f3 c= cNUMPAIR f2 f1 cNUMPAIR f2 f3
++ |- ((\n. (((NUMERAL m) = (NUMERAL n)) = (m = n))) n)
+T * / c= c= cNUMERAL f0 cNUMERAL b0 c= f0 b0 f1
++ |- (((!y2. ((((NUMPAIR x1) y1) = ((NUMPAIR x2) y2)) ==> (x1 = x2))) ==> ((\y2. ((((NUMPAIR x1) y1) = ((NUMPAIR x2) y2)) ==> (x1 = x2))) y2)) = ((\y2. ((((NUMPAIR x1) y1) = ((NUMPAIR x2) y2)) ==> (x1 = x2))) y2))
+T c= c==> ! c==> c= cNUMPAIR f0 f1 cNUMPAIR f2 b0 c= f0 f2 * / c==> c= cNUMPAIR f0 f1 cNUMPAIR f2 b0 c= f0 f2 f3 * / c==> c= cNUMPAIR f0 f1 cNUMPAIR f2 b0 c= f0 f2 f3
++ |- ((\y2. ((((NUMPAIR x1) y1) = ((NUMPAIR x2) y2)) ==> (x1 = x2))) y2)
+T * / c==> c= cNUMPAIR f0 f1 cNUMPAIR f2 b0 c= f0 f2 f3
++ |- (((!n. (((m EXP n) = (NUMERAL _0)) = ((m = (NUMERAL _0)) /\ (~ (n = (NUMERAL _0)))))) ==> ((\n. (((m EXP n) = (NUMERAL _0)) = ((m = (NUMERAL _0)) /\ (~ (n = (NUMERAL _0)))))) n)) = ((\n. (((m EXP n) = (NUMERAL _0)) = ((m = (NUMERAL _0)) /\ (~ (n = (NUMERAL _0)))))) n))
+T c= c==> ! c= c= cEXP f0 b0 cNUMERAL c_0 c/\ c= f0 cNUMERAL c_0 c~ c= b0 cNUMERAL c_0 * / c= c= cEXP f0 b0 cNUMERAL c_0 c/\ c= f0 cNUMERAL c_0 c~ c= b0 cNUMERAL c_0 f1 * / c= c= cEXP f0 b0 cNUMERAL c_0 c/\ c= f0 cNUMERAL c_0 c~ c= b0 cNUMERAL c_0 f1
++ |- (((((NUMERAL (BIT0 (BIT1 _0))) EXP x2) * (((NUMERAL (BIT0 (BIT1 _0))) * y1) + (NUMERAL (BIT1 _0)))) = (((NUMERAL (BIT0 (BIT1 _0))) EXP x2) * (((NUMERAL (BIT0 (BIT1 _0))) * y2) + (NUMERAL (BIT1 _0))))) ==> (y1 = y2))
+T c==> c= c* cEXP cNUMERAL cBIT0 cBIT1 c_0 f0 c+ c* cNUMERAL cBIT0 cBIT1 c_0 f1 cNUMERAL cBIT1 c_0 c* cEXP cNUMERAL cBIT0 cBIT1 c_0 f0 c+ c* cNUMERAL cBIT0 cBIT1 c_0 f2 cNUMERAL cBIT1 c_0 c= f1 f2
++ |- (((!n. (((BIT1 n) = _0) = F)) ==> ((\n. (((BIT1 n) = _0) = F)) n)) = ((\n. (((BIT1 n) = _0) = F)) n))
+T c= c==> ! c= c= cBIT1 b0 c_0 cF * / c= c= cBIT1 b0 c_0 cF f0 * / c= c= cBIT1 b0 c_0 cF f0
++ |- ((!y2. ((((NUMPAIR x1) y1) = ((NUMPAIR x2) y2)) = ((x1 = x2) /\ (y1 = y2)))) = T)
+T c= ! c= c= cNUMPAIR f0 f1 cNUMPAIR f2 b0 c/\ c= f0 f2 c= f1 b0 cT
++ |- (((!n. (((BIT0 n) = _0) = (n = _0))) ==> ((\n. (((BIT0 n) = _0) = (n = _0))) n)) = ((\n. (((BIT0 n) = _0) = (n = _0))) n))
+T c= c==> ! c= c= cBIT0 b0 c_0 c= b0 c_0 * / c= c= cBIT0 b0 c_0 c= b0 c_0 f0 * / c= c= cBIT0 b0 c_0 c= b0 c_0 f0
++ |- ((\n. (((BIT0 n) = _0) = (n = _0))) n)
+T * / c= c= cBIT0 b0 c_0 c= b0 c_0 f0
++ |- (((!y1. (!x2. (!y2. ((((NUMPAIR x1) y1) = ((NUMPAIR x2) y2)) ==> (x1 = x2))))) ==> ((\y1. (!x2. (!y2. ((((NUMPAIR x1) y1) = ((NUMPAIR x2) y2)) ==> (x1 = x2))))) y1)) = ((\y1. (!x2. (!y2. ((((NUMPAIR x1) y1) = ((NUMPAIR x2) y2)) ==> (x1 = x2))))) y1))
+T c= c==> ! ! ! c==> c= cNUMPAIR f0 b0 cNUMPAIR b1 b2 c= f0 b1 * / ! ! c==> c= cNUMPAIR f0 b0 cNUMPAIR b1 b2 c= f0 b1 f1 * / ! ! c==> c= cNUMPAIR f0 b0 cNUMPAIR b1 b2 c= f0 b1 f1
++ |- ((!n. (((BIT0 n) = _0) = (n = _0))) /\ ((!n. (((BIT1 n) = _0) = F)) /\ ((!n. ((_0 = (BIT0 n)) = (_0 = n))) /\ ((!n. ((_0 = (BIT1 n)) = F)) /\ ((!m. (!n. (((BIT0 m) = (BIT0 n)) = (m = n)))) /\ ((!m. (!n. (((BIT0 m) = (BIT1 n)) = F))) /\ ((!m. (!n. (((BIT1 m) = (BIT0 n)) = F))) /\ (!m. (!n. (((BIT1 m) = (BIT1 n)) = (m = n)))))))))))
+T c/\ ! c= c= cBIT0 b0 c_0 c= b0 c_0 c/\ ! c= c= cBIT1 b0 c_0 cF c/\ ! c= c= c_0 cBIT0 b0 c= c_0 b0 c/\ ! c= c= c_0 cBIT1 b0 cF c/\ ! ! c= c= cBIT0 b0 cBIT0 b1 c= b0 b1 c/\ ! ! c= c= cBIT0 b0 cBIT1 b1 cF c/\ ! ! c= c= cBIT1 b0 cBIT0 b1 cF ! ! c= c= cBIT1 b0 cBIT1 b1 c= b0 b1
++ |- (((BIT1 n) = _0) = F)
+T c= c= cBIT1 f0 c_0 cF
++ |- (((!x. (!y. (((NUMPAIR x) y) = (((NUMERAL (BIT0 (BIT1 _0))) EXP x) * (((NUMERAL (BIT0 (BIT1 _0))) * y) + (NUMERAL (BIT1 _0))))))) ==> ((\x. (!y. (((NUMPAIR x) y) = (((NUMERAL (BIT0 (BIT1 _0))) EXP x) * (((NUMERAL (BIT0 (BIT1 _0))) * y) + (NUMERAL (BIT1 _0))))))) x)) = ((\x. (!y. (((NUMPAIR x) y) = (((NUMERAL (BIT0 (BIT1 _0))) EXP x) * (((NUMERAL (BIT0 (BIT1 _0))) * y) + (NUMERAL (BIT1 _0))))))) x))
+T c= c==> ! ! c= cNUMPAIR b0 b1 c* cEXP cNUMERAL cBIT0 cBIT1 c_0 b0 c+ c* cNUMERAL cBIT0 cBIT1 c_0 b1 cNUMERAL cBIT1 c_0 * / ! c= cNUMPAIR b0 b1 c* cEXP cNUMERAL cBIT0 cBIT1 c_0 b0 c+ c* cNUMERAL cBIT0 cBIT1 c_0 b1 cNUMERAL cBIT1 c_0 f0 * / ! c= cNUMPAIR b0 b1 c* cEXP cNUMERAL cBIT0 cBIT1 c_0 b0 c+ c* cNUMERAL cBIT0 cBIT1 c_0 b1 cNUMERAL cBIT1 c_0 f0
++ (((NUMPAIR x1) y1) = ((NUMPAIR x2) y2)) |- ((((NUMPAIR x1) y1) = ((NUMPAIR x2) y2)) = (((NUMPAIR x2) y1) = ((NUMPAIR x2) y2)))
+T c==> c= cNUMPAIR f0 f1 cNUMPAIR f2 f3 c= c= cNUMPAIR f0 f1 cNUMPAIR f2 f3 c= cNUMPAIR f2 f1 cNUMPAIR f2 f3
++ |- (((!m. (!n. (!p. (((m + p) = (n + p)) = (m = n))))) ==> ((\m. (!n. (!p. (((m + p) = (n + p)) = (m = n))))) m)) = ((\m. (!n. (!p. (((m + p) = (n + p)) = (m = n))))) m))
+T c= c==> ! ! ! c= c= c+ b0 b2 c+ b1 b2 c= b0 b1 * / ! ! c= c= c+ b0 b2 c+ b1 b2 c= b0 b1 f0 * / ! ! c= c= c+ b0 b2 c+ b1 b2 c= b0 b1 f0
++ |- ((x = x) = T)
+T c= c= f0 f0 cT
++ (((NUMPAIR x1) y1) = ((NUMPAIR x2) y2)) |- (((((NUMPAIR x2) y1) = ((NUMPAIR x2) y2)) ==> ((x2 = x2) /\ (y1 = y2))) = ((x2 = x2) /\ (y1 = y2)))
+T c==> c= cNUMPAIR f0 f1 cNUMPAIR f2 f3 c= c==> c= cNUMPAIR f2 f1 cNUMPAIR f2 f3 c/\ c= f2 f2 c= f1 f3 c/\ c= f2 f2 c= f1 f3
++ ((x1 = x2) /\ (y1 = y2)) |- (((x1 = x2) /\ (y1 = y2)) /\ (((NUMPAIR x1) y1) = ((NUMPAIR x2) y2)))
+T c==> c/\ c= f0 f1 c= f2 f3 c/\ c/\ c= f0 f1 c= f2 f3 c= cNUMPAIR f0 f2 cNUMPAIR f1 f3
++ |- ((((NUMPAIR x2) y1) = ((NUMPAIR x2) y2)) ==> ((x2 = x2) /\ (y1 = y2)))
+T c==> c= cNUMPAIR f0 f1 cNUMPAIR f0 f2 c/\ c= f0 f0 c= f1 f2
++ |- ((\m. (!n. (!p. (((m + p) = (n + p)) = (m = n))))) m)
+T * / ! ! c= c= c+ b0 b2 c+ b1 b2 c= b0 b1 f0
++ |- (((BIT0 n) = _0) = (n = _0))
+T c= c= cBIT0 f0 c_0 c= f0 c_0
++ |- ((\n. (!p. (((m + p) = (n + p)) = (m = n)))) n)
+T * / ! c= c= c+ f0 b1 c+ b0 b1 c= f0 b0 f1
++ |- ((\n. (((m EXP n) = (NUMERAL _0)) = ((m = (NUMERAL _0)) /\ (~ (n = (NUMERAL _0)))))) n)
+T * / c= c= cEXP f0 b0 cNUMERAL c_0 c/\ c= f0 cNUMERAL c_0 c~ c= b0 cNUMERAL c_0 f1
++ (((NUMPAIR x1) y1) = ((NUMPAIR x2) y2)) |- (((x1 = x2) /\ (y1 = y2)) = ((x2 = x2) /\ (y1 = y2)))
+T c==> c= cNUMPAIR f0 f1 cNUMPAIR f2 f3 c= c/\ c= f0 f2 c= f1 f3 c/\ c= f2 f2 c= f1 f3
++ |- ((\m. (!n. (((m EXP n) = (NUMERAL _0)) = ((m = (NUMERAL _0)) /\ (~ (n = (NUMERAL _0))))))) m)
+T * / ! c= c= cEXP b0 b1 cNUMERAL c_0 c/\ c= b0 cNUMERAL c_0 c~ c= b1 cNUMERAL c_0 f0
++ |- ((((((NUMERAL (BIT0 (BIT1 _0))) EXP x2) * (((NUMERAL (BIT0 (BIT1 _0))) * y1) + (NUMERAL (BIT1 _0)))) = (((NUMERAL (BIT0 (BIT1 _0))) EXP x2) * (((NUMERAL (BIT0 (BIT1 _0))) * y2) + (NUMERAL (BIT1 _0))))) ==> (y1 = y2)) = ((((NUMPAIR x2) y1) = ((NUMPAIR x2) y2)) ==> ((x2 = x2) /\ (y1 = y2))))
+T c= c==> c= c* cEXP cNUMERAL cBIT0 cBIT1 c_0 f0 c+ c* cNUMERAL cBIT0 cBIT1 c_0 f1 cNUMERAL cBIT1 c_0 c* cEXP cNUMERAL cBIT0 cBIT1 c_0 f0 c+ c* cNUMERAL cBIT0 cBIT1 c_0 f2 cNUMERAL cBIT1 c_0 c= f1 f2 c==> c= cNUMPAIR f0 f1 cNUMPAIR f0 f2 c/\ c= f0 f0 c= f1 f2
++ |- (((x1 = x2) /\ (y1 = y2)) ==> (((NUMPAIR x1) y1) = ((NUMPAIR x2) y2)))
+T c==> c/\ c= f0 f1 c= f2 f3 c= cNUMPAIR f0 f2 cNUMPAIR f1 f3
++ |- ((\m. (!n. (((NUMERAL m) = (NUMERAL n)) = (m = n)))) m)
+T * / ! c= c= cNUMERAL b0 cNUMERAL b1 c= b0 b1 f0
++ |- ((\n. (((BIT1 n) = _0) = F)) n)
+T * / c= c= cBIT1 b0 c_0 cF f0
++ (((NUMPAIR x1) y1) = ((NUMPAIR x2) y2)) |- ((x2 = x2) /\ (y1 = y2))
+T c==> c= cNUMPAIR f0 f1 cNUMPAIR f2 f3 c/\ c= f2 f2 c= f1 f3
++ |- ((\p. (((m + p) = (n + p)) = (m = n))) p)
+T * / c= c= c+ f0 b0 c+ f1 b0 c= f0 f1 f2
++ |- (((!m. (!n. (((m EXP n) = (NUMERAL _0)) = ((m = (NUMERAL _0)) /\ (~ (n = (NUMERAL _0))))))) ==> ((\m. (!n. (((m EXP n) = (NUMERAL _0)) = ((m = (NUMERAL _0)) /\ (~ (n = (NUMERAL _0))))))) m)) = ((\m. (!n. (((m EXP n) = (NUMERAL _0)) = ((m = (NUMERAL _0)) /\ (~ (n = (NUMERAL _0))))))) m))
+T c= c==> ! ! c= c= cEXP b0 b1 cNUMERAL c_0 c/\ c= b0 cNUMERAL c_0 c~ c= b1 cNUMERAL c_0 * / ! c= c= cEXP b0 b1 cNUMERAL c_0 c/\ c= b0 cNUMERAL c_0 c~ c= b1 cNUMERAL c_0 f0 * / ! c= c= cEXP b0 b1 cNUMERAL c_0 c/\ c= b0 cNUMERAL c_0 c~ c= b1 cNUMERAL c_0 f0
++ |- ((\y. (((NUMPAIR x) y) = (((NUMERAL (BIT0 (BIT1 _0))) EXP x) * (((NUMERAL (BIT0 (BIT1 _0))) * y) + (NUMERAL (BIT1 _0)))))) y)
+T * / c= cNUMPAIR f0 b0 c* cEXP cNUMERAL cBIT0 cBIT1 c_0 f0 c+ c* cNUMERAL cBIT0 cBIT1 c_0 b0 cNUMERAL cBIT1 c_0 f1
++ |- (((!m. (!n. (((NUMERAL m) = (NUMERAL n)) = (m = n)))) ==> ((\m. (!n. (((NUMERAL m) = (NUMERAL n)) = (m = n)))) m)) = ((\m. (!n. (((NUMERAL m) = (NUMERAL n)) = (m = n)))) m))
+T c= c==> ! ! c= c= cNUMERAL b0 cNUMERAL b1 c= b0 b1 * / ! c= c= cNUMERAL b0 cNUMERAL b1 c= b0 b1 f0 * / ! c= c= cNUMERAL b0 cNUMERAL b1 c= b0 b1 f0
++ |- ((F /\ t) = F)
+T c= c/\ cF f0 cF
++ |- (((!m. (!n. (!p. (((m * n) = (m * p)) = ((m = (NUMERAL _0)) \/ (n = p)))))) ==> ((\m. (!n. (!p. (((m * n) = (m * p)) = ((m = (NUMERAL _0)) \/ (n = p)))))) m)) = ((\m. (!n. (!p. (((m * n) = (m * p)) = ((m = (NUMERAL _0)) \/ (n = p)))))) m))
+T c= c==> ! ! ! c= c= c* b0 b1 c* b0 b2 c\/ c= b0 cNUMERAL c_0 c= b1 b2 * / ! ! c= c= c* b0 b1 c* b0 b2 c\/ c= b0 cNUMERAL c_0 c= b1 b2 f0 * / ! ! c= c= c* b0 b1 c* b0 b2 c\/ c= b0 cNUMERAL c_0 c= b1 b2 f0
++ |- (((((NUMPAIR x1) y1) = ((NUMPAIR x2) y2)) = ((x1 = x2) /\ (y1 = y2))) = T)
+T c= c= c= cNUMPAIR f0 f1 cNUMPAIR f2 f3 c/\ c= f0 f2 c= f1 f3 cT
++ |- (((NUMERAL m) = (NUMERAL n)) = (m = n))
+T c= c= cNUMERAL f0 cNUMERAL f1 c= f0 f1
++ |- (((!n. (((NUMERAL m) = (NUMERAL n)) = (m = n))) ==> ((\n. (((NUMERAL m) = (NUMERAL n)) = (m = n))) n)) = ((\n. (((NUMERAL m) = (NUMERAL n)) = (m = n))) n))
+T c= c==> ! c= c= cNUMERAL f0 cNUMERAL b0 c= f0 b0 * / c= c= cNUMERAL f0 cNUMERAL b0 c= f0 b0 f1 * / c= c= cNUMERAL f0 cNUMERAL b0 c= f0 b0 f1
++ |- ((F \/ t) = t)
+T c= c\/ cF f0 f0
++ |- (((!x2. (!y2. ((((NUMPAIR x1) y1) = ((NUMPAIR x2) y2)) ==> (x1 = x2)))) ==> ((\x2. (!y2. ((((NUMPAIR x1) y1) = ((NUMPAIR x2) y2)) ==> (x1 = x2)))) x2)) = ((\x2. (!y2. ((((NUMPAIR x1) y1) = ((NUMPAIR x2) y2)) ==> (x1 = x2)))) x2))
+T c= c==> ! ! c==> c= cNUMPAIR f0 f1 cNUMPAIR b0 b1 c= f0 b0 * / ! c==> c= cNUMPAIR f0 f1 cNUMPAIR b0 b1 c= f0 b0 f2 * / ! c==> c= cNUMPAIR f0 f1 cNUMPAIR b0 b1 c= f0 b0 f2
++ (((NUMPAIR x1) y1) = ((NUMPAIR x2) y2)) |- ((((NUMPAIR x1) y1) = ((NUMPAIR x2) y2)) /\ ((x1 = x2) /\ (y1 = y2)))
+T c==> c= cNUMPAIR f0 f1 cNUMPAIR f2 f3 c/\ c= cNUMPAIR f0 f1 cNUMPAIR f2 f3 c/\ c= f0 f2 c= f1 f3
++ |- ((\m. (!n. (!p. (((m * n) = (m * p)) = ((m = (NUMERAL _0)) \/ (n = p)))))) m)
+T * / ! ! c= c= c* b0 b1 c* b0 b2 c\/ c= b0 cNUMERAL c_0 c= b1 b2 f0
++ (((NUMPAIR x1) y1) = ((NUMPAIR x2) y2)) |- (((x2 = x2) /\ (y1 = y2)) = ((x1 = x2) /\ (y1 = y2)))
+T c==> c= cNUMPAIR f0 f1 cNUMPAIR f2 f3 c= c/\ c= f2 f2 c= f1 f3 c/\ c= f0 f2 c= f1 f3
++ |- ((((NUMPAIR x1) y1) = ((NUMPAIR x2) y2)) ==> ((x1 = x2) /\ (y1 = y2)))
+T c==> c= cNUMPAIR f0 f1 cNUMPAIR f2 f3 c/\ c= f0 f2 c= f1 f3
++ |- ((!y1. (!x2. (!y2. ((((NUMPAIR x1) y1) = ((NUMPAIR x2) y2)) = ((x1 = x2) /\ (y1 = y2)))))) = T)
+T c= ! ! ! c= c= cNUMPAIR f0 b0 cNUMPAIR b1 b2 c/\ c= f0 b1 c= b0 b2 cT
++ |- ((\x2. (!y2. ((((NUMPAIR x1) y1) = ((NUMPAIR x2) y2)) ==> (x1 = x2)))) x2)
+T * / ! c==> c= cNUMPAIR f0 f1 cNUMPAIR b0 b1 c= f0 b0 f2
++ |- ((\x1. (!y1. (!x2. (!y2. ((((NUMPAIR x1) y1) = ((NUMPAIR x2) y2)) ==> (x1 = x2)))))) x1)
+T * / ! ! ! c==> c= cNUMPAIR b0 b1 cNUMPAIR b2 b3 c= b0 b2 f0
++ |- ((((x1 = x2) /\ (y1 = y2)) ==> (((NUMPAIR x1) y1) = ((NUMPAIR x2) y2))) = (((((NUMPAIR x1) y1) = ((NUMPAIR x2) y2)) ==> ((x1 = x2) /\ (y1 = y2))) /\ (((x1 = x2) /\ (y1 = y2)) ==> (((NUMPAIR x1) y1) = ((NUMPAIR x2) y2)))))
+T c= c==> c/\ c= f0 f1 c= f2 f3 c= cNUMPAIR f0 f2 cNUMPAIR f1 f3 c/\ c==> c= cNUMPAIR f0 f2 cNUMPAIR f1 f3 c/\ c= f0 f1 c= f2 f3 c==> c/\ c= f0 f1 c= f2 f3 c= cNUMPAIR f0 f2 cNUMPAIR f1 f3
++ |- ((\n. (!p. (((m * n) = (m * p)) = ((m = (NUMERAL _0)) \/ (n = p))))) n)
+T * / ! c= c= c* f0 b0 c* f0 b1 c\/ c= f0 cNUMERAL c_0 c= b0 b1 f1
++ |- ((T /\ t) = t)
+T c= c/\ cT f0 f0
++ |- ((\p. (((m * n) = (m * p)) = ((m = (NUMERAL _0)) \/ (n = p)))) p)
+T * / c= c= c* f0 f1 c* f0 b0 c\/ c= f0 cNUMERAL c_0 c= f1 b0 f2
++ |- (T = (((((NUMERAL (BIT0 (BIT1 _0))) EXP x2) * (((NUMERAL (BIT0 (BIT1 _0))) * y1) + (NUMERAL (BIT1 _0)))) = (((NUMERAL (BIT0 (BIT1 _0))) EXP x2) * (((NUMERAL (BIT0 (BIT1 _0))) * y2) + (NUMERAL (BIT1 _0))))) ==> (y1 = y2)))
+T c= cT c==> c= c* cEXP cNUMERAL cBIT0 cBIT1 c_0 f0 c+ c* cNUMERAL cBIT0 cBIT1 c_0 f1 cNUMERAL cBIT1 c_0 c* cEXP cNUMERAL cBIT0 cBIT1 c_0 f0 c+ c* cNUMERAL cBIT0 cBIT1 c_0 f2 cNUMERAL cBIT1 c_0 c= f1 f2
++ |- ((\x. (!y. (((NUMPAIR x) y) = (((NUMERAL (BIT0 (BIT1 _0))) EXP x) * (((NUMERAL (BIT0 (BIT1 _0))) * y) + (NUMERAL (BIT1 _0))))))) x)
+T * / ! c= cNUMPAIR b0 b1 c* cEXP cNUMERAL cBIT0 cBIT1 c_0 b0 c+ c* cNUMERAL cBIT0 cBIT1 c_0 b1 cNUMERAL cBIT1 c_0 f0

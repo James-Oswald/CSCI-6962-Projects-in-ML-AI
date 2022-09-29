@@ -1,0 +1,117 @@
+N Tame_list.mem_fst_setFinal
+C |- (!vs. (!v. (!f. (((filter (\f. ((MEM v) (FST f)))) (((replace f) ((CONS (setFinal f)) NIL)) vs)) = (((replace f) ((CONS (setFinal f)) NIL)) ((filter (\f. ((MEM v) (FST f)))) vs))))))
+T c= cfilter / cMEM f0 cFST b0 creplace f1 cCONS csetFinal f1 cNIL f2 creplace f1 cCONS csetFinal f1 cNIL cfilter / cMEM f0 cFST b0 f2
+D TRUTH
+A |- T
+T cT
+D COND_CLAUSES
+A |- (!t1. (!t2. (((((COND T) t1) t2) = t1) /\ ((((COND F) t1) t2) = t2))))
+T c/\ c= cCOND cT f0 f1 f0 c= cCOND cF f0 f1 f1
+D COND_ELIM_THM
+A |- ((P (((COND c) x) y)) = ((c ==> (P x)) /\ ((~ c) ==> (P y))))
+T c= * f0 cCOND f1 f2 f3 c/\ c==> f1 * f0 f2 c==> c~ f1 * f0 f3
+D list_INDUCT
+A |- (!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x))))
+T c==> c/\ * f0 cNIL ! ! c==> * f0 b1 * f0 cCONS b0 b1 ! * f0 b0
+D APPEND_SING
+A |- (!h. (!t. (((APPEND ((CONS h) NIL)) t) = ((CONS h) t))))
+T c= cAPPEND cCONS f0 cNIL f1 cCONS f0 f1
+D Tame_defs.replace
+A |- (((((replace x) ys) NIL) = NIL) /\ ((((replace x) ys) ((CONS z) zs)) = (((COND (z = x)) ((APPEND ys) zs)) ((CONS z) (((replace x) ys) zs)))))
+T c/\ c= creplace f0 f1 cNIL cNIL c= creplace f0 f1 cCONS f2 f3 cCOND c= f2 f0 cAPPEND f1 f3 cCONS f2 creplace f0 f1 f3
+D Seq.filter_nil
+A |- (!a. (((filter a) NIL) = NIL))
+T c= cfilter f0 cNIL cNIL
+D Seq.filter_cons
+A |- (!a. (!x. (!t. (((filter a) ((CONS x) t)) = (((COND (a x)) ((CONS x) ((filter a) t))) ((filter a) t))))))
+T c= cfilter f0 cCONS f1 f2 cCOND * f0 f1 cCONS f1 cfilter f0 f2 cfilter f0 f2
+D Tame_list.fst_setFinal
+A |- (!f. ((FST (setFinal f)) = (FST f)))
+T c= cFST csetFinal f0 cFST f0
+D Tame_list.filter_non_mem_setFinal
+A |- (!vs. (!v. (!f. ((~ ((MEM v) (FST f))) ==> (((filter (\f. ((MEM v) (FST f)))) (((replace f) ((CONS (setFinal f)) NIL)) vs)) = ((filter (\f. ((MEM v) (FST f)))) vs))))))
+T c==> c~ cMEM f0 cFST f1 c= cfilter / cMEM f0 cFST b0 creplace f1 cCONS csetFinal f1 cNIL f2 cfilter / cMEM f0 cFST b0 f2
++ (!v. (!f. (((filter (\f. ((MEM v) (FST f)))) (((replace f) ((CONS (setFinal f)) NIL)) t)) = (((replace f) ((CONS (setFinal f)) NIL)) ((filter (\f. ((MEM v) (FST f)))) t))))), (~ (h = f)) |- (((MEM v) (FST h)) ==> (((CONS h) ((filter (\f. ((MEM v) (FST f)))) (((replace f) ((CONS (setFinal f)) NIL)) t))) = (((replace f) ((CONS (setFinal f)) NIL)) (((COND ((MEM v) (FST h))) ((CONS h) ((filter (\f. ((MEM v) (FST f)))) t))) ((filter (\f. ((MEM v) (FST f)))) t)))))
+T c==> ! ! c= cfilter / cMEM b0 cFST b2 creplace b1 cCONS csetFinal b1 cNIL f0 creplace b1 cCONS csetFinal b1 cNIL cfilter / cMEM b0 cFST b2 f0 c==> c~ c= f1 f2 c==> cMEM f3 cFST f1 c= cCONS f1 cfilter / cMEM f3 cFST b0 creplace f2 cCONS csetFinal f2 cNIL f0 creplace f2 cCONS csetFinal f2 cNIL cCOND cMEM f3 cFST f1 cCONS f1 cfilter / cMEM f3 cFST b0 f0 cfilter / cMEM f3 cFST b0 f0
++ |- (((!v. (!f. ((~ ((MEM v) (FST f))) ==> (((filter (\f. ((MEM v) (FST f)))) (((replace f) ((CONS (setFinal f)) NIL)) vs)) = ((filter (\f. ((MEM v) (FST f)))) vs))))) ==> ((\v. (!f. ((~ ((MEM v) (FST f))) ==> (((filter (\f. ((MEM v) (FST f)))) (((replace f) ((CONS (setFinal f)) NIL)) vs)) = ((filter (\f. ((MEM v) (FST f)))) vs))))) v)) = ((\v. (!f. ((~ ((MEM v) (FST f))) ==> (((filter (\f. ((MEM v) (FST f)))) (((replace f) ((CONS (setFinal f)) NIL)) vs)) = ((filter (\f. ((MEM v) (FST f)))) vs))))) v))
+T c= c==> ! ! c==> c~ cMEM b0 cFST b1 c= cfilter / cMEM b0 cFST b2 creplace b1 cCONS csetFinal b1 cNIL f0 cfilter / cMEM b0 cFST b2 f0 * / ! c==> c~ cMEM b0 cFST b1 c= cfilter / cMEM b0 cFST b2 creplace b1 cCONS csetFinal b1 cNIL f0 cfilter / cMEM b0 cFST b2 f0 f1 * / ! c==> c~ cMEM b0 cFST b1 c= cfilter / cMEM b0 cFST b2 creplace b1 cCONS csetFinal b1 cNIL f0 cfilter / cMEM b0 cFST b2 f0 f1
++ (!v. (!f. (((filter (\f. ((MEM v) (FST f)))) (((replace f) ((CONS (setFinal f)) NIL)) t)) = (((replace f) ((CONS (setFinal f)) NIL)) ((filter (\f. ((MEM v) (FST f)))) t))))) |- (((filter (\f. ((MEM v) (FST f)))) (((replace f) ((CONS (setFinal f)) NIL)) t)) = (((replace f) ((CONS (setFinal f)) NIL)) ((filter (\f. ((MEM v) (FST f)))) t)))
+T c==> ! ! c= cfilter / cMEM b0 cFST b2 creplace b1 cCONS csetFinal b1 cNIL f0 creplace b1 cCONS csetFinal b1 cNIL cfilter / cMEM b0 cFST b2 f0 c= cfilter / cMEM f1 cFST b0 creplace f2 cCONS csetFinal f2 cNIL f0 creplace f2 cCONS csetFinal f2 cNIL cfilter / cMEM f1 cFST b0 f0
++ |- (((!v. (!f. (((filter (\f. ((MEM v) (FST f)))) (((replace f) ((CONS (setFinal f)) NIL)) t)) = (((replace f) ((CONS (setFinal f)) NIL)) ((filter (\f. ((MEM v) (FST f)))) t))))) ==> (!v. (!f. (((filter (\f. ((MEM v) (FST f)))) (((replace f) ((CONS (setFinal f)) NIL)) ((CONS h) t))) = (((replace f) ((CONS (setFinal f)) NIL)) ((filter (\f. ((MEM v) (FST f)))) ((CONS h) t))))))) = T)
+T c= c==> ! ! c= cfilter / cMEM b0 cFST b2 creplace b1 cCONS csetFinal b1 cNIL f0 creplace b1 cCONS csetFinal b1 cNIL cfilter / cMEM b0 cFST b2 f0 ! ! c= cfilter / cMEM b0 cFST b2 creplace b1 cCONS csetFinal b1 cNIL cCONS f1 f0 creplace b1 cCONS csetFinal b1 cNIL cfilter / cMEM b0 cFST b2 cCONS f1 f0 cT
+- |- (((!f. (!h. (!t. (((MAP f) ((CONS h) t)) = ((CONS (f h)) ((MAP f) t)))))) ==> ((\f. (!h. (!t. (((MAP f) ((CONS h) t)) = ((CONS (f h)) ((MAP f) t)))))) f)) = ((\f. (!h. (!t. (((MAP f) ((CONS h) t)) = ((CONS (f h)) ((MAP f) t)))))) f))
+T c= c==> ! ! ! c= cMAP b0 cCONS b1 b2 cCONS * b0 b1 cMAP b0 b2 * / ! ! c= cMAP b0 cCONS b1 b2 cCONS * b0 b1 cMAP b0 b2 f0 * / ! ! c= cMAP b0 cCONS b1 b2 cCONS * b0 b1 cMAP b0 b2 f0
++ (!v. (!f. (((filter (\f. ((MEM v) (FST f)))) (((replace f) ((CONS (setFinal f)) NIL)) t)) = (((replace f) ((CONS (setFinal f)) NIL)) ((filter (\f. ((MEM v) (FST f)))) t))))) |- ((\v. (!f. ((((replace f) ((CONS (setFinal f)) NIL)) ((filter (\f. ((MEM v) (FST f)))) t)) = ((filter (\f. ((MEM v) (FST f)))) (((replace f) ((CONS (setFinal f)) NIL)) t))))) v)
+T c==> ! ! c= cfilter / cMEM b0 cFST b2 creplace b1 cCONS csetFinal b1 cNIL f0 creplace b1 cCONS csetFinal b1 cNIL cfilter / cMEM b0 cFST b2 f0 * / ! c= creplace b1 cCONS csetFinal b1 cNIL cfilter / cMEM b0 cFST b2 f0 cfilter / cMEM b0 cFST b2 creplace b1 cCONS csetFinal b1 cNIL f0 f1
++ |- (((!t. (((APPEND ((CONS h) NIL)) t) = ((CONS h) t))) ==> ((\t. (((APPEND ((CONS h) NIL)) t) = ((CONS h) t))) t)) = ((\t. (((APPEND ((CONS h) NIL)) t) = ((CONS h) t))) t))
+T c= c==> ! c= cAPPEND cCONS f0 cNIL b0 cCONS f0 b0 * / c= cAPPEND cCONS f0 cNIL b0 cCONS f0 b0 f1 * / c= cAPPEND cCONS f0 cNIL b0 cCONS f0 b0 f1
++ |- ((!v. (!f. (((filter (\f. ((MEM v) (FST f)))) (((COND (h = f)) ((APPEND ((CONS (setFinal f)) NIL)) t)) ((CONS h) (((replace f) ((CONS (setFinal f)) NIL)) t)))) = (((replace f) ((CONS (setFinal f)) NIL)) (((COND ((MEM v) (FST h))) ((CONS h) ((filter (\f. ((MEM v) (FST f)))) t))) ((filter (\f. ((MEM v) (FST f)))) t)))))) = (!v. (!f. (((filter (\f. ((MEM v) (FST f)))) (((replace f) ((CONS (setFinal f)) NIL)) ((CONS h) t))) = (((replace f) ((CONS (setFinal f)) NIL)) ((filter (\f. ((MEM v) (FST f)))) ((CONS h) t)))))))
+T c= ! ! c= cfilter / cMEM b0 cFST b2 cCOND c= f0 b1 cAPPEND cCONS csetFinal b1 cNIL f1 cCONS f0 creplace b1 cCONS csetFinal b1 cNIL f1 creplace b1 cCONS csetFinal b1 cNIL cCOND cMEM b0 cFST f0 cCONS f0 cfilter / cMEM b0 cFST b2 f1 cfilter / cMEM b0 cFST b2 f1 ! ! c= cfilter / cMEM b0 cFST b2 creplace b1 cCONS csetFinal b1 cNIL cCONS f0 f1 creplace b1 cCONS csetFinal b1 cNIL cfilter / cMEM b0 cFST b2 cCONS f0 f1
++ (~ (h = f)) |- (((CONS h) (((replace f) ((CONS (setFinal f)) NIL)) ((filter (\f. ((MEM v) (FST f)))) t))) = (((replace f) ((CONS (setFinal f)) NIL)) ((CONS h) ((filter (\f. ((MEM v) (FST f)))) t))))
+T c==> c~ c= f0 f1 c= cCONS f0 creplace f1 cCONS csetFinal f1 cNIL cfilter / cMEM f2 cFST b0 f3 creplace f1 cCONS csetFinal f1 cNIL cCONS f0 cfilter / cMEM f2 cFST b0 f3
++ (!v. (!f. (((filter (\f. ((MEM v) (FST f)))) (((replace f) ((CONS (setFinal f)) NIL)) t)) = (((replace f) ((CONS (setFinal f)) NIL)) ((filter (\f. ((MEM v) (FST f)))) t))))) |- (((filter (\f. ((MEM v) (FST f)))) (((COND (h = f)) ((CONS (setFinal f)) t)) ((CONS h) (((replace f) ((CONS (setFinal f)) NIL)) t)))) = (((replace f) ((CONS (setFinal f)) NIL)) (((COND ((MEM v) (FST h))) ((CONS h) ((filter (\f. ((MEM v) (FST f)))) t))) ((filter (\f. ((MEM v) (FST f)))) t))))
+T c==> ! ! c= cfilter / cMEM b0 cFST b2 creplace b1 cCONS csetFinal b1 cNIL f0 creplace b1 cCONS csetFinal b1 cNIL cfilter / cMEM b0 cFST b2 f0 c= cfilter / cMEM f1 cFST b0 cCOND c= f2 f3 cCONS csetFinal f3 f0 cCONS f2 creplace f3 cCONS csetFinal f3 cNIL f0 creplace f3 cCONS csetFinal f3 cNIL cCOND cMEM f1 cFST f2 cCONS f2 cfilter / cMEM f1 cFST b0 f0 cfilter / cMEM f1 cFST b0 f0
++ (!v. (!f. (((filter (\f. ((MEM v) (FST f)))) (((replace f) ((CONS (setFinal f)) NIL)) t)) = (((replace f) ((CONS (setFinal f)) NIL)) ((filter (\f. ((MEM v) (FST f)))) t))))) |- ((~ ((MEM v) (FST f))) ==> (((filter (\f. ((MEM v) (FST f)))) t) = (((replace f) ((CONS (setFinal f)) NIL)) (((COND ((MEM v) (FST f))) ((CONS f) ((filter (\f. ((MEM v) (FST f)))) t))) ((filter (\f. ((MEM v) (FST f)))) t)))))
+T c==> ! ! c= cfilter / cMEM b0 cFST b2 creplace b1 cCONS csetFinal b1 cNIL f0 creplace b1 cCONS csetFinal b1 cNIL cfilter / cMEM b0 cFST b2 f0 c==> c~ cMEM f1 cFST f2 c= cfilter / cMEM f1 cFST b0 f0 creplace f2 cCONS csetFinal f2 cNIL cCOND cMEM f1 cFST f2 cCONS f2 cfilter / cMEM f1 cFST b0 f0 cfilter / cMEM f1 cFST b0 f0
++ |- ((!v. (!f. (((filter (\f. ((MEM v) (FST f)))) (((replace f) ((CONS (setFinal f)) NIL)) NIL)) = (((replace f) ((CONS (setFinal f)) NIL)) ((filter (\f. ((MEM v) (FST f)))) NIL))))) /\ (!h. (!t. ((!v. (!f. (((filter (\f. ((MEM v) (FST f)))) (((replace f) ((CONS (setFinal f)) NIL)) t)) = (((replace f) ((CONS (setFinal f)) NIL)) ((filter (\f. ((MEM v) (FST f)))) t))))) ==> (!v. (!f. (((filter (\f. ((MEM v) (FST f)))) (((replace f) ((CONS (setFinal f)) NIL)) ((CONS h) t))) = (((replace f) ((CONS (setFinal f)) NIL)) ((filter (\f. ((MEM v) (FST f)))) ((CONS h) t))))))))))
+T c/\ ! ! c= cfilter / cMEM b0 cFST b2 creplace b1 cCONS csetFinal b1 cNIL cNIL creplace b1 cCONS csetFinal b1 cNIL cfilter / cMEM b0 cFST b2 cNIL ! ! c==> ! ! c= cfilter / cMEM b2 cFST b4 creplace b3 cCONS csetFinal b3 cNIL b1 creplace b3 cCONS csetFinal b3 cNIL cfilter / cMEM b2 cFST b4 b1 ! ! c= cfilter / cMEM b2 cFST b4 creplace b3 cCONS csetFinal b3 cNIL cCONS b0 b1 creplace b3 cCONS csetFinal b3 cNIL cfilter / cMEM b2 cFST b4 cCONS b0 b1
++ |- ((!h. (!t. ((!v. (!f. (((filter (\f. ((MEM v) (FST f)))) (((replace f) ((CONS (setFinal f)) NIL)) t)) = (((replace f) ((CONS (setFinal f)) NIL)) ((filter (\f. ((MEM v) (FST f)))) t))))) ==> (!v. (!f. (((filter (\f. ((MEM v) (FST f)))) (((replace f) ((CONS (setFinal f)) NIL)) ((CONS h) t))) = (((replace f) ((CONS (setFinal f)) NIL)) ((filter (\f. ((MEM v) (FST f)))) ((CONS h) t))))))))) = ((!v. (!f. (((filter (\f. ((MEM v) (FST f)))) (((replace f) ((CONS (setFinal f)) NIL)) NIL)) = (((replace f) ((CONS (setFinal f)) NIL)) ((filter (\f. ((MEM v) (FST f)))) NIL))))) /\ (!h. (!t. ((!v. (!f. (((filter (\f. ((MEM v) (FST f)))) (((replace f) ((CONS (setFinal f)) NIL)) t)) = (((replace f) ((CONS (setFinal f)) NIL)) ((filter (\f. ((MEM v) (FST f)))) t))))) ==> (!v. (!f. (((filter (\f. ((MEM v) (FST f)))) (((replace f) ((CONS (setFinal f)) NIL)) ((CONS h) t))) = (((replace f) ((CONS (setFinal f)) NIL)) ((filter (\f. ((MEM v) (FST f)))) ((CONS h) t)))))))))))
+T c= ! ! c==> ! ! c= cfilter / cMEM b2 cFST b4 creplace b3 cCONS csetFinal b3 cNIL b1 creplace b3 cCONS csetFinal b3 cNIL cfilter / cMEM b2 cFST b4 b1 ! ! c= cfilter / cMEM b2 cFST b4 creplace b3 cCONS csetFinal b3 cNIL cCONS b0 b1 creplace b3 cCONS csetFinal b3 cNIL cfilter / cMEM b2 cFST b4 cCONS b0 b1 c/\ ! ! c= cfilter / cMEM b0 cFST b2 creplace b1 cCONS csetFinal b1 cNIL cNIL creplace b1 cCONS csetFinal b1 cNIL cfilter / cMEM b0 cFST b2 cNIL ! ! c==> ! ! c= cfilter / cMEM b2 cFST b4 creplace b3 cCONS csetFinal b3 cNIL b1 creplace b3 cCONS csetFinal b3 cNIL cfilter / cMEM b2 cFST b4 b1 ! ! c= cfilter / cMEM b2 cFST b4 creplace b3 cCONS csetFinal b3 cNIL cCONS b0 b1 creplace b3 cCONS csetFinal b3 cNIL cfilter / cMEM b2 cFST b4 cCONS b0 b1
++ |- ((\t. (((APPEND ((CONS h) NIL)) t) = ((CONS h) t))) t)
+T * / c= cAPPEND cCONS f0 cNIL b0 cCONS f0 b0 f1
++ (!v. (!f. (((filter (\f. ((MEM v) (FST f)))) (((replace f) ((CONS (setFinal f)) NIL)) t)) = (((replace f) ((CONS (setFinal f)) NIL)) ((filter (\f. ((MEM v) (FST f)))) t))))) |- (((!f. (((filter (\f. ((MEM v) (FST f)))) (((replace f) ((CONS (setFinal f)) NIL)) t)) = (((replace f) ((CONS (setFinal f)) NIL)) ((filter (\f. ((MEM v) (FST f)))) t)))) ==> ((\f. (((filter (\f. ((MEM v) (FST f)))) (((replace f) ((CONS (setFinal f)) NIL)) t)) = (((replace f) ((CONS (setFinal f)) NIL)) ((filter (\f. ((MEM v) (FST f)))) t)))) f)) = ((\f. (((filter (\f. ((MEM v) (FST f)))) (((replace f) ((CONS (setFinal f)) NIL)) t)) = (((replace f) ((CONS (setFinal f)) NIL)) ((filter (\f. ((MEM v) (FST f)))) t)))) f))
+T c==> ! ! c= cfilter / cMEM b0 cFST b2 creplace b1 cCONS csetFinal b1 cNIL f0 creplace b1 cCONS csetFinal b1 cNIL cfilter / cMEM b0 cFST b2 f0 c= c==> ! c= cfilter / cMEM f1 cFST b1 creplace b0 cCONS csetFinal b0 cNIL f0 creplace b0 cCONS csetFinal b0 cNIL cfilter / cMEM f1 cFST b1 f0 * / c= cfilter / cMEM f1 cFST b1 creplace b0 cCONS csetFinal b0 cNIL f0 creplace b0 cCONS csetFinal b0 cNIL cfilter / cMEM f1 cFST b1 f0 f2 * / c= cfilter / cMEM f1 cFST b1 creplace b0 cCONS csetFinal b0 cNIL f0 creplace b0 cCONS csetFinal b0 cNIL cfilter / cMEM f1 cFST b1 f0 f2
++ (!v. (!f. (((filter (\f. ((MEM v) (FST f)))) (((replace f) ((CONS (setFinal f)) NIL)) t)) = (((replace f) ((CONS (setFinal f)) NIL)) ((filter (\f. ((MEM v) (FST f)))) t))))) |- ((((replace f) ((CONS (setFinal f)) NIL)) ((filter (\f. ((MEM v) (FST f)))) t)) = ((filter (\f. ((MEM v) (FST f)))) (((replace f) ((CONS (setFinal f)) NIL)) t)))
+T c==> ! ! c= cfilter / cMEM b0 cFST b2 creplace b1 cCONS csetFinal b1 cNIL f0 creplace b1 cCONS csetFinal b1 cNIL cfilter / cMEM b0 cFST b2 f0 c= creplace f1 cCONS csetFinal f1 cNIL cfilter / cMEM f2 cFST b0 f0 cfilter / cMEM f2 cFST b0 creplace f1 cCONS csetFinal f1 cNIL f0
++ ((MEM v) (FST h)) |- (((MEM v) (FST h)) = T)
+T c==> cMEM f0 cFST f1 c= cMEM f0 cFST f1 cT
++ (!v. (!f. (((filter (\f. ((MEM v) (FST f)))) (((replace f) ((CONS (setFinal f)) NIL)) t)) = (((replace f) ((CONS (setFinal f)) NIL)) ((filter (\f. ((MEM v) (FST f)))) t))))) |- ((\v. (!f. (((filter (\f. ((MEM v) (FST f)))) (((replace f) ((CONS (setFinal f)) NIL)) t)) = (((replace f) ((CONS (setFinal f)) NIL)) ((filter (\f. ((MEM v) (FST f)))) t))))) v)
+T c==> ! ! c= cfilter / cMEM b0 cFST b2 creplace b1 cCONS csetFinal b1 cNIL f0 creplace b1 cCONS csetFinal b1 cNIL cfilter / cMEM b0 cFST b2 f0 * / ! c= cfilter / cMEM b0 cFST b2 creplace b1 cCONS csetFinal b1 cNIL f0 creplace b1 cCONS csetFinal b1 cNIL cfilter / cMEM b0 cFST b2 f0 f1
++ (!v. (!f. (((filter (\f. ((MEM v) (FST f)))) (((replace f) ((CONS (setFinal f)) NIL)) t)) = (((replace f) ((CONS (setFinal f)) NIL)) ((filter (\f. ((MEM v) (FST f)))) t))))), (~ ((MEM v) (FST f))) |- (((filter (\f. ((MEM v) (FST f)))) t) = (((replace f) ((CONS (setFinal f)) NIL)) (((COND F) ((CONS f) ((filter (\f. ((MEM v) (FST f)))) t))) ((filter (\f. ((MEM v) (FST f)))) t))))
+T c==> ! ! c= cfilter / cMEM b0 cFST b2 creplace b1 cCONS csetFinal b1 cNIL f0 creplace b1 cCONS csetFinal b1 cNIL cfilter / cMEM b0 cFST b2 f0 c==> c~ cMEM f1 cFST f2 c= cfilter / cMEM f1 cFST b0 f0 creplace f2 cCONS csetFinal f2 cNIL cCOND cF cCONS f2 cfilter / cMEM f1 cFST b0 f0 cfilter / cMEM f1 cFST b0 f0
++ |- ((!f. t) = t)
+T c= ! f0 f0
++ |- (((((COND ((MEM v) (FST f))) ((CONS (setFinal f)) ((filter (\f. ((MEM v) (FST f)))) t))) ((filter (\f. ((MEM v) (FST f)))) t)) = (((replace f) ((CONS (setFinal f)) NIL)) (((COND ((MEM v) (FST f))) ((CONS f) ((filter (\f. ((MEM v) (FST f)))) t))) ((filter (\f. ((MEM v) (FST f)))) t)))) = ((((MEM v) (FST f)) ==> (((CONS (setFinal f)) ((filter (\f. ((MEM v) (FST f)))) t)) = (((replace f) ((CONS (setFinal f)) NIL)) (((COND ((MEM v) (FST f))) ((CONS f) ((filter (\f. ((MEM v) (FST f)))) t))) ((filter (\f. ((MEM v) (FST f)))) t))))) /\ ((~ ((MEM v) (FST f))) ==> (((filter (\f. ((MEM v) (FST f)))) t) = (((replace f) ((CONS (setFinal f)) NIL)) (((COND ((MEM v) (FST f))) ((CONS f) ((filter (\f. ((MEM v) (FST f)))) t))) ((filter (\f. ((MEM v) (FST f)))) t)))))))
+T c= c= cCOND cMEM f0 cFST f1 cCONS csetFinal f1 cfilter / cMEM f0 cFST b0 f2 cfilter / cMEM f0 cFST b0 f2 creplace f1 cCONS csetFinal f1 cNIL cCOND cMEM f0 cFST f1 cCONS f1 cfilter / cMEM f0 cFST b0 f2 cfilter / cMEM f0 cFST b0 f2 c/\ c==> cMEM f0 cFST f1 c= cCONS csetFinal f1 cfilter / cMEM f0 cFST b0 f2 creplace f1 cCONS csetFinal f1 cNIL cCOND cMEM f0 cFST f1 cCONS f1 cfilter / cMEM f0 cFST b0 f2 cfilter / cMEM f0 cFST b0 f2 c==> c~ cMEM f0 cFST f1 c= cfilter / cMEM f0 cFST b0 f2 creplace f1 cCONS csetFinal f1 cNIL cCOND cMEM f0 cFST f1 cCONS f1 cfilter / cMEM f0 cFST b0 f2 cfilter / cMEM f0 cFST b0 f2
++ |- (((((MEM v) (FST h)) ==> (((CONS h) ((filter (\f. ((MEM v) (FST f)))) (((replace f) ((CONS (setFinal f)) NIL)) t))) = (((replace f) ((CONS (setFinal f)) NIL)) (((COND ((MEM v) (FST h))) ((CONS h) ((filter (\f. ((MEM v) (FST f)))) t))) ((filter (\f. ((MEM v) (FST f)))) t))))) /\ ((~ ((MEM v) (FST h))) ==> (((filter (\f. ((MEM v) (FST f)))) (((replace f) ((CONS (setFinal f)) NIL)) t)) = (((replace f) ((CONS (setFinal f)) NIL)) (((COND ((MEM v) (FST h))) ((CONS h) ((filter (\f. ((MEM v) (FST f)))) t))) ((filter (\f. ((MEM v) (FST f)))) t)))))) = ((((COND ((MEM v) (FST h))) ((CONS h) ((filter (\f. ((MEM v) (FST f)))) (((replace f) ((CONS (setFinal f)) NIL)) t)))) ((filter (\f. ((MEM v) (FST f)))) (((replace f) ((CONS (setFinal f)) NIL)) t))) = (((replace f) ((CONS (setFinal f)) NIL)) (((COND ((MEM v) (FST h))) ((CONS h) ((filter (\f. ((MEM v) (FST f)))) t))) ((filter (\f. ((MEM v) (FST f)))) t)))))
+T c= c/\ c==> cMEM f0 cFST f1 c= cCONS f1 cfilter / cMEM f0 cFST b0 creplace f2 cCONS csetFinal f2 cNIL f3 creplace f2 cCONS csetFinal f2 cNIL cCOND cMEM f0 cFST f1 cCONS f1 cfilter / cMEM f0 cFST b0 f3 cfilter / cMEM f0 cFST b0 f3 c==> c~ cMEM f0 cFST f1 c= cfilter / cMEM f0 cFST b0 creplace f2 cCONS csetFinal f2 cNIL f3 creplace f2 cCONS csetFinal f2 cNIL cCOND cMEM f0 cFST f1 cCONS f1 cfilter / cMEM f0 cFST b0 f3 cfilter / cMEM f0 cFST b0 f3 c= cCOND cMEM f0 cFST f1 cCONS f1 cfilter / cMEM f0 cFST b0 creplace f2 cCONS csetFinal f2 cNIL f3 cfilter / cMEM f0 cFST b0 creplace f2 cCONS csetFinal f2 cNIL f3 creplace f2 cCONS csetFinal f2 cNIL cCOND cMEM f0 cFST f1 cCONS f1 cfilter / cMEM f0 cFST b0 f3 cfilter / cMEM f0 cFST b0 f3
+- (~ ((MEM v) (FST f))) |- ((~ ((MEM v) (FST f))) /\ (((filter (\f. ((MEM v) (FST f)))) (((replace f) ((CONS (setFinal f)) NIL)) vs)) = ((filter (\f. ((MEM v) (FST f)))) vs)))
+T c==> c~ cMEM f0 cFST f1 c/\ c~ cMEM f0 cFST f1 c= cfilter / cMEM f0 cFST b0 creplace f1 cCONS csetFinal f1 cNIL f2 cfilter / cMEM f0 cFST b0 f2
+- |- (((!h. (!t. (((MAP f) ((CONS h) t)) = ((CONS (f h)) ((MAP f) t))))) ==> ((\h. (!t. (((MAP f) ((CONS h) t)) = ((CONS (f h)) ((MAP f) t))))) h)) = ((\h. (!t. (((MAP f) ((CONS h) t)) = ((CONS (f h)) ((MAP f) t))))) h))
+T c= c==> ! ! c= cMAP f0 cCONS b0 b1 cCONS * f0 b0 cMAP f0 b1 * / ! c= cMAP f0 cCONS b0 b1 cCONS * f0 b0 cMAP f0 b1 f1 * / ! c= cMAP f0 cCONS b0 b1 cCONS * f0 b0 cMAP f0 b1 f1
+- (h = f) |- ((h = f) = T)
+T c==> c= f0 f1 c= c= f0 f1 cT
+- (~ (h = f)) |- (((~ (f = h)) ==> ((f = h) = F)) = ((f = h) = F))
+T c==> c~ c= f0 f1 c= c==> c~ c= f1 f0 c= c= f1 f0 cF c= c= f1 f0 cF
+- (~ ((MEM v) (FST f))) |- (T = (~ ((MEM v) (FST f))))
+T c==> c~ cMEM f0 cFST f1 c= cT c~ cMEM f0 cFST f1
+- |- ((\h. (!t. (((MAP f) ((CONS h) t)) = ((CONS (f h)) ((MAP f) t))))) h)
+T * / ! c= cMAP f0 cCONS b0 b1 cCONS * f0 b0 cMAP f0 b1 f1
+- (f = h) |- (h = f)
+T c==> c= f0 f1 c= f1 f0
+- |- (((MAP f) NIL) = NIL)
+T c= cMAP f0 cNIL cNIL
+- |- (((MAP f) ((CONS h) t)) = ((CONS (f h)) ((MAP f) t)))
+T c= cMAP f0 cCONS f1 f2 cCONS * f0 f1 cMAP f0 f2
+- |- (((!f. (((MAP f) NIL) = NIL)) ==> ((\f. (((MAP f) NIL) = NIL)) f)) = ((\f. (((MAP f) NIL) = NIL)) f))
+T c= c==> ! c= cMAP b0 cNIL cNIL * / c= cMAP b0 cNIL cNIL f0 * / c= cMAP b0 cNIL cNIL f0
+- (~ (h = f)) |- (~ (f = h))
+T c==> c~ c= f0 f1 c~ c= f1 f0
+- (~ (h = f)) |- ((f = h) = F)
+T c==> c~ c= f0 f1 c= c= f1 f0 cF
+- (h = f) |- ((((filter (\f. ((MEM v) (FST f)))) ((CONS (setFinal f)) t)) = (((replace f) ((CONS (setFinal f)) NIL)) (((COND ((MEM v) (FST h))) ((CONS h) ((filter (\f. ((MEM v) (FST f)))) t))) ((filter (\f. ((MEM v) (FST f)))) t)))) = (((filter (\f. ((MEM v) (FST f)))) ((CONS (setFinal f)) t)) = (((replace f) ((CONS (setFinal f)) NIL)) (((COND ((MEM v) (FST h))) ((CONS h) ((filter (\f. ((MEM v) (FST f)))) t))) ((filter (\f. ((MEM v) (FST f)))) t)))))
+T c==> c= f0 f1 c= c= cfilter / cMEM f2 cFST b0 cCONS csetFinal f1 f3 creplace f1 cCONS csetFinal f1 cNIL cCOND cMEM f2 cFST f0 cCONS f0 cfilter / cMEM f2 cFST b0 f3 cfilter / cMEM f2 cFST b0 f3 c= cfilter / cMEM f2 cFST b0 cCONS csetFinal f1 f3 creplace f1 cCONS csetFinal f1 cNIL cCOND cMEM f2 cFST f0 cCONS f0 cfilter / cMEM f2 cFST b0 f3 cfilter / cMEM f2 cFST b0 f3
+- |- (((!t. (((MAP f) ((CONS h) t)) = ((CONS (f h)) ((MAP f) t)))) ==> ((\t. (((MAP f) ((CONS h) t)) = ((CONS (f h)) ((MAP f) t)))) t)) = ((\t. (((MAP f) ((CONS h) t)) = ((CONS (f h)) ((MAP f) t)))) t))
+T c= c==> ! c= cMAP f0 cCONS f1 b0 cCONS * f0 f1 cMAP f0 b0 * / c= cMAP f0 cCONS f1 b0 cCONS * f0 f1 cMAP f0 b0 f2 * / c= cMAP f0 cCONS f1 b0 cCONS * f0 f1 cMAP f0 b0 f2
+- |- ((~ F) = T)
+T c= c~ cF cT
+- |- ((\t. (((MAP f) ((CONS h) t)) = ((CONS (f h)) ((MAP f) t)))) t)
+T * / c= cMAP f0 cCONS f1 b0 cCONS * f0 f1 cMAP f0 b0 f2
+- |- ((\f. (((MAP f) NIL) = NIL)) f)
+T * / c= cMAP b0 cNIL cNIL f0
+- |- (((\f. (f f)) y) = (f y))
+T c= * / * f0 b0 f1 * f0 f1
+- (~ (h = f)) |- ((((filter (\f. ((MEM v) (FST f)))) ((CONS h) (((replace f) ((CONS (setFinal f)) NIL)) t))) = (((replace f) ((CONS (setFinal f)) NIL)) (((COND ((MEM v) (FST h))) ((CONS h) ((filter (\f. ((MEM v) (FST f)))) t))) ((filter (\f. ((MEM v) (FST f)))) t)))) = (((filter (\f. ((MEM v) (FST f)))) ((CONS h) (((replace f) ((CONS (setFinal f)) NIL)) t))) = (((replace f) ((CONS (setFinal f)) NIL)) (((COND ((MEM v) (FST h))) ((CONS h) ((filter (\f. ((MEM v) (FST f)))) t))) ((filter (\f. ((MEM v) (FST f)))) t)))))
+T c==> c~ c= f0 f1 c= c= cfilter / cMEM f2 cFST b0 cCONS f0 creplace f1 cCONS csetFinal f1 cNIL f3 creplace f1 cCONS csetFinal f1 cNIL cCOND cMEM f2 cFST f0 cCONS f0 cfilter / cMEM f2 cFST b0 f3 cfilter / cMEM f2 cFST b0 f3 c= cfilter / cMEM f2 cFST b0 cCONS f0 creplace f1 cCONS csetFinal f1 cNIL f3 creplace f1 cCONS csetFinal f1 cNIL cCOND cMEM f2 cFST f0 cCONS f0 cfilter / cMEM f2 cFST b0 f3 cfilter / cMEM f2 cFST b0 f3
+- |- ((\f. (!h. (!t. (((MAP f) ((CONS h) t)) = ((CONS (f h)) ((MAP f) t)))))) f)
+T * / ! ! c= cMAP b0 cCONS b1 b2 cCONS * b0 b1 cMAP b0 b2 f0

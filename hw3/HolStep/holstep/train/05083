@@ -1,0 +1,77 @@
+N ROTATION_EXISTS_1
+C |- (!a. (!b. ((((NUMERAL (BIT0 (BIT1 _0))) <= (dimindex UNIV)) /\ (((vector_norm a) = (real_of_num (NUMERAL (BIT1 _0)))) /\ ((vector_norm b) = (real_of_num (NUMERAL (BIT1 _0)))))) ==> (?f. ((orthogonal_transformation f) /\ (((det (matrix f)) = (real_of_num (NUMERAL (BIT1 _0)))) /\ ((f a) = b)))))))
+T c==> c/\ c<= cNUMERAL cBIT0 cBIT1 c_0 cdimindex part cUNIV c/\ c= cvector_norm f0 creal_of_num cNUMERAL cBIT1 c_0 c= cvector_norm f1 creal_of_num cNUMERAL cBIT1 c_0 c? / c/\ corthogonal_transformation b0 c/\ c= cdet cmatrix b0 creal_of_num cNUMERAL cBIT1 c_0 c= * b0 f0 f1
+D TRUTH
+A |- T
+T cT
+D REAL_MUL_LID
+A |- (!x. (((real_mul (real_of_num (NUMERAL (BIT1 _0)))) x) = x))
+T c= creal_mul creal_of_num cNUMERAL cBIT1 c_0 f0 f0
+D MATRIX_VECTOR_MUL_ASSOC
+A |- (!A. (!B. (!x. (((matrix_vector_mul A) ((matrix_vector_mul B) x)) = ((matrix_vector_mul ((matrix_mul A) B)) x)))))
+T c= cmatrix_vector_mul f0 cmatrix_vector_mul f1 f2 cmatrix_vector_mul cmatrix_mul f0 f1 f2
+D MATRIX_VECTOR_MUL_LID
+A |- (!x. (((matrix_vector_mul (mat (NUMERAL (BIT1 _0)))) x) = x))
+T c= cmatrix_vector_mul cmat cNUMERAL cBIT1 c_0 f0 f0
+D MATRIX_VECTOR_MUL_LINEAR
+A |- (!A. (linear (\x. ((matrix_vector_mul A) x))))
+T clinear / cmatrix_vector_mul f0 b0
+D MATRIX_OF_MATRIX_VECTOR_MUL
+A |- (!A. ((matrix (\x. ((matrix_vector_mul A) x))) = A))
+T c= cmatrix / cmatrix_vector_mul f0 b0 f0
+D DET_TRANSP
+A |- (!A. ((det (transp A)) = (det A)))
+T c= cdet ctransp f0 cdet f0
+D DET_MUL
+A |- (!A. (!B. ((det ((matrix_mul A) B)) = ((real_mul (det A)) (det B)))))
+T c= cdet cmatrix_mul f0 f1 creal_mul cdet f0 cdet f1
+D ORTHOGONAL_MATRIX
+A |- ((orthogonal_matrix Q) = (((matrix_mul (transp Q)) Q) = (mat (NUMERAL (BIT1 _0)))))
+T c= corthogonal_matrix f0 c= cmatrix_mul ctransp f0 f0 cmat cNUMERAL cBIT1 c_0
+D ORTHOGONAL_MATRIX_MUL
+A |- (!A. (!B. (((orthogonal_matrix A) /\ (orthogonal_matrix B)) ==> (orthogonal_matrix ((matrix_mul A) B)))))
+T c==> c/\ corthogonal_matrix f0 corthogonal_matrix f1 corthogonal_matrix cmatrix_mul f0 f1
+D ORTHOGONAL_TRANSFORMATION_MATRIX
+A |- (!f. ((orthogonal_transformation f) = ((linear f) /\ (orthogonal_matrix (matrix f)))))
+T c= corthogonal_transformation f0 c/\ clinear f0 corthogonal_matrix cmatrix f0
+D ORTHOGONAL_MATRIX_TRANSP
+A |- (!A. ((orthogonal_matrix (transp A)) = (orthogonal_matrix A)))
+T c= corthogonal_matrix ctransp f0 corthogonal_matrix f0
+D rotation_matrix
+A |- (!Q. ((rotation_matrix Q) = ((orthogonal_matrix Q) /\ ((det Q) = (real_of_num (NUMERAL (BIT1 _0)))))))
+T c= crotation_matrix f0 c/\ corthogonal_matrix f0 c= cdet f0 creal_of_num cNUMERAL cBIT1 c_0
+D ROTATION_MATRIX_EXISTS_BASIS
+A |- (!a. ((((NUMERAL (BIT0 (BIT1 _0))) <= (dimindex UNIV)) /\ ((vector_norm a) = (real_of_num (NUMERAL (BIT1 _0))))) ==> (?A. ((rotation_matrix A) /\ (((matrix_vector_mul A) (basis (NUMERAL (BIT1 _0)))) = a)))))
+T c==> c/\ c<= cNUMERAL cBIT0 cBIT1 c_0 cdimindex part cUNIV c= cvector_norm f0 creal_of_num cNUMERAL cBIT1 c_0 c? / c/\ crotation_matrix b0 c= cmatrix_vector_mul b0 cbasis cNUMERAL cBIT1 c_0 f0
+- (orthogonal_matrix A) |- (T = (((matrix_vector_mul (transp A)) ((matrix_vector_mul A) (basis (NUMERAL (BIT1 _0))))) = (basis (NUMERAL (BIT1 _0)))))
+T c==> corthogonal_matrix f0 c= cT c= cmatrix_vector_mul ctransp f0 cmatrix_vector_mul f0 cbasis cNUMERAL cBIT1 c_0 cbasis cNUMERAL cBIT1 c_0
++ (orthogonal_matrix A), (orthogonal_matrix B) |- ((((orthogonal_matrix B) /\ (orthogonal_matrix (transp A))) ==> ((orthogonal_matrix ((matrix_mul B) (transp A))) = T)) = ((orthogonal_matrix ((matrix_mul B) (transp A))) = T))
+T c==> corthogonal_matrix f0 c==> corthogonal_matrix f1 c= c==> c/\ corthogonal_matrix f1 corthogonal_matrix ctransp f0 c= corthogonal_matrix cmatrix_mul f1 ctransp f0 cT c= corthogonal_matrix cmatrix_mul f1 ctransp f0 cT
++ (orthogonal_matrix A), (orthogonal_matrix B), ((det A) = (real_of_num (NUMERAL (BIT1 _0)))), ((det B) = (real_of_num (NUMERAL (BIT1 _0)))), (((matrix_vector_mul A) (basis (NUMERAL (BIT1 _0)))) = a), (((matrix_vector_mul B) (basis (NUMERAL (BIT1 _0)))) = b) |- ((\f. ((orthogonal_transformation f) /\ (((det (matrix f)) = (real_of_num (NUMERAL (BIT1 _0)))) /\ ((f a) = b)))) (\x. ((matrix_vector_mul ((matrix_mul B) (transp A))) x)))
+T c==> corthogonal_matrix f0 c==> corthogonal_matrix f1 c==> c= cdet f0 creal_of_num cNUMERAL cBIT1 c_0 c==> c= cdet f1 creal_of_num cNUMERAL cBIT1 c_0 c==> c= cmatrix_vector_mul f0 cbasis cNUMERAL cBIT1 c_0 f2 c==> c= cmatrix_vector_mul f1 cbasis cNUMERAL cBIT1 c_0 f3 * / c/\ corthogonal_transformation b0 c/\ c= cdet cmatrix b0 creal_of_num cNUMERAL cBIT1 c_0 c= * b0 f2 f3 / cmatrix_vector_mul cmatrix_mul f1 ctransp f0 b0
++ |- (((!x. (((matrix_vector_mul ((matrix_mul A) B)) x) = ((matrix_vector_mul A) ((matrix_vector_mul B) x)))) ==> ((\x. (((matrix_vector_mul ((matrix_mul A) B)) x) = ((matrix_vector_mul A) ((matrix_vector_mul B) x)))) x)) = ((\x. (((matrix_vector_mul ((matrix_mul A) B)) x) = ((matrix_vector_mul A) ((matrix_vector_mul B) x)))) x))
+T c= c==> ! c= cmatrix_vector_mul cmatrix_mul f0 f1 b0 cmatrix_vector_mul f0 cmatrix_vector_mul f1 b0 * / c= cmatrix_vector_mul cmatrix_mul f0 f1 b0 cmatrix_vector_mul f0 cmatrix_vector_mul f1 b0 f2 * / c= cmatrix_vector_mul cmatrix_mul f0 f1 b0 cmatrix_vector_mul f0 cmatrix_vector_mul f1 b0 f2
++ (orthogonal_matrix A), ((det A) = (real_of_num (NUMERAL (BIT1 _0)))), (((matrix_vector_mul A) (basis (NUMERAL (BIT1 _0)))) = a), ((orthogonal_matrix B) /\ ((det B) = (real_of_num (NUMERAL (BIT1 _0))))), (((orthogonal_matrix B) /\ ((det B) = (real_of_num (NUMERAL (BIT1 _0))))) /\ (((matrix_vector_mul B) (basis (NUMERAL (BIT1 _0)))) = b)) |- (?f. ((orthogonal_transformation f) /\ (((det (matrix f)) = (real_of_num (NUMERAL (BIT1 _0)))) /\ ((f a) = b))))
+T c==> corthogonal_matrix f0 c==> c= cdet f0 creal_of_num cNUMERAL cBIT1 c_0 c==> c= cmatrix_vector_mul f0 cbasis cNUMERAL cBIT1 c_0 f1 c==> c/\ corthogonal_matrix f2 c= cdet f2 creal_of_num cNUMERAL cBIT1 c_0 c==> c/\ c/\ corthogonal_matrix f2 c= cdet f2 creal_of_num cNUMERAL cBIT1 c_0 c= cmatrix_vector_mul f2 cbasis cNUMERAL cBIT1 c_0 f3 c? / c/\ corthogonal_transformation b0 c/\ c= cdet cmatrix b0 creal_of_num cNUMERAL cBIT1 c_0 c= * b0 f1 f3
++ ((vector_norm a) = (real_of_num (NUMERAL (BIT1 _0)))), ((vector_norm b) = (real_of_num (NUMERAL (BIT1 _0)))), ((NUMERAL (BIT0 (BIT1 _0))) <= (dimindex UNIV)) |- (((?A. (((orthogonal_matrix A) /\ ((det A) = (real_of_num (NUMERAL (BIT1 _0))))) /\ (((matrix_vector_mul A) (basis (NUMERAL (BIT1 _0)))) = a))) ==> ((?A. (((orthogonal_matrix A) /\ ((det A) = (real_of_num (NUMERAL (BIT1 _0))))) /\ (((matrix_vector_mul A) (basis (NUMERAL (BIT1 _0)))) = b))) ==> (?f. ((orthogonal_transformation f) /\ (((det (matrix f)) = (real_of_num (NUMERAL (BIT1 _0)))) /\ ((f a) = b)))))) = (((((NUMERAL (BIT0 (BIT1 _0))) <= (dimindex UNIV)) /\ ((vector_norm a) = (real_of_num (NUMERAL (BIT1 _0))))) ==> (?A. ((rotation_matrix A) /\ (((matrix_vector_mul A) (basis (NUMERAL (BIT1 _0)))) = a)))) ==> (((((NUMERAL (BIT0 (BIT1 _0))) <= (dimindex UNIV)) /\ ((vector_norm b) = (real_of_num (NUMERAL (BIT1 _0))))) ==> (?A. ((rotation_matrix A) /\ (((matrix_vector_mul A) (basis (NUMERAL (BIT1 _0)))) = b)))) ==> (?f. ((orthogonal_transformation f) /\ (((det (matrix f)) = (real_of_num (NUMERAL (BIT1 _0)))) /\ ((f a) = b)))))))
+T c==> c= cvector_norm f0 creal_of_num cNUMERAL cBIT1 c_0 c==> c= cvector_norm f1 creal_of_num cNUMERAL cBIT1 c_0 c==> c<= cNUMERAL cBIT0 cBIT1 c_0 cdimindex part cUNIV c= c==> c? / c/\ c/\ corthogonal_matrix b0 c= cdet b0 creal_of_num cNUMERAL cBIT1 c_0 c= cmatrix_vector_mul b0 cbasis cNUMERAL cBIT1 c_0 f0 c==> c? / c/\ c/\ corthogonal_matrix b0 c= cdet b0 creal_of_num cNUMERAL cBIT1 c_0 c= cmatrix_vector_mul b0 cbasis cNUMERAL cBIT1 c_0 f1 c? / c/\ corthogonal_transformation b0 c/\ c= cdet cmatrix b0 creal_of_num cNUMERAL cBIT1 c_0 c= * b0 f0 f1 c==> c==> c/\ c<= cNUMERAL cBIT0 cBIT1 c_0 cdimindex part cUNIV c= cvector_norm f0 creal_of_num cNUMERAL cBIT1 c_0 c? / c/\ crotation_matrix b0 c= cmatrix_vector_mul b0 cbasis cNUMERAL cBIT1 c_0 f0 c==> c==> c/\ c<= cNUMERAL cBIT0 cBIT1 c_0 cdimindex part cUNIV c= cvector_norm f1 creal_of_num cNUMERAL cBIT1 c_0 c? / c/\ crotation_matrix b0 c= cmatrix_vector_mul b0 cbasis cNUMERAL cBIT1 c_0 f1 c? / c/\ corthogonal_transformation b0 c/\ c= cdet cmatrix b0 creal_of_num cNUMERAL cBIT1 c_0 c= * b0 f0 f1
++ |- (((!A. (linear (\x. ((matrix_vector_mul A) x)))) ==> ((\A. (linear (\x. ((matrix_vector_mul A) x)))) A)) = ((\A. (linear (\x. ((matrix_vector_mul A) x)))) A))
+T c= c==> ! clinear / cmatrix_vector_mul b0 b1 * / clinear / cmatrix_vector_mul b0 b1 f0 * / clinear / cmatrix_vector_mul b0 b1 f0
++ |- (!A. (((\A. (((orthogonal_matrix A) /\ ((det A) = (real_of_num (NUMERAL (BIT1 _0))))) /\ (((matrix_vector_mul A) (basis (NUMERAL (BIT1 _0)))) = a))) A) ==> ((?A. (((orthogonal_matrix A) /\ ((det A) = (real_of_num (NUMERAL (BIT1 _0))))) /\ (((matrix_vector_mul A) (basis (NUMERAL (BIT1 _0)))) = b))) ==> (?f. ((orthogonal_transformation f) /\ (((det (matrix f)) = (real_of_num (NUMERAL (BIT1 _0)))) /\ ((f a) = b)))))))
+T c==> * / c/\ c/\ corthogonal_matrix b0 c= cdet b0 creal_of_num cNUMERAL cBIT1 c_0 c= cmatrix_vector_mul b0 cbasis cNUMERAL cBIT1 c_0 f0 f1 c==> c? / c/\ c/\ corthogonal_matrix b0 c= cdet b0 creal_of_num cNUMERAL cBIT1 c_0 c= cmatrix_vector_mul b0 cbasis cNUMERAL cBIT1 c_0 f2 c? / c/\ corthogonal_transformation b0 c/\ c= cdet cmatrix b0 creal_of_num cNUMERAL cBIT1 c_0 c= * b0 f0 f2
++ |- ((\x. (((matrix_vector_mul A) ((matrix_vector_mul B) x)) = ((matrix_vector_mul ((matrix_mul A) B)) x))) x)
+T * / c= cmatrix_vector_mul f0 cmatrix_vector_mul f1 b0 cmatrix_vector_mul cmatrix_mul f0 f1 b0 f2
+- |- ((t ==> t) = T)
+T c= c==> f0 f0 cT
+- (?A. (((orthogonal_matrix A) /\ ((det A) = (real_of_num (NUMERAL (BIT1 _0))))) /\ (((matrix_vector_mul A) (basis (NUMERAL (BIT1 _0)))) = b))), (orthogonal_matrix A), ((det A) = (real_of_num (NUMERAL (BIT1 _0)))), (((matrix_vector_mul A) (basis (NUMERAL (BIT1 _0)))) = a) |- ((?A. (((orthogonal_matrix A) /\ ((det A) = (real_of_num (NUMERAL (BIT1 _0))))) /\ (((matrix_vector_mul A) (basis (NUMERAL (BIT1 _0)))) = b))) /\ (?f. ((orthogonal_transformation f) /\ (((det (matrix f)) = (real_of_num (NUMERAL (BIT1 _0)))) /\ ((f a) = b)))))
+T c==> c? / c/\ c/\ corthogonal_matrix b0 c= cdet b0 creal_of_num cNUMERAL cBIT1 c_0 c= cmatrix_vector_mul b0 cbasis cNUMERAL cBIT1 c_0 f0 c==> corthogonal_matrix f1 c==> c= cdet f1 creal_of_num cNUMERAL cBIT1 c_0 c==> c= cmatrix_vector_mul f1 cbasis cNUMERAL cBIT1 c_0 f2 c/\ c? / c/\ c/\ corthogonal_matrix b0 c= cdet b0 creal_of_num cNUMERAL cBIT1 c_0 c= cmatrix_vector_mul b0 cbasis cNUMERAL cBIT1 c_0 f0 c? / c/\ corthogonal_transformation b0 c/\ c= cdet cmatrix b0 creal_of_num cNUMERAL cBIT1 c_0 c= * b0 f2 f0
+- (?A. (((orthogonal_matrix A) /\ ((det A) = (real_of_num (NUMERAL (BIT1 _0))))) /\ (((matrix_vector_mul A) (basis (NUMERAL (BIT1 _0)))) = b))), (orthogonal_matrix A), ((det A) = (real_of_num (NUMERAL (BIT1 _0)))), (((matrix_vector_mul A) (basis (NUMERAL (BIT1 _0)))) = a) |- (?f. ((orthogonal_transformation f) /\ (((det (matrix f)) = (real_of_num (NUMERAL (BIT1 _0)))) /\ ((f a) = b))))
+T c==> c? / c/\ c/\ corthogonal_matrix b0 c= cdet b0 creal_of_num cNUMERAL cBIT1 c_0 c= cmatrix_vector_mul b0 cbasis cNUMERAL cBIT1 c_0 f0 c==> corthogonal_matrix f1 c==> c= cdet f1 creal_of_num cNUMERAL cBIT1 c_0 c==> c= cmatrix_vector_mul f1 cbasis cNUMERAL cBIT1 c_0 f2 c? / c/\ corthogonal_transformation b0 c/\ c= cdet cmatrix b0 creal_of_num cNUMERAL cBIT1 c_0 c= * b0 f2 f0
+- |- ((?f. t) = t)
+T c= c? / f0 f0
+- |- ((t /\ t) = t)
+T c= c/\ f0 f0 f0
+- |- (((\x. (f x)) y) = (f y))
+T c= * / * f0 b0 f1 * f0 f1
+- (?A. (((orthogonal_matrix A) /\ ((det A) = (real_of_num (NUMERAL (BIT1 _0))))) /\ (((matrix_vector_mul A) (basis (NUMERAL (BIT1 _0)))) = a))) |- ((?A. (((orthogonal_matrix A) /\ ((det A) = (real_of_num (NUMERAL (BIT1 _0))))) /\ (((matrix_vector_mul A) (basis (NUMERAL (BIT1 _0)))) = a))) /\ ((?A. (((orthogonal_matrix A) /\ ((det A) = (real_of_num (NUMERAL (BIT1 _0))))) /\ (((matrix_vector_mul A) (basis (NUMERAL (BIT1 _0)))) = b))) ==> (?f. ((orthogonal_transformation f) /\ (((det (matrix f)) = (real_of_num (NUMERAL (BIT1 _0)))) /\ ((f a) = b))))))
+T c==> c? / c/\ c/\ corthogonal_matrix b0 c= cdet b0 creal_of_num cNUMERAL cBIT1 c_0 c= cmatrix_vector_mul b0 cbasis cNUMERAL cBIT1 c_0 f0 c/\ c? / c/\ c/\ corthogonal_matrix b0 c= cdet b0 creal_of_num cNUMERAL cBIT1 c_0 c= cmatrix_vector_mul b0 cbasis cNUMERAL cBIT1 c_0 f0 c==> c? / c/\ c/\ corthogonal_matrix b0 c= cdet b0 creal_of_num cNUMERAL cBIT1 c_0 c= cmatrix_vector_mul b0 cbasis cNUMERAL cBIT1 c_0 f1 c? / c/\ corthogonal_transformation b0 c/\ c= cdet cmatrix b0 creal_of_num cNUMERAL cBIT1 c_0 c= * b0 f0 f1

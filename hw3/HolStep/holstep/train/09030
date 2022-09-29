@@ -1,0 +1,79 @@
+N REAL_CONTINUOUS_ADDITIVE_IMP_LINEAR
+C |- (!f. ((((real_continuous_on f) UNIV) /\ (!x. (!y. ((f ((real_add x) y)) = ((real_add (f x)) (f y)))))) ==> (!a. (!x. ((f ((real_mul a) x)) = ((real_mul a) (f x)))))))
+T c==> c/\ creal_continuous_on f0 part cUNIV ! ! c= * f0 creal_add b0 b1 creal_add * f0 b0 * f0 b1 ! ! c= * f0 creal_mul b0 b1 creal_mul b0 * f0 b1
+D TRUTH
+A |- T
+T cT
+D o_THM
+A |- (!f. (!g. (!x. (((f o g) x) = (f (g x))))))
+T c= co f0 f1 f2 * f0 * f1 f2
+D linear
+A |- (!f. ((linear f) = ((!x. (!y. ((f ((vector_add x) y)) = ((vector_add (f x)) (f y))))) /\ (!c. (!x. ((f ((% c) x)) = ((% c) (f x))))))))
+T c= clinear f0 c/\ ! ! c= * f0 cvector_add b0 b1 cvector_add * f0 b0 * f0 b1 ! ! c= * f0 c% b0 b1 c% b0 * f0 b1
+D FORALL_DROP
+A |- ((!x. (P x)) = (!x. (P (drop x))))
+T c= ! * f0 b0 ! * f0 cdrop b0
+D LIFT_EQ
+A |- (!x. (!y. (((lift x) = (lift y)) = (x = y))))
+T c= c= clift f0 clift f1 c= f0 f1
+D LIFT_ADD
+A |- (!x. (!y. ((lift ((real_add x) y)) = ((vector_add (lift x)) (lift y)))))
+T c= clift creal_add f0 f1 cvector_add clift f0 clift f1
+D LIFT_CMUL
+A |- (!x. (!c. ((lift ((real_mul c) x)) = ((% c) (lift x)))))
+T c= clift creal_mul f0 f1 c% f0 clift f1
+D DROP_ADD
+A |- (!x. (!y. ((drop ((vector_add x) y)) = ((real_add (drop x)) (drop y)))))
+T c= cdrop cvector_add f0 f1 creal_add cdrop f0 cdrop f1
+D DROP_CMUL
+A |- (!x. (!c. ((drop ((% c) x)) = ((real_mul c) (drop x)))))
+T c= cdrop c% f0 f1 creal_mul f0 cdrop f1
+D IMAGE_LIFT_UNIV
+A |- (((IMAGE lift) UNIV) = UNIV)
+T c= * * part cIMAGE part clift part cUNIV part cUNIV
+D CONTINUOUS_ADDITIVE_IMP_LINEAR
+A |- (!f. ((((continuous_on f) UNIV) /\ (!x. (!y. ((f ((vector_add x) y)) = ((vector_add (f x)) (f y)))))) ==> (linear f)))
+T c==> c/\ ccontinuous_on f0 part cUNIV ! ! c= * f0 cvector_add b0 b1 cvector_add * f0 b0 * f0 b1 clinear f0
+D REAL_CONTINUOUS_ON
+A |- (!f. (!s. (((real_continuous_on f) s) = ((continuous_on (lift o (f o drop))) ((IMAGE lift) s)))))
+T c= creal_continuous_on f0 f1 ccontinuous_on * * part co part clift * * part co f0 part cdrop * * part cIMAGE part clift f1
++ |- ((((!c. (!x. ((f ((real_mul c) x)) = ((real_mul c) (f x))))) ==> (!c. (!x. ((f ((real_mul c) x)) = ((real_mul c) (f x)))))) = T) = (((!c. (!x. ((f ((real_mul c) x)) = ((real_mul c) (f x))))) ==> (!a. (!x. ((f ((real_mul a) x)) = ((real_mul a) (f x)))))) = T))
+T c= c= c==> ! ! c= * f0 creal_mul b0 b1 creal_mul b0 * f0 b1 ! ! c= * f0 creal_mul b0 b1 creal_mul b0 * f0 b1 cT c= c==> ! ! c= * f0 creal_mul b0 b1 creal_mul b0 * f0 b1 ! ! c= * f0 creal_mul b0 b1 creal_mul b0 * f0 b1 cT
++ (((vector_add (lift x)) (lift y)) = (lift ((real_add x) y))) |- ((lift ((real_add x) y)) = ((vector_add (lift x)) (lift y)))
+T c==> c= cvector_add clift f0 clift f1 clift creal_add f0 f1 c= clift creal_add f0 f1 cvector_add clift f0 clift f1
++ |- (((!c. (((% c) (lift x)) = (lift ((real_mul c) x)))) ==> ((\c. (((% c) (lift x)) = (lift ((real_mul c) x)))) c)) = ((\c. (((% c) (lift x)) = (lift ((real_mul c) x)))) c))
+T c= c==> ! c= c% b0 clift f0 clift creal_mul b0 f0 * / c= c% b0 clift f0 clift creal_mul b0 f0 f1 * / c= c% b0 clift f0 clift creal_mul b0 f0 f1
++ ((lift ((real_add x) y)) = ((vector_add (lift x)) (lift y))) |- (((vector_add (lift x)) (lift y)) = (lift ((real_add x) y)))
+T c==> c= clift creal_add f0 f1 cvector_add clift f0 clift f1 c= cvector_add clift f0 clift f1 clift creal_add f0 f1
+- |- (((!x. ((lift (drop x)) = x)) ==> ((\x. ((lift (drop x)) = x)) x)) = ((\x. ((lift (drop x)) = x)) x))
+T c= c==> ! c= clift cdrop b0 b0 * / c= clift cdrop b0 b0 f0 * / c= clift cdrop b0 b0 f0
+- |- (((!x. ((drop (lift x)) = x)) ==> ((\x. ((drop (lift x)) = x)) x)) = ((\x. ((drop (lift x)) = x)) x))
+T c= c==> ! c= cdrop clift b0 b0 * / c= cdrop clift b0 b0 f0 * / c= cdrop clift b0 b0 f0
++ (!x. (!y. ((f ((real_add x) y)) = ((real_add (f x)) (f y))))) |- ((\y. ((f ((real_add x) y)) = ((real_add (f x)) (f y)))) y)
+T c==> ! ! c= * f0 creal_add b0 b1 creal_add * f0 b0 * f0 b1 * / c= * f0 creal_add f1 b0 creal_add * f0 f1 * f0 b0 f2
++ |- ((\x. (!y. (((lift x) = (lift y)) = (x = y)))) x)
+T * / ! c= c= clift b0 clift b1 c= b0 b1 f0
++ |- (((!c. (!x. ((f ((real_mul c) x)) = ((real_mul c) (f x))))) ==> (!a. (!x. ((f ((real_mul a) x)) = ((real_mul a) (f x)))))) = T)
+T c= c==> ! ! c= * f0 creal_mul b0 b1 creal_mul b0 * f0 b1 ! ! c= * f0 creal_mul b0 b1 creal_mul b0 * f0 b1 cT
++ |- (((!y. ((drop ((vector_add x) y)) = ((real_add (drop x)) (drop y)))) ==> ((\y. ((drop ((vector_add x) y)) = ((real_add (drop x)) (drop y)))) y)) = ((\y. ((drop ((vector_add x) y)) = ((real_add (drop x)) (drop y)))) y))
+T c= c==> ! c= cdrop cvector_add f0 b0 creal_add cdrop f0 cdrop b0 * / c= cdrop cvector_add f0 b0 creal_add cdrop f0 cdrop b0 f1 * / c= cdrop cvector_add f0 b0 creal_add cdrop f0 cdrop b0 f1
++ ((!x. (P (drop x))) = (!x. (P x))) |- ((!x. (P x)) = (!x. (P (drop x))))
+T c==> c= ! * f0 cdrop b0 ! * f0 b0 c= ! * f0 b0 ! * f0 cdrop b0
++ (!x. (!y. ((f ((real_add x) y)) = ((real_add (f x)) (f y))))), ((real_continuous_on f) UNIV) |- (((((continuous_on (lift o (f o drop))) UNIV) /\ (!x. (!y. (((lift o (f o drop)) ((vector_add x) y)) = ((vector_add ((lift o (f o drop)) x)) ((lift o (f o drop)) y)))))) ==> (linear (lift o (f o drop)))) ==> (!a. (!x. ((f ((real_mul a) x)) = ((real_mul a) (f x))))))
+T c==> ! ! c= * f0 creal_add b0 b1 creal_add * f0 b0 * f0 b1 c==> creal_continuous_on f0 part cUNIV c==> c==> c/\ ccontinuous_on * * part co part clift * * part co f0 part cdrop part cUNIV ! ! c= co part clift * * part co f0 part cdrop cvector_add b0 b1 cvector_add co part clift * * part co f0 part cdrop b0 co part clift * * part co f0 part cdrop b1 clinear * * part co part clift * * part co f0 part cdrop ! ! c= * f0 creal_mul b0 b1 creal_mul b0 * f0 b1
+- |- ((drop (lift x)) = x)
+T c= cdrop clift f0 f0
+- |- ((!y'. (((lift o (f o drop)) ((vector_add x) y)) = ((vector_add ((lift o (f o drop)) x)) ((lift o (f o drop)) y)))) = (!y. (((lift o (f o drop)) ((vector_add x) y)) = ((vector_add ((lift o (f o drop)) x)) ((lift o (f o drop)) y)))))
+T c= ! c= co part clift * * part co f0 part cdrop cvector_add f1 f2 cvector_add co part clift * * part co f0 part cdrop f1 co part clift * * part co f0 part cdrop f2 ! c= co part clift * * part co f0 part cdrop cvector_add f1 f2 cvector_add co part clift * * part co f0 part cdrop f1 co part clift * * part co f0 part cdrop f2
+- |- ((\x. ((drop (lift x)) = x)) x)
+T * / c= cdrop clift b0 b0 f0
+- |- ((\x. ((lift (drop x)) = x)) x)
+T * / c= clift cdrop b0 b0 f0
+- |- ((!x'. (((lift o (f o drop)) ((% c) x)) = ((% c) ((lift o (f o drop)) x)))) = (!x. (((lift o (f o drop)) ((% c) x)) = ((% c) ((lift o (f o drop)) x)))))
+T c= ! c= co part clift * * part co f0 part cdrop c% f1 f2 c% f1 co part clift * * part co f0 part cdrop f2 ! c= co part clift * * part co f0 part cdrop c% f1 f2 c% f1 co part clift * * part co f0 part cdrop f2
+- |- ((t /\ t) = t)
+T c= c/\ f0 f0 f0
+- |- ((!x'. (!y. (((lift o (f o drop)) ((vector_add x) y)) = ((vector_add ((lift o (f o drop)) x)) ((lift o (f o drop)) y))))) = (!x. (!y. (((lift o (f o drop)) ((vector_add x) y)) = ((vector_add ((lift o (f o drop)) x)) ((lift o (f o drop)) y))))))
+T c= ! ! c= co part clift * * part co f0 part cdrop cvector_add f1 b1 cvector_add co part clift * * part co f0 part cdrop f1 co part clift * * part co f0 part cdrop b1 ! ! c= co part clift * * part co f0 part cdrop cvector_add f1 b1 cvector_add co part clift * * part co f0 part cdrop f1 co part clift * * part co f0 part cdrop b1
+- |- ((lift (drop x)) = x)
+T c= clift cdrop f0 f0

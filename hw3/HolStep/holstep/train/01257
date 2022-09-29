@@ -1,0 +1,463 @@
+N Seq2.delete1_eq_at
+C |- (!x. (!s. (((delete1 x) s) = ((delete_at ((indexl x) s)) s))))
+T c= cdelete1 f0 f1 cdelete_at cindexl f0 f1 f1
+D TRUTH
+A |- T
+T cT
+D COND_CLAUSES
+A |- (!t1. (!t2. (((((COND T) t1) t2) = t1) /\ ((((COND F) t1) t2) = t2))))
+T c/\ c= cCOND cT f0 f1 f0 c= cCOND cF f0 f1 f1
+D list_INDUCT
+A |- (!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x))))
+T c==> c/\ * f0 cNIL ! ! c==> * f0 b1 * f0 cCONS b0 b1 ! * f0 b0
+D ssreflect_eq_def
+A |- (!v. (!P. (((ssreflect_eq v) P) = P)))
+T c= cssreflect_eq f0 f1 f1
+D bool_elim
+A |- (!P. (((P T) /\ (P F)) ==> (!x. (P x))))
+T c==> c/\ * f0 cT * f0 cF ! * f0 b0
+D Seq2.delete_at
+A |- (!h. (!i. (!t. ((((delete_at i) NIL) = NIL) /\ ((((delete_at (NUMERAL _0)) ((CONS h) t)) = t) /\ (((delete_at (SUC i)) ((CONS h) t)) = ((CONS h) ((delete_at i) t))))))))
+T c/\ c= cdelete_at f0 cNIL cNIL c/\ c= cdelete_at cNUMERAL c_0 cCONS f1 f2 f2 c= cdelete_at cSUC f0 cCONS f1 f2 cCONS f1 cdelete_at f0 f2
+D Seq2.delete1
+A |- (!h. (!x. (!t. ((((delete1 x) NIL) = NIL) /\ (((delete1 x) ((CONS h) t)) = (((COND (x = h)) t) ((CONS h) ((delete1 x) t))))))))
+T c/\ c= cdelete1 f0 cNIL cNIL c= cdelete1 f0 cCONS f1 f2 cCOND c= f0 f1 f2 cCONS f1 cdelete1 f0 f2
+D Seq2.index_cons
+A |- (!x. (!h. (!t. (((indexl x) ((CONS h) t)) = (((COND (x = h)) (NUMERAL _0)) (SUC ((indexl x) t)))))))
+T c= cindexl f0 cCONS f1 f2 cCOND c= f0 f1 cNUMERAL c_0 cSUC cindexl f0 f2
++ |- (((((ssreflect_eq eq) (x = h)) ==> (((((COND T) t) ((CONS h) ((delete1 x) t))) = ((delete_at (((COND T) (NUMERAL _0)) (SUC ((indexl x) t)))) ((CONS h) t))) = (t = ((delete_at (NUMERAL _0)) ((CONS h) t))))) ==> ((((ssreflect_eq eq) ((x = h) = T)) ==> ((((COND T) t) ((CONS h) ((delete1 x) t))) = ((delete_at (((COND T) (NUMERAL _0)) (SUC ((indexl x) t)))) ((CONS h) t)))) = (((ssreflect_eq eq) (x = h)) ==> (t = ((delete_at (NUMERAL _0)) ((CONS h) t)))))) = ((((ssreflect_eq eq) ((x = h) = T)) ==> ((((COND T) t) ((CONS h) ((delete1 x) t))) = ((delete_at (((COND T) (NUMERAL _0)) (SUC ((indexl x) t)))) ((CONS h) t)))) = (((ssreflect_eq eq) (x = h)) ==> (t = ((delete_at (NUMERAL _0)) ((CONS h) t))))))
+T c= c==> c==> cssreflect_eq f0 c= f1 f2 c= c= cCOND cT f3 cCONS f2 cdelete1 f1 f3 cdelete_at cCOND cT cNUMERAL c_0 cSUC cindexl f1 f3 cCONS f2 f3 c= f3 cdelete_at cNUMERAL c_0 cCONS f2 f3 c= c==> cssreflect_eq f0 c= c= f1 f2 cT c= cCOND cT f3 cCONS f2 cdelete1 f1 f3 cdelete_at cCOND cT cNUMERAL c_0 cSUC cindexl f1 f3 cCONS f2 f3 c==> cssreflect_eq f0 c= f1 f2 c= f3 cdelete_at cNUMERAL c_0 cCONS f2 f3 c= c==> cssreflect_eq f0 c= c= f1 f2 cT c= cCOND cT f3 cCONS f2 cdelete1 f1 f3 cdelete_at cCOND cT cNUMERAL c_0 cSUC cindexl f1 f3 cCONS f2 f3 c==> cssreflect_eq f0 c= f1 f2 c= f3 cdelete_at cNUMERAL c_0 cCONS f2 f3
++ |- (((delete1 x) NIL) = ((delete_at ((indexl x) NIL)) NIL))
+T c= cdelete1 f0 cNIL cdelete_at cindexl f0 cNIL cNIL
+- |- ((\p'. (!q'. ((((ssreflect_eq eq) (x = h)) = p') ==> ((p' ==> ((t = ((delete_at (NUMERAL _0)) ((CONS h) t))) = q')) ==> ((((ssreflect_eq eq) (x = h)) ==> (t = ((delete_at (NUMERAL _0)) ((CONS h) t)))) = (p' ==> q')))))) p')
+T * / ! c==> c= cssreflect_eq f0 c= f1 f2 b0 c==> c==> b0 c= c= f3 cdelete_at cNUMERAL c_0 cCONS f2 f3 b1 c= c==> cssreflect_eq f0 c= f1 f2 c= f3 cdelete_at cNUMERAL c_0 cCONS f2 f3 c==> b0 b1 f4
++ |- ((t = F) = (~ t))
+T c= c= f0 cF c~ f0
+- |- (((!p'. (!q'. ((((ssreflect_eq eq) (~ (x = h))) = p') ==> ((p' ==> ((((CONS h) ((delete1 x) t)) = ((delete_at (SUC ((indexl x) t))) ((CONS h) t))) = q')) ==> ((((ssreflect_eq eq) (~ (x = h))) ==> (((CONS h) ((delete1 x) t)) = ((delete_at (SUC ((indexl x) t))) ((CONS h) t)))) = (p' ==> q')))))) ==> ((\p'. (!q'. ((((ssreflect_eq eq) (~ (x = h))) = p') ==> ((p' ==> ((((CONS h) ((delete1 x) t)) = ((delete_at (SUC ((indexl x) t))) ((CONS h) t))) = q')) ==> ((((ssreflect_eq eq) (~ (x = h))) ==> (((CONS h) ((delete1 x) t)) = ((delete_at (SUC ((indexl x) t))) ((CONS h) t)))) = (p' ==> q')))))) p')) = ((\p'. (!q'. ((((ssreflect_eq eq) (~ (x = h))) = p') ==> ((p' ==> ((((CONS h) ((delete1 x) t)) = ((delete_at (SUC ((indexl x) t))) ((CONS h) t))) = q')) ==> ((((ssreflect_eq eq) (~ (x = h))) ==> (((CONS h) ((delete1 x) t)) = ((delete_at (SUC ((indexl x) t))) ((CONS h) t)))) = (p' ==> q')))))) p'))
+T c= c==> ! ! c==> c= cssreflect_eq f0 c~ c= f1 f2 b0 c==> c==> b0 c= c= cCONS f2 cdelete1 f1 f3 cdelete_at cSUC cindexl f1 f3 cCONS f2 f3 b1 c= c==> cssreflect_eq f0 c~ c= f1 f2 c= cCONS f2 cdelete1 f1 f3 cdelete_at cSUC cindexl f1 f3 cCONS f2 f3 c==> b0 b1 * / ! c==> c= cssreflect_eq f0 c~ c= f1 f2 b0 c==> c==> b0 c= c= cCONS f2 cdelete1 f1 f3 cdelete_at cSUC cindexl f1 f3 cCONS f2 f3 b1 c= c==> cssreflect_eq f0 c~ c= f1 f2 c= cCONS f2 cdelete1 f1 f3 cdelete_at cSUC cindexl f1 f3 cCONS f2 f3 c==> b0 b1 f4 * / ! c==> c= cssreflect_eq f0 c~ c= f1 f2 b0 c==> c==> b0 c= c= cCONS f2 cdelete1 f1 f3 cdelete_at cSUC cindexl f1 f3 cCONS f2 f3 b1 c= c==> cssreflect_eq f0 c~ c= f1 f2 c= cCONS f2 cdelete1 f1 f3 cdelete_at cSUC cindexl f1 f3 cCONS f2 f3 c==> b0 b1 f4
+- |- ((\q'. ((((ssreflect_eq eq) (x = h)) = p') ==> ((p' ==> ((t = ((delete_at (NUMERAL _0)) ((CONS h) t))) = q')) ==> ((((ssreflect_eq eq) (x = h)) ==> (t = ((delete_at (NUMERAL _0)) ((CONS h) t)))) = (p' ==> q'))))) q')
+T * / c==> c= cssreflect_eq f0 c= f1 f2 f3 c==> c==> f3 c= c= f4 cdelete_at cNUMERAL c_0 cCONS f2 f4 b0 c= c==> cssreflect_eq f0 c= f1 f2 c= f4 cdelete_at cNUMERAL c_0 cCONS f2 f4 c==> f3 b0 f5
+- ((P T) /\ (P F)) |- ((!P. (((P T) /\ (P F)) ==> (!x. (P x)))) ==> (!x. (P x)))
+T c==> c/\ * f0 cT * f0 cF c==> ! c==> c/\ * b0 cT * b0 cF ! * b0 b1 ! * f0 b0
++ |- (((delete1 x) NIL) = NIL)
+T c= cdelete1 f0 cNIL cNIL
+- ((!x. (P ==> (Q x))) = (P ==> (!x. (Q x)))) |- ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))
+T c==> c= ! c==> f0 * f1 b0 c==> f0 ! * f1 b0 c= c==> f0 ! * f1 b0 ! c==> f0 * f1 b0
++ |- (P = ((ssreflect_eq eq) P))
+T c= f0 cssreflect_eq f1 f0
+- (s = s1) |- ((((delete1 x) s1) = ((delete_at ((indexl x) s1)) s1)) = (((delete1 x) s1) = ((delete_at ((indexl x) s1)) s)))
+T c==> c= f0 f1 c= c= cdelete1 f2 f1 cdelete_at cindexl f2 f1 f1 c= cdelete1 f2 f1 cdelete_at cindexl f2 f1 f0
+- |- ((\P. (!Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x)))))) P)
+T * / ! c= c==> b0 ! * b1 b2 ! c==> b0 * b1 b2 f0
+- |- (((((ssreflect_eq eq) (x = h)) ==> ((t = ((delete_at (NUMERAL _0)) ((CONS h) t))) = (t = ((delete_at (NUMERAL _0)) ((CONS h) t))))) ==> ((((ssreflect_eq eq) (x = h)) ==> (t = ((delete_at (NUMERAL _0)) ((CONS h) t)))) = (((ssreflect_eq eq) (x = h)) ==> (t = ((delete_at (NUMERAL _0)) ((CONS h) t)))))) = ((((ssreflect_eq eq) (x = h)) ==> (t = ((delete_at (NUMERAL _0)) ((CONS h) t)))) = (((ssreflect_eq eq) (x = h)) ==> (t = ((delete_at (NUMERAL _0)) ((CONS h) t))))))
+T c= c==> c==> cssreflect_eq f0 c= f1 f2 c= c= f3 cdelete_at cNUMERAL c_0 cCONS f2 f3 c= f3 cdelete_at cNUMERAL c_0 cCONS f2 f3 c= c==> cssreflect_eq f0 c= f1 f2 c= f3 cdelete_at cNUMERAL c_0 cCONS f2 f3 c==> cssreflect_eq f0 c= f1 f2 c= f3 cdelete_at cNUMERAL c_0 cCONS f2 f3 c= c==> cssreflect_eq f0 c= f1 f2 c= f3 cdelete_at cNUMERAL c_0 cCONS f2 f3 c==> cssreflect_eq f0 c= f1 f2 c= f3 cdelete_at cNUMERAL c_0 cCONS f2 f3
+- ((ssreflect_eq eq) (x = h)) |- (((ssreflect_eq eq) (x = h)) /\ ((t = ((delete_at (NUMERAL _0)) ((CONS h) t))) = (t = ((delete_at (NUMERAL _0)) ((CONS h) t)))))
+T c==> cssreflect_eq f0 c= f1 f2 c/\ cssreflect_eq f0 c= f1 f2 c= c= f3 cdelete_at cNUMERAL c_0 cCONS f2 f3 c= f3 cdelete_at cNUMERAL c_0 cCONS f2 f3
+- ((ssreflect_eq eq) (~ (x = h))) |- (((ssreflect_eq eq) (~ (x = h))) = T)
+T c==> cssreflect_eq f0 c~ c= f1 f2 c= cssreflect_eq f0 c~ c= f1 f2 cT
+- |- ((\s. (((delete1 x) s) = ((delete_at ((indexl x) s)) s))) s1)
+T * / c= cdelete1 f0 b0 cdelete_at cindexl f0 b0 b0 f1
+- (s = s1) |- (((delete1 x) s1) = ((delete_at ((indexl x) s1)) s1))
+T c==> c= f0 f1 c= cdelete1 f2 f1 cdelete_at cindexl f2 f1 f1
++ |- ((((ssreflect_eq eq) ((x = h) = T)) ==> ((((COND T) t) ((CONS h) ((delete1 x) t))) = ((delete_at (((COND T) (NUMERAL _0)) (SUC ((indexl x) t)))) ((CONS h) t)))) = (((ssreflect_eq eq) (x = h)) ==> (t = ((delete_at (NUMERAL _0)) ((CONS h) t)))))
+T c= c==> cssreflect_eq f0 c= c= f1 f2 cT c= cCOND cT f3 cCONS f2 cdelete1 f1 f3 cdelete_at cCOND cT cNUMERAL c_0 cSUC cindexl f1 f3 cCONS f2 f3 c==> cssreflect_eq f0 c= f1 f2 c= f3 cdelete_at cNUMERAL c_0 cCONS f2 f3
++ |- ((\P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))) P)
+T * / c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 f0
++ |- ((\q'. ((((ssreflect_eq eq) ((x = h) = F)) = p') ==> ((p' ==> (((((COND F) t) ((CONS h) ((delete1 x) t))) = ((delete_at (((COND F) (NUMERAL _0)) (SUC ((indexl x) t)))) ((CONS h) t))) = q')) ==> ((((ssreflect_eq eq) ((x = h) = F)) ==> ((((COND F) t) ((CONS h) ((delete1 x) t))) = ((delete_at (((COND F) (NUMERAL _0)) (SUC ((indexl x) t)))) ((CONS h) t)))) = (p' ==> q'))))) q')
+T * / c==> c= cssreflect_eq f0 c= c= f1 f2 cF f3 c==> c==> f3 c= c= cCOND cF f4 cCONS f2 cdelete1 f1 f4 cdelete_at cCOND cF cNUMERAL c_0 cSUC cindexl f1 f4 cCONS f2 f4 b0 c= c==> cssreflect_eq f0 c= c= f1 f2 cF c= cCOND cF f4 cCONS f2 cdelete1 f1 f4 cdelete_at cCOND cF cNUMERAL c_0 cSUC cindexl f1 f4 cCONS f2 f4 c==> f3 b0 f5
+- |- ((t ==> t) = T)
+T c= c==> f0 f0 cT
++ ((x = h) = x1) |- (((((COND x1) t) ((CONS h) ((delete1 x) t))) = ((delete_at (((COND (x = h)) (NUMERAL _0)) (SUC ((indexl x) t)))) ((CONS h) t))) = ((((COND (x = h)) t) ((CONS h) ((delete1 x) t))) = ((delete_at (((COND (x = h)) (NUMERAL _0)) (SUC ((indexl x) t)))) ((CONS h) t))))
+T c==> c= c= f0 f1 f2 c= c= cCOND f2 f3 cCONS f1 cdelete1 f0 f3 cdelete_at cCOND c= f0 f1 cNUMERAL c_0 cSUC cindexl f0 f3 cCONS f1 f3 c= cCOND c= f0 f1 f3 cCONS f1 cdelete1 f0 f3 cdelete_at cCOND c= f0 f1 cNUMERAL c_0 cSUC cindexl f0 f3 cCONS f1 f3
++ (((delete1 x) t) = ((delete_at ((indexl x) t)) t)) |- (((!x1. (((ssreflect_eq eq) ((x = h) = x1)) ==> ((((COND x1) t) ((CONS h) ((delete1 x) t))) = ((delete_at (((COND x1) (NUMERAL _0)) (SUC ((indexl x) t)))) ((CONS h) t))))) ==> ((\x1. (((ssreflect_eq eq) ((x = h) = x1)) ==> ((((COND x1) t) ((CONS h) ((delete1 x) t))) = ((delete_at (((COND x1) (NUMERAL _0)) (SUC ((indexl x) t)))) ((CONS h) t))))) x1)) = ((\x1. (((ssreflect_eq eq) ((x = h) = x1)) ==> ((((COND x1) t) ((CONS h) ((delete1 x) t))) = ((delete_at (((COND x1) (NUMERAL _0)) (SUC ((indexl x) t)))) ((CONS h) t))))) x1))
+T c==> c= cdelete1 f0 f1 cdelete_at cindexl f0 f1 f1 c= c==> ! c==> cssreflect_eq f2 c= c= f0 f3 b0 c= cCOND b0 f1 cCONS f3 cdelete1 f0 f1 cdelete_at cCOND b0 cNUMERAL c_0 cSUC cindexl f0 f1 cCONS f3 f1 * / c==> cssreflect_eq f2 c= c= f0 f3 b0 c= cCOND b0 f1 cCONS f3 cdelete1 f0 f1 cdelete_at cCOND b0 cNUMERAL c_0 cSUC cindexl f0 f1 cCONS f3 f1 f4 * / c==> cssreflect_eq f2 c= c= f0 f3 b0 c= cCOND b0 f1 cCONS f3 cdelete1 f0 f1 cdelete_at cCOND b0 cNUMERAL c_0 cSUC cindexl f0 f1 cCONS f3 f1 f4
+- |- (((!q'. ((((ssreflect_eq eq) (~ (x = h))) = p') ==> ((p' ==> ((((CONS h) ((delete1 x) t)) = ((delete_at (SUC ((indexl x) t))) ((CONS h) t))) = q')) ==> ((((ssreflect_eq eq) (~ (x = h))) ==> (((CONS h) ((delete1 x) t)) = ((delete_at (SUC ((indexl x) t))) ((CONS h) t)))) = (p' ==> q'))))) ==> ((\q'. ((((ssreflect_eq eq) (~ (x = h))) = p') ==> ((p' ==> ((((CONS h) ((delete1 x) t)) = ((delete_at (SUC ((indexl x) t))) ((CONS h) t))) = q')) ==> ((((ssreflect_eq eq) (~ (x = h))) ==> (((CONS h) ((delete1 x) t)) = ((delete_at (SUC ((indexl x) t))) ((CONS h) t)))) = (p' ==> q'))))) q')) = ((\q'. ((((ssreflect_eq eq) (~ (x = h))) = p') ==> ((p' ==> ((((CONS h) ((delete1 x) t)) = ((delete_at (SUC ((indexl x) t))) ((CONS h) t))) = q')) ==> ((((ssreflect_eq eq) (~ (x = h))) ==> (((CONS h) ((delete1 x) t)) = ((delete_at (SUC ((indexl x) t))) ((CONS h) t)))) = (p' ==> q'))))) q'))
+T c= c==> ! c==> c= cssreflect_eq f0 c~ c= f1 f2 f3 c==> c==> f3 c= c= cCONS f2 cdelete1 f1 f4 cdelete_at cSUC cindexl f1 f4 cCONS f2 f4 b0 c= c==> cssreflect_eq f0 c~ c= f1 f2 c= cCONS f2 cdelete1 f1 f4 cdelete_at cSUC cindexl f1 f4 cCONS f2 f4 c==> f3 b0 * / c==> c= cssreflect_eq f0 c~ c= f1 f2 f3 c==> c==> f3 c= c= cCONS f2 cdelete1 f1 f4 cdelete_at cSUC cindexl f1 f4 cCONS f2 f4 b0 c= c==> cssreflect_eq f0 c~ c= f1 f2 c= cCONS f2 cdelete1 f1 f4 cdelete_at cSUC cindexl f1 f4 cCONS f2 f4 c==> f3 b0 f5 * / c==> c= cssreflect_eq f0 c~ c= f1 f2 f3 c==> c==> f3 c= c= cCONS f2 cdelete1 f1 f4 cdelete_at cSUC cindexl f1 f4 cCONS f2 f4 b0 c= c==> cssreflect_eq f0 c~ c= f1 f2 c= cCONS f2 cdelete1 f1 f4 cdelete_at cSUC cindexl f1 f4 cCONS f2 f4 c==> f3 b0 f5
++ |- ((((ssreflect_eq eq) (~ (x = h))) ==> (((CONS h) ((delete1 x) t)) = ((delete_at (SUC ((indexl x) t))) ((CONS h) t)))) = (((ssreflect_eq eq) ((x = h) = F)) ==> ((((COND F) t) ((CONS h) ((delete1 x) t))) = ((delete_at (((COND F) (NUMERAL _0)) (SUC ((indexl x) t)))) ((CONS h) t)))))
+T c= c==> cssreflect_eq f0 c~ c= f1 f2 c= cCONS f2 cdelete1 f1 f3 cdelete_at cSUC cindexl f1 f3 cCONS f2 f3 c==> cssreflect_eq f0 c= c= f1 f2 cF c= cCOND cF f3 cCONS f2 cdelete1 f1 f3 cdelete_at cCOND cF cNUMERAL c_0 cSUC cindexl f1 f3 cCONS f2 f3
+- |- (!s1. (((\s1. (s = s1)) s1) ==> (((delete1 x) s) = ((delete_at ((indexl x) s)) s))))
+T c==> * / c= f0 b0 f1 c= cdelete1 f2 f0 cdelete_at cindexl f2 f0 f0
+- |- (((x = h) = x1) = ((\x1. ((x = h) = x1)) x1))
+T c= c= c= f0 f1 f2 * / c= c= f0 f1 b0 f2
++ |- ((((ssreflect_eq eq) ((x = h) = F)) = p') ==> ((p' ==> (((((COND F) t) ((CONS h) ((delete1 x) t))) = ((delete_at (((COND F) (NUMERAL _0)) (SUC ((indexl x) t)))) ((CONS h) t))) = q')) ==> ((((ssreflect_eq eq) ((x = h) = F)) ==> ((((COND F) t) ((CONS h) ((delete1 x) t))) = ((delete_at (((COND F) (NUMERAL _0)) (SUC ((indexl x) t)))) ((CONS h) t)))) = (p' ==> q'))))
+T c==> c= cssreflect_eq f0 c= c= f1 f2 cF f3 c==> c==> f3 c= c= cCOND cF f4 cCONS f2 cdelete1 f1 f4 cdelete_at cCOND cF cNUMERAL c_0 cSUC cindexl f1 f4 cCONS f2 f4 f5 c= c==> cssreflect_eq f0 c= c= f1 f2 cF c= cCOND cF f4 cCONS f2 cdelete1 f1 f4 cdelete_at cCOND cF cNUMERAL c_0 cSUC cindexl f1 f4 cCONS f2 f4 c==> f3 f5
++ (((delete1 x) t) = ((delete_at ((indexl x) t)) t)) |- ((((COND (x = h)) t) ((CONS h) ((delete1 x) t))) = ((delete_at ((indexl x) ((CONS h) t))) ((CONS h) t)))
+T c==> c= cdelete1 f0 f1 cdelete_at cindexl f0 f1 f1 c= cCOND c= f0 f2 f1 cCONS f2 cdelete1 f0 f1 cdelete_at cindexl f0 cCONS f2 f1 cCONS f2 f1
+- (!P. (((P T) /\ (P F)) ==> (!x. (P x)))) |- ((\P. (((P T) /\ (P F)) ==> (!x. (P x)))) P)
+T c==> ! c==> c/\ * b0 cT * b0 cF ! * b0 b1 * / c==> c/\ * b0 cT * b0 cF ! * b0 b1 f0
+- ((ssreflect_eq eq) (~ (x = h))) |- (~ (h = x))
+T c==> cssreflect_eq f0 c~ c= f1 f2 c~ c= f2 f1
++ |- ((\P. (P = ((ssreflect_eq eq) P))) P)
+T * / c= b0 cssreflect_eq f0 b0 f1
+- |- (!s1. (((\s1. (s = s1)) s1) ==> (?s1. (s = s1))))
+T c==> * / c= f0 b0 f1 c? / c= f0 b0
++ |- (((((ssreflect_eq eq) ((x = h) = F)) = ((ssreflect_eq eq) (~ (x = h)))) ==> ((((ssreflect_eq eq) (~ (x = h))) ==> (((((COND F) t) ((CONS h) ((delete1 x) t))) = ((delete_at (((COND F) (NUMERAL _0)) (SUC ((indexl x) t)))) ((CONS h) t))) = q')) ==> ((((ssreflect_eq eq) ((x = h) = F)) ==> ((((COND F) t) ((CONS h) ((delete1 x) t))) = ((delete_at (((COND F) (NUMERAL _0)) (SUC ((indexl x) t)))) ((CONS h) t)))) = (((ssreflect_eq eq) (~ (x = h))) ==> q')))) = ((((ssreflect_eq eq) (~ (x = h))) ==> (((((COND F) t) ((CONS h) ((delete1 x) t))) = ((delete_at (((COND F) (NUMERAL _0)) (SUC ((indexl x) t)))) ((CONS h) t))) = q')) ==> ((((ssreflect_eq eq) ((x = h) = F)) ==> ((((COND F) t) ((CONS h) ((delete1 x) t))) = ((delete_at (((COND F) (NUMERAL _0)) (SUC ((indexl x) t)))) ((CONS h) t)))) = (((ssreflect_eq eq) (~ (x = h))) ==> q'))))
+T c= c==> c= cssreflect_eq f0 c= c= f1 f2 cF cssreflect_eq f0 c~ c= f1 f2 c==> c==> cssreflect_eq f0 c~ c= f1 f2 c= c= cCOND cF f3 cCONS f2 cdelete1 f1 f3 cdelete_at cCOND cF cNUMERAL c_0 cSUC cindexl f1 f3 cCONS f2 f3 f4 c= c==> cssreflect_eq f0 c= c= f1 f2 cF c= cCOND cF f3 cCONS f2 cdelete1 f1 f3 cdelete_at cCOND cF cNUMERAL c_0 cSUC cindexl f1 f3 cCONS f2 f3 c==> cssreflect_eq f0 c~ c= f1 f2 f4 c==> c==> cssreflect_eq f0 c~ c= f1 f2 c= c= cCOND cF f3 cCONS f2 cdelete1 f1 f3 cdelete_at cCOND cF cNUMERAL c_0 cSUC cindexl f1 f3 cCONS f2 f3 f4 c= c==> cssreflect_eq f0 c= c= f1 f2 cF c= cCOND cF f3 cCONS f2 cdelete1 f1 f3 cdelete_at cCOND cF cNUMERAL c_0 cSUC cindexl f1 f3 cCONS f2 f3 c==> cssreflect_eq f0 c~ c= f1 f2 f4
+- |- ((\s1. (s = s1)) s)
+T * / c= f0 b0 f0
++ |- (((!i. (!t. ((((delete_at i) NIL) = NIL) /\ ((((delete_at (NUMERAL _0)) ((CONS h) t)) = t) /\ (((delete_at (SUC i)) ((CONS h) t)) = ((CONS h) ((delete_at i) t))))))) ==> ((\i. (!t. ((((delete_at i) NIL) = NIL) /\ ((((delete_at (NUMERAL _0)) ((CONS h) t)) = t) /\ (((delete_at (SUC i)) ((CONS h) t)) = ((CONS h) ((delete_at i) t))))))) i)) = ((\i. (!t. ((((delete_at i) NIL) = NIL) /\ ((((delete_at (NUMERAL _0)) ((CONS h) t)) = t) /\ (((delete_at (SUC i)) ((CONS h) t)) = ((CONS h) ((delete_at i) t))))))) i))
+T c= c==> ! ! c/\ c= cdelete_at b0 cNIL cNIL c/\ c= cdelete_at cNUMERAL c_0 cCONS f0 b1 b1 c= cdelete_at cSUC b0 cCONS f0 b1 cCONS f0 cdelete_at b0 b1 * / ! c/\ c= cdelete_at b0 cNIL cNIL c/\ c= cdelete_at cNUMERAL c_0 cCONS f0 b1 b1 c= cdelete_at cSUC b0 cCONS f0 b1 cCONS f0 cdelete_at b0 b1 f1 * / ! c/\ c= cdelete_at b0 cNIL cNIL c/\ c= cdelete_at cNUMERAL c_0 cCONS f0 b1 b1 c= cdelete_at cSUC b0 cCONS f0 b1 cCONS f0 cdelete_at b0 b1 f1
++ |- (((ssreflect_eq eq) (x = h)) ==> (t = ((delete_at (NUMERAL _0)) ((CONS h) t))))
+T c==> cssreflect_eq f0 c= f1 f2 c= f3 cdelete_at cNUMERAL c_0 cCONS f2 f3
+- |- (((((ssreflect_eq eq) (~ (x = h))) = ((ssreflect_eq eq) (~ (x = h)))) ==> ((((ssreflect_eq eq) (~ (x = h))) ==> ((((CONS h) ((delete1 x) t)) = ((delete_at (SUC ((indexl x) t))) ((CONS h) t))) = q')) ==> ((((ssreflect_eq eq) (~ (x = h))) ==> (((CONS h) ((delete1 x) t)) = ((delete_at (SUC ((indexl x) t))) ((CONS h) t)))) = (((ssreflect_eq eq) (~ (x = h))) ==> q')))) = ((((ssreflect_eq eq) (~ (x = h))) ==> ((((CONS h) ((delete1 x) t)) = ((delete_at (SUC ((indexl x) t))) ((CONS h) t))) = q')) ==> ((((ssreflect_eq eq) (~ (x = h))) ==> (((CONS h) ((delete1 x) t)) = ((delete_at (SUC ((indexl x) t))) ((CONS h) t)))) = (((ssreflect_eq eq) (~ (x = h))) ==> q'))))
+T c= c==> c= cssreflect_eq f0 c~ c= f1 f2 cssreflect_eq f0 c~ c= f1 f2 c==> c==> cssreflect_eq f0 c~ c= f1 f2 c= c= cCONS f2 cdelete1 f1 f3 cdelete_at cSUC cindexl f1 f3 cCONS f2 f3 f4 c= c==> cssreflect_eq f0 c~ c= f1 f2 c= cCONS f2 cdelete1 f1 f3 cdelete_at cSUC cindexl f1 f3 cCONS f2 f3 c==> cssreflect_eq f0 c~ c= f1 f2 f4 c==> c==> cssreflect_eq f0 c~ c= f1 f2 c= c= cCONS f2 cdelete1 f1 f3 cdelete_at cSUC cindexl f1 f3 cCONS f2 f3 f4 c= c==> cssreflect_eq f0 c~ c= f1 f2 c= cCONS f2 cdelete1 f1 f3 cdelete_at cSUC cindexl f1 f3 cCONS f2 f3 c==> cssreflect_eq f0 c~ c= f1 f2 f4
+- |- (((!P. (((ssreflect_eq v) P) = P)) ==> ((\P. (((ssreflect_eq v) P) = P)) P)) = ((\P. (((ssreflect_eq v) P) = P)) P))
+T c= c==> ! c= cssreflect_eq f0 b0 b0 * / c= cssreflect_eq f0 b0 b0 f1 * / c= cssreflect_eq f0 b0 b0 f1
++ (((delete1 x) t) = ((delete_at ((indexl x) t)) t)) |- (((ssreflect_eq eq) (~ (x = h))) ==> (((CONS h) ((delete1 x) t)) = ((delete_at (SUC ((indexl x) t))) ((CONS h) t))))
+T c==> c= cdelete1 f0 f1 cdelete_at cindexl f0 f1 f1 c==> cssreflect_eq f2 c~ c= f0 f3 c= cCONS f3 cdelete1 f0 f1 cdelete_at cSUC cindexl f0 f1 cCONS f3 f1
++ |- ((((ssreflect_eq eq) (x = h)) ==> (((((COND T) t) ((CONS h) ((delete1 x) t))) = ((delete_at (((COND T) (NUMERAL _0)) (SUC ((indexl x) t)))) ((CONS h) t))) = q')) ==> ((((ssreflect_eq eq) ((x = h) = T)) ==> ((((COND T) t) ((CONS h) ((delete1 x) t))) = ((delete_at (((COND T) (NUMERAL _0)) (SUC ((indexl x) t)))) ((CONS h) t)))) = (((ssreflect_eq eq) (x = h)) ==> q')))
+T c==> c==> cssreflect_eq f0 c= f1 f2 c= c= cCOND cT f3 cCONS f2 cdelete1 f1 f3 cdelete_at cCOND cT cNUMERAL c_0 cSUC cindexl f1 f3 cCONS f2 f3 f4 c= c==> cssreflect_eq f0 c= c= f1 f2 cT c= cCOND cT f3 cCONS f2 cdelete1 f1 f3 cdelete_at cCOND cT cNUMERAL c_0 cSUC cindexl f1 f3 cCONS f2 f3 c==> cssreflect_eq f0 c= f1 f2 f4
++ ((x = h) = x1) |- (((((COND x1) t) ((CONS h) ((delete1 x) t))) = ((delete_at (((COND x1) (NUMERAL _0)) (SUC ((indexl x) t)))) ((CONS h) t))) = ((((COND x1) t) ((CONS h) ((delete1 x) t))) = ((delete_at (((COND (x = h)) (NUMERAL _0)) (SUC ((indexl x) t)))) ((CONS h) t))))
+T c==> c= c= f0 f1 f2 c= c= cCOND f2 f3 cCONS f1 cdelete1 f0 f3 cdelete_at cCOND f2 cNUMERAL c_0 cSUC cindexl f0 f3 cCONS f1 f3 c= cCOND f2 f3 cCONS f1 cdelete1 f0 f3 cdelete_at cCOND c= f0 f1 cNUMERAL c_0 cSUC cindexl f0 f3 cCONS f1 f3
++ |- ((t = t) = (t = ((delete_at (NUMERAL _0)) ((CONS h) t))))
+T c= c= f0 f0 c= f0 cdelete_at cNUMERAL c_0 cCONS f1 f0
+- (!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))), ((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) |- ((!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))) /\ (!x. (P x)))
+T c==> ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 c==> c/\ * f0 cNIL ! ! c==> * f0 b1 * f0 cCONS b0 b1 c/\ ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 ! * f0 b0
++ (((delete1 x) t) = ((delete_at ((indexl x) t)) t)) |- (!x1. (((ssreflect_eq eq) ((x = h) = x1)) ==> ((((COND x1) t) ((CONS h) ((delete1 x) t))) = ((delete_at (((COND x1) (NUMERAL _0)) (SUC ((indexl x) t)))) ((CONS h) t)))))
+T c==> c= cdelete1 f0 f1 cdelete_at cindexl f0 f1 f1 ! c==> cssreflect_eq f2 c= c= f0 f3 b0 c= cCOND b0 f1 cCONS f3 cdelete1 f0 f1 cdelete_at cCOND b0 cNUMERAL c_0 cSUC cindexl f0 f1 cCONS f3 f1
+- |- ((\P. (((ssreflect_eq v) P) = P)) P)
+T * / c= cssreflect_eq f0 b0 b0 f1
++ ((x = h) = x1), (((delete1 x) t) = ((delete_at ((indexl x) t)) t)) |- ((((COND x1) t) ((CONS h) ((delete1 x) t))) = ((delete_at (((COND (x = h)) (NUMERAL _0)) (SUC ((indexl x) t)))) ((CONS h) t)))
+T c==> c= c= f0 f1 f2 c==> c= cdelete1 f0 f3 cdelete_at cindexl f0 f3 f3 c= cCOND f2 f3 cCONS f1 cdelete1 f0 f3 cdelete_at cCOND c= f0 f1 cNUMERAL c_0 cSUC cindexl f0 f3 cCONS f1 f3
+- ((ssreflect_eq eq) (~ (x = h))) |- (((~ (x = h)) ==> ((x = h) = F)) = ((x = h) = F))
+T c==> cssreflect_eq f0 c~ c= f1 f2 c= c==> c~ c= f1 f2 c= c= f1 f2 cF c= c= f1 f2 cF
+- |- (((((ssreflect_eq eq) (~ (x = h))) ==> ((((CONS h) ((delete1 x) t)) = ((delete_at (SUC ((indexl x) t))) ((CONS h) t))) = (((CONS h) ((delete1 x) t)) = ((delete_at (SUC ((indexl x) t))) ((CONS h) t))))) ==> ((((ssreflect_eq eq) (~ (x = h))) ==> (((CONS h) ((delete1 x) t)) = ((delete_at (SUC ((indexl x) t))) ((CONS h) t)))) = (((ssreflect_eq eq) (~ (x = h))) ==> (((CONS h) ((delete1 x) t)) = ((delete_at (SUC ((indexl x) t))) ((CONS h) t)))))) = ((((ssreflect_eq eq) (~ (x = h))) ==> (((CONS h) ((delete1 x) t)) = ((delete_at (SUC ((indexl x) t))) ((CONS h) t)))) = (((ssreflect_eq eq) (~ (x = h))) ==> (((CONS h) ((delete1 x) t)) = ((delete_at (SUC ((indexl x) t))) ((CONS h) t))))))
+T c= c==> c==> cssreflect_eq f0 c~ c= f1 f2 c= c= cCONS f2 cdelete1 f1 f3 cdelete_at cSUC cindexl f1 f3 cCONS f2 f3 c= cCONS f2 cdelete1 f1 f3 cdelete_at cSUC cindexl f1 f3 cCONS f2 f3 c= c==> cssreflect_eq f0 c~ c= f1 f2 c= cCONS f2 cdelete1 f1 f3 cdelete_at cSUC cindexl f1 f3 cCONS f2 f3 c==> cssreflect_eq f0 c~ c= f1 f2 c= cCONS f2 cdelete1 f1 f3 cdelete_at cSUC cindexl f1 f3 cCONS f2 f3 c= c==> cssreflect_eq f0 c~ c= f1 f2 c= cCONS f2 cdelete1 f1 f3 cdelete_at cSUC cindexl f1 f3 cCONS f2 f3 c==> cssreflect_eq f0 c~ c= f1 f2 c= cCONS f2 cdelete1 f1 f3 cdelete_at cSUC cindexl f1 f3 cCONS f2 f3
+- ((x = h) = x1) |- ((\x1. ((x = h) = x1)) x1)
+T c==> c= c= f0 f1 f2 * / c= c= f0 f1 b0 f2
++ |- ((((delete_at (NUMERAL _0)) ((CONS h) t)) = t) /\ (((delete_at (SUC i)) ((CONS h) t)) = ((CONS h) ((delete_at i) t))))
+T c/\ c= cdelete_at cNUMERAL c_0 cCONS f0 f1 f1 c= cdelete_at cSUC f2 cCONS f0 f1 cCONS f0 cdelete_at f2 f1
++ (((delete1 x) t) = ((delete_at ((indexl x) t)) t)) |- ((((COND (x = h)) t) ((CONS h) ((delete1 x) t))) = ((delete_at (((COND (x = h)) (NUMERAL _0)) (SUC ((indexl x) t)))) ((CONS h) t)))
+T c==> c= cdelete1 f0 f1 cdelete_at cindexl f0 f1 f1 c= cCOND c= f0 f2 f1 cCONS f2 cdelete1 f0 f1 cdelete_at cCOND c= f0 f2 cNUMERAL c_0 cSUC cindexl f0 f1 cCONS f2 f1
++ |- (((!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))) ==> ((\P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))) P)) = ((\P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))) P))
+T c= c==> ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 * / c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 f0 * / c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 f0
++ |- (NIL = ((delete_at ((indexl x) NIL)) NIL))
+T c= cNIL cdelete_at cindexl f0 cNIL cNIL
+- (!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))), ((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) |- (!x. (P x))
+T c==> ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 c==> c/\ * f0 cNIL ! ! c==> * f0 b1 * f0 cCONS b0 b1 ! * f0 b0
++ ((ssreflect_eq eq) (x = h)) |- (((ssreflect_eq eq) (x = h)) /\ (((((COND T) t) ((CONS h) ((delete1 x) t))) = ((delete_at (((COND T) (NUMERAL _0)) (SUC ((indexl x) t)))) ((CONS h) t))) = (t = ((delete_at (NUMERAL _0)) ((CONS h) t)))))
+T c==> cssreflect_eq f0 c= f1 f2 c/\ cssreflect_eq f0 c= f1 f2 c= c= cCOND cT f3 cCONS f2 cdelete1 f1 f3 cdelete_at cCOND cT cNUMERAL c_0 cSUC cindexl f1 f3 cCONS f2 f3 c= f3 cdelete_at cNUMERAL c_0 cCONS f2 f3
++ ((x = h) = x1), (((delete1 x) t) = ((delete_at ((indexl x) t)) t)) |- ((((COND x1) t) ((CONS h) ((delete1 x) t))) = ((delete_at (((COND x1) (NUMERAL _0)) (SUC ((indexl x) t)))) ((CONS h) t)))
+T c==> c= c= f0 f1 f2 c==> c= cdelete1 f0 f3 cdelete_at cindexl f0 f3 f3 c= cCOND f2 f3 cCONS f1 cdelete1 f0 f3 cdelete_at cCOND f2 cNUMERAL c_0 cSUC cindexl f0 f3 cCONS f1 f3
++ (((delete1 x) t) = ((delete_at ((indexl x) t)) t)) |- (((!x. (((\x1. ((x = h) = x1)) x) ==> ((((COND (x = h)) t) ((CONS h) ((delete1 x) t))) = ((delete_at (((COND (x = h)) (NUMERAL _0)) (SUC ((indexl x) t)))) ((CONS h) t))))) ==> ((?x1. ((x = h) = x1)) ==> ((((COND (x = h)) t) ((CONS h) ((delete1 x) t))) = ((delete_at (((COND (x = h)) (NUMERAL _0)) (SUC ((indexl x) t)))) ((CONS h) t))))) = ((?x1. ((x = h) = x1)) ==> ((((COND (x = h)) t) ((CONS h) ((delete1 x) t))) = ((delete_at (((COND (x = h)) (NUMERAL _0)) (SUC ((indexl x) t)))) ((CONS h) t)))))
+T c==> c= cdelete1 f0 f1 cdelete_at cindexl f0 f1 f1 c= c==> ! c==> * / c= c= f0 f2 b1 b0 c= cCOND c= f0 f2 f1 cCONS f2 cdelete1 f0 f1 cdelete_at cCOND c= f0 f2 cNUMERAL c_0 cSUC cindexl f0 f1 cCONS f2 f1 c==> c? / c= c= f0 f2 b0 c= cCOND c= f0 f2 f1 cCONS f2 cdelete1 f0 f1 cdelete_at cCOND c= f0 f2 cNUMERAL c_0 cSUC cindexl f0 f1 cCONS f2 f1 c==> c? / c= c= f0 f2 b0 c= cCOND c= f0 f2 f1 cCONS f2 cdelete1 f0 f1 cdelete_at cCOND c= f0 f2 cNUMERAL c_0 cSUC cindexl f0 f1 cCONS f2 f1
++ |- (((!t. ((((delete1 x) NIL) = NIL) /\ (((delete1 x) ((CONS h) t)) = (((COND (x = h)) t) ((CONS h) ((delete1 x) t)))))) ==> ((\t. ((((delete1 x) NIL) = NIL) /\ (((delete1 x) ((CONS h) t)) = (((COND (x = h)) t) ((CONS h) ((delete1 x) t)))))) t)) = ((\t. ((((delete1 x) NIL) = NIL) /\ (((delete1 x) ((CONS h) t)) = (((COND (x = h)) t) ((CONS h) ((delete1 x) t)))))) t))
+T c= c==> ! c/\ c= cdelete1 f0 cNIL cNIL c= cdelete1 f0 cCONS f1 b0 cCOND c= f0 f1 b0 cCONS f1 cdelete1 f0 b0 * / c/\ c= cdelete1 f0 cNIL cNIL c= cdelete1 f0 cCONS f1 b0 cCOND c= f0 f1 b0 cCONS f1 cdelete1 f0 b0 f2 * / c/\ c= cdelete1 f0 cNIL cNIL c= cdelete1 f0 cCONS f1 b0 cCOND c= f0 f1 b0 cCONS f1 cdelete1 f0 b0 f2
+- |- (((!p'. (!q'. ((((ssreflect_eq eq) (x = h)) = p') ==> ((p' ==> ((t = ((delete_at (NUMERAL _0)) ((CONS h) t))) = q')) ==> ((((ssreflect_eq eq) (x = h)) ==> (t = ((delete_at (NUMERAL _0)) ((CONS h) t)))) = (p' ==> q')))))) ==> ((\p'. (!q'. ((((ssreflect_eq eq) (x = h)) = p') ==> ((p' ==> ((t = ((delete_at (NUMERAL _0)) ((CONS h) t))) = q')) ==> ((((ssreflect_eq eq) (x = h)) ==> (t = ((delete_at (NUMERAL _0)) ((CONS h) t)))) = (p' ==> q')))))) p')) = ((\p'. (!q'. ((((ssreflect_eq eq) (x = h)) = p') ==> ((p' ==> ((t = ((delete_at (NUMERAL _0)) ((CONS h) t))) = q')) ==> ((((ssreflect_eq eq) (x = h)) ==> (t = ((delete_at (NUMERAL _0)) ((CONS h) t)))) = (p' ==> q')))))) p'))
+T c= c==> ! ! c==> c= cssreflect_eq f0 c= f1 f2 b0 c==> c==> b0 c= c= f3 cdelete_at cNUMERAL c_0 cCONS f2 f3 b1 c= c==> cssreflect_eq f0 c= f1 f2 c= f3 cdelete_at cNUMERAL c_0 cCONS f2 f3 c==> b0 b1 * / ! c==> c= cssreflect_eq f0 c= f1 f2 b0 c==> c==> b0 c= c= f3 cdelete_at cNUMERAL c_0 cCONS f2 f3 b1 c= c==> cssreflect_eq f0 c= f1 f2 c= f3 cdelete_at cNUMERAL c_0 cCONS f2 f3 c==> b0 b1 f4 * / ! c==> c= cssreflect_eq f0 c= f1 f2 b0 c==> c==> b0 c= c= f3 cdelete_at cNUMERAL c_0 cCONS f2 f3 b1 c= c==> cssreflect_eq f0 c= f1 f2 c= f3 cdelete_at cNUMERAL c_0 cCONS f2 f3 c==> b0 b1 f4
+- |- (((x = h) = x1) ==> (?x1. ((x = h) = x1)))
+T c==> c= c= f0 f1 f2 c? / c= c= f0 f1 b0
++ |- (((ssreflect_eq eq) (x = h)) ==> (((((COND T) t) ((CONS h) ((delete1 x) t))) = ((delete_at (((COND T) (NUMERAL _0)) (SUC ((indexl x) t)))) ((CONS h) t))) = (t = ((delete_at (NUMERAL _0)) ((CONS h) t)))))
+T c==> cssreflect_eq f0 c= f1 f2 c= c= cCOND cT f3 cCONS f2 cdelete1 f1 f3 cdelete_at cCOND cT cNUMERAL c_0 cSUC cindexl f1 f3 cCONS f2 f3 c= f3 cdelete_at cNUMERAL c_0 cCONS f2 f3
+- ((ssreflect_eq eq) (~ (x = h))) |- ((x = h) = F)
+T c==> cssreflect_eq f0 c~ c= f1 f2 c= c= f1 f2 cF
+- |- ((((delete1 x) s) = ((delete_at ((indexl x) s)) s)) = T)
+T c= c= cdelete1 f0 f1 cdelete_at cindexl f0 f1 f1 cT
+- (!P. (((P T) /\ (P F)) ==> (!x. (P x)))), ((P T) /\ (P F)) |- (!x. (P x))
+T c==> ! c==> c/\ * b0 cT * b0 cF ! * b0 b1 c==> c/\ * f0 cT * f0 cF ! * f0 b0
++ |- ((\t. (((indexl x) ((CONS h) t)) = (((COND (x = h)) (NUMERAL _0)) (SUC ((indexl x) t))))) t)
+T * / c= cindexl f0 cCONS f1 b0 cCOND c= f0 f1 cNUMERAL c_0 cSUC cindexl f0 b0 f2
++ |- ((NIL = ((delete_at ((indexl x) NIL)) NIL)) = (((delete1 x) NIL) = ((delete_at ((indexl x) NIL)) NIL)))
+T c= c= cNIL cdelete_at cindexl f0 cNIL cNIL c= cdelete1 f0 cNIL cdelete_at cindexl f0 cNIL cNIL
++ |- ((!q'. ((p = p') ==> ((p' ==> (q = q')) ==> ((p ==> q) = (p' ==> q'))))) = T)
+T c= ! c==> c= f0 f1 c==> c==> f1 c= f2 b0 c= c==> f0 f2 c==> f1 b0 cT
++ |- (((!p'. (!q'. ((((ssreflect_eq eq) ((x = h) = T)) = p') ==> ((p' ==> (((((COND T) t) ((CONS h) ((delete1 x) t))) = ((delete_at (((COND T) (NUMERAL _0)) (SUC ((indexl x) t)))) ((CONS h) t))) = q')) ==> ((((ssreflect_eq eq) ((x = h) = T)) ==> ((((COND T) t) ((CONS h) ((delete1 x) t))) = ((delete_at (((COND T) (NUMERAL _0)) (SUC ((indexl x) t)))) ((CONS h) t)))) = (p' ==> q')))))) ==> ((\p'. (!q'. ((((ssreflect_eq eq) ((x = h) = T)) = p') ==> ((p' ==> (((((COND T) t) ((CONS h) ((delete1 x) t))) = ((delete_at (((COND T) (NUMERAL _0)) (SUC ((indexl x) t)))) ((CONS h) t))) = q')) ==> ((((ssreflect_eq eq) ((x = h) = T)) ==> ((((COND T) t) ((CONS h) ((delete1 x) t))) = ((delete_at (((COND T) (NUMERAL _0)) (SUC ((indexl x) t)))) ((CONS h) t)))) = (p' ==> q')))))) p')) = ((\p'. (!q'. ((((ssreflect_eq eq) ((x = h) = T)) = p') ==> ((p' ==> (((((COND T) t) ((CONS h) ((delete1 x) t))) = ((delete_at (((COND T) (NUMERAL _0)) (SUC ((indexl x) t)))) ((CONS h) t))) = q')) ==> ((((ssreflect_eq eq) ((x = h) = T)) ==> ((((COND T) t) ((CONS h) ((delete1 x) t))) = ((delete_at (((COND T) (NUMERAL _0)) (SUC ((indexl x) t)))) ((CONS h) t)))) = (p' ==> q')))))) p'))
+T c= c==> ! ! c==> c= cssreflect_eq f0 c= c= f1 f2 cT b0 c==> c==> b0 c= c= cCOND cT f3 cCONS f2 cdelete1 f1 f3 cdelete_at cCOND cT cNUMERAL c_0 cSUC cindexl f1 f3 cCONS f2 f3 b1 c= c==> cssreflect_eq f0 c= c= f1 f2 cT c= cCOND cT f3 cCONS f2 cdelete1 f1 f3 cdelete_at cCOND cT cNUMERAL c_0 cSUC cindexl f1 f3 cCONS f2 f3 c==> b0 b1 * / ! c==> c= cssreflect_eq f0 c= c= f1 f2 cT b0 c==> c==> b0 c= c= cCOND cT f3 cCONS f2 cdelete1 f1 f3 cdelete_at cCOND cT cNUMERAL c_0 cSUC cindexl f1 f3 cCONS f2 f3 b1 c= c==> cssreflect_eq f0 c= c= f1 f2 cT c= cCOND cT f3 cCONS f2 cdelete1 f1 f3 cdelete_at cCOND cT cNUMERAL c_0 cSUC cindexl f1 f3 cCONS f2 f3 c==> b0 b1 f4 * / ! c==> c= cssreflect_eq f0 c= c= f1 f2 cT b0 c==> c==> b0 c= c= cCOND cT f3 cCONS f2 cdelete1 f1 f3 cdelete_at cCOND cT cNUMERAL c_0 cSUC cindexl f1 f3 cCONS f2 f3 b1 c= c==> cssreflect_eq f0 c= c= f1 f2 cT c= cCOND cT f3 cCONS f2 cdelete1 f1 f3 cdelete_at cCOND cT cNUMERAL c_0 cSUC cindexl f1 f3 cCONS f2 f3 c==> b0 b1 f4
++ |- ((\h. (!x. (!t. ((((delete1 x) NIL) = NIL) /\ (((delete1 x) ((CONS h) t)) = (((COND (x = h)) t) ((CONS h) ((delete1 x) t)))))))) h)
+T * / ! ! c/\ c= cdelete1 b1 cNIL cNIL c= cdelete1 b1 cCONS b0 b2 cCOND c= b1 b0 b2 cCONS b0 cdelete1 b1 b2 f0
++ |- (((((delete1 x) t) = ((delete_at ((indexl x) t)) t)) ==> (((delete1 x) ((CONS h) t)) = ((delete_at ((indexl x) ((CONS h) t))) ((CONS h) t)))) = T)
+T c= c==> c= cdelete1 f0 f1 cdelete_at cindexl f0 f1 f1 c= cdelete1 f0 cCONS f2 f1 cdelete_at cindexl f0 cCONS f2 f1 cCONS f2 f1 cT
+- ((ssreflect_eq eq) (~ (x = h))) |- ((h = x) = F)
+T c==> cssreflect_eq f0 c~ c= f1 f2 c= c= f2 f1 cF
+- |- ((s = s1) = ((\s1. (s = s1)) s1))
+T c= c= f0 f1 * / c= f0 b0 f1
++ |- ((((ssreflect_eq eq) (x = h)) ==> (t = ((delete_at (NUMERAL _0)) ((CONS h) t)))) = (((ssreflect_eq eq) ((x = h) = T)) ==> ((((COND T) t) ((CONS h) ((delete1 x) t))) = ((delete_at (((COND T) (NUMERAL _0)) (SUC ((indexl x) t)))) ((CONS h) t)))))
+T c= c==> cssreflect_eq f0 c= f1 f2 c= f3 cdelete_at cNUMERAL c_0 cCONS f2 f3 c==> cssreflect_eq f0 c= c= f1 f2 cT c= cCOND cT f3 cCONS f2 cdelete1 f1 f3 cdelete_at cCOND cT cNUMERAL c_0 cSUC cindexl f1 f3 cCONS f2 f3
+- |- (((!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))) ==> (!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x))))) = (!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))))
+T c= c==> ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1
++ |- ((\h. (!t. (((indexl x) ((CONS h) t)) = (((COND (x = h)) (NUMERAL _0)) (SUC ((indexl x) t)))))) h)
+T * / ! c= cindexl f0 cCONS b0 b1 cCOND c= f0 b0 cNUMERAL c_0 cSUC cindexl f0 b1 f1
++ |- (((((COND (x = h)) t) ((CONS h) ((delete1 x) t))) = ((delete_at ((indexl x) ((CONS h) t))) ((CONS h) t))) = (((delete1 x) ((CONS h) t)) = ((delete_at ((indexl x) ((CONS h) t))) ((CONS h) t))))
+T c= c= cCOND c= f0 f1 f2 cCONS f1 cdelete1 f0 f2 cdelete_at cindexl f0 cCONS f1 f2 cCONS f1 f2 c= cdelete1 f0 cCONS f1 f2 cdelete_at cindexl f0 cCONS f1 f2 cCONS f1 f2
++ (((delete1 x) t) = ((delete_at ((indexl x) t)) t)), ((ssreflect_eq eq) (~ (x = h))) |- (((ssreflect_eq eq) (~ (x = h))) /\ (((CONS h) ((delete1 x) t)) = ((delete_at (SUC ((indexl x) t))) ((CONS h) t))))
+T c==> c= cdelete1 f0 f1 cdelete_at cindexl f0 f1 f1 c==> cssreflect_eq f2 c~ c= f0 f3 c/\ cssreflect_eq f2 c~ c= f0 f3 c= cCONS f3 cdelete1 f0 f1 cdelete_at cSUC cindexl f0 f1 cCONS f3 f1
++ |- (((!t. (((indexl x) ((CONS h) t)) = (((COND (x = h)) (NUMERAL _0)) (SUC ((indexl x) t))))) ==> ((\t. (((indexl x) ((CONS h) t)) = (((COND (x = h)) (NUMERAL _0)) (SUC ((indexl x) t))))) t)) = ((\t. (((indexl x) ((CONS h) t)) = (((COND (x = h)) (NUMERAL _0)) (SUC ((indexl x) t))))) t))
+T c= c==> ! c= cindexl f0 cCONS f1 b0 cCOND c= f0 f1 cNUMERAL c_0 cSUC cindexl f0 b0 * / c= cindexl f0 cCONS f1 b0 cCOND c= f0 f1 cNUMERAL c_0 cSUC cindexl f0 b0 f2 * / c= cindexl f0 cCONS f1 b0 cCOND c= f0 f1 cNUMERAL c_0 cSUC cindexl f0 b0 f2
+- (!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))), ((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) |- (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) /\ (!x. (P x)))
+T c==> ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 c==> c/\ * f0 cNIL ! ! c==> * f0 b1 * f0 cCONS b0 b1 c/\ c/\ * f0 cNIL ! ! c==> * f0 b1 * f0 cCONS b0 b1 ! * f0 b0
++ ((x = h) = x1) |- ((ssreflect_eq eq) ((x = h) = x1))
+T c==> c= c= f0 f1 f2 cssreflect_eq f3 c= c= f0 f1 f2
+- |- (((ssreflect_eq eq) (x = h)) ==> ((t = ((delete_at (NUMERAL _0)) ((CONS h) t))) = (t = ((delete_at (NUMERAL _0)) ((CONS h) t)))))
+T c==> cssreflect_eq f0 c= f1 f2 c= c= f3 cdelete_at cNUMERAL c_0 cCONS f2 f3 c= f3 cdelete_at cNUMERAL c_0 cCONS f2 f3
++ |- (((ssreflect_eq eq) ((x = h) = T)) ==> ((((COND T) t) ((CONS h) ((delete1 x) t))) = ((delete_at (((COND T) (NUMERAL _0)) (SUC ((indexl x) t)))) ((CONS h) t))))
+T c==> cssreflect_eq f0 c= c= f1 f2 cT c= cCOND cT f3 cCONS f2 cdelete1 f1 f3 cdelete_at cCOND cT cNUMERAL c_0 cSUC cindexl f1 f3 cCONS f2 f3
+- ((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) |- ((!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))) ==> (!x. (P x)))
+T c==> c/\ * f0 cNIL ! ! c==> * f0 b1 * f0 cCONS b0 b1 c==> ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 ! * f0 b0
++ |- ((\h. (!i. (!t. ((((delete_at i) NIL) = NIL) /\ ((((delete_at (NUMERAL _0)) ((CONS h) t)) = t) /\ (((delete_at (SUC i)) ((CONS h) t)) = ((CONS h) ((delete_at i) t)))))))) h)
+T * / ! ! c/\ c= cdelete_at b1 cNIL cNIL c/\ c= cdelete_at cNUMERAL c_0 cCONS b0 b2 b2 c= cdelete_at cSUC b1 cCONS b0 b2 cCONS b0 cdelete_at b1 b2 f0
++ (((delete1 x) t) = ((delete_at ((indexl x) t)) t)) |- (!x1. (((\x1. ((x = h) = x1)) x1) ==> ((((COND (x = h)) t) ((CONS h) ((delete1 x) t))) = ((delete_at (((COND (x = h)) (NUMERAL _0)) (SUC ((indexl x) t)))) ((CONS h) t)))))
+T c==> c= cdelete1 f0 f1 cdelete_at cindexl f0 f1 f1 ! c==> * / c= c= f0 f2 b1 b0 c= cCOND c= f0 f2 f1 cCONS f2 cdelete1 f0 f1 cdelete_at cCOND c= f0 f2 cNUMERAL c_0 cSUC cindexl f0 f1 cCONS f2 f1
+- |- ((?s1. (s = s1)) ==> (((delete1 x) s) = ((delete_at ((indexl x) s)) s)))
+T c==> c? / c= f0 b0 c= cdelete1 f1 f0 cdelete_at cindexl f1 f0 f0
+- (s = s1) |- ((((delete1 x) s1) = ((delete_at ((indexl x) s)) s)) = (((delete1 x) s) = ((delete_at ((indexl x) s)) s)))
+T c==> c= f0 f1 c= c= cdelete1 f2 f1 cdelete_at cindexl f2 f0 f0 c= cdelete1 f2 f0 cdelete_at cindexl f2 f0 f0
+- |- ((((COND (x = x)) y) z) = y)
+T c= cCOND c= f0 f0 f1 f2 f1
+- |- (((!x. (((\x1. ((x = h) = x1)) x) ==> (?x1. ((x = h) = x1)))) ==> ((?x1. ((x = h) = x1)) ==> (?x1. ((x = h) = x1)))) = ((?x1. ((x = h) = x1)) ==> (?x1. ((x = h) = x1))))
+T c= c==> ! c==> * / c= c= f0 f1 b1 b0 c? / c= c= f0 f1 b1 c==> c? / c= c= f0 f1 b0 c? / c= c= f0 f1 b0 c==> c? / c= c= f0 f1 b0 c? / c= c= f0 f1 b0
+- |- ((((ssreflect_eq eq) (x = h)) ==> ((t = ((delete_at (NUMERAL _0)) ((CONS h) t))) = q')) ==> ((((ssreflect_eq eq) (x = h)) ==> (t = ((delete_at (NUMERAL _0)) ((CONS h) t)))) = (((ssreflect_eq eq) (x = h)) ==> q')))
+T c==> c==> cssreflect_eq f0 c= f1 f2 c= c= f3 cdelete_at cNUMERAL c_0 cCONS f2 f3 f4 c= c==> cssreflect_eq f0 c= f1 f2 c= f3 cdelete_at cNUMERAL c_0 cCONS f2 f3 c==> cssreflect_eq f0 c= f1 f2 f4
++ |- (((delete_at (NUMERAL _0)) ((CONS h) t)) = t)
+T c= cdelete_at cNUMERAL c_0 cCONS f0 f1 f1
+- ((x = h) = x1) |- (((x = h) = x1) /\ (?x1. ((x = h) = x1)))
+T c==> c= c= f0 f1 f2 c/\ c= c= f0 f1 f2 c? / c= c= f0 f1 b0
++ |- ((\P. (((P T) /\ (P F)) ==> (!x. (P x)))) P)
+T * / c==> c/\ * b0 cT * b0 cF ! * b0 b1 f0
+- |- ((\p'. (!q'. ((((ssreflect_eq eq) (~ (x = h))) = p') ==> ((p' ==> ((((CONS h) ((delete1 x) t)) = ((delete_at (SUC ((indexl x) t))) ((CONS h) t))) = q')) ==> ((((ssreflect_eq eq) (~ (x = h))) ==> (((CONS h) ((delete1 x) t)) = ((delete_at (SUC ((indexl x) t))) ((CONS h) t)))) = (p' ==> q')))))) p')
+T * / ! c==> c= cssreflect_eq f0 c~ c= f1 f2 b0 c==> c==> b0 c= c= cCONS f2 cdelete1 f1 f3 cdelete_at cSUC cindexl f1 f3 cCONS f2 f3 b1 c= c==> cssreflect_eq f0 c~ c= f1 f2 c= cCONS f2 cdelete1 f1 f3 cdelete_at cSUC cindexl f1 f3 cCONS f2 f3 c==> b0 b1 f4
++ |- (((delete1 x) ((CONS h) t)) = (((COND (x = h)) t) ((CONS h) ((delete1 x) t))))
+T c= cdelete1 f0 cCONS f1 f2 cCOND c= f0 f1 f2 cCONS f1 cdelete1 f0 f2
+- ((ssreflect_eq eq) (~ (x = h))) |- (((ssreflect_eq eq) (~ (x = h))) /\ ((((CONS h) ((delete1 x) t)) = ((delete_at (SUC ((indexl x) t))) ((CONS h) t))) = (((CONS h) ((delete1 x) t)) = ((delete_at (SUC ((indexl x) t))) ((CONS h) t)))))
+T c==> cssreflect_eq f0 c~ c= f1 f2 c/\ cssreflect_eq f0 c~ c= f1 f2 c= c= cCONS f2 cdelete1 f1 f3 cdelete_at cSUC cindexl f1 f3 cCONS f2 f3 c= cCONS f2 cdelete1 f1 f3 cdelete_at cSUC cindexl f1 f3 cCONS f2 f3
+- |- ((?s1. (s = s1)) ==> (?s1. (s = s1)))
+T c==> c? / c= f0 b0 c? / c= f0 b0
++ |- ((x = x) = T)
+T c= c= f0 f0 cT
+- (s = s1) |- ((((delete1 x) s1) = ((delete_at ((indexl x) s1)) s)) = (((delete1 x) s1) = ((delete_at ((indexl x) s)) s)))
+T c==> c= f0 f1 c= c= cdelete1 f2 f1 cdelete_at cindexl f2 f1 f0 c= cdelete1 f2 f1 cdelete_at cindexl f2 f0 f0
+- |- ((\Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))) Q)
+T * / c= c==> f0 ! * b0 b1 ! c==> f0 * b0 b1 f1
+- (!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))) |- ((\P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))) P)
+T c==> ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 * / c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 f0
+- |- ((?x1. ((x = h) = x1)) ==> (?x1. ((x = h) = x1)))
+T c==> c? / c= c= f0 f1 b0 c? / c= c= f0 f1 b0
++ |- ((\q'. ((((ssreflect_eq eq) ((x = h) = T)) = p') ==> ((p' ==> (((((COND T) t) ((CONS h) ((delete1 x) t))) = ((delete_at (((COND T) (NUMERAL _0)) (SUC ((indexl x) t)))) ((CONS h) t))) = q')) ==> ((((ssreflect_eq eq) ((x = h) = T)) ==> ((((COND T) t) ((CONS h) ((delete1 x) t))) = ((delete_at (((COND T) (NUMERAL _0)) (SUC ((indexl x) t)))) ((CONS h) t)))) = (p' ==> q'))))) q')
+T * / c==> c= cssreflect_eq f0 c= c= f1 f2 cT f3 c==> c==> f3 c= c= cCOND cT f4 cCONS f2 cdelete1 f1 f4 cdelete_at cCOND cT cNUMERAL c_0 cSUC cindexl f1 f4 cCONS f2 f4 b0 c= c==> cssreflect_eq f0 c= c= f1 f2 cT c= cCOND cT f4 cCONS f2 cdelete1 f1 f4 cdelete_at cCOND cT cNUMERAL c_0 cSUC cindexl f1 f4 cCONS f2 f4 c==> f3 b0 f5
++ (((ssreflect_eq eq) P) = P) |- (P = ((ssreflect_eq eq) P))
+T c==> c= cssreflect_eq f0 f1 f1 c= f1 cssreflect_eq f0 f1
+- (h = x) |- (x = h)
+T c==> c= f0 f1 c= f1 f0
++ |- (((delete_at i) NIL) = NIL)
+T c= cdelete_at f0 cNIL cNIL
++ |- ((t = T) = t)
+T c= c= f0 cT f0
+- ((x = h) = x1) |- (((((COND x1) t) ((CONS h) ((delete1 x) t))) = ((delete_at (((COND x1) (NUMERAL _0)) (SUC ((indexl x) t)))) ((CONS h) t))) = ((((COND (x = h)) t) ((CONS h) ((delete1 x) t))) = ((delete_at (((COND (x = h)) (NUMERAL _0)) (SUC ((indexl x) t)))) ((CONS h) t))))
+T c==> c= c= f0 f1 f2 c= c= cCOND f2 f3 cCONS f1 cdelete1 f0 f3 cdelete_at cCOND f2 cNUMERAL c_0 cSUC cindexl f0 f3 cCONS f1 f3 c= cCOND c= f0 f1 f3 cCONS f1 cdelete1 f0 f3 cdelete_at cCOND c= f0 f1 cNUMERAL c_0 cSUC cindexl f0 f3 cCONS f1 f3
+- |- ((((\s1. (s = s1)) s1) ==> (((delete1 x) s) = ((delete_at ((indexl x) s)) s))) = T)
+T c= c==> * / c= f0 b0 f1 c= cdelete1 f2 f0 cdelete_at cindexl f2 f0 f0 cT
+- |- ((\q'. ((((ssreflect_eq eq) (~ (x = h))) = p') ==> ((p' ==> ((((CONS h) ((delete1 x) t)) = ((delete_at (SUC ((indexl x) t))) ((CONS h) t))) = q')) ==> ((((ssreflect_eq eq) (~ (x = h))) ==> (((CONS h) ((delete1 x) t)) = ((delete_at (SUC ((indexl x) t))) ((CONS h) t)))) = (p' ==> q'))))) q')
+T * / c==> c= cssreflect_eq f0 c~ c= f1 f2 f3 c==> c==> f3 c= c= cCONS f2 cdelete1 f1 f4 cdelete_at cSUC cindexl f1 f4 cCONS f2 f4 b0 c= c==> cssreflect_eq f0 c~ c= f1 f2 c= cCONS f2 cdelete1 f1 f4 cdelete_at cSUC cindexl f1 f4 cCONS f2 f4 c==> f3 b0 f5
+- ((ssreflect_eq eq) (~ (x = h))) |- (~ (x = h))
+T c==> cssreflect_eq f0 c~ c= f1 f2 c~ c= f1 f2
++ |- (!a0. (!a1. ((((delete1 x) a1) = ((delete_at ((indexl x) a1)) a1)) ==> (((delete1 x) ((CONS a0) a1)) = ((delete_at ((indexl x) ((CONS a0) a1))) ((CONS a0) a1))))))
+T c==> c= cdelete1 f0 f1 cdelete_at cindexl f0 f1 f1 c= cdelete1 f0 cCONS f2 f1 cdelete_at cindexl f0 cCONS f2 f1 cCONS f2 f1
+- ((ssreflect_eq eq) (x = h)) |- (((ssreflect_eq eq) (x = h)) = T)
+T c==> cssreflect_eq f0 c= f1 f2 c= cssreflect_eq f0 c= f1 f2 cT
+- ((\s1. (s = s1)) s1) |- (((s = s1) ==> (?s1. (s = s1))) = (?s1. (s = s1)))
+T c==> * / c= f0 b0 f1 c= c==> c= f0 f1 c? / c= f0 b0 c? / c= f0 b0
++ (((delete1 x) t) = ((delete_at ((indexl x) t)) t)) |- (((ssreflect_eq eq) ((x = h) = F)) ==> ((((COND F) t) ((CONS h) ((delete1 x) t))) = ((delete_at (((COND F) (NUMERAL _0)) (SUC ((indexl x) t)))) ((CONS h) t))))
+T c==> c= cdelete1 f0 f1 cdelete_at cindexl f0 f1 f1 c==> cssreflect_eq f2 c= c= f0 f3 cF c= cCOND cF f1 cCONS f3 cdelete1 f0 f1 cdelete_at cCOND cF cNUMERAL c_0 cSUC cindexl f0 f1 cCONS f3 f1
++ |- ((((ssreflect_eq eq) ((x = h) = F)) ==> ((((COND F) t) ((CONS h) ((delete1 x) t))) = ((delete_at (((COND F) (NUMERAL _0)) (SUC ((indexl x) t)))) ((CONS h) t)))) = ((((ssreflect_eq eq) ((x = h) = T)) ==> ((((COND T) t) ((CONS h) ((delete1 x) t))) = ((delete_at (((COND T) (NUMERAL _0)) (SUC ((indexl x) t)))) ((CONS h) t)))) /\ (((ssreflect_eq eq) ((x = h) = F)) ==> ((((COND F) t) ((CONS h) ((delete1 x) t))) = ((delete_at (((COND F) (NUMERAL _0)) (SUC ((indexl x) t)))) ((CONS h) t))))))
+T c= c==> cssreflect_eq f0 c= c= f1 f2 cF c= cCOND cF f3 cCONS f2 cdelete1 f1 f3 cdelete_at cCOND cF cNUMERAL c_0 cSUC cindexl f1 f3 cCONS f2 f3 c/\ c==> cssreflect_eq f0 c= c= f1 f2 cT c= cCOND cT f3 cCONS f2 cdelete1 f1 f3 cdelete_at cCOND cT cNUMERAL c_0 cSUC cindexl f1 f3 cCONS f2 f3 c==> cssreflect_eq f0 c= c= f1 f2 cF c= cCOND cF f3 cCONS f2 cdelete1 f1 f3 cdelete_at cCOND cF cNUMERAL c_0 cSUC cindexl f1 f3 cCONS f2 f3
+- |- ((((ssreflect_eq eq) (x = h)) ==> (t = ((delete_at (NUMERAL _0)) ((CONS h) t)))) = (((ssreflect_eq eq) (x = h)) ==> (t = ((delete_at (NUMERAL _0)) ((CONS h) t)))))
+T c= c==> cssreflect_eq f0 c= f1 f2 c= f3 cdelete_at cNUMERAL c_0 cCONS f2 f3 c==> cssreflect_eq f0 c= f1 f2 c= f3 cdelete_at cNUMERAL c_0 cCONS f2 f3
+- (((delete1 x) t) = ((delete_at ((indexl x) t)) t)) |- (((((COND (x = h)) t) ((CONS h) ((delete_at ((indexl x) t)) t))) = ((delete_at ((indexl x) ((CONS h) t))) ((CONS h) t))) = ((((COND (x = h)) t) ((CONS h) ((delete1 x) t))) = ((delete_at ((indexl x) ((CONS h) t))) ((CONS h) t))))
+T c==> c= cdelete1 f0 f1 cdelete_at cindexl f0 f1 f1 c= c= cCOND c= f0 f2 f1 cCONS f2 cdelete_at cindexl f0 f1 f1 cdelete_at cindexl f0 cCONS f2 f1 cCONS f2 f1 c= cCOND c= f0 f2 f1 cCONS f2 cdelete1 f0 f1 cdelete_at cindexl f0 cCONS f2 f1 cCONS f2 f1
+- |- ((!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))) ==> (!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))))
+T c==> ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1
+- |- ((s = s) = ((\s1. (s = s1)) s))
+T c= c= f0 f0 * / c= f0 b0 f0
++ |- (((((ssreflect_eq eq) (~ (x = h))) ==> (((((COND F) t) ((CONS h) ((delete1 x) t))) = ((delete_at (((COND F) (NUMERAL _0)) (SUC ((indexl x) t)))) ((CONS h) t))) = (((CONS h) ((delete1 x) t)) = ((delete_at (SUC ((indexl x) t))) ((CONS h) t))))) ==> ((((ssreflect_eq eq) ((x = h) = F)) ==> ((((COND F) t) ((CONS h) ((delete1 x) t))) = ((delete_at (((COND F) (NUMERAL _0)) (SUC ((indexl x) t)))) ((CONS h) t)))) = (((ssreflect_eq eq) (~ (x = h))) ==> (((CONS h) ((delete1 x) t)) = ((delete_at (SUC ((indexl x) t))) ((CONS h) t)))))) = ((((ssreflect_eq eq) ((x = h) = F)) ==> ((((COND F) t) ((CONS h) ((delete1 x) t))) = ((delete_at (((COND F) (NUMERAL _0)) (SUC ((indexl x) t)))) ((CONS h) t)))) = (((ssreflect_eq eq) (~ (x = h))) ==> (((CONS h) ((delete1 x) t)) = ((delete_at (SUC ((indexl x) t))) ((CONS h) t))))))
+T c= c==> c==> cssreflect_eq f0 c~ c= f1 f2 c= c= cCOND cF f3 cCONS f2 cdelete1 f1 f3 cdelete_at cCOND cF cNUMERAL c_0 cSUC cindexl f1 f3 cCONS f2 f3 c= cCONS f2 cdelete1 f1 f3 cdelete_at cSUC cindexl f1 f3 cCONS f2 f3 c= c==> cssreflect_eq f0 c= c= f1 f2 cF c= cCOND cF f3 cCONS f2 cdelete1 f1 f3 cdelete_at cCOND cF cNUMERAL c_0 cSUC cindexl f1 f3 cCONS f2 f3 c==> cssreflect_eq f0 c~ c= f1 f2 c= cCONS f2 cdelete1 f1 f3 cdelete_at cSUC cindexl f1 f3 cCONS f2 f3 c= c==> cssreflect_eq f0 c= c= f1 f2 cF c= cCOND cF f3 cCONS f2 cdelete1 f1 f3 cdelete_at cCOND cF cNUMERAL c_0 cSUC cindexl f1 f3 cCONS f2 f3 c==> cssreflect_eq f0 c~ c= f1 f2 c= cCONS f2 cdelete1 f1 f3 cdelete_at cSUC cindexl f1 f3 cCONS f2 f3
+- ((ssreflect_eq eq) (~ (x = h))) |- (((~ (h = x)) ==> ((h = x) = F)) = ((h = x) = F))
+T c==> cssreflect_eq f0 c~ c= f1 f2 c= c==> c~ c= f2 f1 c= c= f2 f1 cF c= c= f2 f1 cF
++ |- ((((ssreflect_eq eq) ((x = h) = T)) = p') ==> ((p' ==> (((((COND T) t) ((CONS h) ((delete1 x) t))) = ((delete_at (((COND T) (NUMERAL _0)) (SUC ((indexl x) t)))) ((CONS h) t))) = q')) ==> ((((ssreflect_eq eq) ((x = h) = T)) ==> ((((COND T) t) ((CONS h) ((delete1 x) t))) = ((delete_at (((COND T) (NUMERAL _0)) (SUC ((indexl x) t)))) ((CONS h) t)))) = (p' ==> q'))))
+T c==> c= cssreflect_eq f0 c= c= f1 f2 cT f3 c==> c==> f3 c= c= cCOND cT f4 cCONS f2 cdelete1 f1 f4 cdelete_at cCOND cT cNUMERAL c_0 cSUC cindexl f1 f4 cCONS f2 f4 f5 c= c==> cssreflect_eq f0 c= c= f1 f2 cT c= cCOND cT f4 cCONS f2 cdelete1 f1 f4 cdelete_at cCOND cT cNUMERAL c_0 cSUC cindexl f1 f4 cCONS f2 f4 c==> f3 f5
++ |- (((!h. (!x. (!t. ((((delete1 x) NIL) = NIL) /\ (((delete1 x) ((CONS h) t)) = (((COND (x = h)) t) ((CONS h) ((delete1 x) t)))))))) ==> ((\h. (!x. (!t. ((((delete1 x) NIL) = NIL) /\ (((delete1 x) ((CONS h) t)) = (((COND (x = h)) t) ((CONS h) ((delete1 x) t)))))))) h)) = ((\h. (!x. (!t. ((((delete1 x) NIL) = NIL) /\ (((delete1 x) ((CONS h) t)) = (((COND (x = h)) t) ((CONS h) ((delete1 x) t)))))))) h))
+T c= c==> ! ! ! c/\ c= cdelete1 b1 cNIL cNIL c= cdelete1 b1 cCONS b0 b2 cCOND c= b1 b0 b2 cCONS b0 cdelete1 b1 b2 * / ! ! c/\ c= cdelete1 b1 cNIL cNIL c= cdelete1 b1 cCONS b0 b2 cCOND c= b1 b0 b2 cCONS b0 cdelete1 b1 b2 f0 * / ! ! c/\ c= cdelete1 b1 cNIL cNIL c= cdelete1 b1 cCONS b0 b2 cCOND c= b1 b0 b2 cCONS b0 cdelete1 b1 b2 f0
++ (((delete1 x) t) = ((delete_at ((indexl x) t)) t)) |- ((?x1. ((x = h) = x1)) ==> ((((COND (x = h)) t) ((CONS h) ((delete1 x) t))) = ((delete_at (((COND (x = h)) (NUMERAL _0)) (SUC ((indexl x) t)))) ((CONS h) t))))
+T c==> c= cdelete1 f0 f1 cdelete_at cindexl f0 f1 f1 c==> c? / c= c= f0 f2 b0 c= cCOND c= f0 f2 f1 cCONS f2 cdelete1 f0 f1 cdelete_at cCOND c= f0 f2 cNUMERAL c_0 cSUC cindexl f0 f1 cCONS f2 f1
++ |- ((((CONS h) ((delete1 x) t)) = ((CONS h) ((delete_at ((indexl x) t)) t))) = (((CONS h) ((delete1 x) t)) = ((delete_at (SUC ((indexl x) t))) ((CONS h) t))))
+T c= c= cCONS f0 cdelete1 f1 f2 cCONS f0 cdelete_at cindexl f1 f2 f2 c= cCONS f0 cdelete1 f1 f2 cdelete_at cSUC cindexl f1 f2 cCONS f0 f2
++ |- (((?x1. ((x = h) = x1)) ==> ((((COND (x = h)) t) ((CONS h) ((delete1 x) t))) = ((delete_at (((COND (x = h)) (NUMERAL _0)) (SUC ((indexl x) t)))) ((CONS h) t)))) = ((((COND (x = h)) t) ((CONS h) ((delete1 x) t))) = ((delete_at (((COND (x = h)) (NUMERAL _0)) (SUC ((indexl x) t)))) ((CONS h) t))))
+T c= c==> c? / c= c= f0 f1 b0 c= cCOND c= f0 f1 f2 cCONS f1 cdelete1 f0 f2 cdelete_at cCOND c= f0 f1 cNUMERAL c_0 cSUC cindexl f0 f2 cCONS f1 f2 c= cCOND c= f0 f1 f2 cCONS f1 cdelete1 f0 f2 cdelete_at cCOND c= f0 f1 cNUMERAL c_0 cSUC cindexl f0 f2 cCONS f1 f2
++ ((ssreflect_eq eq) (~ (x = h))) |- (((ssreflect_eq eq) (~ (x = h))) /\ (((((COND F) t) ((CONS h) ((delete1 x) t))) = ((delete_at (((COND F) (NUMERAL _0)) (SUC ((indexl x) t)))) ((CONS h) t))) = (((CONS h) ((delete1 x) t)) = ((delete_at (SUC ((indexl x) t))) ((CONS h) t)))))
+T c==> cssreflect_eq f0 c~ c= f1 f2 c/\ cssreflect_eq f0 c~ c= f1 f2 c= c= cCOND cF f3 cCONS f2 cdelete1 f1 f3 cdelete_at cCOND cF cNUMERAL c_0 cSUC cindexl f1 f3 cCONS f2 f3 c= cCONS f2 cdelete1 f1 f3 cdelete_at cSUC cindexl f1 f3 cCONS f2 f3
++ |- ((((ssreflect_eq eq) (~ (x = h))) ==> (((((COND F) t) ((CONS h) ((delete1 x) t))) = ((delete_at (((COND F) (NUMERAL _0)) (SUC ((indexl x) t)))) ((CONS h) t))) = q')) ==> ((((ssreflect_eq eq) ((x = h) = F)) ==> ((((COND F) t) ((CONS h) ((delete1 x) t))) = ((delete_at (((COND F) (NUMERAL _0)) (SUC ((indexl x) t)))) ((CONS h) t)))) = (((ssreflect_eq eq) (~ (x = h))) ==> q')))
+T c==> c==> cssreflect_eq f0 c~ c= f1 f2 c= c= cCOND cF f3 cCONS f2 cdelete1 f1 f3 cdelete_at cCOND cF cNUMERAL c_0 cSUC cindexl f1 f3 cCONS f2 f3 f4 c= c==> cssreflect_eq f0 c= c= f1 f2 cF c= cCOND cF f3 cCONS f2 cdelete1 f1 f3 cdelete_at cCOND cF cNUMERAL c_0 cSUC cindexl f1 f3 cCONS f2 f3 c==> cssreflect_eq f0 c~ c= f1 f2 f4
++ |- ((((delete1 x) NIL) = ((delete_at ((indexl x) NIL)) NIL)) /\ (!a0. (!a1. ((((delete1 x) a1) = ((delete_at ((indexl x) a1)) a1)) ==> (((delete1 x) ((CONS a0) a1)) = ((delete_at ((indexl x) ((CONS a0) a1))) ((CONS a0) a1)))))))
+T c/\ c= cdelete1 f0 cNIL cdelete_at cindexl f0 cNIL cNIL ! ! c==> c= cdelete1 f0 b1 cdelete_at cindexl f0 b1 b1 c= cdelete1 f0 cCONS b0 b1 cdelete_at cindexl f0 cCONS b0 b1 cCONS b0 b1
+- |- (((!x. (((\s1. (s = s1)) x) ==> (((delete1 x) s) = ((delete_at ((indexl x) s)) s)))) ==> ((?s1. (s = s1)) ==> (((delete1 x) s) = ((delete_at ((indexl x) s)) s)))) = ((?s1. (s = s1)) ==> (((delete1 x) s) = ((delete_at ((indexl x) s)) s))))
+T c= c==> ! c==> * / c= f0 b1 b0 c= cdelete1 f1 f0 cdelete_at cindexl f1 f0 f0 c==> c? / c= f0 b0 c= cdelete1 f1 f0 cdelete_at cindexl f1 f0 f0 c==> c? / c= f0 b0 c= cdelete1 f1 f0 cdelete_at cindexl f1 f0 f0
++ (((delete1 x) t) = ((delete_at ((indexl x) t)) t)), ((\x1. ((x = h) = x1)) x1) |- (((\x1. ((x = h) = x1)) x1) /\ ((((COND (x = h)) t) ((CONS h) ((delete1 x) t))) = ((delete_at (((COND (x = h)) (NUMERAL _0)) (SUC ((indexl x) t)))) ((CONS h) t))))
+T c==> c= cdelete1 f0 f1 cdelete_at cindexl f0 f1 f1 c==> * / c= c= f0 f2 b0 f3 c/\ * / c= c= f0 f2 b0 f3 c= cCOND c= f0 f2 f1 cCONS f2 cdelete1 f0 f1 cdelete_at cCOND c= f0 f2 cNUMERAL c_0 cSUC cindexl f0 f1 cCONS f2 f1
++ |- ((\x. (!h. (!t. (((indexl x) ((CONS h) t)) = (((COND (x = h)) (NUMERAL _0)) (SUC ((indexl x) t))))))) x)
+T * / ! ! c= cindexl b0 cCONS b1 b2 cCOND c= b0 b1 cNUMERAL c_0 cSUC cindexl b0 b2 f0
+- (!P. (((P T) /\ (P F)) ==> (!x. (P x)))) |- ((((P T) /\ (P F)) ==> (!x. (P x))) = T)
+T c==> ! c==> c/\ * b0 cT * b0 cF ! * b0 b1 c= c==> c/\ * f0 cT * f0 cF ! * f0 b0 cT
+- |- (((!P. (!Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x)))))) ==> ((\P. (!Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x)))))) P)) = ((\P. (!Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x)))))) P))
+T c= c==> ! ! c= c==> b0 ! * b1 b2 ! c==> b0 * b1 b2 * / ! c= c==> b0 ! * b1 b2 ! c==> b0 * b1 b2 f0 * / ! c= c==> b0 ! * b1 b2 ! c==> b0 * b1 b2 f0
++ |- (((((delete1 x) NIL) = ((delete_at ((indexl x) NIL)) NIL)) /\ (!a0. (!a1. ((((delete1 x) a1) = ((delete_at ((indexl x) a1)) a1)) ==> (((delete1 x) ((CONS a0) a1)) = ((delete_at ((indexl x) ((CONS a0) a1))) ((CONS a0) a1))))))) ==> (!s. (((delete1 x) s) = ((delete_at ((indexl x) s)) s))))
+T c==> c/\ c= cdelete1 f0 cNIL cdelete_at cindexl f0 cNIL cNIL ! ! c==> c= cdelete1 f0 b1 cdelete_at cindexl f0 b1 b1 c= cdelete1 f0 cCONS b0 b1 cdelete_at cindexl f0 cCONS b0 b1 cCONS b0 b1 ! c= cdelete1 f0 b0 cdelete_at cindexl f0 b0 b0
++ |- ((\i. (!t. ((((delete_at i) NIL) = NIL) /\ ((((delete_at (NUMERAL _0)) ((CONS h) t)) = t) /\ (((delete_at (SUC i)) ((CONS h) t)) = ((CONS h) ((delete_at i) t))))))) i)
+T * / ! c/\ c= cdelete_at b0 cNIL cNIL c/\ c= cdelete_at cNUMERAL c_0 cCONS f0 b1 b1 c= cdelete_at cSUC b0 cCONS f0 b1 cCONS f0 cdelete_at b0 b1 f1
+- ((\s1. (s = s1)) s1) |- (s = s1)
+T c==> * / c= f0 b0 f1 c= f0 f1
++ ((\x1. ((x = h) = x1)) x1) |- ((((x = h) = x1) ==> ((((COND (x = h)) t) ((CONS h) ((delete1 x) t))) = ((delete_at (((COND (x = h)) (NUMERAL _0)) (SUC ((indexl x) t)))) ((CONS h) t)))) = ((((COND (x = h)) t) ((CONS h) ((delete1 x) t))) = ((delete_at (((COND (x = h)) (NUMERAL _0)) (SUC ((indexl x) t)))) ((CONS h) t))))
+T c==> * / c= c= f0 f1 b0 f2 c= c==> c= c= f0 f1 f2 c= cCOND c= f0 f1 f3 cCONS f1 cdelete1 f0 f3 cdelete_at cCOND c= f0 f1 cNUMERAL c_0 cSUC cindexl f0 f3 cCONS f1 f3 c= cCOND c= f0 f1 f3 cCONS f1 cdelete1 f0 f3 cdelete_at cCOND c= f0 f1 cNUMERAL c_0 cSUC cindexl f0 f3 cCONS f1 f3
+- (s = s1) |- ((s = s1) /\ (?s1. (s = s1)))
+T c==> c= f0 f1 c/\ c= f0 f1 c? / c= f0 b0
+- |- ((((ssreflect_eq eq) (~ (x = h))) = p') ==> ((p' ==> ((((CONS h) ((delete1 x) t)) = ((delete_at (SUC ((indexl x) t))) ((CONS h) t))) = q')) ==> ((((ssreflect_eq eq) (~ (x = h))) ==> (((CONS h) ((delete1 x) t)) = ((delete_at (SUC ((indexl x) t))) ((CONS h) t)))) = (p' ==> q'))))
+T c==> c= cssreflect_eq f0 c~ c= f1 f2 f3 c==> c==> f3 c= c= cCONS f2 cdelete1 f1 f4 cdelete_at cSUC cindexl f1 f4 cCONS f2 f4 f5 c= c==> cssreflect_eq f0 c~ c= f1 f2 c= cCONS f2 cdelete1 f1 f4 cdelete_at cSUC cindexl f1 f4 cCONS f2 f4 c==> f3 f5
+- ((\s1. (s = s1)) s1) |- (((\s1. (s = s1)) s1) /\ (?s1. (s = s1)))
+T c==> * / c= f0 b0 f1 c/\ * / c= f0 b0 f1 c? / c= f0 b0
++ |- (((!P. (((P T) /\ (P F)) ==> (!x. (P x)))) ==> ((\P. (((P T) /\ (P F)) ==> (!x. (P x)))) P)) = ((\P. (((P T) /\ (P F)) ==> (!x. (P x)))) P))
+T c= c==> ! c==> c/\ * b0 cT * b0 cF ! * b0 b1 * / c==> c/\ * b0 cT * b0 cF ! * b0 b1 f0 * / c==> c/\ * b0 cT * b0 cF ! * b0 b1 f0
+- |- (((!q'. ((((ssreflect_eq eq) (x = h)) = p') ==> ((p' ==> ((t = ((delete_at (NUMERAL _0)) ((CONS h) t))) = q')) ==> ((((ssreflect_eq eq) (x = h)) ==> (t = ((delete_at (NUMERAL _0)) ((CONS h) t)))) = (p' ==> q'))))) ==> ((\q'. ((((ssreflect_eq eq) (x = h)) = p') ==> ((p' ==> ((t = ((delete_at (NUMERAL _0)) ((CONS h) t))) = q')) ==> ((((ssreflect_eq eq) (x = h)) ==> (t = ((delete_at (NUMERAL _0)) ((CONS h) t)))) = (p' ==> q'))))) q')) = ((\q'. ((((ssreflect_eq eq) (x = h)) = p') ==> ((p' ==> ((t = ((delete_at (NUMERAL _0)) ((CONS h) t))) = q')) ==> ((((ssreflect_eq eq) (x = h)) ==> (t = ((delete_at (NUMERAL _0)) ((CONS h) t)))) = (p' ==> q'))))) q'))
+T c= c==> ! c==> c= cssreflect_eq f0 c= f1 f2 f3 c==> c==> f3 c= c= f4 cdelete_at cNUMERAL c_0 cCONS f2 f4 b0 c= c==> cssreflect_eq f0 c= f1 f2 c= f4 cdelete_at cNUMERAL c_0 cCONS f2 f4 c==> f3 b0 * / c==> c= cssreflect_eq f0 c= f1 f2 f3 c==> c==> f3 c= c= f4 cdelete_at cNUMERAL c_0 cCONS f2 f4 b0 c= c==> cssreflect_eq f0 c= f1 f2 c= f4 cdelete_at cNUMERAL c_0 cCONS f2 f4 c==> f3 b0 f5 * / c==> c= cssreflect_eq f0 c= f1 f2 f3 c==> c==> f3 c= c= f4 cdelete_at cNUMERAL c_0 cCONS f2 f4 b0 c= c==> cssreflect_eq f0 c= f1 f2 c= f4 cdelete_at cNUMERAL c_0 cCONS f2 f4 c==> f3 b0 f5
++ ((\x1. ((x = h) = x1)) x1) |- ((x = h) = x1)
+T c==> * / c= c= f0 f1 b0 f2 c= c= f0 f1 f2
++ ((ssreflect_eq eq) (x = h)) |- (((ssreflect_eq eq) (x = h)) /\ (t = ((delete_at (NUMERAL _0)) ((CONS h) t))))
+T c==> cssreflect_eq f0 c= f1 f2 c/\ cssreflect_eq f0 c= f1 f2 c= f3 cdelete_at cNUMERAL c_0 cCONS f2 f3
+- (s = s1) |- (((delete1 x) s1) = ((delete_at ((indexl x) s)) s))
+T c==> c= f0 f1 c= cdelete1 f2 f1 cdelete_at cindexl f2 f0 f0
++ (((delete1 x) t) = ((delete_at ((indexl x) t)) t)) |- ((\x1. (((ssreflect_eq eq) ((x = h) = x1)) ==> ((((COND x1) t) ((CONS h) ((delete1 x) t))) = ((delete_at (((COND x1) (NUMERAL _0)) (SUC ((indexl x) t)))) ((CONS h) t))))) x1)
+T c==> c= cdelete1 f0 f1 cdelete_at cindexl f0 f1 f1 * / c==> cssreflect_eq f2 c= c= f0 f3 b0 c= cCOND b0 f1 cCONS f3 cdelete1 f0 f1 cdelete_at cCOND b0 cNUMERAL c_0 cSUC cindexl f0 f1 cCONS f3 f1 f4
++ (((delete1 x) t) = ((delete_at ((indexl x) t)) t)) |- (((x = h) = x1) ==> ((((COND (x = h)) t) ((CONS h) ((delete1 x) t))) = ((delete_at (((COND (x = h)) (NUMERAL _0)) (SUC ((indexl x) t)))) ((CONS h) t))))
+T c==> c= cdelete1 f0 f1 cdelete_at cindexl f0 f1 f1 c==> c= c= f0 f2 f3 c= cCOND c= f0 f2 f1 cCONS f2 cdelete1 f0 f1 cdelete_at cCOND c= f0 f2 cNUMERAL c_0 cSUC cindexl f0 f1 cCONS f2 f1
++ |- ((((COND F) t1) t2) = t2)
+T c= cCOND cF f0 f1 f1
+- |- (((!P. (((P T) /\ (P F)) ==> (!x. (P x)))) ==> (!P. (((P T) /\ (P F)) ==> (!x. (P x))))) = (!P. (((P T) /\ (P F)) ==> (!x. (P x)))))
+T c= c==> ! c==> c/\ * b0 cT * b0 cF ! * b0 b1 ! c==> c/\ * b0 cT * b0 cF ! * b0 b1 ! c==> c/\ * b0 cT * b0 cF ! * b0 b1
+- (!P. (((P T) /\ (P F)) ==> (!x. (P x)))) |- ((!P. (((P T) /\ (P F)) ==> (!x. (P x)))) /\ (!P. (((P T) /\ (P F)) ==> (!x. (P x)))))
+T c==> ! c==> c/\ * b0 cT * b0 cF ! * b0 b1 c/\ ! c==> c/\ * b0 cT * b0 cF ! * b0 b1 ! c==> c/\ * b0 cT * b0 cF ! * b0 b1
++ |- ((!a0. (!a1. ((((delete1 x) a1) = ((delete_at ((indexl x) a1)) a1)) ==> (((delete1 x) ((CONS a0) a1)) = ((delete_at ((indexl x) ((CONS a0) a1))) ((CONS a0) a1)))))) = ((((delete1 x) NIL) = ((delete_at ((indexl x) NIL)) NIL)) /\ (!a0. (!a1. ((((delete1 x) a1) = ((delete_at ((indexl x) a1)) a1)) ==> (((delete1 x) ((CONS a0) a1)) = ((delete_at ((indexl x) ((CONS a0) a1))) ((CONS a0) a1))))))))
+T c= ! ! c==> c= cdelete1 f0 b1 cdelete_at cindexl f0 b1 b1 c= cdelete1 f0 cCONS b0 b1 cdelete_at cindexl f0 cCONS b0 b1 cCONS b0 b1 c/\ c= cdelete1 f0 cNIL cdelete_at cindexl f0 cNIL cNIL ! ! c==> c= cdelete1 f0 b1 cdelete_at cindexl f0 b1 b1 c= cdelete1 f0 cCONS b0 b1 cdelete_at cindexl f0 cCONS b0 b1 cCONS b0 b1
+- |- (((ssreflect_eq eq) (~ (x = h))) ==> ((((CONS h) ((delete1 x) t)) = ((delete_at (SUC ((indexl x) t))) ((CONS h) t))) = (((CONS h) ((delete1 x) t)) = ((delete_at (SUC ((indexl x) t))) ((CONS h) t)))))
+T c==> cssreflect_eq f0 c~ c= f1 f2 c= c= cCONS f2 cdelete1 f1 f3 cdelete_at cSUC cindexl f1 f3 cCONS f2 f3 c= cCONS f2 cdelete1 f1 f3 cdelete_at cSUC cindexl f1 f3 cCONS f2 f3
+- |- ((((\x1. ((x = h) = x1)) x1) ==> (?x1. ((x = h) = x1))) = T)
+T c= c==> * / c= c= f0 f1 b0 f2 c? / c= c= f0 f1 b0 cT
++ |- ((((ssreflect_eq eq) ((x = h) = F)) ==> ((((COND F) t) ((CONS h) ((delete1 x) t))) = ((delete_at (((COND F) (NUMERAL _0)) (SUC ((indexl x) t)))) ((CONS h) t)))) = (((ssreflect_eq eq) (~ (x = h))) ==> (((CONS h) ((delete1 x) t)) = ((delete_at (SUC ((indexl x) t))) ((CONS h) t)))))
+T c= c==> cssreflect_eq f0 c= c= f1 f2 cF c= cCOND cF f3 cCONS f2 cdelete1 f1 f3 cdelete_at cCOND cF cNUMERAL c_0 cSUC cindexl f1 f3 cCONS f2 f3 c==> cssreflect_eq f0 c~ c= f1 f2 c= cCONS f2 cdelete1 f1 f3 cdelete_at cSUC cindexl f1 f3 cCONS f2 f3
++ |- (t = ((delete_at (NUMERAL _0)) ((CONS h) t)))
+T c= f0 cdelete_at cNUMERAL c_0 cCONS f1 f0
+- |- ((((ssreflect_eq eq) (x = h)) = p') ==> ((p' ==> ((t = ((delete_at (NUMERAL _0)) ((CONS h) t))) = q')) ==> ((((ssreflect_eq eq) (x = h)) ==> (t = ((delete_at (NUMERAL _0)) ((CONS h) t)))) = (p' ==> q'))))
+T c==> c= cssreflect_eq f0 c= f1 f2 f3 c==> c==> f3 c= c= f4 cdelete_at cNUMERAL c_0 cCONS f2 f4 f5 c= c==> cssreflect_eq f0 c= f1 f2 c= f4 cdelete_at cNUMERAL c_0 cCONS f2 f4 c==> f3 f5
++ |- ((\t. ((((delete_at i) NIL) = NIL) /\ ((((delete_at (NUMERAL _0)) ((CONS h) t)) = t) /\ (((delete_at (SUC i)) ((CONS h) t)) = ((CONS h) ((delete_at i) t)))))) t)
+T * / c/\ c= cdelete_at f0 cNIL cNIL c/\ c= cdelete_at cNUMERAL c_0 cCONS f1 b0 b0 c= cdelete_at cSUC f0 cCONS f1 b0 cCONS f1 cdelete_at f0 b0 f2
++ |- (?x1. ((x = h) = x1))
+T c? / c= c= f0 f1 b0
+- |- (((!x. (((\s1. (s = s1)) x) ==> (?s1. (s = s1)))) ==> ((?s1. (s = s1)) ==> (?s1. (s = s1)))) = ((?s1. (s = s1)) ==> (?s1. (s = s1))))
+T c= c==> ! c==> * / c= f0 b1 b0 c? / c= f0 b1 c==> c? / c= f0 b0 c? / c= f0 b0 c==> c? / c= f0 b0 c? / c= f0 b0
++ |- (T = (NIL = NIL))
+T c= cT c= cNIL cNIL
+- ((ssreflect_eq eq) (x = h)) |- (x = h)
+T c==> cssreflect_eq f0 c= f1 f2 c= f1 f2
++ |- (NIL = NIL)
+T c= cNIL cNIL
++ |- (((ssreflect_eq eq) (~ (x = h))) ==> (((((COND F) t) ((CONS h) ((delete1 x) t))) = ((delete_at (((COND F) (NUMERAL _0)) (SUC ((indexl x) t)))) ((CONS h) t))) = (((CONS h) ((delete1 x) t)) = ((delete_at (SUC ((indexl x) t))) ((CONS h) t)))))
+T c==> cssreflect_eq f0 c~ c= f1 f2 c= c= cCOND cF f3 cCONS f2 cdelete1 f1 f3 cdelete_at cCOND cF cNUMERAL c_0 cSUC cindexl f1 f3 cCONS f2 f3 c= cCONS f2 cdelete1 f1 f3 cdelete_at cSUC cindexl f1 f3 cCONS f2 f3
++ ((x = h) = x1), (((delete1 x) t) = ((delete_at ((indexl x) t)) t)) |- (((x = h) = x1) /\ ((((COND (x = h)) t) ((CONS h) ((delete1 x) t))) = ((delete_at (((COND (x = h)) (NUMERAL _0)) (SUC ((indexl x) t)))) ((CONS h) t))))
+T c==> c= c= f0 f1 f2 c==> c= cdelete1 f0 f3 cdelete_at cindexl f0 f3 f3 c/\ c= c= f0 f1 f2 c= cCOND c= f0 f1 f3 cCONS f1 cdelete1 f0 f3 cdelete_at cCOND c= f0 f1 cNUMERAL c_0 cSUC cindexl f0 f3 cCONS f1 f3
++ (((delete1 x) t) = ((delete_at ((indexl x) t)) t)) |- (((CONS h) ((delete1 x) t)) = ((delete_at (SUC ((indexl x) t))) ((CONS h) t)))
+T c==> c= cdelete1 f0 f1 cdelete_at cindexl f0 f1 f1 c= cCONS f2 cdelete1 f0 f1 cdelete_at cSUC cindexl f0 f1 cCONS f2 f1
++ ((x = h) = x1), (((delete1 x) t) = ((delete_at ((indexl x) t)) t)) |- ((((COND (x = h)) t) ((CONS h) ((delete1 x) t))) = ((delete_at (((COND (x = h)) (NUMERAL _0)) (SUC ((indexl x) t)))) ((CONS h) t)))
+T c==> c= c= f0 f1 f2 c==> c= cdelete1 f0 f3 cdelete_at cindexl f0 f3 f3 c= cCOND c= f0 f1 f3 cCONS f1 cdelete1 f0 f3 cdelete_at cCOND c= f0 f1 cNUMERAL c_0 cSUC cindexl f0 f3 cCONS f1 f3
+- |- ((s = s1) ==> (?s1. (s = s1)))
+T c==> c= f0 f1 c? / c= f0 b0
++ (P = ((ssreflect_eq eq) P)) |- (((ssreflect_eq eq) P) = P)
+T c==> c= f0 cssreflect_eq f1 f0 c= cssreflect_eq f1 f0 f0
+- |- ((!P. (((P T) /\ (P F)) ==> (!x. (P x)))) ==> (!P. (((P T) /\ (P F)) ==> (!x. (P x)))))
+T c==> ! c==> c/\ * b0 cT * b0 cF ! * b0 b1 ! c==> c/\ * b0 cT * b0 cF ! * b0 b1
+- |- ((s = s1) ==> (((delete1 x) s) = ((delete_at ((indexl x) s)) s)))
+T c==> c= f0 f1 c= cdelete1 f2 f0 cdelete_at cindexl f2 f0 f0
++ (((delete1 x) t) = ((delete_at ((indexl x) t)) t)) |- (((ssreflect_eq eq) ((x = h) = x1)) ==> ((((COND x1) t) ((CONS h) ((delete1 x) t))) = ((delete_at (((COND x1) (NUMERAL _0)) (SUC ((indexl x) t)))) ((CONS h) t))))
+T c==> c= cdelete1 f0 f1 cdelete_at cindexl f0 f1 f1 c==> cssreflect_eq f2 c= c= f0 f3 f4 c= cCOND f4 f1 cCONS f3 cdelete1 f0 f1 cdelete_at cCOND f4 cNUMERAL c_0 cSUC cindexl f0 f1 cCONS f3 f1
+- (!P. (((P T) /\ (P F)) ==> (!x. (P x)))), ((P T) /\ (P F)) |- (((P T) /\ (P F)) /\ (!x. (P x)))
+T c==> ! c==> c/\ * b0 cT * b0 cF ! * b0 b1 c==> c/\ * f0 cT * f0 cF c/\ c/\ * f0 cT * f0 cF ! * f0 b0
+- ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x)))) |- ((!x. (P ==> (Q x))) = (P ==> (!x. (Q x))))
+T c==> c= c==> f0 ! * f1 b0 ! c==> f0 * f1 b0 c= ! c==> f0 * f1 b0 c==> f0 ! * f1 b0
++ |- ((\p'. (!q'. ((((ssreflect_eq eq) ((x = h) = F)) = p') ==> ((p' ==> (((((COND F) t) ((CONS h) ((delete1 x) t))) = ((delete_at (((COND F) (NUMERAL _0)) (SUC ((indexl x) t)))) ((CONS h) t))) = q')) ==> ((((ssreflect_eq eq) ((x = h) = F)) ==> ((((COND F) t) ((CONS h) ((delete1 x) t))) = ((delete_at (((COND F) (NUMERAL _0)) (SUC ((indexl x) t)))) ((CONS h) t)))) = (p' ==> q')))))) p')
+T * / ! c==> c= cssreflect_eq f0 c= c= f1 f2 cF b0 c==> c==> b0 c= c= cCOND cF f3 cCONS f2 cdelete1 f1 f3 cdelete_at cCOND cF cNUMERAL c_0 cSUC cindexl f1 f3 cCONS f2 f3 b1 c= c==> cssreflect_eq f0 c= c= f1 f2 cF c= cCOND cF f3 cCONS f2 cdelete1 f1 f3 cdelete_at cCOND cF cNUMERAL c_0 cSUC cindexl f1 f3 cCONS f2 f3 c==> b0 b1 f4
++ |- (((!h. (!i. (!t. ((((delete_at i) NIL) = NIL) /\ ((((delete_at (NUMERAL _0)) ((CONS h) t)) = t) /\ (((delete_at (SUC i)) ((CONS h) t)) = ((CONS h) ((delete_at i) t)))))))) ==> ((\h. (!i. (!t. ((((delete_at i) NIL) = NIL) /\ ((((delete_at (NUMERAL _0)) ((CONS h) t)) = t) /\ (((delete_at (SUC i)) ((CONS h) t)) = ((CONS h) ((delete_at i) t)))))))) h)) = ((\h. (!i. (!t. ((((delete_at i) NIL) = NIL) /\ ((((delete_at (NUMERAL _0)) ((CONS h) t)) = t) /\ (((delete_at (SUC i)) ((CONS h) t)) = ((CONS h) ((delete_at i) t)))))))) h))
+T c= c==> ! ! ! c/\ c= cdelete_at b1 cNIL cNIL c/\ c= cdelete_at cNUMERAL c_0 cCONS b0 b2 b2 c= cdelete_at cSUC b1 cCONS b0 b2 cCONS b0 cdelete_at b1 b2 * / ! ! c/\ c= cdelete_at b1 cNIL cNIL c/\ c= cdelete_at cNUMERAL c_0 cCONS b0 b2 b2 c= cdelete_at cSUC b1 cCONS b0 b2 cCONS b0 cdelete_at b1 b2 f0 * / ! ! c/\ c= cdelete_at b1 cNIL cNIL c/\ c= cdelete_at cNUMERAL c_0 cCONS b0 b2 b2 c= cdelete_at cSUC b1 cCONS b0 b2 cCONS b0 cdelete_at b1 b2 f0
++ (((delete1 x) t) = ((delete_at ((indexl x) t)) t)) |- ((((\x1. ((x = h) = x1)) x1) ==> ((((COND (x = h)) t) ((CONS h) ((delete1 x) t))) = ((delete_at (((COND (x = h)) (NUMERAL _0)) (SUC ((indexl x) t)))) ((CONS h) t)))) = T)
+T c==> c= cdelete1 f0 f1 cdelete_at cindexl f0 f1 f1 c= c==> * / c= c= f0 f2 b0 f3 c= cCOND c= f0 f2 f1 cCONS f2 cdelete1 f0 f1 cdelete_at cCOND c= f0 f2 cNUMERAL c_0 cSUC cindexl f0 f1 cCONS f2 f1 cT
++ |- ((\p'. (!q'. ((((ssreflect_eq eq) ((x = h) = T)) = p') ==> ((p' ==> (((((COND T) t) ((CONS h) ((delete1 x) t))) = ((delete_at (((COND T) (NUMERAL _0)) (SUC ((indexl x) t)))) ((CONS h) t))) = q')) ==> ((((ssreflect_eq eq) ((x = h) = T)) ==> ((((COND T) t) ((CONS h) ((delete1 x) t))) = ((delete_at (((COND T) (NUMERAL _0)) (SUC ((indexl x) t)))) ((CONS h) t)))) = (p' ==> q')))))) p')
+T * / ! c==> c= cssreflect_eq f0 c= c= f1 f2 cT b0 c==> c==> b0 c= c= cCOND cT f3 cCONS f2 cdelete1 f1 f3 cdelete_at cCOND cT cNUMERAL c_0 cSUC cindexl f1 f3 cCONS f2 f3 b1 c= c==> cssreflect_eq f0 c= c= f1 f2 cT c= cCOND cT f3 cCONS f2 cdelete1 f1 f3 cdelete_at cCOND cT cNUMERAL c_0 cSUC cindexl f1 f3 cCONS f2 f3 c==> b0 b1 f4
++ |- (((!P. (P = ((ssreflect_eq eq) P))) ==> ((\P. (P = ((ssreflect_eq eq) P))) P)) = ((\P. (P = ((ssreflect_eq eq) P))) P))
+T c= c==> ! c= b0 cssreflect_eq f0 b0 * / c= b0 cssreflect_eq f0 b0 f1 * / c= b0 cssreflect_eq f0 b0 f1
++ |- (((x = h) = (x = h)) = ((\x1. ((x = h) = x1)) (x = h)))
+T c= c= c= f0 f1 c= f0 f1 * / c= c= f0 f1 b0 c= f0 f1
+- (!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))) |- ((((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x))) = T)
+T c==> ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 c= c==> c/\ * f0 cNIL ! ! c==> * f0 b1 * f0 cCONS b0 b1 ! * f0 b0 cT
++ |- (((!x. (!h. (!t. (((indexl x) ((CONS h) t)) = (((COND (x = h)) (NUMERAL _0)) (SUC ((indexl x) t))))))) ==> ((\x. (!h. (!t. (((indexl x) ((CONS h) t)) = (((COND (x = h)) (NUMERAL _0)) (SUC ((indexl x) t))))))) x)) = ((\x. (!h. (!t. (((indexl x) ((CONS h) t)) = (((COND (x = h)) (NUMERAL _0)) (SUC ((indexl x) t))))))) x))
+T c= c==> ! ! ! c= cindexl b0 cCONS b1 b2 cCOND c= b0 b1 cNUMERAL c_0 cSUC cindexl b0 b2 * / ! ! c= cindexl b0 cCONS b1 b2 cCOND c= b0 b1 cNUMERAL c_0 cSUC cindexl b0 b2 f0 * / ! ! c= cindexl b0 cCONS b1 b2 cCOND c= b0 b1 cNUMERAL c_0 cSUC cindexl b0 b2 f0
++ |- ((!s. (((delete1 x) s) = ((delete_at ((indexl x) s)) s))) = T)
+T c= ! c= cdelete1 f0 b0 cdelete_at cindexl f0 b0 b0 cT
++ |- (((!x. (!t. ((((delete1 x) NIL) = NIL) /\ (((delete1 x) ((CONS h) t)) = (((COND (x = h)) t) ((CONS h) ((delete1 x) t))))))) ==> ((\x. (!t. ((((delete1 x) NIL) = NIL) /\ (((delete1 x) ((CONS h) t)) = (((COND (x = h)) t) ((CONS h) ((delete1 x) t))))))) x)) = ((\x. (!t. ((((delete1 x) NIL) = NIL) /\ (((delete1 x) ((CONS h) t)) = (((COND (x = h)) t) ((CONS h) ((delete1 x) t))))))) x))
+T c= c==> ! ! c/\ c= cdelete1 b0 cNIL cNIL c= cdelete1 b0 cCONS f0 b1 cCOND c= b0 f0 b1 cCONS f0 cdelete1 b0 b1 * / ! c/\ c= cdelete1 b0 cNIL cNIL c= cdelete1 b0 cCONS f0 b1 cCOND c= b0 f0 b1 cCONS f0 cdelete1 b0 b1 f1 * / ! c/\ c= cdelete1 b0 cNIL cNIL c= cdelete1 b0 cCONS f0 b1 cCOND c= b0 f0 b1 cCONS f0 cdelete1 b0 b1 f1
+- ((\s1. (s = s1)) s1) |- (((s = s1) ==> (((delete1 x) s) = ((delete_at ((indexl x) s)) s))) = (((delete1 x) s) = ((delete_at ((indexl x) s)) s)))
+T c==> * / c= f0 b0 f1 c= c==> c= f0 f1 c= cdelete1 f2 f0 cdelete_at cindexl f2 f0 f0 c= cdelete1 f2 f0 cdelete_at cindexl f2 f0 f0
+- (s = s1) |- ((s = s1) /\ (((delete1 x) s) = ((delete_at ((indexl x) s)) s)))
+T c==> c= f0 f1 c/\ c= f0 f1 c= cdelete1 f2 f0 cdelete_at cindexl f2 f0 f0
+- (s = s1) |- ((\s1. (s = s1)) s1)
+T c==> c= f0 f1 * / c= f0 b0 f1
+- |- (T = (t = t))
+T c= cT c= f0 f0
+- (s = s1) |- ((((delete1 x) s1) = ((delete_at ((indexl x) s1)) s1)) = (((delete1 x) s) = ((delete_at ((indexl x) s)) s)))
+T c==> c= f0 f1 c= c= cdelete1 f2 f1 cdelete_at cindexl f2 f1 f1 c= cdelete1 f2 f0 cdelete_at cindexl f2 f0 f0
+- |- (((!s. (((delete1 x) s) = ((delete_at ((indexl x) s)) s))) ==> ((\s. (((delete1 x) s) = ((delete_at ((indexl x) s)) s))) s1)) = ((\s. (((delete1 x) s) = ((delete_at ((indexl x) s)) s))) s1))
+T c= c==> ! c= cdelete1 f0 b0 cdelete_at cindexl f0 b0 b0 * / c= cdelete1 f0 b0 cdelete_at cindexl f0 b0 b0 f1 * / c= cdelete1 f0 b0 cdelete_at cindexl f0 b0 b0 f1
++ |- (((delete_at (SUC i)) ((CONS h) t)) = ((CONS h) ((delete_at i) t)))
+T c= cdelete_at cSUC f0 cCONS f1 f2 cCONS f1 cdelete_at f0 f2
++ |- ((!a1. ((((delete1 x) a1) = ((delete_at ((indexl x) a1)) a1)) ==> (((delete1 x) ((CONS h) a1)) = ((delete_at ((indexl x) ((CONS h) a1))) ((CONS h) a1))))) = T)
+T c= ! c==> c= cdelete1 f0 b0 cdelete_at cindexl f0 b0 b0 c= cdelete1 f0 cCONS f1 b0 cdelete_at cindexl f0 cCONS f1 b0 cCONS f1 b0 cT
++ |- ((\x1. ((x = h) = x1)) (x = h))
+T * / c= c= f0 f1 b0 c= f0 f1
+- (s = s1) |- (((delete1 x) s1) = ((delete_at ((indexl x) s1)) s))
+T c==> c= f0 f1 c= cdelete1 f2 f1 cdelete_at cindexl f2 f1 f0
+- |- ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))
+T c= c==> f0 ! * f1 b0 ! c==> f0 * f1 b0
+- |- ((((ssreflect_eq eq) (~ (x = h))) ==> (((CONS h) ((delete1 x) t)) = ((delete_at (SUC ((indexl x) t))) ((CONS h) t)))) = (((ssreflect_eq eq) (~ (x = h))) ==> (((CONS h) ((delete1 x) t)) = ((delete_at (SUC ((indexl x) t))) ((CONS h) t)))))
+T c= c==> cssreflect_eq f0 c~ c= f1 f2 c= cCONS f2 cdelete1 f1 f3 cdelete_at cSUC cindexl f1 f3 cCONS f2 f3 c==> cssreflect_eq f0 c~ c= f1 f2 c= cCONS f2 cdelete1 f1 f3 cdelete_at cSUC cindexl f1 f3 cCONS f2 f3
+- (!P. (((P T) /\ (P F)) ==> (!x. (P x)))), ((P T) /\ (P F)) |- ((!P. (((P T) /\ (P F)) ==> (!x. (P x)))) /\ (!x. (P x)))
+T c==> ! c==> c/\ * b0 cT * b0 cF ! * b0 b1 c==> c/\ * f0 cT * f0 cF c/\ ! c==> c/\ * b0 cT * b0 cF ! * b0 b1 ! * f0 b0
+- ((x = h) = x1) |- (x1 = (x = h))
+T c==> c= c= f0 f1 f2 c= f2 c= f0 f1
++ |- (((!t. ((((delete_at i) NIL) = NIL) /\ ((((delete_at (NUMERAL _0)) ((CONS h) t)) = t) /\ (((delete_at (SUC i)) ((CONS h) t)) = ((CONS h) ((delete_at i) t)))))) ==> ((\t. ((((delete_at i) NIL) = NIL) /\ ((((delete_at (NUMERAL _0)) ((CONS h) t)) = t) /\ (((delete_at (SUC i)) ((CONS h) t)) = ((CONS h) ((delete_at i) t)))))) t)) = ((\t. ((((delete_at i) NIL) = NIL) /\ ((((delete_at (NUMERAL _0)) ((CONS h) t)) = t) /\ (((delete_at (SUC i)) ((CONS h) t)) = ((CONS h) ((delete_at i) t)))))) t))
+T c= c==> ! c/\ c= cdelete_at f0 cNIL cNIL c/\ c= cdelete_at cNUMERAL c_0 cCONS f1 b0 b0 c= cdelete_at cSUC f0 cCONS f1 b0 cCONS f1 cdelete_at f0 b0 * / c/\ c= cdelete_at f0 cNIL cNIL c/\ c= cdelete_at cNUMERAL c_0 cCONS f1 b0 b0 c= cdelete_at cSUC f0 cCONS f1 b0 cCONS f1 cdelete_at f0 b0 f2 * / c/\ c= cdelete_at f0 cNIL cNIL c/\ c= cdelete_at cNUMERAL c_0 cCONS f1 b0 b0 c= cdelete_at cSUC f0 cCONS f1 b0 cCONS f1 cdelete_at f0 b0 f2
++ |- (!p'. (!q'. ((p = p') ==> ((p' ==> (q = q')) ==> ((p ==> q) = (p' ==> q'))))))
+T c==> c= f0 f1 c==> c==> f1 c= f2 f3 c= c==> f0 f2 c==> f1 f3
+- |- (?s1. (s = s1))
+T c? / c= f0 b0
++ |- (((((COND (x = h)) t) ((CONS h) ((delete1 x) t))) = ((delete_at (((COND (x = h)) (NUMERAL _0)) (SUC ((indexl x) t)))) ((CONS h) t))) = ((((COND (x = h)) t) ((CONS h) ((delete1 x) t))) = ((delete_at ((indexl x) ((CONS h) t))) ((CONS h) t))))
+T c= c= cCOND c= f0 f1 f2 cCONS f1 cdelete1 f0 f2 cdelete_at cCOND c= f0 f1 cNUMERAL c_0 cSUC cindexl f0 f2 cCONS f1 f2 c= cCOND c= f0 f1 f2 cCONS f1 cdelete1 f0 f2 cdelete_at cindexl f0 cCONS f1 f2 cCONS f1 f2
+- ((\x1. ((x = h) = x1)) x1) |- (((\x1. ((x = h) = x1)) x1) /\ (?x1. ((x = h) = x1)))
+T c==> * / c= c= f0 f1 b0 f2 c/\ * / c= c= f0 f1 b0 f2 c? / c= c= f0 f1 b0
++ ((x = h) = x1) |- ((((ssreflect_eq eq) ((x = h) = x1)) ==> ((((COND x1) t) ((CONS h) ((delete1 x) t))) = ((delete_at (((COND x1) (NUMERAL _0)) (SUC ((indexl x) t)))) ((CONS h) t)))) = ((((COND x1) t) ((CONS h) ((delete1 x) t))) = ((delete_at (((COND x1) (NUMERAL _0)) (SUC ((indexl x) t)))) ((CONS h) t))))
+T c==> c= c= f0 f1 f2 c= c==> cssreflect_eq f3 c= c= f0 f1 f2 c= cCOND f2 f4 cCONS f1 cdelete1 f0 f4 cdelete_at cCOND f2 cNUMERAL c_0 cSUC cindexl f0 f4 cCONS f1 f4 c= cCOND f2 f4 cCONS f1 cdelete1 f0 f4 cdelete_at cCOND f2 cNUMERAL c_0 cSUC cindexl f0 f4 cCONS f1 f4
+- |- (((?s1. (s = s1)) ==> (((delete1 x) s) = ((delete_at ((indexl x) s)) s))) = (((delete1 x) s) = ((delete_at ((indexl x) s)) s)))
+T c= c==> c? / c= f0 b0 c= cdelete1 f1 f0 cdelete_at cindexl f1 f0 f0 c= cdelete1 f1 f0 cdelete_at cindexl f1 f0 f0
++ |- (((p = p') ==> ((p' ==> (q = q')) ==> ((p ==> q) = (p' ==> q')))) = T)
+T c= c==> c= f0 f1 c==> c==> f1 c= f2 f3 c= c==> f0 f2 c==> f1 f3 cT
+- ((\x1. ((x = h) = x1)) x1) |- ((((x = h) = x1) ==> (?x1. ((x = h) = x1))) = (?x1. ((x = h) = x1)))
+T c==> * / c= c= f0 f1 b0 f2 c= c==> c= c= f0 f1 f2 c? / c= c= f0 f1 b0 c? / c= c= f0 f1 b0
+- ((\s1. (s = s1)) s1) |- (((\s1. (s = s1)) s1) /\ (((delete1 x) s) = ((delete_at ((indexl x) s)) s)))
+T c==> * / c= f0 b0 f1 c/\ * / c= f0 b0 f1 c= cdelete1 f2 f0 cdelete_at cindexl f2 f0 f0
++ |- ((\t. ((((delete1 x) NIL) = NIL) /\ (((delete1 x) ((CONS h) t)) = (((COND (x = h)) t) ((CONS h) ((delete1 x) t)))))) t)
+T * / c/\ c= cdelete1 f0 cNIL cNIL c= cdelete1 f0 cCONS f1 b0 cCOND c= f0 f1 b0 cCONS f1 cdelete1 f0 b0 f2
+- |- ((((ssreflect_eq eq) (~ (x = h))) ==> ((((CONS h) ((delete1 x) t)) = ((delete_at (SUC ((indexl x) t))) ((CONS h) t))) = q')) ==> ((((ssreflect_eq eq) (~ (x = h))) ==> (((CONS h) ((delete1 x) t)) = ((delete_at (SUC ((indexl x) t))) ((CONS h) t)))) = (((ssreflect_eq eq) (~ (x = h))) ==> q')))
+T c==> c==> cssreflect_eq f0 c~ c= f1 f2 c= c= cCONS f2 cdelete1 f1 f3 cdelete_at cSUC cindexl f1 f3 cCONS f2 f3 f4 c= c==> cssreflect_eq f0 c~ c= f1 f2 c= cCONS f2 cdelete1 f1 f3 cdelete_at cSUC cindexl f1 f3 cCONS f2 f3 c==> cssreflect_eq f0 c~ c= f1 f2 f4
+- |- (!x1. (((\x1. ((x = h) = x1)) x1) ==> (?x1. ((x = h) = x1))))
+T c==> * / c= c= f0 f1 b0 f2 c? / c= c= f0 f1 b0
+- |- (((!Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))) ==> ((\Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))) Q)) = ((\Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))) Q))
+T c= c==> ! c= c==> f0 ! * b0 b1 ! c==> f0 * b0 b1 * / c= c==> f0 ! * b0 b1 ! c==> f0 * b0 b1 f1 * / c= c==> f0 ! * b0 b1 ! c==> f0 * b0 b1 f1
+- |- ((((\s1. (s = s1)) s1) ==> (?s1. (s = s1))) = T)
+T c= c==> * / c= f0 b0 f1 c? / c= f0 b0 cT
+- (((delete1 x) t) = ((delete_at ((indexl x) t)) t)) |- (T = (((CONS h) ((delete1 x) t)) = ((CONS h) ((delete_at ((indexl x) t)) t))))
+T c==> c= cdelete1 f0 f1 cdelete_at cindexl f0 f1 f1 c= cT c= cCONS f2 cdelete1 f0 f1 cCONS f2 cdelete_at cindexl f0 f1 f1
+- (!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))) |- ((!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))) /\ (!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))))
+T c==> ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 c/\ ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1
+- |- (((((ssreflect_eq eq) (x = h)) = ((ssreflect_eq eq) (x = h))) ==> ((((ssreflect_eq eq) (x = h)) ==> ((t = ((delete_at (NUMERAL _0)) ((CONS h) t))) = q')) ==> ((((ssreflect_eq eq) (x = h)) ==> (t = ((delete_at (NUMERAL _0)) ((CONS h) t)))) = (((ssreflect_eq eq) (x = h)) ==> q')))) = ((((ssreflect_eq eq) (x = h)) ==> ((t = ((delete_at (NUMERAL _0)) ((CONS h) t))) = q')) ==> ((((ssreflect_eq eq) (x = h)) ==> (t = ((delete_at (NUMERAL _0)) ((CONS h) t)))) = (((ssreflect_eq eq) (x = h)) ==> q'))))
+T c= c==> c= cssreflect_eq f0 c= f1 f2 cssreflect_eq f0 c= f1 f2 c==> c==> cssreflect_eq f0 c= f1 f2 c= c= f3 cdelete_at cNUMERAL c_0 cCONS f2 f3 f4 c= c==> cssreflect_eq f0 c= f1 f2 c= f3 cdelete_at cNUMERAL c_0 cCONS f2 f3 c==> cssreflect_eq f0 c= f1 f2 f4 c==> c==> cssreflect_eq f0 c= f1 f2 c= c= f3 cdelete_at cNUMERAL c_0 cCONS f2 f3 f4 c= c==> cssreflect_eq f0 c= f1 f2 c= f3 cdelete_at cNUMERAL c_0 cCONS f2 f3 c==> cssreflect_eq f0 c= f1 f2 f4

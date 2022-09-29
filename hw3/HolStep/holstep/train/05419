@@ -1,0 +1,179 @@
+N INTEGER_SUM
+C |- (!f. (!s. ((!x. ((x IN s) ==> (integer (f x)))) ==> (integer ((sum s) f)))))
+T c==> ! c==> cIN b0 f0 cinteger * f1 b0 cinteger csum f0 f1
+D TRUTH
+A |- T
+T cT
+D SUM_CLOSED
+A |- (!P. (!f. (!s. (((P (real_of_num (NUMERAL _0))) /\ ((!x. (!y. (((P x) /\ (P y)) ==> (P ((real_add x) y))))) /\ (!a. ((a IN s) ==> (P (f a)))))) ==> (P ((sum s) f))))))
+T c==> c/\ * f0 creal_of_num cNUMERAL c_0 c/\ ! ! c==> c/\ * f0 b0 * f0 b1 * f0 creal_add b0 b1 ! c==> cIN b0 f1 * f0 * f2 b0 * f0 csum f1 f2
+D INTEGER_CLOSED
+A |- ((!n. (integer (real_of_num n))) /\ ((!x. (!y. (((integer x) /\ (integer y)) ==> (integer ((real_add x) y))))) /\ ((!x. (!y. (((integer x) /\ (integer y)) ==> (integer ((real_sub x) y))))) /\ ((!x. (!y. (((integer x) /\ (integer y)) ==> (integer ((real_mul x) y))))) /\ ((!x. (!r. ((integer x) ==> (integer ((real_pow x) r))))) /\ ((!x. ((integer x) ==> (integer (real_neg x)))) /\ ((!x. ((integer x) ==> (integer (real_abs x)))) /\ ((!x. (!y. (((integer x) /\ (integer y)) ==> (integer ((real_max x) y))))) /\ (!x. (!y. (((integer x) /\ (integer y)) ==> (integer ((real_min x) y)))))))))))))
+T c/\ ! cinteger creal_of_num b0 c/\ ! ! c==> c/\ cinteger b0 cinteger b1 cinteger creal_add b0 b1 c/\ ! ! c==> c/\ cinteger b0 cinteger b1 cinteger creal_sub b0 b1 c/\ ! ! c==> c/\ cinteger b0 cinteger b1 cinteger creal_mul b0 b1 c/\ ! ! c==> cinteger b0 cinteger creal_pow b0 b1 c/\ ! c==> cinteger b0 cinteger creal_neg b0 c/\ ! c==> cinteger b0 cinteger creal_abs b0 c/\ ! ! c==> c/\ cinteger b0 cinteger b1 cinteger creal_max b0 b1 ! ! c==> c/\ cinteger b0 cinteger b1 cinteger creal_min b0 b1
+D INTEGER_ADD
+A |- (!x. (!y. (((integer x) /\ (integer y)) ==> (integer ((real_add x) y)))))
+T c==> c/\ cinteger f0 cinteger f1 cinteger creal_add f0 f1
+- |- (((integer x) ==> (integer ((real_pow x) r))) = T)
+T c= c==> cinteger f0 cinteger creal_pow f0 f1 cT
++ (!x. ((x IN s) ==> (integer (f x)))) |- ((!x. ((x IN s) ==> (integer (f x)))) /\ (integer ((sum s) f)))
+T c==> ! c==> cIN b0 f0 cinteger * f1 b0 c/\ ! c==> cIN b0 f0 cinteger * f1 b0 cinteger csum f0 f1
+- |- (((integer x) /\ (integer y)) ==> (integer ((real_sub x) y)))
+T c==> c/\ cinteger f0 cinteger f1 cinteger creal_sub f0 f1
+- |- ((\x. (!y. (((integer x) /\ (integer y)) ==> (integer ((real_sub x) y))))) x)
+T * / ! c==> c/\ cinteger b0 cinteger b1 cinteger creal_sub b0 b1 f0
+- |- (((integer x) /\ (integer y)) ==> (integer ((real_min x) y)))
+T c==> c/\ cinteger f0 cinteger f1 cinteger creal_min f0 f1
++ |- (integer (real_of_num n))
+T cinteger creal_of_num f0
+- |- ((!x. (!y. (((integer x) /\ (integer y)) ==> (integer ((real_mul x) y))))) /\ ((!x. (!r. ((integer x) ==> (integer ((real_pow x) r))))) /\ ((!x. ((integer x) ==> (integer (real_neg x)))) /\ ((!x. ((integer x) ==> (integer (real_abs x)))) /\ ((!x. (!y. (((integer x) /\ (integer y)) ==> (integer ((real_max x) y))))) /\ (!x. (!y. (((integer x) /\ (integer y)) ==> (integer ((real_min x) y))))))))))
+T c/\ ! ! c==> c/\ cinteger b0 cinteger b1 cinteger creal_mul b0 b1 c/\ ! ! c==> cinteger b0 cinteger creal_pow b0 b1 c/\ ! c==> cinteger b0 cinteger creal_neg b0 c/\ ! c==> cinteger b0 cinteger creal_abs b0 c/\ ! ! c==> c/\ cinteger b0 cinteger b1 cinteger creal_max b0 b1 ! ! c==> c/\ cinteger b0 cinteger b1 cinteger creal_min b0 b1
+- |- ((integer x) ==> (integer (real_neg x)))
+T c==> cinteger f0 cinteger creal_neg f0
++ (!P. (!f. (!s. (((P (real_of_num (NUMERAL _0))) /\ ((!x. (!y. (((P x) /\ (P y)) ==> (P ((real_add x) y))))) /\ (!a. ((a IN s) ==> (P (f a)))))) ==> (P ((sum s) f)))))) |- ((!f. (((P (real_of_num (NUMERAL _0))) /\ ((!x. (!y. (((P x) /\ (P y)) ==> (P ((real_add x) y))))) /\ (!a. ((a IN s) ==> (P (f a)))))) ==> (P ((sum s) f)))) = T)
+T c==> ! ! ! c==> c/\ * b0 creal_of_num cNUMERAL c_0 c/\ ! ! c==> c/\ * b0 b3 * b0 b4 * b0 creal_add b3 b4 ! c==> cIN b3 b2 * b0 * b1 b3 * b0 csum b2 b1 c= ! c==> c/\ * f0 creal_of_num cNUMERAL c_0 c/\ ! ! c==> c/\ * f0 b1 * f0 b2 * f0 creal_add b1 b2 ! c==> cIN b1 f1 * f0 * b0 b1 * f0 csum f1 b0 cT
+- |- ((\y. (((integer x) /\ (integer y)) ==> (integer ((real_max x) y)))) y)
+T * / c==> c/\ cinteger f0 cinteger b0 cinteger creal_max f0 b0 f1
++ |- ((!s. ((!x. ((x IN s) ==> (integer (f x)))) ==> (integer ((sum s) f)))) = T)
+T c= ! c==> ! c==> cIN b1 b0 cinteger * f0 b1 cinteger csum b0 f0 cT
++ |- (((!x. ((x IN s) ==> (integer (f x)))) ==> (integer ((sum s) f))) = T)
+T c= c==> ! c==> cIN b0 f0 cinteger * f1 b0 cinteger csum f0 f1 cT
++ |- ((\f. (((P (real_of_num (NUMERAL _0))) /\ ((!x. (!y. (((P x) /\ (P y)) ==> (P ((real_add x) y))))) /\ (!a. ((a IN s) ==> (P (f a)))))) ==> (P ((sum s) f)))) f)
+T * / c==> c/\ * f0 creal_of_num cNUMERAL c_0 c/\ ! ! c==> c/\ * f0 b1 * f0 b2 * f0 creal_add b1 b2 ! c==> cIN b1 f1 * f0 * b0 b1 * f0 csum f1 b0 f2
++ |- ((\s. (!f. (((P (real_of_num (NUMERAL _0))) /\ ((!x. (!y. (((P x) /\ (P y)) ==> (P ((real_add x) y))))) /\ (!a. ((a IN s) ==> (P (f a)))))) ==> (P ((sum s) f))))) s)
+T * / ! c==> c/\ * f0 creal_of_num cNUMERAL c_0 c/\ ! ! c==> c/\ * f0 b2 * f0 b3 * f0 creal_add b2 b3 ! c==> cIN b2 b0 * f0 * b1 b2 * f0 csum b0 b1 f1
++ (!P. (!f. (!s. (((P (real_of_num (NUMERAL _0))) /\ ((!x. (!y. (((P x) /\ (P y)) ==> (P ((real_add x) y))))) /\ (!a. ((a IN s) ==> (P (f a)))))) ==> (P ((sum s) f)))))) |- ((\P. (!f. (!s. (((P (real_of_num (NUMERAL _0))) /\ ((!x. (!y. (((P x) /\ (P y)) ==> (P ((real_add x) y))))) /\ (!a. ((a IN s) ==> (P (f a)))))) ==> (P ((sum s) f)))))) P)
+T c==> ! ! ! c==> c/\ * b0 creal_of_num cNUMERAL c_0 c/\ ! ! c==> c/\ * b0 b3 * b0 b4 * b0 creal_add b3 b4 ! c==> cIN b3 b2 * b0 * b1 b3 * b0 csum b2 b1 * / ! ! c==> c/\ * b0 creal_of_num cNUMERAL c_0 c/\ ! ! c==> c/\ * b0 b3 * b0 b4 * b0 creal_add b3 b4 ! c==> cIN b3 b2 * b0 * b1 b3 * b0 csum b2 b1 f0
++ (!P. (!f. (!s. (((P (real_of_num (NUMERAL _0))) /\ ((!x. (!y. (((P x) /\ (P y)) ==> (P ((real_add x) y))))) /\ (!a. ((a IN s) ==> (P (f a)))))) ==> (P ((sum s) f)))))) |- (!s. (!f. (((P (real_of_num (NUMERAL _0))) /\ ((!x. (!y. (((P x) /\ (P y)) ==> (P ((real_add x) y))))) /\ (!a. ((a IN s) ==> (P (f a)))))) ==> (P ((sum s) f)))))
+T c==> ! ! ! c==> c/\ * b0 creal_of_num cNUMERAL c_0 c/\ ! ! c==> c/\ * b0 b3 * b0 b4 * b0 creal_add b3 b4 ! c==> cIN b3 b2 * b0 * b1 b3 * b0 csum b2 b1 ! ! c==> c/\ * f0 creal_of_num cNUMERAL c_0 c/\ ! ! c==> c/\ * f0 b2 * f0 b3 * f0 creal_add b2 b3 ! c==> cIN b2 b0 * f0 * b1 b2 * f0 csum b0 b1
+- |- ((\y. (((integer x) /\ (integer y)) ==> (integer ((real_mul x) y)))) y)
+T * / c==> c/\ cinteger f0 cinteger b0 cinteger creal_mul f0 b0 f1
+- |- ((\x. ((integer x) ==> (integer (real_neg x)))) x)
+T * / c==> cinteger b0 cinteger creal_neg b0 f0
+- (!P. (!f. (!s. (((P (real_of_num (NUMERAL _0))) /\ ((!x. (!y. (((P x) /\ (P y)) ==> (P ((real_add x) y))))) /\ (!a. ((a IN s) ==> (P (f a)))))) ==> (P ((sum s) f)))))), ((P (real_of_num (NUMERAL _0))) /\ ((!x. (!y. (((P x) /\ (P y)) ==> (P ((real_add x) y))))) /\ (!a. ((a IN s) ==> (P (f a)))))) |- (((P (real_of_num (NUMERAL _0))) /\ ((!x. (!y. (((P x) /\ (P y)) ==> (P ((real_add x) y))))) /\ (!a. ((a IN s) ==> (P (f a)))))) /\ (P ((sum s) f)))
+T c==> ! ! ! c==> c/\ * b0 creal_of_num cNUMERAL c_0 c/\ ! ! c==> c/\ * b0 b3 * b0 b4 * b0 creal_add b3 b4 ! c==> cIN b3 b2 * b0 * b1 b3 * b0 csum b2 b1 c==> c/\ * f0 creal_of_num cNUMERAL c_0 c/\ ! ! c==> c/\ * f0 b0 * f0 b1 * f0 creal_add b0 b1 ! c==> cIN b0 f1 * f0 * f2 b0 c/\ c/\ * f0 creal_of_num cNUMERAL c_0 c/\ ! ! c==> c/\ * f0 b0 * f0 b1 * f0 creal_add b0 b1 ! c==> cIN b0 f1 * f0 * f2 b0 * f0 csum f1 f2
++ (!P. (!f. (!s. (((P (real_of_num (NUMERAL _0))) /\ ((!x. (!y. (((P x) /\ (P y)) ==> (P ((real_add x) y))))) /\ (!a. ((a IN s) ==> (P (f a)))))) ==> (P ((sum s) f)))))) |- (((!s. (((P (real_of_num (NUMERAL _0))) /\ ((!x. (!y. (((P x) /\ (P y)) ==> (P ((real_add x) y))))) /\ (!a. ((a IN s) ==> (P (f a)))))) ==> (P ((sum s) f)))) ==> ((\s. (((P (real_of_num (NUMERAL _0))) /\ ((!x. (!y. (((P x) /\ (P y)) ==> (P ((real_add x) y))))) /\ (!a. ((a IN s) ==> (P (f a)))))) ==> (P ((sum s) f)))) s)) = ((\s. (((P (real_of_num (NUMERAL _0))) /\ ((!x. (!y. (((P x) /\ (P y)) ==> (P ((real_add x) y))))) /\ (!a. ((a IN s) ==> (P (f a)))))) ==> (P ((sum s) f)))) s))
+T c==> ! ! ! c==> c/\ * b0 creal_of_num cNUMERAL c_0 c/\ ! ! c==> c/\ * b0 b3 * b0 b4 * b0 creal_add b3 b4 ! c==> cIN b3 b2 * b0 * b1 b3 * b0 csum b2 b1 c= c==> ! c==> c/\ * f0 creal_of_num cNUMERAL c_0 c/\ ! ! c==> c/\ * f0 b1 * f0 b2 * f0 creal_add b1 b2 ! c==> cIN b1 b0 * f0 * f1 b1 * f0 csum b0 f1 * / c==> c/\ * f0 creal_of_num cNUMERAL c_0 c/\ ! ! c==> c/\ * f0 b1 * f0 b2 * f0 creal_add b1 b2 ! c==> cIN b1 b0 * f0 * f1 b1 * f0 csum b0 f1 f2 * / c==> c/\ * f0 creal_of_num cNUMERAL c_0 c/\ ! ! c==> c/\ * f0 b1 * f0 b2 * f0 creal_add b1 b2 ! c==> cIN b1 b0 * f0 * f1 b1 * f0 csum b0 f1 f2
++ |- ((!a. t) = t)
+T c= ! f0 f0
++ (!x. ((x IN s) ==> (integer (f x)))) |- (T = ((integer (real_of_num (NUMERAL _0))) /\ ((!x. (!y. (((integer x) /\ (integer y)) ==> (integer ((real_add x) y))))) /\ (!a. ((a IN s) ==> (integer (f a)))))))
+T c==> ! c==> cIN b0 f0 cinteger * f1 b0 c= cT c/\ cinteger creal_of_num cNUMERAL c_0 c/\ ! ! c==> c/\ cinteger b0 cinteger b1 cinteger creal_add b0 b1 ! c==> cIN b0 f0 cinteger * f1 b0
+- |- (((!x. (!y. (((integer x) /\ (integer y)) ==> (integer ((real_max x) y))))) ==> ((\x. (!y. (((integer x) /\ (integer y)) ==> (integer ((real_max x) y))))) x)) = ((\x. (!y. (((integer x) /\ (integer y)) ==> (integer ((real_max x) y))))) x))
+T c= c==> ! ! c==> c/\ cinteger b0 cinteger b1 cinteger creal_max b0 b1 * / ! c==> c/\ cinteger b0 cinteger b1 cinteger creal_max b0 b1 f0 * / ! c==> c/\ cinteger b0 cinteger b1 cinteger creal_max b0 b1 f0
+- |- ((\x. (!y. (((integer x) /\ (integer y)) ==> (integer ((real_min x) y))))) x)
+T * / ! c==> c/\ cinteger b0 cinteger b1 cinteger creal_min b0 b1 f0
+- |- (((integer x) ==> (integer (real_abs x))) = T)
+T c= c==> cinteger f0 cinteger creal_abs f0 cT
+- |- (((!x. (!y. (((integer x) /\ (integer y)) ==> (integer ((real_sub x) y))))) ==> ((\x. (!y. (((integer x) /\ (integer y)) ==> (integer ((real_sub x) y))))) x)) = ((\x. (!y. (((integer x) /\ (integer y)) ==> (integer ((real_sub x) y))))) x))
+T c= c==> ! ! c==> c/\ cinteger b0 cinteger b1 cinteger creal_sub b0 b1 * / ! c==> c/\ cinteger b0 cinteger b1 cinteger creal_sub b0 b1 f0 * / ! c==> c/\ cinteger b0 cinteger b1 cinteger creal_sub b0 b1 f0
++ |- ((\P. (!s. (!f. (((P (real_of_num (NUMERAL _0))) /\ ((!x. (!y. (((P x) /\ (P y)) ==> (P ((real_add x) y))))) /\ (!a. ((a IN s) ==> (P (f a)))))) ==> (P ((sum s) f)))))) P)
+T * / ! ! c==> c/\ * b0 creal_of_num cNUMERAL c_0 c/\ ! ! c==> c/\ * b0 b3 * b0 b4 * b0 creal_add b3 b4 ! c==> cIN b3 b1 * b0 * b2 b3 * b0 csum b1 b2 f0
+- |- (((!r. ((integer x) ==> (integer ((real_pow x) r)))) ==> ((\r. ((integer x) ==> (integer ((real_pow x) r)))) r)) = ((\r. ((integer x) ==> (integer ((real_pow x) r)))) r))
+T c= c==> ! c==> cinteger f0 cinteger creal_pow f0 b0 * / c==> cinteger f0 cinteger creal_pow f0 b0 f1 * / c==> cinteger f0 cinteger creal_pow f0 b0 f1
+- |- ((\x. (!y. (((integer x) /\ (integer y)) ==> (integer ((real_mul x) y))))) x)
+T * / ! c==> c/\ cinteger b0 cinteger b1 cinteger creal_mul b0 b1 f0
+- (!P. (!f. (!s. (((P (real_of_num (NUMERAL _0))) /\ ((!x. (!y. (((P x) /\ (P y)) ==> (P ((real_add x) y))))) /\ (!a. ((a IN s) ==> (P (f a)))))) ==> (P ((sum s) f)))))), ((P (real_of_num (NUMERAL _0))) /\ ((!x. (!y. (((P x) /\ (P y)) ==> (P ((real_add x) y))))) /\ (!a. ((a IN s) ==> (P (f a)))))) |- ((!P. (!f. (!s. (((P (real_of_num (NUMERAL _0))) /\ ((!x. (!y. (((P x) /\ (P y)) ==> (P ((real_add x) y))))) /\ (!a. ((a IN s) ==> (P (f a)))))) ==> (P ((sum s) f)))))) /\ (P ((sum s) f)))
+T c==> ! ! ! c==> c/\ * b0 creal_of_num cNUMERAL c_0 c/\ ! ! c==> c/\ * b0 b3 * b0 b4 * b0 creal_add b3 b4 ! c==> cIN b3 b2 * b0 * b1 b3 * b0 csum b2 b1 c==> c/\ * f0 creal_of_num cNUMERAL c_0 c/\ ! ! c==> c/\ * f0 b0 * f0 b1 * f0 creal_add b0 b1 ! c==> cIN b0 f1 * f0 * f2 b0 c/\ ! ! ! c==> c/\ * b0 creal_of_num cNUMERAL c_0 c/\ ! ! c==> c/\ * b0 b3 * b0 b4 * b0 creal_add b3 b4 ! c==> cIN b3 b2 * b0 * b1 b3 * b0 csum b2 b1 * f0 csum f1 f2
+- |- (((!x. (!r. ((integer x) ==> (integer ((real_pow x) r))))) ==> ((\x. (!r. ((integer x) ==> (integer ((real_pow x) r))))) x)) = ((\x. (!r. ((integer x) ==> (integer ((real_pow x) r))))) x))
+T c= c==> ! ! c==> cinteger b0 cinteger creal_pow b0 b1 * / ! c==> cinteger b0 cinteger creal_pow b0 b1 f0 * / ! c==> cinteger b0 cinteger creal_pow b0 b1 f0
+- ((P (real_of_num (NUMERAL _0))) /\ ((!x. (!y. (((P x) /\ (P y)) ==> (P ((real_add x) y))))) /\ (!a. ((a IN s) ==> (P (f a)))))) |- ((!P. (!f. (!s. (((P (real_of_num (NUMERAL _0))) /\ ((!x. (!y. (((P x) /\ (P y)) ==> (P ((real_add x) y))))) /\ (!a. ((a IN s) ==> (P (f a)))))) ==> (P ((sum s) f)))))) ==> (P ((sum s) f)))
+T c==> c/\ * f0 creal_of_num cNUMERAL c_0 c/\ ! ! c==> c/\ * f0 b0 * f0 b1 * f0 creal_add b0 b1 ! c==> cIN b0 f1 * f0 * f2 b0 c==> ! ! ! c==> c/\ * b0 creal_of_num cNUMERAL c_0 c/\ ! ! c==> c/\ * b0 b3 * b0 b4 * b0 creal_add b3 b4 ! c==> cIN b3 b2 * b0 * b1 b3 * b0 csum b2 b1 * f0 csum f1 f2
++ |- ((((integer x) /\ (integer y)) ==> (integer ((real_add x) y))) = T)
+T c= c==> c/\ cinteger f0 cinteger f1 cinteger creal_add f0 f1 cT
++ |- (((!x. (!y. (((integer x) /\ (integer y)) ==> (integer ((real_add x) y))))) ==> ((\x. (!y. (((integer x) /\ (integer y)) ==> (integer ((real_add x) y))))) x)) = ((\x. (!y. (((integer x) /\ (integer y)) ==> (integer ((real_add x) y))))) x))
+T c= c==> ! ! c==> c/\ cinteger b0 cinteger b1 cinteger creal_add b0 b1 * / ! c==> c/\ cinteger b0 cinteger b1 cinteger creal_add b0 b1 f0 * / ! c==> c/\ cinteger b0 cinteger b1 cinteger creal_add b0 b1 f0
++ (!x. ((x IN s) ==> (integer (f x)))) |- ((x IN s) ==> (integer (f x)))
+T c==> ! c==> cIN b0 f0 cinteger * f1 b0 c==> cIN f2 f0 cinteger * f1 f2
+- |- (((!x. ((integer x) ==> (integer (real_abs x)))) ==> ((\x. ((integer x) ==> (integer (real_abs x)))) x)) = ((\x. ((integer x) ==> (integer (real_abs x)))) x))
+T c= c==> ! c==> cinteger b0 cinteger creal_abs b0 * / c==> cinteger b0 cinteger creal_abs b0 f0 * / c==> cinteger b0 cinteger creal_abs b0 f0
++ (!P. (!f. (!s. (((P (real_of_num (NUMERAL _0))) /\ ((!x. (!y. (((P x) /\ (P y)) ==> (P ((real_add x) y))))) /\ (!a. ((a IN s) ==> (P (f a)))))) ==> (P ((sum s) f)))))) |- (!f. (((P (real_of_num (NUMERAL _0))) /\ ((!x. (!y. (((P x) /\ (P y)) ==> (P ((real_add x) y))))) /\ (!a. ((a IN s) ==> (P (f a)))))) ==> (P ((sum s) f))))
+T c==> ! ! ! c==> c/\ * b0 creal_of_num cNUMERAL c_0 c/\ ! ! c==> c/\ * b0 b3 * b0 b4 * b0 creal_add b3 b4 ! c==> cIN b3 b2 * b0 * b1 b3 * b0 csum b2 b1 ! c==> c/\ * f0 creal_of_num cNUMERAL c_0 c/\ ! ! c==> c/\ * f0 b1 * f0 b2 * f0 creal_add b1 b2 ! c==> cIN b1 f1 * f0 * b0 b1 * f0 csum f1 b0
++ |- (((!P. (!s. (!f. (((P (real_of_num (NUMERAL _0))) /\ ((!x. (!y. (((P x) /\ (P y)) ==> (P ((real_add x) y))))) /\ (!a. ((a IN s) ==> (P (f a)))))) ==> (P ((sum s) f)))))) ==> ((\P. (!s. (!f. (((P (real_of_num (NUMERAL _0))) /\ ((!x. (!y. (((P x) /\ (P y)) ==> (P ((real_add x) y))))) /\ (!a. ((a IN s) ==> (P (f a)))))) ==> (P ((sum s) f)))))) P)) = ((\P. (!s. (!f. (((P (real_of_num (NUMERAL _0))) /\ ((!x. (!y. (((P x) /\ (P y)) ==> (P ((real_add x) y))))) /\ (!a. ((a IN s) ==> (P (f a)))))) ==> (P ((sum s) f)))))) P))
+T c= c==> ! ! ! c==> c/\ * b0 creal_of_num cNUMERAL c_0 c/\ ! ! c==> c/\ * b0 b3 * b0 b4 * b0 creal_add b3 b4 ! c==> cIN b3 b1 * b0 * b2 b3 * b0 csum b1 b2 * / ! ! c==> c/\ * b0 creal_of_num cNUMERAL c_0 c/\ ! ! c==> c/\ * b0 b3 * b0 b4 * b0 creal_add b3 b4 ! c==> cIN b3 b1 * b0 * b2 b3 * b0 csum b1 b2 f0 * / ! ! c==> c/\ * b0 creal_of_num cNUMERAL c_0 c/\ ! ! c==> c/\ * b0 b3 * b0 b4 * b0 creal_add b3 b4 ! c==> cIN b3 b1 * b0 * b2 b3 * b0 csum b1 b2 f0
++ (!x. ((x IN s) ==> (integer (f x)))) |- ((\x. ((x IN s) ==> (integer (f x)))) x)
+T c==> ! c==> cIN b0 f0 cinteger * f1 b0 * / c==> cIN b0 f0 cinteger * f1 b0 f2
+- |- ((\r. ((integer x) ==> (integer ((real_pow x) r)))) r)
+T * / c==> cinteger f0 cinteger creal_pow f0 b0 f1
+- |- ((integer x) ==> (integer ((real_pow x) r)))
+T c==> cinteger f0 cinteger creal_pow f0 f1
++ (!P. (!f. (!s. (((P (real_of_num (NUMERAL _0))) /\ ((!x. (!y. (((P x) /\ (P y)) ==> (P ((real_add x) y))))) /\ (!a. ((a IN s) ==> (P (f a)))))) ==> (P ((sum s) f)))))) |- ((((P (real_of_num (NUMERAL _0))) /\ ((!x. (!y. (((P x) /\ (P y)) ==> (P ((real_add x) y))))) /\ (!a. ((a IN s) ==> (P (f a)))))) ==> (P ((sum s) f))) = T)
+T c==> ! ! ! c==> c/\ * b0 creal_of_num cNUMERAL c_0 c/\ ! ! c==> c/\ * b0 b3 * b0 b4 * b0 creal_add b3 b4 ! c==> cIN b3 b2 * b0 * b1 b3 * b0 csum b2 b1 c= c==> c/\ * f0 creal_of_num cNUMERAL c_0 c/\ ! ! c==> c/\ * f0 b0 * f0 b1 * f0 creal_add b0 b1 ! c==> cIN b0 f1 * f0 * f2 b0 * f0 csum f1 f2 cT
+- |- ((!x. (!y. (((integer x) /\ (integer y)) ==> (integer ((real_add x) y))))) /\ ((!x. (!y. (((integer x) /\ (integer y)) ==> (integer ((real_sub x) y))))) /\ ((!x. (!y. (((integer x) /\ (integer y)) ==> (integer ((real_mul x) y))))) /\ ((!x. (!r. ((integer x) ==> (integer ((real_pow x) r))))) /\ ((!x. ((integer x) ==> (integer (real_neg x)))) /\ ((!x. ((integer x) ==> (integer (real_abs x)))) /\ ((!x. (!y. (((integer x) /\ (integer y)) ==> (integer ((real_max x) y))))) /\ (!x. (!y. (((integer x) /\ (integer y)) ==> (integer ((real_min x) y))))))))))))
+T c/\ ! ! c==> c/\ cinteger b0 cinteger b1 cinteger creal_add b0 b1 c/\ ! ! c==> c/\ cinteger b0 cinteger b1 cinteger creal_sub b0 b1 c/\ ! ! c==> c/\ cinteger b0 cinteger b1 cinteger creal_mul b0 b1 c/\ ! ! c==> cinteger b0 cinteger creal_pow b0 b1 c/\ ! c==> cinteger b0 cinteger creal_neg b0 c/\ ! c==> cinteger b0 cinteger creal_abs b0 c/\ ! ! c==> c/\ cinteger b0 cinteger b1 cinteger creal_max b0 b1 ! ! c==> c/\ cinteger b0 cinteger b1 cinteger creal_min b0 b1
+- |- ((!x. (!y. (((integer x) /\ (integer y)) ==> (integer ((real_max x) y))))) /\ (!x. (!y. (((integer x) /\ (integer y)) ==> (integer ((real_min x) y))))))
+T c/\ ! ! c==> c/\ cinteger b0 cinteger b1 cinteger creal_max b0 b1 ! ! c==> c/\ cinteger b0 cinteger b1 cinteger creal_min b0 b1
+- |- (((!x. (!y. (((integer x) /\ (integer y)) ==> (integer ((real_min x) y))))) ==> ((\x. (!y. (((integer x) /\ (integer y)) ==> (integer ((real_min x) y))))) x)) = ((\x. (!y. (((integer x) /\ (integer y)) ==> (integer ((real_min x) y))))) x))
+T c= c==> ! ! c==> c/\ cinteger b0 cinteger b1 cinteger creal_min b0 b1 * / ! c==> c/\ cinteger b0 cinteger b1 cinteger creal_min b0 b1 f0 * / ! c==> c/\ cinteger b0 cinteger b1 cinteger creal_min b0 b1 f0
++ |- ((\y. (((integer x) /\ (integer y)) ==> (integer ((real_add x) y)))) y)
+T * / c==> c/\ cinteger f0 cinteger b0 cinteger creal_add f0 b0 f1
+- |- (((!y. (((integer x) /\ (integer y)) ==> (integer ((real_min x) y)))) ==> ((\y. (((integer x) /\ (integer y)) ==> (integer ((real_min x) y)))) y)) = ((\y. (((integer x) /\ (integer y)) ==> (integer ((real_min x) y)))) y))
+T c= c==> ! c==> c/\ cinteger f0 cinteger b0 cinteger creal_min f0 b0 * / c==> c/\ cinteger f0 cinteger b0 cinteger creal_min f0 b0 f1 * / c==> c/\ cinteger f0 cinteger b0 cinteger creal_min f0 b0 f1
+- |- ((!x. ((integer x) ==> (integer (real_neg x)))) /\ ((!x. ((integer x) ==> (integer (real_abs x)))) /\ ((!x. (!y. (((integer x) /\ (integer y)) ==> (integer ((real_max x) y))))) /\ (!x. (!y. (((integer x) /\ (integer y)) ==> (integer ((real_min x) y))))))))
+T c/\ ! c==> cinteger b0 cinteger creal_neg b0 c/\ ! c==> cinteger b0 cinteger creal_abs b0 c/\ ! ! c==> c/\ cinteger b0 cinteger b1 cinteger creal_max b0 b1 ! ! c==> c/\ cinteger b0 cinteger b1 cinteger creal_min b0 b1
++ |- (((!P. (!f. (!s. (((P (real_of_num (NUMERAL _0))) /\ ((!x. (!y. (((P x) /\ (P y)) ==> (P ((real_add x) y))))) /\ (!a. ((a IN s) ==> (P (f a)))))) ==> (P ((sum s) f)))))) ==> (!P. (!s. (!f. (((P (real_of_num (NUMERAL _0))) /\ ((!x. (!y. (((P x) /\ (P y)) ==> (P ((real_add x) y))))) /\ (!a. ((a IN s) ==> (P (f a)))))) ==> (P ((sum s) f))))))) = (!P. (!s. (!f. (((P (real_of_num (NUMERAL _0))) /\ ((!x. (!y. (((P x) /\ (P y)) ==> (P ((real_add x) y))))) /\ (!a. ((a IN s) ==> (P (f a)))))) ==> (P ((sum s) f)))))))
+T c= c==> ! ! ! c==> c/\ * b0 creal_of_num cNUMERAL c_0 c/\ ! ! c==> c/\ * b0 b3 * b0 b4 * b0 creal_add b3 b4 ! c==> cIN b3 b2 * b0 * b1 b3 * b0 csum b2 b1 ! ! ! c==> c/\ * b0 creal_of_num cNUMERAL c_0 c/\ ! ! c==> c/\ * b0 b3 * b0 b4 * b0 creal_add b3 b4 ! c==> cIN b3 b1 * b0 * b2 b3 * b0 csum b1 b2 ! ! ! c==> c/\ * b0 creal_of_num cNUMERAL c_0 c/\ ! ! c==> c/\ * b0 b3 * b0 b4 * b0 creal_add b3 b4 ! c==> cIN b3 b1 * b0 * b2 b3 * b0 csum b1 b2
++ |- ((\n. (integer (real_of_num n))) n)
+T * / cinteger creal_of_num b0 f0
+- |- ((!x. (!y. (((integer x) /\ (integer y)) ==> (integer ((real_sub x) y))))) /\ ((!x. (!y. (((integer x) /\ (integer y)) ==> (integer ((real_mul x) y))))) /\ ((!x. (!r. ((integer x) ==> (integer ((real_pow x) r))))) /\ ((!x. ((integer x) ==> (integer (real_neg x)))) /\ ((!x. ((integer x) ==> (integer (real_abs x)))) /\ ((!x. (!y. (((integer x) /\ (integer y)) ==> (integer ((real_max x) y))))) /\ (!x. (!y. (((integer x) /\ (integer y)) ==> (integer ((real_min x) y)))))))))))
+T c/\ ! ! c==> c/\ cinteger b0 cinteger b1 cinteger creal_sub b0 b1 c/\ ! ! c==> c/\ cinteger b0 cinteger b1 cinteger creal_mul b0 b1 c/\ ! ! c==> cinteger b0 cinteger creal_pow b0 b1 c/\ ! c==> cinteger b0 cinteger creal_neg b0 c/\ ! c==> cinteger b0 cinteger creal_abs b0 c/\ ! ! c==> c/\ cinteger b0 cinteger b1 cinteger creal_max b0 b1 ! ! c==> c/\ cinteger b0 cinteger b1 cinteger creal_min b0 b1
+- |- ((\x. ((integer x) ==> (integer (real_abs x)))) x)
+T * / c==> cinteger b0 cinteger creal_abs b0 f0
++ (!x. ((x IN s) ==> (integer (f x)))) |- (((x IN s) ==> (integer (f x))) = T)
+T c==> ! c==> cIN b0 f0 cinteger * f1 b0 c= c==> cIN f2 f0 cinteger * f1 f2 cT
++ (!P. (!f. (!s. (((P (real_of_num (NUMERAL _0))) /\ ((!x. (!y. (((P x) /\ (P y)) ==> (P ((real_add x) y))))) /\ (!a. ((a IN s) ==> (P (f a)))))) ==> (P ((sum s) f)))))) |- (((!f. (!s. (((P (real_of_num (NUMERAL _0))) /\ ((!x. (!y. (((P x) /\ (P y)) ==> (P ((real_add x) y))))) /\ (!a. ((a IN s) ==> (P (f a)))))) ==> (P ((sum s) f))))) ==> ((\f. (!s. (((P (real_of_num (NUMERAL _0))) /\ ((!x. (!y. (((P x) /\ (P y)) ==> (P ((real_add x) y))))) /\ (!a. ((a IN s) ==> (P (f a)))))) ==> (P ((sum s) f))))) f)) = ((\f. (!s. (((P (real_of_num (NUMERAL _0))) /\ ((!x. (!y. (((P x) /\ (P y)) ==> (P ((real_add x) y))))) /\ (!a. ((a IN s) ==> (P (f a)))))) ==> (P ((sum s) f))))) f))
+T c==> ! ! ! c==> c/\ * b0 creal_of_num cNUMERAL c_0 c/\ ! ! c==> c/\ * b0 b3 * b0 b4 * b0 creal_add b3 b4 ! c==> cIN b3 b2 * b0 * b1 b3 * b0 csum b2 b1 c= c==> ! ! c==> c/\ * f0 creal_of_num cNUMERAL c_0 c/\ ! ! c==> c/\ * f0 b2 * f0 b3 * f0 creal_add b2 b3 ! c==> cIN b2 b1 * f0 * b0 b2 * f0 csum b1 b0 * / ! c==> c/\ * f0 creal_of_num cNUMERAL c_0 c/\ ! ! c==> c/\ * f0 b2 * f0 b3 * f0 creal_add b2 b3 ! c==> cIN b2 b1 * f0 * b0 b2 * f0 csum b1 b0 f1 * / ! c==> c/\ * f0 creal_of_num cNUMERAL c_0 c/\ ! ! c==> c/\ * f0 b2 * f0 b3 * f0 creal_add b2 b3 ! c==> cIN b2 b1 * f0 * b0 b2 * f0 csum b1 b0 f1
+- |- ((\y. (((integer x) /\ (integer y)) ==> (integer ((real_min x) y)))) y)
+T * / c==> c/\ cinteger f0 cinteger b0 cinteger creal_min f0 b0 f1
+- |- (((!x. (!y. (((integer x) /\ (integer y)) ==> (integer ((real_mul x) y))))) ==> ((\x. (!y. (((integer x) /\ (integer y)) ==> (integer ((real_mul x) y))))) x)) = ((\x. (!y. (((integer x) /\ (integer y)) ==> (integer ((real_mul x) y))))) x))
+T c= c==> ! ! c==> c/\ cinteger b0 cinteger b1 cinteger creal_mul b0 b1 * / ! c==> c/\ cinteger b0 cinteger b1 cinteger creal_mul b0 b1 f0 * / ! c==> c/\ cinteger b0 cinteger b1 cinteger creal_mul b0 b1 f0
+- |- ((\x. (!r. ((integer x) ==> (integer ((real_pow x) r))))) x)
+T * / ! c==> cinteger b0 cinteger creal_pow b0 b1 f0
++ |- (((!s. (!f. (((P (real_of_num (NUMERAL _0))) /\ ((!x. (!y. (((P x) /\ (P y)) ==> (P ((real_add x) y))))) /\ (!a. ((a IN s) ==> (P (f a)))))) ==> (P ((sum s) f))))) ==> ((\s. (!f. (((P (real_of_num (NUMERAL _0))) /\ ((!x. (!y. (((P x) /\ (P y)) ==> (P ((real_add x) y))))) /\ (!a. ((a IN s) ==> (P (f a)))))) ==> (P ((sum s) f))))) s)) = ((\s. (!f. (((P (real_of_num (NUMERAL _0))) /\ ((!x. (!y. (((P x) /\ (P y)) ==> (P ((real_add x) y))))) /\ (!a. ((a IN s) ==> (P (f a)))))) ==> (P ((sum s) f))))) s))
+T c= c==> ! ! c==> c/\ * f0 creal_of_num cNUMERAL c_0 c/\ ! ! c==> c/\ * f0 b2 * f0 b3 * f0 creal_add b2 b3 ! c==> cIN b2 b0 * f0 * b1 b2 * f0 csum b0 b1 * / ! c==> c/\ * f0 creal_of_num cNUMERAL c_0 c/\ ! ! c==> c/\ * f0 b2 * f0 b3 * f0 creal_add b2 b3 ! c==> cIN b2 b0 * f0 * b1 b2 * f0 csum b0 b1 f1 * / ! c==> c/\ * f0 creal_of_num cNUMERAL c_0 c/\ ! ! c==> c/\ * f0 b2 * f0 b3 * f0 creal_add b2 b3 ! c==> cIN b2 b0 * f0 * b1 b2 * f0 csum b0 b1 f1
++ (!P. (!f. (!s. (((P (real_of_num (NUMERAL _0))) /\ ((!x. (!y. (((P x) /\ (P y)) ==> (P ((real_add x) y))))) /\ (!a. ((a IN s) ==> (P (f a)))))) ==> (P ((sum s) f)))))) |- (!s. (((P (real_of_num (NUMERAL _0))) /\ ((!x. (!y. (((P x) /\ (P y)) ==> (P ((real_add x) y))))) /\ (!a. ((a IN s) ==> (P (f a)))))) ==> (P ((sum s) f))))
+T c==> ! ! ! c==> c/\ * b0 creal_of_num cNUMERAL c_0 c/\ ! ! c==> c/\ * b0 b3 * b0 b4 * b0 creal_add b3 b4 ! c==> cIN b3 b2 * b0 * b1 b3 * b0 csum b2 b1 ! c==> c/\ * f0 creal_of_num cNUMERAL c_0 c/\ ! ! c==> c/\ * f0 b1 * f0 b2 * f0 creal_add b1 b2 ! c==> cIN b1 b0 * f0 * f1 b1 * f0 csum b0 f1
+- |- (((!y. (((integer x) /\ (integer y)) ==> (integer ((real_max x) y)))) ==> ((\y. (((integer x) /\ (integer y)) ==> (integer ((real_max x) y)))) y)) = ((\y. (((integer x) /\ (integer y)) ==> (integer ((real_max x) y)))) y))
+T c= c==> ! c==> c/\ cinteger f0 cinteger b0 cinteger creal_max f0 b0 * / c==> c/\ cinteger f0 cinteger b0 cinteger creal_max f0 b0 f1 * / c==> c/\ cinteger f0 cinteger b0 cinteger creal_max f0 b0 f1
+- |- (((integer x) /\ (integer y)) ==> (integer ((real_max x) y)))
+T c==> c/\ cinteger f0 cinteger f1 cinteger creal_max f0 f1
+- |- ((\x. (!y. (((integer x) /\ (integer y)) ==> (integer ((real_max x) y))))) x)
+T * / ! c==> c/\ cinteger b0 cinteger b1 cinteger creal_max b0 b1 f0
+- |- ((((integer x) /\ (integer y)) ==> (integer ((real_sub x) y))) = T)
+T c= c==> c/\ cinteger f0 cinteger f1 cinteger creal_sub f0 f1 cT
++ (!P. (!f. (!s. (((P (real_of_num (NUMERAL _0))) /\ ((!x. (!y. (((P x) /\ (P y)) ==> (P ((real_add x) y))))) /\ (!a. ((a IN s) ==> (P (f a)))))) ==> (P ((sum s) f)))))) |- ((!s. (!f. (((P (real_of_num (NUMERAL _0))) /\ ((!x. (!y. (((P x) /\ (P y)) ==> (P ((real_add x) y))))) /\ (!a. ((a IN s) ==> (P (f a)))))) ==> (P ((sum s) f))))) = T)
+T c==> ! ! ! c==> c/\ * b0 creal_of_num cNUMERAL c_0 c/\ ! ! c==> c/\ * b0 b3 * b0 b4 * b0 creal_add b3 b4 ! c==> cIN b3 b2 * b0 * b1 b3 * b0 csum b2 b1 c= ! ! c==> c/\ * f0 creal_of_num cNUMERAL c_0 c/\ ! ! c==> c/\ * f0 b2 * f0 b3 * f0 creal_add b2 b3 ! c==> cIN b2 b0 * f0 * b1 b2 * f0 csum b0 b1 cT
+- |- (((integer x) /\ (integer y)) ==> (integer ((real_mul x) y)))
+T c==> c/\ cinteger f0 cinteger f1 cinteger creal_mul f0 f1
+- |- ((((integer x) /\ (integer y)) ==> (integer ((real_min x) y))) = T)
+T c= c==> c/\ cinteger f0 cinteger f1 cinteger creal_min f0 f1 cT
+- |- ((!x. (!r. ((integer x) ==> (integer ((real_pow x) r))))) /\ ((!x. ((integer x) ==> (integer (real_neg x)))) /\ ((!x. ((integer x) ==> (integer (real_abs x)))) /\ ((!x. (!y. (((integer x) /\ (integer y)) ==> (integer ((real_max x) y))))) /\ (!x. (!y. (((integer x) /\ (integer y)) ==> (integer ((real_min x) y)))))))))
+T c/\ ! ! c==> cinteger b0 cinteger creal_pow b0 b1 c/\ ! c==> cinteger b0 cinteger creal_neg b0 c/\ ! c==> cinteger b0 cinteger creal_abs b0 c/\ ! ! c==> c/\ cinteger b0 cinteger b1 cinteger creal_max b0 b1 ! ! c==> c/\ cinteger b0 cinteger b1 cinteger creal_min b0 b1
+- |- ((t /\ t) = t)
+T c= c/\ f0 f0 f0
+- |- (((integer x) ==> (integer (real_neg x))) = T)
+T c= c==> cinteger f0 cinteger creal_neg f0 cT
++ |- ((integer (real_of_num n)) = T)
+T c= cinteger creal_of_num f0 cT
++ (!P. (!f. (!s. (((P (real_of_num (NUMERAL _0))) /\ ((!x. (!y. (((P x) /\ (P y)) ==> (P ((real_add x) y))))) /\ (!a. ((a IN s) ==> (P (f a)))))) ==> (P ((sum s) f)))))) |- ((\s. (((P (real_of_num (NUMERAL _0))) /\ ((!x. (!y. (((P x) /\ (P y)) ==> (P ((real_add x) y))))) /\ (!a. ((a IN s) ==> (P (f a)))))) ==> (P ((sum s) f)))) s)
+T c==> ! ! ! c==> c/\ * b0 creal_of_num cNUMERAL c_0 c/\ ! ! c==> c/\ * b0 b3 * b0 b4 * b0 creal_add b3 b4 ! c==> cIN b3 b2 * b0 * b1 b3 * b0 csum b2 b1 * / c==> c/\ * f0 creal_of_num cNUMERAL c_0 c/\ ! ! c==> c/\ * f0 b1 * f0 b2 * f0 creal_add b1 b2 ! c==> cIN b1 b0 * f0 * f1 b1 * f0 csum b0 f1 f2
++ (!P. (!f. (!s. (((P (real_of_num (NUMERAL _0))) /\ ((!x. (!y. (((P x) /\ (P y)) ==> (P ((real_add x) y))))) /\ (!a. ((a IN s) ==> (P (f a)))))) ==> (P ((sum s) f)))))) |- ((!P. (!f. (!s. (((P (real_of_num (NUMERAL _0))) /\ ((!x. (!y. (((P x) /\ (P y)) ==> (P ((real_add x) y))))) /\ (!a. ((a IN s) ==> (P (f a)))))) ==> (P ((sum s) f)))))) /\ (!P. (!s. (!f. (((P (real_of_num (NUMERAL _0))) /\ ((!x. (!y. (((P x) /\ (P y)) ==> (P ((real_add x) y))))) /\ (!a. ((a IN s) ==> (P (f a)))))) ==> (P ((sum s) f)))))))
+T c==> ! ! ! c==> c/\ * b0 creal_of_num cNUMERAL c_0 c/\ ! ! c==> c/\ * b0 b3 * b0 b4 * b0 creal_add b3 b4 ! c==> cIN b3 b2 * b0 * b1 b3 * b0 csum b2 b1 c/\ ! ! ! c==> c/\ * b0 creal_of_num cNUMERAL c_0 c/\ ! ! c==> c/\ * b0 b3 * b0 b4 * b0 creal_add b3 b4 ! c==> cIN b3 b2 * b0 * b1 b3 * b0 csum b2 b1 ! ! ! c==> c/\ * b0 creal_of_num cNUMERAL c_0 c/\ ! ! c==> c/\ * b0 b3 * b0 b4 * b0 creal_add b3 b4 ! c==> cIN b3 b1 * b0 * b2 b3 * b0 csum b1 b2
++ |- ((\x. (!y. (((integer x) /\ (integer y)) ==> (integer ((real_add x) y))))) x)
+T * / ! c==> c/\ cinteger b0 cinteger b1 cinteger creal_add b0 b1 f0
++ |- ((!P. (!f. (!s. (((P (real_of_num (NUMERAL _0))) /\ ((!x. (!y. (((P x) /\ (P y)) ==> (P ((real_add x) y))))) /\ (!a. ((a IN s) ==> (P (f a)))))) ==> (P ((sum s) f)))))) ==> (!P. (!s. (!f. (((P (real_of_num (NUMERAL _0))) /\ ((!x. (!y. (((P x) /\ (P y)) ==> (P ((real_add x) y))))) /\ (!a. ((a IN s) ==> (P (f a)))))) ==> (P ((sum s) f)))))))
+T c==> ! ! ! c==> c/\ * b0 creal_of_num cNUMERAL c_0 c/\ ! ! c==> c/\ * b0 b3 * b0 b4 * b0 creal_add b3 b4 ! c==> cIN b3 b2 * b0 * b1 b3 * b0 csum b2 b1 ! ! ! c==> c/\ * b0 creal_of_num cNUMERAL c_0 c/\ ! ! c==> c/\ * b0 b3 * b0 b4 * b0 creal_add b3 b4 ! c==> cIN b3 b1 * b0 * b2 b3 * b0 csum b1 b2
++ (!P. (!f. (!s. (((P (real_of_num (NUMERAL _0))) /\ ((!x. (!y. (((P x) /\ (P y)) ==> (P ((real_add x) y))))) /\ (!a. ((a IN s) ==> (P (f a)))))) ==> (P ((sum s) f)))))) |- ((\f. (!s. (((P (real_of_num (NUMERAL _0))) /\ ((!x. (!y. (((P x) /\ (P y)) ==> (P ((real_add x) y))))) /\ (!a. ((a IN s) ==> (P (f a)))))) ==> (P ((sum s) f))))) f)
+T c==> ! ! ! c==> c/\ * b0 creal_of_num cNUMERAL c_0 c/\ ! ! c==> c/\ * b0 b3 * b0 b4 * b0 creal_add b3 b4 ! c==> cIN b3 b2 * b0 * b1 b3 * b0 csum b2 b1 * / ! c==> c/\ * f0 creal_of_num cNUMERAL c_0 c/\ ! ! c==> c/\ * f0 b2 * f0 b3 * f0 creal_add b2 b3 ! c==> cIN b2 b1 * f0 * b0 b2 * f0 csum b1 b0 f1
++ |- ((T /\ t) = t)
+T c= c/\ cT f0 f0
++ (!x. ((x IN s) ==> (integer (f x)))) |- ((((integer (real_of_num (NUMERAL _0))) /\ ((!x. (!y. (((integer x) /\ (integer y)) ==> (integer ((real_add x) y))))) /\ (!a. ((a IN s) ==> (integer (f a)))))) ==> (integer ((sum s) f))) = (integer ((sum s) f)))
+T c==> ! c==> cIN b0 f0 cinteger * f1 b0 c= c==> c/\ cinteger creal_of_num cNUMERAL c_0 c/\ ! ! c==> c/\ cinteger b0 cinteger b1 cinteger creal_add b0 b1 ! c==> cIN b0 f0 cinteger * f1 b0 cinteger csum f0 f1 cinteger csum f0 f1
++ (!x. ((x IN s) ==> (integer (f x)))) |- ((integer (real_of_num (NUMERAL _0))) /\ ((!x. (!y. (((integer x) /\ (integer y)) ==> (integer ((real_add x) y))))) /\ (!a. ((a IN s) ==> (integer (f a))))))
+T c==> ! c==> cIN b0 f0 cinteger * f1 b0 c/\ cinteger creal_of_num cNUMERAL c_0 c/\ ! ! c==> c/\ cinteger b0 cinteger b1 cinteger creal_add b0 b1 ! c==> cIN b0 f0 cinteger * f1 b0
++ |- (((!f. (((P (real_of_num (NUMERAL _0))) /\ ((!x. (!y. (((P x) /\ (P y)) ==> (P ((real_add x) y))))) /\ (!a. ((a IN s) ==> (P (f a)))))) ==> (P ((sum s) f)))) ==> ((\f. (((P (real_of_num (NUMERAL _0))) /\ ((!x. (!y. (((P x) /\ (P y)) ==> (P ((real_add x) y))))) /\ (!a. ((a IN s) ==> (P (f a)))))) ==> (P ((sum s) f)))) f)) = ((\f. (((P (real_of_num (NUMERAL _0))) /\ ((!x. (!y. (((P x) /\ (P y)) ==> (P ((real_add x) y))))) /\ (!a. ((a IN s) ==> (P (f a)))))) ==> (P ((sum s) f)))) f))
+T c= c==> ! c==> c/\ * f0 creal_of_num cNUMERAL c_0 c/\ ! ! c==> c/\ * f0 b1 * f0 b2 * f0 creal_add b1 b2 ! c==> cIN b1 f1 * f0 * b0 b1 * f0 csum f1 b0 * / c==> c/\ * f0 creal_of_num cNUMERAL c_0 c/\ ! ! c==> c/\ * f0 b1 * f0 b2 * f0 creal_add b1 b2 ! c==> cIN b1 f1 * f0 * b0 b1 * f0 csum f1 b0 f2 * / c==> c/\ * f0 creal_of_num cNUMERAL c_0 c/\ ! ! c==> c/\ * f0 b1 * f0 b2 * f0 creal_add b1 b2 ! c==> cIN b1 f1 * f0 * b0 b1 * f0 csum f1 b0 f2
++ |- (((!y. (((integer x) /\ (integer y)) ==> (integer ((real_add x) y)))) ==> ((\y. (((integer x) /\ (integer y)) ==> (integer ((real_add x) y)))) y)) = ((\y. (((integer x) /\ (integer y)) ==> (integer ((real_add x) y)))) y))
+T c= c==> ! c==> c/\ cinteger f0 cinteger b0 cinteger creal_add f0 b0 * / c==> c/\ cinteger f0 cinteger b0 cinteger creal_add f0 b0 f1 * / c==> c/\ cinteger f0 cinteger b0 cinteger creal_add f0 b0 f1
++ (!P. (!f. (!s. (((P (real_of_num (NUMERAL _0))) /\ ((!x. (!y. (((P x) /\ (P y)) ==> (P ((real_add x) y))))) /\ (!a. ((a IN s) ==> (P (f a)))))) ==> (P ((sum s) f)))))) |- (!f. (!s. (((P (real_of_num (NUMERAL _0))) /\ ((!x. (!y. (((P x) /\ (P y)) ==> (P ((real_add x) y))))) /\ (!a. ((a IN s) ==> (P (f a)))))) ==> (P ((sum s) f)))))
+T c==> ! ! ! c==> c/\ * b0 creal_of_num cNUMERAL c_0 c/\ ! ! c==> c/\ * b0 b3 * b0 b4 * b0 creal_add b3 b4 ! c==> cIN b3 b2 * b0 * b1 b3 * b0 csum b2 b1 ! ! c==> c/\ * f0 creal_of_num cNUMERAL c_0 c/\ ! ! c==> c/\ * f0 b2 * f0 b3 * f0 creal_add b2 b3 ! c==> cIN b2 b1 * f0 * b0 b2 * f0 csum b1 b0
++ |- (((!n. (integer (real_of_num n))) ==> ((\n. (integer (real_of_num n))) n)) = ((\n. (integer (real_of_num n))) n))
+T c= c==> ! cinteger creal_of_num b0 * / cinteger creal_of_num b0 f0 * / cinteger creal_of_num b0 f0

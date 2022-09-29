@@ -1,0 +1,71 @@
+N Seq.mem_behead
+C |- (!s. (!x. (((MEM x) (behead s)) ==> ((MEM x) s))))
+T c==> cMEM f0 cbehead f1 cMEM f0 f1
+D TRUTH
+A |- T
+T cT
+D list_INDUCT
+A |- (!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x))))
+T c==> c/\ * f0 cNIL ! ! c==> * f0 b1 * f0 cCONS b0 b1 ! * f0 b0
+D Seq.behead
+A |- (!h. (!t. (((behead NIL) = NIL) /\ ((behead ((CONS h) t)) = t))))
+T c/\ c= cbehead cNIL cNIL c= cbehead cCONS f0 f1 f1
+D Seq.in_cons
+A |- (!y. (!s. (!x. (((MEM x) ((CONS y) s)) = ((x = y) \/ ((MEM x) s))))))
+T c= cMEM f0 cCONS f1 f2 c\/ c= f0 f1 cMEM f0 f2
++ |- ((((MEM x) s) ==> ((MEM x) ((CONS y) s))) = (((MEM x) (behead ((CONS y) s))) ==> ((MEM x) ((CONS y) s))))
+T c= c==> cMEM f0 f1 cMEM f0 cCONS f2 f1 c==> cMEM f0 cbehead cCONS f2 f1 cMEM f0 cCONS f2 f1
++ |- (T = (((MEM x) s) ==> ((x = y) \/ ((MEM x) s))))
+T c= cT c==> cMEM f0 f1 c\/ c= f0 f2 cMEM f0 f1
++ |- ((t \/ T) = T)
+T c= c\/ f0 cT cT
++ |- ((t ==> T) = T)
+T c= c==> f0 cT cT
++ |- ((\P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))) P)
+T * / c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 f0
++ |- ((((MEM x) (behead ((CONS y) s))) ==> ((MEM x) ((CONS y) s))) = T)
+T c= c==> cMEM f0 cbehead cCONS f1 f2 cMEM f0 cCONS f1 f2 cT
++ |- ((t ==> t) = T)
+T c= c==> f0 f0 cT
+- |- ((t \/ t) = t)
+T c= c\/ f0 f0 f0
++ |- (((!x. (((MEM x) (behead s)) ==> ((MEM x) s))) ==> (!x. (((MEM x) (behead ((CONS y) s))) ==> ((MEM x) ((CONS y) s))))) = T)
+T c= c==> ! c==> cMEM b0 cbehead f0 cMEM b0 f0 ! c==> cMEM b0 cbehead cCONS f1 f0 cMEM b0 cCONS f1 f0 cT
++ (!x. (((MEM x) (behead s)) ==> ((MEM x) s))) |- ((!x. (((MEM x) (behead s)) ==> ((MEM x) s))) /\ (!x. (((MEM x) (behead ((CONS y) s))) ==> ((MEM x) ((CONS y) s)))))
+T c==> ! c==> cMEM b0 cbehead f0 cMEM b0 f0 c/\ ! c==> cMEM b0 cbehead f0 cMEM b0 f0 ! c==> cMEM b0 cbehead cCONS f1 f0 cMEM b0 cCONS f1 f0
++ |- (!x. (((MEM x) (behead ((CONS y) s))) ==> ((MEM x) ((CONS y) s))))
+T c==> cMEM f0 cbehead cCONS f1 f2 cMEM f0 cCONS f1 f2
+- |- (((!x. (((MEM x) NIL) = F)) ==> ((\x. (((MEM x) NIL) = F)) x)) = ((\x. (((MEM x) NIL) = F)) x))
+T c= c==> ! c= cMEM b0 cNIL cF * / c= cMEM b0 cNIL cF f0 * / c= cMEM b0 cNIL cF f0
++ |- ((!x. T) = (!x. (((MEM x) NIL) ==> ((MEM x) NIL))))
+T c= ! cT ! c==> cMEM b0 cNIL cMEM b0 cNIL
++ |- ((((!x. (((MEM x) (behead NIL)) ==> ((MEM x) NIL))) /\ (!a0. (!a1. ((!x. (((MEM x) (behead a1)) ==> ((MEM x) a1))) ==> (!x. (((MEM x) (behead ((CONS a0) a1))) ==> ((MEM x) ((CONS a0) a1)))))))) ==> (!s. (!x. (((MEM x) (behead s)) ==> ((MEM x) s))))) = (!s. (!x. (((MEM x) (behead s)) ==> ((MEM x) s)))))
+T c= c==> c/\ ! c==> cMEM b0 cbehead cNIL cMEM b0 cNIL ! ! c==> ! c==> cMEM b2 cbehead b1 cMEM b2 b1 ! c==> cMEM b2 cbehead cCONS b0 b1 cMEM b2 cCONS b0 b1 ! ! c==> cMEM b1 cbehead b0 cMEM b1 b0 ! ! c==> cMEM b1 cbehead b0 cMEM b1 b0
++ |- ((!x. t) = t)
+T c= ! f0 f0
++ |- (!x. (((MEM x) NIL) ==> ((MEM x) NIL)))
+T c==> cMEM f0 cNIL cMEM f0 cNIL
+- (!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))), ((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) |- ((!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))) /\ (!x. (P x)))
+T c==> ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 c==> c/\ * f0 cNIL ! ! c==> * f0 b1 * f0 cCONS b0 b1 c/\ ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 ! * f0 b0
+- (!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))), ((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) |- (!x. (P x))
+T c==> ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 c==> c/\ * f0 cNIL ! ! c==> * f0 b1 * f0 cCONS b0 b1 ! * f0 b0
+- |- (((!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))) ==> (!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x))))) = (!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))))
+T c= c==> ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1
+- |- ((\x. (((MEM x) NIL) = F)) x)
+T * / c= cMEM b0 cNIL cF f0
+- (!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))), ((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) |- (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) /\ (!x. (P x)))
+T c==> ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 c==> c/\ * f0 cNIL ! ! c==> * f0 b1 * f0 cCONS b0 b1 c/\ c/\ * f0 cNIL ! ! c==> * f0 b1 * f0 cCONS b0 b1 ! * f0 b0
+- ((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) |- ((!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))) ==> (!x. (P x)))
+T c==> c/\ * f0 cNIL ! ! c==> * f0 b1 * f0 cCONS b0 b1 c==> ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 ! * f0 b0
+- |- ((x = x) = T)
+T c= c= f0 f0 cT
+- (!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))) |- ((\P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))) P)
+T c==> ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 * / c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 f0
+- |- ((!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))) ==> (!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))))
+T c==> ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1
+- (!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))) |- ((((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x))) = T)
+T c==> ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 c= c==> c/\ * f0 cNIL ! ! c==> * f0 b1 * f0 cCONS b0 b1 ! * f0 b0 cT
+- |- (((MEM x) NIL) = F)
+T c= cMEM f0 cNIL cF
+- (!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))) |- ((!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))) /\ (!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))))
+T c==> ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 c/\ ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1

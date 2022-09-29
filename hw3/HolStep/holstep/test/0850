@@ -1,0 +1,24 @@
+N ROTATE2D_ADD_VECTORS
+C |- (!t. (!w. (!z. (((rotate2d t) ((vector_add w) z)) = ((vector_add ((rotate2d t) w)) ((rotate2d t) z))))))
+T c= crotate2d f0 cvector_add f1 f2 cvector_add crotate2d f0 f1 crotate2d f0 f2
+D TRUTH
+A |- T
+T cT
+D LINEAR_ADD
+A |- (!f. (!x. (!y. ((linear f) ==> ((f ((vector_add x) y)) = ((vector_add (f x)) (f y)))))))
+T c==> clinear f0 c= * f0 cvector_add f1 f2 cvector_add * f0 f1 * f0 f2
+D LINEAR_ROTATE2D
+A |- (!t. (linear (rotate2d t)))
+T clinear * part crotate2d f0
++ |- (T = (!t. (!w. (!z. (((rotate2d t) ((vector_add w) z)) = ((vector_add ((rotate2d t) w)) ((rotate2d t) z)))))))
+T c= cT ! ! ! c= crotate2d b0 cvector_add b1 b2 cvector_add crotate2d b0 b1 crotate2d b0 b2
++ |- (((!f. (!x. (!y. ((linear f) ==> ((f ((vector_add x) y)) = ((vector_add (f x)) (f y))))))) ==> ((\f. (!x. (!y. ((linear f) ==> ((f ((vector_add x) y)) = ((vector_add (f x)) (f y))))))) f)) = ((\f. (!x. (!y. ((linear f) ==> ((f ((vector_add x) y)) = ((vector_add (f x)) (f y))))))) f))
+T c= c==> ! ! ! c==> clinear b0 c= * b0 cvector_add b1 b2 cvector_add * b0 b1 * b0 b2 * / ! ! c==> clinear b0 c= * b0 cvector_add b1 b2 cvector_add * b0 b1 * b0 b2 f0 * / ! ! c==> clinear b0 c= * b0 cvector_add b1 b2 cvector_add * b0 b1 * b0 b2 f0
++ |- ((\y. ((linear f) ==> ((f ((vector_add x) y)) = ((vector_add (f x)) (f y))))) y)
+T * / c==> clinear f0 c= * f0 cvector_add f1 b0 cvector_add * f0 f1 * f0 b0 f2
+- (linear f) |- ((linear f) /\ ((f ((vector_add x) y)) = ((vector_add (f x)) (f y))))
+T c==> clinear f0 c/\ clinear f0 c= * f0 cvector_add f1 f2 cvector_add * f0 f1 * f0 f2
+- |- ((linear (rotate2d t)) = T)
+T c= clinear * part crotate2d f0 cT
+- |- (T = (linear (rotate2d t)))
+T c= cT clinear * part crotate2d f0

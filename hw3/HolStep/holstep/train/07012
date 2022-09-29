@@ -1,0 +1,27 @@
+N MATRIX_OF_MATRIX_VECTOR_MUL
+C |- (!A. ((matrix (\x. ((matrix_vector_mul A) x))) = A))
+T c= cmatrix / cmatrix_vector_mul f0 b0 f0
+D TRUTH
+A |- T
+T cT
+D MATRIX_EQ
+A |- (!A. (!B. ((A = B) = (!x. (((matrix_vector_mul A) x) = ((matrix_vector_mul B) x))))))
+T c= c= f0 f1 ! c= cmatrix_vector_mul f0 b0 cmatrix_vector_mul f1 b0
+D MATRIX_VECTOR_MUL_LINEAR
+A |- (!A. (linear (\x. ((matrix_vector_mul A) x))))
+T clinear / cmatrix_vector_mul f0 b0
+D MATRIX_WORKS
+A |- (!f. ((linear f) ==> (!x. (((matrix_vector_mul (matrix f)) x) = (f x)))))
+T c==> clinear f0 ! c= cmatrix_vector_mul cmatrix f0 b0 * f0 b0
++ (linear f) |- ((\x. (((matrix_vector_mul (matrix f)) x) = (f x))) x)
+T c==> clinear f0 * / c= cmatrix_vector_mul cmatrix f0 b0 * f0 b0 f1
++ |- (((!A. (linear (\x. ((matrix_vector_mul A) x)))) ==> ((\A. (linear (\x. ((matrix_vector_mul A) x)))) A)) = ((\A. (linear (\x. ((matrix_vector_mul A) x)))) A))
+T c= c==> ! clinear / cmatrix_vector_mul b0 b1 * / clinear / cmatrix_vector_mul b0 b1 f0 * / clinear / cmatrix_vector_mul b0 b1 f0
++ |- (((matrix_vector_mul (matrix (\x. ((matrix_vector_mul A) x)))) x) = ((\x. ((matrix_vector_mul A) x)) x))
+T c= cmatrix_vector_mul cmatrix / cmatrix_vector_mul f0 b0 f1 * / cmatrix_vector_mul f0 b0 f1
+- |- ((linear (\x. ((matrix_vector_mul A) x))) = T)
+T c= clinear / cmatrix_vector_mul f0 b0 cT
+- |- (T = (linear (\x. ((matrix_vector_mul A) x))))
+T c= cT clinear / cmatrix_vector_mul f0 b0
+- |- (((\x. (f x)) y) = (f y))
+T c= * / * f0 b0 f1 * f0 f1

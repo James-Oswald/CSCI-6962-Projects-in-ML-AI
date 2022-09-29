@@ -1,0 +1,607 @@
+N ROWS_MAPROWS
+C |- (!f. (!A. ((rows ((maprows f) A)) = ((IMAGE f) (rows A)))))
+T c= * part crows cmaprows f0 f1 * * part cIMAGE f0 * part crows f1
+D TRUTH
+A |- T
+T cT
+D ETA_AX
+A |- (!t. ((\x. (t x)) = t))
+T c= / * f0 b0 f0
+D EXCLUDED_MIDDLE
+A |- (!t. (t \/ (~ t)))
+T c\/ f0 c~ f0
+D BOOL_CASES_AX
+A |- (!t. ((t = T) \/ (t = F)))
+T c\/ c= f0 cT c= f0 cF
+D NOT_CLAUSES
+A |- ((!t. ((~ (~ t)) = t)) /\ (((~ T) = F) /\ ((~ F) = T)))
+T c/\ ! c= c~ c~ b0 b0 c/\ c= c~ cT cF c= c~ cF cT
+D NOT_EXISTS_THM
+A |- (!P. ((~ (?x. (P x))) = (!x. (~ (P x)))))
+T c= c~ c? / * f0 b0 ! c~ * f0 b0
+D RIGHT_OR_FORALL_THM
+A |- (!P. (!Q. ((P \/ (!x. (Q x))) = (!x. (P \/ (Q x))))))
+T c= c\/ f0 ! * f1 b0 ! c\/ f0 * f1 b0
+D EXTENSION
+A |- (!s. (!t. ((s = t) = (!x. ((x IN s) = (x IN t))))))
+T c= c= f0 f1 ! c= cIN b0 f0 cIN b0 f1
+D Misc_defs_and_lemmas.IN_ELIM_THM'
+A |- ((!P. (!x. ((x IN (GSPEC (\v. (P (SETSPEC v))))) = (P (\p. (\t. (p /\ (x = t)))))))) /\ ((!p. (!x. ((x IN (GSPEC (\v. (?y. (((SETSPEC v) (p y)) y))))) = (p x)))) /\ ((!P. (!x. (((GSPEC (\v. (P (SETSPEC v)))) x) = (P (\p. (\t. (p /\ (x = t)))))))) /\ ((!p. (!x. (((GSPEC (\v. (?y. (((SETSPEC v) (p y)) y)))) x) = (p x)))) /\ (!p. (!x. ((x IN (\y. (p y))) = (p x))))))))
+T c/\ ! ! c= cIN b1 * part cGSPEC / * b0 * part cSETSPEC b2 * b0 / / c/\ b2 c= b1 b3 c/\ ! ! c= cIN b1 * part cGSPEC / c? / cSETSPEC b2 * b0 b3 b3 * b0 b1 c/\ ! ! c= cGSPEC / * b0 * part cSETSPEC b2 b1 * b0 / / c/\ b2 c= b1 b3 c/\ ! ! c= cGSPEC / c? / cSETSPEC b2 * b0 b3 b3 b1 * b0 b1 ! ! c= cIN b1 / * b0 b2 * b0 b1
+D IN_IMAGE
+A |- (!y. (!s. (!f. ((y IN ((IMAGE f) s)) = (?x. ((y = (f x)) /\ (x IN s)))))))
+T c= cIN f0 * * part cIMAGE f1 f2 c? / c/\ c= f0 * f1 b0 cIN b0 f2
+D CART_EQ
+A |- (!x. (!y. ((x = y) = (!i. ((((NUMERAL (BIT1 _0)) <= i) /\ (i <= (dimindex UNIV))) ==> ((x $ i) = (y $ i)))))))
+T c= c= f0 f1 ! c==> c/\ c<= cNUMERAL cBIT1 c_0 b0 c<= b0 cdimindex part cUNIV c= c$ f0 b0 c$ f1 b0
+D LAMBDA_BETA
+A |- (!i. ((((NUMERAL (BIT1 _0)) <= i) /\ (i <= (dimindex UNIV))) ==> (((lambda g) $ i) = (g i))))
+T c==> c/\ c<= cNUMERAL cBIT1 c_0 f0 c<= f0 cdimindex part cUNIV c= c$ clambda f1 f0 * f1 f0
+D LAMBDA_ETA
+A |- (!g. ((lambdai. (g $ i)) = g))
+T c= clambda / c$ f0 b0 f0
+D row
+A |- (!A. (!i. (((row i) A) = (lambdaj. ((A $ i) $ j)))))
+T c= crow f0 f1 clambda / c$ c$ f1 f0 b0
+D rows
+A |- (!A. ((rows A) = (GSPEC (\GEN%PVAR%125. (?i. (((SETSPEC GEN%PVAR%125) (((NUMERAL (BIT1 _0)) <= i) /\ (i <= (dimindex UNIV)))) ((row i) A)))))))
+T c= * part crows f0 * part cGSPEC / c? / cSETSPEC b0 c/\ c<= cNUMERAL cBIT1 c_0 b1 c<= b1 cdimindex part cUNIV crow b1 f0
+D maprows
+A |- (!f. (!d. (((maprows f) d) = (lambdai. (f (d $ i))))))
+T c= cmaprows f0 f1 clambda / * f0 c$ f1 b0
+- (~ ((!x. ((P x) ==> ((f x) = (g x)))) ==> (!x. ((?x. ((P x) /\ (x = (f x)))) = (?x. ((P x) /\ (x = (g x)))))))) |- F
+T c==> c~ c==> ! c==> * f0 b0 c= * f1 b0 * f2 b0 ! c= c? / c/\ * f0 b1 c= b0 * f1 b1 c? / c/\ * f0 b1 c= b0 * f2 b1 cF
+- (~ ((!x. ((P x) ==> ((f x) = (g x)))) ==> (!x. ((?x. ((P x) /\ (x = (f x)))) = (?x. ((P x) /\ (x = (g x)))))))) |- ((~ ((!x. ((P x) ==> ((f x) = (g x)))) ==> (!x. ((?x. ((P x) /\ (x = (f x)))) = (?x. ((P x) /\ (x = (g x)))))))) /\ F)
+T c==> c~ c==> ! c==> * f0 b0 c= * f1 b0 * f2 b0 ! c= c? / c/\ * f0 b1 c= b0 * f1 b1 c? / c/\ * f0 b1 c= b0 * f2 b1 c/\ c~ c==> ! c==> * f0 b0 c= * f1 b0 * f2 b0 ! c= c? / c/\ * f0 b1 c= b0 * f1 b1 c? / c/\ * f0 b1 c= b0 * f2 b1 cF
++ (!x. ((P x) ==> ((f x) = (g x)))) |- ((~ ((?x. ((P x) /\ (x = (f x)))) = (?x. ((P x) /\ (x = (g x)))))) ==> F)
+T c==> ! c==> * f0 b0 c= * f1 b0 * f2 b0 c==> c~ c= c? / c/\ * f0 b0 c= f3 * f1 b0 c? / c/\ * f0 b0 c= f3 * f2 b0 cF
++ ((\x. ((((x = (f x')) /\ ((P x) /\ (x' = (g x)))) /\ (!x. ((~ (P x)) \/ (~ (x = (f (g x))))))) \/ ((!x. ((~ (x = (f x))) \/ (!x. ((~ (P x)) \/ (~ (x = (g x))))))) /\ ((P x) /\ (x = (f (g x))))))) x'') |- (((\x. ((((x = (f x')) /\ ((P x) /\ (x' = (g x)))) /\ (!x. ((~ (P x)) \/ (~ (x = (f (g x))))))) \/ ((!x. ((~ (x = (f x))) \/ (!x. ((~ (P x)) \/ (~ (x = (g x))))))) /\ ((P x) /\ (x = (f (g x))))))) x'') /\ F)
+T c==> * / c\/ c/\ c/\ c= f0 * f1 f2 c/\ * f3 b0 c= f2 * f4 b0 ! c\/ c~ * f3 b1 c~ c= f0 * f1 * f4 b1 c/\ ! c\/ c~ c= f0 * f1 b1 ! c\/ c~ * f3 b2 c~ c= b1 * f4 b2 c/\ * f3 b0 c= f0 * f1 * f4 b0 f5 c/\ * / c\/ c/\ c/\ c= f0 * f1 f2 c/\ * f3 b0 c= f2 * f4 b0 ! c\/ c~ * f3 b1 c~ c= f0 * f1 * f4 b1 c/\ ! c\/ c~ c= f0 * f1 b1 ! c\/ c~ * f3 b2 c~ c= b1 * f4 b2 c/\ * f3 b0 c= f0 * f1 * f4 b0 f5 cF
++ |- (((!x. ((~ (P x)) \/ (~ (x = (f x))))) /\ (?x. ((P x) /\ (x = (g x))))) = (?x. ((!x. ((~ (P x)) \/ (~ (x = (f x))))) /\ ((P x) /\ (x = (g x))))))
+T c= c/\ ! c\/ c~ * f0 b0 c~ c= f1 * f2 b0 c? / c/\ * f0 b0 c= f1 * f3 b0 c? / c/\ ! c\/ c~ * f0 b1 c~ c= f1 * f2 b1 c/\ * f0 b0 c= f1 * f3 b0
+- ((!x. ((~ (P x)) \/ (~ (x = (f x))))) /\ ((P x') /\ (x = (g x')))) |- ((~ (P x')) ==> (P x'))
+T c==> c/\ ! c\/ c~ * f0 b0 c~ c= f1 * f2 b0 c/\ * f0 f3 c= f1 * f4 f3 c==> c~ * f0 f3 * f0 f3
++ ((!x. ((~ (x = (f x))) \/ (!x. ((~ (P x)) \/ (~ (x = (g x))))))) /\ ((P x'') /\ (x = (f (g x''))))) |- ((\x. (!x. ((~ (x = (f x))) \/ ((~ (P x)) \/ (~ (x = (g x))))))) _1219981)
+T c==> c/\ ! c\/ c~ c= f0 * f1 b0 ! c\/ c~ * f2 b1 c~ c= b0 * f3 b1 c/\ * f2 f4 c= f0 * f1 * f3 f4 * / ! c\/ c~ c= f0 * f1 b0 c\/ c~ * f2 b1 c~ c= b0 * f3 b1 f5
++ |- (((~ ((?x. ((x = (f x)) /\ (?x. ((P x) /\ (x = (g x)))))) = (?x. ((P x) /\ (x = (f (g x))))))) ==> F) = ((?x. ((x = (f x)) /\ (?x. ((P x) /\ (x = (g x)))))) = (?x. ((P x) /\ (x = (f (g x)))))))
+T c= c==> c~ c= c? / c/\ c= f0 * f1 b0 c? / c/\ * f2 b1 c= b0 * f3 b1 c? / c/\ * f2 b0 c= f0 * f1 * f3 b0 cF c= c? / c/\ c= f0 * f1 b0 c? / c/\ * f2 b1 c= b0 * f3 b1 c? / c/\ * f2 b0 c= f0 * f1 * f3 b0
+- (!x. ((P x) ==> ((f x) = (g x)))) |- (((!x. ((P x) ==> ((f x) = (g x)))) ==> ((GSPEC (\GEN%PVAR%2541. (?x. (((SETSPEC GEN%PVAR%2541) (P x)) (f x))))) = (GSPEC (\GEN%PVAR%2542. (?x. (((SETSPEC GEN%PVAR%2542) (P x)) (g x))))))) ==> ((GSPEC (\GEN%PVAR%2541. (?x. (((SETSPEC GEN%PVAR%2541) (P x)) (f x))))) = (GSPEC (\GEN%PVAR%2542. (?x. (((SETSPEC GEN%PVAR%2542) (P x)) (g x)))))))
+T c==> ! c==> * f0 b0 c= * f1 b0 * f2 b0 c==> c==> ! c==> * f0 b0 c= * f1 b0 * f2 b0 c= * part cGSPEC / c? / cSETSPEC b0 * f0 b1 * f1 b1 * part cGSPEC / c? / cSETSPEC b0 * f0 b1 * f2 b1 c= * part cGSPEC / c? / cSETSPEC b0 * f0 b1 * f1 b1 * part cGSPEC / c? / cSETSPEC b0 * f0 b1 * f2 b1
+- |- ((!x'. ((~ (P x)) \/ (~ (x = (g x'))))) = ((~ (P x)) \/ (!x. (~ (x = (g x))))))
+T c= ! c\/ c~ * f0 f1 c~ c= f2 * f3 b0 c\/ c~ * f0 f1 ! c~ c= f2 * f3 b0
+- |- ((\t1. (!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))))) t1)
+T * / ! ! c= c\/ b0 c\/ b1 b2 c\/ c\/ b0 b1 b2 f0
+- |- (((~ ((!x. ((P x) ==> ((f x) = (g x)))) ==> (!x. ((?x. ((P x) /\ (x = (f x)))) = (?x. ((P x) /\ (x = (g x)))))))) ==> F) = ((!x. ((P x) ==> ((f x) = (g x)))) ==> (!x. ((?x. ((P x) /\ (x = (f x)))) = (?x. ((P x) /\ (x = (g x))))))))
+T c= c==> c~ c==> ! c==> * f0 b0 c= * f1 b0 * f2 b0 ! c= c? / c/\ * f0 b1 c= b0 * f1 b1 c? / c/\ * f0 b1 c= b0 * f2 b1 cF c==> ! c==> * f0 b0 c= * f1 b0 * f2 b0 ! c= c? / c/\ * f0 b1 c= b0 * f1 b1 c? / c/\ * f0 b1 c= b0 * f2 b1
++ (!x. ((P x) ==> ((f x) = (g x)))) |- ((((P x') /\ (x = (f x'))) /\ (!x. ((~ (P x)) \/ (~ (x = (g x)))))) ==> F)
+T c==> ! c==> * f0 b0 c= * f1 b0 * f2 b0 c==> c/\ c/\ * f0 f3 c= f4 * f1 f3 ! c\/ c~ * f0 b0 c~ c= f4 * f2 b0 cF
+- |- ((\f. (!P. ((~ (!x. ((?x. ((x = (f x)) /\ (?x. ((P x) /\ (x = (g x)))))) = (?x. ((P x) /\ (x = (f (g x)))))))) ==> F))) f)
+T * / ! c==> c~ ! c= c? / c/\ c= b2 * b0 b3 c? / c/\ * b1 b4 c= b3 * f0 b4 c? / c/\ * b1 b3 c= b2 * b0 * f0 b3 cF f1
++ (((x = (f x')) /\ ((P x'') /\ (x' = (g x'')))) /\ (!x. ((~ (P x)) \/ (~ (x = (f (g x))))))) |- ((~ (P _1219980)) \/ (~ (x = (f (g _1219980)))))
+T c==> c/\ c/\ c= f0 * f1 f2 c/\ * f3 f4 c= f2 * f5 f4 ! c\/ c~ * f3 b0 c~ c= f0 * f1 * f5 b0 c\/ c~ * f3 f6 c~ c= f0 * f1 * f5 f6
++ |- (((?x. (?x. ((x = (f x)) /\ ((P x) /\ (x = (g x)))))) /\ (!x. ((~ (P x)) \/ (~ (x = (f (g x))))))) = (?x. ((?x. ((x = (f x)) /\ ((P x) /\ (x = (g x))))) /\ (!x. ((~ (P x)) \/ (~ (x = (f (g x)))))))))
+T c= c/\ c? / c? / c/\ c= f0 * f1 b0 c/\ * f2 b1 c= b0 * f3 b1 ! c\/ c~ * f2 b0 c~ c= f0 * f1 * f3 b0 c? / c/\ c? / c/\ c= f0 * f1 b0 c/\ * f2 b1 c= b0 * f3 b1 ! c\/ c~ * f2 b1 c~ c= f0 * f1 * f3 b1
++ |- (((!x. ((~ (x = (f x))) \/ (!x. ((~ (P x)) \/ (~ (x = (g x))))))) /\ ((P x'') /\ (x = (f (g x''))))) ==> F)
+T c==> c/\ ! c\/ c~ c= f0 * f1 b0 ! c\/ c~ * f2 b1 c~ c= b0 * f3 b1 c/\ * f2 f4 c= f0 * f1 * f3 f4 cF
+- |- ((!x'. ((~ (P x')) \/ (~ (x = (g x))))) = ((!x. (~ (P x))) \/ (~ (x = (g x)))))
+T c= ! c\/ c~ * f0 b0 c~ c= f1 * f2 f3 c\/ ! c~ * f0 b0 c~ c= f1 * f2 f3
++ (((x = (f x')) /\ ((P x'') /\ (x' = (g x'')))) /\ (!x. ((~ (P x)) \/ (~ (x = (f (g x))))))) |- (((~ (P _1219980)) \/ (~ (x = (f (g _1219980))))) = ((~ (P _1219980)) \/ (~ ((f (g x'')) = (f (g _1219980))))))
+T c==> c/\ c/\ c= f0 * f1 f2 c/\ * f3 f4 c= f2 * f5 f4 ! c\/ c~ * f3 b0 c~ c= f0 * f1 * f5 b0 c= c\/ c~ * f3 f6 c~ c= f0 * f1 * f5 f6 c\/ c~ * f3 f6 c~ c= * f1 * f5 f4 * f1 * f5 f6
++ |- ((a \/ b) = ((~ b) ==> a))
+T c= c\/ f0 f1 c==> c~ f1 f0
++ |- (((!i. (((row i) A) = (lambdaj. ((A $ i) $ j)))) ==> ((\i. (((row i) A) = (lambdaj. ((A $ i) $ j)))) i)) = ((\i. (((row i) A) = (lambdaj. ((A $ i) $ j)))) i))
+T c= c==> ! c= crow b0 f0 clambda / c$ c$ f0 b0 b1 * / c= crow b0 f0 clambda / c$ c$ f0 b0 b1 f1 * / c= crow b0 f0 clambda / c$ c$ f0 b0 b1 f1
++ ((!x. ((~ (x = (f x))) \/ (!x. ((~ (P x)) \/ (~ (x = (g x))))))) /\ ((P x'') /\ (x = (f (g x''))))) |- (((f (g x'')) = (f (g x''))) /\ ((P x'') /\ ((g x'') = (g x''))))
+T c==> c/\ ! c\/ c~ c= f0 * f1 b0 ! c\/ c~ * f2 b1 c~ c= b0 * f3 b1 c/\ * f2 f4 c= f0 * f1 * f3 f4 c/\ c= * f1 * f3 f4 * f1 * f3 f4 c/\ * f2 f4 c= * f3 f4 * f3 f4
++ |- ((((((NUMERAL (BIT1 _0)) <= i) /\ (i <= (dimindex UNIV))) ==> (((lambdaj. (((lambdai. (f (A $ i))) $ i) $ j)) = (f (lambdaj. ((A $ i) $ j)))) = T)) ==> (((((NUMERAL (BIT1 _0)) <= i) /\ (i <= (dimindex UNIV))) ==> ((lambdaj. (((lambdai. (f (A $ i))) $ i) $ j)) = (f (lambdaj. ((A $ i) $ j))))) = ((((NUMERAL (BIT1 _0)) <= i) /\ (i <= (dimindex UNIV))) ==> T))) = (((((NUMERAL (BIT1 _0)) <= i) /\ (i <= (dimindex UNIV))) ==> ((lambdaj. (((lambdai. (f (A $ i))) $ i) $ j)) = (f (lambdaj. ((A $ i) $ j))))) = ((((NUMERAL (BIT1 _0)) <= i) /\ (i <= (dimindex UNIV))) ==> T)))
+T c= c==> c==> c/\ c<= cNUMERAL cBIT1 c_0 f0 c<= f0 cdimindex part cUNIV c= c= clambda / c$ c$ clambda / * f1 c$ f2 b1 f0 b0 * f1 clambda / c$ c$ f2 f0 b0 cT c= c==> c/\ c<= cNUMERAL cBIT1 c_0 f0 c<= f0 cdimindex part cUNIV c= clambda / c$ c$ clambda / * f1 c$ f2 b1 f0 b0 * f1 clambda / c$ c$ f2 f0 b0 c==> c/\ c<= cNUMERAL cBIT1 c_0 f0 c<= f0 cdimindex part cUNIV cT c= c==> c/\ c<= cNUMERAL cBIT1 c_0 f0 c<= f0 cdimindex part cUNIV c= clambda / c$ c$ clambda / * f1 c$ f2 b1 f0 b0 * f1 clambda / c$ c$ f2 f0 b0 c==> c/\ c<= cNUMERAL cBIT1 c_0 f0 c<= f0 cdimindex part cUNIV cT
+- |- ((!x'. ((~ (P x')) \/ ((f x) = (g x)))) = ((!x. (~ (P x))) \/ ((f x) = (g x))))
+T c= ! c\/ c~ * f0 b0 c= * f1 f2 * f3 f2 c\/ ! c~ * f0 b0 c= * f1 f2 * f3 f2
++ ((!x. ((~ (x = (f x))) \/ (!x. ((~ (P x)) \/ (~ (x = (g x))))))) /\ ((P x'') /\ (x = (f (g x''))))) |- (((g x'') = (g x'')) = ((P x'') /\ ((g x'') = (g x''))))
+T c==> c/\ ! c\/ c~ c= f0 * f1 b0 ! c\/ c~ * f2 b1 c~ c= b0 * f3 b1 c/\ * f2 f4 c= f0 * f1 * f3 f4 c= c= * f3 f4 * f3 f4 c/\ * f2 f4 c= * f3 f4 * f3 f4
+- ((!x. ((~ (P x)) \/ (~ (x = (f x))))) /\ ((P x') /\ (x = (g x')))) |- (F = F)
+T c==> c/\ ! c\/ c~ * f0 b0 c~ c= f1 * f2 b0 c/\ * f0 f3 c= f1 * f4 f3 c= cF cF
++ |- (!x. ((x IN ((IMAGE f) (GSPEC (\GEN%PVAR%2543. (?x. (((SETSPEC GEN%PVAR%2543) (P x)) (g x))))))) = (x IN (GSPEC (\GEN%PVAR%2544. (?x. (((SETSPEC GEN%PVAR%2544) (P x)) (f (g x)))))))))
+T c= cIN f0 * * part cIMAGE f1 * part cGSPEC / c? / cSETSPEC b0 * f2 b1 * f3 b1 cIN f0 * part cGSPEC / c? / cSETSPEC b0 * f2 b1 * f1 * f3 b1
+- (!x. ((P x) ==> ((f x) = (g x)))), ((!x. ((~ (P x)) \/ (~ (x = (f x))))) /\ ((P x') /\ (x = (g x')))) |- ((~ ((f x') = (g x'))) ==> ((f x') = (g x')))
+T c==> ! c==> * f0 b0 c= * f1 b0 * f2 b0 c==> c/\ ! c\/ c~ * f0 b0 c~ c= f3 * f1 b0 c/\ * f0 f4 c= f3 * f2 f4 c==> c~ c= * f1 f4 * f2 f4 c= * f1 f4 * f2 f4
++ (!x. ((P x) ==> ((f x) = (g x)))), ((!x. ((~ (P x)) \/ (~ (x = (f x))))) /\ ((P x') /\ (x = (g x')))) |- ((((P x') /\ ((g x') = (f x'))) ==> F) = F)
+T c==> ! c==> * f0 b0 c= * f1 b0 * f2 b0 c==> c/\ ! c\/ c~ * f0 b0 c~ c= f3 * f1 b0 c/\ * f0 f4 c= f3 * f2 f4 c= c==> c/\ * f0 f4 c= * f2 f4 * f1 f4 cF cF
++ (((x = (f x')) /\ ((P x'') /\ (x' = (g x'')))) /\ (!x. ((~ (P x)) \/ (~ (x = (f (g x))))))) |- ((P x'') /\ ((f (g x'')) = (f (g x''))))
+T c==> c/\ c/\ c= f0 * f1 f2 c/\ * f3 f4 c= f2 * f5 f4 ! c\/ c~ * f3 b0 c~ c= f0 * f1 * f5 b0 c/\ * f3 f4 c= * f1 * f5 f4 * f1 * f5 f4
++ |- (((?x. (P x)) \/ Q) = (?x. ((P x) \/ Q)))
+T c= c\/ c? / * f0 b0 f1 c? / c\/ * f0 b0 f1
+- |- ((!x'. ((~ (P x)) \/ ((f x') = (g x')))) = ((~ (P x)) \/ (!x. ((f x) = (g x)))))
+T c= ! c\/ c~ * f0 f1 c= * f2 b0 * f3 b0 c\/ c~ * f0 f1 ! c= * f2 b0 * f3 b0
+- (((P x') /\ (x = (f x'))) /\ (!x. ((~ (P x)) \/ (~ (x = (g x)))))) |- ((~ (P x')) ==> (P x'))
+T c==> c/\ c/\ * f0 f1 c= f2 * f3 f1 ! c\/ c~ * f0 b0 c~ c= f2 * f4 b0 c==> c~ * f0 f1 * f0 f1
++ (!x. ((P x) ==> ((f x) = (g x)))) |- ((((\x. ((((P x) /\ (x = (f x))) /\ (!x. ((~ (P x)) \/ (~ (x = (g x)))))) \/ ((!x. ((~ (P x)) \/ (~ (x = (f x))))) /\ ((P x) /\ (x = (g x)))))) x') ==> F) = T)
+T c==> ! c==> * f0 b0 c= * f1 b0 * f2 b0 c= c==> * / c\/ c/\ c/\ * f0 b0 c= f3 * f1 b0 ! c\/ c~ * f0 b1 c~ c= f3 * f2 b1 c/\ ! c\/ c~ * f0 b1 c~ c= f3 * f1 b1 c/\ * f0 b0 c= f3 * f2 b0 f4 cF cT
++ (~ ((?x. ((P x) /\ (x = (f x)))) = (?x. ((P x) /\ (x = (g x)))))) |- (((?x. ((((P x) /\ (x = (f x))) /\ (!x. ((~ (P x)) \/ (~ (x = (g x)))))) \/ ((!x. ((~ (P x)) \/ (~ (x = (f x))))) /\ ((P x) /\ (x = (g x)))))) ==> F) = F)
+T c==> c~ c= c? / c/\ * f0 b0 c= f1 * f2 b0 c? / c/\ * f0 b0 c= f1 * f3 b0 c= c==> c? / c\/ c/\ c/\ * f0 b0 c= f1 * f2 b0 ! c\/ c~ * f0 b1 c~ c= f1 * f3 b1 c/\ ! c\/ c~ * f0 b1 c~ c= f1 * f2 b1 c/\ * f0 b0 c= f1 * f3 b0 cF cF
++ |- ((x IN (GSPEC (\GEN%PVAR%2544. (?x. (((SETSPEC GEN%PVAR%2544) (P x)) (f (g x))))))) = (?x. (((\p. (\t. (p /\ (x = t)))) (P x)) (f (g x)))))
+T c= cIN f0 * part cGSPEC / c? / cSETSPEC b0 * f1 b1 * f2 * f3 b1 c? / * * / / c/\ b1 c= f0 b2 * f1 b0 * f2 * f3 b0
+- |- ((\P. ((~ (!x. ((?x. ((x = (f x)) /\ (?x. ((P x) /\ (x = (g x)))))) = (?x. ((P x) /\ (x = (f (g x)))))))) ==> F)) P)
+T * / c==> c~ ! c= c? / c/\ c= b1 * f0 b2 c? / c/\ * b0 b3 c= b2 * f1 b3 c? / c/\ * b0 b2 c= b1 * f0 * f1 b2 cF f2
++ ((!x. ((~ (x = (f x))) \/ (!x. ((~ (P x)) \/ (~ (x = (g x))))))) /\ ((P x'') /\ (x = (f (g x''))))) |- (((!x. ((~ (x = (f _1219981))) \/ ((~ (P x)) \/ (~ (_1219981 = (g x)))))) ==> ((\x. ((~ (x = (f _1219981))) \/ ((~ (P x)) \/ (~ (_1219981 = (g x)))))) _1219982)) = ((\x. ((~ (x = (f _1219981))) \/ ((~ (P x)) \/ (~ (_1219981 = (g x)))))) _1219982))
+T c==> c/\ ! c\/ c~ c= f0 * f1 b0 ! c\/ c~ * f2 b1 c~ c= b0 * f3 b1 c/\ * f2 f4 c= f0 * f1 * f3 f4 c= c==> ! c\/ c~ c= f0 * f1 f5 c\/ c~ * f2 b0 c~ c= f5 * f3 b0 * / c\/ c~ c= f0 * f1 f5 c\/ c~ * f2 b0 c~ c= f5 * f3 b0 f6 * / c\/ c~ c= f0 * f1 f5 c\/ c~ * f2 b0 c~ c= f5 * f3 b0 f6
+- (~ (P x')), ((!x. ((~ (P x)) \/ (~ (x = (f x))))) /\ ((P x') /\ (x = (g x')))) |- ((~ (P x')) /\ (P x'))
+T c==> c~ * f0 f1 c==> c/\ ! c\/ c~ * f0 b0 c~ c= f2 * f3 b0 c/\ * f0 f1 c= f2 * f4 f1 c/\ c~ * f0 f1 * f0 f1
++ |- ((t ==> T) = T)
+T c= c==> f0 cT cT
++ |- (((IMAGE f) (GSPEC (\GEN%PVAR%125. (?i. (((SETSPEC GEN%PVAR%125) (((NUMERAL (BIT1 _0)) <= i) /\ (i <= (dimindex UNIV)))) (lambdaj. ((A $ i) $ j))))))) = (GSPEC (\GEN%PVAR%2544. (?i. (((SETSPEC GEN%PVAR%2544) (((NUMERAL (BIT1 _0)) <= i) /\ (i <= (dimindex UNIV)))) (f (lambdaj. ((A $ i) $ j))))))))
+T c= * * part cIMAGE f0 * part cGSPEC / c? / cSETSPEC b0 c/\ c<= cNUMERAL cBIT1 c_0 b1 c<= b1 cdimindex part cUNIV clambda / c$ c$ f1 b1 b2 * part cGSPEC / c? / cSETSPEC b0 c/\ c<= cNUMERAL cBIT1 c_0 b1 c<= b1 cdimindex part cUNIV * f0 clambda / c$ c$ f1 b1 b2
+- |- ((?x. (P x)) = ((P T) \/ (P F)))
+T c= c? / * f0 b0 c\/ * f0 cT * f0 cF
+- |- ((\f. ((~ ((!x. ((P x) ==> ((f x) = (g x)))) ==> (!x. ((?x. ((P x) /\ (x = (f x)))) = (?x. ((P x) /\ (x = (g x)))))))) ==> F)) f)
+T * / c==> c~ c==> ! c==> * f0 b1 c= * b0 b1 * f1 b1 ! c= c? / c/\ * f0 b2 c= b1 * b0 b2 c? / c/\ * f0 b2 c= b1 * f1 b2 cF f2
+- |- ((!x'. ((~ (P x')) \/ (~ (x = (f (g x)))))) = ((!x. (~ (P x))) \/ (~ (x = (f (g x))))))
+T c= ! c\/ c~ * f0 b0 c~ c= f1 * f2 * f3 f4 c\/ ! c~ * f0 b0 c~ c= f1 * f2 * f3 f4
+- (~ F), ((!x. ((~ (x = (f x))) \/ (!x. ((~ (P x)) \/ (~ (x = (g x))))))) /\ ((P x'') /\ (x = (f (g x''))))) |- ((~ F) /\ F)
+T c==> c~ cF c==> c/\ ! c\/ c~ c= f0 * f1 b0 ! c\/ c~ * f2 b1 c~ c= b0 * f3 b1 c/\ * f2 f4 c= f0 * f1 * f3 f4 c/\ c~ cF cF
+- (((x = (f x')) /\ ((P x'') /\ (x' = (g x'')))) /\ (!x. ((~ (P x)) \/ (~ (x = (f (g x))))))) |- (F = F)
+T c==> c/\ c/\ c= f0 * f1 f2 c/\ * f3 f4 c= f2 * f5 f4 ! c\/ c~ * f3 b0 c~ c= f0 * f1 * f5 b0 c= cF cF
++ |- (((?x. (P x)) /\ Q) = (?x. ((P x) /\ Q)))
+T c= c/\ c? / * f0 b0 f1 c? / c/\ * f0 b0 f1
+- |- ((t ==> t) = T)
+T c= c==> f0 f0 cT
+- (~ (P x'')), (((x = (f x')) /\ ((P x'') /\ (x' = (g x'')))) /\ (!x. ((~ (P x)) \/ (~ (x = (f (g x))))))) |- ((~ (P x'')) /\ (P x''))
+T c==> c~ * f0 f1 c==> c/\ c/\ c= f2 * f3 f4 c/\ * f0 f1 c= f4 * f5 f1 ! c\/ c~ * f0 b0 c~ c= f2 * f3 * f5 b0 c/\ c~ * f0 f1 * f0 f1
++ |- (((?x. (((x = (f x)) /\ ((P x) /\ (x = (g x)))) /\ (!x. ((~ (P x)) \/ (~ (x = (f (g x)))))))) \/ (?x. ((!x. ((~ (x = (f x))) \/ (!x. ((~ (P x)) \/ (~ (x = (g x))))))) /\ ((P x) /\ (x = (f (g x))))))) = (?x. ((((x = (f x)) /\ ((P x) /\ (x = (g x)))) /\ (!x. ((~ (P x)) \/ (~ (x = (f (g x))))))) \/ ((!x. ((~ (x = (f x))) \/ (!x. ((~ (P x)) \/ (~ (x = (g x))))))) /\ ((P x) /\ (x = (f (g x))))))))
+T c= c\/ c? / c/\ c/\ c= f0 * f1 f2 c/\ * f3 b0 c= f2 * f4 b0 ! c\/ c~ * f3 b1 c~ c= f0 * f1 * f4 b1 c? / c/\ ! c\/ c~ c= f0 * f1 b1 ! c\/ c~ * f3 b2 c~ c= b1 * f4 b2 c/\ * f3 b0 c= f0 * f1 * f4 b0 c? / c\/ c/\ c/\ c= f0 * f1 f2 c/\ * f3 b0 c= f2 * f4 b0 ! c\/ c~ * f3 b1 c~ c= f0 * f1 * f4 b1 c/\ ! c\/ c~ c= f0 * f1 b1 ! c\/ c~ * f3 b2 c~ c= b1 * f4 b2 c/\ * f3 b0 c= f0 * f1 * f4 b0
+- |- ((p \/ p) = p)
+T c= c\/ f0 f0 f0
+- (!x. ((P x) ==> ((f x) = (g x)))), (((P x') /\ (x = (f x'))) /\ (!x. ((~ (P x)) \/ (~ (x = (g x)))))) |- ((~ ((f x') = (g x'))) ==> ((f x') = (g x')))
+T c==> ! c==> * f0 b0 c= * f1 b0 * f2 b0 c==> c/\ c/\ * f0 f3 c= f4 * f1 f3 ! c\/ c~ * f0 b0 c~ c= f4 * f2 b0 c==> c~ c= * f1 f3 * f2 f3 c= * f1 f3 * f2 f3
+- |- ((!P. (!f. ((!x. ((P x) ==> ((f x) = (g x)))) ==> (!x. ((?x. ((P x) /\ (x = (f x)))) = (?x. ((P x) /\ (x = (g x))))))))) = T)
+T c= ! ! c==> ! c==> * b0 b2 c= * b1 b2 * f0 b2 ! c= c? / c/\ * b0 b3 c= b2 * b1 b3 c? / c/\ * b0 b3 c= b2 * f0 b3 cT
++ |- ((!x. ((x IN ((IMAGE f) (GSPEC (\GEN%PVAR%2543. (?x. (((SETSPEC GEN%PVAR%2543) (P x)) (g x))))))) = (x IN (GSPEC (\GEN%PVAR%2544. (?x. (((SETSPEC GEN%PVAR%2544) (P x)) (f (g x))))))))) = (((IMAGE f) (GSPEC (\GEN%PVAR%2543. (?x. (((SETSPEC GEN%PVAR%2543) (P x)) (g x)))))) = (GSPEC (\GEN%PVAR%2544. (?x. (((SETSPEC GEN%PVAR%2544) (P x)) (f (g x))))))))
+T c= ! c= cIN b0 * * part cIMAGE f0 * part cGSPEC / c? / cSETSPEC b1 * f1 b2 * f2 b2 cIN b0 * part cGSPEC / c? / cSETSPEC b1 * f1 b2 * f0 * f2 b2 c= * * part cIMAGE f0 * part cGSPEC / c? / cSETSPEC b0 * f1 b1 * f2 b1 * part cGSPEC / c? / cSETSPEC b0 * f1 b1 * f0 * f2 b1
++ ((!x. ((~ (x = (f x))) \/ (!x. ((~ (P x)) \/ (~ (x = (g x))))))) /\ ((P x'') /\ (x = (f (g x''))))) |- (((!x. ((~ (x = (f x))) \/ (!x. ((~ (P x)) \/ (~ (x = (g x))))))) /\ ((P x'') /\ (x = (f (g x''))))) /\ F)
+T c==> c/\ ! c\/ c~ c= f0 * f1 b0 ! c\/ c~ * f2 b1 c~ c= b0 * f3 b1 c/\ * f2 f4 c= f0 * f1 * f3 f4 c/\ c/\ ! c\/ c~ c= f0 * f1 b0 ! c\/ c~ * f2 b1 c~ c= b0 * f3 b1 c/\ * f2 f4 c= f0 * f1 * f3 f4 cF
+- |- ((\t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))) t3)
+T * / c= c\/ f0 c\/ f1 b0 c\/ c\/ f0 f1 b0 f2
++ |- (((!q'. (((((NUMERAL (BIT1 _0)) <= i) /\ (i <= (dimindex UNIV))) = p') ==> ((p' ==> (((lambdaj. (((lambdai. (f (A $ i))) $ i) $ j)) = (f (lambdaj. ((A $ i) $ j)))) = q')) ==> (((((NUMERAL (BIT1 _0)) <= i) /\ (i <= (dimindex UNIV))) ==> ((lambdaj. (((lambdai. (f (A $ i))) $ i) $ j)) = (f (lambdaj. ((A $ i) $ j))))) = (p' ==> q'))))) ==> ((\q'. (((((NUMERAL (BIT1 _0)) <= i) /\ (i <= (dimindex UNIV))) = p') ==> ((p' ==> (((lambdaj. (((lambdai. (f (A $ i))) $ i) $ j)) = (f (lambdaj. ((A $ i) $ j)))) = q')) ==> (((((NUMERAL (BIT1 _0)) <= i) /\ (i <= (dimindex UNIV))) ==> ((lambdaj. (((lambdai. (f (A $ i))) $ i) $ j)) = (f (lambdaj. ((A $ i) $ j))))) = (p' ==> q'))))) q')) = ((\q'. (((((NUMERAL (BIT1 _0)) <= i) /\ (i <= (dimindex UNIV))) = p') ==> ((p' ==> (((lambdaj. (((lambdai. (f (A $ i))) $ i) $ j)) = (f (lambdaj. ((A $ i) $ j)))) = q')) ==> (((((NUMERAL (BIT1 _0)) <= i) /\ (i <= (dimindex UNIV))) ==> ((lambdaj. (((lambdai. (f (A $ i))) $ i) $ j)) = (f (lambdaj. ((A $ i) $ j))))) = (p' ==> q'))))) q'))
+T c= c==> ! c==> c= c/\ c<= cNUMERAL cBIT1 c_0 f0 c<= f0 cdimindex part cUNIV f1 c==> c==> f1 c= c= clambda / c$ c$ clambda / * f2 c$ f3 b2 f0 b1 * f2 clambda / c$ c$ f3 f0 b1 b0 c= c==> c/\ c<= cNUMERAL cBIT1 c_0 f0 c<= f0 cdimindex part cUNIV c= clambda / c$ c$ clambda / * f2 c$ f3 b2 f0 b1 * f2 clambda / c$ c$ f3 f0 b1 c==> f1 b0 * / c==> c= c/\ c<= cNUMERAL cBIT1 c_0 f0 c<= f0 cdimindex part cUNIV f1 c==> c==> f1 c= c= clambda / c$ c$ clambda / * f2 c$ f3 b2 f0 b1 * f2 clambda / c$ c$ f3 f0 b1 b0 c= c==> c/\ c<= cNUMERAL cBIT1 c_0 f0 c<= f0 cdimindex part cUNIV c= clambda / c$ c$ clambda / * f2 c$ f3 b2 f0 b1 * f2 clambda / c$ c$ f3 f0 b1 c==> f1 b0 f4 * / c==> c= c/\ c<= cNUMERAL cBIT1 c_0 f0 c<= f0 cdimindex part cUNIV f1 c==> c==> f1 c= c= clambda / c$ c$ clambda / * f2 c$ f3 b2 f0 b1 * f2 clambda / c$ c$ f3 f0 b1 b0 c= c==> c/\ c<= cNUMERAL cBIT1 c_0 f0 c<= f0 cdimindex part cUNIV c= clambda / c$ c$ clambda / * f2 c$ f3 b2 f0 b1 * f2 clambda / c$ c$ f3 f0 b1 c==> f1 b0 f4
++ ((\x. (?x. ((((x = (f x)) /\ ((P x) /\ (x = (g x)))) /\ (!x. ((~ (P x)) \/ (~ (x = (f (g x))))))) \/ ((!x. ((~ (x = (f x))) \/ (!x. ((~ (P x)) \/ (~ (x = (g x))))))) /\ ((P x) /\ (x = (f (g x)))))))) x') |- (((?x. ((((x = (f x')) /\ ((P x) /\ (x' = (g x)))) /\ (!x. ((~ (P x)) \/ (~ (x = (f (g x))))))) \/ ((!x. ((~ (x = (f x))) \/ (!x. ((~ (P x)) \/ (~ (x = (g x))))))) /\ ((P x) /\ (x = (f (g x))))))) ==> F) = F)
+T c==> * / c? / c\/ c/\ c/\ c= f0 * f1 b0 c/\ * f2 b1 c= b0 * f3 b1 ! c\/ c~ * f2 b2 c~ c= f0 * f1 * f3 b2 c/\ ! c\/ c~ c= f0 * f1 b2 ! c\/ c~ * f2 b2 c~ c= b2 * f3 b2 c/\ * f2 b1 c= f0 * f1 * f3 b1 f4 c= c==> c? / c\/ c/\ c/\ c= f0 * f1 f4 c/\ * f2 b0 c= f4 * f3 b0 ! c\/ c~ * f2 b1 c~ c= f0 * f1 * f3 b1 c/\ ! c\/ c~ c= f0 * f1 b1 ! c\/ c~ * f2 b2 c~ c= b1 * f3 b2 c/\ * f2 b0 c= f0 * f1 * f3 b0 cF cF
+- |- (((~ p) ==> p) = p)
+T c= c==> c~ f0 f0 f0
++ |- (((!x. ((~ (x = (f x))) \/ (!x. ((~ (P x)) \/ (~ (x = (g x))))))) /\ (?x. ((P x) /\ (x = (f (g x)))))) = (?x. ((!x. ((~ (x = (f x))) \/ (!x. ((~ (P x)) \/ (~ (x = (g x))))))) /\ ((P x) /\ (x = (f (g x)))))))
+T c= c/\ ! c\/ c~ c= f0 * f1 b0 ! c\/ c~ * f2 b1 c~ c= b0 * f3 b1 c? / c/\ * f2 b0 c= f0 * f1 * f3 b0 c? / c/\ ! c\/ c~ c= f0 * f1 b1 ! c\/ c~ * f2 b2 c~ c= b1 * f3 b2 c/\ * f2 b0 c= f0 * f1 * f3 b0
++ |- ((\g. ((lambdai. (g $ i)) = g)) g)
+T * / c= clambda / c$ b0 b1 b0 f0
++ |- (((!i. ((((NUMERAL (BIT1 _0)) <= i) /\ (i <= (dimindex UNIV))) ==> (((lambda g) $ i) = (g i)))) ==> ((\i. ((((NUMERAL (BIT1 _0)) <= i) /\ (i <= (dimindex UNIV))) ==> (((lambda g) $ i) = (g i)))) i)) = ((\i. ((((NUMERAL (BIT1 _0)) <= i) /\ (i <= (dimindex UNIV))) ==> (((lambda g) $ i) = (g i)))) i))
+T c= c==> ! c==> c/\ c<= cNUMERAL cBIT1 c_0 b0 c<= b0 cdimindex part cUNIV c= c$ clambda f0 b0 * f0 b0 * / c==> c/\ c<= cNUMERAL cBIT1 c_0 b0 c<= b0 cdimindex part cUNIV c= c$ clambda f0 b0 * f0 b0 f1 * / c==> c/\ c<= cNUMERAL cBIT1 c_0 b0 c<= b0 cdimindex part cUNIV c= c$ clambda f0 b0 * f0 b0 f1
++ (((P x') /\ (x = (f x'))) /\ (!x. ((~ (P x)) \/ (~ (x = (g x)))))) |- (((!x. ((~ (P x)) \/ (~ (x = (g x))))) ==> ((\x. ((~ (P x)) \/ (~ (x = (g x))))) _1219945)) = ((\x. ((~ (P x)) \/ (~ (x = (g x))))) _1219945))
+T c==> c/\ c/\ * f0 f1 c= f2 * f3 f1 ! c\/ c~ * f0 b0 c~ c= f2 * f4 b0 c= c==> ! c\/ c~ * f0 b0 c~ c= f2 * f4 b0 * / c\/ c~ * f0 b0 c~ c= f2 * f4 b0 f5 * / c\/ c~ * f0 b0 c~ c= f2 * f4 b0 f5
++ ((!x. ((~ (P x)) \/ (~ (x = (f x))))) /\ ((P x') /\ (x = (g x')))) |- (((!x. ((~ (P x)) \/ (~ (x = (f x))))) ==> ((\x. ((~ (P x)) \/ (~ (x = (f x))))) _1219947)) = ((\x. ((~ (P x)) \/ (~ (x = (f x))))) _1219947))
+T c==> c/\ ! c\/ c~ * f0 b0 c~ c= f1 * f2 b0 c/\ * f0 f3 c= f1 * f4 f3 c= c==> ! c\/ c~ * f0 b0 c~ c= f1 * f2 b0 * / c\/ c~ * f0 b0 c~ c= f1 * f2 b0 f5 * / c\/ c~ * f0 b0 c~ c= f1 * f2 b0 f5
++ |- ((((\x. (?x. ((((x = (f x)) /\ ((P x) /\ (x = (g x)))) /\ (!x. ((~ (P x)) \/ (~ (x = (f (g x))))))) \/ ((!x. ((~ (x = (f x))) \/ (!x. ((~ (P x)) \/ (~ (x = (g x))))))) /\ ((P x) /\ (x = (f (g x)))))))) x') ==> F) = T)
+T c= c==> * / c? / c\/ c/\ c/\ c= f0 * f1 b0 c/\ * f2 b1 c= b0 * f3 b1 ! c\/ c~ * f2 b2 c~ c= f0 * f1 * f3 b2 c/\ ! c\/ c~ c= f0 * f1 b2 ! c\/ c~ * f2 b2 c~ c= b2 * f3 b2 c/\ * f2 b1 c= f0 * f1 * f3 b1 f4 cF cT
+- (((NUMERAL (BIT1 _0)) <= i') /\ (i' <= (dimindex UNIV))) |- (((NUMERAL (BIT1 _0)) <= i') = T)
+T c==> c/\ c<= cNUMERAL cBIT1 c_0 f0 c<= f0 cdimindex part cUNIV c= c<= cNUMERAL cBIT1 c_0 f0 cT
+- |- ((t ==> F) = (~ t))
+T c= c==> f0 cF c~ f0
++ (!x. ((P x) ==> ((f x) = (g x)))), ((!x. ((~ (P x)) \/ (~ (x = (f x))))) /\ ((P x') /\ (x = (g x')))) |- (((((f x') = (g x')) /\ ((f x') = (f x'))) ==> ((g x') = (f x'))) = ((g x') = (f x')))
+T c==> ! c==> * f0 b0 c= * f1 b0 * f2 b0 c==> c/\ ! c\/ c~ * f0 b0 c~ c= f3 * f1 b0 c/\ * f0 f4 c= f3 * f2 f4 c= c==> c/\ c= * f1 f4 * f2 f4 c= * f1 f4 * f1 f4 c= * f2 f4 * f1 f4 c= * f2 f4 * f1 f4
++ |- (((~ ((?x. ((P x) /\ (x = (f x)))) = (?x. ((P x) /\ (x = (g x)))))) ==> F) = ((?x. ((P x) /\ (x = (f x)))) = (?x. ((P x) /\ (x = (g x))))))
+T c= c==> c~ c= c? / c/\ * f0 b0 c= f1 * f2 b0 c? / c/\ * f0 b0 c= f1 * f3 b0 cF c= c? / c/\ * f0 b0 c= f1 * f2 b0 c? / c/\ * f0 b0 c= f1 * f3 b0
+- (((x = (f x')) /\ ((P x'') /\ (x' = (g x'')))) /\ (!x. ((~ (P x)) \/ (~ (x = (f (g x))))))) |- ((~ F) ==> F)
+T c==> c/\ c/\ c= f0 * f1 f2 c/\ * f3 f4 c= f2 * f5 f4 ! c\/ c~ * f3 b0 c~ c= f0 * f1 * f5 b0 c==> c~ cF cF
+- ((!x. ((~ (x = (f x))) \/ (!x. ((~ (P x)) \/ (~ (x = (g x))))))) /\ ((P x'') /\ (x = (f (g x''))))) |- (F = F)
+T c==> c/\ ! c\/ c~ c= f0 * f1 b0 ! c\/ c~ * f2 b1 c~ c= b0 * f3 b1 c/\ * f2 f4 c= f0 * f1 * f3 f4 c= cF cF
++ ((!x. ((~ (x = (f x))) \/ (!x. ((~ (P x)) \/ (~ (x = (g x))))))) /\ ((P x'') /\ (x = (f (g x''))))) |- ((~ ((f (g x'')) = (f _1219981))) \/ ((~ (P _1219982)) \/ (~ (_1219981 = (g _1219982)))))
+T c==> c/\ ! c\/ c~ c= f0 * f1 b0 ! c\/ c~ * f2 b1 c~ c= b0 * f3 b1 c/\ * f2 f4 c= f0 * f1 * f3 f4 c\/ c~ c= * f1 * f3 f4 * f1 f5 c\/ c~ * f2 f6 c~ c= f5 * f3 f6
++ (((NUMERAL (BIT1 _0)) <= i) /\ (i <= (dimindex UNIV))) |- ((((((NUMERAL (BIT1 _0)) <= i') /\ (i' <= (dimindex UNIV))) ==> ((((lambdaj. (((lambdai. (f (A $ i))) $ i) $ j)) $ i') = ((f (lambdaj. ((A $ i) $ j))) $ i')) = T)) ==> (((((NUMERAL (BIT1 _0)) <= i') /\ (i' <= (dimindex UNIV))) ==> (((lambdaj. (((lambdai. (f (A $ i))) $ i) $ j)) $ i') = ((f (lambdaj. ((A $ i) $ j))) $ i'))) = ((((NUMERAL (BIT1 _0)) <= i') /\ (i' <= (dimindex UNIV))) ==> T))) = (((((NUMERAL (BIT1 _0)) <= i') /\ (i' <= (dimindex UNIV))) ==> (((lambdaj. (((lambdai. (f (A $ i))) $ i) $ j)) $ i') = ((f (lambdaj. ((A $ i) $ j))) $ i'))) = ((((NUMERAL (BIT1 _0)) <= i') /\ (i' <= (dimindex UNIV))) ==> T)))
+T c==> c/\ c<= cNUMERAL cBIT1 c_0 f0 c<= f0 cdimindex part cUNIV c= c==> c==> c/\ c<= cNUMERAL cBIT1 c_0 f1 c<= f1 cdimindex part cUNIV c= c= c$ clambda / c$ c$ clambda / * f2 c$ f3 b1 f0 b0 f1 c$ * f2 clambda / c$ c$ f3 f0 b0 f1 cT c= c==> c/\ c<= cNUMERAL cBIT1 c_0 f1 c<= f1 cdimindex part cUNIV c= c$ clambda / c$ c$ clambda / * f2 c$ f3 b1 f0 b0 f1 c$ * f2 clambda / c$ c$ f3 f0 b0 f1 c==> c/\ c<= cNUMERAL cBIT1 c_0 f1 c<= f1 cdimindex part cUNIV cT c= c==> c/\ c<= cNUMERAL cBIT1 c_0 f1 c<= f1 cdimindex part cUNIV c= c$ clambda / c$ c$ clambda / * f2 c$ f3 b1 f0 b0 f1 c$ * f2 clambda / c$ c$ f3 f0 b0 f1 c==> c/\ c<= cNUMERAL cBIT1 c_0 f1 c<= f1 cdimindex part cUNIV cT
+- |- ((?x'. ((P x) /\ (x = (f (g x'))))) = ((P x) /\ (?x. (x = (f (g x))))))
+T c= c? / c/\ * f0 f1 c= f2 * f3 * f4 b0 c/\ * f0 f1 c? / c= f2 * f3 * f4 b0
++ |- (p = ((~ p) ==> F))
+T c= f0 c==> c~ f0 cF
+- |- ((?i. t) = t)
+T c= c? / f0 f0
+- |- (((~ ((!x. ((P x) ==> ((f x) = (g x)))) ==> (!x. ((?x. ((P x) /\ (x = (f x)))) = (?x. ((P x) /\ (x = (g x)))))))) ==> F) ==> ((~ ((!x. ((P x) ==> ((f x) = (g x)))) ==> (!x. ((?x. ((P x) /\ (x = (f x)))) = (?x. ((P x) /\ (x = (g x)))))))) ==> F))
+T c==> c==> c~ c==> ! c==> * f0 b0 c= * f1 b0 * f2 b0 ! c= c? / c/\ * f0 b1 c= b0 * f1 b1 c? / c/\ * f0 b1 c= b0 * f2 b1 cF c==> c~ c==> ! c==> * f0 b0 c= * f1 b0 * f2 b0 ! c= c? / c/\ * f0 b1 c= b0 * f1 b1 c? / c/\ * f0 b1 c= b0 * f2 b1 cF
++ (((P x') /\ (x = (f x'))) /\ (!x. ((~ (P x)) \/ (~ (x = (g x)))))) |- (((~ (P _1219945)) \/ (~ (x = (g _1219945)))) = ((~ (P _1219945)) \/ (~ ((f x') = (g _1219945)))))
+T c==> c/\ c/\ * f0 f1 c= f2 * f3 f1 ! c\/ c~ * f0 b0 c~ c= f2 * f4 b0 c= c\/ c~ * f0 f5 c~ c= f2 * f4 f5 c\/ c~ * f0 f5 c~ c= * f3 f1 * f4 f5
++ |- (((!x. (((\x. ((((x = (f x')) /\ ((P x) /\ (x' = (g x)))) /\ (!x. ((~ (P x)) \/ (~ (x = (f (g x))))))) \/ ((!x. ((~ (x = (f x))) \/ (!x. ((~ (P x)) \/ (~ (x = (g x))))))) /\ ((P x) /\ (x = (f (g x))))))) x) ==> F)) ==> ((?x. ((((x = (f x')) /\ ((P x) /\ (x' = (g x)))) /\ (!x. ((~ (P x)) \/ (~ (x = (f (g x))))))) \/ ((!x. ((~ (x = (f x))) \/ (!x. ((~ (P x)) \/ (~ (x = (g x))))))) /\ ((P x) /\ (x = (f (g x))))))) ==> F)) = ((?x. ((((x = (f x')) /\ ((P x) /\ (x' = (g x)))) /\ (!x. ((~ (P x)) \/ (~ (x = (f (g x))))))) \/ ((!x. ((~ (x = (f x))) \/ (!x. ((~ (P x)) \/ (~ (x = (g x))))))) /\ ((P x) /\ (x = (f (g x))))))) ==> F))
+T c= c==> ! c==> * / c\/ c/\ c/\ c= f0 * f1 f2 c/\ * f3 b1 c= f2 * f4 b1 ! c\/ c~ * f3 b1 c~ c= f0 * f1 * f4 b1 c/\ ! c\/ c~ c= f0 * f1 b1 ! c\/ c~ * f3 b2 c~ c= b1 * f4 b2 c/\ * f3 b1 c= f0 * f1 * f4 b1 b0 cF c==> c? / c\/ c/\ c/\ c= f0 * f1 f2 c/\ * f3 b0 c= f2 * f4 b0 ! c\/ c~ * f3 b1 c~ c= f0 * f1 * f4 b1 c/\ ! c\/ c~ c= f0 * f1 b1 ! c\/ c~ * f3 b2 c~ c= b1 * f4 b2 c/\ * f3 b0 c= f0 * f1 * f4 b0 cF c==> c? / c\/ c/\ c/\ c= f0 * f1 f2 c/\ * f3 b0 c= f2 * f4 b0 ! c\/ c~ * f3 b1 c~ c= f0 * f1 * f4 b1 c/\ ! c\/ c~ c= f0 * f1 b1 ! c\/ c~ * f3 b2 c~ c= b1 * f4 b2 c/\ * f3 b0 c= f0 * f1 * f4 b0 cF
+- (((NUMERAL (BIT1 _0)) <= i) /\ (i <= (dimindex UNIV))) |- ((((NUMERAL (BIT1 _0)) <= i) /\ (i <= (dimindex UNIV))) /\ (((lambda g) $ i) = (g i)))
+T c==> c/\ c<= cNUMERAL cBIT1 c_0 f0 c<= f0 cdimindex part cUNIV c/\ c/\ c<= cNUMERAL cBIT1 c_0 f0 c<= f0 cdimindex part cUNIV c= c$ clambda f1 f0 * f1 f0
++ |- ((!i. ((((NUMERAL (BIT1 _0)) <= i) /\ (i <= (dimindex UNIV))) ==> ((lambdaj. (((lambdai. (f (A $ i))) $ i) $ j)) = (f (lambdaj. ((A $ i) $ j)))))) ==> ((GSPEC (\GEN%PVAR%125. (?i. (((SETSPEC GEN%PVAR%125) (((NUMERAL (BIT1 _0)) <= i) /\ (i <= (dimindex UNIV)))) (lambdaj. (((lambdai. (f (A $ i))) $ i) $ j)))))) = (GSPEC (\GEN%PVAR%2544. (?i. (((SETSPEC GEN%PVAR%2544) (((NUMERAL (BIT1 _0)) <= i) /\ (i <= (dimindex UNIV)))) (f (lambdaj. ((A $ i) $ j)))))))))
+T c==> ! c==> c/\ c<= cNUMERAL cBIT1 c_0 b0 c<= b0 cdimindex part cUNIV c= clambda / c$ c$ clambda / * f0 c$ f1 b2 b0 b1 * f0 clambda / c$ c$ f1 b0 b1 c= * part cGSPEC / c? / cSETSPEC b0 c/\ c<= cNUMERAL cBIT1 c_0 b1 c<= b1 cdimindex part cUNIV clambda / c$ c$ clambda / * f0 c$ f1 b3 b1 b2 * part cGSPEC / c? / cSETSPEC b0 c/\ c<= cNUMERAL cBIT1 c_0 b1 c<= b1 cdimindex part cUNIV * f0 clambda / c$ c$ f1 b1 b2
++ |- (((!x. ((P x) ==> ((f x) = (g x)))) ==> (!x. ((?x. ((P x) /\ (x = (f x)))) = (?x. ((P x) /\ (x = (g x))))))) = ((!x. ((P x) ==> ((f x) = (g x)))) ==> (!x. ((x IN (GSPEC (\GEN%PVAR%2541. (?x. (((SETSPEC GEN%PVAR%2541) (P x)) (f x)))))) = (x IN (GSPEC (\GEN%PVAR%2542. (?x. (((SETSPEC GEN%PVAR%2542) (P x)) (g x))))))))))
+T c= c==> ! c==> * f0 b0 c= * f1 b0 * f2 b0 ! c= c? / c/\ * f0 b1 c= b0 * f1 b1 c? / c/\ * f0 b1 c= b0 * f2 b1 c==> ! c==> * f0 b0 c= * f1 b0 * f2 b0 ! c= cIN b0 * part cGSPEC / c? / cSETSPEC b1 * f0 b2 * f1 b2 cIN b0 * part cGSPEC / c? / cSETSPEC b1 * f0 b2 * f2 b2
++ |- ((!x. ((P x) ==> ((f x) = (g x)))) ==> (!x. ((x IN (GSPEC (\GEN%PVAR%2541. (?x. (((SETSPEC GEN%PVAR%2541) (P x)) (f x)))))) = (x IN (GSPEC (\GEN%PVAR%2542. (?x. (((SETSPEC GEN%PVAR%2542) (P x)) (g x)))))))))
+T c==> ! c==> * f0 b0 c= * f1 b0 * f2 b0 ! c= cIN b0 * part cGSPEC / c? / cSETSPEC b1 * f0 b2 * f1 b2 cIN b0 * part cGSPEC / c? / cSETSPEC b1 * f0 b2 * f2 b2
+- |- (((!g. (!P. (!f. ((~ ((!x. ((P x) ==> ((f x) = (g x)))) ==> (!x. ((?x. ((P x) /\ (x = (f x)))) = (?x. ((P x) /\ (x = (g x)))))))) ==> F)))) ==> ((\g. (!P. (!f. ((~ ((!x. ((P x) ==> ((f x) = (g x)))) ==> (!x. ((?x. ((P x) /\ (x = (f x)))) = (?x. ((P x) /\ (x = (g x)))))))) ==> F)))) g)) = ((\g. (!P. (!f. ((~ ((!x. ((P x) ==> ((f x) = (g x)))) ==> (!x. ((?x. ((P x) /\ (x = (f x)))) = (?x. ((P x) /\ (x = (g x)))))))) ==> F)))) g))
+T c= c==> ! ! ! c==> c~ c==> ! c==> * b1 b3 c= * b2 b3 * b0 b3 ! c= c? / c/\ * b1 b4 c= b3 * b2 b4 c? / c/\ * b1 b4 c= b3 * b0 b4 cF * / ! ! c==> c~ c==> ! c==> * b1 b3 c= * b2 b3 * b0 b3 ! c= c? / c/\ * b1 b4 c= b3 * b2 b4 c? / c/\ * b1 b4 c= b3 * b0 b4 cF f0 * / ! ! c==> c~ c==> ! c==> * b1 b3 c= * b2 b3 * b0 b3 ! c= c? / c/\ * b1 b4 c= b3 * b2 b4 c? / c/\ * b1 b4 c= b3 * b0 b4 cF f0
++ (((x = (f x')) /\ ((P x'') /\ (x' = (g x'')))) /\ (!x. ((~ (P x)) \/ (~ (x = (f (g x))))))) |- (((!x. ((~ (P x)) \/ (~ (x = (f (g x)))))) ==> ((\x. ((~ (P x)) \/ (~ (x = (f (g x)))))) _1219980)) = ((\x. ((~ (P x)) \/ (~ (x = (f (g x)))))) _1219980))
+T c==> c/\ c/\ c= f0 * f1 f2 c/\ * f3 f4 c= f2 * f5 f4 ! c\/ c~ * f3 b0 c~ c= f0 * f1 * f5 b0 c= c==> ! c\/ c~ * f3 b0 c~ c= f0 * f1 * f5 b0 * / c\/ c~ * f3 b0 c~ c= f0 * f1 * f5 b0 f6 * / c\/ c~ * f3 b0 c~ c= f0 * f1 * f5 b0 f6
+- (((x = (f x')) /\ ((P x'') /\ (x' = (g x'')))) /\ (!x. ((~ (P x)) \/ (~ (x = (f (g x))))))) |- ((~ (P x'')) ==> (P x''))
+T c==> c/\ c/\ c= f0 * f1 f2 c/\ * f3 f4 c= f2 * f5 f4 ! c\/ c~ * f3 b0 c~ c= f0 * f1 * f5 b0 c==> c~ * f3 f4 * f3 f4
+- (((P x') /\ (x = (f x'))) /\ (!x. ((~ (P x)) \/ (~ (x = (g x)))))) |- (((~ (P _1219944)) \/ ((f _1219944) = (g _1219944))) = ((~ (P _1219944)) \/ ((f _1219944) = (g _1219944))))
+T c==> c/\ c/\ * f0 f1 c= f2 * f3 f1 ! c\/ c~ * f0 b0 c~ c= f2 * f4 b0 c= c\/ c~ * f0 f5 c= * f3 f5 * f4 f5 c\/ c~ * f0 f5 c= * f3 f5 * f4 f5
++ |- ((\p'. (!q'. (((((NUMERAL (BIT1 _0)) <= i) /\ (i <= (dimindex UNIV))) = p') ==> ((p' ==> (((lambdaj. (((lambdai. (f (A $ i))) $ i) $ j)) = (f (lambdaj. ((A $ i) $ j)))) = q')) ==> (((((NUMERAL (BIT1 _0)) <= i) /\ (i <= (dimindex UNIV))) ==> ((lambdaj. (((lambdai. (f (A $ i))) $ i) $ j)) = (f (lambdaj. ((A $ i) $ j))))) = (p' ==> q')))))) p')
+T * / ! c==> c= c/\ c<= cNUMERAL cBIT1 c_0 f0 c<= f0 cdimindex part cUNIV b0 c==> c==> b0 c= c= clambda / c$ c$ clambda / * f1 c$ f2 b3 f0 b2 * f1 clambda / c$ c$ f2 f0 b2 b1 c= c==> c/\ c<= cNUMERAL cBIT1 c_0 f0 c<= f0 cdimindex part cUNIV c= clambda / c$ c$ clambda / * f1 c$ f2 b3 f0 b2 * f1 clambda / c$ c$ f2 f0 b2 c==> b0 b1 f3
++ ((!x. ((~ (P x)) \/ (~ (x = (f x))))) /\ ((P x') /\ (x = (g x')))) |- (((P _1219947) /\ ((g x') = (f _1219947))) ==> F)
+T c==> c/\ ! c\/ c~ * f0 b0 c~ c= f1 * f2 b0 c/\ * f0 f3 c= f1 * f4 f3 c==> c/\ * f0 f5 c= * f4 f3 * f2 f5 cF
++ |- ((!x. ((?x. ((x = (f x)) /\ (?x. ((P x) /\ (x = (g x)))))) = (?x. ((P x) /\ (x = (f (g x))))))) = (!x. ((x IN ((IMAGE f) (GSPEC (\GEN%PVAR%2543. (?x. (((SETSPEC GEN%PVAR%2543) (P x)) (g x))))))) = (x IN (GSPEC (\GEN%PVAR%2544. (?x. (((SETSPEC GEN%PVAR%2544) (P x)) (f (g x))))))))))
+T c= ! c= c? / c/\ c= b0 * f0 b1 c? / c/\ * f1 b2 c= b1 * f2 b2 c? / c/\ * f1 b1 c= b0 * f0 * f2 b1 ! c= cIN b0 * * part cIMAGE f0 * part cGSPEC / c? / cSETSPEC b1 * f1 b2 * f2 b2 cIN b0 * part cGSPEC / c? / cSETSPEC b1 * f1 b2 * f0 * f2 b2
+- (~ (P x')), (((P x') /\ (x = (f x'))) /\ (!x. ((~ (P x)) \/ (~ (x = (g x)))))) |- ((~ (P x')) /\ (P x'))
+T c==> c~ * f0 f1 c==> c/\ c/\ * f0 f1 c= f2 * f3 f1 ! c\/ c~ * f0 b0 c~ c= f2 * f4 b0 c/\ c~ * f0 f1 * f0 f1
++ ((!x. ((~ (P x)) \/ (~ (x = (f x))))) /\ ((P x') /\ (x = (g x')))) |- ((~ (P _1219947)) \/ (~ ((g x') = (f _1219947))))
+T c==> c/\ ! c\/ c~ * f0 b0 c~ c= f1 * f2 b0 c/\ * f0 f3 c= f1 * f4 f3 c\/ c~ * f0 f5 c~ c= * f4 f3 * f2 f5
++ ((!x. ((~ (P x)) \/ (~ (x = (f x))))) /\ ((P x') /\ (x = (g x')))) |- (((g x') = (f x')) = ((P x') /\ ((g x') = (f x'))))
+T c==> c/\ ! c\/ c~ * f0 b0 c~ c= f1 * f2 b0 c/\ * f0 f3 c= f1 * f4 f3 c= c= * f4 f3 * f2 f3 c/\ * f0 f3 c= * f4 f3 * f2 f3
++ ((!x. ((~ (x = (f x))) \/ (!x. ((~ (P x)) \/ (~ (x = (g x))))))) /\ ((P x'') /\ (x = (f (g x''))))) |- ((P x'') /\ ((g x'') = (g x'')))
+T c==> c/\ ! c\/ c~ c= f0 * f1 b0 ! c\/ c~ * f2 b1 c~ c= b0 * f3 b1 c/\ * f2 f4 c= f0 * f1 * f3 f4 c/\ * f2 f4 c= * f3 f4 * f3 f4
+- |- (T = (((~ (x = y)) \/ ((~ (x = z)) \/ (y = z))) = ((y = z) \/ ((~ (x = y)) \/ (~ (x = z))))))
+T c= cT c= c\/ c~ c= f0 f1 c\/ c~ c= f0 f2 c= f1 f2 c\/ c= f1 f2 c\/ c~ c= f0 f1 c~ c= f0 f2
++ |- ((((((NUMERAL (BIT1 _0)) <= i) /\ (i <= (dimindex UNIV))) = (((NUMERAL (BIT1 _0)) <= i) /\ (i <= (dimindex UNIV)))) ==> (((((NUMERAL (BIT1 _0)) <= i) /\ (i <= (dimindex UNIV))) ==> (((lambdaj. (((lambdai. (f (A $ i))) $ i) $ j)) = (f (lambdaj. ((A $ i) $ j)))) = q')) ==> (((((NUMERAL (BIT1 _0)) <= i) /\ (i <= (dimindex UNIV))) ==> ((lambdaj. (((lambdai. (f (A $ i))) $ i) $ j)) = (f (lambdaj. ((A $ i) $ j))))) = ((((NUMERAL (BIT1 _0)) <= i) /\ (i <= (dimindex UNIV))) ==> q')))) = (((((NUMERAL (BIT1 _0)) <= i) /\ (i <= (dimindex UNIV))) ==> (((lambdaj. (((lambdai. (f (A $ i))) $ i) $ j)) = (f (lambdaj. ((A $ i) $ j)))) = q')) ==> (((((NUMERAL (BIT1 _0)) <= i) /\ (i <= (dimindex UNIV))) ==> ((lambdaj. (((lambdai. (f (A $ i))) $ i) $ j)) = (f (lambdaj. ((A $ i) $ j))))) = ((((NUMERAL (BIT1 _0)) <= i) /\ (i <= (dimindex UNIV))) ==> q'))))
+T c= c==> c= c/\ c<= cNUMERAL cBIT1 c_0 f0 c<= f0 cdimindex part cUNIV c/\ c<= cNUMERAL cBIT1 c_0 f0 c<= f0 cdimindex part cUNIV c==> c==> c/\ c<= cNUMERAL cBIT1 c_0 f0 c<= f0 cdimindex part cUNIV c= c= clambda / c$ c$ clambda / * f1 c$ f2 b1 f0 b0 * f1 clambda / c$ c$ f2 f0 b0 f3 c= c==> c/\ c<= cNUMERAL cBIT1 c_0 f0 c<= f0 cdimindex part cUNIV c= clambda / c$ c$ clambda / * f1 c$ f2 b1 f0 b0 * f1 clambda / c$ c$ f2 f0 b0 c==> c/\ c<= cNUMERAL cBIT1 c_0 f0 c<= f0 cdimindex part cUNIV f3 c==> c==> c/\ c<= cNUMERAL cBIT1 c_0 f0 c<= f0 cdimindex part cUNIV c= c= clambda / c$ c$ clambda / * f1 c$ f2 b1 f0 b0 * f1 clambda / c$ c$ f2 f0 b0 f3 c= c==> c/\ c<= cNUMERAL cBIT1 c_0 f0 c<= f0 cdimindex part cUNIV c= clambda / c$ c$ clambda / * f1 c$ f2 b1 f0 b0 * f1 clambda / c$ c$ f2 f0 b0 c==> c/\ c<= cNUMERAL cBIT1 c_0 f0 c<= f0 cdimindex part cUNIV f3
++ (((x = (f x')) /\ ((P x'') /\ (x' = (g x'')))) /\ (!x. ((~ (P x)) \/ (~ (x = (f (g x))))))) |- (P x'')
+T c==> c/\ c/\ c= f0 * f1 f2 c/\ * f3 f4 c= f2 * f5 f4 ! c\/ c~ * f3 b0 c~ c= f0 * f1 * f5 b0 * f3 f4
+- |- ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))
+T c= c\/ f0 c\/ f1 f2 c\/ c\/ f0 f1 f2
++ ((!x. ((~ (P x)) \/ (~ (x = (f x))))) /\ ((P x') /\ (x = (g x')))) |- (((~ (P _1219947)) \/ (~ (x = (f _1219947)))) = ((~ (P _1219947)) \/ (~ ((g x') = (f _1219947)))))
+T c==> c/\ ! c\/ c~ * f0 b0 c~ c= f1 * f2 b0 c/\ * f0 f3 c= f1 * f4 f3 c= c\/ c~ * f0 f5 c~ c= f1 * f2 f5 c\/ c~ * f0 f5 c~ c= * f4 f3 * f2 f5
+- ((~ ((!x. ((P x) ==> ((f x) = (g x)))) ==> (!x. ((?x. ((P x) /\ (x = (f x)))) = (?x. ((P x) /\ (x = (g x)))))))) ==> F) |- (((~ ((!x. ((P x) ==> ((f x) = (g x)))) ==> (!x. ((?x. ((P x) /\ (x = (f x)))) = (?x. ((P x) /\ (x = (g x)))))))) ==> F) /\ ((~ ((!x. ((P x) ==> ((f x) = (g x)))) ==> (!x. ((?x. ((P x) /\ (x = (f x)))) = (?x. ((P x) /\ (x = (g x)))))))) ==> F))
+T c==> c==> c~ c==> ! c==> * f0 b0 c= * f1 b0 * f2 b0 ! c= c? / c/\ * f0 b1 c= b0 * f1 b1 c? / c/\ * f0 b1 c= b0 * f2 b1 cF c/\ c==> c~ c==> ! c==> * f0 b0 c= * f1 b0 * f2 b0 ! c= c? / c/\ * f0 b1 c= b0 * f1 b1 c? / c/\ * f0 b1 c= b0 * f2 b1 cF c==> c~ c==> ! c==> * f0 b0 c= * f1 b0 * f2 b0 ! c= c? / c/\ * f0 b1 c= b0 * f1 b1 c? / c/\ * f0 b1 c= b0 * f2 b1 cF
++ ((!x. ((~ (P x)) \/ (~ (x = (f x))))) /\ ((P x') /\ (x = (g x')))) |- ((\x. ((~ (P x)) \/ (~ (x = (f x))))) _1219947)
+T c==> c/\ ! c\/ c~ * f0 b0 c~ c= f1 * f2 b0 c/\ * f0 f3 c= f1 * f4 f3 * / c\/ c~ * f0 b0 c~ c= f1 * f2 b0 f5
++ ((!x. ((~ (P x)) \/ (~ (x = (f x))))) /\ ((P x') /\ (x = (g x')))) |- (P x')
+T c==> c/\ ! c\/ c~ * f0 b0 c~ c= f1 * f2 b0 c/\ * f0 f3 c= f1 * f4 f3 * f0 f3
++ (!x. ((P x) ==> ((f x) = (g x)))), (((P x') /\ (x = (f x'))) /\ (!x. ((~ (P x)) \/ (~ (x = (g x)))))) |- ((P x') /\ ((f x') = (g x')))
+T c==> ! c==> * f0 b0 c= * f1 b0 * f2 b0 c==> c/\ c/\ * f0 f3 c= f4 * f1 f3 ! c\/ c~ * f0 b0 c~ c= f4 * f2 b0 c/\ * f0 f3 c= * f1 f3 * f2 f3
++ |- ((!q'. ((p = p') ==> ((p' ==> (q = q')) ==> ((p ==> q) = (p' ==> q'))))) = T)
+T c= ! c==> c= f0 f1 c==> c==> f1 c= f2 b0 c= c==> f0 f2 c==> f1 b0 cT
++ |- ((\i. ((((NUMERAL (BIT1 _0)) <= i) /\ (i <= (dimindex UNIV))) ==> (((lambda g) $ i) = (g i)))) i)
+T * / c==> c/\ c<= cNUMERAL cBIT1 c_0 b0 c<= b0 cdimindex part cUNIV c= c$ clambda f0 b0 * f0 b0 f1
++ (!x. ((P x) ==> ((f x) = (g x)))) |- ((!x. ((P x) ==> ((f x) = (g x)))) /\ (!x. ((?x. ((P x) /\ (x = (f x)))) = (?x. ((P x) /\ (x = (g x)))))))
+T c==> ! c==> * f0 b0 c= * f1 b0 * f2 b0 c/\ ! c==> * f0 b0 c= * f1 b0 * f2 b0 ! c= c? / c/\ * f0 b1 c= b0 * f1 b1 c? / c/\ * f0 b1 c= b0 * f2 b1
++ |- ((\q'. (((((NUMERAL (BIT1 _0)) <= i) /\ (i <= (dimindex UNIV))) = p') ==> ((p' ==> (((lambdaj. (((lambdai. (f (A $ i))) $ i) $ j)) = (f (lambdaj. ((A $ i) $ j)))) = q')) ==> (((((NUMERAL (BIT1 _0)) <= i) /\ (i <= (dimindex UNIV))) ==> ((lambdaj. (((lambdai. (f (A $ i))) $ i) $ j)) = (f (lambdaj. ((A $ i) $ j))))) = (p' ==> q'))))) q')
+T * / c==> c= c/\ c<= cNUMERAL cBIT1 c_0 f0 c<= f0 cdimindex part cUNIV f1 c==> c==> f1 c= c= clambda / c$ c$ clambda / * f2 c$ f3 b2 f0 b1 * f2 clambda / c$ c$ f3 f0 b1 b0 c= c==> c/\ c<= cNUMERAL cBIT1 c_0 f0 c<= f0 cdimindex part cUNIV c= clambda / c$ c$ clambda / * f2 c$ f3 b2 f0 b1 * f2 clambda / c$ c$ f3 f0 b1 c==> f1 b0 f4
++ |- ((\p'. (!q'. (((((NUMERAL (BIT1 _0)) <= i') /\ (i' <= (dimindex UNIV))) = p') ==> ((p' ==> ((((lambdaj. (((lambdai. (f (A $ i))) $ i) $ j)) $ i') = ((f (lambdaj. ((A $ i) $ j))) $ i')) = q')) ==> (((((NUMERAL (BIT1 _0)) <= i') /\ (i' <= (dimindex UNIV))) ==> (((lambdaj. (((lambdai. (f (A $ i))) $ i) $ j)) $ i') = ((f (lambdaj. ((A $ i) $ j))) $ i'))) = (p' ==> q')))))) p')
+T * / ! c==> c= c/\ c<= cNUMERAL cBIT1 c_0 f0 c<= f0 cdimindex part cUNIV b0 c==> c==> b0 c= c= c$ clambda / c$ c$ clambda / * f1 c$ f2 b3 f3 b2 f0 c$ * f1 clambda / c$ c$ f2 f3 b2 f0 b1 c= c==> c/\ c<= cNUMERAL cBIT1 c_0 f0 c<= f0 cdimindex part cUNIV c= c$ clambda / c$ c$ clambda / * f1 c$ f2 b3 f3 b2 f0 c$ * f1 clambda / c$ c$ f2 f3 b2 f0 c==> b0 b1 f4
+- |- ((_1220009 = _1220010) ==> ((P _1220010) \/ (~ (P _1220009))))
+T c==> c= f0 f1 c\/ * f2 f1 c~ * f2 f0
++ (!x. ((P x) ==> ((f x) = (g x)))), (~ ((?x. ((P x) /\ (x = (f x)))) = (?x. ((P x) /\ (x = (g x)))))) |- ((~ ((?x. ((P x) /\ (x = (f x)))) = (?x. ((P x) /\ (x = (g x)))))) /\ F)
+T c==> ! c==> * f0 b0 c= * f1 b0 * f2 b0 c==> c~ c= c? / c/\ * f0 b0 c= f3 * f1 b0 c? / c/\ * f0 b0 c= f3 * f2 b0 c/\ c~ c= c? / c/\ * f0 b0 c= f3 * f1 b0 c? / c/\ * f0 b0 c= f3 * f2 b0 cF
+- ((!x. ((~ (x = (f x))) \/ (!x. ((~ (P x)) \/ (~ (x = (g x))))))) /\ ((P x'') /\ (x = (f (g x''))))) |- ((~ F) ==> F)
+T c==> c/\ ! c\/ c~ c= f0 * f1 b0 ! c\/ c~ * f2 b1 c~ c= b0 * f3 b1 c/\ * f2 f4 c= f0 * f1 * f3 f4 c==> c~ cF cF
++ |- ((((((NUMERAL (BIT1 _0)) <= i') /\ (i' <= (dimindex UNIV))) = (((NUMERAL (BIT1 _0)) <= i') /\ (i' <= (dimindex UNIV)))) ==> (((((NUMERAL (BIT1 _0)) <= i') /\ (i' <= (dimindex UNIV))) ==> ((((lambdaj. (((lambdai. (f (A $ i))) $ i) $ j)) $ i') = ((f (lambdaj. ((A $ i) $ j))) $ i')) = q')) ==> (((((NUMERAL (BIT1 _0)) <= i') /\ (i' <= (dimindex UNIV))) ==> (((lambdaj. (((lambdai. (f (A $ i))) $ i) $ j)) $ i') = ((f (lambdaj. ((A $ i) $ j))) $ i'))) = ((((NUMERAL (BIT1 _0)) <= i') /\ (i' <= (dimindex UNIV))) ==> q')))) = (((((NUMERAL (BIT1 _0)) <= i') /\ (i' <= (dimindex UNIV))) ==> ((((lambdaj. (((lambdai. (f (A $ i))) $ i) $ j)) $ i') = ((f (lambdaj. ((A $ i) $ j))) $ i')) = q')) ==> (((((NUMERAL (BIT1 _0)) <= i') /\ (i' <= (dimindex UNIV))) ==> (((lambdaj. (((lambdai. (f (A $ i))) $ i) $ j)) $ i') = ((f (lambdaj. ((A $ i) $ j))) $ i'))) = ((((NUMERAL (BIT1 _0)) <= i') /\ (i' <= (dimindex UNIV))) ==> q'))))
+T c= c==> c= c/\ c<= cNUMERAL cBIT1 c_0 f0 c<= f0 cdimindex part cUNIV c/\ c<= cNUMERAL cBIT1 c_0 f0 c<= f0 cdimindex part cUNIV c==> c==> c/\ c<= cNUMERAL cBIT1 c_0 f0 c<= f0 cdimindex part cUNIV c= c= c$ clambda / c$ c$ clambda / * f1 c$ f2 b1 f3 b0 f0 c$ * f1 clambda / c$ c$ f2 f3 b0 f0 f4 c= c==> c/\ c<= cNUMERAL cBIT1 c_0 f0 c<= f0 cdimindex part cUNIV c= c$ clambda / c$ c$ clambda / * f1 c$ f2 b1 f3 b0 f0 c$ * f1 clambda / c$ c$ f2 f3 b0 f0 c==> c/\ c<= cNUMERAL cBIT1 c_0 f0 c<= f0 cdimindex part cUNIV f4 c==> c==> c/\ c<= cNUMERAL cBIT1 c_0 f0 c<= f0 cdimindex part cUNIV c= c= c$ clambda / c$ c$ clambda / * f1 c$ f2 b1 f3 b0 f0 c$ * f1 clambda / c$ c$ f2 f3 b0 f0 f4 c= c==> c/\ c<= cNUMERAL cBIT1 c_0 f0 c<= f0 cdimindex part cUNIV c= c$ clambda / c$ c$ clambda / * f1 c$ f2 b1 f3 b0 f0 c$ * f1 clambda / c$ c$ f2 f3 b0 f0 c==> c/\ c<= cNUMERAL cBIT1 c_0 f0 c<= f0 cdimindex part cUNIV f4
++ |- (((!p'. (!q'. (((((NUMERAL (BIT1 _0)) <= i) /\ (i <= (dimindex UNIV))) = p') ==> ((p' ==> (((lambdaj. (((lambdai. (f (A $ i))) $ i) $ j)) = (f (lambdaj. ((A $ i) $ j)))) = q')) ==> (((((NUMERAL (BIT1 _0)) <= i) /\ (i <= (dimindex UNIV))) ==> ((lambdaj. (((lambdai. (f (A $ i))) $ i) $ j)) = (f (lambdaj. ((A $ i) $ j))))) = (p' ==> q')))))) ==> ((\p'. (!q'. (((((NUMERAL (BIT1 _0)) <= i) /\ (i <= (dimindex UNIV))) = p') ==> ((p' ==> (((lambdaj. (((lambdai. (f (A $ i))) $ i) $ j)) = (f (lambdaj. ((A $ i) $ j)))) = q')) ==> (((((NUMERAL (BIT1 _0)) <= i) /\ (i <= (dimindex UNIV))) ==> ((lambdaj. (((lambdai. (f (A $ i))) $ i) $ j)) = (f (lambdaj. ((A $ i) $ j))))) = (p' ==> q')))))) p')) = ((\p'. (!q'. (((((NUMERAL (BIT1 _0)) <= i) /\ (i <= (dimindex UNIV))) = p') ==> ((p' ==> (((lambdaj. (((lambdai. (f (A $ i))) $ i) $ j)) = (f (lambdaj. ((A $ i) $ j)))) = q')) ==> (((((NUMERAL (BIT1 _0)) <= i) /\ (i <= (dimindex UNIV))) ==> ((lambdaj. (((lambdai. (f (A $ i))) $ i) $ j)) = (f (lambdaj. ((A $ i) $ j))))) = (p' ==> q')))))) p'))
+T c= c==> ! ! c==> c= c/\ c<= cNUMERAL cBIT1 c_0 f0 c<= f0 cdimindex part cUNIV b0 c==> c==> b0 c= c= clambda / c$ c$ clambda / * f1 c$ f2 b3 f0 b2 * f1 clambda / c$ c$ f2 f0 b2 b1 c= c==> c/\ c<= cNUMERAL cBIT1 c_0 f0 c<= f0 cdimindex part cUNIV c= clambda / c$ c$ clambda / * f1 c$ f2 b3 f0 b2 * f1 clambda / c$ c$ f2 f0 b2 c==> b0 b1 * / ! c==> c= c/\ c<= cNUMERAL cBIT1 c_0 f0 c<= f0 cdimindex part cUNIV b0 c==> c==> b0 c= c= clambda / c$ c$ clambda / * f1 c$ f2 b3 f0 b2 * f1 clambda / c$ c$ f2 f0 b2 b1 c= c==> c/\ c<= cNUMERAL cBIT1 c_0 f0 c<= f0 cdimindex part cUNIV c= clambda / c$ c$ clambda / * f1 c$ f2 b3 f0 b2 * f1 clambda / c$ c$ f2 f0 b2 c==> b0 b1 f3 * / ! c==> c= c/\ c<= cNUMERAL cBIT1 c_0 f0 c<= f0 cdimindex part cUNIV b0 c==> c==> b0 c= c= clambda / c$ c$ clambda / * f1 c$ f2 b3 f0 b2 * f1 clambda / c$ c$ f2 f0 b2 b1 c= c==> c/\ c<= cNUMERAL cBIT1 c_0 f0 c<= f0 cdimindex part cUNIV c= clambda / c$ c$ clambda / * f1 c$ f2 b3 f0 b2 * f1 clambda / c$ c$ f2 f0 b2 c==> b0 b1 f3
++ (!x. ((P x) ==> ((f x) = (g x)))) |- ((?x. ((((P x) /\ (x = (f x))) /\ (!x. ((~ (P x)) \/ (~ (x = (g x)))))) \/ ((!x. ((~ (P x)) \/ (~ (x = (f x))))) /\ ((P x) /\ (x = (g x)))))) ==> F)
+T c==> ! c==> * f0 b0 c= * f1 b0 * f2 b0 c==> c? / c\/ c/\ c/\ * f0 b0 c= f3 * f1 b0 ! c\/ c~ * f0 b1 c~ c= f3 * f2 b1 c/\ ! c\/ c~ * f0 b1 c~ c= f3 * f1 b1 c/\ * f0 b0 c= f3 * f2 b0 cF
++ (!x. ((P x) ==> ((f x) = (g x)))) |- (((?x. ((P x) /\ (x = (f x)))) = (?x. ((P x) /\ (x = (g x))))) = T)
+T c==> ! c==> * f0 b0 c= * f1 b0 * f2 b0 c= c= c? / c/\ * f0 b0 c= f3 * f1 b0 c? / c/\ * f0 b0 c= f3 * f2 b0 cT
++ |- ((\A. ((rows A) = (GSPEC (\GEN%PVAR%125. (?i. (((SETSPEC GEN%PVAR%125) (((NUMERAL (BIT1 _0)) <= i) /\ (i <= (dimindex UNIV)))) ((row i) A))))))) A)
+T * / c= * part crows b0 * part cGSPEC / c? / cSETSPEC b1 c/\ c<= cNUMERAL cBIT1 c_0 b2 c<= b2 cdimindex part cUNIV crow b2 b0 f0
+- |- ((\t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3)))) t2)
+T * / ! c= c\/ f0 c\/ b0 b1 c\/ c\/ f0 b0 b1 f1
+- |- ((!f. ((!x. ((P x) ==> ((f x) = (g x)))) ==> (!x. ((?x. ((P x) /\ (x = (f x)))) = (?x. ((P x) /\ (x = (g x)))))))) = T)
+T c= ! c==> ! c==> * f0 b1 c= * b0 b1 * f1 b1 ! c= c? / c/\ * f0 b2 c= b1 * b0 b2 c? / c/\ * f0 b2 c= b1 * f1 b2 cT
+- |- ((!x. ((P x) \/ Q)) = ((!x. (P x)) \/ Q))
+T c= ! c\/ * f0 b0 f1 c\/ ! * f0 b0 f1
++ ((!x. ((~ (P x)) \/ (~ (x = (f x))))) /\ ((P x') /\ (x = (g x')))) |- (((P x') ==> ((f x') = (g x'))) = ((f x') = (g x')))
+T c==> c/\ ! c\/ c~ * f0 b0 c~ c= f1 * f2 b0 c/\ * f0 f3 c= f1 * f4 f3 c= c==> * f0 f3 c= * f2 f3 * f4 f3 c= * f2 f3 * f4 f3
++ |- ((\i. (((row i) A) = (lambdaj. ((A $ i) $ j)))) i)
+T * / c= crow b0 f0 clambda / c$ c$ f0 b0 b1 f1
+- (~ (!x. ((?x. ((x = (f x)) /\ (?x. ((P x) /\ (x = (g x)))))) = (?x. ((P x) /\ (x = (f (g x)))))))) |- ((~ (!x. ((?x. ((x = (f x)) /\ (?x. ((P x) /\ (x = (g x)))))) = (?x. ((P x) /\ (x = (f (g x)))))))) /\ F)
+T c==> c~ ! c= c? / c/\ c= b0 * f0 b1 c? / c/\ * f1 b2 c= b1 * f2 b2 c? / c/\ * f1 b1 c= b0 * f0 * f2 b1 c/\ c~ ! c= c? / c/\ c= b0 * f0 b1 c? / c/\ * f1 b2 c= b1 * f2 b2 c? / c/\ * f1 b1 c= b0 * f0 * f2 b1 cF
++ (!x. ((P x) ==> ((f x) = (g x)))) |- (((!x. ((~ (P x)) \/ (~ (x = (f x))))) /\ ((P x') /\ (x = (g x')))) ==> F)
+T c==> ! c==> * f0 b0 c= * f1 b0 * f2 b0 c==> c/\ ! c\/ c~ * f0 b0 c~ c= f3 * f1 b0 c/\ * f0 f4 c= f3 * f2 f4 cF
++ |- (((!q'. (((((NUMERAL (BIT1 _0)) <= i') /\ (i' <= (dimindex UNIV))) = p') ==> ((p' ==> ((((lambdaj. (((lambdai. (f (A $ i))) $ i) $ j)) $ i') = ((f (lambdaj. ((A $ i) $ j))) $ i')) = q')) ==> (((((NUMERAL (BIT1 _0)) <= i') /\ (i' <= (dimindex UNIV))) ==> (((lambdaj. (((lambdai. (f (A $ i))) $ i) $ j)) $ i') = ((f (lambdaj. ((A $ i) $ j))) $ i'))) = (p' ==> q'))))) ==> ((\q'. (((((NUMERAL (BIT1 _0)) <= i') /\ (i' <= (dimindex UNIV))) = p') ==> ((p' ==> ((((lambdaj. (((lambdai. (f (A $ i))) $ i) $ j)) $ i') = ((f (lambdaj. ((A $ i) $ j))) $ i')) = q')) ==> (((((NUMERAL (BIT1 _0)) <= i') /\ (i' <= (dimindex UNIV))) ==> (((lambdaj. (((lambdai. (f (A $ i))) $ i) $ j)) $ i') = ((f (lambdaj. ((A $ i) $ j))) $ i'))) = (p' ==> q'))))) q')) = ((\q'. (((((NUMERAL (BIT1 _0)) <= i') /\ (i' <= (dimindex UNIV))) = p') ==> ((p' ==> ((((lambdaj. (((lambdai. (f (A $ i))) $ i) $ j)) $ i') = ((f (lambdaj. ((A $ i) $ j))) $ i')) = q')) ==> (((((NUMERAL (BIT1 _0)) <= i') /\ (i' <= (dimindex UNIV))) ==> (((lambdaj. (((lambdai. (f (A $ i))) $ i) $ j)) $ i') = ((f (lambdaj. ((A $ i) $ j))) $ i'))) = (p' ==> q'))))) q'))
+T c= c==> ! c==> c= c/\ c<= cNUMERAL cBIT1 c_0 f0 c<= f0 cdimindex part cUNIV f1 c==> c==> f1 c= c= c$ clambda / c$ c$ clambda / * f2 c$ f3 b2 f4 b1 f0 c$ * f2 clambda / c$ c$ f3 f4 b1 f0 b0 c= c==> c/\ c<= cNUMERAL cBIT1 c_0 f0 c<= f0 cdimindex part cUNIV c= c$ clambda / c$ c$ clambda / * f2 c$ f3 b2 f4 b1 f0 c$ * f2 clambda / c$ c$ f3 f4 b1 f0 c==> f1 b0 * / c==> c= c/\ c<= cNUMERAL cBIT1 c_0 f0 c<= f0 cdimindex part cUNIV f1 c==> c==> f1 c= c= c$ clambda / c$ c$ clambda / * f2 c$ f3 b2 f4 b1 f0 c$ * f2 clambda / c$ c$ f3 f4 b1 f0 b0 c= c==> c/\ c<= cNUMERAL cBIT1 c_0 f0 c<= f0 cdimindex part cUNIV c= c$ clambda / c$ c$ clambda / * f2 c$ f3 b2 f4 b1 f0 c$ * f2 clambda / c$ c$ f3 f4 b1 f0 c==> f1 b0 f5 * / c==> c= c/\ c<= cNUMERAL cBIT1 c_0 f0 c<= f0 cdimindex part cUNIV f1 c==> c==> f1 c= c= c$ clambda / c$ c$ clambda / * f2 c$ f3 b2 f4 b1 f0 c$ * f2 clambda / c$ c$ f3 f4 b1 f0 b0 c= c==> c/\ c<= cNUMERAL cBIT1 c_0 f0 c<= f0 cdimindex part cUNIV c= c$ clambda / c$ c$ clambda / * f2 c$ f3 b2 f4 b1 f0 c$ * f2 clambda / c$ c$ f3 f4 b1 f0 c==> f1 b0 f5
++ (((P x') /\ (x = (f x'))) /\ (!x. ((~ (P x)) \/ (~ (x = (g x)))))) |- ((~ (P _1219945)) \/ (~ (x = (g _1219945))))
+T c==> c/\ c/\ * f0 f1 c= f2 * f3 f1 ! c\/ c~ * f0 b0 c~ c= f2 * f4 b0 c\/ c~ * f0 f5 c~ c= f2 * f4 f5
++ ((\x. ((((P x) /\ (x = (f x))) /\ (!x. ((~ (P x)) \/ (~ (x = (g x)))))) \/ ((!x. ((~ (P x)) \/ (~ (x = (f x))))) /\ ((P x) /\ (x = (g x)))))) x') |- ((((P x') /\ (x = (f x'))) /\ (!x. ((~ (P x)) \/ (~ (x = (g x)))))) \/ ((!x. ((~ (P x)) \/ (~ (x = (f x))))) /\ ((P x') /\ (x = (g x')))))
+T c==> * / c\/ c/\ c/\ * f0 b0 c= f1 * f2 b0 ! c\/ c~ * f0 b1 c~ c= f1 * f3 b1 c/\ ! c\/ c~ * f0 b1 c~ c= f1 * f2 b1 c/\ * f0 b0 c= f1 * f3 b0 f4 c\/ c/\ c/\ * f0 f4 c= f1 * f2 f4 ! c\/ c~ * f0 b0 c~ c= f1 * f3 b0 c/\ ! c\/ c~ * f0 b0 c~ c= f1 * f2 b0 c/\ * f0 f4 c= f1 * f3 f4
+- ((~ (!x. ((?x. ((x = (f x)) /\ (?x. ((P x) /\ (x = (g x)))))) = (?x. ((P x) /\ (x = (f (g x)))))))) ==> F), (((~ (!x. ((?x. ((x = (f x)) /\ (?x. ((P x) /\ (x = (g x)))))) = (?x. ((P x) /\ (x = (f (g x)))))))) ==> F) ==> ((~ (!x. ((?x. ((x = (f x)) /\ (?x. ((P x) /\ (x = (g x)))))) = (?x. ((P x) /\ (x = (f (g x)))))))) ==> F)) |- ((((~ (!x. ((?x. ((x = (f x)) /\ (?x. ((P x) /\ (x = (g x)))))) = (?x. ((P x) /\ (x = (f (g x)))))))) ==> F) ==> ((~ (!x. ((?x. ((x = (f x)) /\ (?x. ((P x) /\ (x = (g x)))))) = (?x. ((P x) /\ (x = (f (g x)))))))) ==> F)) /\ ((~ (!x. ((?x. ((x = (f x)) /\ (?x. ((P x) /\ (x = (g x)))))) = (?x. ((P x) /\ (x = (f (g x)))))))) ==> F))
+T c==> c==> c~ ! c= c? / c/\ c= b0 * f0 b1 c? / c/\ * f1 b2 c= b1 * f2 b2 c? / c/\ * f1 b1 c= b0 * f0 * f2 b1 cF c==> c==> c==> c~ ! c= c? / c/\ c= b0 * f0 b1 c? / c/\ * f1 b2 c= b1 * f2 b2 c? / c/\ * f1 b1 c= b0 * f0 * f2 b1 cF c==> c~ ! c= c? / c/\ c= b0 * f0 b1 c? / c/\ * f1 b2 c= b1 * f2 b2 c? / c/\ * f1 b1 c= b0 * f0 * f2 b1 cF c/\ c==> c==> c~ ! c= c? / c/\ c= b0 * f0 b1 c? / c/\ * f1 b2 c= b1 * f2 b2 c? / c/\ * f1 b1 c= b0 * f0 * f2 b1 cF c==> c~ ! c= c? / c/\ c= b0 * f0 b1 c? / c/\ * f1 b2 c= b1 * f2 b2 c? / c/\ * f1 b1 c= b0 * f0 * f2 b1 cF c==> c~ ! c= c? / c/\ c= b0 * f0 b1 c? / c/\ * f1 b2 c= b1 * f2 b2 c? / c/\ * f1 b1 c= b0 * f0 * f2 b1 cF
++ ((!x. ((~ (x = (f x))) \/ (!x. ((~ (P x)) \/ (~ (x = (g x))))))) /\ ((P x'') /\ (x = (f (g x''))))) |- ((~ (x = (f _1219981))) \/ ((~ (P _1219982)) \/ (~ (_1219981 = (g _1219982)))))
+T c==> c/\ ! c\/ c~ c= f0 * f1 b0 ! c\/ c~ * f2 b1 c~ c= b0 * f3 b1 c/\ * f2 f4 c= f0 * f1 * f3 f4 c\/ c~ c= f0 * f1 f5 c\/ c~ * f2 f6 c~ c= f5 * f3 f6
+- |- (((!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3)))) ==> ((\t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3)))) t2)) = ((\t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3)))) t2))
+T c= c==> ! ! c= c\/ f0 c\/ b0 b1 c\/ c\/ f0 b0 b1 * / ! c= c\/ f0 c\/ b0 b1 c\/ c\/ f0 b0 b1 f1 * / ! c= c\/ f0 c\/ b0 b1 c\/ c\/ f0 b0 b1 f1
++ |- (((!g. ((lambdai. (g $ i)) = g)) ==> ((\g. ((lambdai. (g $ i)) = g)) g)) = ((\g. ((lambdai. (g $ i)) = g)) g))
+T c= c==> ! c= clambda / c$ b0 b1 b0 * / c= clambda / c$ b0 b1 b0 f0 * / c= clambda / c$ b0 b1 b0 f0
++ |- (((((x = (f x')) /\ ((P x'') /\ (x' = (g x'')))) /\ (!x. ((~ (P x)) \/ (~ (x = (f (g x))))))) \/ ((!x. ((~ (x = (f x))) \/ (!x. ((~ (P x)) \/ (~ (x = (g x))))))) /\ ((P x'') /\ (x = (f (g x'')))))) ==> F)
+T c==> c\/ c/\ c/\ c= f0 * f1 f2 c/\ * f3 f4 c= f2 * f5 f4 ! c\/ c~ * f3 b0 c~ c= f0 * f1 * f5 b0 c/\ ! c\/ c~ c= f0 * f1 b0 ! c\/ c~ * f3 b1 c~ c= b0 * f5 b1 c/\ * f3 f4 c= f0 * f1 * f5 f4 cF
++ (!x. ((P x) ==> ((f x) = (g x)))) |- (!x'. (((\x. ((((P x) /\ (x = (f x))) /\ (!x. ((~ (P x)) \/ (~ (x = (g x)))))) \/ ((!x. ((~ (P x)) \/ (~ (x = (f x))))) /\ ((P x) /\ (x = (g x)))))) x') ==> F))
+T c==> ! c==> * f0 b0 c= * f1 b0 * f2 b0 ! c==> * / c\/ c/\ c/\ * f0 b1 c= f3 * f1 b1 ! c\/ c~ * f0 b2 c~ c= f3 * f2 b2 c/\ ! c\/ c~ * f0 b2 c~ c= f3 * f1 b2 c/\ * f0 b1 c= f3 * f2 b1 b0 cF
+- (_1220013 = _1220014) |- ((_1220013 = _1220014) /\ ((g _1220013) = (g _1220014)))
+T c==> c= f0 f1 c/\ c= f0 f1 c= * f2 f0 * f2 f1
++ (!x. ((P x) ==> ((f x) = (g x)))) |- (((((P x') /\ (x = (f x'))) /\ (!x. ((~ (P x)) \/ (~ (x = (g x)))))) \/ ((!x. ((~ (P x)) \/ (~ (x = (f x))))) /\ ((P x') /\ (x = (g x'))))) ==> F)
+T c==> ! c==> * f0 b0 c= * f1 b0 * f2 b0 c==> c\/ c/\ c/\ * f0 f3 c= f4 * f1 f3 ! c\/ c~ * f0 b0 c~ c= f4 * f2 b0 c/\ ! c\/ c~ * f0 b0 c~ c= f4 * f1 b0 c/\ * f0 f3 c= f4 * f2 f3 cF
++ |- (((!x. (((\x. (?x. ((((x = (f x)) /\ ((P x) /\ (x = (g x)))) /\ (!x. ((~ (P x)) \/ (~ (x = (f (g x))))))) \/ ((!x. ((~ (x = (f x))) \/ (!x. ((~ (P x)) \/ (~ (x = (g x))))))) /\ ((P x) /\ (x = (f (g x)))))))) x) ==> F)) ==> ((?x. (?x. ((((x = (f x)) /\ ((P x) /\ (x = (g x)))) /\ (!x. ((~ (P x)) \/ (~ (x = (f (g x))))))) \/ ((!x. ((~ (x = (f x))) \/ (!x. ((~ (P x)) \/ (~ (x = (g x))))))) /\ ((P x) /\ (x = (f (g x)))))))) ==> F)) = ((?x. (?x. ((((x = (f x)) /\ ((P x) /\ (x = (g x)))) /\ (!x. ((~ (P x)) \/ (~ (x = (f (g x))))))) \/ ((!x. ((~ (x = (f x))) \/ (!x. ((~ (P x)) \/ (~ (x = (g x))))))) /\ ((P x) /\ (x = (f (g x)))))))) ==> F))
+T c= c==> ! c==> * / c? / c\/ c/\ c/\ c= f0 * f1 b1 c/\ * f2 b1 c= b1 * f3 b1 ! c\/ c~ * f2 b2 c~ c= f0 * f1 * f3 b2 c/\ ! c\/ c~ c= f0 * f1 b2 ! c\/ c~ * f2 b2 c~ c= b2 * f3 b2 c/\ * f2 b1 c= f0 * f1 * f3 b1 b0 cF c==> c? / c? / c\/ c/\ c/\ c= f0 * f1 b0 c/\ * f2 b1 c= b0 * f3 b1 ! c\/ c~ * f2 b2 c~ c= f0 * f1 * f3 b2 c/\ ! c\/ c~ c= f0 * f1 b2 ! c\/ c~ * f2 b2 c~ c= b2 * f3 b2 c/\ * f2 b1 c= f0 * f1 * f3 b1 cF c==> c? / c? / c\/ c/\ c/\ c= f0 * f1 b0 c/\ * f2 b1 c= b0 * f3 b1 ! c\/ c~ * f2 b2 c~ c= f0 * f1 * f3 b2 c/\ ! c\/ c~ c= f0 * f1 b2 ! c\/ c~ * f2 b2 c~ c= b2 * f3 b2 c/\ * f2 b1 c= f0 * f1 * f3 b1 cF
++ (((P x') /\ (x = (f x'))) /\ (!x. ((~ (P x)) \/ (~ (x = (g x)))))) |- (((P x') ==> ((f x') = (g x'))) = ((f x') = (g x')))
+T c==> c/\ c/\ * f0 f1 c= f2 * f3 f1 ! c\/ c~ * f0 b0 c~ c= f2 * f4 b0 c= c==> * f0 f1 c= * f3 f1 * f4 f1 c= * f3 f1 * f4 f1
+- (!x. ((P x) ==> ((f x) = (g x)))), (~ ((g x') = (f x'))), ((!x. ((~ (P x)) \/ (~ (x = (f x))))) /\ ((P x') /\ (x = (g x')))) |- ((~ ((g x') = (f x'))) /\ ((g x') = (f x')))
+T c==> ! c==> * f0 b0 c= * f1 b0 * f2 b0 c==> c~ c= * f2 f3 * f1 f3 c==> c/\ ! c\/ c~ * f0 b0 c~ c= f4 * f1 b0 c/\ * f0 f3 c= f4 * f2 f3 c/\ c~ c= * f2 f3 * f1 f3 c= * f2 f3 * f1 f3
++ ((\x. (?x. ((((x = (f x)) /\ ((P x) /\ (x = (g x)))) /\ (!x. ((~ (P x)) \/ (~ (x = (f (g x))))))) \/ ((!x. ((~ (x = (f x))) \/ (!x. ((~ (P x)) \/ (~ (x = (g x))))))) /\ ((P x) /\ (x = (f (g x)))))))) x') |- (((\x. (?x. ((((x = (f x)) /\ ((P x) /\ (x = (g x)))) /\ (!x. ((~ (P x)) \/ (~ (x = (f (g x))))))) \/ ((!x. ((~ (x = (f x))) \/ (!x. ((~ (P x)) \/ (~ (x = (g x))))))) /\ ((P x) /\ (x = (f (g x)))))))) x') /\ F)
+T c==> * / c? / c\/ c/\ c/\ c= f0 * f1 b0 c/\ * f2 b1 c= b0 * f3 b1 ! c\/ c~ * f2 b2 c~ c= f0 * f1 * f3 b2 c/\ ! c\/ c~ c= f0 * f1 b2 ! c\/ c~ * f2 b2 c~ c= b2 * f3 b2 c/\ * f2 b1 c= f0 * f1 * f3 b1 f4 c/\ * / c? / c\/ c/\ c/\ c= f0 * f1 b0 c/\ * f2 b1 c= b0 * f3 b1 ! c\/ c~ * f2 b2 c~ c= f0 * f1 * f3 b2 c/\ ! c\/ c~ c= f0 * f1 b2 ! c\/ c~ * f2 b2 c~ c= b2 * f3 b2 c/\ * f2 b1 c= f0 * f1 * f3 b1 f4 cF
++ (!x. ((P x) ==> ((f x) = (g x)))), ((((P x') /\ (x = (f x'))) /\ (!x. ((~ (P x)) \/ (~ (x = (g x)))))) \/ ((!x. ((~ (P x)) \/ (~ (x = (f x))))) /\ ((P x') /\ (x = (g x'))))) |- (((((P x') /\ (x = (f x'))) /\ (!x. ((~ (P x)) \/ (~ (x = (g x)))))) \/ ((!x. ((~ (P x)) \/ (~ (x = (f x))))) /\ ((P x') /\ (x = (g x'))))) /\ F)
+T c==> ! c==> * f0 b0 c= * f1 b0 * f2 b0 c==> c\/ c/\ c/\ * f0 f3 c= f4 * f1 f3 ! c\/ c~ * f0 b0 c~ c= f4 * f2 b0 c/\ ! c\/ c~ * f0 b0 c~ c= f4 * f1 b0 c/\ * f0 f3 c= f4 * f2 f3 c/\ c\/ c/\ c/\ * f0 f3 c= f4 * f1 f3 ! c\/ c~ * f0 b0 c~ c= f4 * f2 b0 c/\ ! c\/ c~ * f0 b0 c~ c= f4 * f1 b0 c/\ * f0 f3 c= f4 * f2 f3 cF
+- |- ((!g. (!P. (!f. ((!x. ((P x) ==> ((f x) = (g x)))) ==> (!x. ((?x. ((P x) /\ (x = (f x)))) = (?x. ((P x) /\ (x = (g x)))))))))) = (!g. (!P. (!f. ((~ ((!x. ((P x) ==> ((f x) = (g x)))) ==> (!x. ((?x. ((P x) /\ (x = (f x)))) = (?x. ((P x) /\ (x = (g x)))))))) ==> F)))))
+T c= ! ! ! c==> ! c==> * b1 b3 c= * b2 b3 * b0 b3 ! c= c? / c/\ * b1 b4 c= b3 * b2 b4 c? / c/\ * b1 b4 c= b3 * b0 b4 ! ! ! c==> c~ c==> ! c==> * b1 b3 c= * b2 b3 * b0 b3 ! c= c? / c/\ * b1 b4 c= b3 * b2 b4 c? / c/\ * b1 b4 c= b3 * b0 b4 cF
+- ((~ (!x. ((?x. ((x = (f x)) /\ (?x. ((P x) /\ (x = (g x)))))) = (?x. ((P x) /\ (x = (f (g x)))))))) ==> F) |- ((((~ (!x. ((?x. ((x = (f x)) /\ (?x. ((P x) /\ (x = (g x)))))) = (?x. ((P x) /\ (x = (f (g x)))))))) ==> F) ==> ((~ (!x. ((?x. ((x = (f x)) /\ (?x. ((P x) /\ (x = (g x)))))) = (?x. ((P x) /\ (x = (f (g x)))))))) ==> F)) ==> ((~ (!x. ((?x. ((x = (f x)) /\ (?x. ((P x) /\ (x = (g x)))))) = (?x. ((P x) /\ (x = (f (g x)))))))) ==> F))
+T c==> c==> c~ ! c= c? / c/\ c= b0 * f0 b1 c? / c/\ * f1 b2 c= b1 * f2 b2 c? / c/\ * f1 b1 c= b0 * f0 * f2 b1 cF c==> c==> c==> c~ ! c= c? / c/\ c= b0 * f0 b1 c? / c/\ * f1 b2 c= b1 * f2 b2 c? / c/\ * f1 b1 c= b0 * f0 * f2 b1 cF c==> c~ ! c= c? / c/\ c= b0 * f0 b1 c? / c/\ * f1 b2 c= b1 * f2 b2 c? / c/\ * f1 b1 c= b0 * f0 * f2 b1 cF c==> c~ ! c= c? / c/\ c= b0 * f0 b1 c? / c/\ * f1 b2 c= b1 * f2 b2 c? / c/\ * f1 b1 c= b0 * f0 * f2 b1 cF
++ |- ((x = x) = T)
+T c= c= f0 f0 cT
++ (!x. ((P x) ==> ((f x) = (g x)))) |- (((\x. ((((P x) /\ (x = (f x))) /\ (!x. ((~ (P x)) \/ (~ (x = (g x)))))) \/ ((!x. ((~ (P x)) \/ (~ (x = (f x))))) /\ ((P x) /\ (x = (g x)))))) x') ==> F)
+T c==> ! c==> * f0 b0 c= * f1 b0 * f2 b0 c==> * / c\/ c/\ c/\ * f0 b0 c= f3 * f1 b0 ! c\/ c~ * f0 b1 c~ c= f3 * f2 b1 c/\ ! c\/ c~ * f0 b1 c~ c= f3 * f1 b1 c/\ * f0 b0 c= f3 * f2 b0 f4 cF
+- (!x. ((P x) ==> ((f x) = (g x)))), (~ ((f x') = (g x'))), (((P x') /\ (x = (f x'))) /\ (!x. ((~ (P x)) \/ (~ (x = (g x)))))) |- ((~ ((f x') = (g x'))) /\ ((f x') = (g x')))
+T c==> ! c==> * f0 b0 c= * f1 b0 * f2 b0 c==> c~ c= * f1 f3 * f2 f3 c==> c/\ c/\ * f0 f3 c= f4 * f1 f3 ! c\/ c~ * f0 b0 c~ c= f4 * f2 b0 c/\ c~ c= * f1 f3 * f2 f3 c= * f1 f3 * f2 f3
+- (~ (!x. ((?x. ((x = (f x)) /\ (?x. ((P x) /\ (x = (g x)))))) = (?x. ((P x) /\ (x = (f (g x)))))))) |- F
+T c==> c~ ! c= c? / c/\ c= b0 * f0 b1 c? / c/\ * f1 b2 c= b1 * f2 b2 c? / c/\ * f1 b1 c= b0 * f0 * f2 b1 cF
++ |- ((p \/ (q \/ r)) = (q \/ (p \/ r)))
+T c= c\/ f0 c\/ f1 f2 c\/ f1 c\/ f0 f2
++ |- (((IMAGE f) (GSPEC (\GEN%PVAR%125. (?i. (((SETSPEC GEN%PVAR%125) (P i)) (g i)))))) = (GSPEC (\GEN%PVAR%2544. (?i. (((SETSPEC GEN%PVAR%2544) (P i)) (f (g i)))))))
+T c= * * part cIMAGE f0 * part cGSPEC / c? / cSETSPEC b0 * f1 b1 * f2 b1 * part cGSPEC / c? / cSETSPEC b0 * f1 b1 * f0 * f2 b1
+- |- ((a ==> b) = ((~ a) \/ b))
+T c= c==> f0 f1 c\/ c~ f0 f1
++ (((P x') /\ (x = (f x'))) /\ (!x. ((~ (P x)) \/ (~ (x = (g x)))))) |- ((\x. ((~ (P x)) \/ (~ (x = (g x))))) _1219945)
+T c==> c/\ c/\ * f0 f1 c= f2 * f3 f1 ! c\/ c~ * f0 b0 c~ c= f2 * f4 b0 * / c\/ c~ * f0 b0 c~ c= f2 * f4 b0 f5
++ |- (((~ a) \/ (~ b)) = (~ (a /\ b)))
+T c= c\/ c~ f0 c~ f1 c~ c/\ f0 f1
++ |- (((?x. ((x = (f x)) /\ ((P x) /\ (x = (g x))))) /\ (!x. ((~ (P x)) \/ (~ (x = (f (g x))))))) = (?x. (((x = (f x)) /\ ((P x) /\ (x = (g x)))) /\ (!x. ((~ (P x)) \/ (~ (x = (f (g x)))))))))
+T c= c/\ c? / c/\ c= f0 * f1 f2 c/\ * f3 b0 c= f2 * f4 b0 ! c\/ c~ * f3 b0 c~ c= f0 * f1 * f4 b0 c? / c/\ c/\ c= f0 * f1 f2 c/\ * f3 b0 c= f2 * f4 b0 ! c\/ c~ * f3 b1 c~ c= f0 * f1 * f4 b1
++ (((x = (f x')) /\ ((P x'') /\ (x' = (g x'')))) /\ (!x. ((~ (P x)) \/ (~ (x = (f (g x))))))) |- ((((x = (f x')) /\ ((P x'') /\ (x' = (g x'')))) /\ (!x. ((~ (P x)) \/ (~ (x = (f (g x))))))) /\ F)
+T c==> c/\ c/\ c= f0 * f1 f2 c/\ * f3 f4 c= f2 * f5 f4 ! c\/ c~ * f3 b0 c~ c= f0 * f1 * f5 b0 c/\ c/\ c/\ c= f0 * f1 f2 c/\ * f3 f4 c= f2 * f5 f4 ! c\/ c~ * f3 b0 c~ c= f0 * f1 * f5 b0 cF
+- |- (((!P. (!f. ((~ ((!x. ((P x) ==> ((f x) = (g x)))) ==> (!x. ((?x. ((P x) /\ (x = (f x)))) = (?x. ((P x) /\ (x = (g x)))))))) ==> F))) ==> ((\P. (!f. ((~ ((!x. ((P x) ==> ((f x) = (g x)))) ==> (!x. ((?x. ((P x) /\ (x = (f x)))) = (?x. ((P x) /\ (x = (g x)))))))) ==> F))) P)) = ((\P. (!f. ((~ ((!x. ((P x) ==> ((f x) = (g x)))) ==> (!x. ((?x. ((P x) /\ (x = (f x)))) = (?x. ((P x) /\ (x = (g x)))))))) ==> F))) P))
+T c= c==> ! ! c==> c~ c==> ! c==> * b0 b2 c= * b1 b2 * f0 b2 ! c= c? / c/\ * b0 b3 c= b2 * b1 b3 c? / c/\ * b0 b3 c= b2 * f0 b3 cF * / ! c==> c~ c==> ! c==> * b0 b2 c= * b1 b2 * f0 b2 ! c= c? / c/\ * b0 b3 c= b2 * b1 b3 c? / c/\ * b0 b3 c= b2 * f0 b3 cF f1 * / ! c==> c~ c==> ! c==> * b0 b2 c= * b1 b2 * f0 b2 ! c= c? / c/\ * b0 b3 c= b2 * b1 b3 c? / c/\ * b0 b3 c= b2 * f0 b3 cF f1
+- (~ ((f (g x'')) = (f (g x'')))) |- ((~ ((f (g x'')) = (f (g x'')))) /\ ((f (g x'')) = (f (g x''))))
+T c==> c~ c= * f0 * f1 f2 * f0 * f1 f2 c/\ c~ c= * f0 * f1 f2 * f0 * f1 f2 c= * f0 * f1 f2 * f0 * f1 f2
+- ((~ ((!x. ((P x) ==> ((f x) = (g x)))) ==> (!x. ((?x. ((P x) /\ (x = (f x)))) = (?x. ((P x) /\ (x = (g x)))))))) ==> F), (((~ ((!x. ((P x) ==> ((f x) = (g x)))) ==> (!x. ((?x. ((P x) /\ (x = (f x)))) = (?x. ((P x) /\ (x = (g x)))))))) ==> F) ==> ((~ ((!x. ((P x) ==> ((f x) = (g x)))) ==> (!x. ((?x. ((P x) /\ (x = (f x)))) = (?x. ((P x) /\ (x = (g x)))))))) ==> F)) |- ((((~ ((!x. ((P x) ==> ((f x) = (g x)))) ==> (!x. ((?x. ((P x) /\ (x = (f x)))) = (?x. ((P x) /\ (x = (g x)))))))) ==> F) ==> ((~ ((!x. ((P x) ==> ((f x) = (g x)))) ==> (!x. ((?x. ((P x) /\ (x = (f x)))) = (?x. ((P x) /\ (x = (g x)))))))) ==> F)) /\ ((~ ((!x. ((P x) ==> ((f x) = (g x)))) ==> (!x. ((?x. ((P x) /\ (x = (f x)))) = (?x. ((P x) /\ (x = (g x)))))))) ==> F))
+T c==> c==> c~ c==> ! c==> * f0 b0 c= * f1 b0 * f2 b0 ! c= c? / c/\ * f0 b1 c= b0 * f1 b1 c? / c/\ * f0 b1 c= b0 * f2 b1 cF c==> c==> c==> c~ c==> ! c==> * f0 b0 c= * f1 b0 * f2 b0 ! c= c? / c/\ * f0 b1 c= b0 * f1 b1 c? / c/\ * f0 b1 c= b0 * f2 b1 cF c==> c~ c==> ! c==> * f0 b0 c= * f1 b0 * f2 b0 ! c= c? / c/\ * f0 b1 c= b0 * f1 b1 c? / c/\ * f0 b1 c= b0 * f2 b1 cF c/\ c==> c==> c~ c==> ! c==> * f0 b0 c= * f1 b0 * f2 b0 ! c= c? / c/\ * f0 b1 c= b0 * f1 b1 c? / c/\ * f0 b1 c= b0 * f2 b1 cF c==> c~ c==> ! c==> * f0 b0 c= * f1 b0 * f2 b0 ! c= c? / c/\ * f0 b1 c= b0 * f1 b1 c? / c/\ * f0 b1 c= b0 * f2 b1 cF c==> c~ c==> ! c==> * f0 b0 c= * f1 b0 * f2 b0 ! c= c? / c/\ * f0 b1 c= b0 * f1 b1 c? / c/\ * f0 b1 c= b0 * f2 b1 cF
++ |- ((((\x. ((((x = (f x')) /\ ((P x) /\ (x' = (g x)))) /\ (!x. ((~ (P x)) \/ (~ (x = (f (g x))))))) \/ ((!x. ((~ (x = (f x))) \/ (!x. ((~ (P x)) \/ (~ (x = (g x))))))) /\ ((P x) /\ (x = (f (g x))))))) x'') ==> F) = T)
+T c= c==> * / c\/ c/\ c/\ c= f0 * f1 f2 c/\ * f3 b0 c= f2 * f4 b0 ! c\/ c~ * f3 b1 c~ c= f0 * f1 * f4 b1 c/\ ! c\/ c~ c= f0 * f1 b1 ! c\/ c~ * f3 b2 c~ c= b1 * f4 b2 c/\ * f3 b0 c= f0 * f1 * f4 b0 f5 cF cT
++ |- ((p \/ q) = (q \/ p))
+T c= c\/ f0 f1 c\/ f1 f0
++ ((\x. ((((x = (f x')) /\ ((P x) /\ (x' = (g x)))) /\ (!x. ((~ (P x)) \/ (~ (x = (f (g x))))))) \/ ((!x. ((~ (x = (f x))) \/ (!x. ((~ (P x)) \/ (~ (x = (g x))))))) /\ ((P x) /\ (x = (f (g x))))))) x'') |- ((((x = (f x')) /\ ((P x'') /\ (x' = (g x'')))) /\ (!x. ((~ (P x)) \/ (~ (x = (f (g x))))))) \/ ((!x. ((~ (x = (f x))) \/ (!x. ((~ (P x)) \/ (~ (x = (g x))))))) /\ ((P x'') /\ (x = (f (g x''))))))
+T c==> * / c\/ c/\ c/\ c= f0 * f1 f2 c/\ * f3 b0 c= f2 * f4 b0 ! c\/ c~ * f3 b1 c~ c= f0 * f1 * f4 b1 c/\ ! c\/ c~ c= f0 * f1 b1 ! c\/ c~ * f3 b2 c~ c= b1 * f4 b2 c/\ * f3 b0 c= f0 * f1 * f4 b0 f5 c\/ c/\ c/\ c= f0 * f1 f2 c/\ * f3 f5 c= f2 * f4 f5 ! c\/ c~ * f3 b0 c~ c= f0 * f1 * f4 b0 c/\ ! c\/ c~ c= f0 * f1 b0 ! c\/ c~ * f3 b1 c~ c= b0 * f4 b1 c/\ * f3 f5 c= f0 * f1 * f4 f5
++ (!x. ((P x) ==> ((f x) = (g x)))), (((P x') /\ (x = (f x'))) /\ (!x. ((~ (P x)) \/ (~ (x = (g x)))))) |- ((((P x') /\ ((f x') = (g x'))) ==> F) = F)
+T c==> ! c==> * f0 b0 c= * f1 b0 * f2 b0 c==> c/\ c/\ * f0 f3 c= f4 * f1 f3 ! c\/ c~ * f0 b0 c~ c= f4 * f2 b0 c= c==> c/\ * f0 f3 c= * f1 f3 * f2 f3 cF cF
++ |- (((!x. ((P x) ==> ((f x) = (g x)))) ==> (!x. ((x IN (GSPEC (\GEN%PVAR%2541. (?x. (((SETSPEC GEN%PVAR%2541) (P x)) (f x)))))) = (x IN (GSPEC (\GEN%PVAR%2542. (?x. (((SETSPEC GEN%PVAR%2542) (P x)) (g x))))))))) = ((!x. ((P x) ==> ((f x) = (g x)))) ==> ((GSPEC (\GEN%PVAR%2541. (?x. (((SETSPEC GEN%PVAR%2541) (P x)) (f x))))) = (GSPEC (\GEN%PVAR%2542. (?x. (((SETSPEC GEN%PVAR%2542) (P x)) (g x))))))))
+T c= c==> ! c==> * f0 b0 c= * f1 b0 * f2 b0 ! c= cIN b0 * part cGSPEC / c? / cSETSPEC b1 * f0 b2 * f1 b2 cIN b0 * part cGSPEC / c? / cSETSPEC b1 * f0 b2 * f2 b2 c==> ! c==> * f0 b0 c= * f1 b0 * f2 b0 c= * part cGSPEC / c? / cSETSPEC b0 * f0 b1 * f1 b1 * part cGSPEC / c? / cSETSPEC b0 * f0 b1 * f2 b1
+- |- ((_1220013 = _1220014) ==> ((g _1220013) = (g _1220014)))
+T c==> c= f0 f1 c= * f2 f0 * f2 f1
++ ((!x. ((~ (x = (f x))) \/ (!x. ((~ (P x)) \/ (~ (x = (g x))))))) /\ ((P x'') /\ (x = (f (g x''))))) |- (((!x. (!x. ((~ (x = (f x))) \/ ((~ (P x)) \/ (~ (x = (g x))))))) ==> ((\x. (!x. ((~ (x = (f x))) \/ ((~ (P x)) \/ (~ (x = (g x))))))) _1219981)) = ((\x. (!x. ((~ (x = (f x))) \/ ((~ (P x)) \/ (~ (x = (g x))))))) _1219981))
+T c==> c/\ ! c\/ c~ c= f0 * f1 b0 ! c\/ c~ * f2 b1 c~ c= b0 * f3 b1 c/\ * f2 f4 c= f0 * f1 * f3 f4 c= c==> ! ! c\/ c~ c= f0 * f1 b0 c\/ c~ * f2 b1 c~ c= b0 * f3 b1 * / ! c\/ c~ c= f0 * f1 b0 c\/ c~ * f2 b1 c~ c= b0 * f3 b1 f5 * / ! c\/ c~ c= f0 * f1 b0 c\/ c~ * f2 b1 c~ c= b0 * f3 b1 f5
++ |- (((((NUMERAL (BIT1 _0)) <= i) /\ (i <= (dimindex UNIV))) ==> ((lambdaj. (((lambdai. (f (A $ i))) $ i) $ j)) = (f (lambdaj. ((A $ i) $ j))))) = ((((NUMERAL (BIT1 _0)) <= i) /\ (i <= (dimindex UNIV))) ==> T))
+T c= c==> c/\ c<= cNUMERAL cBIT1 c_0 f0 c<= f0 cdimindex part cUNIV c= clambda / c$ c$ clambda / * f1 c$ f2 b1 f0 b0 * f1 clambda / c$ c$ f2 f0 b0 c==> c/\ c<= cNUMERAL cBIT1 c_0 f0 c<= f0 cdimindex part cUNIV cT
++ |- (((?x. (?x. (((x = (f x)) /\ ((P x) /\ (x = (g x)))) /\ (!x. ((~ (P x)) \/ (~ (x = (f (g x))))))))) \/ (?x. ((!x. ((~ (x = (f x))) \/ (!x. ((~ (P x)) \/ (~ (x = (g x))))))) /\ ((P x) /\ (x = (f (g x))))))) = (?x. ((?x. (((x = (f x)) /\ ((P x) /\ (x = (g x)))) /\ (!x. ((~ (P x)) \/ (~ (x = (f (g x)))))))) \/ (?x. ((!x. ((~ (x = (f x))) \/ (!x. ((~ (P x)) \/ (~ (x = (g x))))))) /\ ((P x) /\ (x = (f (g x)))))))))
+T c= c\/ c? / c? / c/\ c/\ c= f0 * f1 b0 c/\ * f2 b1 c= b0 * f3 b1 ! c\/ c~ * f2 b2 c~ c= f0 * f1 * f3 b2 c? / c/\ ! c\/ c~ c= f0 * f1 b1 ! c\/ c~ * f2 b2 c~ c= b1 * f3 b2 c/\ * f2 b0 c= f0 * f1 * f3 b0 c? / c\/ c? / c/\ c/\ c= f0 * f1 b0 c/\ * f2 b1 c= b0 * f3 b1 ! c\/ c~ * f2 b2 c~ c= f0 * f1 * f3 b2 c? / c/\ ! c\/ c~ c= f0 * f1 b2 ! c\/ c~ * f2 b2 c~ c= b2 * f3 b2 c/\ * f2 b1 c= f0 * f1 * f3 b1
+- |- ((p \/ (p \/ q)) = (p \/ q))
+T c= c\/ f0 c\/ f0 f1 c\/ f0 f1
++ ((!x. ((~ (x = (f x))) \/ (!x. ((~ (P x)) \/ (~ (x = (g x))))))) /\ ((P x'') /\ (x = (f (g x''))))) |- (x = (f (g x'')))
+T c==> c/\ ! c\/ c~ c= f0 * f1 b0 ! c\/ c~ * f2 b1 c~ c= b0 * f3 b1 c/\ * f2 f4 c= f0 * f1 * f3 f4 c= f0 * f1 * f3 f4
+- (!x. ((P x) ==> ((f x) = (g x)))), (~ F), ((!x. ((~ (P x)) \/ (~ (x = (f x))))) /\ ((P x') /\ (x = (g x')))) |- ((~ F) /\ F)
+T c==> ! c==> * f0 b0 c= * f1 b0 * f2 b0 c==> c~ cF c==> c/\ ! c\/ c~ * f0 b0 c~ c= f3 * f1 b0 c/\ * f0 f4 c= f3 * f2 f4 c/\ c~ cF cF
++ (((x = (f x')) /\ ((P x'') /\ (x' = (g x'')))) /\ (!x. ((~ (P x)) \/ (~ (x = (f (g x))))))) |- (((f (g x'')) = (f (g x''))) = ((P x'') /\ ((f (g x'')) = (f (g x'')))))
+T c==> c/\ c/\ c= f0 * f1 f2 c/\ * f3 f4 c= f2 * f5 f4 ! c\/ c~ * f3 b0 c~ c= f0 * f1 * f5 b0 c= c= * f1 * f5 f4 * f1 * f5 f4 c/\ * f3 f4 c= * f1 * f5 f4 * f1 * f5 f4
++ (((x = (f x')) /\ ((P x'') /\ (x' = (g x'')))) /\ (!x. ((~ (P x)) \/ (~ (x = (f (g x))))))) |- ((\x. ((~ (P x)) \/ (~ (x = (f (g x)))))) _1219980)
+T c==> c/\ c/\ c= f0 * f1 f2 c/\ * f3 f4 c= f2 * f5 f4 ! c\/ c~ * f3 b0 c~ c= f0 * f1 * f5 b0 * / c\/ c~ * f3 b0 c~ c= f0 * f1 * f5 b0 f6
+- |- (((!g. (!f. (!P. ((~ (!x. ((?x. ((x = (f x)) /\ (?x. ((P x) /\ (x = (g x)))))) = (?x. ((P x) /\ (x = (f (g x)))))))) ==> F)))) ==> ((\g. (!f. (!P. ((~ (!x. ((?x. ((x = (f x)) /\ (?x. ((P x) /\ (x = (g x)))))) = (?x. ((P x) /\ (x = (f (g x)))))))) ==> F)))) g)) = ((\g. (!f. (!P. ((~ (!x. ((?x. ((x = (f x)) /\ (?x. ((P x) /\ (x = (g x)))))) = (?x. ((P x) /\ (x = (f (g x)))))))) ==> F)))) g))
+T c= c==> ! ! ! c==> c~ ! c= c? / c/\ c= b3 * b1 b4 c? / c/\ * b2 b5 c= b4 * b0 b5 c? / c/\ * b2 b4 c= b3 * b1 * b0 b4 cF * / ! ! c==> c~ ! c= c? / c/\ c= b3 * b1 b4 c? / c/\ * b2 b5 c= b4 * b0 b5 c? / c/\ * b2 b4 c= b3 * b1 * b0 b4 cF f0 * / ! ! c==> c~ ! c= c? / c/\ c= b3 * b1 b4 c? / c/\ * b2 b5 c= b4 * b0 b5 c? / c/\ * b2 b4 c= b3 * b1 * b0 b4 cF f0
+- (_1220009 = _1220010) |- ((_1220009 = _1220010) /\ ((P _1220010) \/ (~ (P _1220009))))
+T c==> c= f0 f1 c/\ c= f0 f1 c\/ * f2 f1 c~ * f2 f0
+- (!x. ((P x) ==> ((f x) = (g x)))), (((P x') /\ (x = (f x'))) /\ (!x. ((~ (P x)) \/ (~ (x = (g x)))))) |- ((~ F) ==> F)
+T c==> ! c==> * f0 b0 c= * f1 b0 * f2 b0 c==> c/\ c/\ * f0 f3 c= f4 * f1 f3 ! c\/ c~ * f0 b0 c~ c= f4 * f2 b0 c==> c~ cF cF
+- |- ((((~ ((!x. ((P x) ==> ((f x) = (g x)))) ==> (!x. ((?x. ((P x) /\ (x = (f x)))) = (?x. ((P x) /\ (x = (g x)))))))) ==> F) ==> ((~ ((!x. ((P x) ==> ((f x) = (g x)))) ==> (!x. ((?x. ((P x) /\ (x = (f x)))) = (?x. ((P x) /\ (x = (g x)))))))) ==> F)) ==> (((~ ((!x. ((P x) ==> ((f x) = (g x)))) ==> (!x. ((?x. ((P x) /\ (x = (f x)))) = (?x. ((P x) /\ (x = (g x)))))))) ==> F) ==> ((~ ((!x. ((P x) ==> ((f x) = (g x)))) ==> (!x. ((?x. ((P x) /\ (x = (f x)))) = (?x. ((P x) /\ (x = (g x)))))))) ==> F)))
+T c==> c==> c==> c~ c==> ! c==> * f0 b0 c= * f1 b0 * f2 b0 ! c= c? / c/\ * f0 b1 c= b0 * f1 b1 c? / c/\ * f0 b1 c= b0 * f2 b1 cF c==> c~ c==> ! c==> * f0 b0 c= * f1 b0 * f2 b0 ! c= c? / c/\ * f0 b1 c= b0 * f1 b1 c? / c/\ * f0 b1 c= b0 * f2 b1 cF c==> c==> c~ c==> ! c==> * f0 b0 c= * f1 b0 * f2 b0 ! c= c? / c/\ * f0 b1 c= b0 * f1 b1 c? / c/\ * f0 b1 c= b0 * f2 b1 cF c==> c~ c==> ! c==> * f0 b0 c= * f1 b0 * f2 b0 ! c= c? / c/\ * f0 b1 c= b0 * f1 b1 c? / c/\ * f0 b1 c= b0 * f2 b1 cF
+- (~ ((g x'') = (g x''))) |- ((~ ((g x'') = (g x''))) /\ ((g x'') = (g x'')))
+T c==> c~ c= * f0 f1 * f0 f1 c/\ c~ c= * f0 f1 * f0 f1 c= * f0 f1 * f0 f1
++ |- (((!A. (!i. (((row i) A) = (lambdaj. ((A $ i) $ j))))) ==> ((\A. (!i. (((row i) A) = (lambdaj. ((A $ i) $ j))))) A)) = ((\A. (!i. (((row i) A) = (lambdaj. ((A $ i) $ j))))) A))
+T c= c==> ! ! c= crow b1 b0 clambda / c$ c$ b0 b1 b2 * / ! c= crow b1 b0 clambda / c$ c$ b0 b1 b2 f0 * / ! c= crow b1 b0 clambda / c$ c$ b0 b1 b2 f0
++ ((((x = (f x')) /\ ((P x'') /\ (x' = (g x'')))) /\ (!x. ((~ (P x)) \/ (~ (x = (f (g x))))))) \/ ((!x. ((~ (x = (f x))) \/ (!x. ((~ (P x)) \/ (~ (x = (g x))))))) /\ ((P x'') /\ (x = (f (g x'')))))) |- (((((x = (f x')) /\ ((P x'') /\ (x' = (g x'')))) /\ (!x. ((~ (P x)) \/ (~ (x = (f (g x))))))) \/ ((!x. ((~ (x = (f x))) \/ (!x. ((~ (P x)) \/ (~ (x = (g x))))))) /\ ((P x'') /\ (x = (f (g x'')))))) /\ F)
+T c==> c\/ c/\ c/\ c= f0 * f1 f2 c/\ * f3 f4 c= f2 * f5 f4 ! c\/ c~ * f3 b0 c~ c= f0 * f1 * f5 b0 c/\ ! c\/ c~ c= f0 * f1 b0 ! c\/ c~ * f3 b1 c~ c= b0 * f5 b1 c/\ * f3 f4 c= f0 * f1 * f5 f4 c/\ c\/ c/\ c/\ c= f0 * f1 f2 c/\ * f3 f4 c= f2 * f5 f4 ! c\/ c~ * f3 b0 c~ c= f0 * f1 * f5 b0 c/\ ! c\/ c~ c= f0 * f1 b0 ! c\/ c~ * f3 b1 c~ c= b0 * f5 b1 c/\ * f3 f4 c= f0 * f1 * f5 f4 cF
++ (((x = (f x')) /\ ((P x'') /\ (x' = (g x'')))) /\ (!x. ((~ (P x)) \/ (~ (x = (f (g x))))))) |- ((~ (P _1219980)) \/ (~ ((f (g x'')) = (f (g _1219980)))))
+T c==> c/\ c/\ c= f0 * f1 f2 c/\ * f3 f4 c= f2 * f5 f4 ! c\/ c~ * f3 b0 c~ c= f0 * f1 * f5 b0 c\/ c~ * f3 f6 c~ c= * f1 * f5 f4 * f1 * f5 f6
+- (!x. ((P x) ==> ((f x) = (g x)))), ((!x. ((~ (P x)) \/ (~ (x = (f x))))) /\ ((P x') /\ (x = (g x')))) |- ((~ F) ==> F)
+T c==> ! c==> * f0 b0 c= * f1 b0 * f2 b0 c==> c/\ ! c\/ c~ * f0 b0 c~ c= f3 * f1 b0 c/\ * f0 f4 c= f3 * f2 f4 c==> c~ cF cF
+- |- ((\g. (!f. (!P. ((~ (!x. ((?x. ((x = (f x)) /\ (?x. ((P x) /\ (x = (g x)))))) = (?x. ((P x) /\ (x = (f (g x)))))))) ==> F)))) g)
+T * / ! ! c==> c~ ! c= c? / c/\ c= b3 * b1 b4 c? / c/\ * b2 b5 c= b4 * b0 b5 c? / c/\ * b2 b4 c= b3 * b1 * b0 b4 cF f0
++ |- ((\f. (!d. (((maprows f) d) = (lambdai. (f (d $ i)))))) f)
+T * / ! c= cmaprows b0 b1 clambda / * b0 c$ b1 b2 f0
+- |- ((\P. (!f. ((~ ((!x. ((P x) ==> ((f x) = (g x)))) ==> (!x. ((?x. ((P x) /\ (x = (f x)))) = (?x. ((P x) /\ (x = (g x)))))))) ==> F))) P)
+T * / ! c==> c~ c==> ! c==> * b0 b2 c= * b1 b2 * f0 b2 ! c= c? / c/\ * b0 b3 c= b2 * b1 b3 c? / c/\ * b0 b3 c= b2 * f0 b3 cF f1
++ |- (((((NUMERAL (BIT1 _0)) <= i) /\ (i <= (dimindex UNIV))) ==> (((lambdaj. (((lambdai. (f (A $ i))) $ i) $ j)) = (f (lambdaj. ((A $ i) $ j)))) = q')) ==> (((((NUMERAL (BIT1 _0)) <= i) /\ (i <= (dimindex UNIV))) ==> ((lambdaj. (((lambdai. (f (A $ i))) $ i) $ j)) = (f (lambdaj. ((A $ i) $ j))))) = ((((NUMERAL (BIT1 _0)) <= i) /\ (i <= (dimindex UNIV))) ==> q')))
+T c==> c==> c/\ c<= cNUMERAL cBIT1 c_0 f0 c<= f0 cdimindex part cUNIV c= c= clambda / c$ c$ clambda / * f1 c$ f2 b1 f0 b0 * f1 clambda / c$ c$ f2 f0 b0 f3 c= c==> c/\ c<= cNUMERAL cBIT1 c_0 f0 c<= f0 cdimindex part cUNIV c= clambda / c$ c$ clambda / * f1 c$ f2 b1 f0 b0 * f1 clambda / c$ c$ f2 f0 b0 c==> c/\ c<= cNUMERAL cBIT1 c_0 f0 c<= f0 cdimindex part cUNIV f3
++ (!x. ((P x) ==> ((f x) = (g x)))), ((!x. ((~ (P x)) \/ (~ (x = (f x))))) /\ ((P x') /\ (x = (g x')))) |- ((g x') = (f x'))
+T c==> ! c==> * f0 b0 c= * f1 b0 * f2 b0 c==> c/\ ! c\/ c~ * f0 b0 c~ c= f3 * f1 b0 c/\ * f0 f4 c= f3 * f2 f4 c= * f2 f4 * f1 f4
+- |- (((t1 \/ t2) \/ t3) = (t1 \/ (t2 \/ t3)))
+T c= c\/ c\/ f0 f1 f2 c\/ f0 c\/ f1 f2
++ (~ ((?x. ((x = (f x)) /\ (?x. ((P x) /\ (x = (g x)))))) = (?x. ((P x) /\ (x = (f (g x))))))) |- (((?x. (?x. ((((x = (f x)) /\ ((P x) /\ (x = (g x)))) /\ (!x. ((~ (P x)) \/ (~ (x = (f (g x))))))) \/ ((!x. ((~ (x = (f x))) \/ (!x. ((~ (P x)) \/ (~ (x = (g x))))))) /\ ((P x) /\ (x = (f (g x)))))))) ==> F) = F)
+T c==> c~ c= c? / c/\ c= f0 * f1 b0 c? / c/\ * f2 b1 c= b0 * f3 b1 c? / c/\ * f2 b0 c= f0 * f1 * f3 b0 c= c==> c? / c? / c\/ c/\ c/\ c= f0 * f1 b0 c/\ * f2 b1 c= b0 * f3 b1 ! c\/ c~ * f2 b2 c~ c= f0 * f1 * f3 b2 c/\ ! c\/ c~ c= f0 * f1 b2 ! c\/ c~ * f2 b2 c~ c= b2 * f3 b2 c/\ * f2 b1 c= f0 * f1 * f3 b1 cF cF
++ |- ((~ (a \/ b)) = ((~ a) /\ (~ b)))
+T c= c~ c\/ f0 f1 c/\ c~ f0 c~ f1
++ ((\x. ((((P x) /\ (x = (f x))) /\ (!x. ((~ (P x)) \/ (~ (x = (g x)))))) \/ ((!x. ((~ (P x)) \/ (~ (x = (f x))))) /\ ((P x) /\ (x = (g x)))))) x') |- ((((((P x') /\ (x = (f x'))) /\ (!x. ((~ (P x)) \/ (~ (x = (g x)))))) \/ ((!x. ((~ (P x)) \/ (~ (x = (f x))))) /\ ((P x') /\ (x = (g x'))))) ==> F) = F)
+T c==> * / c\/ c/\ c/\ * f0 b0 c= f1 * f2 b0 ! c\/ c~ * f0 b1 c~ c= f1 * f3 b1 c/\ ! c\/ c~ * f0 b1 c~ c= f1 * f2 b1 c/\ * f0 b0 c= f1 * f3 b0 f4 c= c==> c\/ c/\ c/\ * f0 f4 c= f1 * f2 f4 ! c\/ c~ * f0 b0 c~ c= f1 * f3 b0 c/\ ! c\/ c~ * f0 b0 c~ c= f1 * f2 b0 c/\ * f0 f4 c= f1 * f3 f4 cF cF
+- |- ((!g. (!f. (!P. (!x. ((?x. ((x = (f x)) /\ (?x. ((P x) /\ (x = (g x)))))) = (?x. ((P x) /\ (x = (f (g x)))))))))) = (!g. (!f. (!P. ((~ (!x. ((?x. ((x = (f x)) /\ (?x. ((P x) /\ (x = (g x)))))) = (?x. ((P x) /\ (x = (f (g x)))))))) ==> F)))))
+T c= ! ! ! ! c= c? / c/\ c= b3 * b1 b4 c? / c/\ * b2 b5 c= b4 * b0 b5 c? / c/\ * b2 b4 c= b3 * b1 * b0 b4 ! ! ! c==> c~ ! c= c? / c/\ c= b3 * b1 b4 c? / c/\ * b2 b5 c= b4 * b0 b5 c? / c/\ * b2 b4 c= b3 * b1 * b0 b4 cF
+- ((~ (!x. ((?x. ((x = (f x)) /\ (?x. ((P x) /\ (x = (g x)))))) = (?x. ((P x) /\ (x = (f (g x)))))))) ==> F) |- (((~ (!x. ((?x. ((x = (f x)) /\ (?x. ((P x) /\ (x = (g x)))))) = (?x. ((P x) /\ (x = (f (g x)))))))) ==> F) /\ ((~ (!x. ((?x. ((x = (f x)) /\ (?x. ((P x) /\ (x = (g x)))))) = (?x. ((P x) /\ (x = (f (g x)))))))) ==> F))
+T c==> c==> c~ ! c= c? / c/\ c= b0 * f0 b1 c? / c/\ * f1 b2 c= b1 * f2 b2 c? / c/\ * f1 b1 c= b0 * f0 * f2 b1 cF c/\ c==> c~ ! c= c? / c/\ c= b0 * f0 b1 c? / c/\ * f1 b2 c= b1 * f2 b2 c? / c/\ * f1 b1 c= b0 * f0 * f2 b1 cF c==> c~ ! c= c? / c/\ c= b0 * f0 b1 c? / c/\ * f1 b2 c= b1 * f2 b2 c? / c/\ * f1 b1 c= b0 * f0 * f2 b1 cF
++ |- (((!p'. (!q'. (((((NUMERAL (BIT1 _0)) <= i') /\ (i' <= (dimindex UNIV))) = p') ==> ((p' ==> ((((lambdaj. (((lambdai. (f (A $ i))) $ i) $ j)) $ i') = ((f (lambdaj. ((A $ i) $ j))) $ i')) = q')) ==> (((((NUMERAL (BIT1 _0)) <= i') /\ (i' <= (dimindex UNIV))) ==> (((lambdaj. (((lambdai. (f (A $ i))) $ i) $ j)) $ i') = ((f (lambdaj. ((A $ i) $ j))) $ i'))) = (p' ==> q')))))) ==> ((\p'. (!q'. (((((NUMERAL (BIT1 _0)) <= i') /\ (i' <= (dimindex UNIV))) = p') ==> ((p' ==> ((((lambdaj. (((lambdai. (f (A $ i))) $ i) $ j)) $ i') = ((f (lambdaj. ((A $ i) $ j))) $ i')) = q')) ==> (((((NUMERAL (BIT1 _0)) <= i') /\ (i' <= (dimindex UNIV))) ==> (((lambdaj. (((lambdai. (f (A $ i))) $ i) $ j)) $ i') = ((f (lambdaj. ((A $ i) $ j))) $ i'))) = (p' ==> q')))))) p')) = ((\p'. (!q'. (((((NUMERAL (BIT1 _0)) <= i') /\ (i' <= (dimindex UNIV))) = p') ==> ((p' ==> ((((lambdaj. (((lambdai. (f (A $ i))) $ i) $ j)) $ i') = ((f (lambdaj. ((A $ i) $ j))) $ i')) = q')) ==> (((((NUMERAL (BIT1 _0)) <= i') /\ (i' <= (dimindex UNIV))) ==> (((lambdaj. (((lambdai. (f (A $ i))) $ i) $ j)) $ i') = ((f (lambdaj. ((A $ i) $ j))) $ i'))) = (p' ==> q')))))) p'))
+T c= c==> ! ! c==> c= c/\ c<= cNUMERAL cBIT1 c_0 f0 c<= f0 cdimindex part cUNIV b0 c==> c==> b0 c= c= c$ clambda / c$ c$ clambda / * f1 c$ f2 b3 f3 b2 f0 c$ * f1 clambda / c$ c$ f2 f3 b2 f0 b1 c= c==> c/\ c<= cNUMERAL cBIT1 c_0 f0 c<= f0 cdimindex part cUNIV c= c$ clambda / c$ c$ clambda / * f1 c$ f2 b3 f3 b2 f0 c$ * f1 clambda / c$ c$ f2 f3 b2 f0 c==> b0 b1 * / ! c==> c= c/\ c<= cNUMERAL cBIT1 c_0 f0 c<= f0 cdimindex part cUNIV b0 c==> c==> b0 c= c= c$ clambda / c$ c$ clambda / * f1 c$ f2 b3 f3 b2 f0 c$ * f1 clambda / c$ c$ f2 f3 b2 f0 b1 c= c==> c/\ c<= cNUMERAL cBIT1 c_0 f0 c<= f0 cdimindex part cUNIV c= c$ clambda / c$ c$ clambda / * f1 c$ f2 b3 f3 b2 f0 c$ * f1 clambda / c$ c$ f2 f3 b2 f0 c==> b0 b1 f4 * / ! c==> c= c/\ c<= cNUMERAL cBIT1 c_0 f0 c<= f0 cdimindex part cUNIV b0 c==> c==> b0 c= c= c$ clambda / c$ c$ clambda / * f1 c$ f2 b3 f3 b2 f0 c$ * f1 clambda / c$ c$ f2 f3 b2 f0 b1 c= c==> c/\ c<= cNUMERAL cBIT1 c_0 f0 c<= f0 cdimindex part cUNIV c= c$ clambda / c$ c$ clambda / * f1 c$ f2 b3 f3 b2 f0 c$ * f1 clambda / c$ c$ f2 f3 b2 f0 c==> b0 b1 f4
+- |- (((!x. ((P x) ==> ((f x) = (g x)))) ==> ((GSPEC (\GEN%PVAR%2541. (?x. (((SETSPEC GEN%PVAR%2541) (P x)) (f x))))) = (GSPEC (\GEN%PVAR%2542. (?x. (((SETSPEC GEN%PVAR%2542) (P x)) (g x))))))) ==> ((!x. ((P x) ==> ((f x) = (g x)))) ==> ((GSPEC (\GEN%PVAR%2541. (?x. (((SETSPEC GEN%PVAR%2541) (P x)) (f x))))) = (GSPEC (\GEN%PVAR%2542. (?x. (((SETSPEC GEN%PVAR%2542) (P x)) (g x))))))))
+T c==> c==> ! c==> * f0 b0 c= * f1 b0 * f2 b0 c= * part cGSPEC / c? / cSETSPEC b0 * f0 b1 * f1 b1 * part cGSPEC / c? / cSETSPEC b0 * f0 b1 * f2 b1 c==> ! c==> * f0 b0 c= * f1 b0 * f2 b0 c= * part cGSPEC / c? / cSETSPEC b0 * f0 b1 * f1 b1 * part cGSPEC / c? / cSETSPEC b0 * f0 b1 * f2 b1
+- |- (((((~ ((!x. ((P x) ==> ((f x) = (g x)))) ==> (!x. ((?x. ((P x) /\ (x = (f x)))) = (?x. ((P x) /\ (x = (g x)))))))) ==> F) ==> ((~ ((!x. ((P x) ==> ((f x) = (g x)))) ==> (!x. ((?x. ((P x) /\ (x = (f x)))) = (?x. ((P x) /\ (x = (g x)))))))) ==> F)) ==> (((~ ((!x. ((P x) ==> ((f x) = (g x)))) ==> (!x. ((?x. ((P x) /\ (x = (f x)))) = (?x. ((P x) /\ (x = (g x)))))))) ==> F) ==> ((~ ((!x. ((P x) ==> ((f x) = (g x)))) ==> (!x. ((?x. ((P x) /\ (x = (f x)))) = (?x. ((P x) /\ (x = (g x)))))))) ==> F))) = (((~ ((!x. ((P x) ==> ((f x) = (g x)))) ==> (!x. ((?x. ((P x) /\ (x = (f x)))) = (?x. ((P x) /\ (x = (g x)))))))) ==> F) ==> ((~ ((!x. ((P x) ==> ((f x) = (g x)))) ==> (!x. ((?x. ((P x) /\ (x = (f x)))) = (?x. ((P x) /\ (x = (g x)))))))) ==> F)))
+T c= c==> c==> c==> c~ c==> ! c==> * f0 b0 c= * f1 b0 * f2 b0 ! c= c? / c/\ * f0 b1 c= b0 * f1 b1 c? / c/\ * f0 b1 c= b0 * f2 b1 cF c==> c~ c==> ! c==> * f0 b0 c= * f1 b0 * f2 b0 ! c= c? / c/\ * f0 b1 c= b0 * f1 b1 c? / c/\ * f0 b1 c= b0 * f2 b1 cF c==> c==> c~ c==> ! c==> * f0 b0 c= * f1 b0 * f2 b0 ! c= c? / c/\ * f0 b1 c= b0 * f1 b1 c? / c/\ * f0 b1 c= b0 * f2 b1 cF c==> c~ c==> ! c==> * f0 b0 c= * f1 b0 * f2 b0 ! c= c? / c/\ * f0 b1 c= b0 * f1 b1 c? / c/\ * f0 b1 c= b0 * f2 b1 cF c==> c==> c~ c==> ! c==> * f0 b0 c= * f1 b0 * f2 b0 ! c= c? / c/\ * f0 b1 c= b0 * f1 b1 c? / c/\ * f0 b1 c= b0 * f2 b1 cF c==> c~ c==> ! c==> * f0 b0 c= * f1 b0 * f2 b0 ! c= c? / c/\ * f0 b1 c= b0 * f1 b1 c? / c/\ * f0 b1 c= b0 * f2 b1 cF
++ |- (((GSPEC (\GEN%PVAR%125. (?i. (((SETSPEC GEN%PVAR%125) (((NUMERAL (BIT1 _0)) <= i) /\ (i <= (dimindex UNIV)))) (lambdaj. (((lambdai. (f (A $ i))) $ i) $ j)))))) = ((IMAGE f) (GSPEC (\GEN%PVAR%125. (?i. (((SETSPEC GEN%PVAR%125) (((NUMERAL (BIT1 _0)) <= i) /\ (i <= (dimindex UNIV)))) (lambdaj. ((A $ i) $ j)))))))) = ((rows ((maprows f) A)) = ((IMAGE f) (rows A))))
+T c= c= * part cGSPEC / c? / cSETSPEC b0 c/\ c<= cNUMERAL cBIT1 c_0 b1 c<= b1 cdimindex part cUNIV clambda / c$ c$ clambda / * f0 c$ f1 b3 b1 b2 * * part cIMAGE f0 * part cGSPEC / c? / cSETSPEC b0 c/\ c<= cNUMERAL cBIT1 c_0 b1 c<= b1 cdimindex part cUNIV clambda / c$ c$ f1 b1 b2 c= * part crows cmaprows f0 f1 * * part cIMAGE f0 * part crows f1
++ |- ((\A. (!i. (((row i) A) = (lambdaj. ((A $ i) $ j))))) A)
+T * / ! c= crow b1 b0 clambda / c$ c$ b0 b1 b2 f0
++ |- (!i. ((((NUMERAL (BIT1 _0)) <= i) /\ (i <= (dimindex UNIV))) ==> ((lambdaj. (((lambdai. (f (A $ i))) $ i) $ j)) = (f (lambdaj. ((A $ i) $ j))))))
+T c==> c/\ c<= cNUMERAL cBIT1 c_0 f0 c<= f0 cdimindex part cUNIV c= clambda / c$ c$ clambda / * f1 c$ f2 b1 f0 b0 * f1 clambda / c$ c$ f2 f0 b0
+- ((~ ((!x. ((P x) ==> ((f x) = (g x)))) ==> (!x. ((?x. ((P x) /\ (x = (f x)))) = (?x. ((P x) /\ (x = (g x)))))))) ==> F), (((~ ((!x. ((P x) ==> ((f x) = (g x)))) ==> (!x. ((?x. ((P x) /\ (x = (f x)))) = (?x. ((P x) /\ (x = (g x)))))))) ==> F) ==> ((~ ((!x. ((P x) ==> ((f x) = (g x)))) ==> (!x. ((?x. ((P x) /\ (x = (f x)))) = (?x. ((P x) /\ (x = (g x)))))))) ==> F)) |- (((~ ((!x. ((P x) ==> ((f x) = (g x)))) ==> (!x. ((?x. ((P x) /\ (x = (f x)))) = (?x. ((P x) /\ (x = (g x)))))))) ==> F) /\ ((~ ((!x. ((P x) ==> ((f x) = (g x)))) ==> (!x. ((?x. ((P x) /\ (x = (f x)))) = (?x. ((P x) /\ (x = (g x)))))))) ==> F))
+T c==> c==> c~ c==> ! c==> * f0 b0 c= * f1 b0 * f2 b0 ! c= c? / c/\ * f0 b1 c= b0 * f1 b1 c? / c/\ * f0 b1 c= b0 * f2 b1 cF c==> c==> c==> c~ c==> ! c==> * f0 b0 c= * f1 b0 * f2 b0 ! c= c? / c/\ * f0 b1 c= b0 * f1 b1 c? / c/\ * f0 b1 c= b0 * f2 b1 cF c==> c~ c==> ! c==> * f0 b0 c= * f1 b0 * f2 b0 ! c= c? / c/\ * f0 b1 c= b0 * f1 b1 c? / c/\ * f0 b1 c= b0 * f2 b1 cF c/\ c==> c~ c==> ! c==> * f0 b0 c= * f1 b0 * f2 b0 ! c= c? / c/\ * f0 b1 c= b0 * f1 b1 c? / c/\ * f0 b1 c= b0 * f2 b1 cF c==> c~ c==> ! c==> * f0 b0 c= * f1 b0 * f2 b0 ! c= c? / c/\ * f0 b1 c= b0 * f1 b1 c? / c/\ * f0 b1 c= b0 * f2 b1 cF
++ |- (((x = (f x)) /\ (?x. ((P x) /\ (x = (g x))))) = (?x. ((x = (f x)) /\ ((P x) /\ (x = (g x))))))
+T c= c/\ c= f0 * f1 f2 c? / c/\ * f3 b0 c= f2 * f4 b0 c? / c/\ c= f0 * f1 f2 c/\ * f3 b0 c= f2 * f4 b0
++ (((x = (f x')) /\ ((P x'') /\ (x' = (g x'')))) /\ (!x. ((~ (P x)) \/ (~ (x = (f (g x))))))) |- ((((P x'') /\ ((f (g x'')) = (f (g x'')))) ==> F) = F)
+T c==> c/\ c/\ c= f0 * f1 f2 c/\ * f3 f4 c= f2 * f5 f4 ! c\/ c~ * f3 b0 c~ c= f0 * f1 * f5 b0 c= c==> c/\ * f3 f4 c= * f1 * f5 f4 * f1 * f5 f4 cF cF
++ (~ ((?x. ((P x) /\ (x = (f x)))) = (?x. ((P x) /\ (x = (g x)))))) |- (?x. ((((P x) /\ (x = (f x))) /\ (!x. ((~ (P x)) \/ (~ (x = (g x)))))) \/ ((!x. ((~ (P x)) \/ (~ (x = (f x))))) /\ ((P x) /\ (x = (g x))))))
+T c==> c~ c= c? / c/\ * f0 b0 c= f1 * f2 b0 c? / c/\ * f0 b0 c= f1 * f3 b0 c? / c\/ c/\ c/\ * f0 b0 c= f1 * f2 b0 ! c\/ c~ * f0 b1 c~ c= f1 * f3 b1 c/\ ! c\/ c~ * f0 b1 c~ c= f1 * f2 b1 c/\ * f0 b0 c= f1 * f3 b0
++ (((!x. ((~ (x = (f x))) \/ (!x. ((~ (P x)) \/ (~ (x = (g x))))))) /\ ((P x'') /\ (x = (f (g x''))))) ==> F), ((((x = (f x')) /\ ((P x'') /\ (x' = (g x'')))) /\ (!x. ((~ (P x)) \/ (~ (x = (f (g x))))))) \/ ((!x. ((~ (x = (f x))) \/ (!x. ((~ (P x)) \/ (~ (x = (g x))))))) /\ ((P x'') /\ (x = (f (g x'')))))) |- F
+T c==> c==> c/\ ! c\/ c~ c= f0 * f1 b0 ! c\/ c~ * f2 b1 c~ c= b0 * f3 b1 c/\ * f2 f4 c= f0 * f1 * f3 f4 cF c==> c\/ c/\ c/\ c= f0 * f1 f5 c/\ * f2 f4 c= f5 * f3 f4 ! c\/ c~ * f2 b0 c~ c= f0 * f1 * f3 b0 c/\ ! c\/ c~ c= f0 * f1 b0 ! c\/ c~ * f2 b1 c~ c= b0 * f3 b1 c/\ * f2 f4 c= f0 * f1 * f3 f4 cF
+- (((NUMERAL (BIT1 _0)) <= i') /\ (i' <= (dimindex UNIV))) |- ((i' <= (dimindex UNIV)) = T)
+T c==> c/\ c<= cNUMERAL cBIT1 c_0 f0 c<= f0 cdimindex part cUNIV c= c<= f0 cdimindex part cUNIV cT
++ (!x. ((P x) ==> ((f x) = (g x)))), (((P x') /\ (x = (f x'))) /\ (!x. ((~ (P x)) \/ (~ (x = (g x)))))) |- ((((P x') /\ (x = (f x'))) /\ (!x. ((~ (P x)) \/ (~ (x = (g x)))))) /\ F)
+T c==> ! c==> * f0 b0 c= * f1 b0 * f2 b0 c==> c/\ c/\ * f0 f3 c= f4 * f1 f3 ! c\/ c~ * f0 b0 c~ c= f4 * f2 b0 c/\ c/\ c/\ * f0 f3 c= f4 * f1 f3 ! c\/ c~ * f0 b0 c~ c= f4 * f2 b0 cF
++ |- (((!i. ((((NUMERAL (BIT1 _0)) <= i) /\ (i <= (dimindex UNIV))) ==> ((lambdaj. (((lambdai. (f (A $ i))) $ i) $ j)) = (f (lambdaj. ((A $ i) $ j)))))) ==> ((GSPEC (\GEN%PVAR%125. (?i. (((SETSPEC GEN%PVAR%125) (((NUMERAL (BIT1 _0)) <= i) /\ (i <= (dimindex UNIV)))) (lambdaj. (((lambdai. (f (A $ i))) $ i) $ j)))))) = (GSPEC (\GEN%PVAR%2544. (?i. (((SETSPEC GEN%PVAR%2544) (((NUMERAL (BIT1 _0)) <= i) /\ (i <= (dimindex UNIV)))) (f (lambdaj. ((A $ i) $ j))))))))) = ((GSPEC (\GEN%PVAR%125. (?i. (((SETSPEC GEN%PVAR%125) (((NUMERAL (BIT1 _0)) <= i) /\ (i <= (dimindex UNIV)))) (lambdaj. (((lambdai. (f (A $ i))) $ i) $ j)))))) = (GSPEC (\GEN%PVAR%2544. (?i. (((SETSPEC GEN%PVAR%2544) (((NUMERAL (BIT1 _0)) <= i) /\ (i <= (dimindex UNIV)))) (f (lambdaj. ((A $ i) $ j)))))))))
+T c= c==> ! c==> c/\ c<= cNUMERAL cBIT1 c_0 b0 c<= b0 cdimindex part cUNIV c= clambda / c$ c$ clambda / * f0 c$ f1 b2 b0 b1 * f0 clambda / c$ c$ f1 b0 b1 c= * part cGSPEC / c? / cSETSPEC b0 c/\ c<= cNUMERAL cBIT1 c_0 b1 c<= b1 cdimindex part cUNIV clambda / c$ c$ clambda / * f0 c$ f1 b3 b1 b2 * part cGSPEC / c? / cSETSPEC b0 c/\ c<= cNUMERAL cBIT1 c_0 b1 c<= b1 cdimindex part cUNIV * f0 clambda / c$ c$ f1 b1 b2 c= * part cGSPEC / c? / cSETSPEC b0 c/\ c<= cNUMERAL cBIT1 c_0 b1 c<= b1 cdimindex part cUNIV clambda / c$ c$ clambda / * f0 c$ f1 b3 b1 b2 * part cGSPEC / c? / cSETSPEC b0 c/\ c<= cNUMERAL cBIT1 c_0 b1 c<= b1 cdimindex part cUNIV * f0 clambda / c$ c$ f1 b1 b2
+- |- ((!x'. ((~ (x = (f x'))) \/ (!x. ((~ (P x)) \/ (~ (x = (g x))))))) = ((!x. (~ (x = (f x)))) \/ (!x. ((~ (P x)) \/ (~ (x = (g x)))))))
+T c= ! c\/ c~ c= f0 * f1 b0 ! c\/ c~ * f2 b1 c~ c= f3 * f4 b1 c\/ ! c~ c= f0 * f1 b0 ! c\/ c~ * f2 b0 c~ c= f3 * f4 b0
++ |- ((x IN (GSPEC (\GEN%PVAR%2544. (P (SETSPEC GEN%PVAR%2544))))) = (P (\p. (\t. (p /\ (x = t))))))
+T c= cIN f0 * part cGSPEC / * f1 * part cSETSPEC b0 * f1 / / c/\ b0 c= f0 b1
++ |- ((x IN (GSPEC (\GEN%PVAR%2543. (?x. (((SETSPEC GEN%PVAR%2543) (P x)) (g x)))))) = (?x. (((\p. (\t. (p /\ (x = t)))) (P x)) (g x))))
+T c= cIN f0 * part cGSPEC / c? / cSETSPEC b0 * f1 b1 * f2 b1 c? / * * / / c/\ b1 c= f0 b2 * f1 b0 * f2 b0
++ |- (((!A. ((rows A) = (GSPEC (\GEN%PVAR%125. (?i. (((SETSPEC GEN%PVAR%125) (((NUMERAL (BIT1 _0)) <= i) /\ (i <= (dimindex UNIV)))) ((row i) A))))))) ==> ((\A. ((rows A) = (GSPEC (\GEN%PVAR%125. (?i. (((SETSPEC GEN%PVAR%125) (((NUMERAL (BIT1 _0)) <= i) /\ (i <= (dimindex UNIV)))) ((row i) A))))))) A)) = ((\A. ((rows A) = (GSPEC (\GEN%PVAR%125. (?i. (((SETSPEC GEN%PVAR%125) (((NUMERAL (BIT1 _0)) <= i) /\ (i <= (dimindex UNIV)))) ((row i) A))))))) A))
+T c= c==> ! c= * part crows b0 * part cGSPEC / c? / cSETSPEC b1 c/\ c<= cNUMERAL cBIT1 c_0 b2 c<= b2 cdimindex part cUNIV crow b2 b0 * / c= * part crows b0 * part cGSPEC / c? / cSETSPEC b1 c/\ c<= cNUMERAL cBIT1 c_0 b2 c<= b2 cdimindex part cUNIV crow b2 b0 f0 * / c= * part crows b0 * part cGSPEC / c? / cSETSPEC b1 c/\ c<= cNUMERAL cBIT1 c_0 b2 c<= b2 cdimindex part cUNIV crow b2 b0 f0
+- |- ((~ ((g x'') = (g x''))) ==> ((g x'') = (g x'')))
+T c==> c~ c= * f0 f1 * f0 f1 c= * f0 f1 * f0 f1
++ (!x. ((P x) ==> ((f x) = (g x)))), ((!x. ((~ (P x)) \/ (~ (x = (f x))))) /\ ((P x') /\ (x = (g x')))) |- (((!x. ((~ (P x)) \/ (~ (x = (f x))))) /\ ((P x') /\ (x = (g x')))) /\ F)
+T c==> ! c==> * f0 b0 c= * f1 b0 * f2 b0 c==> c/\ ! c\/ c~ * f0 b0 c~ c= f3 * f1 b0 c/\ * f0 f4 c= f3 * f2 f4 c/\ c/\ ! c\/ c~ * f0 b0 c~ c= f3 * f1 b0 c/\ * f0 f4 c= f3 * f2 f4 cF
++ |- ((~ ((?x. ((x = (f x)) /\ (?x. ((P x) /\ (x = (g x)))))) = (?x. ((P x) /\ (x = (f (g x))))))) ==> F)
+T c==> c~ c= c? / c/\ c= f0 * f1 b0 c? / c/\ * f2 b1 c= b0 * f3 b1 c? / c/\ * f2 b0 c= f0 * f1 * f3 b0 cF
+- (((~ ((!x. ((P x) ==> ((f x) = (g x)))) ==> (!x. ((?x. ((P x) /\ (x = (f x)))) = (?x. ((P x) /\ (x = (g x)))))))) ==> F) ==> ((~ ((!x. ((P x) ==> ((f x) = (g x)))) ==> (!x. ((?x. ((P x) /\ (x = (f x)))) = (?x. ((P x) /\ (x = (g x)))))))) ==> F)) |- ((((~ ((!x. ((P x) ==> ((f x) = (g x)))) ==> (!x. ((?x. ((P x) /\ (x = (f x)))) = (?x. ((P x) /\ (x = (g x)))))))) ==> F) ==> ((~ ((!x. ((P x) ==> ((f x) = (g x)))) ==> (!x. ((?x. ((P x) /\ (x = (f x)))) = (?x. ((P x) /\ (x = (g x)))))))) ==> F)) /\ (((~ ((!x. ((P x) ==> ((f x) = (g x)))) ==> (!x. ((?x. ((P x) /\ (x = (f x)))) = (?x. ((P x) /\ (x = (g x)))))))) ==> F) ==> ((~ ((!x. ((P x) ==> ((f x) = (g x)))) ==> (!x. ((?x. ((P x) /\ (x = (f x)))) = (?x. ((P x) /\ (x = (g x)))))))) ==> F)))
+T c==> c==> c==> c~ c==> ! c==> * f0 b0 c= * f1 b0 * f2 b0 ! c= c? / c/\ * f0 b1 c= b0 * f1 b1 c? / c/\ * f0 b1 c= b0 * f2 b1 cF c==> c~ c==> ! c==> * f0 b0 c= * f1 b0 * f2 b0 ! c= c? / c/\ * f0 b1 c= b0 * f1 b1 c? / c/\ * f0 b1 c= b0 * f2 b1 cF c/\ c==> c==> c~ c==> ! c==> * f0 b0 c= * f1 b0 * f2 b0 ! c= c? / c/\ * f0 b1 c= b0 * f1 b1 c? / c/\ * f0 b1 c= b0 * f2 b1 cF c==> c~ c==> ! c==> * f0 b0 c= * f1 b0 * f2 b0 ! c= c? / c/\ * f0 b1 c= b0 * f1 b1 c? / c/\ * f0 b1 c= b0 * f2 b1 cF c==> c==> c~ c==> ! c==> * f0 b0 c= * f1 b0 * f2 b0 ! c= c? / c/\ * f0 b1 c= b0 * f1 b1 c? / c/\ * f0 b1 c= b0 * f2 b1 cF c==> c~ c==> ! c==> * f0 b0 c= * f1 b0 * f2 b0 ! c= c? / c/\ * f0 b1 c= b0 * f1 b1 c? / c/\ * f0 b1 c= b0 * f2 b1 cF
++ |- ((\d. (((maprows f) d) = (lambdai. (f (d $ i))))) d)
+T * / c= cmaprows f0 b0 clambda / * f0 c$ b0 b1 f1
+- (!x. ((P x) ==> ((f x) = (g x)))), ((!x. ((P x) ==> ((f x) = (g x)))) ==> ((GSPEC (\GEN%PVAR%2541. (?x. (((SETSPEC GEN%PVAR%2541) (P x)) (f x))))) = (GSPEC (\GEN%PVAR%2542. (?x. (((SETSPEC GEN%PVAR%2542) (P x)) (g x))))))) |- ((!x. ((P x) ==> ((f x) = (g x)))) /\ ((GSPEC (\GEN%PVAR%2541. (?x. (((SETSPEC GEN%PVAR%2541) (P x)) (f x))))) = (GSPEC (\GEN%PVAR%2542. (?x. (((SETSPEC GEN%PVAR%2542) (P x)) (g x)))))))
+T c==> ! c==> * f0 b0 c= * f1 b0 * f2 b0 c==> c==> ! c==> * f0 b0 c= * f1 b0 * f2 b0 c= * part cGSPEC / c? / cSETSPEC b0 * f0 b1 * f1 b1 * part cGSPEC / c? / cSETSPEC b0 * f0 b1 * f2 b1 c/\ ! c==> * f0 b0 c= * f1 b0 * f2 b0 c= * part cGSPEC / c? / cSETSPEC b0 * f0 b1 * f1 b1 * part cGSPEC / c? / cSETSPEC b0 * f0 b1 * f2 b1
+- |- ((!x. (P \/ (Q x))) = (P \/ (!x. (Q x))))
+T c= ! c\/ f0 * f1 b0 c\/ f0 ! * f1 b0
+- |- ((!x. ((?x. ((x = (f x)) /\ (?x. ((P x) /\ (x = (g x)))))) = (?x. ((P x) /\ (x = (f (g x))))))) = T)
+T c= ! c= c? / c/\ c= b0 * f0 b1 c? / c/\ * f1 b2 c= b1 * f2 b2 c? / c/\ * f1 b1 c= b0 * f0 * f2 b1 cT
+- |- (((!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))) ==> ((\t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))) t3)) = ((\t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))) t3))
+T c= c==> ! c= c\/ f0 c\/ f1 b0 c\/ c\/ f0 f1 b0 * / c= c\/ f0 c\/ f1 b0 c\/ c\/ f0 f1 b0 f2 * / c= c\/ f0 c\/ f1 b0 c\/ c\/ f0 f1 b0 f2
+- |- ((?x'. ((x = (f x)) /\ (?x. ((P x) /\ (x' = (g x)))))) = ((x = (f x)) /\ (?x. (?x. ((P x) /\ (x = (g x)))))))
+T c= c? / c/\ c= f0 * f1 f2 c? / c/\ * f3 b1 c= b0 * f4 b1 c/\ c= f0 * f1 f2 c? / c? / c/\ * f3 b1 c= b0 * f4 b1
+- ((!x. ((P x) ==> ((f x) = (g x)))) ==> ((GSPEC (\GEN%PVAR%2541. (?x. (((SETSPEC GEN%PVAR%2541) (P x)) (f x))))) = (GSPEC (\GEN%PVAR%2542. (?x. (((SETSPEC GEN%PVAR%2542) (P x)) (g x))))))) |- (((!x. ((P x) ==> ((f x) = (g x)))) ==> ((GSPEC (\GEN%PVAR%2541. (?x. (((SETSPEC GEN%PVAR%2541) (P x)) (f x))))) = (GSPEC (\GEN%PVAR%2542. (?x. (((SETSPEC GEN%PVAR%2542) (P x)) (g x))))))) /\ ((!x. ((P x) ==> ((f x) = (g x)))) ==> ((GSPEC (\GEN%PVAR%2541. (?x. (((SETSPEC GEN%PVAR%2541) (P x)) (f x))))) = (GSPEC (\GEN%PVAR%2542. (?x. (((SETSPEC GEN%PVAR%2542) (P x)) (g x))))))))
+T c==> c==> ! c==> * f0 b0 c= * f1 b0 * f2 b0 c= * part cGSPEC / c? / cSETSPEC b0 * f0 b1 * f1 b1 * part cGSPEC / c? / cSETSPEC b0 * f0 b1 * f2 b1 c/\ c==> ! c==> * f0 b0 c= * f1 b0 * f2 b0 c= * part cGSPEC / c? / cSETSPEC b0 * f0 b1 * f1 b1 * part cGSPEC / c? / cSETSPEC b0 * f0 b1 * f2 b1 c==> ! c==> * f0 b0 c= * f1 b0 * f2 b0 c= * part cGSPEC / c? / cSETSPEC b0 * f0 b1 * f1 b1 * part cGSPEC / c? / cSETSPEC b0 * f0 b1 * f2 b1
+- |- ((t /\ t) = t)
+T c= c/\ f0 f0 f0
+- |- ((a = b) ==> (b \/ (~ a)))
+T c==> c= f0 f1 c\/ f1 c~ f0
++ (((x = (f x')) /\ ((P x'') /\ (x' = (g x'')))) /\ (!x. ((~ (P x)) \/ (~ (x = (f (g x))))))) |- ((P x'') /\ (x' = (g x'')))
+T c==> c/\ c/\ c= f0 * f1 f2 c/\ * f3 f4 c= f2 * f5 f4 ! c\/ c~ * f3 b0 c~ c= f0 * f1 * f5 b0 c/\ * f3 f4 c= f2 * f5 f4
+- |- (((~ (!x. ((?x. ((x = (f x)) /\ (?x. ((P x) /\ (x = (g x)))))) = (?x. ((P x) /\ (x = (f (g x)))))))) ==> F) = (!x. ((?x. ((x = (f x)) /\ (?x. ((P x) /\ (x = (g x)))))) = (?x. ((P x) /\ (x = (f (g x))))))))
+T c= c==> c~ ! c= c? / c/\ c= b0 * f0 b1 c? / c/\ * f1 b2 c= b1 * f2 b2 c? / c/\ * f1 b1 c= b0 * f0 * f2 b1 cF ! c= c? / c/\ c= b0 * f0 b1 c? / c/\ * f1 b2 c= b1 * f2 b2 c? / c/\ * f1 b1 c= b0 * f0 * f2 b1
+- ((~ (!x. ((?x. ((x = (f x)) /\ (?x. ((P x) /\ (x = (g x)))))) = (?x. ((P x) /\ (x = (f (g x)))))))) ==> F), (((~ (!x. ((?x. ((x = (f x)) /\ (?x. ((P x) /\ (x = (g x)))))) = (?x. ((P x) /\ (x = (f (g x)))))))) ==> F) ==> ((~ (!x. ((?x. ((x = (f x)) /\ (?x. ((P x) /\ (x = (g x)))))) = (?x. ((P x) /\ (x = (f (g x)))))))) ==> F)) |- (((~ (!x. ((?x. ((x = (f x)) /\ (?x. ((P x) /\ (x = (g x)))))) = (?x. ((P x) /\ (x = (f (g x)))))))) ==> F) /\ ((~ (!x. ((?x. ((x = (f x)) /\ (?x. ((P x) /\ (x = (g x)))))) = (?x. ((P x) /\ (x = (f (g x)))))))) ==> F))
+T c==> c==> c~ ! c= c? / c/\ c= b0 * f0 b1 c? / c/\ * f1 b2 c= b1 * f2 b2 c? / c/\ * f1 b1 c= b0 * f0 * f2 b1 cF c==> c==> c==> c~ ! c= c? / c/\ c= b0 * f0 b1 c? / c/\ * f1 b2 c= b1 * f2 b2 c? / c/\ * f1 b1 c= b0 * f0 * f2 b1 cF c==> c~ ! c= c? / c/\ c= b0 * f0 b1 c? / c/\ * f1 b2 c= b1 * f2 b2 c? / c/\ * f1 b1 c= b0 * f0 * f2 b1 cF c/\ c==> c~ ! c= c? / c/\ c= b0 * f0 b1 c? / c/\ * f1 b2 c= b1 * f2 b2 c? / c/\ * f1 b1 c= b0 * f0 * f2 b1 cF c==> c~ ! c= c? / c/\ c= b0 * f0 b1 c? / c/\ * f1 b2 c= b1 * f2 b2 c? / c/\ * f1 b1 c= b0 * f0 * f2 b1 cF
+- (((P x') /\ (x = (f x'))) /\ (!x. ((~ (P x)) \/ (~ (x = (g x)))))) |- ((P x') = (P x'))
+T c==> c/\ c/\ * f0 f1 c= f2 * f3 f1 ! c\/ c~ * f0 b0 c~ c= f2 * f4 b0 c= * f0 f1 * f0 f1
++ ((!x. ((~ (P x)) \/ (~ (x = (f x))))) /\ ((P x') /\ (x = (g x')))) |- (x = (g x'))
+T c==> c/\ ! c\/ c~ * f0 b0 c~ c= f1 * f2 b0 c/\ * f0 f3 c= f1 * f4 f3 c= f1 * f4 f3
++ |- ((((NUMERAL (BIT1 _0)) <= i) /\ (i <= (dimindex UNIV))) ==> (((lambdaj. (((lambdai. (f (A $ i))) $ i) $ j)) = (f (lambdaj. ((A $ i) $ j)))) = T))
+T c==> c/\ c<= cNUMERAL cBIT1 c_0 f0 c<= f0 cdimindex part cUNIV c= c= clambda / c$ c$ clambda / * f1 c$ f2 b1 f0 b0 * f1 clambda / c$ c$ f2 f0 b0 cT
+- |- ((!P. (!x. ((?x. ((x = (f x)) /\ (?x. ((P x) /\ (x = (g x)))))) = (?x. ((P x) /\ (x = (f (g x)))))))) = T)
+T c= ! ! c= c? / c/\ c= b1 * f0 b2 c? / c/\ * b0 b3 c= b2 * f1 b3 c? / c/\ * b0 b2 c= b1 * f0 * f1 b2 cT
++ |- (((((NUMERAL (BIT1 _0)) <= i') /\ (i' <= (dimindex UNIV))) = p') ==> ((p' ==> ((((lambdaj. (((lambdai. (f (A $ i))) $ i) $ j)) $ i') = ((f (lambdaj. ((A $ i) $ j))) $ i')) = q')) ==> (((((NUMERAL (BIT1 _0)) <= i') /\ (i' <= (dimindex UNIV))) ==> (((lambdaj. (((lambdai. (f (A $ i))) $ i) $ j)) $ i') = ((f (lambdaj. ((A $ i) $ j))) $ i'))) = (p' ==> q'))))
+T c==> c= c/\ c<= cNUMERAL cBIT1 c_0 f0 c<= f0 cdimindex part cUNIV f1 c==> c==> f1 c= c= c$ clambda / c$ c$ clambda / * f2 c$ f3 b1 f4 b0 f0 c$ * f2 clambda / c$ c$ f3 f4 b0 f0 f5 c= c==> c/\ c<= cNUMERAL cBIT1 c_0 f0 c<= f0 cdimindex part cUNIV c= c$ clambda / c$ c$ clambda / * f2 c$ f3 b1 f4 b0 f0 c$ * f2 clambda / c$ c$ f3 f4 b0 f0 c==> f1 f5
+- |- ((~ (_1220013 = _1220014)) \/ ((g _1220013) = (g _1220014)))
+T c\/ c~ c= f0 f1 c= * f2 f0 * f2 f1
+- (?x. ((((x = (f x')) /\ ((P x) /\ (x' = (g x)))) /\ (!x. ((~ (P x)) \/ (~ (x = (f (g x))))))) \/ ((!x. ((~ (x = (f x))) \/ (!x. ((~ (P x)) \/ (~ (x = (g x))))))) /\ ((P x) /\ (x = (f (g x))))))) |- ((?x. ((((x = (f x')) /\ ((P x) /\ (x' = (g x)))) /\ (!x. ((~ (P x)) \/ (~ (x = (f (g x))))))) \/ ((!x. ((~ (x = (f x))) \/ (!x. ((~ (P x)) \/ (~ (x = (g x))))))) /\ ((P x) /\ (x = (f (g x))))))) /\ F)
+T c==> c? / c\/ c/\ c/\ c= f0 * f1 f2 c/\ * f3 b0 c= f2 * f4 b0 ! c\/ c~ * f3 b1 c~ c= f0 * f1 * f4 b1 c/\ ! c\/ c~ c= f0 * f1 b1 ! c\/ c~ * f3 b2 c~ c= b1 * f4 b2 c/\ * f3 b0 c= f0 * f1 * f4 b0 c/\ c? / c\/ c/\ c/\ c= f0 * f1 f2 c/\ * f3 b0 c= f2 * f4 b0 ! c\/ c~ * f3 b1 c~ c= f0 * f1 * f4 b1 c/\ ! c\/ c~ c= f0 * f1 b1 ! c\/ c~ * f3 b2 c~ c= b1 * f4 b2 c/\ * f3 b0 c= f0 * f1 * f4 b0 cF
++ |- ((\q'. (((((NUMERAL (BIT1 _0)) <= i') /\ (i' <= (dimindex UNIV))) = p') ==> ((p' ==> ((((lambdaj. (((lambdai. (f (A $ i))) $ i) $ j)) $ i') = ((f (lambdaj. ((A $ i) $ j))) $ i')) = q')) ==> (((((NUMERAL (BIT1 _0)) <= i') /\ (i' <= (dimindex UNIV))) ==> (((lambdaj. (((lambdai. (f (A $ i))) $ i) $ j)) $ i') = ((f (lambdaj. ((A $ i) $ j))) $ i'))) = (p' ==> q'))))) q')
+T * / c==> c= c/\ c<= cNUMERAL cBIT1 c_0 f0 c<= f0 cdimindex part cUNIV f1 c==> c==> f1 c= c= c$ clambda / c$ c$ clambda / * f2 c$ f3 b2 f4 b1 f0 c$ * f2 clambda / c$ c$ f3 f4 b1 f0 b0 c= c==> c/\ c<= cNUMERAL cBIT1 c_0 f0 c<= f0 cdimindex part cUNIV c= c$ clambda / c$ c$ clambda / * f2 c$ f3 b2 f4 b1 f0 c$ * f2 clambda / c$ c$ f3 f4 b1 f0 c==> f1 b0 f5
+- (!x. ((P x) ==> ((f x) = (g x)))), (~ F), (((P x') /\ (x = (f x'))) /\ (!x. ((~ (P x)) \/ (~ (x = (g x)))))) |- ((~ F) /\ F)
+T c==> ! c==> * f0 b0 c= * f1 b0 * f2 b0 c==> c~ cF c==> c/\ c/\ * f0 f3 c= f4 * f1 f3 ! c\/ c~ * f0 b0 c~ c= f4 * f2 b0 c/\ c~ cF cF
+- |- ((~ ((f (g x'')) = (f (g x'')))) ==> ((f (g x'')) = (f (g x''))))
+T c==> c~ c= * f0 * f1 f2 * f0 * f1 f2 c= * f0 * f1 f2 * f0 * f1 f2
++ (!x. ((P x) ==> ((f x) = (g x)))), (((!x. ((~ (P x)) \/ (~ (x = (f x))))) /\ ((P x') /\ (x = (g x')))) ==> F), ((((P x') /\ (x = (f x'))) /\ (!x. ((~ (P x)) \/ (~ (x = (g x)))))) \/ ((!x. ((~ (P x)) \/ (~ (x = (f x))))) /\ ((P x') /\ (x = (g x'))))) |- F
+T c==> ! c==> * f0 b0 c= * f1 b0 * f2 b0 c==> c==> c/\ ! c\/ c~ * f0 b0 c~ c= f3 * f1 b0 c/\ * f0 f4 c= f3 * f2 f4 cF c==> c\/ c/\ c/\ * f0 f4 c= f3 * f1 f4 ! c\/ c~ * f0 b0 c~ c= f3 * f2 b0 c/\ ! c\/ c~ * f0 b0 c~ c= f3 * f1 b0 c/\ * f0 f4 c= f3 * f2 f4 cF
++ |- (!x''. (((\x. ((((x = (f x')) /\ ((P x) /\ (x' = (g x)))) /\ (!x. ((~ (P x)) \/ (~ (x = (f (g x))))))) \/ ((!x. ((~ (x = (f x))) \/ (!x. ((~ (P x)) \/ (~ (x = (g x))))))) /\ ((P x) /\ (x = (f (g x))))))) x'') ==> F))
+T c==> * / c\/ c/\ c/\ c= f0 * f1 f2 c/\ * f3 b0 c= f2 * f4 b0 ! c\/ c~ * f3 b1 c~ c= f0 * f1 * f4 b1 c/\ ! c\/ c~ c= f0 * f1 b1 ! c\/ c~ * f3 b2 c~ c= b1 * f4 b2 c/\ * f3 b0 c= f0 * f1 * f4 b0 f5 cF
++ (!x. ((P x) ==> ((f x) = (g x)))), ((\x. ((((P x) /\ (x = (f x))) /\ (!x. ((~ (P x)) \/ (~ (x = (g x)))))) \/ ((!x. ((~ (P x)) \/ (~ (x = (f x))))) /\ ((P x) /\ (x = (g x)))))) x') |- (((\x. ((((P x) /\ (x = (f x))) /\ (!x. ((~ (P x)) \/ (~ (x = (g x)))))) \/ ((!x. ((~ (P x)) \/ (~ (x = (f x))))) /\ ((P x) /\ (x = (g x)))))) x') /\ F)
+T c==> ! c==> * f0 b0 c= * f1 b0 * f2 b0 c==> * / c\/ c/\ c/\ * f0 b0 c= f3 * f1 b0 ! c\/ c~ * f0 b1 c~ c= f3 * f2 b1 c/\ ! c\/ c~ * f0 b1 c~ c= f3 * f1 b1 c/\ * f0 b0 c= f3 * f2 b0 f4 c/\ * / c\/ c/\ c/\ * f0 b0 c= f3 * f1 b0 ! c\/ c~ * f0 b1 c~ c= f3 * f2 b1 c/\ ! c\/ c~ * f0 b1 c~ c= f3 * f1 b1 c/\ * f0 b0 c= f3 * f2 b0 f4 cF
+- |- ((((~ (!x. ((?x. ((x = (f x)) /\ (?x. ((P x) /\ (x = (g x)))))) = (?x. ((P x) /\ (x = (f (g x)))))))) ==> F) ==> ((~ (!x. ((?x. ((x = (f x)) /\ (?x. ((P x) /\ (x = (g x)))))) = (?x. ((P x) /\ (x = (f (g x)))))))) ==> F)) = ((~ (!x. ((?x. ((x = (f x)) /\ (?x. ((P x) /\ (x = (g x)))))) = (?x. ((P x) /\ (x = (f (g x)))))))) ==> F))
+T c= c==> c==> c~ ! c= c? / c/\ c= b0 * f0 b1 c? / c/\ * f1 b2 c= b1 * f2 b2 c? / c/\ * f1 b1 c= b0 * f0 * f2 b1 cF c==> c~ ! c= c? / c/\ c= b0 * f0 b1 c? / c/\ * f1 b2 c= b1 * f2 b2 c? / c/\ * f1 b1 c= b0 * f0 * f2 b1 cF c==> c~ ! c= c? / c/\ c= b0 * f0 b1 c? / c/\ * f1 b2 c= b1 * f2 b2 c? / c/\ * f1 b1 c= b0 * f0 * f2 b1 cF
++ |- (((!d. (((maprows f) d) = (lambdai. (f (d $ i))))) ==> ((\d. (((maprows f) d) = (lambdai. (f (d $ i))))) d)) = ((\d. (((maprows f) d) = (lambdai. (f (d $ i))))) d))
+T c= c==> ! c= cmaprows f0 b0 clambda / * f0 c$ b0 b1 * / c= cmaprows f0 b0 clambda / * f0 c$ b0 b1 f1 * / c= cmaprows f0 b0 clambda / * f0 c$ b0 b1 f1
+- |- ((!x'. ((~ (P x)) \/ (~ (x = (f (g x')))))) = ((~ (P x)) \/ (!x. (~ (x = (f (g x)))))))
+T c= ! c\/ c~ * f0 f1 c~ c= f2 * f3 * f4 b0 c\/ c~ * f0 f1 ! c~ c= f2 * f3 * f4 b0
+- ((~ ((!x. ((P x) ==> ((f x) = (g x)))) ==> (!x. ((?x. ((P x) /\ (x = (f x)))) = (?x. ((P x) /\ (x = (g x)))))))) ==> F) |- ((((~ ((!x. ((P x) ==> ((f x) = (g x)))) ==> (!x. ((?x. ((P x) /\ (x = (f x)))) = (?x. ((P x) /\ (x = (g x)))))))) ==> F) ==> ((~ ((!x. ((P x) ==> ((f x) = (g x)))) ==> (!x. ((?x. ((P x) /\ (x = (f x)))) = (?x. ((P x) /\ (x = (g x)))))))) ==> F)) ==> ((~ ((!x. ((P x) ==> ((f x) = (g x)))) ==> (!x. ((?x. ((P x) /\ (x = (f x)))) = (?x. ((P x) /\ (x = (g x)))))))) ==> F))
+T c==> c==> c~ c==> ! c==> * f0 b0 c= * f1 b0 * f2 b0 ! c= c? / c/\ * f0 b1 c= b0 * f1 b1 c? / c/\ * f0 b1 c= b0 * f2 b1 cF c==> c==> c==> c~ c==> ! c==> * f0 b0 c= * f1 b0 * f2 b0 ! c= c? / c/\ * f0 b1 c= b0 * f1 b1 c? / c/\ * f0 b1 c= b0 * f2 b1 cF c==> c~ c==> ! c==> * f0 b0 c= * f1 b0 * f2 b0 ! c= c? / c/\ * f0 b1 c= b0 * f1 b1 c? / c/\ * f0 b1 c= b0 * f2 b1 cF c==> c~ c==> ! c==> * f0 b0 c= * f1 b0 * f2 b0 ! c= c? / c/\ * f0 b1 c= b0 * f1 b1 c? / c/\ * f0 b1 c= b0 * f2 b1 cF
+- |- (((!P. ((~ (!x. ((?x. ((x = (f x)) /\ (?x. ((P x) /\ (x = (g x)))))) = (?x. ((P x) /\ (x = (f (g x)))))))) ==> F)) ==> ((\P. ((~ (!x. ((?x. ((x = (f x)) /\ (?x. ((P x) /\ (x = (g x)))))) = (?x. ((P x) /\ (x = (f (g x)))))))) ==> F)) P)) = ((\P. ((~ (!x. ((?x. ((x = (f x)) /\ (?x. ((P x) /\ (x = (g x)))))) = (?x. ((P x) /\ (x = (f (g x)))))))) ==> F)) P))
+T c= c==> ! c==> c~ ! c= c? / c/\ c= b1 * f0 b2 c? / c/\ * b0 b3 c= b2 * f1 b3 c? / c/\ * b0 b2 c= b1 * f0 * f1 b2 cF * / c==> c~ ! c= c? / c/\ c= b1 * f0 b2 c? / c/\ * b0 b3 c= b2 * f1 b3 c? / c/\ * b0 b2 c= b1 * f0 * f1 b2 cF f2 * / c==> c~ ! c= c? / c/\ c= b1 * f0 b2 c? / c/\ * b0 b3 c= b2 * f1 b3 c? / c/\ * b0 b2 c= b1 * f0 * f1 b2 cF f2
+- ((!x. ((~ (x = (f x))) \/ (!x. ((~ (P x)) \/ (~ (x = (g x))))))) /\ ((P x'') /\ (x = (f (g x''))))) |- ((P x'') = (P x''))
+T c==> c/\ ! c\/ c~ c= f0 * f1 b0 ! c\/ c~ * f2 b1 c~ c= b0 * f3 b1 c/\ * f2 f4 c= f0 * f1 * f3 f4 c= * f2 f4 * f2 f4
+- (!x. ((P x) ==> ((f x) = (g x)))), (~ ((f x') = (g x'))), ((!x. ((~ (P x)) \/ (~ (x = (f x))))) /\ ((P x') /\ (x = (g x')))) |- ((~ ((f x') = (g x'))) /\ ((f x') = (g x')))
+T c==> ! c==> * f0 b0 c= * f1 b0 * f2 b0 c==> c~ c= * f1 f3 * f2 f3 c==> c/\ ! c\/ c~ * f0 b0 c~ c= f4 * f1 b0 c/\ * f0 f3 c= f4 * f2 f3 c/\ c~ c= * f1 f3 * f2 f3 c= * f1 f3 * f2 f3
+- |- ((((!x. ((P x) ==> ((f x) = (g x)))) ==> ((GSPEC (\GEN%PVAR%2541. (?x. (((SETSPEC GEN%PVAR%2541) (P x)) (f x))))) = (GSPEC (\GEN%PVAR%2542. (?x. (((SETSPEC GEN%PVAR%2542) (P x)) (g x))))))) ==> ((!x. ((P x) ==> ((f x) = (g x)))) ==> ((GSPEC (\GEN%PVAR%2541. (?x. (((SETSPEC GEN%PVAR%2541) (P x)) (f x))))) = (GSPEC (\GEN%PVAR%2542. (?x. (((SETSPEC GEN%PVAR%2542) (P x)) (g x)))))))) = ((!x. ((P x) ==> ((f x) = (g x)))) ==> ((GSPEC (\GEN%PVAR%2541. (?x. (((SETSPEC GEN%PVAR%2541) (P x)) (f x))))) = (GSPEC (\GEN%PVAR%2542. (?x. (((SETSPEC GEN%PVAR%2542) (P x)) (g x))))))))
+T c= c==> c==> ! c==> * f0 b0 c= * f1 b0 * f2 b0 c= * part cGSPEC / c? / cSETSPEC b0 * f0 b1 * f1 b1 * part cGSPEC / c? / cSETSPEC b0 * f0 b1 * f2 b1 c==> ! c==> * f0 b0 c= * f1 b0 * f2 b0 c= * part cGSPEC / c? / cSETSPEC b0 * f0 b1 * f1 b1 * part cGSPEC / c? / cSETSPEC b0 * f0 b1 * f2 b1 c==> ! c==> * f0 b0 c= * f1 b0 * f2 b0 c= * part cGSPEC / c? / cSETSPEC b0 * f0 b1 * f1 b1 * part cGSPEC / c? / cSETSPEC b0 * f0 b1 * f2 b1
+- ((!x. ((~ (P x)) \/ (~ (x = (f x))))) /\ ((P x') /\ (x = (g x')))) |- ((P x') = (P x'))
+T c==> c/\ ! c\/ c~ * f0 b0 c~ c= f1 * f2 b0 c/\ * f0 f3 c= f1 * f4 f3 c= * f0 f3 * f0 f3
+- |- (((((~ (!x. ((?x. ((x = (f x)) /\ (?x. ((P x) /\ (x = (g x)))))) = (?x. ((P x) /\ (x = (f (g x)))))))) ==> F) ==> ((~ (!x. ((?x. ((x = (f x)) /\ (?x. ((P x) /\ (x = (g x)))))) = (?x. ((P x) /\ (x = (f (g x)))))))) ==> F)) ==> (((~ (!x. ((?x. ((x = (f x)) /\ (?x. ((P x) /\ (x = (g x)))))) = (?x. ((P x) /\ (x = (f (g x)))))))) ==> F) ==> ((~ (!x. ((?x. ((x = (f x)) /\ (?x. ((P x) /\ (x = (g x)))))) = (?x. ((P x) /\ (x = (f (g x)))))))) ==> F))) = (((~ (!x. ((?x. ((x = (f x)) /\ (?x. ((P x) /\ (x = (g x)))))) = (?x. ((P x) /\ (x = (f (g x)))))))) ==> F) ==> ((~ (!x. ((?x. ((x = (f x)) /\ (?x. ((P x) /\ (x = (g x)))))) = (?x. ((P x) /\ (x = (f (g x)))))))) ==> F)))
+T c= c==> c==> c==> c~ ! c= c? / c/\ c= b0 * f0 b1 c? / c/\ * f1 b2 c= b1 * f2 b2 c? / c/\ * f1 b1 c= b0 * f0 * f2 b1 cF c==> c~ ! c= c? / c/\ c= b0 * f0 b1 c? / c/\ * f1 b2 c= b1 * f2 b2 c? / c/\ * f1 b1 c= b0 * f0 * f2 b1 cF c==> c==> c~ ! c= c? / c/\ c= b0 * f0 b1 c? / c/\ * f1 b2 c= b1 * f2 b2 c? / c/\ * f1 b1 c= b0 * f0 * f2 b1 cF c==> c~ ! c= c? / c/\ c= b0 * f0 b1 c? / c/\ * f1 b2 c= b1 * f2 b2 c? / c/\ * f1 b1 c= b0 * f0 * f2 b1 cF c==> c==> c~ ! c= c? / c/\ c= b0 * f0 b1 c? / c/\ * f1 b2 c= b1 * f2 b2 c? / c/\ * f1 b1 c= b0 * f0 * f2 b1 cF c==> c~ ! c= c? / c/\ c= b0 * f0 b1 c? / c/\ * f1 b2 c= b1 * f2 b2 c? / c/\ * f1 b1 c= b0 * f0 * f2 b1 cF
+- |- ((!x. (P x)) = ((P T) /\ (P F)))
+T c= ! * f0 b0 c/\ * f0 cT * f0 cF
+- ((!x. ((~ (x = (f x))) \/ (!x. ((~ (P x)) \/ (~ (x = (g x))))))) /\ ((P x'') /\ (x = (f (g x''))))) |- ((~ (P x'')) ==> (P x''))
+T c==> c/\ ! c\/ c~ c= f0 * f1 b0 ! c\/ c~ * f2 b1 c~ c= b0 * f3 b1 c/\ * f2 f4 c= f0 * f1 * f3 f4 c==> c~ * f2 f4 * f2 f4
+- |- (((!x. ((P x) ==> ((f x) = (g x)))) ==> (!x. ((?x. ((P x) /\ (x = (f x)))) = (?x. ((P x) /\ (x = (g x))))))) = T)
+T c= c==> ! c==> * f0 b0 c= * f1 b0 * f2 b0 ! c= c? / c/\ * f0 b1 c= b0 * f1 b1 c? / c/\ * f0 b1 c= b0 * f2 b1 cT
+- (((~ (!x. ((?x. ((x = (f x)) /\ (?x. ((P x) /\ (x = (g x)))))) = (?x. ((P x) /\ (x = (f (g x)))))))) ==> F) ==> ((~ (!x. ((?x. ((x = (f x)) /\ (?x. ((P x) /\ (x = (g x)))))) = (?x. ((P x) /\ (x = (f (g x)))))))) ==> F)) |- ((((~ (!x. ((?x. ((x = (f x)) /\ (?x. ((P x) /\ (x = (g x)))))) = (?x. ((P x) /\ (x = (f (g x)))))))) ==> F) ==> ((~ (!x. ((?x. ((x = (f x)) /\ (?x. ((P x) /\ (x = (g x)))))) = (?x. ((P x) /\ (x = (f (g x)))))))) ==> F)) /\ (((~ (!x. ((?x. ((x = (f x)) /\ (?x. ((P x) /\ (x = (g x)))))) = (?x. ((P x) /\ (x = (f (g x)))))))) ==> F) ==> ((~ (!x. ((?x. ((x = (f x)) /\ (?x. ((P x) /\ (x = (g x)))))) = (?x. ((P x) /\ (x = (f (g x)))))))) ==> F)))
+T c==> c==> c==> c~ ! c= c? / c/\ c= b0 * f0 b1 c? / c/\ * f1 b2 c= b1 * f2 b2 c? / c/\ * f1 b1 c= b0 * f0 * f2 b1 cF c==> c~ ! c= c? / c/\ c= b0 * f0 b1 c? / c/\ * f1 b2 c= b1 * f2 b2 c? / c/\ * f1 b1 c= b0 * f0 * f2 b1 cF c/\ c==> c==> c~ ! c= c? / c/\ c= b0 * f0 b1 c? / c/\ * f1 b2 c= b1 * f2 b2 c? / c/\ * f1 b1 c= b0 * f0 * f2 b1 cF c==> c~ ! c= c? / c/\ c= b0 * f0 b1 c? / c/\ * f1 b2 c= b1 * f2 b2 c? / c/\ * f1 b1 c= b0 * f0 * f2 b1 cF c==> c==> c~ ! c= c? / c/\ c= b0 * f0 b1 c? / c/\ * f1 b2 c= b1 * f2 b2 c? / c/\ * f1 b1 c= b0 * f0 * f2 b1 cF c==> c~ ! c= c? / c/\ c= b0 * f0 b1 c? / c/\ * f1 b2 c= b1 * f2 b2 c? / c/\ * f1 b1 c= b0 * f0 * f2 b1 cF
+- |- (((!t1. (!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))))) ==> ((\t1. (!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))))) t1)) = ((\t1. (!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))))) t1))
+T c= c==> ! ! ! c= c\/ b0 c\/ b1 b2 c\/ c\/ b0 b1 b2 * / ! ! c= c\/ b0 c\/ b1 b2 c\/ c\/ b0 b1 b2 f0 * / ! ! c= c\/ b0 c\/ b1 b2 c\/ c\/ b0 b1 b2 f0
+- (!x. ((P x) ==> ((f x) = (g x)))), ((!x. ((P x) ==> ((f x) = (g x)))) ==> ((GSPEC (\GEN%PVAR%2541. (?x. (((SETSPEC GEN%PVAR%2541) (P x)) (f x))))) = (GSPEC (\GEN%PVAR%2542. (?x. (((SETSPEC GEN%PVAR%2542) (P x)) (g x))))))) |- (((!x. ((P x) ==> ((f x) = (g x)))) ==> ((GSPEC (\GEN%PVAR%2541. (?x. (((SETSPEC GEN%PVAR%2541) (P x)) (f x))))) = (GSPEC (\GEN%PVAR%2542. (?x. (((SETSPEC GEN%PVAR%2542) (P x)) (g x))))))) /\ ((GSPEC (\GEN%PVAR%2541. (?x. (((SETSPEC GEN%PVAR%2541) (P x)) (f x))))) = (GSPEC (\GEN%PVAR%2542. (?x. (((SETSPEC GEN%PVAR%2542) (P x)) (g x)))))))
+T c==> ! c==> * f0 b0 c= * f1 b0 * f2 b0 c==> c==> ! c==> * f0 b0 c= * f1 b0 * f2 b0 c= * part cGSPEC / c? / cSETSPEC b0 * f0 b1 * f1 b1 * part cGSPEC / c? / cSETSPEC b0 * f0 b1 * f2 b1 c/\ c==> ! c==> * f0 b0 c= * f1 b0 * f2 b0 c= * part cGSPEC / c? / cSETSPEC b0 * f0 b1 * f1 b1 * part cGSPEC / c? / cSETSPEC b0 * f0 b1 * f2 b1 c= * part cGSPEC / c? / cSETSPEC b0 * f0 b1 * f1 b1 * part cGSPEC / c? / cSETSPEC b0 * f0 b1 * f2 b1
+- |- (((!f. (!P. ((~ (!x. ((?x. ((x = (f x)) /\ (?x. ((P x) /\ (x = (g x)))))) = (?x. ((P x) /\ (x = (f (g x)))))))) ==> F))) ==> ((\f. (!P. ((~ (!x. ((?x. ((x = (f x)) /\ (?x. ((P x) /\ (x = (g x)))))) = (?x. ((P x) /\ (x = (f (g x)))))))) ==> F))) f)) = ((\f. (!P. ((~ (!x. ((?x. ((x = (f x)) /\ (?x. ((P x) /\ (x = (g x)))))) = (?x. ((P x) /\ (x = (f (g x)))))))) ==> F))) f))
+T c= c==> ! ! c==> c~ ! c= c? / c/\ c= b2 * b0 b3 c? / c/\ * b1 b4 c= b3 * f0 b4 c? / c/\ * b1 b3 c= b2 * b0 * f0 b3 cF * / ! c==> c~ ! c= c? / c/\ c= b2 * b0 b3 c? / c/\ * b1 b4 c= b3 * f0 b4 c? / c/\ * b1 b3 c= b2 * b0 * f0 b3 cF f1 * / ! c==> c~ ! c= c? / c/\ c= b2 * b0 b3 c? / c/\ * b1 b4 c= b3 * f0 b4 c? / c/\ * b1 b3 c= b2 * b0 * f0 b3 cF f1
+- ((!x. ((~ (P x)) \/ (~ (x = (f x))))) /\ ((P x') /\ (x = (g x')))) |- (((~ (P _1219946)) \/ ((f _1219946) = (g _1219946))) = ((~ (P _1219946)) \/ ((f _1219946) = (g _1219946))))
+T c==> c/\ ! c\/ c~ * f0 b0 c~ c= f1 * f2 b0 c/\ * f0 f3 c= f1 * f4 f3 c= c\/ c~ * f0 f5 c= * f2 f5 * f4 f5 c\/ c~ * f0 f5 c= * f2 f5 * f4 f5
+- |- ((?x. (P /\ (Q x))) = (P /\ (?x. (Q x))))
+T c= c? / c/\ f0 * f1 b0 c/\ f0 c? / * f1 b0
+- |- (((\i. (f i)) y) = (f y))
+T c= * / * f0 b0 f1 * f0 f1
+- |- ((\g. (!P. (!f. ((~ ((!x. ((P x) ==> ((f x) = (g x)))) ==> (!x. ((?x. ((P x) /\ (x = (f x)))) = (?x. ((P x) /\ (x = (g x)))))))) ==> F)))) g)
+T * / ! ! c==> c~ c==> ! c==> * b1 b3 c= * b2 b3 * b0 b3 ! c= c? / c/\ * b1 b4 c= b3 * b2 b4 c? / c/\ * b1 b4 c= b3 * b0 b4 cF f0
+- |- ((((~ (!x. ((?x. ((x = (f x)) /\ (?x. ((P x) /\ (x = (g x)))))) = (?x. ((P x) /\ (x = (f (g x)))))))) ==> F) ==> ((~ (!x. ((?x. ((x = (f x)) /\ (?x. ((P x) /\ (x = (g x)))))) = (?x. ((P x) /\ (x = (f (g x)))))))) ==> F)) ==> (((~ (!x. ((?x. ((x = (f x)) /\ (?x. ((P x) /\ (x = (g x)))))) = (?x. ((P x) /\ (x = (f (g x)))))))) ==> F) ==> ((~ (!x. ((?x. ((x = (f x)) /\ (?x. ((P x) /\ (x = (g x)))))) = (?x. ((P x) /\ (x = (f (g x)))))))) ==> F)))
+T c==> c==> c==> c~ ! c= c? / c/\ c= b0 * f0 b1 c? / c/\ * f1 b2 c= b1 * f2 b2 c? / c/\ * f1 b1 c= b0 * f0 * f2 b1 cF c==> c~ ! c= c? / c/\ c= b0 * f0 b1 c? / c/\ * f1 b2 c= b1 * f2 b2 c? / c/\ * f1 b1 c= b0 * f0 * f2 b1 cF c==> c==> c~ ! c= c? / c/\ c= b0 * f0 b1 c? / c/\ * f1 b2 c= b1 * f2 b2 c? / c/\ * f1 b1 c= b0 * f0 * f2 b1 cF c==> c~ ! c= c? / c/\ c= b0 * f0 b1 c? / c/\ * f1 b2 c= b1 * f2 b2 c? / c/\ * f1 b1 c= b0 * f0 * f2 b1 cF
+- |- (((~ (!x. ((?x. ((x = (f x)) /\ (?x. ((P x) /\ (x = (g x)))))) = (?x. ((P x) /\ (x = (f (g x)))))))) ==> F) ==> ((~ (!x. ((?x. ((x = (f x)) /\ (?x. ((P x) /\ (x = (g x)))))) = (?x. ((P x) /\ (x = (f (g x)))))))) ==> F))
+T c==> c==> c~ ! c= c? / c/\ c= b0 * f0 b1 c? / c/\ * f1 b2 c= b1 * f2 b2 c? / c/\ * f1 b1 c= b0 * f0 * f2 b1 cF c==> c~ ! c= c? / c/\ c= b0 * f0 b1 c? / c/\ * f1 b2 c= b1 * f2 b2 c? / c/\ * f1 b1 c= b0 * f0 * f2 b1 cF
+- (_1220009 = _1220010) |- ((((P _1220009) = (P _1220010)) ==> ((P _1220010) \/ (~ (P _1220009)))) = ((P _1220010) \/ (~ (P _1220009))))
+T c==> c= f0 f1 c= c==> c= * f2 f0 * f2 f1 c\/ * f2 f1 c~ * f2 f0 c\/ * f2 f1 c~ * f2 f0
+- (((NUMERAL (BIT1 _0)) <= i) /\ (i <= (dimindex UNIV))) |- (T = (((NUMERAL (BIT1 _0)) <= i) /\ (i <= (dimindex UNIV))))
+T c==> c/\ c<= cNUMERAL cBIT1 c_0 f0 c<= f0 cdimindex part cUNIV c= cT c/\ c<= cNUMERAL cBIT1 c_0 f0 c<= f0 cdimindex part cUNIV
+- |- ((~ (_1220009 = _1220010)) \/ ((P _1220010) \/ (~ (P _1220009))))
+T c\/ c~ c= f0 f1 c\/ * f2 f1 c~ * f2 f0
+- |- ((T /\ t) = t)
+T c= c/\ cT f0 f0
+- (~ F), (((x = (f x')) /\ ((P x'') /\ (x' = (g x'')))) /\ (!x. ((~ (P x)) \/ (~ (x = (f (g x))))))) |- ((~ F) /\ F)
+T c==> c~ cF c==> c/\ c/\ c= f0 * f1 f2 c/\ * f3 f4 c= f2 * f5 f4 ! c\/ c~ * f3 b0 c~ c= f0 * f1 * f5 b0 c/\ c~ cF cF
+- |- ((?x'. ((x = (f x')) /\ (?x. ((P x) /\ (x = (g x)))))) = ((?x. (x = (f x))) /\ (?x. ((P x) /\ (x = (g x))))))
+T c= c? / c/\ c= f0 * f1 b0 c? / c/\ * f2 b1 c= f3 * f4 b1 c/\ c? / c= f0 * f1 b0 c? / c/\ * f2 b0 c= f3 * f4 b0
+- |- ((!x'. ((~ (x = (f x))) \/ (!x. ((~ (P x)) \/ (~ (x' = (g x))))))) = ((~ (x = (f x))) \/ (!x. (!x. ((~ (P x)) \/ (~ (x = (g x))))))))
+T c= ! c\/ c~ c= f0 * f1 f2 ! c\/ c~ * f3 b1 c~ c= b0 * f4 b1 c\/ c~ c= f0 * f1 f2 ! ! c\/ c~ * f3 b1 c~ c= b0 * f4 b1
+- (!x. ((P x) ==> ((f x) = (g x)))), ((!x. ((~ (P x)) \/ (~ (x = (f x))))) /\ ((P x') /\ (x = (g x')))) |- ((~ ((g x') = (f x'))) ==> ((g x') = (f x')))
+T c==> ! c==> * f0 b0 c= * f1 b0 * f2 b0 c==> c/\ ! c\/ c~ * f0 b0 c~ c= f3 * f1 b0 c/\ * f0 f4 c= f3 * f2 f4 c==> c~ c= * f2 f4 * f1 f4 c= * f2 f4 * f1 f4
+- (((x = (f x')) /\ ((P x'') /\ (x' = (g x'')))) /\ (!x. ((~ (P x)) \/ (~ (x = (f (g x))))))) |- (((~ (P _1219980)) \/ (~ (x = (f (g _1219980))))) = ((~ (P _1219980)) \/ (~ (x = (f (g _1219980))))))
+T c==> c/\ c/\ c= f0 * f1 f2 c/\ * f3 f4 c= f2 * f5 f4 ! c\/ c~ * f3 b0 c~ c= f0 * f1 * f5 b0 c= c\/ c~ * f3 f6 c~ c= f0 * f1 * f5 f6 c\/ c~ * f3 f6 c~ c= f0 * f1 * f5 f6
+- |- ((x IN (GSPEC (\GEN%PVAR%2544. (?x. (((SETSPEC GEN%PVAR%2544) (p x)) x))))) = (p x))
+T c= cIN f0 * part cGSPEC / c? / cSETSPEC b0 * f1 b1 b1 * f1 f0
+- |- ((((~ ((!x. ((P x) ==> ((f x) = (g x)))) ==> (!x. ((?x. ((P x) /\ (x = (f x)))) = (?x. ((P x) /\ (x = (g x)))))))) ==> F) ==> ((~ ((!x. ((P x) ==> ((f x) = (g x)))) ==> (!x. ((?x. ((P x) /\ (x = (f x)))) = (?x. ((P x) /\ (x = (g x)))))))) ==> F)) = ((~ ((!x. ((P x) ==> ((f x) = (g x)))) ==> (!x. ((?x. ((P x) /\ (x = (f x)))) = (?x. ((P x) /\ (x = (g x)))))))) ==> F))
+T c= c==> c==> c~ c==> ! c==> * f0 b0 c= * f1 b0 * f2 b0 ! c= c? / c/\ * f0 b1 c= b0 * f1 b1 c? / c/\ * f0 b1 c= b0 * f2 b1 cF c==> c~ c==> ! c==> * f0 b0 c= * f1 b0 * f2 b0 ! c= c? / c/\ * f0 b1 c= b0 * f1 b1 c? / c/\ * f0 b1 c= b0 * f2 b1 cF c==> c~ c==> ! c==> * f0 b0 c= * f1 b0 * f2 b0 ! c= c? / c/\ * f0 b1 c= b0 * f1 b1 c? / c/\ * f0 b1 c= b0 * f2 b1 cF
+- (((P x') /\ (x = (f x'))) /\ (!x. ((~ (P x)) \/ (~ (x = (g x)))))) |- (F = F)
+T c==> c/\ c/\ * f0 f1 c= f2 * f3 f1 ! c\/ c~ * f0 b0 c~ c= f2 * f4 b0 c= cF cF
+- (~ (P x'')), ((!x. ((~ (x = (f x))) \/ (!x. ((~ (P x)) \/ (~ (x = (g x))))))) /\ ((P x'') /\ (x = (f (g x''))))) |- ((~ (P x'')) /\ (P x''))
+T c==> c~ * f0 f1 c==> c/\ ! c\/ c~ c= f2 * f3 b0 ! c\/ c~ * f0 b1 c~ c= b0 * f4 b1 c/\ * f0 f1 c= f2 * f3 * f4 f1 c/\ c~ * f0 f1 * f0 f1
+- |- (((!f. ((~ ((!x. ((P x) ==> ((f x) = (g x)))) ==> (!x. ((?x. ((P x) /\ (x = (f x)))) = (?x. ((P x) /\ (x = (g x)))))))) ==> F)) ==> ((\f. ((~ ((!x. ((P x) ==> ((f x) = (g x)))) ==> (!x. ((?x. ((P x) /\ (x = (f x)))) = (?x. ((P x) /\ (x = (g x)))))))) ==> F)) f)) = ((\f. ((~ ((!x. ((P x) ==> ((f x) = (g x)))) ==> (!x. ((?x. ((P x) /\ (x = (f x)))) = (?x. ((P x) /\ (x = (g x)))))))) ==> F)) f))
+T c= c==> ! c==> c~ c==> ! c==> * f0 b1 c= * b0 b1 * f1 b1 ! c= c? / c/\ * f0 b2 c= b1 * b0 b2 c? / c/\ * f0 b2 c= b1 * f1 b2 cF * / c==> c~ c==> ! c==> * f0 b1 c= * b0 b1 * f1 b1 ! c= c? / c/\ * f0 b2 c= b1 * b0 b2 c? / c/\ * f0 b2 c= b1 * f1 b2 cF f2 * / c==> c~ c==> ! c==> * f0 b1 c= * b0 b1 * f1 b1 ! c= c? / c/\ * f0 b2 c= b1 * b0 b2 c? / c/\ * f0 b2 c= b1 * f1 b2 cF f2
+- |- ((?x. ((P x) /\ Q)) = ((?x. (P x)) /\ Q))
+T c= c? / c/\ * f0 b0 f1 c/\ c? / * f0 b0 f1
+- (((x = (f x')) /\ ((P x'') /\ (x' = (g x'')))) /\ (!x. ((~ (P x)) \/ (~ (x = (f (g x))))))) |- ((P x'') = (P x''))
+T c==> c/\ c/\ c= f0 * f1 f2 c/\ * f3 f4 c= f2 * f5 f4 ! c\/ c~ * f3 b0 c~ c= f0 * f1 * f5 b0 c= * f3 f4 * f3 f4
+- |- ((?x'. ((P x) /\ (x = (g x')))) = ((P x) /\ (?x. (x = (g x)))))
+T c= c? / c/\ * f0 f1 c= f2 * f3 b0 c/\ * f0 f1 c? / c= f2 * f3 b0
+- |- (T = (((~ (P _1219946)) \/ ((f _1219946) = (g _1219946))) = (((f _1219946) = (g _1219946)) \/ (~ (P _1219946)))))
+T c= cT c= c\/ c~ * f0 f1 c= * f2 f1 * f3 f1 c\/ c= * f2 f1 * f3 f1 c~ * f0 f1
+- |- ((!f. (!P. (!x. ((?x. ((x = (f x)) /\ (?x. ((P x) /\ (x = (g x)))))) = (?x. ((P x) /\ (x = (f (g x))))))))) = T)
+T c= ! ! ! c= c? / c/\ c= b2 * b0 b3 c? / c/\ * b1 b4 c= b3 * f0 b4 c? / c/\ * b1 b3 c= b2 * b0 * f0 b3 cT

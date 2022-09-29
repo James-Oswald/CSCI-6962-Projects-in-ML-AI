@@ -1,0 +1,371 @@
+N IN_SET_OF_LIST
+C |- (!x. (!l. ((x IN (set_of_list l)) = ((MEM x) l))))
+T c= cIN f0 * part cset_of_list f1 cMEM f0 f1
+D TRUTH
+A |- T
+T cT
+D BOOL_CASES_AX
+A |- (!t. ((t = T) \/ (t = F)))
+T c\/ c= f0 cT c= f0 cF
+D NOT_CLAUSES
+A |- ((!t. ((~ (~ t)) = t)) /\ (((~ T) = F) /\ ((~ F) = T)))
+T c/\ ! c= c~ c~ b0 b0 c/\ c= c~ cT cF c= c~ cF cT
+D list_INDUCT
+A |- (!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x))))
+T c==> c/\ * f0 cNIL ! ! c==> * f0 b1 * f0 cCONS b0 b1 ! * f0 b0
+D MEM
+A |- ((((MEM x) NIL) = F) /\ (((MEM x) ((CONS h) t)) = ((x = h) \/ ((MEM x) t))))
+T c/\ c= cMEM f0 cNIL cF c= cMEM f0 cCONS f1 f2 c\/ c= f0 f1 cMEM f0 f2
+D NOT_IN_EMPTY
+A |- (!x. (~ (x IN EMPTY)))
+T c~ cIN f0 part cEMPTY
+D IN_INSERT
+A |- (!x. (!y. (!s. ((x IN (y INSERT s)) = ((x = y) \/ (x IN s))))))
+T c= cIN f0 * * part cINSERT f1 f2 c\/ c= f0 f1 cIN f0 f2
+D set_of_list
+A |- (((set_of_list NIL) = EMPTY) /\ ((set_of_list ((CONS h) t)) = (h INSERT (set_of_list t))))
+T c/\ c= * part cset_of_list cNIL part cEMPTY c= * part cset_of_list cCONS f0 f1 * * part cINSERT f0 * part cset_of_list f1
+- (~ F), (x = h), (((x = h) \/ (x IN (set_of_list t))) /\ ((~ (x = h)) /\ (~ ((MEM x) t)))), ((x IN (set_of_list t)) /\ ((MEM x) t)) |- ((~ F) /\ F)
+T c==> c~ cF c==> c= f0 f1 c==> c/\ c\/ c= f0 f1 cIN f0 * part cset_of_list f2 c/\ c~ c= f0 f1 c~ cMEM f0 f2 c==> c/\ cIN f0 * part cset_of_list f2 cMEM f0 f2 c/\ c~ cF cF
++ (((~ (x = h)) /\ (~ (x IN (set_of_list t)))) /\ ((x = h) \/ ((MEM x) t))) |- ((x IN (set_of_list t)) ==> F)
+T c==> c/\ c/\ c~ c= f0 f1 c~ cIN f0 * part cset_of_list f2 c\/ c= f0 f1 cMEM f0 f2 c==> cIN f0 * part cset_of_list f2 cF
++ (((x = h) \/ (x IN (set_of_list t))) /\ ((~ (x = h)) /\ (~ ((MEM x) t)))), ((x IN (set_of_list t)) /\ ((MEM x) t)) |- (((x IN (set_of_list t)) /\ ((MEM x) t)) /\ F)
+T c==> c/\ c\/ c= f0 f1 cIN f0 * part cset_of_list f2 c/\ c~ c= f0 f1 c~ cMEM f0 f2 c==> c/\ cIN f0 * part cset_of_list f2 cMEM f0 f2 c/\ c/\ cIN f0 * part cset_of_list f2 cMEM f0 f2 cF
+- |- ((\t1. (!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))))) t1)
+T * / ! ! c= c\/ b0 c\/ b1 b2 c\/ c\/ b0 b1 b2 f0
+- |- ((~ (h = h)) ==> (h = h))
+T c==> c~ c= f0 f0 c= f0 f0
++ |- ((x IN (set_of_list NIL)) = ((MEM x) NIL))
+T c= cIN f0 * part cset_of_list cNIL cMEM f0 cNIL
++ (~ (((x = h) \/ (x IN (set_of_list t))) = ((x = h) \/ ((MEM x) t)))), ((((~ (x = h)) /\ (~ (x IN (set_of_list t)))) /\ ((x = h) \/ ((MEM x) t))) ==> F), ((((x = h) \/ (x IN (set_of_list t))) /\ ((~ (x = h)) /\ (~ ((MEM x) t)))) ==> F) |- F
+T c==> c~ c= c\/ c= f0 f1 cIN f0 * part cset_of_list f2 c\/ c= f0 f1 cMEM f0 f2 c==> c==> c/\ c/\ c~ c= f0 f1 c~ cIN f0 * part cset_of_list f2 c\/ c= f0 f1 cMEM f0 f2 cF c==> c==> c/\ c\/ c= f0 f1 cIN f0 * part cset_of_list f2 c/\ c~ c= f0 f1 c~ cMEM f0 f2 cF cF
++ (x = h), ((x IN (set_of_list t)) /\ ((MEM x) t)) |- (((h IN (set_of_list t)) ==> F) = F)
+T c==> c= f0 f1 c==> c/\ cIN f0 * part cset_of_list f2 cMEM f0 f2 c= c==> cIN f1 * part cset_of_list f2 cF cF
++ ((x IN (set_of_list t)) = ((MEM x) t)), (((~ (x = h)) /\ (~ (x IN (set_of_list t)))) /\ ((x = h) \/ ((MEM x) t))) |- ((((~ (x = h)) /\ (~ (x IN (set_of_list t)))) /\ ((x = h) \/ ((MEM x) t))) /\ F)
+T c==> c= cIN f0 * part cset_of_list f1 cMEM f0 f1 c==> c/\ c/\ c~ c= f0 f2 c~ cIN f0 * part cset_of_list f1 c\/ c= f0 f2 cMEM f0 f1 c/\ c/\ c/\ c~ c= f0 f2 c~ cIN f0 * part cset_of_list f1 c\/ c= f0 f2 cMEM f0 f1 cF
++ (x = h), (((x = h) \/ (x IN (set_of_list t))) /\ ((~ (x = h)) /\ (~ ((MEM x) t)))) |- (((x IN (set_of_list t)) /\ ((MEM x) t)) ==> F)
+T c==> c= f0 f1 c==> c/\ c\/ c= f0 f1 cIN f0 * part cset_of_list f2 c/\ c~ c= f0 f1 c~ cMEM f0 f2 c==> c/\ cIN f0 * part cset_of_list f2 cMEM f0 f2 cF
++ ((~ (x IN (set_of_list t))) /\ (~ ((MEM x) t))), (x IN (set_of_list t)) |- F
+T c==> c/\ c~ cIN f0 * part cset_of_list f1 c~ cMEM f0 f1 c==> cIN f0 * part cset_of_list f1 cF
++ (((x = h) \/ (x IN (set_of_list t))) /\ ((~ (x = h)) /\ (~ ((MEM x) t)))) |- (~ (x = h))
+T c==> c/\ c\/ c= f0 f1 cIN f0 * part cset_of_list f2 c/\ c~ c= f0 f1 c~ cMEM f0 f2 c~ c= f0 f1
+- |- ((~ (_43134 = _43135)) \/ ((set_of_list _43134) = (set_of_list _43135)))
+T c\/ c~ c= f0 f1 c= * part cset_of_list f0 * part cset_of_list f1
+- ((~ (x IN (set_of_list t))) /\ (~ ((MEM x) t))), ((MEM x) t) |- ((~ F) ==> F)
+T c==> c/\ c~ cIN f0 * part cset_of_list f1 c~ cMEM f0 f1 c==> cMEM f0 f1 c==> c~ cF cF
+- (~ ((MEM h) t)), (x = h), ((x IN (set_of_list t)) /\ ((MEM x) t)) |- ((~ ((MEM h) t)) /\ ((MEM h) t))
+T c==> c~ cMEM f0 f1 c==> c= f2 f0 c==> c/\ cIN f2 * part cset_of_list f1 cMEM f2 f1 c/\ c~ cMEM f0 f1 cMEM f0 f1
+- |- ((t ==> t) = T)
+T c= c==> f0 f0 cT
+- |- ((t \/ t) = t)
+T c= c\/ f0 f0 f0
+- |- (((!x. (!h. (((x IN (set_of_list t)) = ((MEM x) t)) ==> ((~ (((x = h) \/ (x IN (set_of_list t))) = ((x = h) \/ ((MEM x) t)))) ==> F)))) ==> ((\x. (!h. (((x IN (set_of_list t)) = ((MEM x) t)) ==> ((~ (((x = h) \/ (x IN (set_of_list t))) = ((x = h) \/ ((MEM x) t)))) ==> F)))) x)) = ((\x. (!h. (((x IN (set_of_list t)) = ((MEM x) t)) ==> ((~ (((x = h) \/ (x IN (set_of_list t))) = ((x = h) \/ ((MEM x) t)))) ==> F)))) x))
+T c= c==> ! ! c==> c= cIN b0 * part cset_of_list f0 cMEM b0 f0 c==> c~ c= c\/ c= b0 b1 cIN b0 * part cset_of_list f0 c\/ c= b0 b1 cMEM b0 f0 cF * / ! c==> c= cIN b0 * part cset_of_list f0 cMEM b0 f0 c==> c~ c= c\/ c= b0 b1 cIN b0 * part cset_of_list f0 c\/ c= b0 b1 cMEM b0 f0 cF f1 * / ! c==> c= cIN b0 * part cset_of_list f0 cMEM b0 f0 c==> c~ c= c\/ c= b0 b1 cIN b0 * part cset_of_list f0 c\/ c= b0 b1 cMEM b0 f0 cF f1
++ (x = h), ((x IN (set_of_list t)) = ((MEM x) t)), (((x = h) \/ (x IN (set_of_list t))) /\ ((~ (x = h)) /\ (~ ((MEM x) t)))) |- F
+T c==> c= f0 f1 c==> c= cIN f0 * part cset_of_list f2 cMEM f0 f2 c==> c/\ c\/ c= f0 f1 cIN f0 * part cset_of_list f2 c/\ c~ c= f0 f1 c~ cMEM f0 f2 cF
++ (x = h), ((x IN (set_of_list t)) = ((MEM x) t)), (((x = h) \/ (x IN (set_of_list t))) /\ ((~ (x = h)) /\ (~ ((MEM x) t)))) |- ((x = h) /\ F)
+T c==> c= f0 f1 c==> c= cIN f0 * part cset_of_list f2 cMEM f0 f2 c==> c/\ c\/ c= f0 f1 cIN f0 * part cset_of_list f2 c/\ c~ c= f0 f1 c~ cMEM f0 f2 c/\ c= f0 f1 cF
++ ((x IN (set_of_list t)) /\ ((MEM x) t)) |- ((((MEM x) t) ==> F) = F)
+T c==> c/\ cIN f0 * part cset_of_list f1 cMEM f0 f1 c= c==> cMEM f0 f1 cF cF
+- |- ((\t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))) t3)
+T * / c= c\/ f0 c\/ f1 b0 c\/ c\/ f0 f1 b0 f2
++ |- ((((x IN (set_of_list t)) = ((MEM x) t)) ==> ((x IN (set_of_list ((CONS h) t))) = ((MEM x) ((CONS h) t)))) = T)
+T c= c==> c= cIN f0 * part cset_of_list f1 cMEM f0 f1 c= cIN f0 * part cset_of_list cCONS f2 f1 cMEM f0 cCONS f2 f1 cT
+- |- (((((x IN (set_of_list t)) = ((MEM x) t)) ==> ((~ (((x = h) \/ (x IN (set_of_list t))) = ((x = h) \/ ((MEM x) t)))) ==> F)) ==> (((x IN (set_of_list t)) = ((MEM x) t)) ==> ((~ (((x = h) \/ (x IN (set_of_list t))) = ((x = h) \/ ((MEM x) t)))) ==> F))) ==> ((((x IN (set_of_list t)) = ((MEM x) t)) ==> ((~ (((x = h) \/ (x IN (set_of_list t))) = ((x = h) \/ ((MEM x) t)))) ==> F)) ==> (((x IN (set_of_list t)) = ((MEM x) t)) ==> ((~ (((x = h) \/ (x IN (set_of_list t))) = ((x = h) \/ ((MEM x) t)))) ==> F))))
+T c==> c==> c==> c= cIN f0 * part cset_of_list f1 cMEM f0 f1 c==> c~ c= c\/ c= f0 f2 cIN f0 * part cset_of_list f1 c\/ c= f0 f2 cMEM f0 f1 cF c==> c= cIN f0 * part cset_of_list f1 cMEM f0 f1 c==> c~ c= c\/ c= f0 f2 cIN f0 * part cset_of_list f1 c\/ c= f0 f2 cMEM f0 f1 cF c==> c==> c= cIN f0 * part cset_of_list f1 cMEM f0 f1 c==> c~ c= c\/ c= f0 f2 cIN f0 * part cset_of_list f1 c\/ c= f0 f2 cMEM f0 f1 cF c==> c= cIN f0 * part cset_of_list f1 cMEM f0 f1 c==> c~ c= c\/ c= f0 f2 cIN f0 * part cset_of_list f1 c\/ c= f0 f2 cMEM f0 f1 cF
++ |- (((((x IN (set_of_list NIL)) = ((MEM x) NIL)) /\ (!h. (!t. (((x IN (set_of_list t)) = ((MEM x) t)) ==> ((x IN (set_of_list ((CONS h) t))) = ((MEM x) ((CONS h) t))))))) ==> (!l. ((x IN (set_of_list l)) = ((MEM x) l)))) = (!l. ((x IN (set_of_list l)) = ((MEM x) l))))
+T c= c==> c/\ c= cIN f0 * part cset_of_list cNIL cMEM f0 cNIL ! ! c==> c= cIN f0 * part cset_of_list b1 cMEM f0 b1 c= cIN f0 * part cset_of_list cCONS b0 b1 cMEM f0 cCONS b0 b1 ! c= cIN f0 * part cset_of_list b0 cMEM f0 b0 ! c= cIN f0 * part cset_of_list b0 cMEM f0 b0
+- |- (((~ p) ==> p) = p)
+T c= c==> c~ f0 f0 f0
+- |- ((!h. t) = t)
+T c= ! f0 f0
+- (~ F), (((~ (x = h)) /\ (~ (x IN (set_of_list t)))) /\ ((x = h) \/ ((MEM x) t))), ((x IN (set_of_list t)) /\ ((MEM x) t)) |- ((~ F) /\ F)
+T c==> c~ cF c==> c/\ c/\ c~ c= f0 f1 c~ cIN f0 * part cset_of_list f2 c\/ c= f0 f1 cMEM f0 f2 c==> c/\ cIN f0 * part cset_of_list f2 cMEM f0 f2 c/\ c~ cF cF
++ ((x IN (set_of_list t)) = ((MEM x) t)), (((x = h) \/ (x IN (set_of_list t))) /\ ((~ (x = h)) /\ (~ ((MEM x) t)))) |- ((x = h) ==> F)
+T c==> c= cIN f0 * part cset_of_list f1 cMEM f0 f1 c==> c/\ c\/ c= f0 f2 cIN f0 * part cset_of_list f1 c/\ c~ c= f0 f2 c~ cMEM f0 f1 c==> c= f0 f2 cF
++ (x = h), (((x = h) \/ (x IN (set_of_list t))) /\ ((~ (x = h)) /\ (~ ((MEM x) t)))) |- (~ ((MEM h) t))
+T c==> c= f0 f1 c==> c/\ c\/ c= f0 f1 cIN f0 * part cset_of_list f2 c/\ c~ c= f0 f1 c~ cMEM f0 f2 c~ cMEM f1 f2
++ (x = h), (((~ (x = h)) /\ (~ (x IN (set_of_list t)))) /\ ((x = h) \/ ((MEM x) t))) |- (~ (h = h))
+T c==> c= f0 f1 c==> c/\ c/\ c~ c= f0 f1 c~ cIN f0 * part cset_of_list f2 c\/ c= f0 f1 cMEM f0 f2 c~ c= f1 f1
+- |- ((~ (_43130 = _43132)) \/ ((~ (_43131 = _43133)) \/ ((_43132 IN _43133) \/ (~ (_43130 IN _43131)))))
+T c\/ c~ c= f0 f1 c\/ c~ c= f2 f3 c\/ cIN f1 f3 c~ cIN f0 f2
+- |- ((t ==> F) = (~ t))
+T c= c==> f0 cF c~ f0
++ |- ((F = t) = (~ t))
+T c= c= cF f0 c~ f0
+- (((x IN (set_of_list t)) = ((MEM x) t)) ==> ((~ (((x = h) \/ (x IN (set_of_list t))) = ((x = h) \/ ((MEM x) t)))) ==> F)), ((((x IN (set_of_list t)) = ((MEM x) t)) ==> ((~ (((x = h) \/ (x IN (set_of_list t))) = ((x = h) \/ ((MEM x) t)))) ==> F)) ==> (((x IN (set_of_list t)) = ((MEM x) t)) ==> ((~ (((x = h) \/ (x IN (set_of_list t))) = ((x = h) \/ ((MEM x) t)))) ==> F))) |- ((((x IN (set_of_list t)) = ((MEM x) t)) ==> ((~ (((x = h) \/ (x IN (set_of_list t))) = ((x = h) \/ ((MEM x) t)))) ==> F)) /\ (((x IN (set_of_list t)) = ((MEM x) t)) ==> ((~ (((x = h) \/ (x IN (set_of_list t))) = ((x = h) \/ ((MEM x) t)))) ==> F)))
+T c==> c==> c= cIN f0 * part cset_of_list f1 cMEM f0 f1 c==> c~ c= c\/ c= f0 f2 cIN f0 * part cset_of_list f1 c\/ c= f0 f2 cMEM f0 f1 cF c==> c==> c==> c= cIN f0 * part cset_of_list f1 cMEM f0 f1 c==> c~ c= c\/ c= f0 f2 cIN f0 * part cset_of_list f1 c\/ c= f0 f2 cMEM f0 f1 cF c==> c= cIN f0 * part cset_of_list f1 cMEM f0 f1 c==> c~ c= c\/ c= f0 f2 cIN f0 * part cset_of_list f1 c\/ c= f0 f2 cMEM f0 f1 cF c/\ c==> c= cIN f0 * part cset_of_list f1 cMEM f0 f1 c==> c~ c= c\/ c= f0 f2 cIN f0 * part cset_of_list f1 c\/ c= f0 f2 cMEM f0 f1 cF c==> c= cIN f0 * part cset_of_list f1 cMEM f0 f1 c==> c~ c= c\/ c= f0 f2 cIN f0 * part cset_of_list f1 c\/ c= f0 f2 cMEM f0 f1 cF
+- |- ((\t. (!x. (!h. (((x IN (set_of_list t)) = ((MEM x) t)) ==> ((~ (((x = h) \/ (x IN (set_of_list t))) = ((x = h) \/ ((MEM x) t)))) ==> F))))) t)
+T * / ! ! c==> c= cIN b1 * part cset_of_list b0 cMEM b1 b0 c==> c~ c= c\/ c= b1 b2 cIN b1 * part cset_of_list b0 c\/ c= b1 b2 cMEM b1 b0 cF f0
++ |- (((~ (((x = h) \/ (x IN (set_of_list t))) = ((x = h) \/ ((MEM x) t)))) ==> F) = (((x = h) \/ (x IN (set_of_list t))) = ((x = h) \/ ((MEM x) t))))
+T c= c==> c~ c= c\/ c= f0 f1 cIN f0 * part cset_of_list f2 c\/ c= f0 f1 cMEM f0 f2 cF c= c\/ c= f0 f1 cIN f0 * part cset_of_list f2 c\/ c= f0 f1 cMEM f0 f2
++ |- (p = ((~ p) ==> F))
+T c= f0 c==> c~ f0 cF
+- (~ F), (((x = h) \/ (x IN (set_of_list t))) /\ ((~ (x = h)) /\ (~ ((MEM x) t)))), ((x IN (set_of_list t)) /\ ((MEM x) t)) |- ((~ F) /\ F)
+T c==> c~ cF c==> c/\ c\/ c= f0 f1 cIN f0 * part cset_of_list f2 c/\ c~ c= f0 f1 c~ cMEM f0 f2 c==> c/\ cIN f0 * part cset_of_list f2 cMEM f0 f2 c/\ c~ cF cF
+- (_43126 = _43128), (_43127 = _43129) |- ((_43127 = _43129) /\ (((MEM _43128) _43129) \/ (~ ((MEM _43126) _43127))))
+T c==> c= f0 f1 c==> c= f2 f3 c/\ c= f2 f3 c\/ cMEM f1 f3 c~ cMEM f0 f2
+- |- ((((((x IN (set_of_list t)) = ((MEM x) t)) ==> ((~ (((x = h) \/ (x IN (set_of_list t))) = ((x = h) \/ ((MEM x) t)))) ==> F)) ==> (((x IN (set_of_list t)) = ((MEM x) t)) ==> ((~ (((x = h) \/ (x IN (set_of_list t))) = ((x = h) \/ ((MEM x) t)))) ==> F))) ==> ((((x IN (set_of_list t)) = ((MEM x) t)) ==> ((~ (((x = h) \/ (x IN (set_of_list t))) = ((x = h) \/ ((MEM x) t)))) ==> F)) ==> (((x IN (set_of_list t)) = ((MEM x) t)) ==> ((~ (((x = h) \/ (x IN (set_of_list t))) = ((x = h) \/ ((MEM x) t)))) ==> F)))) = ((((x IN (set_of_list t)) = ((MEM x) t)) ==> ((~ (((x = h) \/ (x IN (set_of_list t))) = ((x = h) \/ ((MEM x) t)))) ==> F)) ==> (((x IN (set_of_list t)) = ((MEM x) t)) ==> ((~ (((x = h) \/ (x IN (set_of_list t))) = ((x = h) \/ ((MEM x) t)))) ==> F))))
+T c= c==> c==> c==> c= cIN f0 * part cset_of_list f1 cMEM f0 f1 c==> c~ c= c\/ c= f0 f2 cIN f0 * part cset_of_list f1 c\/ c= f0 f2 cMEM f0 f1 cF c==> c= cIN f0 * part cset_of_list f1 cMEM f0 f1 c==> c~ c= c\/ c= f0 f2 cIN f0 * part cset_of_list f1 c\/ c= f0 f2 cMEM f0 f1 cF c==> c==> c= cIN f0 * part cset_of_list f1 cMEM f0 f1 c==> c~ c= c\/ c= f0 f2 cIN f0 * part cset_of_list f1 c\/ c= f0 f2 cMEM f0 f1 cF c==> c= cIN f0 * part cset_of_list f1 cMEM f0 f1 c==> c~ c= c\/ c= f0 f2 cIN f0 * part cset_of_list f1 c\/ c= f0 f2 cMEM f0 f1 cF c==> c==> c= cIN f0 * part cset_of_list f1 cMEM f0 f1 c==> c~ c= c\/ c= f0 f2 cIN f0 * part cset_of_list f1 c\/ c= f0 f2 cMEM f0 f1 cF c==> c= cIN f0 * part cset_of_list f1 cMEM f0 f1 c==> c~ c= c\/ c= f0 f2 cIN f0 * part cset_of_list f1 c\/ c= f0 f2 cMEM f0 f1 cF
+- (x IN (set_of_list t)) |- ((~ (x IN (set_of_list t))) ==> (x IN (set_of_list t)))
+T c==> cIN f0 * part cset_of_list f1 c==> c~ cIN f0 * part cset_of_list f1 cIN f0 * part cset_of_list f1
++ (x = h), ((~ (x IN (set_of_list t))) /\ (~ ((MEM x) t))), (((~ (x = h)) /\ (~ (x IN (set_of_list t)))) /\ ((x = h) \/ ((MEM x) t))) |- (((~ (x IN (set_of_list t))) /\ (~ ((MEM x) t))) /\ F)
+T c==> c= f0 f1 c==> c/\ c~ cIN f0 * part cset_of_list f2 c~ cMEM f0 f2 c==> c/\ c/\ c~ c= f0 f1 c~ cIN f0 * part cset_of_list f2 c\/ c= f0 f1 cMEM f0 f2 c/\ c/\ c~ cIN f0 * part cset_of_list f2 c~ cMEM f0 f2 cF
++ (((~ (x = h)) /\ (~ (x IN (set_of_list t)))) /\ ((x = h) \/ ((MEM x) t))), ((x IN (set_of_list t)) /\ ((MEM x) t)) |- (((x IN (set_of_list t)) /\ ((MEM x) t)) /\ F)
+T c==> c/\ c/\ c~ c= f0 f1 c~ cIN f0 * part cset_of_list f2 c\/ c= f0 f1 cMEM f0 f2 c==> c/\ cIN f0 * part cset_of_list f2 cMEM f0 f2 c/\ c/\ cIN f0 * part cset_of_list f2 cMEM f0 f2 cF
++ (~ (((x = h) \/ (x IN (set_of_list t))) = ((x = h) \/ ((MEM x) t)))), ((x IN (set_of_list t)) = ((MEM x) t)) |- ((~ (((x = h) \/ (x IN (set_of_list t))) = ((x = h) \/ ((MEM x) t)))) /\ F)
+T c==> c~ c= c\/ c= f0 f1 cIN f0 * part cset_of_list f2 c\/ c= f0 f1 cMEM f0 f2 c==> c= cIN f0 * part cset_of_list f2 cMEM f0 f2 c/\ c~ c= c\/ c= f0 f1 cIN f0 * part cset_of_list f2 c\/ c= f0 f1 cMEM f0 f2 cF
+- (x = h), (((~ (x = h)) /\ (~ (x IN (set_of_list t)))) /\ ((x = h) \/ ((MEM x) t))) |- ((~ F) ==> F)
+T c==> c= f0 f1 c==> c/\ c/\ c~ c= f0 f1 c~ cIN f0 * part cset_of_list f2 c\/ c= f0 f1 cMEM f0 f2 c==> c~ cF cF
++ |- ((((x = h) \/ (x IN (set_of_list t))) = ((x = h) \/ ((MEM x) t))) = ((x IN (set_of_list ((CONS h) t))) = ((MEM x) ((CONS h) t))))
+T c= c= c\/ c= f0 f1 cIN f0 * part cset_of_list f2 c\/ c= f0 f1 cMEM f0 f2 c= cIN f0 * part cset_of_list cCONS f1 f2 cMEM f0 cCONS f1 f2
++ |- (((MEM x) ((CONS h) t)) = ((x = h) \/ ((MEM x) t)))
+T c= cMEM f0 cCONS f1 f2 c\/ c= f0 f1 cMEM f0 f2
+- (~ F), (x = h), (((x = h) \/ (x IN (set_of_list t))) /\ ((~ (x = h)) /\ (~ ((MEM x) t)))) |- ((~ F) /\ F)
+T c==> c~ cF c==> c= f0 f1 c==> c/\ c\/ c= f0 f1 cIN f0 * part cset_of_list f2 c/\ c~ c= f0 f1 c~ cMEM f0 f2 c/\ c~ cF cF
+- ((((x IN (set_of_list t)) = ((MEM x) t)) ==> ((~ (((x = h) \/ (x IN (set_of_list t))) = ((x = h) \/ ((MEM x) t)))) ==> F)) ==> (((x IN (set_of_list t)) = ((MEM x) t)) ==> ((~ (((x = h) \/ (x IN (set_of_list t))) = ((x = h) \/ ((MEM x) t)))) ==> F))) |- (((((x IN (set_of_list t)) = ((MEM x) t)) ==> ((~ (((x = h) \/ (x IN (set_of_list t))) = ((x = h) \/ ((MEM x) t)))) ==> F)) ==> (((x IN (set_of_list t)) = ((MEM x) t)) ==> ((~ (((x = h) \/ (x IN (set_of_list t))) = ((x = h) \/ ((MEM x) t)))) ==> F))) /\ ((((x IN (set_of_list t)) = ((MEM x) t)) ==> ((~ (((x = h) \/ (x IN (set_of_list t))) = ((x = h) \/ ((MEM x) t)))) ==> F)) ==> (((x IN (set_of_list t)) = ((MEM x) t)) ==> ((~ (((x = h) \/ (x IN (set_of_list t))) = ((x = h) \/ ((MEM x) t)))) ==> F))))
+T c==> c==> c==> c= cIN f0 * part cset_of_list f1 cMEM f0 f1 c==> c~ c= c\/ c= f0 f2 cIN f0 * part cset_of_list f1 c\/ c= f0 f2 cMEM f0 f1 cF c==> c= cIN f0 * part cset_of_list f1 cMEM f0 f1 c==> c~ c= c\/ c= f0 f2 cIN f0 * part cset_of_list f1 c\/ c= f0 f2 cMEM f0 f1 cF c/\ c==> c==> c= cIN f0 * part cset_of_list f1 cMEM f0 f1 c==> c~ c= c\/ c= f0 f2 cIN f0 * part cset_of_list f1 c\/ c= f0 f2 cMEM f0 f1 cF c==> c= cIN f0 * part cset_of_list f1 cMEM f0 f1 c==> c~ c= c\/ c= f0 f2 cIN f0 * part cset_of_list f1 c\/ c= f0 f2 cMEM f0 f1 cF c==> c==> c= cIN f0 * part cset_of_list f1 cMEM f0 f1 c==> c~ c= c\/ c= f0 f2 cIN f0 * part cset_of_list f1 c\/ c= f0 f2 cMEM f0 f1 cF c==> c= cIN f0 * part cset_of_list f1 cMEM f0 f1 c==> c~ c= c\/ c= f0 f2 cIN f0 * part cset_of_list f1 c\/ c= f0 f2 cMEM f0 f1 cF
+- |- ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))
+T c= c\/ f0 c\/ f1 f2 c\/ c\/ f0 f1 f2
++ (((~ (x = h)) /\ (~ (x IN (set_of_list t)))) /\ ((x = h) \/ ((MEM x) t))), ((x = h) ==> F), (((MEM x) t) ==> F) |- F
+T c==> c/\ c/\ c~ c= f0 f1 c~ cIN f0 * part cset_of_list f2 c\/ c= f0 f1 cMEM f0 f2 c==> c==> c= f0 f1 cF c==> c==> cMEM f0 f2 cF cF
++ (x = h), ((~ (x IN (set_of_list t))) /\ (~ ((MEM x) t))), (((x = h) \/ (x IN (set_of_list t))) /\ ((~ (x = h)) /\ (~ ((MEM x) t)))) |- (((~ (x IN (set_of_list t))) /\ (~ ((MEM x) t))) /\ F)
+T c==> c= f0 f1 c==> c/\ c~ cIN f0 * part cset_of_list f2 c~ cMEM f0 f2 c==> c/\ c\/ c= f0 f1 cIN f0 * part cset_of_list f2 c/\ c~ c= f0 f1 c~ cMEM f0 f2 c/\ c/\ c~ cIN f0 * part cset_of_list f2 c~ cMEM f0 f2 cF
+- (_43126 = _43128) |- ((_43126 = _43128) /\ ((~ (_43127 = _43129)) \/ (((MEM _43128) _43129) \/ (~ ((MEM _43126) _43127)))))
+T c==> c= f0 f1 c/\ c= f0 f1 c\/ c~ c= f2 f3 c\/ cMEM f1 f3 c~ cMEM f0 f2
+- |- ((_43126 = _43128) ==> ((~ (_43127 = _43129)) \/ (((MEM _43128) _43129) \/ (~ ((MEM _43126) _43127)))))
+T c==> c= f0 f1 c\/ c~ c= f2 f3 c\/ cMEM f1 f3 c~ cMEM f0 f2
++ |- (((!x. (~ (x IN EMPTY))) ==> ((\x. (~ (x IN EMPTY))) x)) = ((\x. (~ (x IN EMPTY))) x))
+T c= c==> ! c~ cIN b0 part cEMPTY * / c~ cIN b0 part cEMPTY f0 * / c~ cIN b0 part cEMPTY f0
++ ((x IN (set_of_list t)) = ((MEM x) t)) |- ((((~ (x = h)) /\ (~ (x IN (set_of_list t)))) /\ ((x = h) \/ ((MEM x) t))) ==> F)
+T c==> c= cIN f0 * part cset_of_list f1 cMEM f0 f1 c==> c/\ c/\ c~ c= f0 f2 c~ cIN f0 * part cset_of_list f1 c\/ c= f0 f2 cMEM f0 f1 cF
++ (x = h), (((~ (x = h)) /\ (~ (x IN (set_of_list t)))) /\ ((x = h) \/ ((MEM x) t))) |- (~ (h IN (set_of_list t)))
+T c==> c= f0 f1 c==> c/\ c/\ c~ c= f0 f1 c~ cIN f0 * part cset_of_list f2 c\/ c= f0 f1 cMEM f0 f2 c~ cIN f1 * part cset_of_list f2
+- (x = h), (((x = h) \/ (x IN (set_of_list t))) /\ ((~ (x = h)) /\ (~ ((MEM x) t)))) |- ((~ F) ==> F)
+T c==> c= f0 f1 c==> c/\ c\/ c= f0 f1 cIN f0 * part cset_of_list f2 c/\ c~ c= f0 f1 c~ cMEM f0 f2 c==> c~ cF cF
+- |- ((\t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3)))) t2)
+T * / ! c= c\/ f0 c\/ b0 b1 c\/ c\/ f0 b0 b1 f1
++ (x = h) |- ((~ (x IN (set_of_list t))) = (~ (h IN (set_of_list t))))
+T c==> c= f0 f1 c= c~ cIN f0 * part cset_of_list f2 c~ cIN f1 * part cset_of_list f2
++ ((x IN (set_of_list t)) /\ ((MEM x) t)) |- (((x IN (set_of_list t)) ==> F) = F)
+T c==> c/\ cIN f0 * part cset_of_list f1 cMEM f0 f1 c= c==> cIN f0 * part cset_of_list f1 cF cF
++ (x = h), (((x = h) \/ (x IN (set_of_list t))) /\ ((~ (x = h)) /\ (~ ((MEM x) t)))) |- (((MEM h) t) ==> F)
+T c==> c= f0 f1 c==> c/\ c\/ c= f0 f1 cIN f0 * part cset_of_list f2 c/\ c~ c= f0 f1 c~ cMEM f0 f2 c==> cMEM f1 f2 cF
+- |- ((!x. (!h. (((x IN (set_of_list t)) = ((MEM x) t)) ==> (((x = h) \/ (x IN (set_of_list t))) = ((x = h) \/ ((MEM x) t)))))) = T)
+T c= ! ! c==> c= cIN b0 * part cset_of_list f0 cMEM b0 f0 c= c\/ c= b0 b1 cIN b0 * part cset_of_list f0 c\/ c= b0 b1 cMEM b0 f0 cT
++ |- (((h = h) ==> F) = F)
+T c= c==> c= f0 f0 cF cF
++ (x = h) |- (((MEM x) t) = ((MEM h) t))
+T c==> c= f0 f1 c= cMEM f0 f2 cMEM f1 f2
+- (x = h), (((x = h) \/ (x IN (set_of_list t))) /\ ((~ (x = h)) /\ (~ ((MEM x) t)))), ((x IN (set_of_list t)) /\ ((MEM x) t)) |- ((~ F) ==> F)
+T c==> c= f0 f1 c==> c/\ c\/ c= f0 f1 cIN f0 * part cset_of_list f2 c/\ c~ c= f0 f1 c~ cMEM f0 f2 c==> c/\ cIN f0 * part cset_of_list f2 cMEM f0 f2 c==> c~ cF cF
++ |- (((~ (x IN EMPTY)) ==> ((x IN EMPTY) = F)) = ((x IN EMPTY) = F))
+T c= c==> c~ cIN f0 part cEMPTY c= cIN f0 part cEMPTY cF c= cIN f0 part cEMPTY cF
+- |- (((!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3)))) ==> ((\t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3)))) t2)) = ((\t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3)))) t2))
+T c= c==> ! ! c= c\/ f0 c\/ b0 b1 c\/ c\/ f0 b0 b1 * / ! c= c\/ f0 c\/ b0 b1 c\/ c\/ f0 b0 b1 f1 * / ! c= c\/ f0 c\/ b0 b1 c\/ c\/ f0 b0 b1 f1
++ |- ((\x. (!y. (!s. ((x IN (y INSERT s)) = ((x = y) \/ (x IN s)))))) x)
+T * / ! ! c= cIN b0 * * part cINSERT b1 b2 c\/ c= b0 b1 cIN b0 b2 f0
+- (~ F), ((~ (x IN (set_of_list t))) /\ (~ ((MEM x) t))), ((MEM x) t) |- ((~ F) /\ F)
+T c==> c~ cF c==> c/\ c~ cIN f0 * part cset_of_list f1 c~ cMEM f0 f1 c==> cMEM f0 f1 c/\ c~ cF cF
++ ((x IN (set_of_list t)) = ((MEM x) t)), (((~ (x = h)) /\ (~ (x IN (set_of_list t)))) /\ ((x = h) \/ ((MEM x) t))), (((~ (x IN (set_of_list t))) /\ (~ ((MEM x) t))) ==> F) |- F
+T c==> c= cIN f0 * part cset_of_list f1 cMEM f0 f1 c==> c/\ c/\ c~ c= f0 f2 c~ cIN f0 * part cset_of_list f1 c\/ c= f0 f2 cMEM f0 f1 c==> c==> c/\ c~ cIN f0 * part cset_of_list f1 c~ cMEM f0 f1 cF cF
++ (~ (((x = h) \/ (x IN (set_of_list t))) = ((x = h) \/ ((MEM x) t)))), ((x IN (set_of_list t)) = ((MEM x) t)), ((((~ (x = h)) /\ (~ (x IN (set_of_list t)))) /\ ((x = h) \/ ((MEM x) t))) ==> F) |- F
+T c==> c~ c= c\/ c= f0 f1 cIN f0 * part cset_of_list f2 c\/ c= f0 f1 cMEM f0 f2 c==> c= cIN f0 * part cset_of_list f2 cMEM f0 f2 c==> c==> c/\ c/\ c~ c= f0 f1 c~ cIN f0 * part cset_of_list f2 c\/ c= f0 f1 cMEM f0 f2 cF cF
++ (x = h), (((x = h) \/ (x IN (set_of_list t))) /\ ((~ (x = h)) /\ (~ ((MEM x) t)))), ((x IN (set_of_list t)) /\ ((MEM x) t)) |- (((x IN (set_of_list t)) /\ ((MEM x) t)) /\ F)
+T c==> c= f0 f1 c==> c/\ c\/ c= f0 f1 cIN f0 * part cset_of_list f2 c/\ c~ c= f0 f1 c~ cMEM f0 f2 c==> c/\ cIN f0 * part cset_of_list f2 cMEM f0 f2 c/\ c/\ cIN f0 * part cset_of_list f2 cMEM f0 f2 cF
+- |- ((_43130 = _43132) ==> ((~ (_43131 = _43133)) \/ ((_43132 IN _43133) \/ (~ (_43130 IN _43131)))))
+T c==> c= f0 f1 c\/ c~ c= f2 f3 c\/ cIN f1 f3 c~ cIN f0 f2
++ (x = h), (((~ (x = h)) /\ (~ (x IN (set_of_list t)))) /\ ((x = h) \/ ((MEM x) t))), ((x IN (set_of_list t)) /\ ((MEM x) t)) |- (((x IN (set_of_list t)) /\ ((MEM x) t)) /\ F)
+T c==> c= f0 f1 c==> c/\ c/\ c~ c= f0 f1 c~ cIN f0 * part cset_of_list f2 c\/ c= f0 f1 cMEM f0 f2 c==> c/\ cIN f0 * part cset_of_list f2 cMEM f0 f2 c/\ c/\ cIN f0 * part cset_of_list f2 cMEM f0 f2 cF
++ ((x IN (set_of_list t)) = ((MEM x) t)) |- (((x IN (set_of_list t)) /\ ((MEM x) t)) \/ ((~ (x IN (set_of_list t))) /\ (~ ((MEM x) t))))
+T c==> c= cIN f0 * part cset_of_list f1 cMEM f0 f1 c\/ c/\ cIN f0 * part cset_of_list f1 cMEM f0 f1 c/\ c~ cIN f0 * part cset_of_list f1 c~ cMEM f0 f1
+- |- ((x = x) = T)
+T c= c= f0 f0 cT
++ |- ((\y. (!s. ((x IN (y INSERT s)) = ((x = y) \/ (x IN s))))) y)
+T * / ! c= cIN f0 * * part cINSERT b0 b1 c\/ c= f0 b0 cIN f0 b1 f1
+- |- ((a ==> b) = ((~ a) \/ b))
+T c= c==> f0 f1 c\/ c~ f0 f1
+- ((MEM x) t) |- ((~ ((MEM x) t)) ==> ((MEM x) t))
+T c==> cMEM f0 f1 c==> c~ cMEM f0 f1 cMEM f0 f1
++ (((x = h) \/ (x IN (set_of_list t))) /\ ((~ (x = h)) /\ (~ ((MEM x) t)))) |- (~ ((MEM x) t))
+T c==> c/\ c\/ c= f0 f1 cIN f0 * part cset_of_list f2 c/\ c~ c= f0 f1 c~ cMEM f0 f2 c~ cMEM f0 f2
+- (~ F), (x = h), (((~ (x = h)) /\ (~ (x IN (set_of_list t)))) /\ ((x = h) \/ ((MEM x) t))), ((x IN (set_of_list t)) /\ ((MEM x) t)) |- ((~ F) /\ F)
+T c==> c~ cF c==> c= f0 f1 c==> c/\ c/\ c~ c= f0 f1 c~ cIN f0 * part cset_of_list f2 c\/ c= f0 f1 cMEM f0 f2 c==> c/\ cIN f0 * part cset_of_list f2 cMEM f0 f2 c/\ c~ cF cF
++ ((x IN (set_of_list t)) = ((MEM x) t)), (((x = h) \/ (x IN (set_of_list t))) /\ ((~ (x = h)) /\ (~ ((MEM x) t)))) |- ((((x = h) \/ (x IN (set_of_list t))) /\ ((~ (x = h)) /\ (~ ((MEM x) t)))) /\ F)
+T c==> c= cIN f0 * part cset_of_list f1 cMEM f0 f1 c==> c/\ c\/ c= f0 f2 cIN f0 * part cset_of_list f1 c/\ c~ c= f0 f2 c~ cMEM f0 f1 c/\ c/\ c\/ c= f0 f2 cIN f0 * part cset_of_list f1 c/\ c~ c= f0 f2 c~ cMEM f0 f1 cF
+- |- ((!h. (((x IN (set_of_list t)) = ((MEM x) t)) ==> (((x = h) \/ (x IN (set_of_list t))) = ((x = h) \/ ((MEM x) t))))) = T)
+T c= ! c==> c= cIN f0 * part cset_of_list f1 cMEM f0 f1 c= c\/ c= f0 b0 cIN f0 * part cset_of_list f1 c\/ c= f0 b0 cMEM f0 f1 cT
++ ((~ (x IN (set_of_list t))) /\ (~ ((MEM x) t))), (x IN (set_of_list t)) |- (((~ (x IN (set_of_list t))) /\ (~ ((MEM x) t))) /\ F)
+T c==> c/\ c~ cIN f0 * part cset_of_list f1 c~ cMEM f0 f1 c==> cIN f0 * part cset_of_list f1 c/\ c/\ c~ cIN f0 * part cset_of_list f1 c~ cMEM f0 f1 cF
+- (x = h) |- (F = F)
+T c==> c= f0 f1 c= cF cF
++ ((x IN (set_of_list t)) = ((MEM x) t)), (((~ (x = h)) /\ (~ (x IN (set_of_list t)))) /\ ((x = h) \/ ((MEM x) t))), ((MEM x) t) |- (((MEM x) t) /\ F)
+T c==> c= cIN f0 * part cset_of_list f1 cMEM f0 f1 c==> c/\ c/\ c~ c= f0 f2 c~ cIN f0 * part cset_of_list f1 c\/ c= f0 f2 cMEM f0 f1 c==> cMEM f0 f1 c/\ cMEM f0 f1 cF
+- |- ((_43134 = _43135) ==> ((set_of_list _43134) = (set_of_list _43135)))
+T c==> c= f0 f1 c= * part cset_of_list f0 * part cset_of_list f1
++ ((x IN (set_of_list t)) = ((MEM x) t)), (((x = h) \/ (x IN (set_of_list t))) /\ ((~ (x = h)) /\ (~ ((MEM x) t)))), ((x IN (set_of_list t)) ==> F) |- F
+T c==> c= cIN f0 * part cset_of_list f1 cMEM f0 f1 c==> c/\ c\/ c= f0 f2 cIN f0 * part cset_of_list f1 c/\ c~ c= f0 f2 c~ cMEM f0 f1 c==> c==> cIN f0 * part cset_of_list f1 cF cF
++ (x = h), ((x IN (set_of_list t)) /\ ((MEM x) t)) |- ((((MEM h) t) ==> F) = F)
+T c==> c= f0 f1 c==> c/\ cIN f0 * part cset_of_list f2 cMEM f0 f2 c= c==> cMEM f1 f2 cF cF
++ |- (((!s. ((x IN (y INSERT s)) = ((x = y) \/ (x IN s)))) ==> ((\s. ((x IN (y INSERT s)) = ((x = y) \/ (x IN s)))) s)) = ((\s. ((x IN (y INSERT s)) = ((x = y) \/ (x IN s)))) s))
+T c= c==> ! c= cIN f0 * * part cINSERT f1 b0 c\/ c= f0 f1 cIN f0 b0 * / c= cIN f0 * * part cINSERT f1 b0 c\/ c= f0 f1 cIN f0 b0 f2 * / c= cIN f0 * * part cINSERT f1 b0 c\/ c= f0 f1 cIN f0 b0 f2
++ (x = h), (((~ (x = h)) /\ (~ (x IN (set_of_list t)))) /\ ((x = h) \/ ((MEM x) t))) |- F
+T c==> c= f0 f1 c==> c/\ c/\ c~ c= f0 f1 c~ cIN f0 * part cset_of_list f2 c\/ c= f0 f1 cMEM f0 f2 cF
++ |- ((\x. (~ (x IN EMPTY))) x)
+T * / c~ cIN b0 part cEMPTY f0
+- (~ ((MEM x) t)), ((x IN (set_of_list t)) /\ ((MEM x) t)) |- ((~ ((MEM x) t)) /\ ((MEM x) t))
+T c==> c~ cMEM f0 f1 c==> c/\ cIN f0 * part cset_of_list f1 cMEM f0 f1 c/\ c~ cMEM f0 f1 cMEM f0 f1
+- (~ F), (x = h), (((~ (x = h)) /\ (~ (x IN (set_of_list t)))) /\ ((x = h) \/ ((MEM x) t))) |- ((~ F) /\ F)
+T c==> c~ cF c==> c= f0 f1 c==> c/\ c/\ c~ c= f0 f1 c~ cIN f0 * part cset_of_list f2 c\/ c= f0 f1 cMEM f0 f2 c/\ c~ cF cF
++ (x = h), (((x = h) \/ (x IN (set_of_list t))) /\ ((~ (x = h)) /\ (~ ((MEM x) t)))) |- F
+T c==> c= f0 f1 c==> c/\ c\/ c= f0 f1 cIN f0 * part cset_of_list f2 c/\ c~ c= f0 f1 c~ cMEM f0 f2 cF
+- |- (((t1 \/ t2) \/ t3) = (t1 \/ (t2 \/ t3)))
+T c= c\/ c\/ f0 f1 f2 c\/ f0 c\/ f1 f2
++ (x = h), (((x = h) \/ (x IN (set_of_list t))) /\ ((~ (x = h)) /\ (~ ((MEM x) t)))) |- (((~ (x IN (set_of_list t))) /\ (~ ((MEM x) t))) ==> F)
+T c==> c= f0 f1 c==> c/\ c\/ c= f0 f1 cIN f0 * part cset_of_list f2 c/\ c~ c= f0 f1 c~ cMEM f0 f2 c==> c/\ c~ cIN f0 * part cset_of_list f2 c~ cMEM f0 f2 cF
++ (x = h), (((x = h) \/ (x IN (set_of_list t))) /\ ((~ (x = h)) /\ (~ ((MEM x) t)))) |- ((h = h) ==> F)
+T c==> c= f0 f1 c==> c/\ c\/ c= f0 f1 cIN f0 * part cset_of_list f2 c/\ c~ c= f0 f1 c~ cMEM f0 f2 c==> c= f1 f1 cF
++ (x = h) |- ((~ ((MEM x) t)) = (~ ((MEM h) t)))
+T c==> c= f0 f1 c= c~ cMEM f0 f2 c~ cMEM f1 f2
++ (x = h) |- ((x IN (set_of_list t)) = (h IN (set_of_list t)))
+T c==> c= f0 f1 c= cIN f0 * part cset_of_list f2 cIN f1 * part cset_of_list f2
++ ((MEM x) t) |- (((~ (x IN (set_of_list t))) /\ (~ ((MEM x) t))) ==> F)
+T c==> cMEM f0 f1 c==> c/\ c~ cIN f0 * part cset_of_list f1 c~ cMEM f0 f1 cF
+- (~ F), ((~ (x IN (set_of_list t))) /\ (~ ((MEM x) t))), (x IN (set_of_list t)) |- ((~ F) /\ F)
+T c==> c~ cF c==> c/\ c~ cIN f0 * part cset_of_list f1 c~ cMEM f0 f1 c==> cIN f0 * part cset_of_list f1 c/\ c~ cF cF
+- (_43130 = _43132) |- ((_43130 = _43132) /\ ((~ (_43131 = _43133)) \/ ((_43132 IN _43133) \/ (~ (_43130 IN _43131)))))
+T c==> c= f0 f1 c/\ c= f0 f1 c\/ c~ c= f2 f3 c\/ cIN f1 f3 c~ cIN f0 f2
+- |- (((((x IN (set_of_list t)) = ((MEM x) t)) ==> ((~ (((x = h) \/ (x IN (set_of_list t))) = ((x = h) \/ ((MEM x) t)))) ==> F)) ==> (((x IN (set_of_list t)) = ((MEM x) t)) ==> ((~ (((x = h) \/ (x IN (set_of_list t))) = ((x = h) \/ ((MEM x) t)))) ==> F))) = (((x IN (set_of_list t)) = ((MEM x) t)) ==> ((~ (((x = h) \/ (x IN (set_of_list t))) = ((x = h) \/ ((MEM x) t)))) ==> F)))
+T c= c==> c==> c= cIN f0 * part cset_of_list f1 cMEM f0 f1 c==> c~ c= c\/ c= f0 f2 cIN f0 * part cset_of_list f1 c\/ c= f0 f2 cMEM f0 f1 cF c==> c= cIN f0 * part cset_of_list f1 cMEM f0 f1 c==> c~ c= c\/ c= f0 f2 cIN f0 * part cset_of_list f1 c\/ c= f0 f2 cMEM f0 f1 cF c==> c= cIN f0 * part cset_of_list f1 cMEM f0 f1 c==> c~ c= c\/ c= f0 f2 cIN f0 * part cset_of_list f1 c\/ c= f0 f2 cMEM f0 f1 cF
++ (~ (((x = h) \/ (x IN (set_of_list t))) = ((x = h) \/ ((MEM x) t)))) |- ((((x = h) \/ (x IN (set_of_list t))) /\ ((~ (x = h)) /\ (~ ((MEM x) t)))) \/ (((~ (x = h)) /\ (~ (x IN (set_of_list t)))) /\ ((x = h) \/ ((MEM x) t))))
+T c==> c~ c= c\/ c= f0 f1 cIN f0 * part cset_of_list f2 c\/ c= f0 f1 cMEM f0 f2 c\/ c/\ c\/ c= f0 f1 cIN f0 * part cset_of_list f2 c/\ c~ c= f0 f1 c~ cMEM f0 f2 c/\ c/\ c~ c= f0 f1 c~ cIN f0 * part cset_of_list f2 c\/ c= f0 f1 cMEM f0 f2
+- (_43130 = _43132), (_43131 = _43133) |- ((((_43130 IN _43131) = (_43132 IN _43133)) ==> ((_43132 IN _43133) \/ (~ (_43130 IN _43131)))) = ((_43132 IN _43133) \/ (~ (_43130 IN _43131))))
+T c==> c= f0 f1 c==> c= f2 f3 c= c==> c= cIN f0 f2 cIN f1 f3 c\/ cIN f1 f3 c~ cIN f0 f2 c\/ cIN f1 f3 c~ cIN f0 f2
++ (x = h), ((x IN (set_of_list t)) /\ ((MEM x) t)) |- ((MEM h) t)
+T c==> c= f0 f1 c==> c/\ cIN f0 * part cset_of_list f2 cMEM f0 f2 cMEM f1 f2
++ (x = h), ((x IN (set_of_list t)) = ((MEM x) t)), (((~ (x = h)) /\ (~ (x IN (set_of_list t)))) /\ ((x = h) \/ ((MEM x) t))) |- F
+T c==> c= f0 f1 c==> c= cIN f0 * part cset_of_list f2 cMEM f0 f2 c==> c/\ c/\ c~ c= f0 f1 c~ cIN f0 * part cset_of_list f2 c\/ c= f0 f1 cMEM f0 f2 cF
+- (x = h), ((~ (x IN (set_of_list t))) /\ (~ ((MEM x) t))) |- (~ (h IN (set_of_list t)))
+T c==> c= f0 f1 c==> c/\ c~ cIN f0 * part cset_of_list f2 c~ cMEM f0 f2 c~ cIN f1 * part cset_of_list f2
++ |- (T = ((x IN (set_of_list NIL)) = ((MEM x) NIL)))
+T c= cT c= cIN f0 * part cset_of_list cNIL cMEM f0 cNIL
++ |- ((!h. (!t. (((x IN (set_of_list t)) = ((MEM x) t)) ==> ((x IN (set_of_list ((CONS h) t))) = ((MEM x) ((CONS h) t)))))) = (((x IN (set_of_list NIL)) = ((MEM x) NIL)) /\ (!h. (!t. (((x IN (set_of_list t)) = ((MEM x) t)) ==> ((x IN (set_of_list ((CONS h) t))) = ((MEM x) ((CONS h) t))))))))
+T c= ! ! c==> c= cIN f0 * part cset_of_list b1 cMEM f0 b1 c= cIN f0 * part cset_of_list cCONS b0 b1 cMEM f0 cCONS b0 b1 c/\ c= cIN f0 * part cset_of_list cNIL cMEM f0 cNIL ! ! c==> c= cIN f0 * part cset_of_list b1 cMEM f0 b1 c= cIN f0 * part cset_of_list cCONS b0 b1 cMEM f0 cCONS b0 b1
++ ((x IN (set_of_list t)) = ((MEM x) t)), (((~ (x = h)) /\ (~ (x IN (set_of_list t)))) /\ ((x = h) \/ ((MEM x) t))) |- (((MEM x) t) ==> F)
+T c==> c= cIN f0 * part cset_of_list f1 cMEM f0 f1 c==> c/\ c/\ c~ c= f0 f2 c~ cIN f0 * part cset_of_list f1 c\/ c= f0 f2 cMEM f0 f1 c==> cMEM f0 f1 cF
+- |- (((!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))) ==> ((\t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))) t3)) = ((\t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))) t3))
+T c= c==> ! c= c\/ f0 c\/ f1 b0 c\/ c\/ f0 f1 b0 * / c= c\/ f0 c\/ f1 b0 c\/ c\/ f0 f1 b0 f2 * / c= c\/ f0 c\/ f1 b0 c\/ c\/ f0 f1 b0 f2
++ (((~ (x = h)) /\ (~ (x IN (set_of_list t)))) /\ ((x = h) \/ ((MEM x) t))) |- (((x IN (set_of_list t)) /\ ((MEM x) t)) ==> F)
+T c==> c/\ c/\ c~ c= f0 f1 c~ cIN f0 * part cset_of_list f2 c\/ c= f0 f1 cMEM f0 f2 c==> c/\ cIN f0 * part cset_of_list f2 cMEM f0 f2 cF
++ |- ((\s. ((x IN (y INSERT s)) = ((x = y) \/ (x IN s)))) s)
+T * / c= cIN f0 * * part cINSERT f1 b0 c\/ c= f0 f1 cIN f0 b0 f2
+- |- ((a = b) ==> (b \/ (~ a)))
+T c==> c= f0 f1 c\/ f1 c~ f0
+- (~ (h IN (set_of_list t))), (x = h), ((x IN (set_of_list t)) /\ ((MEM x) t)) |- ((~ (h IN (set_of_list t))) /\ (h IN (set_of_list t)))
+T c==> c~ cIN f0 * part cset_of_list f1 c==> c= f2 f0 c==> c/\ cIN f2 * part cset_of_list f1 cMEM f2 f1 c/\ c~ cIN f0 * part cset_of_list f1 cIN f0 * part cset_of_list f1
+- (((~ (x = h)) /\ (~ (x IN (set_of_list t)))) /\ ((x = h) \/ ((MEM x) t))), ((x IN (set_of_list t)) /\ ((MEM x) t)) |- ((~ F) ==> F)
+T c==> c/\ c/\ c~ c= f0 f1 c~ cIN f0 * part cset_of_list f2 c\/ c= f0 f1 cMEM f0 f2 c==> c/\ cIN f0 * part cset_of_list f2 cMEM f0 f2 c==> c~ cF cF
++ (x IN (set_of_list t)) |- (((~ (x IN (set_of_list t))) /\ (~ ((MEM x) t))) ==> F)
+T c==> cIN f0 * part cset_of_list f1 c==> c/\ c~ cIN f0 * part cset_of_list f1 c~ cMEM f0 f1 cF
++ (x = h), (((~ (x = h)) /\ (~ (x IN (set_of_list t)))) /\ ((x = h) \/ ((MEM x) t))) |- ((h = h) ==> F)
+T c==> c= f0 f1 c==> c/\ c/\ c~ c= f0 f1 c~ cIN f0 * part cset_of_list f2 c\/ c= f0 f1 cMEM f0 f2 c==> c= f1 f1 cF
+- (_43126 = _43128), (_43127 = _43129) |- (((((MEM _43126) _43127) = ((MEM _43128) _43129)) ==> (((MEM _43128) _43129) \/ (~ ((MEM _43126) _43127)))) = (((MEM _43128) _43129) \/ (~ ((MEM _43126) _43127))))
+T c==> c= f0 f1 c==> c= f2 f3 c= c==> c= cMEM f0 f2 cMEM f1 f3 c\/ cMEM f1 f3 c~ cMEM f0 f2 c\/ cMEM f1 f3 c~ cMEM f0 f2
+- (~ (x IN (set_of_list t))), (x IN (set_of_list t)) |- ((~ (x IN (set_of_list t))) /\ (x IN (set_of_list t)))
+T c==> c~ cIN f0 * part cset_of_list f1 c==> cIN f0 * part cset_of_list f1 c/\ c~ cIN f0 * part cset_of_list f1 cIN f0 * part cset_of_list f1
+- |- ((\x. (!h. (((x IN (set_of_list t)) = ((MEM x) t)) ==> ((~ (((x = h) \/ (x IN (set_of_list t))) = ((x = h) \/ ((MEM x) t)))) ==> F)))) x)
+T * / ! c==> c= cIN b0 * part cset_of_list f0 cMEM b0 f0 c==> c~ c= c\/ c= b0 b1 cIN b0 * part cset_of_list f0 c\/ c= b0 b1 cMEM b0 f0 cF f1
++ (x = h), ((x IN (set_of_list t)) = ((MEM x) t)), (((~ (x = h)) /\ (~ (x IN (set_of_list t)))) /\ ((x = h) \/ ((MEM x) t))), (((~ (x IN (set_of_list t))) /\ (~ ((MEM x) t))) ==> F) |- F
+T c==> c= f0 f1 c==> c= cIN f0 * part cset_of_list f2 cMEM f0 f2 c==> c/\ c/\ c~ c= f0 f1 c~ cIN f0 * part cset_of_list f2 c\/ c= f0 f1 cMEM f0 f2 c==> c==> c/\ c~ cIN f0 * part cset_of_list f2 c~ cMEM f0 f2 cF cF
+- ((x IN (set_of_list t)) /\ ((MEM x) t)) |- ((~ (x IN (set_of_list t))) ==> (x IN (set_of_list t)))
+T c==> c/\ cIN f0 * part cset_of_list f1 cMEM f0 f1 c==> c~ cIN f0 * part cset_of_list f1 cIN f0 * part cset_of_list f1
++ |- ((set_of_list NIL) = EMPTY)
+T c= * part cset_of_list cNIL part cEMPTY
+- |- ((~ (_43126 = _43128)) \/ ((~ (_43127 = _43129)) \/ (((MEM _43128) _43129) \/ (~ ((MEM _43126) _43127)))))
+T c\/ c~ c= f0 f1 c\/ c~ c= f2 f3 c\/ cMEM f1 f3 c~ cMEM f0 f2
+- (((x IN (set_of_list t)) = ((MEM x) t)) ==> ((~ (((x = h) \/ (x IN (set_of_list t))) = ((x = h) \/ ((MEM x) t)))) ==> F)) |- ((((x IN (set_of_list t)) = ((MEM x) t)) ==> ((~ (((x = h) \/ (x IN (set_of_list t))) = ((x = h) \/ ((MEM x) t)))) ==> F)) /\ (((x IN (set_of_list t)) = ((MEM x) t)) ==> ((~ (((x = h) \/ (x IN (set_of_list t))) = ((x = h) \/ ((MEM x) t)))) ==> F)))
+T c==> c==> c= cIN f0 * part cset_of_list f1 cMEM f0 f1 c==> c~ c= c\/ c= f0 f2 cIN f0 * part cset_of_list f1 c\/ c= f0 f2 cMEM f0 f1 cF c/\ c==> c= cIN f0 * part cset_of_list f1 cMEM f0 f1 c==> c~ c= c\/ c= f0 f2 cIN f0 * part cset_of_list f1 c\/ c= f0 f2 cMEM f0 f1 cF c==> c= cIN f0 * part cset_of_list f1 cMEM f0 f1 c==> c~ c= c\/ c= f0 f2 cIN f0 * part cset_of_list f1 c\/ c= f0 f2 cMEM f0 f1 cF
+- (_43126 = _43128) |- ((_43127 = _43129) ==> (((MEM _43128) _43129) \/ (~ ((MEM _43126) _43127))))
+T c==> c= f0 f1 c==> c= f2 f3 c\/ cMEM f1 f3 c~ cMEM f0 f2
++ (((x = h) \/ (x IN (set_of_list t))) /\ ((~ (x = h)) /\ (~ ((MEM x) t)))) |- (((x IN (set_of_list t)) /\ ((MEM x) t)) ==> F)
+T c==> c/\ c\/ c= f0 f1 cIN f0 * part cset_of_list f2 c/\ c~ c= f0 f1 c~ cMEM f0 f2 c==> c/\ cIN f0 * part cset_of_list f2 cMEM f0 f2 cF
++ (((x = h) \/ (x IN (set_of_list t))) /\ ((~ (x = h)) /\ (~ ((MEM x) t)))), ((x = h) ==> F), ((x IN (set_of_list t)) ==> F) |- F
+T c==> c/\ c\/ c= f0 f1 cIN f0 * part cset_of_list f2 c/\ c~ c= f0 f1 c~ cMEM f0 f2 c==> c==> c= f0 f1 cF c==> c==> cIN f0 * part cset_of_list f2 cF cF
++ |- ((((x IN (set_of_list NIL)) = ((MEM x) NIL)) /\ (!h. (!t. (((x IN (set_of_list t)) = ((MEM x) t)) ==> ((x IN (set_of_list ((CONS h) t))) = ((MEM x) ((CONS h) t))))))) ==> (!l. ((x IN (set_of_list l)) = ((MEM x) l))))
+T c==> c/\ c= cIN f0 * part cset_of_list cNIL cMEM f0 cNIL ! ! c==> c= cIN f0 * part cset_of_list b1 cMEM f0 b1 c= cIN f0 * part cset_of_list cCONS b0 b1 cMEM f0 cCONS b0 b1 ! c= cIN f0 * part cset_of_list b0 cMEM f0 b0
+- |- ((\h. (((x IN (set_of_list t)) = ((MEM x) t)) ==> ((~ (((x = h) \/ (x IN (set_of_list t))) = ((x = h) \/ ((MEM x) t)))) ==> F))) h)
+T * / c==> c= cIN f0 * part cset_of_list f1 cMEM f0 f1 c==> c~ c= c\/ c= f0 b0 cIN f0 * part cset_of_list f1 c\/ c= f0 b0 cMEM f0 f1 cF f2
+- (x = h), ((x IN (set_of_list t)) /\ ((MEM x) t)) |- ((~ ((MEM h) t)) ==> ((MEM h) t))
+T c==> c= f0 f1 c==> c/\ cIN f0 * part cset_of_list f2 cMEM f0 f2 c==> c~ cMEM f1 f2 cMEM f1 f2
++ (((x = h) \/ (x IN (set_of_list t))) /\ ((~ (x = h)) /\ (~ ((MEM x) t)))) |- (((MEM x) t) ==> F)
+T c==> c/\ c\/ c= f0 f1 cIN f0 * part cset_of_list f2 c/\ c~ c= f0 f1 c~ cMEM f0 f2 c==> cMEM f0 f2 cF
++ (x = h) |- ((~ (x = h)) = (~ (h = h)))
+T c==> c= f0 f1 c= c~ c= f0 f1 c~ c= f1 f1
++ ((x IN (set_of_list t)) = ((MEM x) t)) |- (((x IN (set_of_list t)) = ((MEM x) t)) /\ ((x IN (set_of_list ((CONS h) t))) = ((MEM x) ((CONS h) t))))
+T c==> c= cIN f0 * part cset_of_list f1 cMEM f0 f1 c/\ c= cIN f0 * part cset_of_list f1 cMEM f0 f1 c= cIN f0 * part cset_of_list cCONS f2 f1 cMEM f0 cCONS f2 f1
++ ((x IN (set_of_list t)) = ((MEM x) t)), (((x = h) \/ (x IN (set_of_list t))) /\ ((~ (x = h)) /\ (~ ((MEM x) t)))) |- ((x IN (set_of_list t)) ==> F)
+T c==> c= cIN f0 * part cset_of_list f1 cMEM f0 f1 c==> c/\ c\/ c= f0 f2 cIN f0 * part cset_of_list f1 c/\ c~ c= f0 f2 c~ cMEM f0 f1 c==> cIN f0 * part cset_of_list f1 cF
++ |- ((x IN EMPTY) = F)
+T c= cIN f0 part cEMPTY cF
++ ((x IN (set_of_list t)) = ((MEM x) t)), (((x = h) \/ (x IN (set_of_list t))) /\ ((~ (x = h)) /\ (~ ((MEM x) t)))), (((~ (x IN (set_of_list t))) /\ (~ ((MEM x) t))) ==> F) |- F
+T c==> c= cIN f0 * part cset_of_list f1 cMEM f0 f1 c==> c/\ c\/ c= f0 f2 cIN f0 * part cset_of_list f1 c/\ c~ c= f0 f2 c~ cMEM f0 f1 c==> c==> c/\ c~ cIN f0 * part cset_of_list f1 c~ cMEM f0 f1 cF cF
+- ((x IN (set_of_list t)) = ((MEM x) t)) |- (((x IN (set_of_list t)) = ((MEM x) t)) /\ (((x = h) \/ (x IN (set_of_list t))) = ((x = h) \/ ((MEM x) t))))
+T c==> c= cIN f0 * part cset_of_list f1 cMEM f0 f1 c/\ c= cIN f0 * part cset_of_list f1 cMEM f0 f1 c= c\/ c= f0 f2 cIN f0 * part cset_of_list f1 c\/ c= f0 f2 cMEM f0 f1
+- (_43134 = _43135) |- ((_43134 = _43135) /\ ((set_of_list _43134) = (set_of_list _43135)))
+T c==> c= f0 f1 c/\ c= f0 f1 c= * part cset_of_list f0 * part cset_of_list f1
++ ((~ (x IN (set_of_list t))) /\ (~ ((MEM x) t))), ((MEM x) t) |- (((~ (x IN (set_of_list t))) /\ (~ ((MEM x) t))) /\ F)
+T c==> c/\ c~ cIN f0 * part cset_of_list f1 c~ cMEM f0 f1 c==> cMEM f0 f1 c/\ c/\ c~ cIN f0 * part cset_of_list f1 c~ cMEM f0 f1 cF
+- (((x IN (set_of_list t)) = ((MEM x) t)) ==> ((~ (((x = h) \/ (x IN (set_of_list t))) = ((x = h) \/ ((MEM x) t)))) ==> F)), ((((x IN (set_of_list t)) = ((MEM x) t)) ==> ((~ (((x = h) \/ (x IN (set_of_list t))) = ((x = h) \/ ((MEM x) t)))) ==> F)) ==> (((x IN (set_of_list t)) = ((MEM x) t)) ==> ((~ (((x = h) \/ (x IN (set_of_list t))) = ((x = h) \/ ((MEM x) t)))) ==> F))) |- (((((x IN (set_of_list t)) = ((MEM x) t)) ==> ((~ (((x = h) \/ (x IN (set_of_list t))) = ((x = h) \/ ((MEM x) t)))) ==> F)) ==> (((x IN (set_of_list t)) = ((MEM x) t)) ==> ((~ (((x = h) \/ (x IN (set_of_list t))) = ((x = h) \/ ((MEM x) t)))) ==> F))) /\ (((x IN (set_of_list t)) = ((MEM x) t)) ==> ((~ (((x = h) \/ (x IN (set_of_list t))) = ((x = h) \/ ((MEM x) t)))) ==> F)))
+T c==> c==> c= cIN f0 * part cset_of_list f1 cMEM f0 f1 c==> c~ c= c\/ c= f0 f2 cIN f0 * part cset_of_list f1 c\/ c= f0 f2 cMEM f0 f1 cF c==> c==> c==> c= cIN f0 * part cset_of_list f1 cMEM f0 f1 c==> c~ c= c\/ c= f0 f2 cIN f0 * part cset_of_list f1 c\/ c= f0 f2 cMEM f0 f1 cF c==> c= cIN f0 * part cset_of_list f1 cMEM f0 f1 c==> c~ c= c\/ c= f0 f2 cIN f0 * part cset_of_list f1 c\/ c= f0 f2 cMEM f0 f1 cF c/\ c==> c==> c= cIN f0 * part cset_of_list f1 cMEM f0 f1 c==> c~ c= c\/ c= f0 f2 cIN f0 * part cset_of_list f1 c\/ c= f0 f2 cMEM f0 f1 cF c==> c= cIN f0 * part cset_of_list f1 cMEM f0 f1 c==> c~ c= c\/ c= f0 f2 cIN f0 * part cset_of_list f1 c\/ c= f0 f2 cMEM f0 f1 cF c==> c= cIN f0 * part cset_of_list f1 cMEM f0 f1 c==> c~ c= c\/ c= f0 f2 cIN f0 * part cset_of_list f1 c\/ c= f0 f2 cMEM f0 f1 cF
++ ((x IN (set_of_list t)) = ((MEM x) t)), (((~ (x = h)) /\ (~ (x IN (set_of_list t)))) /\ ((x = h) \/ ((MEM x) t))) |- ((x = h) ==> F)
+T c==> c= cIN f0 * part cset_of_list f1 cMEM f0 f1 c==> c/\ c/\ c~ c= f0 f2 c~ cIN f0 * part cset_of_list f1 c\/ c= f0 f2 cMEM f0 f1 c==> c= f0 f2 cF
++ (x = h), ((x IN (set_of_list t)) = ((MEM x) t)), (((x = h) \/ (x IN (set_of_list t))) /\ ((~ (x = h)) /\ (~ ((MEM x) t)))), (((~ (x IN (set_of_list t))) /\ (~ ((MEM x) t))) ==> F) |- F
+T c==> c= f0 f1 c==> c= cIN f0 * part cset_of_list f2 cMEM f0 f2 c==> c/\ c\/ c= f0 f1 cIN f0 * part cset_of_list f2 c/\ c~ c= f0 f1 c~ cMEM f0 f2 c==> c==> c/\ c~ cIN f0 * part cset_of_list f2 c~ cMEM f0 f2 cF cF
++ |- ((~ F) = T)
+T c= c~ cF cT
++ (x = h), (((~ (x = h)) /\ (~ (x IN (set_of_list t)))) /\ ((x = h) \/ ((MEM x) t))) |- (((x IN (set_of_list t)) /\ ((MEM x) t)) ==> F)
+T c==> c= f0 f1 c==> c/\ c/\ c~ c= f0 f1 c~ cIN f0 * part cset_of_list f2 c\/ c= f0 f1 cMEM f0 f2 c==> c/\ cIN f0 * part cset_of_list f2 cMEM f0 f2 cF
+- |- ((!h. (P h)) = ((P T) /\ (P F)))
+T c= ! * f0 b0 c/\ * f0 cT * f0 cF
+- |- (((!t1. (!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))))) ==> ((\t1. (!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))))) t1)) = ((\t1. (!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))))) t1))
+T c= c==> ! ! ! c= c\/ b0 c\/ b1 b2 c\/ c\/ b0 b1 b2 * / ! ! c= c\/ b0 c\/ b1 b2 c\/ c\/ b0 b1 b2 f0 * / ! ! c= c\/ b0 c\/ b1 b2 c\/ c\/ b0 b1 b2 f0
+- |- ((~ (~ t)) = t)
+T c= c~ c~ f0 f0
++ ((~ (x IN (set_of_list t))) /\ (~ ((MEM x) t))), ((MEM x) t) |- F
+T c==> c/\ c~ cIN f0 * part cset_of_list f1 c~ cMEM f0 f1 c==> cMEM f0 f1 cF
+- (((x IN (set_of_list t)) = ((MEM x) t)) ==> ((~ (((x = h) \/ (x IN (set_of_list t))) = ((x = h) \/ ((MEM x) t)))) ==> F)) |- (((((x IN (set_of_list t)) = ((MEM x) t)) ==> ((~ (((x = h) \/ (x IN (set_of_list t))) = ((x = h) \/ ((MEM x) t)))) ==> F)) ==> (((x IN (set_of_list t)) = ((MEM x) t)) ==> ((~ (((x = h) \/ (x IN (set_of_list t))) = ((x = h) \/ ((MEM x) t)))) ==> F))) ==> (((x IN (set_of_list t)) = ((MEM x) t)) ==> ((~ (((x = h) \/ (x IN (set_of_list t))) = ((x = h) \/ ((MEM x) t)))) ==> F)))
+T c==> c==> c= cIN f0 * part cset_of_list f1 cMEM f0 f1 c==> c~ c= c\/ c= f0 f2 cIN f0 * part cset_of_list f1 c\/ c= f0 f2 cMEM f0 f1 cF c==> c==> c==> c= cIN f0 * part cset_of_list f1 cMEM f0 f1 c==> c~ c= c\/ c= f0 f2 cIN f0 * part cset_of_list f1 c\/ c= f0 f2 cMEM f0 f1 cF c==> c= cIN f0 * part cset_of_list f1 cMEM f0 f1 c==> c~ c= c\/ c= f0 f2 cIN f0 * part cset_of_list f1 c\/ c= f0 f2 cMEM f0 f1 cF c==> c= cIN f0 * part cset_of_list f1 cMEM f0 f1 c==> c~ c= c\/ c= f0 f2 cIN f0 * part cset_of_list f1 c\/ c= f0 f2 cMEM f0 f1 cF
++ ((x IN (set_of_list t)) = ((MEM x) t)) |- ((((x = h) \/ (x IN (set_of_list t))) /\ ((~ (x = h)) /\ (~ ((MEM x) t)))) ==> F)
+T c==> c= cIN f0 * part cset_of_list f1 cMEM f0 f1 c==> c/\ c\/ c= f0 f2 cIN f0 * part cset_of_list f1 c/\ c~ c= f0 f2 c~ cMEM f0 f1 cF
+- |- ((((x IN (set_of_list t)) = ((MEM x) t)) ==> ((~ (((x = h) \/ (x IN (set_of_list t))) = ((x = h) \/ ((MEM x) t)))) ==> F)) ==> (((x IN (set_of_list t)) = ((MEM x) t)) ==> ((~ (((x = h) \/ (x IN (set_of_list t))) = ((x = h) \/ ((MEM x) t)))) ==> F)))
+T c==> c==> c= cIN f0 * part cset_of_list f1 cMEM f0 f1 c==> c~ c= c\/ c= f0 f2 cIN f0 * part cset_of_list f1 c\/ c= f0 f2 cMEM f0 f1 cF c==> c= cIN f0 * part cset_of_list f1 cMEM f0 f1 c==> c~ c= c\/ c= f0 f2 cIN f0 * part cset_of_list f1 c\/ c= f0 f2 cMEM f0 f1 cF
+- (x = h), ((~ (x IN (set_of_list t))) /\ (~ ((MEM x) t))) |- (~ ((MEM h) t))
+T c==> c= f0 f1 c==> c/\ c~ cIN f0 * part cset_of_list f2 c~ cMEM f0 f2 c~ cMEM f1 f2
+- ((~ (x IN (set_of_list t))) /\ (~ ((MEM x) t))), (x IN (set_of_list t)) |- ((~ F) ==> F)
+T c==> c/\ c~ cIN f0 * part cset_of_list f1 c~ cMEM f0 f1 c==> cIN f0 * part cset_of_list f1 c==> c~ cF cF
+- |- ((((x IN (set_of_list t)) = ((MEM x) t)) ==> (((x = h) \/ (x IN (set_of_list t))) = ((x = h) \/ ((MEM x) t)))) = T)
+T c= c==> c= cIN f0 * part cset_of_list f1 cMEM f0 f1 c= c\/ c= f0 f2 cIN f0 * part cset_of_list f1 c\/ c= f0 f2 cMEM f0 f1 cT
+- (x = h), (((~ (x = h)) /\ (~ (x IN (set_of_list t)))) /\ ((x = h) \/ ((MEM x) t))), ((x IN (set_of_list t)) /\ ((MEM x) t)) |- ((~ F) ==> F)
+T c==> c= f0 f1 c==> c/\ c/\ c~ c= f0 f1 c~ cIN f0 * part cset_of_list f2 c\/ c= f0 f1 cMEM f0 f2 c==> c/\ cIN f0 * part cset_of_list f2 cMEM f0 f2 c==> c~ cF cF
+- (~ (h = h)) |- ((~ (h = h)) /\ (h = h))
+T c==> c~ c= f0 f0 c/\ c~ c= f0 f0 c= f0 f0
+- ((x IN (set_of_list t)) /\ ((MEM x) t)) |- ((~ ((MEM x) t)) ==> ((MEM x) t))
+T c==> c/\ cIN f0 * part cset_of_list f1 cMEM f0 f1 c==> c~ cMEM f0 f1 cMEM f0 f1
+- (~ (x IN (set_of_list t))), ((x IN (set_of_list t)) /\ ((MEM x) t)) |- ((~ (x IN (set_of_list t))) /\ (x IN (set_of_list t)))
+T c==> c~ cIN f0 * part cset_of_list f1 c==> c/\ cIN f0 * part cset_of_list f1 cMEM f0 f1 c/\ c~ cIN f0 * part cset_of_list f1 cIN f0 * part cset_of_list f1
+- (~ ((MEM x) t)), ((MEM x) t) |- ((~ ((MEM x) t)) /\ ((MEM x) t))
+T c==> c~ cMEM f0 f1 c==> cMEM f0 f1 c/\ c~ cMEM f0 f1 cMEM f0 f1
+- |- (((!t. (!x. (!h. (((x IN (set_of_list t)) = ((MEM x) t)) ==> ((~ (((x = h) \/ (x IN (set_of_list t))) = ((x = h) \/ ((MEM x) t)))) ==> F))))) ==> ((\t. (!x. (!h. (((x IN (set_of_list t)) = ((MEM x) t)) ==> ((~ (((x = h) \/ (x IN (set_of_list t))) = ((x = h) \/ ((MEM x) t)))) ==> F))))) t)) = ((\t. (!x. (!h. (((x IN (set_of_list t)) = ((MEM x) t)) ==> ((~ (((x = h) \/ (x IN (set_of_list t))) = ((x = h) \/ ((MEM x) t)))) ==> F))))) t))
+T c= c==> ! ! ! c==> c= cIN b1 * part cset_of_list b0 cMEM b1 b0 c==> c~ c= c\/ c= b1 b2 cIN b1 * part cset_of_list b0 c\/ c= b1 b2 cMEM b1 b0 cF * / ! ! c==> c= cIN b1 * part cset_of_list b0 cMEM b1 b0 c==> c~ c= c\/ c= b1 b2 cIN b1 * part cset_of_list b0 c\/ c= b1 b2 cMEM b1 b0 cF f0 * / ! ! c==> c= cIN b1 * part cset_of_list b0 cMEM b1 b0 c==> c~ c= c\/ c= b1 b2 cIN b1 * part cset_of_list b0 c\/ c= b1 b2 cMEM b1 b0 cF f0
+- |- ((!t. (!x. (!h. (((x IN (set_of_list t)) = ((MEM x) t)) ==> (((x = h) \/ (x IN (set_of_list t))) = ((x = h) \/ ((MEM x) t))))))) = (!t. (!x. (!h. (((x IN (set_of_list t)) = ((MEM x) t)) ==> ((~ (((x = h) \/ (x IN (set_of_list t))) = ((x = h) \/ ((MEM x) t)))) ==> F))))))
+T c= ! ! ! c==> c= cIN b1 * part cset_of_list b0 cMEM b1 b0 c= c\/ c= b1 b2 cIN b1 * part cset_of_list b0 c\/ c= b1 b2 cMEM b1 b0 ! ! ! c==> c= cIN b1 * part cset_of_list b0 cMEM b1 b0 c==> c~ c= c\/ c= b1 b2 cIN b1 * part cset_of_list b0 c\/ c= b1 b2 cMEM b1 b0 cF
+- (x = h), ((x IN (set_of_list t)) /\ ((MEM x) t)) |- ((~ (h IN (set_of_list t))) ==> (h IN (set_of_list t)))
+T c==> c= f0 f1 c==> c/\ cIN f0 * part cset_of_list f2 cMEM f0 f2 c==> c~ cIN f1 * part cset_of_list f2 cIN f1 * part cset_of_list f2
+- (((x = h) \/ (x IN (set_of_list t))) /\ ((~ (x = h)) /\ (~ ((MEM x) t)))), ((x IN (set_of_list t)) /\ ((MEM x) t)) |- ((~ F) ==> F)
+T c==> c/\ c\/ c= f0 f1 cIN f0 * part cset_of_list f2 c/\ c~ c= f0 f1 c~ cMEM f0 f2 c==> c/\ cIN f0 * part cset_of_list f2 cMEM f0 f2 c==> c~ cF cF
+- (_43130 = _43132) |- ((_43131 = _43133) ==> ((_43132 IN _43133) \/ (~ (_43130 IN _43131))))
+T c==> c= f0 f1 c==> c= f2 f3 c\/ cIN f1 f3 c~ cIN f0 f2
+- |- (((!h. (((x IN (set_of_list t)) = ((MEM x) t)) ==> ((~ (((x = h) \/ (x IN (set_of_list t))) = ((x = h) \/ ((MEM x) t)))) ==> F))) ==> ((\h. (((x IN (set_of_list t)) = ((MEM x) t)) ==> ((~ (((x = h) \/ (x IN (set_of_list t))) = ((x = h) \/ ((MEM x) t)))) ==> F))) h)) = ((\h. (((x IN (set_of_list t)) = ((MEM x) t)) ==> ((~ (((x = h) \/ (x IN (set_of_list t))) = ((x = h) \/ ((MEM x) t)))) ==> F))) h))
+T c= c==> ! c==> c= cIN f0 * part cset_of_list f1 cMEM f0 f1 c==> c~ c= c\/ c= f0 b0 cIN f0 * part cset_of_list f1 c\/ c= f0 b0 cMEM f0 f1 cF * / c==> c= cIN f0 * part cset_of_list f1 cMEM f0 f1 c==> c~ c= c\/ c= f0 b0 cIN f0 * part cset_of_list f1 c\/ c= f0 b0 cMEM f0 f1 cF f2 * / c==> c= cIN f0 * part cset_of_list f1 cMEM f0 f1 c==> c~ c= c\/ c= f0 b0 cIN f0 * part cset_of_list f1 c\/ c= f0 b0 cMEM f0 f1 cF f2
+- (_43130 = _43132), (_43131 = _43133) |- ((_43131 = _43133) /\ ((_43132 IN _43133) \/ (~ (_43130 IN _43131))))
+T c==> c= f0 f1 c==> c= f2 f3 c/\ c= f2 f3 c\/ cIN f1 f3 c~ cIN f0 f2

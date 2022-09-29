@@ -1,0 +1,179 @@
+N REAL_SGN_SIGN
+C |- (!p. ((real_sgn (sign p)) = (sign p)))
+T c= creal_sgn csign f0 csign f0
+D TRUTH
+A |- T
+T cT
+D ETA_AX
+A |- (!t. ((\x. (t x)) = t))
+T c= / * f0 b0 f0
+D BOOL_CASES_AX
+A |- (!t. ((t = T) \/ (t = F)))
+T c\/ c= f0 cT c= f0 cF
+D DE_MORGAN_THM
+A |- (!t1. (!t2. (((~ (t1 /\ t2)) = ((~ t1) \/ (~ t2))) /\ ((~ (t1 \/ t2)) = ((~ t1) /\ (~ t2))))))
+T c/\ c= c~ c/\ f0 f1 c\/ c~ f0 c~ f1 c= c~ c\/ f0 f1 c/\ c~ f0 c~ f1
+D NOT_CLAUSES
+A |- ((!t. ((~ (~ t)) = t)) /\ (((~ T) = F) /\ ((~ F) = T)))
+T c/\ ! c= c~ c~ b0 b0 c/\ c= c~ cT cF c= c~ cF cT
+D NOT_EXISTS_THM
+A |- (!P. ((~ (?x. (P x))) = (!x. (~ (P x)))))
+T c= c~ c? / * f0 b0 ! c~ * f0 b0
+D COND_ELIM_THM
+A |- ((P (((COND c) x) y)) = ((c ==> (P x)) /\ ((~ c) ==> (P y))))
+T c= * f0 cCOND f1 f2 f3 c/\ c==> f1 * f0 f2 c==> c~ f1 * f0 f3
+D NUMERAL
+A |- (!n. ((NUMERAL n) = n))
+T c= cNUMERAL f0 f0
+D Ssrnat.addSn
+A |- (!m. (!n. (((SUC m) + n) = (SUC (m + n)))))
+T c= c+ cSUC f0 f1 cSUC c+ f0 f1
+D Ssrnat.addnS
+A |- (!m. (!n. ((m + (SUC n)) = (SUC (m + n)))))
+T c= c+ f0 cSUC f1 cSUC c+ f0 f1
+D Ssrnat.addnC
+A |- (!m. (!n. ((m + n) = (n + m))))
+T c= c+ f0 f1 c+ f1 f0
+D Ssrnat.addn_eq0
+A |- (!m. (!n. (((m + n) = (NUMERAL _0)) = ((m = (NUMERAL _0)) /\ (n = (NUMERAL _0))))))
+T c= c= c+ f0 f1 cNUMERAL c_0 c/\ c= f0 cNUMERAL c_0 c= f1 cNUMERAL c_0
+D LE
+A |- ((!m. ((m <= (NUMERAL _0)) = (m = (NUMERAL _0)))) /\ (!m. (!n. ((m <= (SUC n)) = ((m = (SUC n)) \/ (m <= n))))))
+T c/\ ! c= c<= b0 cNUMERAL c_0 c= b0 cNUMERAL c_0 ! ! c= c<= b0 cSUC b1 c\/ c= b0 cSUC b1 c<= b0 b1
+D LE_0
+A |- (!n. ((NUMERAL _0) <= n))
+T c<= cNUMERAL c_0 f0
+D NOT_LE
+A |- (!m. (!n. ((~ (m <= n)) = (n < m))))
+T c= c~ c<= f0 f1 c< f1 f0
+D LT_EXISTS
+A |- (!m. (!n. ((m < n) = (?d. (n = (m + (SUC d)))))))
+T c= c< f0 f1 c? / c= f1 c+ f0 cSUC b0
+D Ssrnat.eqn_leq
+A |- (!m. (!n. ((m = n) = ((m <= n) /\ (n <= m)))))
+T c= c= f0 f1 c/\ c<= f0 f1 c<= f1 f0
+D ARITH_SUC
+A |- ((!n. ((SUC (NUMERAL n)) = (NUMERAL (SUC n)))) /\ (((SUC _0) = (BIT1 _0)) /\ ((!n. ((SUC (BIT0 n)) = (BIT1 n))) /\ (!n. ((SUC (BIT1 n)) = (BIT0 (SUC n)))))))
+T c/\ ! c= cSUC cNUMERAL b0 cNUMERAL cSUC b0 c/\ c= cSUC c_0 cBIT1 c_0 c/\ ! c= cSUC cBIT0 b0 cBIT1 b0 ! c= cSUC cBIT1 b0 cBIT0 cSUC b0
+D ARITH_ADD
+A |- ((!m. (!n. (((NUMERAL m) + (NUMERAL n)) = (NUMERAL (m + n))))) /\ (((_0 + _0) = _0) /\ ((!n. ((_0 + (BIT0 n)) = (BIT0 n))) /\ ((!n. ((_0 + (BIT1 n)) = (BIT1 n))) /\ ((!n. (((BIT0 n) + _0) = (BIT0 n))) /\ ((!n. (((BIT1 n) + _0) = (BIT1 n))) /\ ((!m. (!n. (((BIT0 m) + (BIT0 n)) = (BIT0 (m + n))))) /\ ((!m. (!n. (((BIT0 m) + (BIT1 n)) = (BIT1 (m + n))))) /\ ((!m. (!n. (((BIT1 m) + (BIT0 n)) = (BIT1 (m + n))))) /\ (!m. (!n. (((BIT1 m) + (BIT1 n)) = (BIT0 (SUC (m + n)))))))))))))))
+T c/\ ! ! c= c+ cNUMERAL b0 cNUMERAL b1 cNUMERAL c+ b0 b1 c/\ c= c+ c_0 c_0 c_0 c/\ ! c= c+ c_0 cBIT0 b0 cBIT0 b0 c/\ ! c= c+ c_0 cBIT1 b0 cBIT1 b0 c/\ ! c= c+ cBIT0 b0 c_0 cBIT0 b0 c/\ ! c= c+ cBIT1 b0 c_0 cBIT1 b0 c/\ ! ! c= c+ cBIT0 b0 cBIT0 b1 cBIT0 c+ b0 b1 c/\ ! ! c= c+ cBIT0 b0 cBIT1 b1 cBIT1 c+ b0 b1 c/\ ! ! c= c+ cBIT1 b0 cBIT0 b1 cBIT1 c+ b0 b1 ! ! c= c+ cBIT1 b0 cBIT1 b1 cBIT0 cSUC c+ b0 b1
+D Real_ext.REAL_LE
+A |- (!m. (!n. (((real_le (real_of_num m)) (real_of_num n)) = (m <= n))))
+T c= creal_le creal_of_num f0 creal_of_num f1 c<= f0 f1
+D Misc_defs_and_lemmas.REAL_ADD
+A |- (!m. (!n. (((real_add (real_of_num m)) (real_of_num n)) = (real_of_num (m + n)))))
+T c= creal_add creal_of_num f0 creal_of_num f1 creal_of_num c+ f0 f1
+D real_lt
+A |- (!y. (!x. (((real_lt x) y) = (~ ((real_le y) x)))))
+T c= creal_lt f0 f1 c~ creal_le f1 f0
+D real_gt
+A |- (!y. (!x. (((real_gt x) y) = ((real_lt y) x))))
+T c= creal_gt f0 f1 creal_lt f1 f0
+D REAL_LE_LNEG
+A |- (!x. (!y. (((real_le (real_neg x)) y) = ((real_le (real_of_num (NUMERAL _0))) ((real_add x) y)))))
+T c= creal_le creal_neg f0 f1 creal_le creal_of_num cNUMERAL c_0 creal_add f0 f1
+D REAL_LE_NEG
+A |- (!x. (!y. (((real_le (real_neg x)) (real_neg y)) = ((real_le y) x))))
+T c= creal_le creal_neg f0 creal_neg f1 creal_le f1 f0
+D REAL_LE_RNEG
+A |- (!x. (!y. (((real_le x) (real_neg y)) = ((real_le ((real_add x) y)) (real_of_num (NUMERAL _0))))))
+T c= creal_le f0 creal_neg f1 creal_le creal_add f0 f1 creal_of_num cNUMERAL c_0
+D REAL_SGN_EQ
+A |- ((!x. (((real_sgn x) = (real_of_num (NUMERAL _0))) = (x = (real_of_num (NUMERAL _0))))) /\ ((!x. (((real_sgn x) = (real_of_num (NUMERAL (BIT1 _0)))) = ((real_gt x) (real_of_num (NUMERAL _0))))) /\ (!x. (((real_sgn x) = (real_neg (real_of_num (NUMERAL (BIT1 _0))))) = ((real_lt x) (real_of_num (NUMERAL _0)))))))
+T c/\ ! c= c= creal_sgn b0 creal_of_num cNUMERAL c_0 c= b0 creal_of_num cNUMERAL c_0 c/\ ! c= c= creal_sgn b0 creal_of_num cNUMERAL cBIT1 c_0 creal_gt b0 creal_of_num cNUMERAL c_0 ! c= c= creal_sgn b0 creal_neg creal_of_num cNUMERAL cBIT1 c_0 creal_lt b0 creal_of_num cNUMERAL c_0
+D sign
+A |- (!p. ((sign p) = (((COND (evenperm p)) (real_of_num (NUMERAL (BIT1 _0)))) (real_neg (real_of_num (NUMERAL (BIT1 _0)))))))
+T c= csign f0 cCOND cevenperm f0 creal_of_num cNUMERAL cBIT1 c_0 creal_neg creal_of_num cNUMERAL cBIT1 c_0
+- (~ (evenperm p)) |- ((evenperm p) = F)
+T c==> c~ cevenperm f0 c= cevenperm f0 cF
++ |- ((F /\ T) = F)
+T c= c/\ cF cT cF
++ |- ((real_lt (real_neg (real_of_num (NUMERAL (BIT1 _0))))) (real_of_num (NUMERAL _0)))
+T creal_lt creal_neg creal_of_num cNUMERAL cBIT1 c_0 creal_of_num cNUMERAL c_0
++ |- (T = ((real_gt (real_of_num (NUMERAL (BIT1 _0)))) (real_of_num (NUMERAL _0))))
+T c= cT creal_gt creal_of_num cNUMERAL cBIT1 c_0 creal_of_num cNUMERAL c_0
+- |- (((real_lt (real_of_num (NUMERAL _0))) (real_of_num (NUMERAL (BIT1 _0)))) ==> (((real_lt ((real_div (real_neg (real_of_num (NUMERAL (BIT1 _0))))) (real_of_num (NUMERAL (BIT1 _0))))) ((real_div (real_of_num (NUMERAL _0))) (real_of_num (NUMERAL (BIT1 _0))))) = ((real_lt ((real_mul (real_neg (real_of_num (NUMERAL (BIT1 _0))))) (real_of_num (NUMERAL (BIT1 _0))))) ((real_mul (real_of_num (NUMERAL _0))) (real_of_num (NUMERAL (BIT1 _0)))))))
+T c==> creal_lt creal_of_num cNUMERAL c_0 creal_of_num cNUMERAL cBIT1 c_0 c= creal_lt creal_div creal_neg creal_of_num cNUMERAL cBIT1 c_0 creal_of_num cNUMERAL cBIT1 c_0 creal_div creal_of_num cNUMERAL c_0 creal_of_num cNUMERAL cBIT1 c_0 creal_lt creal_mul creal_neg creal_of_num cNUMERAL cBIT1 c_0 creal_of_num cNUMERAL cBIT1 c_0 creal_mul creal_of_num cNUMERAL c_0 creal_of_num cNUMERAL cBIT1 c_0
+- |- (((real_lt ((real_div (real_of_num (NUMERAL _0))) (real_of_num (NUMERAL (BIT1 _0))))) ((real_div (real_of_num (NUMERAL (BIT1 _0)))) (real_of_num (NUMERAL (BIT1 _0))))) = ((real_lt ((real_mul (real_of_num (NUMERAL _0))) (real_of_num (NUMERAL (BIT1 _0))))) ((real_mul (real_of_num (NUMERAL (BIT1 _0)))) (real_of_num (NUMERAL (BIT1 _0))))))
+T c= creal_lt creal_div creal_of_num cNUMERAL c_0 creal_of_num cNUMERAL cBIT1 c_0 creal_div creal_of_num cNUMERAL cBIT1 c_0 creal_of_num cNUMERAL cBIT1 c_0 creal_lt creal_mul creal_of_num cNUMERAL c_0 creal_of_num cNUMERAL cBIT1 c_0 creal_mul creal_of_num cNUMERAL cBIT1 c_0 creal_of_num cNUMERAL cBIT1 c_0
+- |- (((real_mul (real_of_num m)) (real_of_num n)) = (real_of_num (m * n)))
+T c= creal_mul creal_of_num f0 creal_of_num f1 creal_of_num c* f0 f1
++ |- (((NUMERAL (BIT1 _0)) = (NUMERAL _0)) = F)
+T c= c= cNUMERAL cBIT1 c_0 cNUMERAL c_0 cF
++ |- (T = ((real_lt (real_neg (real_of_num (NUMERAL (BIT1 _0))))) (real_of_num (NUMERAL _0))))
+T c= cT creal_lt creal_neg creal_of_num cNUMERAL cBIT1 c_0 creal_of_num cNUMERAL c_0
++ |- ((~ (evenperm p)) ==> ((real_sgn (real_neg (real_of_num (NUMERAL (BIT1 _0))))) = (real_neg (real_of_num (NUMERAL (BIT1 _0))))))
+T c==> c~ cevenperm f0 c= creal_sgn creal_neg creal_of_num cNUMERAL cBIT1 c_0 creal_neg creal_of_num cNUMERAL cBIT1 c_0
++ (~ (evenperm p)) |- ((~ (evenperm p)) /\ ((real_sgn (real_neg (real_of_num (NUMERAL (BIT1 _0))))) = (real_neg (real_of_num (NUMERAL (BIT1 _0))))))
+T c==> c~ cevenperm f0 c/\ c~ cevenperm f0 c= creal_sgn creal_neg creal_of_num cNUMERAL cBIT1 c_0 creal_neg creal_of_num cNUMERAL cBIT1 c_0
++ |- ((evenperm p) ==> ((real_sgn (real_of_num (NUMERAL (BIT1 _0)))) = (real_of_num (NUMERAL (BIT1 _0)))))
+T c==> cevenperm f0 c= creal_sgn creal_of_num cNUMERAL cBIT1 c_0 creal_of_num cNUMERAL cBIT1 c_0
+- (evenperm p) |- (((real_sgn (real_of_num (NUMERAL (BIT1 _0)))) = (real_of_num (NUMERAL (BIT1 _0)))) = ((real_sgn (real_of_num (NUMERAL (BIT1 _0)))) = (real_of_num (NUMERAL (BIT1 _0)))))
+T c==> cevenperm f0 c= c= creal_sgn creal_of_num cNUMERAL cBIT1 c_0 creal_of_num cNUMERAL cBIT1 c_0 c= creal_sgn creal_of_num cNUMERAL cBIT1 c_0 creal_of_num cNUMERAL cBIT1 c_0
++ |- (((evenperm p) ==> ((real_sgn (real_of_num (NUMERAL (BIT1 _0)))) = (real_of_num (NUMERAL (BIT1 _0))))) /\ ((~ (evenperm p)) ==> ((real_sgn (real_neg (real_of_num (NUMERAL (BIT1 _0))))) = (real_neg (real_of_num (NUMERAL (BIT1 _0)))))))
+T c/\ c==> cevenperm f0 c= creal_sgn creal_of_num cNUMERAL cBIT1 c_0 creal_of_num cNUMERAL cBIT1 c_0 c==> c~ cevenperm f0 c= creal_sgn creal_neg creal_of_num cNUMERAL cBIT1 c_0 creal_neg creal_of_num cNUMERAL cBIT1 c_0
+- |- ((((real_lt (real_of_num (NUMERAL _0))) (real_of_num (NUMERAL (BIT1 _0)))) ==> (((real_lt ((real_div (real_neg (real_of_num (NUMERAL (BIT1 _0))))) (real_of_num (NUMERAL (BIT1 _0))))) ((real_div (real_of_num (NUMERAL _0))) (real_of_num (NUMERAL (BIT1 _0))))) = ((real_lt ((real_mul (real_neg (real_of_num (NUMERAL (BIT1 _0))))) (real_of_num (NUMERAL (BIT1 _0))))) ((real_mul (real_of_num (NUMERAL _0))) (real_of_num (NUMERAL (BIT1 _0))))))) = (((real_lt ((real_div (real_neg (real_of_num (NUMERAL (BIT1 _0))))) (real_of_num (NUMERAL (BIT1 _0))))) ((real_div (real_of_num (NUMERAL _0))) (real_of_num (NUMERAL (BIT1 _0))))) = ((real_lt ((real_mul (real_neg (real_of_num (NUMERAL (BIT1 _0))))) (real_of_num (NUMERAL (BIT1 _0))))) ((real_mul (real_of_num (NUMERAL _0))) (real_of_num (NUMERAL (BIT1 _0)))))))
+T c= c==> creal_lt creal_of_num cNUMERAL c_0 creal_of_num cNUMERAL cBIT1 c_0 c= creal_lt creal_div creal_neg creal_of_num cNUMERAL cBIT1 c_0 creal_of_num cNUMERAL cBIT1 c_0 creal_div creal_of_num cNUMERAL c_0 creal_of_num cNUMERAL cBIT1 c_0 creal_lt creal_mul creal_neg creal_of_num cNUMERAL cBIT1 c_0 creal_of_num cNUMERAL cBIT1 c_0 creal_mul creal_of_num cNUMERAL c_0 creal_of_num cNUMERAL cBIT1 c_0 c= creal_lt creal_div creal_neg creal_of_num cNUMERAL cBIT1 c_0 creal_of_num cNUMERAL cBIT1 c_0 creal_div creal_of_num cNUMERAL c_0 creal_of_num cNUMERAL cBIT1 c_0 creal_lt creal_mul creal_neg creal_of_num cNUMERAL cBIT1 c_0 creal_of_num cNUMERAL cBIT1 c_0 creal_mul creal_of_num cNUMERAL c_0 creal_of_num cNUMERAL cBIT1 c_0
+- |- ((\x. (((real_sgn x) = (real_of_num (NUMERAL _0))) = (x = (real_of_num (NUMERAL _0))))) x)
+T * / c= c= creal_sgn b0 creal_of_num cNUMERAL c_0 c= b0 creal_of_num cNUMERAL c_0 f0
++ |- ((real_gt (real_of_num (NUMERAL (BIT1 _0)))) (real_of_num (NUMERAL _0)))
+T creal_gt creal_of_num cNUMERAL cBIT1 c_0 creal_of_num cNUMERAL c_0
++ |- (((real_sgn x) = (real_neg (real_of_num (NUMERAL (BIT1 _0))))) = ((real_lt x) (real_of_num (NUMERAL _0))))
+T c= c= creal_sgn f0 creal_neg creal_of_num cNUMERAL cBIT1 c_0 creal_lt f0 creal_of_num cNUMERAL c_0
++ |- (((real_sgn (((COND (evenperm p)) (real_of_num (NUMERAL (BIT1 _0)))) (real_neg (real_of_num (NUMERAL (BIT1 _0)))))) = (((COND (evenperm p)) (real_of_num (NUMERAL (BIT1 _0)))) (real_neg (real_of_num (NUMERAL (BIT1 _0)))))) = (((evenperm p) ==> ((real_sgn (real_of_num (NUMERAL (BIT1 _0)))) = (real_of_num (NUMERAL (BIT1 _0))))) /\ ((~ (evenperm p)) ==> ((real_sgn (real_neg (real_of_num (NUMERAL (BIT1 _0))))) = (real_neg (real_of_num (NUMERAL (BIT1 _0))))))))
+T c= c= creal_sgn cCOND cevenperm f0 creal_of_num cNUMERAL cBIT1 c_0 creal_neg creal_of_num cNUMERAL cBIT1 c_0 cCOND cevenperm f0 creal_of_num cNUMERAL cBIT1 c_0 creal_neg creal_of_num cNUMERAL cBIT1 c_0 c/\ c==> cevenperm f0 c= creal_sgn creal_of_num cNUMERAL cBIT1 c_0 creal_of_num cNUMERAL cBIT1 c_0 c==> c~ cevenperm f0 c= creal_sgn creal_neg creal_of_num cNUMERAL cBIT1 c_0 creal_neg creal_of_num cNUMERAL cBIT1 c_0
++ |- ((real_sgn (real_neg (real_of_num (NUMERAL (BIT1 _0))))) = (real_neg (real_of_num (NUMERAL (BIT1 _0)))))
+T c= creal_sgn creal_neg creal_of_num cNUMERAL cBIT1 c_0 creal_neg creal_of_num cNUMERAL cBIT1 c_0
+- |- ((((real_lt (real_of_num (NUMERAL _0))) (real_of_num (NUMERAL (BIT1 _0)))) ==> (((real_lt ((real_div (real_of_num (NUMERAL _0))) (real_of_num (NUMERAL (BIT1 _0))))) ((real_div (real_of_num (NUMERAL (BIT1 _0)))) (real_of_num (NUMERAL (BIT1 _0))))) = ((real_lt ((real_mul (real_of_num (NUMERAL _0))) (real_of_num (NUMERAL (BIT1 _0))))) ((real_mul (real_of_num (NUMERAL (BIT1 _0)))) (real_of_num (NUMERAL (BIT1 _0))))))) = (((real_lt ((real_div (real_of_num (NUMERAL _0))) (real_of_num (NUMERAL (BIT1 _0))))) ((real_div (real_of_num (NUMERAL (BIT1 _0)))) (real_of_num (NUMERAL (BIT1 _0))))) = ((real_lt ((real_mul (real_of_num (NUMERAL _0))) (real_of_num (NUMERAL (BIT1 _0))))) ((real_mul (real_of_num (NUMERAL (BIT1 _0)))) (real_of_num (NUMERAL (BIT1 _0)))))))
+T c= c==> creal_lt creal_of_num cNUMERAL c_0 creal_of_num cNUMERAL cBIT1 c_0 c= creal_lt creal_div creal_of_num cNUMERAL c_0 creal_of_num cNUMERAL cBIT1 c_0 creal_div creal_of_num cNUMERAL cBIT1 c_0 creal_of_num cNUMERAL cBIT1 c_0 creal_lt creal_mul creal_of_num cNUMERAL c_0 creal_of_num cNUMERAL cBIT1 c_0 creal_mul creal_of_num cNUMERAL cBIT1 c_0 creal_of_num cNUMERAL cBIT1 c_0 c= creal_lt creal_div creal_of_num cNUMERAL c_0 creal_of_num cNUMERAL cBIT1 c_0 creal_div creal_of_num cNUMERAL cBIT1 c_0 creal_of_num cNUMERAL cBIT1 c_0 creal_lt creal_mul creal_of_num cNUMERAL c_0 creal_of_num cNUMERAL cBIT1 c_0 creal_mul creal_of_num cNUMERAL cBIT1 c_0 creal_of_num cNUMERAL cBIT1 c_0
+- (evenperm p) |- ((evenperm p) = T)
+T c==> cevenperm f0 c= cevenperm f0 cT
++ |- (((real_lt (real_neg (real_of_num m))) (real_of_num n)) = (~ ((m = (NUMERAL _0)) /\ (n = (NUMERAL _0)))))
+T c= creal_lt creal_neg creal_of_num f0 creal_of_num f1 c~ c/\ c= f0 cNUMERAL c_0 c= f1 cNUMERAL c_0
+- |- ((x = x) = T)
+T c= c= f0 f0 cT
+- |- (((!x. (((real_sgn x) = (real_of_num (NUMERAL _0))) = (x = (real_of_num (NUMERAL _0))))) ==> ((\x. (((real_sgn x) = (real_of_num (NUMERAL _0))) = (x = (real_of_num (NUMERAL _0))))) x)) = ((\x. (((real_sgn x) = (real_of_num (NUMERAL _0))) = (x = (real_of_num (NUMERAL _0))))) x))
+T c= c==> ! c= c= creal_sgn b0 creal_of_num cNUMERAL c_0 c= b0 creal_of_num cNUMERAL c_0 * / c= c= creal_sgn b0 creal_of_num cNUMERAL c_0 c= b0 creal_of_num cNUMERAL c_0 f0 * / c= c= creal_sgn b0 creal_of_num cNUMERAL c_0 c= b0 creal_of_num cNUMERAL c_0 f0
++ |- (((real_sgn x) = (real_of_num (NUMERAL (BIT1 _0)))) = ((real_gt x) (real_of_num (NUMERAL _0))))
+T c= c= creal_sgn f0 creal_of_num cNUMERAL cBIT1 c_0 creal_gt f0 creal_of_num cNUMERAL c_0
++ |- (((!x. (((real_sgn x) = (real_of_num (NUMERAL (BIT1 _0)))) = ((real_gt x) (real_of_num (NUMERAL _0))))) ==> ((\x. (((real_sgn x) = (real_of_num (NUMERAL (BIT1 _0)))) = ((real_gt x) (real_of_num (NUMERAL _0))))) x)) = ((\x. (((real_sgn x) = (real_of_num (NUMERAL (BIT1 _0)))) = ((real_gt x) (real_of_num (NUMERAL _0))))) x))
+T c= c==> ! c= c= creal_sgn b0 creal_of_num cNUMERAL cBIT1 c_0 creal_gt b0 creal_of_num cNUMERAL c_0 * / c= c= creal_sgn b0 creal_of_num cNUMERAL cBIT1 c_0 creal_gt b0 creal_of_num cNUMERAL c_0 f0 * / c= c= creal_sgn b0 creal_of_num cNUMERAL cBIT1 c_0 creal_gt b0 creal_of_num cNUMERAL c_0 f0
++ |- ((((evenperm p) ==> ((real_sgn (real_of_num (NUMERAL (BIT1 _0)))) = (real_of_num (NUMERAL (BIT1 _0))))) /\ ((~ (evenperm p)) ==> ((real_sgn (real_neg (real_of_num (NUMERAL (BIT1 _0))))) = (real_neg (real_of_num (NUMERAL (BIT1 _0))))))) = ((real_sgn (((COND (evenperm p)) (real_of_num (NUMERAL (BIT1 _0)))) (real_neg (real_of_num (NUMERAL (BIT1 _0)))))) = (((COND (evenperm p)) (real_of_num (NUMERAL (BIT1 _0)))) (real_neg (real_of_num (NUMERAL (BIT1 _0)))))))
+T c= c/\ c==> cevenperm f0 c= creal_sgn creal_of_num cNUMERAL cBIT1 c_0 creal_of_num cNUMERAL cBIT1 c_0 c==> c~ cevenperm f0 c= creal_sgn creal_neg creal_of_num cNUMERAL cBIT1 c_0 creal_neg creal_of_num cNUMERAL cBIT1 c_0 c= creal_sgn cCOND cevenperm f0 creal_of_num cNUMERAL cBIT1 c_0 creal_neg creal_of_num cNUMERAL cBIT1 c_0 cCOND cevenperm f0 creal_of_num cNUMERAL cBIT1 c_0 creal_neg creal_of_num cNUMERAL cBIT1 c_0
++ |- (((real_sgn (((COND (evenperm p)) (real_of_num (NUMERAL (BIT1 _0)))) (real_neg (real_of_num (NUMERAL (BIT1 _0)))))) = (((COND (evenperm p)) (real_of_num (NUMERAL (BIT1 _0)))) (real_neg (real_of_num (NUMERAL (BIT1 _0)))))) = ((real_sgn (sign p)) = (sign p)))
+T c= c= creal_sgn cCOND cevenperm f0 creal_of_num cNUMERAL cBIT1 c_0 creal_neg creal_of_num cNUMERAL cBIT1 c_0 cCOND cevenperm f0 creal_of_num cNUMERAL cBIT1 c_0 creal_neg creal_of_num cNUMERAL cBIT1 c_0 c= creal_sgn csign f0 csign f0
++ |- ((!x. (((real_sgn x) = (real_of_num (NUMERAL (BIT1 _0)))) = ((real_gt x) (real_of_num (NUMERAL _0))))) /\ (!x. (((real_sgn x) = (real_neg (real_of_num (NUMERAL (BIT1 _0))))) = ((real_lt x) (real_of_num (NUMERAL _0))))))
+T c/\ ! c= c= creal_sgn b0 creal_of_num cNUMERAL cBIT1 c_0 creal_gt b0 creal_of_num cNUMERAL c_0 ! c= c= creal_sgn b0 creal_neg creal_of_num cNUMERAL cBIT1 c_0 creal_lt b0 creal_of_num cNUMERAL c_0
++ |- (((real_gt (real_of_num (NUMERAL (BIT1 _0)))) (real_of_num (NUMERAL _0))) = ((real_sgn (real_of_num (NUMERAL (BIT1 _0)))) = (real_of_num (NUMERAL (BIT1 _0)))))
+T c= creal_gt creal_of_num cNUMERAL cBIT1 c_0 creal_of_num cNUMERAL c_0 c= creal_sgn creal_of_num cNUMERAL cBIT1 c_0 creal_of_num cNUMERAL cBIT1 c_0
+- |- (((NUMERAL (BIT1 _0)) * (NUMERAL (BIT1 _0))) = (NUMERAL (BIT1 _0)))
+T c= c* cNUMERAL cBIT1 c_0 cNUMERAL cBIT1 c_0 cNUMERAL cBIT1 c_0
++ |- ((real_sgn (real_of_num (NUMERAL (BIT1 _0)))) = (real_of_num (NUMERAL (BIT1 _0))))
+T c= creal_sgn creal_of_num cNUMERAL cBIT1 c_0 creal_of_num cNUMERAL cBIT1 c_0
++ |- (((~ (evenperm p)) ==> ((real_sgn (real_neg (real_of_num (NUMERAL (BIT1 _0))))) = (real_neg (real_of_num (NUMERAL (BIT1 _0)))))) = (((evenperm p) ==> ((real_sgn (real_of_num (NUMERAL (BIT1 _0)))) = (real_of_num (NUMERAL (BIT1 _0))))) /\ ((~ (evenperm p)) ==> ((real_sgn (real_neg (real_of_num (NUMERAL (BIT1 _0))))) = (real_neg (real_of_num (NUMERAL (BIT1 _0))))))))
+T c= c==> c~ cevenperm f0 c= creal_sgn creal_neg creal_of_num cNUMERAL cBIT1 c_0 creal_neg creal_of_num cNUMERAL cBIT1 c_0 c/\ c==> cevenperm f0 c= creal_sgn creal_of_num cNUMERAL cBIT1 c_0 creal_of_num cNUMERAL cBIT1 c_0 c==> c~ cevenperm f0 c= creal_sgn creal_neg creal_of_num cNUMERAL cBIT1 c_0 creal_neg creal_of_num cNUMERAL cBIT1 c_0
++ (evenperm p) |- ((evenperm p) /\ ((real_sgn (real_of_num (NUMERAL (BIT1 _0)))) = (real_of_num (NUMERAL (BIT1 _0)))))
+T c==> cevenperm f0 c/\ cevenperm f0 c= creal_sgn creal_of_num cNUMERAL cBIT1 c_0 creal_of_num cNUMERAL cBIT1 c_0
+- (~ (evenperm p)) |- (((real_sgn (real_neg (real_of_num (NUMERAL (BIT1 _0))))) = (real_neg (real_of_num (NUMERAL (BIT1 _0))))) = ((real_sgn (real_neg (real_of_num (NUMERAL (BIT1 _0))))) = (real_neg (real_of_num (NUMERAL (BIT1 _0))))))
+T c==> c~ cevenperm f0 c= c= creal_sgn creal_neg creal_of_num cNUMERAL cBIT1 c_0 creal_neg creal_of_num cNUMERAL cBIT1 c_0 c= creal_sgn creal_neg creal_of_num cNUMERAL cBIT1 c_0 creal_neg creal_of_num cNUMERAL cBIT1 c_0
+- |- (((real_lt ((real_div (real_neg (real_of_num (NUMERAL (BIT1 _0))))) (real_of_num (NUMERAL (BIT1 _0))))) ((real_div (real_of_num (NUMERAL _0))) (real_of_num (NUMERAL (BIT1 _0))))) = ((real_lt ((real_mul (real_neg (real_of_num (NUMERAL (BIT1 _0))))) (real_of_num (NUMERAL (BIT1 _0))))) ((real_mul (real_of_num (NUMERAL _0))) (real_of_num (NUMERAL (BIT1 _0))))))
+T c= creal_lt creal_div creal_neg creal_of_num cNUMERAL cBIT1 c_0 creal_of_num cNUMERAL cBIT1 c_0 creal_div creal_of_num cNUMERAL c_0 creal_of_num cNUMERAL cBIT1 c_0 creal_lt creal_mul creal_neg creal_of_num cNUMERAL cBIT1 c_0 creal_of_num cNUMERAL cBIT1 c_0 creal_mul creal_of_num cNUMERAL c_0 creal_of_num cNUMERAL cBIT1 c_0
+- |- (T = ((real_lt (real_of_num (NUMERAL _0))) (real_of_num (NUMERAL (BIT1 _0)))))
+T c= cT creal_lt creal_of_num cNUMERAL c_0 creal_of_num cNUMERAL cBIT1 c_0
+- |- ((((real_lt (real_of_num (NUMERAL _0))) (real_of_num (NUMERAL (BIT1 _0)))) ==> (((real_lt (real_of_num (NUMERAL _0))) (real_of_num (NUMERAL (BIT1 _0)))) ==> (((real_lt ((real_div (real_neg (real_of_num (NUMERAL (BIT1 _0))))) (real_of_num (NUMERAL (BIT1 _0))))) ((real_div (real_of_num (NUMERAL _0))) (real_of_num (NUMERAL (BIT1 _0))))) = ((real_lt ((real_mul (real_neg (real_of_num (NUMERAL (BIT1 _0))))) (real_of_num (NUMERAL (BIT1 _0))))) ((real_mul (real_of_num (NUMERAL _0))) (real_of_num (NUMERAL (BIT1 _0)))))))) = (((real_lt (real_of_num (NUMERAL _0))) (real_of_num (NUMERAL (BIT1 _0)))) ==> (((real_lt ((real_div (real_neg (real_of_num (NUMERAL (BIT1 _0))))) (real_of_num (NUMERAL (BIT1 _0))))) ((real_div (real_of_num (NUMERAL _0))) (real_of_num (NUMERAL (BIT1 _0))))) = ((real_lt ((real_mul (real_neg (real_of_num (NUMERAL (BIT1 _0))))) (real_of_num (NUMERAL (BIT1 _0))))) ((real_mul (real_of_num (NUMERAL _0))) (real_of_num (NUMERAL (BIT1 _0))))))))
+T c= c==> creal_lt creal_of_num cNUMERAL c_0 creal_of_num cNUMERAL cBIT1 c_0 c==> creal_lt creal_of_num cNUMERAL c_0 creal_of_num cNUMERAL cBIT1 c_0 c= creal_lt creal_div creal_neg creal_of_num cNUMERAL cBIT1 c_0 creal_of_num cNUMERAL cBIT1 c_0 creal_div creal_of_num cNUMERAL c_0 creal_of_num cNUMERAL cBIT1 c_0 creal_lt creal_mul creal_neg creal_of_num cNUMERAL cBIT1 c_0 creal_of_num cNUMERAL cBIT1 c_0 creal_mul creal_of_num cNUMERAL c_0 creal_of_num cNUMERAL cBIT1 c_0 c==> creal_lt creal_of_num cNUMERAL c_0 creal_of_num cNUMERAL cBIT1 c_0 c= creal_lt creal_div creal_neg creal_of_num cNUMERAL cBIT1 c_0 creal_of_num cNUMERAL cBIT1 c_0 creal_div creal_of_num cNUMERAL c_0 creal_of_num cNUMERAL cBIT1 c_0 creal_lt creal_mul creal_neg creal_of_num cNUMERAL cBIT1 c_0 creal_of_num cNUMERAL cBIT1 c_0 creal_mul creal_of_num cNUMERAL c_0 creal_of_num cNUMERAL cBIT1 c_0
+- |- ((((real_lt (real_of_num (NUMERAL _0))) (real_of_num (NUMERAL (BIT1 _0)))) ==> (((real_lt (real_of_num (NUMERAL _0))) (real_of_num (NUMERAL (BIT1 _0)))) ==> (((real_lt ((real_div (real_of_num (NUMERAL _0))) (real_of_num (NUMERAL (BIT1 _0))))) ((real_div (real_of_num (NUMERAL (BIT1 _0)))) (real_of_num (NUMERAL (BIT1 _0))))) = ((real_lt ((real_mul (real_of_num (NUMERAL _0))) (real_of_num (NUMERAL (BIT1 _0))))) ((real_mul (real_of_num (NUMERAL (BIT1 _0)))) (real_of_num (NUMERAL (BIT1 _0)))))))) = (((real_lt (real_of_num (NUMERAL _0))) (real_of_num (NUMERAL (BIT1 _0)))) ==> (((real_lt ((real_div (real_of_num (NUMERAL _0))) (real_of_num (NUMERAL (BIT1 _0))))) ((real_div (real_of_num (NUMERAL (BIT1 _0)))) (real_of_num (NUMERAL (BIT1 _0))))) = ((real_lt ((real_mul (real_of_num (NUMERAL _0))) (real_of_num (NUMERAL (BIT1 _0))))) ((real_mul (real_of_num (NUMERAL (BIT1 _0)))) (real_of_num (NUMERAL (BIT1 _0))))))))
+T c= c==> creal_lt creal_of_num cNUMERAL c_0 creal_of_num cNUMERAL cBIT1 c_0 c==> creal_lt creal_of_num cNUMERAL c_0 creal_of_num cNUMERAL cBIT1 c_0 c= creal_lt creal_div creal_of_num cNUMERAL c_0 creal_of_num cNUMERAL cBIT1 c_0 creal_div creal_of_num cNUMERAL cBIT1 c_0 creal_of_num cNUMERAL cBIT1 c_0 creal_lt creal_mul creal_of_num cNUMERAL c_0 creal_of_num cNUMERAL cBIT1 c_0 creal_mul creal_of_num cNUMERAL cBIT1 c_0 creal_of_num cNUMERAL cBIT1 c_0 c==> creal_lt creal_of_num cNUMERAL c_0 creal_of_num cNUMERAL cBIT1 c_0 c= creal_lt creal_div creal_of_num cNUMERAL c_0 creal_of_num cNUMERAL cBIT1 c_0 creal_div creal_of_num cNUMERAL cBIT1 c_0 creal_of_num cNUMERAL cBIT1 c_0 creal_lt creal_mul creal_of_num cNUMERAL c_0 creal_of_num cNUMERAL cBIT1 c_0 creal_mul creal_of_num cNUMERAL cBIT1 c_0 creal_of_num cNUMERAL cBIT1 c_0
+- |- (((real_mul (real_of_num (NUMERAL _0))) (real_of_num x)) = (real_of_num (NUMERAL _0)))
+T c= creal_mul creal_of_num cNUMERAL c_0 creal_of_num f0 creal_of_num cNUMERAL c_0
+- |- ((real_of_num x) = ((real_div (real_of_num x)) (real_of_num (NUMERAL (BIT1 _0)))))
+T c= creal_of_num f0 creal_div creal_of_num f0 creal_of_num cNUMERAL cBIT1 c_0
+- |- (((real_mul (real_neg (real_of_num m))) (real_of_num n)) = (real_neg (real_of_num (m * n))))
+T c= creal_mul creal_neg creal_of_num f0 creal_of_num f1 creal_neg creal_of_num c* f0 f1
+- |- (((real_lt (real_of_num (NUMERAL _0))) (real_of_num (NUMERAL (BIT1 _0)))) ==> (((real_lt ((real_div (real_of_num (NUMERAL _0))) (real_of_num (NUMERAL (BIT1 _0))))) ((real_div (real_of_num (NUMERAL (BIT1 _0)))) (real_of_num (NUMERAL (BIT1 _0))))) = ((real_lt ((real_mul (real_of_num (NUMERAL _0))) (real_of_num (NUMERAL (BIT1 _0))))) ((real_mul (real_of_num (NUMERAL (BIT1 _0)))) (real_of_num (NUMERAL (BIT1 _0)))))))
+T c==> creal_lt creal_of_num cNUMERAL c_0 creal_of_num cNUMERAL cBIT1 c_0 c= creal_lt creal_div creal_of_num cNUMERAL c_0 creal_of_num cNUMERAL cBIT1 c_0 creal_div creal_of_num cNUMERAL cBIT1 c_0 creal_of_num cNUMERAL cBIT1 c_0 creal_lt creal_mul creal_of_num cNUMERAL c_0 creal_of_num cNUMERAL cBIT1 c_0 creal_mul creal_of_num cNUMERAL cBIT1 c_0 creal_of_num cNUMERAL cBIT1 c_0
+- |- (((real_sgn x) = (real_of_num (NUMERAL _0))) = (x = (real_of_num (NUMERAL _0))))
+T c= c= creal_sgn f0 creal_of_num cNUMERAL c_0 c= f0 creal_of_num cNUMERAL c_0
+- |- ((real_neg (real_of_num x)) = ((real_div (real_neg (real_of_num x))) (real_of_num (NUMERAL (BIT1 _0)))))
+T c= creal_neg creal_of_num f0 creal_div creal_neg creal_of_num f0 creal_of_num cNUMERAL cBIT1 c_0

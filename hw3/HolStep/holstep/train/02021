@@ -1,0 +1,639 @@
+N MEM_FILTER
+C |- (!P. (!l. (!x. (((MEM x) ((FILTER P) l)) = ((P x) /\ ((MEM x) l))))))
+T c= cMEM f0 cFILTER f1 f2 c/\ * f1 f0 cMEM f0 f2
+D TRUTH
+A |- T
+T cT
+D BOOL_CASES_AX
+A |- (!t. ((t = T) \/ (t = F)))
+T c\/ c= f0 cT c= f0 cF
+D NOT_CLAUSES
+A |- ((!t. ((~ (~ t)) = t)) /\ (((~ T) = F) /\ ((~ F) = T)))
+T c/\ ! c= c~ c~ b0 b0 c/\ c= c~ cT cF c= c~ cF cT
+D COND_ELIM_THM
+A |- ((P (((COND c) x) y)) = ((c ==> (P x)) /\ ((~ c) ==> (P y))))
+T c= * f0 cCOND f1 f2 f3 c/\ c==> f1 * f0 f2 c==> c~ f1 * f0 f3
+D I_THM
+A |- (!x. ((I x) = x))
+T c= cI f0 f0
+D list_INDUCT
+A |- (!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x))))
+T c==> c/\ * f0 cNIL ! ! c==> * f0 b1 * f0 cCONS b0 b1 ! * f0 b0
+D MEM
+A |- ((((MEM x) NIL) = F) /\ (((MEM x) ((CONS h) t)) = ((x = h) \/ ((MEM x) t))))
+T c/\ c= cMEM f0 cNIL cF c= cMEM f0 cCONS f1 f2 c\/ c= f0 f1 cMEM f0 f2
+D FILTER
+A |- ((((FILTER P) NIL) = NIL) /\ (((FILTER P) ((CONS h) t)) = (((COND (P h)) ((CONS h) ((FILTER P) t))) ((FILTER P) t))))
+T c/\ c= cFILTER f0 cNIL cNIL c= cFILTER f0 cCONS f1 f2 cCOND * f0 f1 cCONS f1 cFILTER f0 f2 cFILTER f0 f2
++ (~ ((I P) x)), (P h) |- ((x = h) ==> F)
+T c==> c~ cI f0 f1 c==> * f0 f2 c==> c= f1 f2 cF
+- (~ ((I P) x)), (x = h), (((~ (x = h)) /\ ((~ ((I P) x)) \/ (~ ((MEM x) t)))) /\ (((I P) x) /\ ((x = h) \/ ((MEM x) t)))) |- ((x = h) /\ F)
+T c==> c~ cI f0 f1 c==> c= f1 f2 c==> c/\ c/\ c~ c= f1 f2 c\/ c~ cI f0 f1 c~ cMEM f1 f3 c/\ cI f0 f1 c\/ c= f1 f2 cMEM f1 f3 c/\ c= f1 f2 cF
+- (~ F), (~ ((I P) x)), (((I P) x) /\ ((MEM x) t)) |- ((~ F) /\ F)
+T c==> c~ cF c==> c~ cI f0 f1 c==> c/\ cI f0 f1 cMEM f1 f2 c/\ c~ cF cF
++ |- ((\h. (!P. ((!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))) ==> ((P h) ==> ((~ (((x = h) \/ ((P x) /\ ((MEM x) t))) = ((P x) /\ ((x = h) \/ ((MEM x) t))))) ==> F))))) h)
+T * / ! c==> ! c= cMEM b2 cFILTER b1 f0 c/\ * b1 b2 cMEM b2 f0 c==> * b1 b0 c==> c~ c= c\/ c= f1 b0 c/\ * b1 f1 cMEM f1 f0 c/\ * b1 f1 c\/ c= f1 b0 cMEM f1 f0 cF f2
+- ((((I P) x) /\ ((MEM x) t)) /\ ((~ ((I P) x)) \/ ((~ (x = h)) /\ (~ ((MEM x) t))))) |- ((~ ((MEM x) t)) ==> ((MEM x) t))
+T c==> c/\ c/\ cI f0 f1 cMEM f1 f2 c\/ c~ cI f0 f1 c/\ c~ c= f1 f3 c~ cMEM f1 f2 c==> c~ cMEM f1 f2 cMEM f1 f2
++ ((~ (x = h)) /\ (~ ((MEM x) t))), (((x = h) \/ (((I P) x) /\ ((MEM x) t))) /\ ((~ ((I P) x)) \/ ((~ (x = h)) /\ (~ ((MEM x) t))))) |- F
+T c==> c/\ c~ c= f0 f1 c~ cMEM f0 f2 c==> c/\ c\/ c= f0 f1 c/\ cI f3 f0 cMEM f0 f2 c\/ c~ cI f3 f0 c/\ c~ c= f0 f1 c~ cMEM f0 f2 cF
+- ((!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))) ==> ((~ (P h)) ==> ((~ (((P x) /\ ((MEM x) t)) = ((P x) /\ ((x = h) \/ ((MEM x) t))))) ==> F))), (((!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))) ==> ((~ (P h)) ==> ((~ (((P x) /\ ((MEM x) t)) = ((P x) /\ ((x = h) \/ ((MEM x) t))))) ==> F))) ==> ((!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))) ==> ((~ (P h)) ==> ((~ (((P x) /\ ((MEM x) t)) = ((P x) /\ ((x = h) \/ ((MEM x) t))))) ==> F)))) |- ((((!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))) ==> ((~ (P h)) ==> ((~ (((P x) /\ ((MEM x) t)) = ((P x) /\ ((x = h) \/ ((MEM x) t))))) ==> F))) ==> ((!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))) ==> ((~ (P h)) ==> ((~ (((P x) /\ ((MEM x) t)) = ((P x) /\ ((x = h) \/ ((MEM x) t))))) ==> F)))) /\ ((!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))) ==> ((~ (P h)) ==> ((~ (((P x) /\ ((MEM x) t)) = ((P x) /\ ((x = h) \/ ((MEM x) t))))) ==> F))))
+T c==> c==> ! c= cMEM b0 cFILTER f0 f1 c/\ * f0 b0 cMEM b0 f1 c==> c~ * f0 f2 c==> c~ c= c/\ * f0 f3 cMEM f3 f1 c/\ * f0 f3 c\/ c= f3 f2 cMEM f3 f1 cF c==> c==> c==> ! c= cMEM b0 cFILTER f0 f1 c/\ * f0 b0 cMEM b0 f1 c==> c~ * f0 f2 c==> c~ c= c/\ * f0 f3 cMEM f3 f1 c/\ * f0 f3 c\/ c= f3 f2 cMEM f3 f1 cF c==> ! c= cMEM b0 cFILTER f0 f1 c/\ * f0 b0 cMEM b0 f1 c==> c~ * f0 f2 c==> c~ c= c/\ * f0 f3 cMEM f3 f1 c/\ * f0 f3 c\/ c= f3 f2 cMEM f3 f1 cF c/\ c==> c==> ! c= cMEM b0 cFILTER f0 f1 c/\ * f0 b0 cMEM b0 f1 c==> c~ * f0 f2 c==> c~ c= c/\ * f0 f3 cMEM f3 f1 c/\ * f0 f3 c\/ c= f3 f2 cMEM f3 f1 cF c==> ! c= cMEM b0 cFILTER f0 f1 c/\ * f0 b0 cMEM b0 f1 c==> c~ * f0 f2 c==> c~ c= c/\ * f0 f3 cMEM f3 f1 c/\ * f0 f3 c\/ c= f3 f2 cMEM f3 f1 cF c==> ! c= cMEM b0 cFILTER f0 f1 c/\ * f0 b0 cMEM b0 f1 c==> c~ * f0 f2 c==> c~ c= c/\ * f0 f3 cMEM f3 f1 c/\ * f0 f3 c\/ c= f3 f2 cMEM f3 f1 cF
+- ((~ (x = h)) /\ (~ ((MEM x) t))), ((((I P) x) /\ ((MEM x) t)) /\ ((~ ((I P) x)) \/ ((~ (x = h)) /\ (~ ((MEM x) t))))) |- ((~ F) ==> F)
+T c==> c/\ c~ c= f0 f1 c~ cMEM f0 f2 c==> c/\ c/\ cI f3 f0 cMEM f0 f2 c\/ c~ cI f3 f0 c/\ c~ c= f0 f1 c~ cMEM f0 f2 c==> c~ cF cF
+- |- ((\t1. (!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))))) t1)
+T * / ! ! c= c\/ b0 c\/ b1 b2 c\/ c\/ b0 b1 b2 f0
+- |- ((~ (h = h)) ==> (h = h))
+T c==> c~ c= f0 f0 c= f0 f0
+- (~ ((MEM x) t)), (x = h) |- (~ ((MEM h) t))
+T c==> c~ cMEM f0 f1 c==> c= f0 f2 c~ cMEM f2 f1
+- (!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))) |- ((~ ((MEM _17591) ((FILTER P) t))) \/ ((MEM _17591) t))
+T c==> ! c= cMEM b0 cFILTER f0 f1 c/\ * f0 b0 cMEM b0 f1 c\/ c~ cMEM f2 cFILTER f0 f1 cMEM f2 f1
+- |- (((!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))) ==> ((P h) ==> ((~ (((x = h) \/ ((P x) /\ ((MEM x) t))) = ((P x) /\ ((x = h) \/ ((MEM x) t))))) ==> F))) ==> ((!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))) ==> ((P h) ==> ((~ (((x = h) \/ ((P x) /\ ((MEM x) t))) = ((P x) /\ ((x = h) \/ ((MEM x) t))))) ==> F))))
+T c==> c==> ! c= cMEM b0 cFILTER f0 f1 c/\ * f0 b0 cMEM b0 f1 c==> * f0 f2 c==> c~ c= c\/ c= f3 f2 c/\ * f0 f3 cMEM f3 f1 c/\ * f0 f3 c\/ c= f3 f2 cMEM f3 f1 cF c==> ! c= cMEM b0 cFILTER f0 f1 c/\ * f0 b0 cMEM b0 f1 c==> * f0 f2 c==> c~ c= c\/ c= f3 f2 c/\ * f0 f3 cMEM f3 f1 c/\ * f0 f3 c\/ c= f3 f2 cMEM f3 f1 cF
++ (x = h), (((~ ((I P) x)) \/ (~ ((MEM x) t))) /\ (((I P) x) /\ ((x = h) \/ ((MEM x) t)))) |- ((((I P) h) ==> F) = F)
+T c==> c= f0 f1 c==> c/\ c\/ c~ cI f2 f0 c~ cMEM f0 f3 c/\ cI f2 f0 c\/ c= f0 f1 cMEM f0 f3 c= c==> cI f2 f1 cF cF
++ (~ (((x = h) \/ ((P x) /\ ((MEM x) t))) = ((P x) /\ ((x = h) \/ ((MEM x) t))))) |- ((((x = h) \/ (((I P) x) /\ ((MEM x) t))) /\ ((~ ((I P) x)) \/ ((~ (x = h)) /\ (~ ((MEM x) t))))) \/ (((~ (x = h)) /\ ((~ ((I P) x)) \/ (~ ((MEM x) t)))) /\ (((I P) x) /\ ((x = h) \/ ((MEM x) t)))))
+T c==> c~ c= c\/ c= f0 f1 c/\ * f2 f0 cMEM f0 f3 c/\ * f2 f0 c\/ c= f0 f1 cMEM f0 f3 c\/ c/\ c\/ c= f0 f1 c/\ cI f2 f0 cMEM f0 f3 c\/ c~ cI f2 f0 c/\ c~ c= f0 f1 c~ cMEM f0 f3 c/\ c/\ c~ c= f0 f1 c\/ c~ cI f2 f0 c~ cMEM f0 f3 c/\ cI f2 f0 c\/ c= f0 f1 cMEM f0 f3
++ ((((I P) x) /\ ((MEM x) t)) /\ ((~ ((I P) x)) \/ ((~ (x = h)) /\ (~ ((MEM x) t))))) |- ((((I P) x) ==> F) = F)
+T c==> c/\ c/\ cI f0 f1 cMEM f1 f2 c\/ c~ cI f0 f1 c/\ c~ c= f1 f3 c~ cMEM f1 f2 c= c==> cI f0 f1 cF cF
++ |- (((!h. (!P. ((!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))) ==> ((~ (P h)) ==> ((~ (((P x) /\ ((MEM x) t)) = ((P x) /\ ((x = h) \/ ((MEM x) t))))) ==> F))))) ==> ((\h. (!P. ((!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))) ==> ((~ (P h)) ==> ((~ (((P x) /\ ((MEM x) t)) = ((P x) /\ ((x = h) \/ ((MEM x) t))))) ==> F))))) h)) = ((\h. (!P. ((!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))) ==> ((~ (P h)) ==> ((~ (((P x) /\ ((MEM x) t)) = ((P x) /\ ((x = h) \/ ((MEM x) t))))) ==> F))))) h))
+T c= c==> ! ! c==> ! c= cMEM b2 cFILTER b1 f0 c/\ * b1 b2 cMEM b2 f0 c==> c~ * b1 b0 c==> c~ c= c/\ * b1 f1 cMEM f1 f0 c/\ * b1 f1 c\/ c= f1 b0 cMEM f1 f0 cF * / ! c==> ! c= cMEM b2 cFILTER b1 f0 c/\ * b1 b2 cMEM b2 f0 c==> c~ * b1 b0 c==> c~ c= c/\ * b1 f1 cMEM f1 f0 c/\ * b1 f1 c\/ c= f1 b0 cMEM f1 f0 cF f2 * / ! c==> ! c= cMEM b2 cFILTER b1 f0 c/\ * b1 b2 cMEM b2 f0 c==> c~ * b1 b0 c==> c~ c= c/\ * b1 f1 cMEM f1 f0 c/\ * b1 f1 c\/ c= f1 b0 cMEM f1 f0 cF f2
+- (!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))), (~ (((x = h) \/ ((P x) /\ ((MEM x) t))) = ((P x) /\ ((x = h) \/ ((MEM x) t))))), (P h) |- ((~ (((x = h) \/ ((P x) /\ ((MEM x) t))) = ((P x) /\ ((x = h) \/ ((MEM x) t))))) /\ F)
+T c==> ! c= cMEM b0 cFILTER f0 f1 c/\ * f0 b0 cMEM b0 f1 c==> c~ c= c\/ c= f2 f3 c/\ * f0 f2 cMEM f2 f1 c/\ * f0 f2 c\/ c= f2 f3 cMEM f2 f1 c==> * f0 f3 c/\ c~ c= c\/ c= f2 f3 c/\ * f0 f2 cMEM f2 f1 c/\ * f0 f2 c\/ c= f2 f3 cMEM f2 f1 cF
+- (~ ((I P) h)), (P h) |- ((~ ((I P) h)) /\ ((I P) h))
+T c==> c~ cI f0 f1 c==> * f0 f1 c/\ c~ cI f0 f1 cI f0 f1
+- (!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))) |- (((MEM _17590) ((FILTER P) t)) \/ ((~ ((I P) _17590)) \/ (~ ((MEM _17590) t))))
+T c==> ! c= cMEM b0 cFILTER f0 f1 c/\ * f0 b0 cMEM b0 f1 c\/ cMEM f2 cFILTER f0 f1 c\/ c~ cI f0 f2 c~ cMEM f2 f1
+- (x = h) |- ((~ ((I P) h)) = (~ ((I P) h)))
+T c==> c= f0 f1 c= c~ cI f2 f1 c~ cI f2 f1
+- (~ F), ((~ (x = h)) /\ (~ ((MEM x) t))), (((I P) x) /\ ((MEM x) t)) |- ((~ F) /\ F)
+T c==> c~ cF c==> c/\ c~ c= f0 f1 c~ cMEM f0 f2 c==> c/\ cI f3 f0 cMEM f0 f2 c/\ c~ cF cF
+- |- (((!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))) ==> ((~ (P h)) ==> ((~ (((P x) /\ ((MEM x) t)) = ((P x) /\ ((x = h) \/ ((MEM x) t))))) ==> F))) ==> ((!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))) ==> ((~ (P h)) ==> ((~ (((P x) /\ ((MEM x) t)) = ((P x) /\ ((x = h) \/ ((MEM x) t))))) ==> F))))
+T c==> c==> ! c= cMEM b0 cFILTER f0 f1 c/\ * f0 b0 cMEM b0 f1 c==> c~ * f0 f2 c==> c~ c= c/\ * f0 f3 cMEM f3 f1 c/\ * f0 f3 c\/ c= f3 f2 cMEM f3 f1 cF c==> ! c= cMEM b0 cFILTER f0 f1 c/\ * f0 b0 cMEM b0 f1 c==> c~ * f0 f2 c==> c~ c= c/\ * f0 f3 cMEM f3 f1 c/\ * f0 f3 c\/ c= f3 f2 cMEM f3 f1 cF
++ (!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))) |- ((!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))) /\ ((P h) ==> (((x = h) \/ ((P x) /\ ((MEM x) t))) = ((P x) /\ ((x = h) \/ ((MEM x) t))))))
+T c==> ! c= cMEM b0 cFILTER f0 f1 c/\ * f0 b0 cMEM b0 f1 c/\ ! c= cMEM b0 cFILTER f0 f1 c/\ * f0 b0 cMEM b0 f1 c==> * f0 f2 c= c\/ c= f3 f2 c/\ * f0 f3 cMEM f3 f1 c/\ * f0 f3 c\/ c= f3 f2 cMEM f3 f1
++ (~ ((I P) x)), (P h), (((x = h) \/ (((I P) x) /\ ((MEM x) t))) /\ ((~ ((I P) x)) \/ ((~ (x = h)) /\ (~ ((MEM x) t))))) |- F
+T c==> c~ cI f0 f1 c==> * f0 f2 c==> c/\ c\/ c= f1 f2 c/\ cI f0 f1 cMEM f1 f3 c\/ c~ cI f0 f1 c/\ c~ c= f1 f2 c~ cMEM f1 f3 cF
+- (x = h), ((~ (x = h)) /\ (~ ((MEM x) t))) |- (~ ((MEM h) t))
+T c==> c= f0 f1 c==> c/\ c~ c= f0 f1 c~ cMEM f0 f2 c~ cMEM f1 f2
+- (~ (P h)), (x = h), (((~ ((I P) x)) \/ (~ ((MEM x) t))) /\ (((I P) x) /\ ((x = h) \/ ((MEM x) t)))) |- ((~ ((MEM x) t)) ==> F)
+T c==> c~ * f0 f1 c==> c= f2 f1 c==> c/\ c\/ c~ cI f0 f2 c~ cMEM f2 f3 c/\ cI f0 f2 c\/ c= f2 f1 cMEM f2 f3 c==> c~ cMEM f2 f3 cF
+- (_17628 = _17630), (_17629 = _17631) |- ((_17629 = _17631) /\ (((FILTER _17628) _17629) = ((FILTER _17630) _17631)))
+T c==> c= f0 f1 c==> c= f2 f3 c/\ c= f2 f3 c= cFILTER f0 f2 cFILTER f1 f3
+- (!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))) |- (!x. (((MEM x) ((FILTER P) t)) \/ ((~ ((I P) x)) \/ (~ ((MEM x) t)))))
+T c==> ! c= cMEM b0 cFILTER f0 f1 c/\ * f0 b0 cMEM b0 f1 ! c\/ cMEM b0 cFILTER f0 f1 c\/ c~ cI f0 b0 c~ cMEM b0 f1
+- (~ (P h)), (~ ((MEM x) t)), (x = h), (((~ ((I P) x)) \/ (~ ((MEM x) t))) /\ (((I P) x) /\ ((x = h) \/ ((MEM x) t)))) |- ((~ ((MEM x) t)) /\ F)
+T c==> c~ * f0 f1 c==> c~ cMEM f2 f3 c==> c= f2 f1 c==> c/\ c\/ c~ cI f0 f2 c~ cMEM f2 f3 c/\ cI f0 f2 c\/ c= f2 f1 cMEM f2 f3 c/\ c~ cMEM f2 f3 cF
+- |- ((t ==> t) = T)
+T c= c==> f0 f0 cT
+- |- ((t \/ t) = t)
+T c= c\/ f0 f0 f0
+- (!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))) |- ((\x. (((MEM x) ((FILTER P) t)) \/ ((~ ((I P) x)) \/ (~ ((MEM x) t))))) _17590)
+T c==> ! c= cMEM b0 cFILTER f0 f1 c/\ * f0 b0 cMEM b0 f1 * / c\/ cMEM b0 cFILTER f0 f1 c\/ c~ cI f0 b0 c~ cMEM b0 f1 f2
++ (((I P) x) /\ ((MEM x) t)) |- ((((I P) x) ==> F) = F)
+T c==> c/\ cI f0 f1 cMEM f1 f2 c= c==> cI f0 f1 cF cF
+- (~ F), (x = h), ((~ (x = h)) /\ (~ ((MEM x) t))) |- ((~ F) /\ F)
+T c==> c~ cF c==> c= f0 f1 c==> c/\ c~ c= f0 f1 c~ cMEM f0 f2 c/\ c~ cF cF
++ |- ((P h) ==> (((x = h) \/ ((P x) /\ ((MEM x) t))) = ((P x) /\ ((x = h) \/ ((MEM x) t)))))
+T c==> * f0 f1 c= c\/ c= f2 f1 c/\ * f0 f2 cMEM f2 f3 c/\ * f0 f2 c\/ c= f2 f1 cMEM f2 f3
++ |- (((!t. (!x. (!h. (!P. ((!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))) ==> ((~ (P h)) ==> ((~ (((P x) /\ ((MEM x) t)) = ((P x) /\ ((x = h) \/ ((MEM x) t))))) ==> F))))))) ==> ((\t. (!x. (!h. (!P. ((!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))) ==> ((~ (P h)) ==> ((~ (((P x) /\ ((MEM x) t)) = ((P x) /\ ((x = h) \/ ((MEM x) t))))) ==> F))))))) t)) = ((\t. (!x. (!h. (!P. ((!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))) ==> ((~ (P h)) ==> ((~ (((P x) /\ ((MEM x) t)) = ((P x) /\ ((x = h) \/ ((MEM x) t))))) ==> F))))))) t))
+T c= c==> ! ! ! ! c==> ! c= cMEM b4 cFILTER b3 b0 c/\ * b3 b4 cMEM b4 b0 c==> c~ * b3 b2 c==> c~ c= c/\ * b3 b1 cMEM b1 b0 c/\ * b3 b1 c\/ c= b1 b2 cMEM b1 b0 cF * / ! ! ! c==> ! c= cMEM b4 cFILTER b3 b0 c/\ * b3 b4 cMEM b4 b0 c==> c~ * b3 b2 c==> c~ c= c/\ * b3 b1 cMEM b1 b0 c/\ * b3 b1 c\/ c= b1 b2 cMEM b1 b0 cF f0 * / ! ! ! c==> ! c= cMEM b4 cFILTER b3 b0 c/\ * b3 b4 cMEM b4 b0 c==> c~ * b3 b2 c==> c~ c= c/\ * b3 b1 cMEM b1 b0 c/\ * b3 b1 c\/ c= b1 b2 cMEM b1 b0 cF f0
++ (((~ (x = h)) /\ ((~ ((I P) x)) \/ (~ ((MEM x) t)))) /\ (((I P) x) /\ ((x = h) \/ ((MEM x) t)))) |- ((~ ((MEM x) t)) ==> F)
+T c==> c/\ c/\ c~ c= f0 f1 c\/ c~ cI f2 f0 c~ cMEM f0 f3 c/\ cI f2 f0 c\/ c= f0 f1 cMEM f0 f3 c==> c~ cMEM f0 f3 cF
+- |- ((\t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))) t3)
+T * / c= c\/ f0 c\/ f1 b0 c\/ c\/ f0 f1 b0 f2
+- |- ((_17628 = _17630) ==> ((~ (_17629 = _17631)) \/ (((FILTER _17628) _17629) = ((FILTER _17630) _17631))))
+T c==> c= f0 f1 c\/ c~ c= f2 f3 c= cFILTER f0 f2 cFILTER f1 f3
++ |- ((\h. (!P. ((!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))) ==> ((~ (P h)) ==> ((~ (((P x) /\ ((MEM x) t)) = ((P x) /\ ((x = h) \/ ((MEM x) t))))) ==> F))))) h)
+T * / ! c==> ! c= cMEM b2 cFILTER b1 f0 c/\ * b1 b2 cMEM b2 f0 c==> c~ * b1 b0 c==> c~ c= c/\ * b1 f1 cMEM f1 f0 c/\ * b1 f1 c\/ c= f1 b0 cMEM f1 f0 cF f2
++ (~ ((I P) x)), (((~ ((I P) x)) \/ (~ ((MEM x) t))) /\ (((I P) x) /\ ((x = h) \/ ((MEM x) t)))) |- ((~ ((I P) x)) /\ F)
+T c==> c~ cI f0 f1 c==> c/\ c\/ c~ cI f0 f1 c~ cMEM f1 f2 c/\ cI f0 f1 c\/ c= f1 f3 cMEM f1 f2 c/\ c~ cI f0 f1 cF
+- |- (((~ p) ==> p) = p)
+T c= c==> c~ f0 f0 f0
++ (~ ((MEM x) t)), (((~ (x = h)) /\ ((~ ((I P) x)) \/ (~ ((MEM x) t)))) /\ (((I P) x) /\ ((x = h) \/ ((MEM x) t)))) |- F
+T c==> c~ cMEM f0 f1 c==> c/\ c/\ c~ c= f0 f2 c\/ c~ cI f3 f0 c~ cMEM f0 f1 c/\ cI f3 f0 c\/ c= f0 f2 cMEM f0 f1 cF
+- (((!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))) ==> ((P h) ==> ((~ (((x = h) \/ ((P x) /\ ((MEM x) t))) = ((P x) /\ ((x = h) \/ ((MEM x) t))))) ==> F))) ==> ((!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))) ==> ((P h) ==> ((~ (((x = h) \/ ((P x) /\ ((MEM x) t))) = ((P x) /\ ((x = h) \/ ((MEM x) t))))) ==> F)))) |- ((((!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))) ==> ((P h) ==> ((~ (((x = h) \/ ((P x) /\ ((MEM x) t))) = ((P x) /\ ((x = h) \/ ((MEM x) t))))) ==> F))) ==> ((!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))) ==> ((P h) ==> ((~ (((x = h) \/ ((P x) /\ ((MEM x) t))) = ((P x) /\ ((x = h) \/ ((MEM x) t))))) ==> F)))) /\ (((!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))) ==> ((P h) ==> ((~ (((x = h) \/ ((P x) /\ ((MEM x) t))) = ((P x) /\ ((x = h) \/ ((MEM x) t))))) ==> F))) ==> ((!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))) ==> ((P h) ==> ((~ (((x = h) \/ ((P x) /\ ((MEM x) t))) = ((P x) /\ ((x = h) \/ ((MEM x) t))))) ==> F)))))
+T c==> c==> c==> ! c= cMEM b0 cFILTER f0 f1 c/\ * f0 b0 cMEM b0 f1 c==> * f0 f2 c==> c~ c= c\/ c= f3 f2 c/\ * f0 f3 cMEM f3 f1 c/\ * f0 f3 c\/ c= f3 f2 cMEM f3 f1 cF c==> ! c= cMEM b0 cFILTER f0 f1 c/\ * f0 b0 cMEM b0 f1 c==> * f0 f2 c==> c~ c= c\/ c= f3 f2 c/\ * f0 f3 cMEM f3 f1 c/\ * f0 f3 c\/ c= f3 f2 cMEM f3 f1 cF c/\ c==> c==> ! c= cMEM b0 cFILTER f0 f1 c/\ * f0 b0 cMEM b0 f1 c==> * f0 f2 c==> c~ c= c\/ c= f3 f2 c/\ * f0 f3 cMEM f3 f1 c/\ * f0 f3 c\/ c= f3 f2 cMEM f3 f1 cF c==> ! c= cMEM b0 cFILTER f0 f1 c/\ * f0 b0 cMEM b0 f1 c==> * f0 f2 c==> c~ c= c\/ c= f3 f2 c/\ * f0 f3 cMEM f3 f1 c/\ * f0 f3 c\/ c= f3 f2 cMEM f3 f1 cF c==> c==> ! c= cMEM b0 cFILTER f0 f1 c/\ * f0 b0 cMEM b0 f1 c==> * f0 f2 c==> c~ c= c\/ c= f3 f2 c/\ * f0 f3 cMEM f3 f1 c/\ * f0 f3 c\/ c= f3 f2 cMEM f3 f1 cF c==> ! c= cMEM b0 cFILTER f0 f1 c/\ * f0 b0 cMEM b0 f1 c==> * f0 f2 c==> c~ c= c\/ c= f3 f2 c/\ * f0 f3 cMEM f3 f1 c/\ * f0 f3 c\/ c= f3 f2 cMEM f3 f1 cF
+- (x = h), (((~ (x = h)) /\ ((~ ((I P) x)) \/ (~ ((MEM x) t)))) /\ (((I P) x) /\ ((x = h) \/ ((MEM x) t)))) |- ((I P) h)
+T c==> c= f0 f1 c==> c/\ c/\ c~ c= f0 f1 c\/ c~ cI f2 f0 c~ cMEM f0 f3 c/\ cI f2 f0 c\/ c= f0 f1 cMEM f0 f3 cI f2 f1
++ |- ((\t. (!x. (!h. (!P. ((!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))) ==> ((P h) ==> ((~ (((x = h) \/ ((P x) /\ ((MEM x) t))) = ((P x) /\ ((x = h) \/ ((MEM x) t))))) ==> F))))))) t)
+T * / ! ! ! c==> ! c= cMEM b4 cFILTER b3 b0 c/\ * b3 b4 cMEM b4 b0 c==> * b3 b2 c==> c~ c= c\/ c= b1 b2 c/\ * b3 b1 cMEM b1 b0 c/\ * b3 b1 c\/ c= b1 b2 cMEM b1 b0 cF f0
++ (((~ ((I P) x)) \/ (~ ((MEM x) t))) /\ (((I P) x) /\ ((x = h) \/ ((MEM x) t)))), ((x = h) ==> F), (((MEM x) t) ==> F) |- F
+T c==> c/\ c\/ c~ cI f0 f1 c~ cMEM f1 f2 c/\ cI f0 f1 c\/ c= f1 f3 cMEM f1 f2 c==> c==> c= f1 f3 cF c==> c==> cMEM f1 f2 cF cF
+- (((I P) x) /\ ((MEM x) t)) |- ((~ ((MEM x) t)) ==> ((MEM x) t))
+T c==> c/\ cI f0 f1 cMEM f1 f2 c==> c~ cMEM f1 f2 cMEM f1 f2
+- ((!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))) ==> ((P h) ==> ((~ (((x = h) \/ ((P x) /\ ((MEM x) t))) = ((P x) /\ ((x = h) \/ ((MEM x) t))))) ==> F))) |- ((((!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))) ==> ((P h) ==> ((~ (((x = h) \/ ((P x) /\ ((MEM x) t))) = ((P x) /\ ((x = h) \/ ((MEM x) t))))) ==> F))) ==> ((!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))) ==> ((P h) ==> ((~ (((x = h) \/ ((P x) /\ ((MEM x) t))) = ((P x) /\ ((x = h) \/ ((MEM x) t))))) ==> F)))) ==> ((!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))) ==> ((P h) ==> ((~ (((x = h) \/ ((P x) /\ ((MEM x) t))) = ((P x) /\ ((x = h) \/ ((MEM x) t))))) ==> F))))
+T c==> c==> ! c= cMEM b0 cFILTER f0 f1 c/\ * f0 b0 cMEM b0 f1 c==> * f0 f2 c==> c~ c= c\/ c= f3 f2 c/\ * f0 f3 cMEM f3 f1 c/\ * f0 f3 c\/ c= f3 f2 cMEM f3 f1 cF c==> c==> c==> ! c= cMEM b0 cFILTER f0 f1 c/\ * f0 b0 cMEM b0 f1 c==> * f0 f2 c==> c~ c= c\/ c= f3 f2 c/\ * f0 f3 cMEM f3 f1 c/\ * f0 f3 c\/ c= f3 f2 cMEM f3 f1 cF c==> ! c= cMEM b0 cFILTER f0 f1 c/\ * f0 b0 cMEM b0 f1 c==> * f0 f2 c==> c~ c= c\/ c= f3 f2 c/\ * f0 f3 cMEM f3 f1 c/\ * f0 f3 c\/ c= f3 f2 cMEM f3 f1 cF c==> ! c= cMEM b0 cFILTER f0 f1 c/\ * f0 b0 cMEM b0 f1 c==> * f0 f2 c==> c~ c= c\/ c= f3 f2 c/\ * f0 f3 cMEM f3 f1 c/\ * f0 f3 c\/ c= f3 f2 cMEM f3 f1 cF
++ (~ ((I P) x)), (P h), (x = h) |- ((x = h) /\ F)
+T c==> c~ cI f0 f1 c==> * f0 f2 c==> c= f1 f2 c/\ c= f1 f2 cF
+- |- ((!x'. ((~ ((MEM x') ((FILTER P) t))) \/ ((P x) /\ ((MEM x) t)))) = ((!x. (~ ((MEM x) ((FILTER P) t)))) \/ ((P x) /\ ((MEM x) t))))
+T c= ! c\/ c~ cMEM b0 cFILTER f0 f1 c/\ * f0 f2 cMEM f2 f1 c\/ ! c~ cMEM b0 cFILTER f0 f1 c/\ * f0 f2 cMEM f2 f1
+- (P h) |- ((((MEM x) ((CONS h) ((FILTER P) t))) = ((P x) /\ ((x = h) \/ ((MEM x) t)))) = (((MEM x) ((CONS h) ((FILTER P) t))) = ((P x) /\ ((x = h) \/ ((MEM x) t)))))
+T c==> * f0 f1 c= c= cMEM f2 cCONS f1 cFILTER f0 f3 c/\ * f0 f2 c\/ c= f2 f1 cMEM f2 f3 c= cMEM f2 cCONS f1 cFILTER f0 f3 c/\ * f0 f2 c\/ c= f2 f1 cMEM f2 f3
+- |- ((!x'. (((MEM x) ((FILTER P) t)) \/ ((~ (P x')) \/ (~ ((MEM x') t))))) = (((MEM x) ((FILTER P) t)) \/ (!x. ((~ (P x)) \/ (~ ((MEM x) t))))))
+T c= ! c\/ cMEM f0 cFILTER f1 f2 c\/ c~ * f1 b0 c~ cMEM b0 f2 c\/ cMEM f0 cFILTER f1 f2 ! c\/ c~ * f1 b0 c~ cMEM b0 f2
++ ((~ (x = h)) /\ (~ ((MEM x) t))), (((x = h) \/ (((I P) x) /\ ((MEM x) t))) /\ ((~ ((I P) x)) \/ ((~ (x = h)) /\ (~ ((MEM x) t))))) |- (((~ (x = h)) /\ (~ ((MEM x) t))) /\ F)
+T c==> c/\ c~ c= f0 f1 c~ cMEM f0 f2 c==> c/\ c\/ c= f0 f1 c/\ cI f3 f0 cMEM f0 f2 c\/ c~ cI f3 f0 c/\ c~ c= f0 f1 c~ cMEM f0 f2 c/\ c/\ c~ c= f0 f1 c~ cMEM f0 f2 cF
++ |- ((f x) = ((I f) x))
+T c= * f0 f1 cI f0 f1
+- |- ((t ==> F) = (~ t))
+T c= c==> f0 cF c~ f0
++ (((~ (x = h)) /\ ((~ ((I P) x)) \/ (~ ((MEM x) t)))) /\ (((I P) x) /\ ((x = h) \/ ((MEM x) t)))) |- ((~ ((I P) x)) \/ (~ ((MEM x) t)))
+T c==> c/\ c/\ c~ c= f0 f1 c\/ c~ cI f2 f0 c~ cMEM f0 f3 c/\ cI f2 f0 c\/ c= f0 f1 cMEM f0 f3 c\/ c~ cI f2 f0 c~ cMEM f0 f3
+- (!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))) |- (!x. (((~ ((MEM x) ((FILTER P) t))) \/ ((I P) x)) /\ ((~ ((MEM x) ((FILTER P) t))) \/ ((MEM x) t))))
+T c==> ! c= cMEM b0 cFILTER f0 f1 c/\ * f0 b0 cMEM b0 f1 ! c/\ c\/ c~ cMEM b0 cFILTER f0 f1 cI f0 b0 c\/ c~ cMEM b0 cFILTER f0 f1 cMEM b0 f1
+- |- ((~ (_17625 = _17627)) \/ ((~ (_17624 = _17626)) \/ (((I _17626) _17627) \/ (~ ((I _17624) _17625)))))
+T c\/ c~ c= f0 f1 c\/ c~ c= f2 f3 c\/ cI f3 f1 c~ cI f2 f0
+- (x = h) |- (((~ ((MEM _17587) ((FILTER P) t))) \/ ((I P) _17587)) = ((~ ((MEM _17587) ((FILTER P) t))) \/ ((I P) _17587)))
+T c==> c= f0 f1 c= c\/ c~ cMEM f2 cFILTER f3 f4 cI f3 f2 c\/ c~ cMEM f2 cFILTER f3 f4 cI f3 f2
++ |- (!h. (!t. ((!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))) ==> (!x. (((MEM x) ((FILTER P) ((CONS h) t))) = ((P x) /\ ((MEM x) ((CONS h) t))))))))
+T c==> ! c= cMEM b0 cFILTER f0 f1 c/\ * f0 b0 cMEM b0 f1 ! c= cMEM b0 cFILTER f0 cCONS f2 f1 c/\ * f0 b0 cMEM b0 cCONS f2 f1
++ (((I P) x) /\ ((MEM x) t)) |- ((((MEM x) t) ==> F) = F)
+T c==> c/\ cI f0 f1 cMEM f1 f2 c= c==> cMEM f1 f2 cF cF
+- (~ F), (x = h), (((~ (x = h)) /\ ((~ ((I P) x)) \/ (~ ((MEM x) t)))) /\ (((I P) x) /\ ((x = h) \/ ((MEM x) t)))) |- ((~ F) /\ F)
+T c==> c~ cF c==> c= f0 f1 c==> c/\ c/\ c~ c= f0 f1 c\/ c~ cI f2 f0 c~ cMEM f0 f3 c/\ cI f2 f0 c\/ c= f0 f1 cMEM f0 f3 c/\ c~ cF cF
++ |- (T = (!x. (((MEM x) ((FILTER P) NIL)) = ((P x) /\ ((MEM x) NIL)))))
+T c= cT ! c= cMEM b0 cFILTER f0 cNIL c/\ * f0 b0 cMEM b0 cNIL
++ |- ((F = t) = (~ t))
+T c= c= cF f0 c~ f0
++ ((((I P) x) /\ ((MEM x) t)) /\ ((~ ((I P) x)) \/ ((~ (x = h)) /\ (~ ((MEM x) t))))) |- ((I P) x)
+T c==> c/\ c/\ cI f0 f1 cMEM f1 f2 c\/ c~ cI f0 f1 c/\ c~ c= f1 f3 c~ cMEM f1 f2 cI f0 f1
++ (((~ (x = h)) /\ ((~ ((I P) x)) \/ (~ ((MEM x) t)))) /\ (((I P) x) /\ ((x = h) \/ ((MEM x) t)))), ((~ ((MEM x) t)) ==> F) |- F
+T c==> c/\ c/\ c~ c= f0 f1 c\/ c~ cI f2 f0 c~ cMEM f0 f3 c/\ cI f2 f0 c\/ c= f0 f1 cMEM f0 f3 c==> c==> c~ cMEM f0 f3 cF cF
++ |- (((!h. (!P. ((!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))) ==> ((P h) ==> ((~ (((x = h) \/ ((P x) /\ ((MEM x) t))) = ((P x) /\ ((x = h) \/ ((MEM x) t))))) ==> F))))) ==> ((\h. (!P. ((!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))) ==> ((P h) ==> ((~ (((x = h) \/ ((P x) /\ ((MEM x) t))) = ((P x) /\ ((x = h) \/ ((MEM x) t))))) ==> F))))) h)) = ((\h. (!P. ((!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))) ==> ((P h) ==> ((~ (((x = h) \/ ((P x) /\ ((MEM x) t))) = ((P x) /\ ((x = h) \/ ((MEM x) t))))) ==> F))))) h))
+T c= c==> ! ! c==> ! c= cMEM b2 cFILTER b1 f0 c/\ * b1 b2 cMEM b2 f0 c==> * b1 b0 c==> c~ c= c\/ c= f1 b0 c/\ * b1 f1 cMEM f1 f0 c/\ * b1 f1 c\/ c= f1 b0 cMEM f1 f0 cF * / ! c==> ! c= cMEM b2 cFILTER b1 f0 c/\ * b1 b2 cMEM b2 f0 c==> * b1 b0 c==> c~ c= c\/ c= f1 b0 c/\ * b1 f1 cMEM f1 f0 c/\ * b1 f1 c\/ c= f1 b0 cMEM f1 f0 cF f2 * / ! c==> ! c= cMEM b2 cFILTER b1 f0 c/\ * b1 b2 cMEM b2 f0 c==> * b1 b0 c==> c~ c= c\/ c= f1 b0 c/\ * b1 f1 cMEM f1 f0 c/\ * b1 f1 c\/ c= f1 b0 cMEM f1 f0 cF f2
++ (!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))) |- ((((P x) /\ ((MEM x) t)) = ((P x) /\ ((x = h) \/ ((MEM x) t)))) = (((MEM x) ((FILTER P) t)) = ((P x) /\ ((x = h) \/ ((MEM x) t)))))
+T c==> ! c= cMEM b0 cFILTER f0 f1 c/\ * f0 b0 cMEM b0 f1 c= c= c/\ * f0 f2 cMEM f2 f1 c/\ * f0 f2 c\/ c= f2 f3 cMEM f2 f1 c= cMEM f2 cFILTER f0 f1 c/\ * f0 f2 c\/ c= f2 f3 cMEM f2 f1
++ ((~ (x = h)) /\ (~ ((MEM x) t))), (((x = h) \/ (((I P) x) /\ ((MEM x) t))) /\ ((~ ((I P) x)) \/ ((~ (x = h)) /\ (~ ((MEM x) t))))), ((((I P) x) /\ ((MEM x) t)) ==> F) |- F
+T c==> c/\ c~ c= f0 f1 c~ cMEM f0 f2 c==> c/\ c\/ c= f0 f1 c/\ cI f3 f0 cMEM f0 f2 c\/ c~ cI f3 f0 c/\ c~ c= f0 f1 c~ cMEM f0 f2 c==> c==> c/\ cI f3 f0 cMEM f0 f2 cF cF
++ |- (p = ((~ p) ==> F))
+T c= f0 c==> c~ f0 cF
+- (x = h) |- ((((MEM _17586) ((FILTER P) t)) \/ ((~ ((I P) _17586)) \/ (~ ((MEM _17586) t)))) = (((MEM _17586) ((FILTER P) t)) \/ ((~ ((I P) _17586)) \/ (~ ((MEM _17586) t)))))
+T c==> c= f0 f1 c= c\/ cMEM f2 cFILTER f3 f4 c\/ c~ cI f3 f2 c~ cMEM f2 f4 c\/ cMEM f2 cFILTER f3 f4 c\/ c~ cI f3 f2 c~ cMEM f2 f4
+- |- ((((!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))) ==> ((~ (P h)) ==> ((~ (((P x) /\ ((MEM x) t)) = ((P x) /\ ((x = h) \/ ((MEM x) t))))) ==> F))) ==> ((!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))) ==> ((~ (P h)) ==> ((~ (((P x) /\ ((MEM x) t)) = ((P x) /\ ((x = h) \/ ((MEM x) t))))) ==> F)))) ==> (((!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))) ==> ((~ (P h)) ==> ((~ (((P x) /\ ((MEM x) t)) = ((P x) /\ ((x = h) \/ ((MEM x) t))))) ==> F))) ==> ((!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))) ==> ((~ (P h)) ==> ((~ (((P x) /\ ((MEM x) t)) = ((P x) /\ ((x = h) \/ ((MEM x) t))))) ==> F)))))
+T c==> c==> c==> ! c= cMEM b0 cFILTER f0 f1 c/\ * f0 b0 cMEM b0 f1 c==> c~ * f0 f2 c==> c~ c= c/\ * f0 f3 cMEM f3 f1 c/\ * f0 f3 c\/ c= f3 f2 cMEM f3 f1 cF c==> ! c= cMEM b0 cFILTER f0 f1 c/\ * f0 b0 cMEM b0 f1 c==> c~ * f0 f2 c==> c~ c= c/\ * f0 f3 cMEM f3 f1 c/\ * f0 f3 c\/ c= f3 f2 cMEM f3 f1 cF c==> c==> ! c= cMEM b0 cFILTER f0 f1 c/\ * f0 b0 cMEM b0 f1 c==> c~ * f0 f2 c==> c~ c= c/\ * f0 f3 cMEM f3 f1 c/\ * f0 f3 c\/ c= f3 f2 cMEM f3 f1 cF c==> ! c= cMEM b0 cFILTER f0 f1 c/\ * f0 b0 cMEM b0 f1 c==> c~ * f0 f2 c==> c~ c= c/\ * f0 f3 cMEM f3 f1 c/\ * f0 f3 c\/ c= f3 f2 cMEM f3 f1 cF
+- (_17620 = _17622), (_17621 = _17623) |- ((_17621 = _17623) /\ (((MEM _17622) _17623) \/ (~ ((MEM _17620) _17621))))
+T c==> c= f0 f1 c==> c= f2 f3 c/\ c= f2 f3 c\/ cMEM f1 f3 c~ cMEM f0 f2
+- (x = h) |- (((~ ((MEM _17587) ((FILTER P) t))) \/ ((MEM _17587) t)) = ((~ ((MEM _17587) ((FILTER P) t))) \/ ((MEM _17587) t)))
+T c==> c= f0 f1 c= c\/ c~ cMEM f2 cFILTER f3 f4 cMEM f2 f4 c\/ c~ cMEM f2 cFILTER f3 f4 cMEM f2 f4
++ (((~ ((I P) x)) \/ (~ ((MEM x) t))) /\ (((I P) x) /\ ((x = h) \/ ((MEM x) t)))), ((~ ((I P) x)) ==> F), ((~ ((MEM x) t)) ==> F) |- F
+T c==> c/\ c\/ c~ cI f0 f1 c~ cMEM f1 f2 c/\ cI f0 f1 c\/ c= f1 f3 cMEM f1 f2 c==> c==> c~ cI f0 f1 cF c==> c==> c~ cMEM f1 f2 cF cF
+- (~ ((I P) x)), (((~ (x = h)) /\ ((~ ((I P) x)) \/ (~ ((MEM x) t)))) /\ (((I P) x) /\ ((x = h) \/ ((MEM x) t)))) |- ((~ ((I P) x)) /\ ((I P) x))
+T c==> c~ cI f0 f1 c==> c/\ c/\ c~ c= f1 f2 c\/ c~ cI f0 f1 c~ cMEM f1 f3 c/\ cI f0 f1 c\/ c= f1 f2 cMEM f1 f3 c/\ c~ cI f0 f1 cI f0 f1
++ |- ((!t. ((!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))) ==> (!x. (((MEM x) ((FILTER P) ((CONS h) t))) = ((P x) /\ ((MEM x) ((CONS h) t))))))) = T)
+T c= ! c==> ! c= cMEM b1 cFILTER f0 b0 c/\ * f0 b1 cMEM b1 b0 ! c= cMEM b1 cFILTER f0 cCONS f1 b0 c/\ * f0 b1 cMEM b1 cCONS f1 b0 cT
++ (((x = h) \/ (((I P) x) /\ ((MEM x) t))) /\ ((~ ((I P) x)) \/ ((~ (x = h)) /\ (~ ((MEM x) t))))), ((x = h) ==> F), ((((I P) x) /\ ((MEM x) t)) ==> F) |- F
+T c==> c/\ c\/ c= f0 f1 c/\ cI f2 f0 cMEM f0 f3 c\/ c~ cI f2 f0 c/\ c~ c= f0 f1 c~ cMEM f0 f3 c==> c==> c= f0 f1 cF c==> c==> c/\ cI f2 f0 cMEM f0 f3 cF cF
+- ((~ (x = h)) /\ (~ ((MEM x) t))), (((I P) x) /\ ((MEM x) t)) |- ((~ F) ==> F)
+T c==> c/\ c~ c= f0 f1 c~ cMEM f0 f2 c==> c/\ cI f3 f0 cMEM f0 f2 c==> c~ cF cF
++ |- ((((P h) ==> (((MEM x) ((CONS h) ((FILTER P) t))) = ((P x) /\ ((x = h) \/ ((MEM x) t))))) /\ ((~ (P h)) ==> (((MEM x) ((FILTER P) t)) = ((P x) /\ ((x = h) \/ ((MEM x) t)))))) = (((MEM x) (((COND (P h)) ((CONS h) ((FILTER P) t))) ((FILTER P) t))) = ((P x) /\ ((x = h) \/ ((MEM x) t)))))
+T c= c/\ c==> * f0 f1 c= cMEM f2 cCONS f1 cFILTER f0 f3 c/\ * f0 f2 c\/ c= f2 f1 cMEM f2 f3 c==> c~ * f0 f1 c= cMEM f2 cFILTER f0 f3 c/\ * f0 f2 c\/ c= f2 f1 cMEM f2 f3 c= cMEM f2 cCOND * f0 f1 cCONS f1 cFILTER f0 f3 cFILTER f0 f3 c/\ * f0 f2 c\/ c= f2 f1 cMEM f2 f3
+- (~ ((I P) x)), (((~ ((I P) x)) \/ (~ ((MEM x) t))) /\ (((I P) x) /\ ((x = h) \/ ((MEM x) t)))) |- ((~ ((I P) x)) /\ ((I P) x))
+T c==> c~ cI f0 f1 c==> c/\ c\/ c~ cI f0 f1 c~ cMEM f1 f2 c/\ cI f0 f1 c\/ c= f1 f3 cMEM f1 f2 c/\ c~ cI f0 f1 cI f0 f1
+- |- (((((!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))) ==> ((P h) ==> ((~ (((x = h) \/ ((P x) /\ ((MEM x) t))) = ((P x) /\ ((x = h) \/ ((MEM x) t))))) ==> F))) ==> ((!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))) ==> ((P h) ==> ((~ (((x = h) \/ ((P x) /\ ((MEM x) t))) = ((P x) /\ ((x = h) \/ ((MEM x) t))))) ==> F)))) ==> (((!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))) ==> ((P h) ==> ((~ (((x = h) \/ ((P x) /\ ((MEM x) t))) = ((P x) /\ ((x = h) \/ ((MEM x) t))))) ==> F))) ==> ((!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))) ==> ((P h) ==> ((~ (((x = h) \/ ((P x) /\ ((MEM x) t))) = ((P x) /\ ((x = h) \/ ((MEM x) t))))) ==> F))))) = (((!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))) ==> ((P h) ==> ((~ (((x = h) \/ ((P x) /\ ((MEM x) t))) = ((P x) /\ ((x = h) \/ ((MEM x) t))))) ==> F))) ==> ((!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))) ==> ((P h) ==> ((~ (((x = h) \/ ((P x) /\ ((MEM x) t))) = ((P x) /\ ((x = h) \/ ((MEM x) t))))) ==> F)))))
+T c= c==> c==> c==> ! c= cMEM b0 cFILTER f0 f1 c/\ * f0 b0 cMEM b0 f1 c==> * f0 f2 c==> c~ c= c\/ c= f3 f2 c/\ * f0 f3 cMEM f3 f1 c/\ * f0 f3 c\/ c= f3 f2 cMEM f3 f1 cF c==> ! c= cMEM b0 cFILTER f0 f1 c/\ * f0 b0 cMEM b0 f1 c==> * f0 f2 c==> c~ c= c\/ c= f3 f2 c/\ * f0 f3 cMEM f3 f1 c/\ * f0 f3 c\/ c= f3 f2 cMEM f3 f1 cF c==> c==> ! c= cMEM b0 cFILTER f0 f1 c/\ * f0 b0 cMEM b0 f1 c==> * f0 f2 c==> c~ c= c\/ c= f3 f2 c/\ * f0 f3 cMEM f3 f1 c/\ * f0 f3 c\/ c= f3 f2 cMEM f3 f1 cF c==> ! c= cMEM b0 cFILTER f0 f1 c/\ * f0 b0 cMEM b0 f1 c==> * f0 f2 c==> c~ c= c\/ c= f3 f2 c/\ * f0 f3 cMEM f3 f1 c/\ * f0 f3 c\/ c= f3 f2 cMEM f3 f1 cF c==> c==> ! c= cMEM b0 cFILTER f0 f1 c/\ * f0 b0 cMEM b0 f1 c==> * f0 f2 c==> c~ c= c\/ c= f3 f2 c/\ * f0 f3 cMEM f3 f1 c/\ * f0 f3 c\/ c= f3 f2 cMEM f3 f1 cF c==> ! c= cMEM b0 cFILTER f0 f1 c/\ * f0 b0 cMEM b0 f1 c==> * f0 f2 c==> c~ c= c\/ c= f3 f2 c/\ * f0 f3 cMEM f3 f1 c/\ * f0 f3 c\/ c= f3 f2 cMEM f3 f1 cF
+- |- ((~ (_17628 = _17630)) \/ ((~ (_17629 = _17631)) \/ (((FILTER _17628) _17629) = ((FILTER _17630) _17631))))
+T c\/ c~ c= f0 f1 c\/ c~ c= f2 f3 c= cFILTER f0 f2 cFILTER f1 f3
+- (~ ((I P) x)), (x = h), (((~ ((I P) x)) \/ (~ ((MEM x) t))) /\ (((I P) x) /\ ((x = h) \/ ((MEM x) t)))) |- F
+T c==> c~ cI f0 f1 c==> c= f1 f2 c==> c/\ c\/ c~ cI f0 f1 c~ cMEM f1 f3 c/\ cI f0 f1 c\/ c= f1 f2 cMEM f1 f3 cF
+- ((!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))) ==> ((~ (P h)) ==> ((~ (((P x) /\ ((MEM x) t)) = ((P x) /\ ((x = h) \/ ((MEM x) t))))) ==> F))), (((!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))) ==> ((~ (P h)) ==> ((~ (((P x) /\ ((MEM x) t)) = ((P x) /\ ((x = h) \/ ((MEM x) t))))) ==> F))) ==> ((!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))) ==> ((~ (P h)) ==> ((~ (((P x) /\ ((MEM x) t)) = ((P x) /\ ((x = h) \/ ((MEM x) t))))) ==> F)))) |- (((!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))) ==> ((~ (P h)) ==> ((~ (((P x) /\ ((MEM x) t)) = ((P x) /\ ((x = h) \/ ((MEM x) t))))) ==> F))) /\ ((!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))) ==> ((~ (P h)) ==> ((~ (((P x) /\ ((MEM x) t)) = ((P x) /\ ((x = h) \/ ((MEM x) t))))) ==> F))))
+T c==> c==> ! c= cMEM b0 cFILTER f0 f1 c/\ * f0 b0 cMEM b0 f1 c==> c~ * f0 f2 c==> c~ c= c/\ * f0 f3 cMEM f3 f1 c/\ * f0 f3 c\/ c= f3 f2 cMEM f3 f1 cF c==> c==> c==> ! c= cMEM b0 cFILTER f0 f1 c/\ * f0 b0 cMEM b0 f1 c==> c~ * f0 f2 c==> c~ c= c/\ * f0 f3 cMEM f3 f1 c/\ * f0 f3 c\/ c= f3 f2 cMEM f3 f1 cF c==> ! c= cMEM b0 cFILTER f0 f1 c/\ * f0 b0 cMEM b0 f1 c==> c~ * f0 f2 c==> c~ c= c/\ * f0 f3 cMEM f3 f1 c/\ * f0 f3 c\/ c= f3 f2 cMEM f3 f1 cF c/\ c==> ! c= cMEM b0 cFILTER f0 f1 c/\ * f0 b0 cMEM b0 f1 c==> c~ * f0 f2 c==> c~ c= c/\ * f0 f3 cMEM f3 f1 c/\ * f0 f3 c\/ c= f3 f2 cMEM f3 f1 cF c==> ! c= cMEM b0 cFILTER f0 f1 c/\ * f0 b0 cMEM b0 f1 c==> c~ * f0 f2 c==> c~ c= c/\ * f0 f3 cMEM f3 f1 c/\ * f0 f3 c\/ c= f3 f2 cMEM f3 f1 cF
++ |- (((!x. (!h. (!P. ((!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))) ==> ((~ (P h)) ==> ((~ (((P x) /\ ((MEM x) t)) = ((P x) /\ ((x = h) \/ ((MEM x) t))))) ==> F)))))) ==> ((\x. (!h. (!P. ((!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))) ==> ((~ (P h)) ==> ((~ (((P x) /\ ((MEM x) t)) = ((P x) /\ ((x = h) \/ ((MEM x) t))))) ==> F)))))) x)) = ((\x. (!h. (!P. ((!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))) ==> ((~ (P h)) ==> ((~ (((P x) /\ ((MEM x) t)) = ((P x) /\ ((x = h) \/ ((MEM x) t))))) ==> F)))))) x))
+T c= c==> ! ! ! c==> ! c= cMEM b3 cFILTER b2 f0 c/\ * b2 b3 cMEM b3 f0 c==> c~ * b2 b1 c==> c~ c= c/\ * b2 b0 cMEM b0 f0 c/\ * b2 b0 c\/ c= b0 b1 cMEM b0 f0 cF * / ! ! c==> ! c= cMEM b3 cFILTER b2 f0 c/\ * b2 b3 cMEM b3 f0 c==> c~ * b2 b1 c==> c~ c= c/\ * b2 b0 cMEM b0 f0 c/\ * b2 b0 c\/ c= b0 b1 cMEM b0 f0 cF f1 * / ! ! c==> ! c= cMEM b3 cFILTER b2 f0 c/\ * b2 b3 cMEM b3 f0 c==> c~ * b2 b1 c==> c~ c= c/\ * b2 b0 cMEM b0 f0 c/\ * b2 b0 c\/ c= b0 b1 cMEM b0 f0 cF f1
+- |- ((((!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))) ==> ((~ (P h)) ==> ((~ (((P x) /\ ((MEM x) t)) = ((P x) /\ ((x = h) \/ ((MEM x) t))))) ==> F))) ==> ((!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))) ==> ((~ (P h)) ==> ((~ (((P x) /\ ((MEM x) t)) = ((P x) /\ ((x = h) \/ ((MEM x) t))))) ==> F)))) = ((!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))) ==> ((~ (P h)) ==> ((~ (((P x) /\ ((MEM x) t)) = ((P x) /\ ((x = h) \/ ((MEM x) t))))) ==> F))))
+T c= c==> c==> ! c= cMEM b0 cFILTER f0 f1 c/\ * f0 b0 cMEM b0 f1 c==> c~ * f0 f2 c==> c~ c= c/\ * f0 f3 cMEM f3 f1 c/\ * f0 f3 c\/ c= f3 f2 cMEM f3 f1 cF c==> ! c= cMEM b0 cFILTER f0 f1 c/\ * f0 b0 cMEM b0 f1 c==> c~ * f0 f2 c==> c~ c= c/\ * f0 f3 cMEM f3 f1 c/\ * f0 f3 c\/ c= f3 f2 cMEM f3 f1 cF c==> ! c= cMEM b0 cFILTER f0 f1 c/\ * f0 b0 cMEM b0 f1 c==> c~ * f0 f2 c==> c~ c= c/\ * f0 f3 cMEM f3 f1 c/\ * f0 f3 c\/ c= f3 f2 cMEM f3 f1 cF
++ |- (((MEM x) ((CONS h) t)) = ((x = h) \/ ((MEM x) t)))
+T c= cMEM f0 cCONS f1 f2 c\/ c= f0 f1 cMEM f0 f2
+- (~ F), (~ ((I P) x)), (((~ ((I P) x)) \/ (~ ((MEM x) t))) /\ (((I P) x) /\ ((x = h) \/ ((MEM x) t)))) |- ((~ F) /\ F)
+T c==> c~ cF c==> c~ cI f0 f1 c==> c/\ c\/ c~ cI f0 f1 c~ cMEM f1 f2 c/\ cI f0 f1 c\/ c= f1 f3 cMEM f1 f2 c/\ c~ cF cF
+- |- ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))
+T c= c\/ f0 c\/ f1 f2 c\/ c\/ f0 f1 f2
++ (((~ (x = h)) /\ ((~ ((I P) x)) \/ (~ ((MEM x) t)))) /\ (((I P) x) /\ ((x = h) \/ ((MEM x) t)))) |- ((x = h) ==> F)
+T c==> c/\ c/\ c~ c= f0 f1 c\/ c~ cI f2 f0 c~ cMEM f0 f3 c/\ cI f2 f0 c\/ c= f0 f1 cMEM f0 f3 c==> c= f0 f1 cF
++ (!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))) |- ((((MEM x) (((COND (P h)) ((CONS h) ((FILTER P) t))) ((FILTER P) t))) = ((P x) /\ ((x = h) \/ ((MEM x) t)))) = T)
+T c==> ! c= cMEM b0 cFILTER f0 f1 c/\ * f0 b0 cMEM b0 f1 c= c= cMEM f2 cCOND * f0 f3 cCONS f3 cFILTER f0 f1 cFILTER f0 f1 c/\ * f0 f2 c\/ c= f2 f3 cMEM f2 f1 cT
++ (~ (P h)) |- (~ ((I P) h))
+T c==> c~ * f0 f1 c~ cI f0 f1
+- (~ F), (~ ((I P) x)), (x = h), (((~ (x = h)) /\ ((~ ((I P) x)) \/ (~ ((MEM x) t)))) /\ (((I P) x) /\ ((x = h) \/ ((MEM x) t)))) |- ((~ F) /\ F)
+T c==> c~ cF c==> c~ cI f0 f1 c==> c= f1 f2 c==> c/\ c/\ c~ c= f1 f2 c\/ c~ cI f0 f1 c~ cMEM f1 f3 c/\ cI f0 f1 c\/ c= f1 f2 cMEM f1 f3 c/\ c~ cF cF
++ (~ (P h)), (((~ ((I P) x)) \/ (~ ((MEM x) t))) /\ (((I P) x) /\ ((x = h) \/ ((MEM x) t)))), (((MEM x) t) ==> F) |- F
+T c==> c~ * f0 f1 c==> c/\ c\/ c~ cI f0 f2 c~ cMEM f2 f3 c/\ cI f0 f2 c\/ c= f2 f1 cMEM f2 f3 c==> c==> cMEM f2 f3 cF cF
++ |- (!x. (((MEM x) ((FILTER P) NIL)) = ((P x) /\ ((MEM x) NIL))))
+T c= cMEM f0 cFILTER f1 cNIL c/\ * f1 f0 cMEM f0 cNIL
+- (_17620 = _17622) |- ((_17620 = _17622) /\ ((~ (_17621 = _17623)) \/ (((MEM _17622) _17623) \/ (~ ((MEM _17620) _17621)))))
+T c==> c= f0 f1 c/\ c= f0 f1 c\/ c~ c= f2 f3 c\/ cMEM f1 f3 c~ cMEM f0 f2
++ |- ((\x. (!h. (!P. ((!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))) ==> ((P h) ==> ((~ (((x = h) \/ ((P x) /\ ((MEM x) t))) = ((P x) /\ ((x = h) \/ ((MEM x) t))))) ==> F)))))) x)
+T * / ! ! c==> ! c= cMEM b3 cFILTER b2 f0 c/\ * b2 b3 cMEM b3 f0 c==> * b2 b1 c==> c~ c= c\/ c= b0 b1 c/\ * b2 b0 cMEM b0 f0 c/\ * b2 b0 c\/ c= b0 b1 cMEM b0 f0 cF f1
+- (~ ((MEM x) t)), ((((I P) x) /\ ((MEM x) t)) /\ ((~ ((I P) x)) \/ ((~ (x = h)) /\ (~ ((MEM x) t))))) |- ((~ ((MEM x) t)) /\ ((MEM x) t))
+T c==> c~ cMEM f0 f1 c==> c/\ c/\ cI f2 f0 cMEM f0 f1 c\/ c~ cI f2 f0 c/\ c~ c= f0 f3 c~ cMEM f0 f1 c/\ c~ cMEM f0 f1 cMEM f0 f1
+- |- ((_17620 = _17622) ==> ((~ (_17621 = _17623)) \/ (((MEM _17622) _17623) \/ (~ ((MEM _17620) _17621)))))
+T c==> c= f0 f1 c\/ c~ c= f2 f3 c\/ cMEM f1 f3 c~ cMEM f0 f2
++ (~ ((MEM x) t)), ((MEM x) t) |- F
+T c==> c~ cMEM f0 f1 c==> cMEM f0 f1 cF
++ (~ ((MEM x) t)), ((MEM x) t) |- ((~ ((MEM x) t)) /\ F)
+T c==> c~ cMEM f0 f1 c==> cMEM f0 f1 c/\ c~ cMEM f0 f1 cF
++ |- ((((~ (x = h)) /\ ((~ ((I P) x)) \/ (~ ((MEM x) t)))) /\ (((I P) x) /\ ((x = h) \/ ((MEM x) t)))) ==> F)
+T c==> c/\ c/\ c~ c= f0 f1 c\/ c~ cI f2 f0 c~ cMEM f0 f3 c/\ cI f2 f0 c\/ c= f0 f1 cMEM f0 f3 cF
+- (!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))) |- (((!x. (((MEM x) ((FILTER P) t)) \/ ((~ ((I P) x)) \/ (~ ((MEM x) t))))) ==> ((\x. (((MEM x) ((FILTER P) t)) \/ ((~ ((I P) x)) \/ (~ ((MEM x) t))))) _17590)) = ((\x. (((MEM x) ((FILTER P) t)) \/ ((~ ((I P) x)) \/ (~ ((MEM x) t))))) _17590))
+T c==> ! c= cMEM b0 cFILTER f0 f1 c/\ * f0 b0 cMEM b0 f1 c= c==> ! c\/ cMEM b0 cFILTER f0 f1 c\/ c~ cI f0 b0 c~ cMEM b0 f1 * / c\/ cMEM b0 cFILTER f0 f1 c\/ c~ cI f0 b0 c~ cMEM b0 f1 f2 * / c\/ cMEM b0 cFILTER f0 f1 c\/ c~ cI f0 b0 c~ cMEM b0 f1 f2
+- (x = h), (((~ ((I P) x)) \/ (~ ((MEM x) t))) /\ (((I P) x) /\ ((x = h) \/ ((MEM x) t)))), ((~ ((MEM x) t)) ==> F) |- F
+T c==> c= f0 f1 c==> c/\ c\/ c~ cI f2 f0 c~ cMEM f0 f3 c/\ cI f2 f0 c\/ c= f0 f1 cMEM f0 f3 c==> c==> c~ cMEM f0 f3 cF cF
++ (((~ ((I P) x)) \/ (~ ((MEM x) t))) /\ (((I P) x) /\ ((x = h) \/ ((MEM x) t)))) |- ((x = h) \/ ((MEM x) t))
+T c==> c/\ c\/ c~ cI f0 f1 c~ cMEM f1 f2 c/\ cI f0 f1 c\/ c= f1 f3 cMEM f1 f2 c\/ c= f1 f3 cMEM f1 f2
++ (((~ (x = h)) /\ ((~ ((I P) x)) \/ (~ ((MEM x) t)))) /\ (((I P) x) /\ ((x = h) \/ ((MEM x) t)))), (((MEM x) t) ==> F) |- F
+T c==> c/\ c/\ c~ c= f0 f1 c\/ c~ cI f2 f0 c~ cMEM f0 f3 c/\ cI f2 f0 c\/ c= f0 f1 cMEM f0 f3 c==> c==> cMEM f0 f3 cF cF
+- (x = h), (((~ ((I P) x)) \/ (~ ((MEM x) t))) /\ (((I P) x) /\ ((x = h) \/ ((MEM x) t)))) |- ((~ ((I P) x)) ==> F)
+T c==> c= f0 f1 c==> c/\ c\/ c~ cI f2 f0 c~ cMEM f0 f3 c/\ cI f2 f0 c\/ c= f0 f1 cMEM f0 f3 c==> c~ cI f2 f0 cF
++ (x = h), ((~ (x = h)) /\ (~ ((MEM x) t))) |- (~ (h = h))
+T c==> c= f0 f1 c==> c/\ c~ c= f0 f1 c~ cMEM f0 f2 c~ c= f1 f1
+- (~ F), (~ ((MEM x) t)), ((MEM x) t) |- ((~ F) /\ F)
+T c==> c~ cF c==> c~ cMEM f0 f1 c==> cMEM f0 f1 c/\ c~ cF cF
++ (!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))), (~ (P h)) |- ((~ (P h)) /\ (((MEM x) ((FILTER P) t)) = ((P x) /\ ((x = h) \/ ((MEM x) t)))))
+T c==> ! c= cMEM b0 cFILTER f0 f1 c/\ * f0 b0 cMEM b0 f1 c==> c~ * f0 f2 c/\ c~ * f0 f2 c= cMEM f3 cFILTER f0 f1 c/\ * f0 f3 c\/ c= f3 f2 cMEM f3 f1
+- (!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))) |- ((!x. (((MEM x) ((FILTER P) t)) \/ ((~ ((I P) x)) \/ (~ ((MEM x) t))))) /\ (!x. ((~ ((MEM x) ((FILTER P) t))) \/ (((I P) x) /\ ((MEM x) t)))))
+T c==> ! c= cMEM b0 cFILTER f0 f1 c/\ * f0 b0 cMEM b0 f1 c/\ ! c\/ cMEM b0 cFILTER f0 f1 c\/ c~ cI f0 b0 c~ cMEM b0 f1 ! c\/ c~ cMEM b0 cFILTER f0 f1 c/\ cI f0 b0 cMEM b0 f1
++ (((~ (x = h)) /\ ((~ ((I P) x)) \/ (~ ((MEM x) t)))) /\ (((I P) x) /\ ((x = h) \/ ((MEM x) t)))) |- ((((~ (x = h)) /\ ((~ ((I P) x)) \/ (~ ((MEM x) t)))) /\ (((I P) x) /\ ((x = h) \/ ((MEM x) t)))) /\ F)
+T c==> c/\ c/\ c~ c= f0 f1 c\/ c~ cI f2 f0 c~ cMEM f0 f3 c/\ cI f2 f0 c\/ c= f0 f1 cMEM f0 f3 c/\ c/\ c/\ c~ c= f0 f1 c\/ c~ cI f2 f0 c~ cMEM f0 f3 c/\ cI f2 f0 c\/ c= f0 f1 cMEM f0 f3 cF
+- (~ F), (~ ((I P) x)), (P h), (x = h) |- ((~ F) /\ F)
+T c==> c~ cF c==> c~ cI f0 f1 c==> * f0 f2 c==> c= f1 f2 c/\ c~ cF cF
+- |- ((\t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3)))) t2)
+T * / ! c= c\/ f0 c\/ b0 b1 c\/ c\/ f0 b0 b1 f1
+- |- ((!x. ((P x) \/ Q)) = ((!x. (P x)) \/ Q))
+T c= ! c\/ * f0 b0 f1 c\/ ! * f0 b0 f1
+- (x = h), (((~ ((I P) x)) \/ (~ ((MEM x) t))) /\ (((I P) x) /\ ((x = h) \/ ((MEM x) t)))) |- ((~ ((I P) h)) ==> ((I P) h))
+T c==> c= f0 f1 c==> c/\ c\/ c~ cI f2 f0 c~ cMEM f0 f3 c/\ cI f2 f0 c\/ c= f0 f1 cMEM f0 f3 c==> c~ cI f2 f1 cI f2 f1
++ (~ ((MEM x) t)), (((~ (x = h)) /\ ((~ ((I P) x)) \/ (~ ((MEM x) t)))) /\ (((I P) x) /\ ((x = h) \/ ((MEM x) t)))) |- ((~ ((MEM x) t)) /\ F)
+T c==> c~ cMEM f0 f1 c==> c/\ c/\ c~ c= f0 f2 c\/ c~ cI f3 f0 c~ cMEM f0 f1 c/\ cI f3 f0 c\/ c= f0 f2 cMEM f0 f1 c/\ c~ cMEM f0 f1 cF
+- (~ ((I P) x)), (((~ ((I P) x)) \/ (~ ((MEM x) t))) /\ (((I P) x) /\ ((x = h) \/ ((MEM x) t)))) |- ((~ F) ==> F)
+T c==> c~ cI f0 f1 c==> c/\ c\/ c~ cI f0 f1 c~ cMEM f1 f2 c/\ cI f0 f1 c\/ c= f1 f3 cMEM f1 f2 c==> c~ cF cF
++ (((~ (x = h)) /\ ((~ ((I P) x)) \/ (~ ((MEM x) t)))) /\ (((I P) x) /\ ((x = h) \/ ((MEM x) t)))) |- ((x = h) \/ ((MEM x) t))
+T c==> c/\ c/\ c~ c= f0 f1 c\/ c~ cI f2 f0 c~ cMEM f0 f3 c/\ cI f2 f0 c\/ c= f0 f1 cMEM f0 f3 c\/ c= f0 f1 cMEM f0 f3
+- (_17625 = _17627), (_17624 = _17626) |- (((((I _17624) _17625) = ((I _17626) _17627)) ==> (((I _17626) _17627) \/ (~ ((I _17624) _17625)))) = (((I _17626) _17627) \/ (~ ((I _17624) _17625))))
+T c==> c= f0 f1 c==> c= f2 f3 c= c==> c= cI f2 f0 cI f3 f1 c\/ cI f3 f1 c~ cI f2 f0 c\/ cI f3 f1 c~ cI f2 f0
+- ((!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))) ==> ((~ (P h)) ==> ((~ (((P x) /\ ((MEM x) t)) = ((P x) /\ ((x = h) \/ ((MEM x) t))))) ==> F))) |- ((((!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))) ==> ((~ (P h)) ==> ((~ (((P x) /\ ((MEM x) t)) = ((P x) /\ ((x = h) \/ ((MEM x) t))))) ==> F))) ==> ((!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))) ==> ((~ (P h)) ==> ((~ (((P x) /\ ((MEM x) t)) = ((P x) /\ ((x = h) \/ ((MEM x) t))))) ==> F)))) ==> ((!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))) ==> ((~ (P h)) ==> ((~ (((P x) /\ ((MEM x) t)) = ((P x) /\ ((x = h) \/ ((MEM x) t))))) ==> F))))
+T c==> c==> ! c= cMEM b0 cFILTER f0 f1 c/\ * f0 b0 cMEM b0 f1 c==> c~ * f0 f2 c==> c~ c= c/\ * f0 f3 cMEM f3 f1 c/\ * f0 f3 c\/ c= f3 f2 cMEM f3 f1 cF c==> c==> c==> ! c= cMEM b0 cFILTER f0 f1 c/\ * f0 b0 cMEM b0 f1 c==> c~ * f0 f2 c==> c~ c= c/\ * f0 f3 cMEM f3 f1 c/\ * f0 f3 c\/ c= f3 f2 cMEM f3 f1 cF c==> ! c= cMEM b0 cFILTER f0 f1 c/\ * f0 b0 cMEM b0 f1 c==> c~ * f0 f2 c==> c~ c= c/\ * f0 f3 cMEM f3 f1 c/\ * f0 f3 c\/ c= f3 f2 cMEM f3 f1 cF c==> ! c= cMEM b0 cFILTER f0 f1 c/\ * f0 b0 cMEM b0 f1 c==> c~ * f0 f2 c==> c~ c= c/\ * f0 f3 cMEM f3 f1 c/\ * f0 f3 c\/ c= f3 f2 cMEM f3 f1 cF
++ ((~ (x = h)) /\ (~ ((MEM x) t))), (((I P) x) /\ ((MEM x) t)) |- ((((I P) x) /\ ((MEM x) t)) /\ F)
+T c==> c/\ c~ c= f0 f1 c~ cMEM f0 f2 c==> c/\ cI f3 f0 cMEM f0 f2 c/\ c/\ cI f3 f0 cMEM f0 f2 cF
+- (~ ((I P) x)), (((~ (x = h)) /\ ((~ ((I P) x)) \/ (~ ((MEM x) t)))) /\ (((I P) x) /\ ((x = h) \/ ((MEM x) t)))), ((MEM x) t) |- (((MEM x) t) /\ F)
+T c==> c~ cI f0 f1 c==> c/\ c/\ c~ c= f1 f2 c\/ c~ cI f0 f1 c~ cMEM f1 f3 c/\ cI f0 f1 c\/ c= f1 f2 cMEM f1 f3 c==> cMEM f1 f3 c/\ cMEM f1 f3 cF
++ |- (((h = h) ==> F) = F)
+T c= c==> c= f0 f0 cF cF
++ (x = h), ((~ (x = h)) /\ (~ ((MEM x) t))) |- ((x = h) /\ F)
+T c==> c= f0 f1 c==> c/\ c~ c= f0 f1 c~ cMEM f0 f2 c/\ c= f0 f1 cF
++ (x = h) |- (((I P) x) = ((I P) h))
+T c==> c= f0 f1 c= cI f2 f0 cI f2 f1
++ |- (((((I P) x) /\ ((MEM x) t)) /\ ((~ ((I P) x)) \/ ((~ (x = h)) /\ (~ ((MEM x) t))))) ==> F)
+T c==> c/\ c/\ cI f0 f1 cMEM f1 f2 c\/ c~ cI f0 f1 c/\ c~ c= f1 f3 c~ cMEM f1 f2 cF
++ (!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))), (~ (P h)) |- (((P x) /\ ((MEM x) t)) = ((P x) /\ ((x = h) \/ ((MEM x) t))))
+T c==> ! c= cMEM b0 cFILTER f0 f1 c/\ * f0 b0 cMEM b0 f1 c==> c~ * f0 f2 c= c/\ * f0 f3 cMEM f3 f1 c/\ * f0 f3 c\/ c= f3 f2 cMEM f3 f1
++ (!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))), (P h) |- ((~ (((x = h) \/ ((P x) /\ ((MEM x) t))) = ((P x) /\ ((x = h) \/ ((MEM x) t))))) ==> F)
+T c==> ! c= cMEM b0 cFILTER f0 f1 c/\ * f0 b0 cMEM b0 f1 c==> * f0 f2 c==> c~ c= c\/ c= f3 f2 c/\ * f0 f3 cMEM f3 f1 c/\ * f0 f3 c\/ c= f3 f2 cMEM f3 f1 cF
+- |- ((!x. ((((MEM x) ((FILTER P) t)) \/ ((~ (P x)) \/ (~ ((MEM x) t)))) /\ ((~ ((MEM x) ((FILTER P) t))) \/ ((P x) /\ ((MEM x) t))))) = ((!x. (((MEM x) ((FILTER P) t)) \/ ((~ (P x)) \/ (~ ((MEM x) t))))) /\ (!x. ((~ ((MEM x) ((FILTER P) t))) \/ ((P x) /\ ((MEM x) t))))))
+T c= ! c/\ c\/ cMEM b0 cFILTER f0 f1 c\/ c~ * f0 b0 c~ cMEM b0 f1 c\/ c~ cMEM b0 cFILTER f0 f1 c/\ * f0 b0 cMEM b0 f1 c/\ ! c\/ cMEM b0 cFILTER f0 f1 c\/ c~ * f0 b0 c~ cMEM b0 f1 ! c\/ c~ cMEM b0 cFILTER f0 f1 c/\ * f0 b0 cMEM b0 f1
+- (~ ((I P) x)), (((~ (x = h)) /\ ((~ ((I P) x)) \/ (~ ((MEM x) t)))) /\ (((I P) x) /\ ((x = h) \/ ((MEM x) t)))) |- ((x = h) ==> F)
+T c==> c~ cI f0 f1 c==> c/\ c/\ c~ c= f1 f2 c\/ c~ cI f0 f1 c~ cMEM f1 f3 c/\ cI f0 f1 c\/ c= f1 f2 cMEM f1 f3 c==> c= f1 f2 cF
++ (P h), (((x = h) \/ (((I P) x) /\ ((MEM x) t))) /\ ((~ ((I P) x)) \/ ((~ (x = h)) /\ (~ ((MEM x) t))))) |- ((((x = h) \/ (((I P) x) /\ ((MEM x) t))) /\ ((~ ((I P) x)) \/ ((~ (x = h)) /\ (~ ((MEM x) t))))) /\ F)
+T c==> * f0 f1 c==> c/\ c\/ c= f2 f1 c/\ cI f0 f2 cMEM f2 f3 c\/ c~ cI f0 f2 c/\ c~ c= f2 f1 c~ cMEM f2 f3 c/\ c/\ c\/ c= f2 f1 c/\ cI f0 f2 cMEM f2 f3 c\/ c~ cI f0 f2 c/\ c~ c= f2 f1 c~ cMEM f2 f3 cF
++ (((~ (x = h)) /\ ((~ ((I P) x)) \/ (~ ((MEM x) t)))) /\ (((I P) x) /\ ((x = h) \/ ((MEM x) t)))), ((~ ((I P) x)) ==> F), ((~ ((MEM x) t)) ==> F) |- F
+T c==> c/\ c/\ c~ c= f0 f1 c\/ c~ cI f2 f0 c~ cMEM f0 f3 c/\ cI f2 f0 c\/ c= f0 f1 cMEM f0 f3 c==> c==> c~ cI f2 f0 cF c==> c==> c~ cMEM f0 f3 cF cF
+- (~ (P h)) |- ((((MEM x) ((FILTER P) t)) = ((P x) /\ ((x = h) \/ ((MEM x) t)))) = (((MEM x) ((FILTER P) t)) = ((P x) /\ ((x = h) \/ ((MEM x) t)))))
+T c==> c~ * f0 f1 c= c= cMEM f2 cFILTER f0 f3 c/\ * f0 f2 c\/ c= f2 f1 cMEM f2 f3 c= cMEM f2 cFILTER f0 f3 c/\ * f0 f2 c\/ c= f2 f1 cMEM f2 f3
++ (~ (P h)) |- ((~ (P h)) /\ (((P x) /\ ((MEM x) t)) = ((P x) /\ ((x = h) \/ ((MEM x) t)))))
+T c==> c~ * f0 f1 c/\ c~ * f0 f1 c= c/\ * f0 f2 cMEM f2 f3 c/\ * f0 f2 c\/ c= f2 f1 cMEM f2 f3
++ (~ (P h)), (x = h), (((~ ((I P) x)) \/ (~ ((MEM x) t))) /\ (((I P) x) /\ ((x = h) \/ ((MEM x) t)))) |- ((x = h) /\ F)
+T c==> c~ * f0 f1 c==> c= f2 f1 c==> c/\ c\/ c~ cI f0 f2 c~ cMEM f2 f3 c/\ cI f0 f2 c\/ c= f2 f1 cMEM f2 f3 c/\ c= f2 f1 cF
+- (~ ((MEM x) t)), (((I P) x) /\ ((MEM x) t)) |- ((~ ((MEM x) t)) /\ ((MEM x) t))
+T c==> c~ cMEM f0 f1 c==> c/\ cI f2 f0 cMEM f0 f1 c/\ c~ cMEM f0 f1 cMEM f0 f1
+- |- (((!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3)))) ==> ((\t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3)))) t2)) = ((\t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3)))) t2))
+T c= c==> ! ! c= c\/ f0 c\/ b0 b1 c\/ c\/ f0 b0 b1 * / ! c= c\/ f0 c\/ b0 b1 c\/ c\/ f0 b0 b1 f1 * / ! c= c\/ f0 c\/ b0 b1 c\/ c\/ f0 b0 b1 f1
++ (~ (P h)), (x = h), (((~ ((I P) x)) \/ (~ ((MEM x) t))) /\ (((I P) x) /\ ((x = h) \/ ((MEM x) t)))) |- F
+T c==> c~ * f0 f1 c==> c= f2 f1 c==> c/\ c\/ c~ cI f0 f2 c~ cMEM f2 f3 c/\ cI f0 f2 c\/ c= f2 f1 cMEM f2 f3 cF
+- (x = h), ((~ (x = h)) /\ (~ ((MEM x) t))) |- ((~ F) ==> F)
+T c==> c= f0 f1 c==> c/\ c~ c= f0 f1 c~ cMEM f0 f2 c==> c~ cF cF
+- (_17625 = _17627), (_17624 = _17626) |- ((_17624 = _17626) /\ (((I _17626) _17627) \/ (~ ((I _17624) _17625))))
+T c==> c= f0 f1 c==> c= f2 f3 c/\ c= f2 f3 c\/ cI f3 f1 c~ cI f2 f0
++ (~ (((P x) /\ ((MEM x) t)) = ((P x) /\ ((x = h) \/ ((MEM x) t))))), (((((I P) x) /\ ((MEM x) t)) /\ ((~ ((I P) x)) \/ ((~ (x = h)) /\ (~ ((MEM x) t))))) ==> F), ((((~ ((I P) x)) \/ (~ ((MEM x) t))) /\ (((I P) x) /\ ((x = h) \/ ((MEM x) t)))) ==> F) |- F
+T c==> c~ c= c/\ * f0 f1 cMEM f1 f2 c/\ * f0 f1 c\/ c= f1 f3 cMEM f1 f2 c==> c==> c/\ c/\ cI f0 f1 cMEM f1 f2 c\/ c~ cI f0 f1 c/\ c~ c= f1 f3 c~ cMEM f1 f2 cF c==> c==> c/\ c\/ c~ cI f0 f1 c~ cMEM f1 f2 c/\ cI f0 f1 c\/ c= f1 f3 cMEM f1 f2 cF cF
++ ((~ (x = h)) /\ (~ ((MEM x) t))), ((((I P) x) /\ ((MEM x) t)) /\ ((~ ((I P) x)) \/ ((~ (x = h)) /\ (~ ((MEM x) t))))) |- (((~ (x = h)) /\ (~ ((MEM x) t))) /\ F)
+T c==> c/\ c~ c= f0 f1 c~ cMEM f0 f2 c==> c/\ c/\ cI f3 f0 cMEM f0 f2 c\/ c~ cI f3 f0 c/\ c~ c= f0 f1 c~ cMEM f0 f2 c/\ c/\ c~ c= f0 f1 c~ cMEM f0 f2 cF
+- (~ ((I P) x)), (((~ (x = h)) /\ ((~ ((I P) x)) \/ (~ ((MEM x) t)))) /\ (((I P) x) /\ ((x = h) \/ ((MEM x) t)))), (((MEM x) t) ==> F) |- F
+T c==> c~ cI f0 f1 c==> c/\ c/\ c~ c= f1 f2 c\/ c~ cI f0 f1 c~ cMEM f1 f3 c/\ cI f0 f1 c\/ c= f1 f2 cMEM f1 f3 c==> c==> cMEM f1 f3 cF cF
++ (x = h), (((~ (x = h)) /\ ((~ ((I P) x)) \/ (~ ((MEM x) t)))) /\ (((I P) x) /\ ((x = h) \/ ((MEM x) t)))) |- F
+T c==> c= f0 f1 c==> c/\ c/\ c~ c= f0 f1 c\/ c~ cI f2 f0 c~ cMEM f0 f3 c/\ cI f2 f0 c\/ c= f0 f1 cMEM f0 f3 cF
+- (~ ((I P) h)), (x = h), (((~ ((I P) x)) \/ (~ ((MEM x) t))) /\ (((I P) x) /\ ((x = h) \/ ((MEM x) t)))) |- ((~ ((I P) h)) /\ ((I P) h))
+T c==> c~ cI f0 f1 c==> c= f2 f1 c==> c/\ c\/ c~ cI f0 f2 c~ cMEM f2 f3 c/\ cI f0 f2 c\/ c= f2 f1 cMEM f2 f3 c/\ c~ cI f0 f1 cI f0 f1
+- (~ ((I P) x)), (x = h), (((~ ((I P) x)) \/ (~ ((MEM x) t))) /\ (((I P) x) /\ ((x = h) \/ ((MEM x) t)))) |- ((~ ((I P) x)) /\ F)
+T c==> c~ cI f0 f1 c==> c= f1 f2 c==> c/\ c\/ c~ cI f0 f1 c~ cMEM f1 f3 c/\ cI f0 f1 c\/ c= f1 f2 cMEM f1 f3 c/\ c~ cI f0 f1 cF
++ (((~ ((I P) x)) \/ (~ ((MEM x) t))) /\ (((I P) x) /\ ((x = h) \/ ((MEM x) t)))) |- ((((I P) x) ==> F) = F)
+T c==> c/\ c\/ c~ cI f0 f1 c~ cMEM f1 f2 c/\ cI f0 f1 c\/ c= f1 f3 cMEM f1 f2 c= c==> cI f0 f1 cF cF
+- (~ ((I P) h)), (x = h), (((~ (x = h)) /\ ((~ ((I P) x)) \/ (~ ((MEM x) t)))) /\ (((I P) x) /\ ((x = h) \/ ((MEM x) t)))) |- ((~ ((I P) h)) /\ ((I P) h))
+T c==> c~ cI f0 f1 c==> c= f2 f1 c==> c/\ c/\ c~ c= f2 f1 c\/ c~ cI f0 f2 c~ cMEM f2 f3 c/\ cI f0 f2 c\/ c= f2 f1 cMEM f2 f3 c/\ c~ cI f0 f1 cI f0 f1
+- |- ((x = x) = T)
+T c= c= f0 f0 cT
+- (~ ((I P) x)), (((~ (x = h)) /\ ((~ ((I P) x)) \/ (~ ((MEM x) t)))) /\ (((I P) x) /\ ((x = h) \/ ((MEM x) t)))) |- ((~ F) ==> F)
+T c==> c~ cI f0 f1 c==> c/\ c/\ c~ c= f1 f2 c\/ c~ cI f0 f1 c~ cMEM f1 f3 c/\ cI f0 f1 c\/ c= f1 f2 cMEM f1 f3 c==> c~ cF cF
+- |- ((!x'. (((MEM x') ((FILTER P) t)) \/ ((~ (P x)) \/ (~ ((MEM x) t))))) = ((!x. ((MEM x) ((FILTER P) t))) \/ ((~ (P x)) \/ (~ ((MEM x) t)))))
+T c= ! c\/ cMEM b0 cFILTER f0 f1 c\/ c~ * f0 f2 c~ cMEM f2 f1 c\/ ! cMEM b0 cFILTER f0 f1 c\/ c~ * f0 f2 c~ cMEM f2 f1
++ (~ (((P x) /\ ((MEM x) t)) = ((P x) /\ ((x = h) \/ ((MEM x) t))))), ((((~ ((I P) x)) \/ (~ ((MEM x) t))) /\ (((I P) x) /\ ((x = h) \/ ((MEM x) t)))) ==> F) |- F
+T c==> c~ c= c/\ * f0 f1 cMEM f1 f2 c/\ * f0 f1 c\/ c= f1 f3 cMEM f1 f2 c==> c==> c/\ c\/ c~ cI f0 f1 c~ cMEM f1 f2 c/\ cI f0 f1 c\/ c= f1 f3 cMEM f1 f2 cF cF
+- (_17628 = _17630) |- ((_17628 = _17630) /\ ((~ (_17629 = _17631)) \/ (((FILTER _17628) _17629) = ((FILTER _17630) _17631))))
+T c==> c= f0 f1 c/\ c= f0 f1 c\/ c~ c= f2 f3 c= cFILTER f0 f2 cFILTER f1 f3
++ |- (((!P. ((!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))) ==> ((~ (P h)) ==> ((~ (((P x) /\ ((MEM x) t)) = ((P x) /\ ((x = h) \/ ((MEM x) t))))) ==> F)))) ==> ((\P. ((!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))) ==> ((~ (P h)) ==> ((~ (((P x) /\ ((MEM x) t)) = ((P x) /\ ((x = h) \/ ((MEM x) t))))) ==> F)))) P)) = ((\P. ((!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))) ==> ((~ (P h)) ==> ((~ (((P x) /\ ((MEM x) t)) = ((P x) /\ ((x = h) \/ ((MEM x) t))))) ==> F)))) P))
+T c= c==> ! c==> ! c= cMEM b1 cFILTER b0 f0 c/\ * b0 b1 cMEM b1 f0 c==> c~ * b0 f1 c==> c~ c= c/\ * b0 f2 cMEM f2 f0 c/\ * b0 f2 c\/ c= f2 f1 cMEM f2 f0 cF * / c==> ! c= cMEM b1 cFILTER b0 f0 c/\ * b0 b1 cMEM b1 f0 c==> c~ * b0 f1 c==> c~ c= c/\ * b0 f2 cMEM f2 f0 c/\ * b0 f2 c\/ c= f2 f1 cMEM f2 f0 cF f3 * / c==> ! c= cMEM b1 cFILTER b0 f0 c/\ * b0 b1 cMEM b1 f0 c==> c~ * b0 f1 c==> c~ c= c/\ * b0 f2 cMEM f2 f0 c/\ * b0 f2 c\/ c= f2 f1 cMEM f2 f0 cF f3
+- (~ F), (~ (P h)), (x = h), (((~ ((I P) x)) \/ (~ ((MEM x) t))) /\ (((I P) x) /\ ((x = h) \/ ((MEM x) t)))) |- ((~ F) /\ F)
+T c==> c~ cF c==> c~ * f0 f1 c==> c= f2 f1 c==> c/\ c\/ c~ cI f0 f2 c~ cMEM f2 f3 c/\ cI f0 f2 c\/ c= f2 f1 cMEM f2 f3 c/\ c~ cF cF
+- |- ((a ==> b) = ((~ a) \/ b))
+T c= c==> f0 f1 c\/ c~ f0 f1
+- ((MEM x) t) |- ((~ ((MEM x) t)) ==> ((MEM x) t))
+T c==> cMEM f0 f1 c==> c~ cMEM f0 f1 cMEM f0 f1
++ (x = h), ((~ (x = h)) /\ (~ ((MEM x) t))) |- F
+T c==> c= f0 f1 c==> c/\ c~ c= f0 f1 c~ cMEM f0 f2 cF
++ (!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))), (P h) |- ((P h) /\ (((MEM x) ((CONS h) ((FILTER P) t))) = ((P x) /\ ((x = h) \/ ((MEM x) t)))))
+T c==> ! c= cMEM b0 cFILTER f0 f1 c/\ * f0 b0 cMEM b0 f1 c==> * f0 f2 c/\ * f0 f2 c= cMEM f3 cCONS f2 cFILTER f0 f1 c/\ * f0 f3 c\/ c= f3 f2 cMEM f3 f1
++ (~ ((I P) x)), (((~ (x = h)) /\ ((~ ((I P) x)) \/ (~ ((MEM x) t)))) /\ (((I P) x) /\ ((x = h) \/ ((MEM x) t)))) |- ((~ ((I P) x)) /\ F)
+T c==> c~ cI f0 f1 c==> c/\ c/\ c~ c= f1 f2 c\/ c~ cI f0 f1 c~ cMEM f1 f3 c/\ cI f0 f1 c\/ c= f1 f2 cMEM f1 f3 c/\ c~ cI f0 f1 cF
++ (P h) |- ((~ (((x = h) \/ ((P x) /\ ((MEM x) t))) = ((P x) /\ ((x = h) \/ ((MEM x) t))))) ==> F)
+T c==> * f0 f1 c==> c~ c= c\/ c= f2 f1 c/\ * f0 f2 cMEM f2 f3 c/\ * f0 f2 c\/ c= f2 f1 cMEM f2 f3 cF
++ |- ((\P. ((!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))) ==> ((~ (P h)) ==> ((~ (((P x) /\ ((MEM x) t)) = ((P x) /\ ((x = h) \/ ((MEM x) t))))) ==> F)))) P)
+T * / c==> ! c= cMEM b1 cFILTER b0 f0 c/\ * b0 b1 cMEM b1 f0 c==> c~ * b0 f1 c==> c~ c= c/\ * b0 f2 cMEM f2 f0 c/\ * b0 f2 c\/ c= f2 f1 cMEM f2 f0 cF f3
++ (((~ (x = h)) /\ ((~ ((I P) x)) \/ (~ ((MEM x) t)))) /\ (((I P) x) /\ ((x = h) \/ ((MEM x) t)))) |- ((I P) x)
+T c==> c/\ c/\ c~ c= f0 f1 c\/ c~ cI f2 f0 c~ cMEM f0 f3 c/\ cI f2 f0 c\/ c= f0 f1 cMEM f0 f3 cI f2 f0
++ (((~ (x = h)) /\ ((~ ((I P) x)) \/ (~ ((MEM x) t)))) /\ (((I P) x) /\ ((x = h) \/ ((MEM x) t)))) |- (~ (x = h))
+T c==> c/\ c/\ c~ c= f0 f1 c\/ c~ cI f2 f0 c~ cMEM f0 f3 c/\ cI f2 f0 c\/ c= f0 f1 cMEM f0 f3 c~ c= f0 f1
+- (~ (P h)), (x = h), (((~ ((I P) x)) \/ (~ ((MEM x) t))) /\ (((I P) x) /\ ((x = h) \/ ((MEM x) t)))) |- ((~ F) ==> F)
+T c==> c~ * f0 f1 c==> c= f2 f1 c==> c/\ c\/ c~ cI f0 f2 c~ cMEM f2 f3 c/\ cI f0 f2 c\/ c= f2 f1 cMEM f2 f3 c==> c~ cF cF
+- (~ ((I P) x)), (((~ (x = h)) /\ ((~ ((I P) x)) \/ (~ ((MEM x) t)))) /\ (((I P) x) /\ ((x = h) \/ ((MEM x) t)))) |- (((MEM x) t) ==> F)
+T c==> c~ cI f0 f1 c==> c/\ c/\ c~ c= f1 f2 c\/ c~ cI f0 f1 c~ cMEM f1 f3 c/\ cI f0 f1 c\/ c= f1 f2 cMEM f1 f3 c==> cMEM f1 f3 cF
++ |- (((!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))) ==> ((~ (P h)) ==> (((P x) /\ ((MEM x) t)) = ((P x) /\ ((x = h) \/ ((MEM x) t)))))) = T)
+T c= c==> ! c= cMEM b0 cFILTER f0 f1 c/\ * f0 b0 cMEM b0 f1 c==> c~ * f0 f2 c= c/\ * f0 f3 cMEM f3 f1 c/\ * f0 f3 c\/ c= f3 f2 cMEM f3 f1 cT
++ |- ((((MEM x) (((COND (P h)) ((CONS h) ((FILTER P) t))) ((FILTER P) t))) = ((P x) /\ ((x = h) \/ ((MEM x) t)))) = (((P h) ==> (((MEM x) ((CONS h) ((FILTER P) t))) = ((P x) /\ ((x = h) \/ ((MEM x) t))))) /\ ((~ (P h)) ==> (((MEM x) ((FILTER P) t)) = ((P x) /\ ((x = h) \/ ((MEM x) t)))))))
+T c= c= cMEM f0 cCOND * f1 f2 cCONS f2 cFILTER f1 f3 cFILTER f1 f3 c/\ * f1 f0 c\/ c= f0 f2 cMEM f0 f3 c/\ c==> * f1 f2 c= cMEM f0 cCONS f2 cFILTER f1 f3 c/\ * f1 f0 c\/ c= f0 f2 cMEM f0 f3 c==> c~ * f1 f2 c= cMEM f0 cFILTER f1 f3 c/\ * f1 f0 c\/ c= f0 f2 cMEM f0 f3
++ (~ (((P x) /\ ((MEM x) t)) = ((P x) /\ ((x = h) \/ ((MEM x) t))))) |- (((((I P) x) /\ ((MEM x) t)) /\ ((~ ((I P) x)) \/ ((~ (x = h)) /\ (~ ((MEM x) t))))) \/ (((~ ((I P) x)) \/ (~ ((MEM x) t))) /\ (((I P) x) /\ ((x = h) \/ ((MEM x) t)))))
+T c==> c~ c= c/\ * f0 f1 cMEM f1 f2 c/\ * f0 f1 c\/ c= f1 f3 cMEM f1 f2 c\/ c/\ c/\ cI f0 f1 cMEM f1 f2 c\/ c~ cI f0 f1 c/\ c~ c= f1 f3 c~ cMEM f1 f2 c/\ c\/ c~ cI f0 f1 c~ cMEM f1 f2 c/\ cI f0 f1 c\/ c= f1 f3 cMEM f1 f2
+- (~ ((I P) x)), (x = h), (((~ ((I P) x)) \/ (~ ((MEM x) t))) /\ (((I P) x) /\ ((x = h) \/ ((MEM x) t)))) |- ((~ F) ==> F)
+T c==> c~ cI f0 f1 c==> c= f1 f2 c==> c/\ c\/ c~ cI f0 f1 c~ cMEM f1 f3 c/\ cI f0 f1 c\/ c= f1 f2 cMEM f1 f3 c==> c~ cF cF
++ (P h) |- ((((x = h) \/ (((I P) x) /\ ((MEM x) t))) /\ ((~ ((I P) x)) \/ ((~ (x = h)) /\ (~ ((MEM x) t))))) ==> F)
+T c==> * f0 f1 c==> c/\ c\/ c= f2 f1 c/\ cI f0 f2 cMEM f2 f3 c\/ c~ cI f0 f2 c/\ c~ c= f2 f1 c~ cMEM f2 f3 cF
++ (x = h), (((~ (x = h)) /\ ((~ ((I P) x)) \/ (~ ((MEM x) t)))) /\ (((I P) x) /\ ((x = h) \/ ((MEM x) t)))) |- (~ (h = h))
+T c==> c= f0 f1 c==> c/\ c/\ c~ c= f0 f1 c\/ c~ cI f2 f0 c~ cMEM f0 f3 c/\ cI f2 f0 c\/ c= f0 f1 cMEM f0 f3 c~ c= f1 f1
+- (_17625 = _17627) |- ((_17625 = _17627) /\ ((~ (_17624 = _17626)) \/ (((I _17626) _17627) \/ (~ ((I _17624) _17625)))))
+T c==> c= f0 f1 c/\ c= f0 f1 c\/ c~ c= f2 f3 c\/ cI f3 f1 c~ cI f2 f0
+- |- ((((!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))) ==> ((P h) ==> ((~ (((x = h) \/ ((P x) /\ ((MEM x) t))) = ((P x) /\ ((x = h) \/ ((MEM x) t))))) ==> F))) ==> ((!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))) ==> ((P h) ==> ((~ (((x = h) \/ ((P x) /\ ((MEM x) t))) = ((P x) /\ ((x = h) \/ ((MEM x) t))))) ==> F)))) = ((!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))) ==> ((P h) ==> ((~ (((x = h) \/ ((P x) /\ ((MEM x) t))) = ((P x) /\ ((x = h) \/ ((MEM x) t))))) ==> F))))
+T c= c==> c==> ! c= cMEM b0 cFILTER f0 f1 c/\ * f0 b0 cMEM b0 f1 c==> * f0 f2 c==> c~ c= c\/ c= f3 f2 c/\ * f0 f3 cMEM f3 f1 c/\ * f0 f3 c\/ c= f3 f2 cMEM f3 f1 cF c==> ! c= cMEM b0 cFILTER f0 f1 c/\ * f0 b0 cMEM b0 f1 c==> * f0 f2 c==> c~ c= c\/ c= f3 f2 c/\ * f0 f3 cMEM f3 f1 c/\ * f0 f3 c\/ c= f3 f2 cMEM f3 f1 cF c==> ! c= cMEM b0 cFILTER f0 f1 c/\ * f0 b0 cMEM b0 f1 c==> * f0 f2 c==> c~ c= c\/ c= f3 f2 c/\ * f0 f3 cMEM f3 f1 c/\ * f0 f3 c\/ c= f3 f2 cMEM f3 f1 cF
+- (~ (P h)) |- ((P h) = F)
+T c==> c~ * f0 f1 c= * f0 f1 cF
++ (P h) |- ((((I P) h) ==> F) = F)
+T c==> * f0 f1 c= c==> cI f0 f1 cF cF
+- ((!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))) ==> ((~ (P h)) ==> ((~ (((P x) /\ ((MEM x) t)) = ((P x) /\ ((x = h) \/ ((MEM x) t))))) ==> F))) |- (((!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))) ==> ((~ (P h)) ==> ((~ (((P x) /\ ((MEM x) t)) = ((P x) /\ ((x = h) \/ ((MEM x) t))))) ==> F))) /\ ((!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))) ==> ((~ (P h)) ==> ((~ (((P x) /\ ((MEM x) t)) = ((P x) /\ ((x = h) \/ ((MEM x) t))))) ==> F))))
+T c==> c==> ! c= cMEM b0 cFILTER f0 f1 c/\ * f0 b0 cMEM b0 f1 c==> c~ * f0 f2 c==> c~ c= c/\ * f0 f3 cMEM f3 f1 c/\ * f0 f3 c\/ c= f3 f2 cMEM f3 f1 cF c/\ c==> ! c= cMEM b0 cFILTER f0 f1 c/\ * f0 b0 cMEM b0 f1 c==> c~ * f0 f2 c==> c~ c= c/\ * f0 f3 cMEM f3 f1 c/\ * f0 f3 c\/ c= f3 f2 cMEM f3 f1 cF c==> ! c= cMEM b0 cFILTER f0 f1 c/\ * f0 b0 cMEM b0 f1 c==> c~ * f0 f2 c==> c~ c= c/\ * f0 f3 cMEM f3 f1 c/\ * f0 f3 c\/ c= f3 f2 cMEM f3 f1 cF
+- (x = h) |- (F = F)
+T c==> c= f0 f1 c= cF cF
++ (~ ((I P) x)), (x = h) |- (~ ((I P) h))
+T c==> c~ cI f0 f1 c==> c= f1 f2 c~ cI f0 f2
+- (!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))) |- ((!x. (((MEM x) ((FILTER P) t)) \/ ((~ (P x)) \/ (~ ((MEM x) t))))) /\ (!x. ((~ ((MEM x) ((FILTER P) t))) \/ ((P x) /\ ((MEM x) t)))))
+T c==> ! c= cMEM b0 cFILTER f0 f1 c/\ * f0 b0 cMEM b0 f1 c/\ ! c\/ cMEM b0 cFILTER f0 f1 c\/ c~ * f0 b0 c~ cMEM b0 f1 ! c\/ c~ cMEM b0 cFILTER f0 f1 c/\ * f0 b0 cMEM b0 f1
++ |- ((!P. ((!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))) ==> ((P h) ==> (((x = h) \/ ((P x) /\ ((MEM x) t))) = ((P x) /\ ((x = h) \/ ((MEM x) t))))))) = T)
+T c= ! c==> ! c= cMEM b1 cFILTER b0 f0 c/\ * b0 b1 cMEM b1 f0 c==> * b0 f1 c= c\/ c= f2 f1 c/\ * b0 f2 cMEM f2 f0 c/\ * b0 f2 c\/ c= f2 f1 cMEM f2 f0 cT
++ (!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))), (P h) |- (((x = h) \/ ((P x) /\ ((MEM x) t))) = ((P x) /\ ((x = h) \/ ((MEM x) t))))
+T c==> ! c= cMEM b0 cFILTER f0 f1 c/\ * f0 b0 cMEM b0 f1 c==> * f0 f2 c= c\/ c= f3 f2 c/\ * f0 f3 cMEM f3 f1 c/\ * f0 f3 c\/ c= f3 f2 cMEM f3 f1
+- (((~ (x = h)) /\ ((~ ((I P) x)) \/ (~ ((MEM x) t)))) /\ (((I P) x) /\ ((x = h) \/ ((MEM x) t)))) |- ((~ ((I P) x)) ==> ((I P) x))
+T c==> c/\ c/\ c~ c= f0 f1 c\/ c~ cI f2 f0 c~ cMEM f0 f3 c/\ cI f2 f0 c\/ c= f0 f1 cMEM f0 f3 c==> c~ cI f2 f0 cI f2 f0
++ (((x = h) \/ (((I P) x) /\ ((MEM x) t))) /\ ((~ ((I P) x)) \/ ((~ (x = h)) /\ (~ ((MEM x) t))))) |- (((~ (x = h)) /\ (~ ((MEM x) t))) ==> F)
+T c==> c/\ c\/ c= f0 f1 c/\ cI f2 f0 cMEM f0 f3 c\/ c~ cI f2 f0 c/\ c~ c= f0 f1 c~ cMEM f0 f3 c==> c/\ c~ c= f0 f1 c~ cMEM f0 f3 cF
++ (~ (((x = h) \/ ((P x) /\ ((MEM x) t))) = ((P x) /\ ((x = h) \/ ((MEM x) t))))), (P h) |- F
+T c==> c~ c= c\/ c= f0 f1 c/\ * f2 f0 cMEM f0 f3 c/\ * f2 f0 c\/ c= f0 f1 cMEM f0 f3 c==> * f2 f1 cF
+- ((!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))) ==> ((P h) ==> ((~ (((x = h) \/ ((P x) /\ ((MEM x) t))) = ((P x) /\ ((x = h) \/ ((MEM x) t))))) ==> F))), (((!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))) ==> ((P h) ==> ((~ (((x = h) \/ ((P x) /\ ((MEM x) t))) = ((P x) /\ ((x = h) \/ ((MEM x) t))))) ==> F))) ==> ((!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))) ==> ((P h) ==> ((~ (((x = h) \/ ((P x) /\ ((MEM x) t))) = ((P x) /\ ((x = h) \/ ((MEM x) t))))) ==> F)))) |- (((!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))) ==> ((P h) ==> ((~ (((x = h) \/ ((P x) /\ ((MEM x) t))) = ((P x) /\ ((x = h) \/ ((MEM x) t))))) ==> F))) /\ ((!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))) ==> ((P h) ==> ((~ (((x = h) \/ ((P x) /\ ((MEM x) t))) = ((P x) /\ ((x = h) \/ ((MEM x) t))))) ==> F))))
+T c==> c==> ! c= cMEM b0 cFILTER f0 f1 c/\ * f0 b0 cMEM b0 f1 c==> * f0 f2 c==> c~ c= c\/ c= f3 f2 c/\ * f0 f3 cMEM f3 f1 c/\ * f0 f3 c\/ c= f3 f2 cMEM f3 f1 cF c==> c==> c==> ! c= cMEM b0 cFILTER f0 f1 c/\ * f0 b0 cMEM b0 f1 c==> * f0 f2 c==> c~ c= c\/ c= f3 f2 c/\ * f0 f3 cMEM f3 f1 c/\ * f0 f3 c\/ c= f3 f2 cMEM f3 f1 cF c==> ! c= cMEM b0 cFILTER f0 f1 c/\ * f0 b0 cMEM b0 f1 c==> * f0 f2 c==> c~ c= c\/ c= f3 f2 c/\ * f0 f3 cMEM f3 f1 c/\ * f0 f3 c\/ c= f3 f2 cMEM f3 f1 cF c/\ c==> ! c= cMEM b0 cFILTER f0 f1 c/\ * f0 b0 cMEM b0 f1 c==> * f0 f2 c==> c~ c= c\/ c= f3 f2 c/\ * f0 f3 cMEM f3 f1 c/\ * f0 f3 c\/ c= f3 f2 cMEM f3 f1 cF c==> ! c= cMEM b0 cFILTER f0 f1 c/\ * f0 b0 cMEM b0 f1 c==> * f0 f2 c==> c~ c= c\/ c= f3 f2 c/\ * f0 f3 cMEM f3 f1 c/\ * f0 f3 c\/ c= f3 f2 cMEM f3 f1 cF
+- (x = h) |- (((I P) h) = ((I P) h))
+T c==> c= f0 f1 c= cI f2 f1 cI f2 f1
+- |- (((t1 \/ t2) \/ t3) = (t1 \/ (t2 \/ t3)))
+T c= c\/ c\/ f0 f1 f2 c\/ f0 c\/ f1 f2
+- (~ F), ((~ (x = h)) /\ (~ ((MEM x) t))), ((((I P) x) /\ ((MEM x) t)) /\ ((~ ((I P) x)) \/ ((~ (x = h)) /\ (~ ((MEM x) t))))) |- ((~ F) /\ F)
+T c==> c~ cF c==> c/\ c~ c= f0 f1 c~ cMEM f0 f2 c==> c/\ c/\ cI f3 f0 cMEM f0 f2 c\/ c~ cI f3 f0 c/\ c~ c= f0 f1 c~ cMEM f0 f2 c/\ c~ cF cF
+- (x = h) |- ((~ ((MEM x) t)) = (~ ((MEM h) t)))
+T c==> c= f0 f1 c= c~ cMEM f0 f2 c~ cMEM f1 f2
++ (P h), (((x = h) \/ (((I P) x) /\ ((MEM x) t))) /\ ((~ ((I P) x)) \/ ((~ (x = h)) /\ (~ ((MEM x) t))))) |- ((~ ((I P) x)) ==> F)
+T c==> * f0 f1 c==> c/\ c\/ c= f2 f1 c/\ cI f0 f2 cMEM f2 f3 c\/ c~ cI f0 f2 c/\ c~ c= f2 f1 c~ cMEM f2 f3 c==> c~ cI f0 f2 cF
++ (!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))) |- (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))
+T c==> ! c= cMEM b0 cFILTER f0 f1 c/\ * f0 b0 cMEM b0 f1 c= cMEM f2 cFILTER f0 f1 c/\ * f0 f2 cMEM f2 f1
+- (~ ((I P) x)), ((((I P) x) /\ ((MEM x) t)) /\ ((~ ((I P) x)) \/ ((~ (x = h)) /\ (~ ((MEM x) t))))) |- ((~ ((I P) x)) /\ ((I P) x))
+T c==> c~ cI f0 f1 c==> c/\ c/\ cI f0 f1 cMEM f1 f2 c\/ c~ cI f0 f1 c/\ c~ c= f1 f3 c~ cMEM f1 f2 c/\ c~ cI f0 f1 cI f0 f1
++ ((~ (x = h)) /\ (~ ((MEM x) t))), ((((I P) x) /\ ((MEM x) t)) /\ ((~ ((I P) x)) \/ ((~ (x = h)) /\ (~ ((MEM x) t))))) |- F
+T c==> c/\ c~ c= f0 f1 c~ cMEM f0 f2 c==> c/\ c/\ cI f3 f0 cMEM f0 f2 c\/ c~ cI f3 f0 c/\ c~ c= f0 f1 c~ cMEM f0 f2 cF
++ (~ (((P x) /\ ((MEM x) t)) = ((P x) /\ ((x = h) \/ ((MEM x) t))))) |- ((((P x) /\ ((MEM x) t)) /\ ((~ (P x)) \/ ((~ (x = h)) /\ (~ ((MEM x) t))))) \/ (((~ (P x)) \/ (~ ((MEM x) t))) /\ ((P x) /\ ((x = h) \/ ((MEM x) t)))))
+T c==> c~ c= c/\ * f0 f1 cMEM f1 f2 c/\ * f0 f1 c\/ c= f1 f3 cMEM f1 f2 c\/ c/\ c/\ * f0 f1 cMEM f1 f2 c\/ c~ * f0 f1 c/\ c~ c= f1 f3 c~ cMEM f1 f2 c/\ c\/ c~ * f0 f1 c~ cMEM f1 f2 c/\ * f0 f1 c\/ c= f1 f3 cMEM f1 f2
++ (~ (P h)), (((~ ((I P) x)) \/ (~ ((MEM x) t))) /\ (((I P) x) /\ ((x = h) \/ ((MEM x) t)))) |- ((((~ ((I P) x)) \/ (~ ((MEM x) t))) /\ (((I P) x) /\ ((x = h) \/ ((MEM x) t)))) /\ F)
+T c==> c~ * f0 f1 c==> c/\ c\/ c~ cI f0 f2 c~ cMEM f2 f3 c/\ cI f0 f2 c\/ c= f2 f1 cMEM f2 f3 c/\ c/\ c\/ c~ cI f0 f2 c~ cMEM f2 f3 c/\ cI f0 f2 c\/ c= f2 f1 cMEM f2 f3 cF
++ |- (((FILTER P) ((CONS h) t)) = (((COND (P h)) ((CONS h) ((FILTER P) t))) ((FILTER P) t)))
+T c= cFILTER f0 cCONS f1 f2 cCOND * f0 f1 cCONS f1 cFILTER f0 f2 cFILTER f0 f2
++ (~ (P h)) |- ((((~ ((I P) x)) \/ (~ ((MEM x) t))) /\ (((I P) x) /\ ((x = h) \/ ((MEM x) t)))) ==> F)
+T c==> c~ * f0 f1 c==> c/\ c\/ c~ cI f0 f2 c~ cMEM f2 f3 c/\ cI f0 f2 c\/ c= f2 f1 cMEM f2 f3 cF
++ |- ((\x. (!h. (!P. ((!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))) ==> ((~ (P h)) ==> ((~ (((P x) /\ ((MEM x) t)) = ((P x) /\ ((x = h) \/ ((MEM x) t))))) ==> F)))))) x)
+T * / ! ! c==> ! c= cMEM b3 cFILTER b2 f0 c/\ * b2 b3 cMEM b3 f0 c==> c~ * b2 b1 c==> c~ c= c/\ * b2 b0 cMEM b0 f0 c/\ * b2 b0 c\/ c= b0 b1 cMEM b0 f0 cF f1
+- (~ F), (~ ((I P) x)), ((((I P) x) /\ ((MEM x) t)) /\ ((~ ((I P) x)) \/ ((~ (x = h)) /\ (~ ((MEM x) t))))) |- ((~ F) /\ F)
+T c==> c~ cF c==> c~ cI f0 f1 c==> c/\ c/\ cI f0 f1 cMEM f1 f2 c\/ c~ cI f0 f1 c/\ c~ c= f1 f3 c~ cMEM f1 f2 c/\ c~ cF cF
++ ((~ (x = h)) /\ (~ ((MEM x) t))) |- ((((I P) x) /\ ((MEM x) t)) ==> F)
+T c==> c/\ c~ c= f0 f1 c~ cMEM f0 f2 c==> c/\ cI f3 f0 cMEM f0 f2 cF
+- (!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))) |- ((~ ((MEM _17591) ((FILTER P) t))) \/ ((I P) _17591))
+T c==> ! c= cMEM b0 cFILTER f0 f1 c/\ * f0 b0 cMEM b0 f1 c\/ c~ cMEM f2 cFILTER f0 f1 cI f0 f2
++ (~ ((I P) x)), (((~ (x = h)) /\ ((~ ((I P) x)) \/ (~ ((MEM x) t)))) /\ (((I P) x) /\ ((x = h) \/ ((MEM x) t)))) |- F
+T c==> c~ cI f0 f1 c==> c/\ c/\ c~ c= f1 f2 c\/ c~ cI f0 f1 c~ cMEM f1 f3 c/\ cI f0 f1 c\/ c= f1 f2 cMEM f1 f3 cF
+- (!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))) |- (((~ ((MEM _17591) ((FILTER P) t))) \/ ((I P) _17591)) /\ ((~ ((MEM _17591) ((FILTER P) t))) \/ ((MEM _17591) t)))
+T c==> ! c= cMEM b0 cFILTER f0 f1 c/\ * f0 b0 cMEM b0 f1 c/\ c\/ c~ cMEM f2 cFILTER f0 f1 cI f0 f2 c\/ c~ cMEM f2 cFILTER f0 f1 cMEM f2 f1
++ (((~ (x = h)) /\ ((~ ((I P) x)) \/ (~ ((MEM x) t)))) /\ (((I P) x) /\ ((x = h) \/ ((MEM x) t)))) |- ((((I P) x) ==> F) = F)
+T c==> c/\ c/\ c~ c= f0 f1 c\/ c~ cI f2 f0 c~ cMEM f0 f3 c/\ cI f2 f0 c\/ c= f0 f1 cMEM f0 f3 c= c==> cI f2 f0 cF cF
++ |- (((!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))) ==> (!x. (((MEM x) ((FILTER P) ((CONS h) t))) = ((P x) /\ ((MEM x) ((CONS h) t)))))) = T)
+T c= c==> ! c= cMEM b0 cFILTER f0 f1 c/\ * f0 b0 cMEM b0 f1 ! c= cMEM b0 cFILTER f0 cCONS f2 f1 c/\ * f0 b0 cMEM b0 cCONS f2 f1 cT
+- (!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))) |- (!x. ((~ ((MEM x) ((FILTER P) t))) \/ (((I P) x) /\ ((MEM x) t))))
+T c==> ! c= cMEM b0 cFILTER f0 f1 c/\ * f0 b0 cMEM b0 f1 ! c\/ c~ cMEM b0 cFILTER f0 f1 c/\ cI f0 b0 cMEM b0 f1
++ ((((I P) x) /\ ((MEM x) t)) /\ ((~ ((I P) x)) \/ ((~ (x = h)) /\ (~ ((MEM x) t))))), ((~ ((I P) x)) ==> F), (((~ (x = h)) /\ (~ ((MEM x) t))) ==> F) |- F
+T c==> c/\ c/\ cI f0 f1 cMEM f1 f2 c\/ c~ cI f0 f1 c/\ c~ c= f1 f3 c~ cMEM f1 f2 c==> c==> c~ cI f0 f1 cF c==> c==> c/\ c~ c= f1 f3 c~ cMEM f1 f2 cF cF
++ (!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))) |- ((!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))) /\ (!x. (((MEM x) ((FILTER P) ((CONS h) t))) = ((P x) /\ ((MEM x) ((CONS h) t))))))
+T c==> ! c= cMEM b0 cFILTER f0 f1 c/\ * f0 b0 cMEM b0 f1 c/\ ! c= cMEM b0 cFILTER f0 f1 c/\ * f0 b0 cMEM b0 f1 ! c= cMEM b0 cFILTER f0 cCONS f2 f1 c/\ * f0 b0 cMEM b0 cCONS f2 f1
++ (~ ((I P) x)), (P h), (((x = h) \/ (((I P) x) /\ ((MEM x) t))) /\ ((~ ((I P) x)) \/ ((~ (x = h)) /\ (~ ((MEM x) t))))), ((((I P) x) /\ ((MEM x) t)) ==> F) |- F
+T c==> c~ cI f0 f1 c==> * f0 f2 c==> c/\ c\/ c= f1 f2 c/\ cI f0 f1 cMEM f1 f3 c\/ c~ cI f0 f1 c/\ c~ c= f1 f2 c~ cMEM f1 f3 c==> c==> c/\ cI f0 f1 cMEM f1 f3 cF cF
+- |- ((!x. (P \/ (Q x))) = (P \/ (!x. (Q x))))
+T c= ! c\/ f0 * f1 b0 c\/ f0 ! * f1 b0
++ (!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))) |- ((!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))) /\ ((~ (P h)) ==> (((P x) /\ ((MEM x) t)) = ((P x) /\ ((x = h) \/ ((MEM x) t))))))
+T c==> ! c= cMEM b0 cFILTER f0 f1 c/\ * f0 b0 cMEM b0 f1 c/\ ! c= cMEM b0 cFILTER f0 f1 c/\ * f0 b0 cMEM b0 f1 c==> c~ * f0 f2 c= c/\ * f0 f3 cMEM f3 f1 c/\ * f0 f3 c\/ c= f3 f2 cMEM f3 f1
++ (~ ((I P) x)), (x = h) |- (((I P) h) ==> F)
+T c==> c~ cI f0 f1 c==> c= f1 f2 c==> cI f0 f2 cF
+- |- (((!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))) ==> ((\t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))) t3)) = ((\t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))) t3))
+T c= c==> ! c= c\/ f0 c\/ f1 b0 c\/ c\/ f0 f1 b0 * / c= c\/ f0 c\/ f1 b0 c\/ c\/ f0 f1 b0 f2 * / c= c\/ f0 c\/ f1 b0 c\/ c\/ f0 f1 b0 f2
++ (!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))) |- (((P h) ==> (((MEM x) ((CONS h) ((FILTER P) t))) = ((P x) /\ ((x = h) \/ ((MEM x) t))))) /\ ((~ (P h)) ==> (((MEM x) ((FILTER P) t)) = ((P x) /\ ((x = h) \/ ((MEM x) t))))))
+T c==> ! c= cMEM b0 cFILTER f0 f1 c/\ * f0 b0 cMEM b0 f1 c/\ c==> * f0 f2 c= cMEM f3 cCONS f2 cFILTER f0 f1 c/\ * f0 f3 c\/ c= f3 f2 cMEM f3 f1 c==> c~ * f0 f2 c= cMEM f3 cFILTER f0 f1 c/\ * f0 f3 c\/ c= f3 f2 cMEM f3 f1
+- (~ ((MEM x) t)), ((MEM x) t) |- (((MEM x) t) /\ F)
+T c==> c~ cMEM f0 f1 c==> cMEM f0 f1 c/\ cMEM f0 f1 cF
+- |- ((t /\ t) = t)
+T c= c/\ f0 f0 f0
+- |- ((a = b) ==> (b \/ (~ a)))
+T c==> c= f0 f1 c\/ f1 c~ f0
++ (~ ((I P) x)) |- ((((I P) x) /\ ((MEM x) t)) ==> F)
+T c==> c~ cI f0 f1 c==> c/\ cI f0 f1 cMEM f1 f2 cF
+- ((!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))) ==> ((P h) ==> ((~ (((x = h) \/ ((P x) /\ ((MEM x) t))) = ((P x) /\ ((x = h) \/ ((MEM x) t))))) ==> F))), (((!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))) ==> ((P h) ==> ((~ (((x = h) \/ ((P x) /\ ((MEM x) t))) = ((P x) /\ ((x = h) \/ ((MEM x) t))))) ==> F))) ==> ((!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))) ==> ((P h) ==> ((~ (((x = h) \/ ((P x) /\ ((MEM x) t))) = ((P x) /\ ((x = h) \/ ((MEM x) t))))) ==> F)))) |- ((((!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))) ==> ((P h) ==> ((~ (((x = h) \/ ((P x) /\ ((MEM x) t))) = ((P x) /\ ((x = h) \/ ((MEM x) t))))) ==> F))) ==> ((!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))) ==> ((P h) ==> ((~ (((x = h) \/ ((P x) /\ ((MEM x) t))) = ((P x) /\ ((x = h) \/ ((MEM x) t))))) ==> F)))) /\ ((!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))) ==> ((P h) ==> ((~ (((x = h) \/ ((P x) /\ ((MEM x) t))) = ((P x) /\ ((x = h) \/ ((MEM x) t))))) ==> F))))
+T c==> c==> ! c= cMEM b0 cFILTER f0 f1 c/\ * f0 b0 cMEM b0 f1 c==> * f0 f2 c==> c~ c= c\/ c= f3 f2 c/\ * f0 f3 cMEM f3 f1 c/\ * f0 f3 c\/ c= f3 f2 cMEM f3 f1 cF c==> c==> c==> ! c= cMEM b0 cFILTER f0 f1 c/\ * f0 b0 cMEM b0 f1 c==> * f0 f2 c==> c~ c= c\/ c= f3 f2 c/\ * f0 f3 cMEM f3 f1 c/\ * f0 f3 c\/ c= f3 f2 cMEM f3 f1 cF c==> ! c= cMEM b0 cFILTER f0 f1 c/\ * f0 b0 cMEM b0 f1 c==> * f0 f2 c==> c~ c= c\/ c= f3 f2 c/\ * f0 f3 cMEM f3 f1 c/\ * f0 f3 c\/ c= f3 f2 cMEM f3 f1 cF c/\ c==> c==> ! c= cMEM b0 cFILTER f0 f1 c/\ * f0 b0 cMEM b0 f1 c==> * f0 f2 c==> c~ c= c\/ c= f3 f2 c/\ * f0 f3 cMEM f3 f1 c/\ * f0 f3 c\/ c= f3 f2 cMEM f3 f1 cF c==> ! c= cMEM b0 cFILTER f0 f1 c/\ * f0 b0 cMEM b0 f1 c==> * f0 f2 c==> c~ c= c\/ c= f3 f2 c/\ * f0 f3 cMEM f3 f1 c/\ * f0 f3 c\/ c= f3 f2 cMEM f3 f1 cF c==> ! c= cMEM b0 cFILTER f0 f1 c/\ * f0 b0 cMEM b0 f1 c==> * f0 f2 c==> c~ c= c\/ c= f3 f2 c/\ * f0 f3 cMEM f3 f1 c/\ * f0 f3 c\/ c= f3 f2 cMEM f3 f1 cF
+- (~ ((MEM x) t)), ((MEM x) t) |- ((~ F) ==> F)
+T c==> c~ cMEM f0 f1 c==> cMEM f0 f1 c==> c~ cF cF
+- (P h) |- ((~ ((I P) h)) ==> ((I P) h))
+T c==> * f0 f1 c==> c~ cI f0 f1 cI f0 f1
+- (_17628 = _17630) |- ((_17629 = _17631) ==> (((FILTER _17628) _17629) = ((FILTER _17630) _17631)))
+T c==> c= f0 f1 c==> c= f2 f3 c= cFILTER f0 f2 cFILTER f1 f3
++ (x = h) |- ((~ ((I P) x)) = (~ ((I P) h)))
+T c==> c= f0 f1 c= c~ cI f2 f0 c~ cI f2 f1
+- (x = h), (((~ (x = h)) /\ ((~ ((I P) x)) \/ (~ ((MEM x) t)))) /\ (((I P) x) /\ ((x = h) \/ ((MEM x) t)))) |- ((((I P) h) ==> F) = F)
+T c==> c= f0 f1 c==> c/\ c/\ c~ c= f0 f1 c\/ c~ cI f2 f0 c~ cMEM f0 f3 c/\ cI f2 f0 c\/ c= f0 f1 cMEM f0 f3 c= c==> cI f2 f1 cF cF
++ |- ((!h. (!t. ((!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))) ==> (!x. (((MEM x) ((FILTER P) ((CONS h) t))) = ((P x) /\ ((MEM x) ((CONS h) t)))))))) = ((!x. (((MEM x) ((FILTER P) NIL)) = ((P x) /\ ((MEM x) NIL)))) /\ (!h. (!t. ((!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))) ==> (!x. (((MEM x) ((FILTER P) ((CONS h) t))) = ((P x) /\ ((MEM x) ((CONS h) t))))))))))
+T c= ! ! c==> ! c= cMEM b2 cFILTER f0 b1 c/\ * f0 b2 cMEM b2 b1 ! c= cMEM b2 cFILTER f0 cCONS b0 b1 c/\ * f0 b2 cMEM b2 cCONS b0 b1 c/\ ! c= cMEM b0 cFILTER f0 cNIL c/\ * f0 b0 cMEM b0 cNIL ! ! c==> ! c= cMEM b2 cFILTER f0 b1 c/\ * f0 b2 cMEM b2 b1 ! c= cMEM b2 cFILTER f0 cCONS b0 b1 c/\ * f0 b2 cMEM b2 cCONS b0 b1
++ (P h) |- ((I P) h)
+T c==> * f0 f1 cI f0 f1
+- (_17620 = _17622), (_17621 = _17623) |- (((((MEM _17620) _17621) = ((MEM _17622) _17623)) ==> (((MEM _17622) _17623) \/ (~ ((MEM _17620) _17621)))) = (((MEM _17622) _17623) \/ (~ ((MEM _17620) _17621))))
+T c==> c= f0 f1 c==> c= f2 f3 c= c==> c= cMEM f0 f2 cMEM f1 f3 c\/ cMEM f1 f3 c~ cMEM f0 f2 c\/ cMEM f1 f3 c~ cMEM f0 f2
++ ((((I P) x) /\ ((MEM x) t)) /\ ((~ ((I P) x)) \/ ((~ (x = h)) /\ (~ ((MEM x) t))))) |- ((~ ((I P) x)) ==> F)
+T c==> c/\ c/\ cI f0 f1 cMEM f1 f2 c\/ c~ cI f0 f1 c/\ c~ c= f1 f3 c~ cMEM f1 f2 c==> c~ cI f0 f1 cF
++ |- (((!x. (!h. (!P. ((!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))) ==> ((P h) ==> ((~ (((x = h) \/ ((P x) /\ ((MEM x) t))) = ((P x) /\ ((x = h) \/ ((MEM x) t))))) ==> F)))))) ==> ((\x. (!h. (!P. ((!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))) ==> ((P h) ==> ((~ (((x = h) \/ ((P x) /\ ((MEM x) t))) = ((P x) /\ ((x = h) \/ ((MEM x) t))))) ==> F)))))) x)) = ((\x. (!h. (!P. ((!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))) ==> ((P h) ==> ((~ (((x = h) \/ ((P x) /\ ((MEM x) t))) = ((P x) /\ ((x = h) \/ ((MEM x) t))))) ==> F)))))) x))
+T c= c==> ! ! ! c==> ! c= cMEM b3 cFILTER b2 f0 c/\ * b2 b3 cMEM b3 f0 c==> * b2 b1 c==> c~ c= c\/ c= b0 b1 c/\ * b2 b0 cMEM b0 f0 c/\ * b2 b0 c\/ c= b0 b1 cMEM b0 f0 cF * / ! ! c==> ! c= cMEM b3 cFILTER b2 f0 c/\ * b2 b3 cMEM b3 f0 c==> * b2 b1 c==> c~ c= c\/ c= b0 b1 c/\ * b2 b0 cMEM b0 f0 c/\ * b2 b0 c\/ c= b0 b1 cMEM b0 f0 cF f1 * / ! ! c==> ! c= cMEM b3 cFILTER b2 f0 c/\ * b2 b3 cMEM b3 f0 c==> * b2 b1 c==> c~ c= c\/ c= b0 b1 c/\ * b2 b0 cMEM b0 f0 c/\ * b2 b0 c\/ c= b0 b1 cMEM b0 f0 cF f1
+- |- ((~ (_17620 = _17622)) \/ ((~ (_17621 = _17623)) \/ (((MEM _17622) _17623) \/ (~ ((MEM _17620) _17621)))))
+T c\/ c~ c= f0 f1 c\/ c~ c= f2 f3 c\/ cMEM f1 f3 c~ cMEM f0 f2
++ ((((I P) x) /\ ((MEM x) t)) /\ ((~ ((I P) x)) \/ ((~ (x = h)) /\ (~ ((MEM x) t))))) |- (((~ (x = h)) /\ (~ ((MEM x) t))) ==> F)
+T c==> c/\ c/\ cI f0 f1 cMEM f1 f2 c\/ c~ cI f0 f1 c/\ c~ c= f1 f3 c~ cMEM f1 f2 c==> c/\ c~ c= f1 f3 c~ cMEM f1 f2 cF
++ |- ((!h. (!P. ((!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))) ==> ((~ (P h)) ==> (((P x) /\ ((MEM x) t)) = ((P x) /\ ((x = h) \/ ((MEM x) t)))))))) = T)
+T c= ! ! c==> ! c= cMEM b2 cFILTER b1 f0 c/\ * b1 b2 cMEM b2 f0 c==> c~ * b1 b0 c= c/\ * b1 f1 cMEM f1 f0 c/\ * b1 f1 c\/ c= f1 b0 cMEM f1 f0 cT
++ |- ((!x. (!h. (!P. ((!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))) ==> ((P h) ==> (((x = h) \/ ((P x) /\ ((MEM x) t))) = ((P x) /\ ((x = h) \/ ((MEM x) t))))))))) = T)
+T c= ! ! ! c==> ! c= cMEM b3 cFILTER b2 f0 c/\ * b2 b3 cMEM b3 f0 c==> * b2 b1 c= c\/ c= b0 b1 c/\ * b2 b0 cMEM b0 f0 c/\ * b2 b0 c\/ c= b0 b1 cMEM b0 f0 cT
++ ((((I P) x) /\ ((MEM x) t)) /\ ((~ ((I P) x)) \/ ((~ (x = h)) /\ (~ ((MEM x) t))))) |- ((MEM x) t)
+T c==> c/\ c/\ cI f0 f1 cMEM f1 f2 c\/ c~ cI f0 f1 c/\ c~ c= f1 f3 c~ cMEM f1 f2 cMEM f1 f2
++ |- ((!h. (!P. ((!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))) ==> ((P h) ==> (((x = h) \/ ((P x) /\ ((MEM x) t))) = ((P x) /\ ((x = h) \/ ((MEM x) t)))))))) = T)
+T c= ! ! c==> ! c= cMEM b2 cFILTER b1 f0 c/\ * b1 b2 cMEM b2 f0 c==> * b1 b0 c= c\/ c= f1 b0 c/\ * b1 f1 cMEM f1 f0 c/\ * b1 f1 c\/ c= f1 b0 cMEM f1 f0 cT
++ (~ (((x = h) \/ ((P x) /\ ((MEM x) t))) = ((P x) /\ ((x = h) \/ ((MEM x) t))))), ((((~ (x = h)) /\ ((~ ((I P) x)) \/ (~ ((MEM x) t)))) /\ (((I P) x) /\ ((x = h) \/ ((MEM x) t)))) ==> F), ((((x = h) \/ (((I P) x) /\ ((MEM x) t))) /\ ((~ ((I P) x)) \/ ((~ (x = h)) /\ (~ ((MEM x) t))))) ==> F) |- F
+T c==> c~ c= c\/ c= f0 f1 c/\ * f2 f0 cMEM f0 f3 c/\ * f2 f0 c\/ c= f0 f1 cMEM f0 f3 c==> c==> c/\ c/\ c~ c= f0 f1 c\/ c~ cI f2 f0 c~ cMEM f0 f3 c/\ cI f2 f0 c\/ c= f0 f1 cMEM f0 f3 cF c==> c==> c/\ c\/ c= f0 f1 c/\ cI f2 f0 cMEM f0 f3 c\/ c~ cI f2 f0 c/\ c~ c= f0 f1 c~ cMEM f0 f3 cF cF
++ (~ ((I P) x)), (((I P) x) /\ ((MEM x) t)) |- ((((I P) x) /\ ((MEM x) t)) /\ F)
+T c==> c~ cI f0 f1 c==> c/\ cI f0 f1 cMEM f1 f2 c/\ c/\ cI f0 f1 cMEM f1 f2 cF
+- (_17620 = _17622) |- ((_17621 = _17623) ==> (((MEM _17622) _17623) \/ (~ ((MEM _17620) _17621))))
+T c==> c= f0 f1 c==> c= f2 f3 c\/ cMEM f1 f3 c~ cMEM f0 f2
++ |- (((!t. (!x. (!h. (!P. ((!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))) ==> ((P h) ==> ((~ (((x = h) \/ ((P x) /\ ((MEM x) t))) = ((P x) /\ ((x = h) \/ ((MEM x) t))))) ==> F))))))) ==> ((\t. (!x. (!h. (!P. ((!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))) ==> ((P h) ==> ((~ (((x = h) \/ ((P x) /\ ((MEM x) t))) = ((P x) /\ ((x = h) \/ ((MEM x) t))))) ==> F))))))) t)) = ((\t. (!x. (!h. (!P. ((!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))) ==> ((P h) ==> ((~ (((x = h) \/ ((P x) /\ ((MEM x) t))) = ((P x) /\ ((x = h) \/ ((MEM x) t))))) ==> F))))))) t))
+T c= c==> ! ! ! ! c==> ! c= cMEM b4 cFILTER b3 b0 c/\ * b3 b4 cMEM b4 b0 c==> * b3 b2 c==> c~ c= c\/ c= b1 b2 c/\ * b3 b1 cMEM b1 b0 c/\ * b3 b1 c\/ c= b1 b2 cMEM b1 b0 cF * / ! ! ! c==> ! c= cMEM b4 cFILTER b3 b0 c/\ * b3 b4 cMEM b4 b0 c==> * b3 b2 c==> c~ c= c\/ c= b1 b2 c/\ * b3 b1 cMEM b1 b0 c/\ * b3 b1 c\/ c= b1 b2 cMEM b1 b0 cF f0 * / ! ! ! c==> ! c= cMEM b4 cFILTER b3 b0 c/\ * b3 b4 cMEM b4 b0 c==> * b3 b2 c==> c~ c= c\/ c= b1 b2 c/\ * b3 b1 cMEM b1 b0 c/\ * b3 b1 c\/ c= b1 b2 cMEM b1 b0 cF f0
++ (P h), (((x = h) \/ (((I P) x) /\ ((MEM x) t))) /\ ((~ ((I P) x)) \/ ((~ (x = h)) /\ (~ ((MEM x) t))))), (((~ (x = h)) /\ (~ ((MEM x) t))) ==> F) |- F
+T c==> * f0 f1 c==> c/\ c\/ c= f2 f1 c/\ cI f0 f2 cMEM f2 f3 c\/ c~ cI f0 f2 c/\ c~ c= f2 f1 c~ cMEM f2 f3 c==> c==> c/\ c~ c= f2 f1 c~ cMEM f2 f3 cF cF
+- ((!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))) ==> ((P h) ==> ((~ (((x = h) \/ ((P x) /\ ((MEM x) t))) = ((P x) /\ ((x = h) \/ ((MEM x) t))))) ==> F))) |- (((!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))) ==> ((P h) ==> ((~ (((x = h) \/ ((P x) /\ ((MEM x) t))) = ((P x) /\ ((x = h) \/ ((MEM x) t))))) ==> F))) /\ ((!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))) ==> ((P h) ==> ((~ (((x = h) \/ ((P x) /\ ((MEM x) t))) = ((P x) /\ ((x = h) \/ ((MEM x) t))))) ==> F))))
+T c==> c==> ! c= cMEM b0 cFILTER f0 f1 c/\ * f0 b0 cMEM b0 f1 c==> * f0 f2 c==> c~ c= c\/ c= f3 f2 c/\ * f0 f3 cMEM f3 f1 c/\ * f0 f3 c\/ c= f3 f2 cMEM f3 f1 cF c/\ c==> ! c= cMEM b0 cFILTER f0 f1 c/\ * f0 b0 cMEM b0 f1 c==> * f0 f2 c==> c~ c= c\/ c= f3 f2 c/\ * f0 f3 cMEM f3 f1 c/\ * f0 f3 c\/ c= f3 f2 cMEM f3 f1 cF c==> ! c= cMEM b0 cFILTER f0 f1 c/\ * f0 b0 cMEM b0 f1 c==> * f0 f2 c==> c~ c= c\/ c= f3 f2 c/\ * f0 f3 cMEM f3 f1 c/\ * f0 f3 c\/ c= f3 f2 cMEM f3 f1 cF
++ ((((I P) x) /\ ((MEM x) t)) /\ ((~ ((I P) x)) \/ ((~ (x = h)) /\ (~ ((MEM x) t))))) |- ((((MEM x) t) ==> F) = F)
+T c==> c/\ c/\ cI f0 f1 cMEM f1 f2 c\/ c~ cI f0 f1 c/\ c~ c= f1 f3 c~ cMEM f1 f2 c= c==> cMEM f1 f2 cF cF
++ |- ((!P. ((!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))) ==> ((~ (P h)) ==> (((P x) /\ ((MEM x) t)) = ((P x) /\ ((x = h) \/ ((MEM x) t))))))) = T)
+T c= ! c==> ! c= cMEM b1 cFILTER b0 f0 c/\ * b0 b1 cMEM b1 f0 c==> c~ * b0 f1 c= c/\ * b0 f2 cMEM f2 f0 c/\ * b0 f2 c\/ c= f2 f1 cMEM f2 f0 cT
+- (~ ((I P) x)), (P h), (x = h) |- ((~ F) ==> F)
+T c==> c~ cI f0 f1 c==> * f0 f2 c==> c= f1 f2 c==> c~ cF cF
++ (x = h) |- ((~ (x = h)) = (~ (h = h)))
+T c==> c= f0 f1 c= c~ c= f0 f1 c~ c= f1 f1
++ (((~ (x = h)) /\ ((~ ((I P) x)) \/ (~ ((MEM x) t)))) /\ (((I P) x) /\ ((x = h) \/ ((MEM x) t)))) |- ((~ ((I P) x)) ==> F)
+T c==> c/\ c/\ c~ c= f0 f1 c\/ c~ cI f2 f0 c~ cMEM f0 f3 c/\ cI f2 f0 c\/ c= f0 f1 cMEM f0 f3 c==> c~ cI f2 f0 cF
++ |- (((~ (((x = h) \/ ((P x) /\ ((MEM x) t))) = ((P x) /\ ((x = h) \/ ((MEM x) t))))) ==> F) = (((x = h) \/ ((P x) /\ ((MEM x) t))) = ((P x) /\ ((x = h) \/ ((MEM x) t)))))
+T c= c==> c~ c= c\/ c= f0 f1 c/\ * f2 f0 cMEM f0 f3 c/\ * f2 f0 c\/ c= f0 f1 cMEM f0 f3 cF c= c\/ c= f0 f1 c/\ * f2 f0 cMEM f0 f3 c/\ * f2 f0 c\/ c= f0 f1 cMEM f0 f3
++ (((~ ((I P) x)) \/ (~ ((MEM x) t))) /\ (((I P) x) /\ ((x = h) \/ ((MEM x) t)))), ((~ ((MEM x) t)) ==> F) |- F
+T c==> c/\ c\/ c~ cI f0 f1 c~ cMEM f1 f2 c/\ cI f0 f1 c\/ c= f1 f3 cMEM f1 f2 c==> c==> c~ cMEM f1 f2 cF cF
++ (~ ((I P) x)), (P h), (((x = h) \/ (((I P) x) /\ ((MEM x) t))) /\ ((~ ((I P) x)) \/ ((~ (x = h)) /\ (~ ((MEM x) t))))) |- ((~ ((I P) x)) /\ F)
+T c==> c~ cI f0 f1 c==> * f0 f2 c==> c/\ c\/ c= f1 f2 c/\ cI f0 f1 cMEM f1 f3 c\/ c~ cI f0 f1 c/\ c~ c= f1 f2 c~ cMEM f1 f3 c/\ c~ cI f0 f1 cF
+- |- ((_17625 = _17627) ==> ((~ (_17624 = _17626)) \/ (((I _17626) _17627) \/ (~ ((I _17624) _17625)))))
+T c==> c= f0 f1 c\/ c~ c= f2 f3 c\/ cI f3 f1 c~ cI f2 f0
++ (((~ ((I P) x)) \/ (~ ((MEM x) t))) /\ (((I P) x) /\ ((x = h) \/ ((MEM x) t)))) |- ((I P) x)
+T c==> c/\ c\/ c~ cI f0 f1 c~ cMEM f1 f2 c/\ cI f0 f1 c\/ c= f1 f3 cMEM f1 f2 cI f0 f1
++ (x = h), ((~ (x = h)) /\ (~ ((MEM x) t))) |- ((h = h) ==> F)
+T c==> c= f0 f1 c==> c/\ c~ c= f0 f1 c~ cMEM f0 f2 c==> c= f1 f1 cF
++ |- ((\P. ((!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))) ==> ((P h) ==> ((~ (((x = h) \/ ((P x) /\ ((MEM x) t))) = ((P x) /\ ((x = h) \/ ((MEM x) t))))) ==> F)))) P)
+T * / c==> ! c= cMEM b1 cFILTER b0 f0 c/\ * b0 b1 cMEM b1 f0 c==> * b0 f1 c==> c~ c= c\/ c= f2 f1 c/\ * b0 f2 cMEM f2 f0 c/\ * b0 f2 c\/ c= f2 f1 cMEM f2 f0 cF f3
+- (((~ ((I P) x)) \/ (~ ((MEM x) t))) /\ (((I P) x) /\ ((x = h) \/ ((MEM x) t)))) |- ((~ ((I P) x)) ==> ((I P) x))
+T c==> c/\ c\/ c~ cI f0 f1 c~ cMEM f1 f2 c/\ cI f0 f1 c\/ c= f1 f3 cMEM f1 f2 c==> c~ cI f0 f1 cI f0 f1
+- (~ F), (~ ((I P) x)), (x = h), (((~ ((I P) x)) \/ (~ ((MEM x) t))) /\ (((I P) x) /\ ((x = h) \/ ((MEM x) t)))) |- ((~ F) /\ F)
+T c==> c~ cF c==> c~ cI f0 f1 c==> c= f1 f2 c==> c/\ c\/ c~ cI f0 f1 c~ cMEM f1 f3 c/\ cI f0 f1 c\/ c= f1 f2 cMEM f1 f3 c/\ c~ cF cF
+- (x = h), (((~ (x = h)) /\ ((~ ((I P) x)) \/ (~ ((MEM x) t)))) /\ (((I P) x) /\ ((x = h) \/ ((MEM x) t)))) |- ((~ F) ==> F)
+T c==> c= f0 f1 c==> c/\ c/\ c~ c= f0 f1 c\/ c~ cI f2 f0 c~ cMEM f0 f3 c/\ cI f2 f0 c\/ c= f0 f1 cMEM f0 f3 c==> c~ cF cF
++ |- (((FILTER P) NIL) = NIL)
+T c= cFILTER f0 cNIL cNIL
++ (!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))) |- ((P h) ==> (((MEM x) ((CONS h) ((FILTER P) t))) = ((P x) /\ ((x = h) \/ ((MEM x) t)))))
+T c==> ! c= cMEM b0 cFILTER f0 f1 c/\ * f0 b0 cMEM b0 f1 c==> * f0 f2 c= cMEM f3 cCONS f2 cFILTER f0 f1 c/\ * f0 f3 c\/ c= f3 f2 cMEM f3 f1
+- (~ F), (~ ((I P) x)), (((~ (x = h)) /\ ((~ ((I P) x)) \/ (~ ((MEM x) t)))) /\ (((I P) x) /\ ((x = h) \/ ((MEM x) t)))) |- ((~ F) /\ F)
+T c==> c~ cF c==> c~ cI f0 f1 c==> c/\ c/\ c~ c= f1 f2 c\/ c~ cI f0 f1 c~ cMEM f1 f3 c/\ cI f0 f1 c\/ c= f1 f2 cMEM f1 f3 c/\ c~ cF cF
++ |- ((!x. (!h. (!P. ((!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))) ==> ((~ (P h)) ==> (((P x) /\ ((MEM x) t)) = ((P x) /\ ((x = h) \/ ((MEM x) t))))))))) = T)
+T c= ! ! ! c==> ! c= cMEM b3 cFILTER b2 f0 c/\ * b2 b3 cMEM b3 f0 c==> c~ * b2 b1 c= c/\ * b2 b0 cMEM b0 f0 c/\ * b2 b0 c\/ c= b0 b1 cMEM b0 f0 cT
++ |- ((~ F) = T)
+T c= c~ cF cT
++ |- (((!P. ((!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))) ==> ((P h) ==> ((~ (((x = h) \/ ((P x) /\ ((MEM x) t))) = ((P x) /\ ((x = h) \/ ((MEM x) t))))) ==> F)))) ==> ((\P. ((!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))) ==> ((P h) ==> ((~ (((x = h) \/ ((P x) /\ ((MEM x) t))) = ((P x) /\ ((x = h) \/ ((MEM x) t))))) ==> F)))) P)) = ((\P. ((!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))) ==> ((P h) ==> ((~ (((x = h) \/ ((P x) /\ ((MEM x) t))) = ((P x) /\ ((x = h) \/ ((MEM x) t))))) ==> F)))) P))
+T c= c==> ! c==> ! c= cMEM b1 cFILTER b0 f0 c/\ * b0 b1 cMEM b1 f0 c==> * b0 f1 c==> c~ c= c\/ c= f2 f1 c/\ * b0 f2 cMEM f2 f0 c/\ * b0 f2 c\/ c= f2 f1 cMEM f2 f0 cF * / c==> ! c= cMEM b1 cFILTER b0 f0 c/\ * b0 b1 cMEM b1 f0 c==> * b0 f1 c==> c~ c= c\/ c= f2 f1 c/\ * b0 f2 cMEM f2 f0 c/\ * b0 f2 c\/ c= f2 f1 cMEM f2 f0 cF f3 * / c==> ! c= cMEM b1 cFILTER b0 f0 c/\ * b0 b1 cMEM b1 f0 c==> * b0 f1 c==> c~ c= c\/ c= f2 f1 c/\ * b0 f2 cMEM f2 f0 c/\ * b0 f2 c\/ c= f2 f1 cMEM f2 f0 cF f3
+- (((I P) x) /\ ((MEM x) t)) |- ((~ ((I P) x)) ==> ((I P) x))
+T c==> c/\ cI f0 f1 cMEM f1 f2 c==> c~ cI f0 f1 cI f0 f1
++ (!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))) |- ((~ (P h)) ==> (((MEM x) ((FILTER P) t)) = ((P x) /\ ((x = h) \/ ((MEM x) t)))))
+T c==> ! c= cMEM b0 cFILTER f0 f1 c/\ * f0 b0 cMEM b0 f1 c==> c~ * f0 f2 c= cMEM f3 cFILTER f0 f1 c/\ * f0 f3 c\/ c= f3 f2 cMEM f3 f1
++ |- (((!x. (((MEM x) ((FILTER P) NIL)) = ((P x) /\ ((MEM x) NIL)))) /\ (!h. (!t. ((!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))) ==> (!x. (((MEM x) ((FILTER P) ((CONS h) t))) = ((P x) /\ ((MEM x) ((CONS h) t))))))))) ==> (!l. (!x. (((MEM x) ((FILTER P) l)) = ((P x) /\ ((MEM x) l))))))
+T c==> c/\ ! c= cMEM b0 cFILTER f0 cNIL c/\ * f0 b0 cMEM b0 cNIL ! ! c==> ! c= cMEM b2 cFILTER f0 b1 c/\ * f0 b2 cMEM b2 b1 ! c= cMEM b2 cFILTER f0 cCONS b0 b1 c/\ * f0 b2 cMEM b2 cCONS b0 b1 ! ! c= cMEM b1 cFILTER f0 b0 c/\ * f0 b1 cMEM b1 b0
+- |- ((!x'. ((~ ((MEM x) ((FILTER P) t))) \/ ((P x') /\ ((MEM x') t)))) = ((~ ((MEM x) ((FILTER P) t))) \/ (!x. ((P x) /\ ((MEM x) t)))))
+T c= ! c\/ c~ cMEM f0 cFILTER f1 f2 c/\ * f1 b0 cMEM b0 f2 c\/ c~ cMEM f0 cFILTER f1 f2 ! c/\ * f1 b0 cMEM b0 f2
+- (_17625 = _17627) |- ((_17624 = _17626) ==> (((I _17626) _17627) \/ (~ ((I _17624) _17625))))
+T c==> c= f0 f1 c==> c= f2 f3 c\/ cI f3 f1 c~ cI f2 f0
+- (!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))), (~ (((x = h) \/ ((P x) /\ ((MEM x) t))) = ((P x) /\ ((x = h) \/ ((MEM x) t))))), (P h) |- F
+T c==> ! c= cMEM b0 cFILTER f0 f1 c/\ * f0 b0 cMEM b0 f1 c==> c~ c= c\/ c= f2 f3 c/\ * f0 f2 cMEM f2 f1 c/\ * f0 f2 c\/ c= f2 f3 cMEM f2 f1 c==> * f0 f3 cF
+- |- ((!P. (P P)) = ((P T) /\ (P F)))
+T c= ! * f0 b0 c/\ * f0 cT * f0 cF
++ (!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))) |- (!x. (((MEM x) (((COND (P h)) ((CONS h) ((FILTER P) t))) ((FILTER P) t))) = ((P x) /\ ((x = h) \/ ((MEM x) t)))))
+T c==> ! c= cMEM b0 cFILTER f0 f1 c/\ * f0 b0 cMEM b0 f1 ! c= cMEM b0 cCOND * f0 f2 cCONS f2 cFILTER f0 f1 cFILTER f0 f1 c/\ * f0 b0 c\/ c= b0 f2 cMEM b0 f1
++ ((~ (x = h)) /\ (~ ((MEM x) t))) |- (((MEM x) t) ==> F)
+T c==> c/\ c~ c= f0 f1 c~ cMEM f0 f2 c==> cMEM f0 f2 cF
+- |- (((((!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))) ==> ((~ (P h)) ==> ((~ (((P x) /\ ((MEM x) t)) = ((P x) /\ ((x = h) \/ ((MEM x) t))))) ==> F))) ==> ((!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))) ==> ((~ (P h)) ==> ((~ (((P x) /\ ((MEM x) t)) = ((P x) /\ ((x = h) \/ ((MEM x) t))))) ==> F)))) ==> (((!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))) ==> ((~ (P h)) ==> ((~ (((P x) /\ ((MEM x) t)) = ((P x) /\ ((x = h) \/ ((MEM x) t))))) ==> F))) ==> ((!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))) ==> ((~ (P h)) ==> ((~ (((P x) /\ ((MEM x) t)) = ((P x) /\ ((x = h) \/ ((MEM x) t))))) ==> F))))) = (((!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))) ==> ((~ (P h)) ==> ((~ (((P x) /\ ((MEM x) t)) = ((P x) /\ ((x = h) \/ ((MEM x) t))))) ==> F))) ==> ((!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))) ==> ((~ (P h)) ==> ((~ (((P x) /\ ((MEM x) t)) = ((P x) /\ ((x = h) \/ ((MEM x) t))))) ==> F)))))
+T c= c==> c==> c==> ! c= cMEM b0 cFILTER f0 f1 c/\ * f0 b0 cMEM b0 f1 c==> c~ * f0 f2 c==> c~ c= c/\ * f0 f3 cMEM f3 f1 c/\ * f0 f3 c\/ c= f3 f2 cMEM f3 f1 cF c==> ! c= cMEM b0 cFILTER f0 f1 c/\ * f0 b0 cMEM b0 f1 c==> c~ * f0 f2 c==> c~ c= c/\ * f0 f3 cMEM f3 f1 c/\ * f0 f3 c\/ c= f3 f2 cMEM f3 f1 cF c==> c==> ! c= cMEM b0 cFILTER f0 f1 c/\ * f0 b0 cMEM b0 f1 c==> c~ * f0 f2 c==> c~ c= c/\ * f0 f3 cMEM f3 f1 c/\ * f0 f3 c\/ c= f3 f2 cMEM f3 f1 cF c==> ! c= cMEM b0 cFILTER f0 f1 c/\ * f0 b0 cMEM b0 f1 c==> c~ * f0 f2 c==> c~ c= c/\ * f0 f3 cMEM f3 f1 c/\ * f0 f3 c\/ c= f3 f2 cMEM f3 f1 cF c==> c==> ! c= cMEM b0 cFILTER f0 f1 c/\ * f0 b0 cMEM b0 f1 c==> c~ * f0 f2 c==> c~ c= c/\ * f0 f3 cMEM f3 f1 c/\ * f0 f3 c\/ c= f3 f2 cMEM f3 f1 cF c==> ! c= cMEM b0 cFILTER f0 f1 c/\ * f0 b0 cMEM b0 f1 c==> c~ * f0 f2 c==> c~ c= c/\ * f0 f3 cMEM f3 f1 c/\ * f0 f3 c\/ c= f3 f2 cMEM f3 f1 cF
+- |- (((!t1. (!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))))) ==> ((\t1. (!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))))) t1)) = ((\t1. (!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))))) t1))
+T c= c==> ! ! ! c= c\/ b0 c\/ b1 b2 c\/ c\/ b0 b1 b2 * / ! ! c= c\/ b0 c\/ b1 b2 c\/ c\/ b0 b1 b2 f0 * / ! ! c= c\/ b0 c\/ b1 b2 c\/ c\/ b0 b1 b2 f0
+- (((!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))) ==> ((~ (P h)) ==> ((~ (((P x) /\ ((MEM x) t)) = ((P x) /\ ((x = h) \/ ((MEM x) t))))) ==> F))) ==> ((!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))) ==> ((~ (P h)) ==> ((~ (((P x) /\ ((MEM x) t)) = ((P x) /\ ((x = h) \/ ((MEM x) t))))) ==> F)))) |- ((((!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))) ==> ((~ (P h)) ==> ((~ (((P x) /\ ((MEM x) t)) = ((P x) /\ ((x = h) \/ ((MEM x) t))))) ==> F))) ==> ((!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))) ==> ((~ (P h)) ==> ((~ (((P x) /\ ((MEM x) t)) = ((P x) /\ ((x = h) \/ ((MEM x) t))))) ==> F)))) /\ (((!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))) ==> ((~ (P h)) ==> ((~ (((P x) /\ ((MEM x) t)) = ((P x) /\ ((x = h) \/ ((MEM x) t))))) ==> F))) ==> ((!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))) ==> ((~ (P h)) ==> ((~ (((P x) /\ ((MEM x) t)) = ((P x) /\ ((x = h) \/ ((MEM x) t))))) ==> F)))))
+T c==> c==> c==> ! c= cMEM b0 cFILTER f0 f1 c/\ * f0 b0 cMEM b0 f1 c==> c~ * f0 f2 c==> c~ c= c/\ * f0 f3 cMEM f3 f1 c/\ * f0 f3 c\/ c= f3 f2 cMEM f3 f1 cF c==> ! c= cMEM b0 cFILTER f0 f1 c/\ * f0 b0 cMEM b0 f1 c==> c~ * f0 f2 c==> c~ c= c/\ * f0 f3 cMEM f3 f1 c/\ * f0 f3 c\/ c= f3 f2 cMEM f3 f1 cF c/\ c==> c==> ! c= cMEM b0 cFILTER f0 f1 c/\ * f0 b0 cMEM b0 f1 c==> c~ * f0 f2 c==> c~ c= c/\ * f0 f3 cMEM f3 f1 c/\ * f0 f3 c\/ c= f3 f2 cMEM f3 f1 cF c==> ! c= cMEM b0 cFILTER f0 f1 c/\ * f0 b0 cMEM b0 f1 c==> c~ * f0 f2 c==> c~ c= c/\ * f0 f3 cMEM f3 f1 c/\ * f0 f3 c\/ c= f3 f2 cMEM f3 f1 cF c==> c==> ! c= cMEM b0 cFILTER f0 f1 c/\ * f0 b0 cMEM b0 f1 c==> c~ * f0 f2 c==> c~ c= c/\ * f0 f3 cMEM f3 f1 c/\ * f0 f3 c\/ c= f3 f2 cMEM f3 f1 cF c==> ! c= cMEM b0 cFILTER f0 f1 c/\ * f0 b0 cMEM b0 f1 c==> c~ * f0 f2 c==> c~ c= c/\ * f0 f3 cMEM f3 f1 c/\ * f0 f3 c\/ c= f3 f2 cMEM f3 f1 cF
+- |- ((~ (~ t)) = t)
+T c= c~ c~ f0 f0
++ (~ ((I P) x)), ((((I P) x) /\ ((MEM x) t)) /\ ((~ ((I P) x)) \/ ((~ (x = h)) /\ (~ ((MEM x) t))))) |- ((~ ((I P) x)) /\ F)
+T c==> c~ cI f0 f1 c==> c/\ c/\ cI f0 f1 cMEM f1 f2 c\/ c~ cI f0 f1 c/\ c~ c= f1 f3 c~ cMEM f1 f2 c/\ c~ cI f0 f1 cF
+- (x = h), (((~ (x = h)) /\ ((~ ((I P) x)) \/ (~ ((MEM x) t)))) /\ (((I P) x) /\ ((x = h) \/ ((MEM x) t)))) |- ((~ ((I P) h)) ==> ((I P) h))
+T c==> c= f0 f1 c==> c/\ c/\ c~ c= f0 f1 c\/ c~ cI f2 f0 c~ cMEM f0 f3 c/\ cI f2 f0 c\/ c= f0 f1 cMEM f0 f3 c==> c~ cI f2 f1 cI f2 f1
+- |- ((!x. ((P x) /\ (Q x))) = ((!x. (P x)) /\ (!x. (Q x))))
+T c= ! c/\ * f0 b0 * f1 b0 c/\ ! * f0 b0 ! * f1 b0
++ (~ (P h)), (((~ ((I P) x)) \/ (~ ((MEM x) t))) /\ (((I P) x) /\ ((x = h) \/ ((MEM x) t)))) |- ((x = h) ==> F)
+T c==> c~ * f0 f1 c==> c/\ c\/ c~ cI f0 f2 c~ cMEM f2 f3 c/\ cI f0 f2 c\/ c= f2 f1 cMEM f2 f3 c==> c= f2 f1 cF
++ |- (((!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))) ==> ((P h) ==> (((x = h) \/ ((P x) /\ ((MEM x) t))) = ((P x) /\ ((x = h) \/ ((MEM x) t)))))) = T)
+T c= c==> ! c= cMEM b0 cFILTER f0 f1 c/\ * f0 b0 cMEM b0 f1 c==> * f0 f2 c= c\/ c= f3 f2 c/\ * f0 f3 cMEM f3 f1 c/\ * f0 f3 c\/ c= f3 f2 cMEM f3 f1 cT
++ (x = h), (((~ (x = h)) /\ ((~ ((I P) x)) \/ (~ ((MEM x) t)))) /\ (((I P) x) /\ ((x = h) \/ ((MEM x) t)))) |- ((h = h) ==> F)
+T c==> c= f0 f1 c==> c/\ c/\ c~ c= f0 f1 c\/ c~ cI f2 f0 c~ cMEM f0 f3 c/\ cI f2 f0 c\/ c= f0 f1 cMEM f0 f3 c==> c= f1 f1 cF
++ (~ (P h)) |- ((~ (((P x) /\ ((MEM x) t)) = ((P x) /\ ((x = h) \/ ((MEM x) t))))) ==> F)
+T c==> c~ * f0 f1 c==> c~ c= c/\ * f0 f2 cMEM f2 f3 c/\ * f0 f2 c\/ c= f2 f1 cMEM f2 f3 cF
++ |- ((!l. (!x. (((MEM x) ((FILTER P) l)) = ((P x) /\ ((MEM x) l))))) = T)
+T c= ! ! c= cMEM b1 cFILTER f0 b0 c/\ * f0 b1 cMEM b1 b0 cT
+- (~ ((I P) x)), (((I P) x) /\ ((MEM x) t)) |- ((~ ((I P) x)) /\ ((I P) x))
+T c==> c~ cI f0 f1 c==> c/\ cI f0 f1 cMEM f1 f2 c/\ c~ cI f0 f1 cI f0 f1
++ |- ((((!x. (((MEM x) ((FILTER P) NIL)) = ((P x) /\ ((MEM x) NIL)))) /\ (!h. (!t. ((!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))) ==> (!x. (((MEM x) ((FILTER P) ((CONS h) t))) = ((P x) /\ ((MEM x) ((CONS h) t))))))))) ==> (!l. (!x. (((MEM x) ((FILTER P) l)) = ((P x) /\ ((MEM x) l)))))) = (!l. (!x. (((MEM x) ((FILTER P) l)) = ((P x) /\ ((MEM x) l))))))
+T c= c==> c/\ ! c= cMEM b0 cFILTER f0 cNIL c/\ * f0 b0 cMEM b0 cNIL ! ! c==> ! c= cMEM b2 cFILTER f0 b1 c/\ * f0 b2 cMEM b2 b1 ! c= cMEM b2 cFILTER f0 cCONS b0 b1 c/\ * f0 b2 cMEM b2 cCONS b0 b1 ! ! c= cMEM b1 cFILTER f0 b0 c/\ * f0 b1 cMEM b1 b0 ! ! c= cMEM b1 cFILTER f0 b0 c/\ * f0 b1 cMEM b1 b0
++ |- ((t /\ F) = F)
+T c= c/\ f0 cF cF
++ (~ (((x = h) \/ ((P x) /\ ((MEM x) t))) = ((P x) /\ ((x = h) \/ ((MEM x) t))))) |- ((((x = h) \/ ((P x) /\ ((MEM x) t))) /\ ((~ (P x)) \/ ((~ (x = h)) /\ (~ ((MEM x) t))))) \/ (((~ (x = h)) /\ ((~ (P x)) \/ (~ ((MEM x) t)))) /\ ((P x) /\ ((x = h) \/ ((MEM x) t)))))
+T c==> c~ c= c\/ c= f0 f1 c/\ * f2 f0 cMEM f0 f3 c/\ * f2 f0 c\/ c= f0 f1 cMEM f0 f3 c\/ c/\ c\/ c= f0 f1 c/\ * f2 f0 cMEM f0 f3 c\/ c~ * f2 f0 c/\ c~ c= f0 f1 c~ cMEM f0 f3 c/\ c/\ c~ c= f0 f1 c\/ c~ * f2 f0 c~ cMEM f0 f3 c/\ * f2 f0 c\/ c= f0 f1 cMEM f0 f3
+- (~ ((I P) x)), (((I P) x) /\ ((MEM x) t)) |- ((~ F) ==> F)
+T c==> c~ cI f0 f1 c==> c/\ cI f0 f1 cMEM f1 f2 c==> c~ cF cF
++ (~ (((x = h) \/ ((P x) /\ ((MEM x) t))) = ((P x) /\ ((x = h) \/ ((MEM x) t))))), (P h), ((((~ (x = h)) /\ ((~ ((I P) x)) \/ (~ ((MEM x) t)))) /\ (((I P) x) /\ ((x = h) \/ ((MEM x) t)))) ==> F) |- F
+T c==> c~ c= c\/ c= f0 f1 c/\ * f2 f0 cMEM f0 f3 c/\ * f2 f0 c\/ c= f0 f1 cMEM f0 f3 c==> * f2 f1 c==> c==> c/\ c/\ c~ c= f0 f1 c\/ c~ cI f2 f0 c~ cMEM f0 f3 c/\ cI f2 f0 c\/ c= f0 f1 cMEM f0 f3 cF cF
++ (~ (((x = h) \/ ((P x) /\ ((MEM x) t))) = ((P x) /\ ((x = h) \/ ((MEM x) t))))), (P h) |- ((~ (((x = h) \/ ((P x) /\ ((MEM x) t))) = ((P x) /\ ((x = h) \/ ((MEM x) t))))) /\ F)
+T c==> c~ c= c\/ c= f0 f1 c/\ * f2 f0 cMEM f0 f3 c/\ * f2 f0 c\/ c= f0 f1 cMEM f0 f3 c==> * f2 f1 c/\ c~ c= c\/ c= f0 f1 c/\ * f2 f0 cMEM f0 f3 c/\ * f2 f0 c\/ c= f0 f1 cMEM f0 f3 cF
+- (!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))), (~ (P h)), (~ (((P x) /\ ((MEM x) t)) = ((P x) /\ ((x = h) \/ ((MEM x) t))))) |- ((~ (((P x) /\ ((MEM x) t)) = ((P x) /\ ((x = h) \/ ((MEM x) t))))) /\ F)
+T c==> ! c= cMEM b0 cFILTER f0 f1 c/\ * f0 b0 cMEM b0 f1 c==> c~ * f0 f2 c==> c~ c= c/\ * f0 f3 cMEM f3 f1 c/\ * f0 f3 c\/ c= f3 f2 cMEM f3 f1 c/\ c~ c= c/\ * f0 f3 cMEM f3 f1 c/\ * f0 f3 c\/ c= f3 f2 cMEM f3 f1 cF
+- (~ ((I P) x)), (x = h), (((~ (x = h)) /\ ((~ ((I P) x)) \/ (~ ((MEM x) t)))) /\ (((I P) x) /\ ((x = h) \/ ((MEM x) t)))) |- F
+T c==> c~ cI f0 f1 c==> c= f1 f2 c==> c/\ c/\ c~ c= f1 f2 c\/ c~ cI f0 f1 c~ cMEM f1 f3 c/\ cI f0 f1 c\/ c= f1 f2 cMEM f1 f3 cF
+- (~ (h = h)) |- ((~ (h = h)) /\ (h = h))
+T c==> c~ c= f0 f0 c/\ c~ c= f0 f0 c= f0 f0
+- (!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))) |- ((\x. (((~ ((MEM x) ((FILTER P) t))) \/ ((I P) x)) /\ ((~ ((MEM x) ((FILTER P) t))) \/ ((MEM x) t)))) _17591)
+T c==> ! c= cMEM b0 cFILTER f0 f1 c/\ * f0 b0 cMEM b0 f1 * / c/\ c\/ c~ cMEM b0 cFILTER f0 f1 cI f0 b0 c\/ c~ cMEM b0 cFILTER f0 f1 cMEM b0 f1 f2
+- (~ ((MEM x) t)), ((MEM x) t) |- ((~ ((MEM x) t)) /\ ((MEM x) t))
+T c==> c~ cMEM f0 f1 c==> cMEM f0 f1 c/\ c~ cMEM f0 f1 cMEM f0 f1
+- |- ((((!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))) ==> ((P h) ==> ((~ (((x = h) \/ ((P x) /\ ((MEM x) t))) = ((P x) /\ ((x = h) \/ ((MEM x) t))))) ==> F))) ==> ((!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))) ==> ((P h) ==> ((~ (((x = h) \/ ((P x) /\ ((MEM x) t))) = ((P x) /\ ((x = h) \/ ((MEM x) t))))) ==> F)))) ==> (((!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))) ==> ((P h) ==> ((~ (((x = h) \/ ((P x) /\ ((MEM x) t))) = ((P x) /\ ((x = h) \/ ((MEM x) t))))) ==> F))) ==> ((!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))) ==> ((P h) ==> ((~ (((x = h) \/ ((P x) /\ ((MEM x) t))) = ((P x) /\ ((x = h) \/ ((MEM x) t))))) ==> F)))))
+T c==> c==> c==> ! c= cMEM b0 cFILTER f0 f1 c/\ * f0 b0 cMEM b0 f1 c==> * f0 f2 c==> c~ c= c\/ c= f3 f2 c/\ * f0 f3 cMEM f3 f1 c/\ * f0 f3 c\/ c= f3 f2 cMEM f3 f1 cF c==> ! c= cMEM b0 cFILTER f0 f1 c/\ * f0 b0 cMEM b0 f1 c==> * f0 f2 c==> c~ c= c\/ c= f3 f2 c/\ * f0 f3 cMEM f3 f1 c/\ * f0 f3 c\/ c= f3 f2 cMEM f3 f1 cF c==> c==> ! c= cMEM b0 cFILTER f0 f1 c/\ * f0 b0 cMEM b0 f1 c==> * f0 f2 c==> c~ c= c\/ c= f3 f2 c/\ * f0 f3 cMEM f3 f1 c/\ * f0 f3 c\/ c= f3 f2 cMEM f3 f1 cF c==> ! c= cMEM b0 cFILTER f0 f1 c/\ * f0 b0 cMEM b0 f1 c==> * f0 f2 c==> c~ c= c\/ c= f3 f2 c/\ * f0 f3 cMEM f3 f1 c/\ * f0 f3 c\/ c= f3 f2 cMEM f3 f1 cF
+- ((((I P) x) /\ ((MEM x) t)) /\ ((~ ((I P) x)) \/ ((~ (x = h)) /\ (~ ((MEM x) t))))) |- ((~ ((I P) x)) ==> ((I P) x))
+T c==> c/\ c/\ cI f0 f1 cMEM f1 f2 c\/ c~ cI f0 f1 c/\ c~ c= f1 f3 c~ cMEM f1 f2 c==> c~ cI f0 f1 cI f0 f1
+- (~ ((I P) x)), ((((I P) x) /\ ((MEM x) t)) /\ ((~ ((I P) x)) \/ ((~ (x = h)) /\ (~ ((MEM x) t))))) |- ((~ F) ==> F)
+T c==> c~ cI f0 f1 c==> c/\ c/\ cI f0 f1 cMEM f1 f2 c\/ c~ cI f0 f1 c/\ c~ c= f1 f3 c~ cMEM f1 f2 c==> c~ cF cF
+- (!x. (((MEM x) ((FILTER P) t)) = ((P x) /\ ((MEM x) t)))) |- (((!x. (((~ ((MEM x) ((FILTER P) t))) \/ ((I P) x)) /\ ((~ ((MEM x) ((FILTER P) t))) \/ ((MEM x) t)))) ==> ((\x. (((~ ((MEM x) ((FILTER P) t))) \/ ((I P) x)) /\ ((~ ((MEM x) ((FILTER P) t))) \/ ((MEM x) t)))) _17591)) = ((\x. (((~ ((MEM x) ((FILTER P) t))) \/ ((I P) x)) /\ ((~ ((MEM x) ((FILTER P) t))) \/ ((MEM x) t)))) _17591))
+T c==> ! c= cMEM b0 cFILTER f0 f1 c/\ * f0 b0 cMEM b0 f1 c= c==> ! c/\ c\/ c~ cMEM b0 cFILTER f0 f1 cI f0 b0 c\/ c~ cMEM b0 cFILTER f0 f1 cMEM b0 f1 * / c/\ c\/ c~ cMEM b0 cFILTER f0 f1 cI f0 b0 c\/ c~ cMEM b0 cFILTER f0 f1 cMEM b0 f1 f2 * / c/\ c\/ c~ cMEM b0 cFILTER f0 f1 cI f0 b0 c\/ c~ cMEM b0 cFILTER f0 f1 cMEM b0 f1 f2
+- (~ ((I P) x)), (x = h), (((~ (x = h)) /\ ((~ ((I P) x)) \/ (~ ((MEM x) t)))) /\ (((I P) x) /\ ((x = h) \/ ((MEM x) t)))) |- ((~ F) ==> F)
+T c==> c~ cI f0 f1 c==> c= f1 f2 c==> c/\ c/\ c~ c= f1 f2 c\/ c~ cI f0 f1 c~ cMEM f1 f3 c/\ cI f0 f1 c\/ c= f1 f2 cMEM f1 f3 c==> c~ cF cF
+- (P h) |- ((P h) = T)
+T c==> * f0 f1 c= * f0 f1 cT

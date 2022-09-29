@@ -1,0 +1,774 @@
+N Tame_list.normal_list_flatten_flatten
+C |- (!L. (!N. (((normal_list L) N) ==> ((flatten (flatten ((MAP (parts L)) N))) = (flatten N)))))
+T c==> cnormal_list f0 f1 c= cflatten cflatten cMAP * part cparts f0 f1 cflatten f1
+D TRUTH
+A |- T
+T cT
+D ETA_AX
+A |- (!t. ((\x. (t x)) = t))
+T c= / * f0 b0 f0
+D EXCLUDED_MIDDLE
+A |- (!t. (t \/ (~ t)))
+T c\/ f0 c~ f0
+D BOOL_CASES_AX
+A |- (!t. ((t = T) \/ (t = F)))
+T c\/ c= f0 cT c= f0 cF
+D NOT_CLAUSES
+A |- ((!t. ((~ (~ t)) = t)) /\ (((~ T) = F) /\ ((~ F) = T)))
+T c/\ ! c= c~ c~ b0 b0 c/\ c= c~ cT cF c= c~ cF cT
+D NOT_EXISTS_THM
+A |- (!P. ((~ (?x. (P x))) = (!x. (~ (P x)))))
+T c= c~ c? / * f0 b0 ! c~ * f0 b0
+D FORALL_BOOL_THM
+A |- ((!b. (P b)) = ((P T) /\ (P F)))
+T c= ! * f0 b0 c/\ * f0 cT * f0 cF
+D o_THM
+A |- (!f. (!g. (!x. (((f o g) x) = (f (g x))))))
+T c= co f0 f1 f2 * f0 * f1 f2
+D I_THM
+A |- (!x. ((I x) = x))
+T c= cI f0 f0
+D MAP_o
+A |- (!f. (!g. (!l. (((MAP (g o f)) l) = ((MAP g) ((MAP f) l))))))
+T c= cMAP * * part co f0 f1 f2 cMAP f0 cMAP f1 f2
+D MAP_EQ
+A |- (!f. (!g. (!l. (((ALL (\x. ((f x) = (g x)))) l) ==> (((MAP f) l) = ((MAP g) l))))))
+T c==> cALL / c= * f0 b0 * f1 b0 f2 c= cMAP f0 f2 cMAP f1 f2
+D MAP_I
+A |- ((MAP I) = I)
+T c= * part cMAP part cI part cI
+D Seq.allP
+A |- (!a. (!s. ((!x. (((MEM x) s) ==> (a x))) = ((all a) s))))
+T c= ! c==> cMEM b0 f0 * f1 b0 call f1 f0
+D Seq2.ALL_all
+A |- (ALL = all)
+T c= part cALL part call
+D Tame_list.normal_list_uniq_nonnil
+A |- (!L. (!N. (!r. ((((normal_list L) N) /\ ((MEM r) N)) ==> ((uniq r) /\ (~ (r = NIL)))))))
+T c==> c/\ cnormal_list f0 f1 cMEM f2 f1 c/\ cuniq f2 c~ c= f2 cNIL
+D Tame_list.parts_flatten
+A |- (!L. (!r. (((uniq r) /\ (~ (r = NIL))) ==> ((flatten ((parts L) r)) = r))))
+T c==> c/\ cuniq f0 c~ c= f0 cNIL c= cflatten cparts f1 f0 f0
+D Tame_list.flatten_flatten
+A |- (!s. ((flatten ((MAP flatten) s)) = (flatten (flatten s))))
+T c= cflatten cMAP part cflatten f0 cflatten cflatten f0
+- |- ((~ (_10134934 = _10134936)) \/ ((~ (_10134935 = _10134937)) \/ (((normal_list _10134936) _10134937) \/ (~ ((normal_list _10134934) _10134935)))))
+T c\/ c~ c= f0 f1 c\/ c~ c= f2 f3 c\/ cnormal_list f1 f3 c~ cnormal_list f0 f2
++ ((flatten (flatten ((MAP (parts L)) N))) = (flatten ((MAP (flatten o (parts L))) N))), (((MAP (flatten o (parts L))) N) = N) |- (((((I flatten) (flatten ((MAP (parts L)) N))) = ((I flatten) N)) ==> F) = F)
+T c==> c= cflatten cflatten cMAP * part cparts f0 f1 cflatten cMAP * * part co part cflatten * part cparts f0 f1 c==> c= cMAP * * part co part cflatten * part cparts f0 f1 f1 c= c==> c= cI part cflatten cflatten cMAP * part cparts f0 f1 cI part cflatten f1 cF cF
++ |- (((!x. ((I x) = x)) ==> ((\x. ((I x) = x)) x)) = ((\x. ((I x) = x)) x))
+T c= c==> ! c= cI b0 b0 * / c= cI b0 b0 f0 * / c= cI b0 b0 f0
+- |- ((REVERSE = rev) /\ ((!s. (!x0. ((~ (NIL = s)) ==> ((LAST s) = ((last x0) s))))) /\ ((APPEND = cat) /\ (ALL = all))))
+T c/\ c= part cREVERSE part crev c/\ ! ! c==> c~ c= cNIL b0 c= cLAST b0 clast b1 b0 c/\ c= part cAPPEND part ccat c= part cALL part call
++ |- (((~ (!a. (!b. (!c. ((a ==> (b = c)) ==> (!P. ((a /\ (P c)) ==> (P b)))))))) ==> F) = (!a. (!b. (!c. ((a ==> (b = c)) ==> (!P. ((a /\ (P c)) ==> (P b))))))))
+T c= c==> c~ ! ! ! c==> c==> b0 c= b1 b2 ! c==> c/\ b0 * b3 b2 * b3 b1 cF ! ! ! c==> c==> b0 c= b1 b2 ! c==> c/\ b0 * b3 b2 * b3 b1
++ (!r. (((MEM r) N) ==> (((flatten o (parts L)) r) = r))), ((normal_list L) N) |- (((flatten (flatten ((MAP (parts L)) N))) = (flatten ((MAP (flatten o (parts L))) N))) ==> ((((MAP (flatten o (parts L))) N) = N) ==> ((flatten (flatten ((MAP (parts L)) N))) = (flatten N))))
+T c==> ! c==> cMEM b0 f0 c= co part cflatten * part cparts f1 b0 b0 c==> cnormal_list f1 f0 c==> c= cflatten cflatten cMAP * part cparts f1 f0 cflatten cMAP * * part co part cflatten * part cparts f1 f0 c==> c= cMAP * * part co part cflatten * part cparts f1 f0 f0 c= cflatten cflatten cMAP * part cparts f1 f0 cflatten f0
+- (~ (?L. (?N. (((normal_list L) N) /\ ((MEM r) N))))), ((MEM r) N), ((normal_list L) N) |- ((~ F) ==> F)
+T c==> c~ c? / c? / c/\ cnormal_list b0 b1 cMEM f0 b1 c==> cMEM f0 f1 c==> cnormal_list f2 f1 c==> c~ cF cF
++ |- (((((uniq r) /\ (~ (r = NIL))) ==> ((flatten ((parts L) r)) = r)) ==> (!P. ((((uniq r) /\ (~ (r = NIL))) /\ (P r)) ==> (P (flatten ((parts L) r)))))) = (!P. ((((uniq r) /\ (~ (r = NIL))) /\ (P r)) ==> (P (flatten ((parts L) r))))))
+T c= c==> c==> c/\ cuniq f0 c~ c= f0 cNIL c= cflatten cparts f1 f0 f0 ! c==> c/\ c/\ cuniq f0 c~ c= f0 cNIL * b0 f0 * b0 cflatten cparts f1 f0 ! c==> c/\ c/\ cuniq f0 c~ c= f0 cNIL * b0 f0 * b0 cflatten cparts f1 f0
++ |- ((t /\ T) = t)
+T c= c/\ f0 cT f0
++ |- (((all a) s) = (!x. (((MEM x) s) ==> (a x))))
+T c= call f0 f1 ! c==> cMEM b0 f1 * f0 b0
++ ((MEM r) N), ((normal_list L) N) |- ((~ (?L. (?N. (((normal_list L) N) /\ ((MEM r) N))))) ==> F)
+T c==> cMEM f0 f1 c==> cnormal_list f2 f1 c==> c~ c? / c? / c/\ cnormal_list b0 b1 cMEM f0 b1 cF
++ |- (((!r. ((?L. (?N. (((normal_list L) N) /\ ((MEM r) N)))) ==> ((uniq r) /\ (~ (r = NIL))))) ==> ((\r. ((?L. (?N. (((normal_list L) N) /\ ((MEM r) N)))) ==> ((uniq r) /\ (~ (r = NIL))))) r)) = ((\r. ((?L. (?N. (((normal_list L) N) /\ ((MEM r) N)))) ==> ((uniq r) /\ (~ (r = NIL))))) r))
+T c= c==> ! c==> c? / c? / c/\ cnormal_list b1 b2 cMEM b0 b2 c/\ cuniq b0 c~ c= b0 cNIL * / c==> c? / c? / c/\ cnormal_list b1 b2 cMEM b0 b2 c/\ cuniq b0 c~ c= b0 cNIL f0 * / c==> c? / c? / c/\ cnormal_list b1 b2 cMEM b0 b2 c/\ cuniq b0 c~ c= b0 cNIL f0
++ |- (T = (((F ==> B) /\ F) ==> B))
+T c= cT c==> c/\ c==> cF f0 cF f0
+- |- (!r. (!N. (!L. (((normal_list L) N) ==> (((MEM r) N) ==> (?L. (?N. (((normal_list L) N) /\ ((MEM r) N)))))))))
+T c==> cnormal_list f0 f1 c==> cMEM f2 f1 c? / c? / c/\ cnormal_list b0 b1 cMEM f2 b1
++ |- (((\x. ((\v. (v = r)) x)) (flatten ((parts L) r))) = ((\v. (v = r)) (flatten ((parts L) r))))
+T c= * / * / c= b1 f0 b0 cflatten cparts f1 f0 * / c= b0 f0 cflatten cparts f1 f0
+- (!f. (!g. (!l. (((ALL (\x. ((f x) = (g x)))) l) ==> (((MAP f) l) = ((MAP g) l)))))) |- ((\f. (!g. (!l. (((ALL (\x. ((f x) = (g x)))) l) ==> (((MAP f) l) = ((MAP g) l)))))) f)
+T c==> ! ! ! c==> cALL / c= * b0 b3 * b1 b3 b2 c= cMAP b0 b2 cMAP b1 b2 * / ! ! c==> cALL / c= * b0 b3 * b1 b3 b2 c= cMAP b0 b2 cMAP b1 b2 f0
++ (((all a) s) = (!x. (((MEM x) s) ==> (a x)))) |- ((!x. (((MEM x) s) ==> (a x))) = ((all a) s))
+T c==> c= call f0 f1 ! c==> cMEM b0 f1 * f0 b0 c= ! c==> cMEM b0 f1 * f0 b0 call f0 f1
++ (!L. (!r. (!P. ((((uniq r) /\ (~ (r = NIL))) /\ (P r)) ==> (P (flatten ((parts L) r))))))) |- (((!r. (!P. ((((uniq r) /\ (~ (r = NIL))) /\ (P r)) ==> (P (flatten ((parts L) r)))))) ==> ((\r. (!P. ((((uniq r) /\ (~ (r = NIL))) /\ (P r)) ==> (P (flatten ((parts L) r)))))) r)) = ((\r. (!P. ((((uniq r) /\ (~ (r = NIL))) /\ (P r)) ==> (P (flatten ((parts L) r)))))) r))
+T c==> ! ! ! c==> c/\ c/\ cuniq b1 c~ c= b1 cNIL * b2 b1 * b2 cflatten cparts b0 b1 c= c==> ! ! c==> c/\ c/\ cuniq b0 c~ c= b0 cNIL * b1 b0 * b1 cflatten cparts f0 b0 * / ! c==> c/\ c/\ cuniq b0 c~ c= b0 cNIL * b1 b0 * b1 cflatten cparts f0 b0 f1 * / ! c==> c/\ c/\ cuniq b0 c~ c= b0 cNIL * b1 b0 * b1 cflatten cparts f0 b0 f1
+- |- ((FILTER = filter) /\ ((REVERSE = rev) /\ ((!s. (!x0. ((~ (NIL = s)) ==> ((LAST s) = ((last x0) s))))) /\ ((APPEND = cat) /\ (ALL = all)))))
+T c/\ c= part cFILTER part cfilter c/\ c= part cREVERSE part crev c/\ ! ! c==> c~ c= cNIL b0 c= cLAST b0 clast b1 b0 c/\ c= part cAPPEND part ccat c= part cALL part call
+- |- ((\t1. (!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))))) t1)
+T * / ! ! c= c\/ b0 c\/ b1 b2 c\/ c\/ b0 b1 b2 f0
+- (!f. (!g. (!l. (((ALL (\x. ((f x) = (g x)))) l) ==> (((MAP f) l) = ((MAP g) l)))))) |- ((!l. (((ALL (\x. ((f x) = (g x)))) l) ==> (((MAP f) l) = ((MAP g) l)))) = T)
+T c==> ! ! ! c==> cALL / c= * b0 b3 * b1 b3 b2 c= cMAP b0 b2 cMAP b1 b2 c= ! c==> cALL / c= * f0 b1 * f1 b1 b0 c= cMAP f0 b0 cMAP f1 b0 cT
+- (~ F), (~ (P b)), (P c), (b = c) |- ((~ F) /\ F)
+T c==> c~ cF c==> c~ * f0 f1 c==> * f0 f2 c==> c= f1 f2 c/\ c~ cF cF
++ |- (((~ (?L. (?N. (((normal_list L) N) /\ ((MEM r) N))))) ==> F) = (?L. (?N. (((normal_list L) N) /\ ((MEM r) N)))))
+T c= c==> c~ c? / c? / c/\ cnormal_list b0 b1 cMEM f0 b1 cF c? / c? / c/\ cnormal_list b0 b1 cMEM f0 b1
+- (!r. (((MEM r) N) ==> (((flatten o (parts L)) r) = r))) |- (!r. ((~ ((MEM r) N)) \/ (((flatten o (parts L)) r) = r)))
+T c==> ! c==> cMEM b0 f0 c= co part cflatten * part cparts f1 b0 b0 ! c\/ c~ cMEM b0 f0 c= co part cflatten * part cparts f1 b0 b0
++ ((MEM r) N), ((normal_list L) N) |- (((uniq r) /\ (~ (r = NIL))) /\ ((\x. ((\v. (v = r)) x)) r))
+T c==> cMEM f0 f1 c==> cnormal_list f2 f1 c/\ c/\ cuniq f0 c~ c= f0 cNIL * / * / c= b1 f0 b0 f0
++ ((flatten (flatten ((MAP (parts L)) N))) = (flatten ((MAP (flatten o (parts L))) N))), (((MAP (flatten o (parts L))) N) = N) |- ((((((I flatten) ((MAP (flatten o (parts L))) N)) = ((I flatten) (flatten ((MAP (parts L)) N)))) /\ (((I flatten) ((MAP (flatten o (parts L))) N)) = ((I flatten) N))) ==> (((I flatten) (flatten ((MAP (parts L)) N))) = ((I flatten) N))) = (((I flatten) (flatten ((MAP (parts L)) N))) = ((I flatten) N)))
+T c==> c= cflatten cflatten cMAP * part cparts f0 f1 cflatten cMAP * * part co part cflatten * part cparts f0 f1 c==> c= cMAP * * part co part cflatten * part cparts f0 f1 f1 c= c==> c/\ c= cI part cflatten cMAP * * part co part cflatten * part cparts f0 f1 cI part cflatten cflatten cMAP * part cparts f0 f1 c= cI part cflatten cMAP * * part co part cflatten * part cparts f0 f1 cI part cflatten f1 c= cI part cflatten cflatten cMAP * part cparts f0 f1 cI part cflatten f1 c= cI part cflatten cflatten cMAP * part cparts f0 f1 cI part cflatten f1
++ (!r. (((MEM r) N) ==> (((flatten o (parts L)) r) = r))) |- ((((ALL (\x. (((flatten o (parts L)) x) = (I x)))) N) ==> (((MAP (flatten o (parts L))) N) = ((MAP I) N))) = (((MAP (flatten o (parts L))) N) = ((MAP I) N)))
+T c==> ! c==> cMEM b0 f0 c= co part cflatten * part cparts f1 b0 b0 c= c==> cALL / c= co part cflatten * part cparts f1 b0 cI b0 f0 c= cMAP * * part co part cflatten * part cparts f1 f0 cMAP part cI f0 c= cMAP * * part co part cflatten * part cparts f1 f0 cMAP part cI f0
+- |- ((!s. (!x0. ((~ (NIL = s)) ==> ((LAST s) = ((last x0) s))))) /\ ((APPEND = cat) /\ (ALL = all)))
+T c/\ ! ! c==> c~ c= cNIL b0 c= cLAST b0 clast b1 b0 c/\ c= part cAPPEND part ccat c= part cALL part call
++ (!L. (!N. (!r. ((((normal_list L) N) /\ ((MEM r) N)) ==> ((uniq r) /\ (~ (r = NIL))))))) |- ((\L. (!N. (!r. ((((normal_list L) N) /\ ((MEM r) N)) ==> ((uniq r) /\ (~ (r = NIL))))))) L)
+T c==> ! ! ! c==> c/\ cnormal_list b0 b1 cMEM b2 b1 c/\ cuniq b2 c~ c= b2 cNIL * / ! ! c==> c/\ cnormal_list b0 b1 cMEM b2 b1 c/\ cuniq b2 c~ c= b2 cNIL f0
+- |- ((_10134934 = _10134936) ==> ((~ (_10134935 = _10134937)) \/ (((normal_list _10134936) _10134937) \/ (~ ((normal_list _10134934) _10134935)))))
+T c==> c= f0 f1 c\/ c~ c= f2 f3 c\/ cnormal_list f1 f3 c~ cnormal_list f0 f2
++ |- ((\c. ((a ==> (b = c)) ==> (!P. ((a /\ (P c)) ==> (P b))))) c)
+T * / c==> c==> f0 c= f1 b0 ! c==> c/\ f0 * b1 b0 * b1 f1 f2
++ |- ((a \/ b) = ((~ b) ==> a))
+T c= c\/ f0 f1 c==> c~ f1 f0
++ (!r. (((MEM r) N) ==> (((flatten o (parts L)) r) = r))), ((normal_list L) N) |- (((flatten (flatten ((MAP (parts L)) N))) = (flatten ((MAP (flatten o (parts L))) N))) = ((((flatten (flatten ((MAP (parts L)) N))) = (flatten ((MAP (flatten o (parts L))) N))) ==> ((((MAP (flatten o (parts L))) N) = N) ==> ((flatten (flatten ((MAP (parts L)) N))) = (flatten N)))) /\ ((flatten (flatten ((MAP (parts L)) N))) = (flatten ((MAP (flatten o (parts L))) N)))))
+T c==> ! c==> cMEM b0 f0 c= co part cflatten * part cparts f1 b0 b0 c==> cnormal_list f1 f0 c= c= cflatten cflatten cMAP * part cparts f1 f0 cflatten cMAP * * part co part cflatten * part cparts f1 f0 c/\ c==> c= cflatten cflatten cMAP * part cparts f1 f0 cflatten cMAP * * part co part cflatten * part cparts f1 f0 c==> c= cMAP * * part co part cflatten * part cparts f1 f0 f0 c= cflatten cflatten cMAP * part cparts f1 f0 cflatten f0 c= cflatten cflatten cMAP * part cparts f1 f0 cflatten cMAP * * part co part cflatten * part cparts f1 f0
+- (((normal_list L) N) ==> ((!r. (((MEM r) N) ==> (((flatten o (parts L)) r) = r))) ==> ((~ (((flatten (flatten ((MAP (parts L)) N))) = (flatten ((MAP (flatten o (parts L))) N))) ==> ((((MAP (flatten o (parts L))) N) = N) ==> ((flatten (flatten ((MAP (parts L)) N))) = (flatten N))))) ==> F))) |- (((((normal_list L) N) ==> ((!r. (((MEM r) N) ==> (((flatten o (parts L)) r) = r))) ==> ((~ (((flatten (flatten ((MAP (parts L)) N))) = (flatten ((MAP (flatten o (parts L))) N))) ==> ((((MAP (flatten o (parts L))) N) = N) ==> ((flatten (flatten ((MAP (parts L)) N))) = (flatten N))))) ==> F))) ==> (((normal_list L) N) ==> ((!r. (((MEM r) N) ==> (((flatten o (parts L)) r) = r))) ==> ((~ (((flatten (flatten ((MAP (parts L)) N))) = (flatten ((MAP (flatten o (parts L))) N))) ==> ((((MAP (flatten o (parts L))) N) = N) ==> ((flatten (flatten ((MAP (parts L)) N))) = (flatten N))))) ==> F)))) ==> (((normal_list L) N) ==> ((!r. (((MEM r) N) ==> (((flatten o (parts L)) r) = r))) ==> ((~ (((flatten (flatten ((MAP (parts L)) N))) = (flatten ((MAP (flatten o (parts L))) N))) ==> ((((MAP (flatten o (parts L))) N) = N) ==> ((flatten (flatten ((MAP (parts L)) N))) = (flatten N))))) ==> F))))
+T c==> c==> cnormal_list f0 f1 c==> ! c==> cMEM b0 f1 c= co part cflatten * part cparts f0 b0 b0 c==> c~ c==> c= cflatten cflatten cMAP * part cparts f0 f1 cflatten cMAP * * part co part cflatten * part cparts f0 f1 c==> c= cMAP * * part co part cflatten * part cparts f0 f1 f1 c= cflatten cflatten cMAP * part cparts f0 f1 cflatten f1 cF c==> c==> c==> cnormal_list f0 f1 c==> ! c==> cMEM b0 f1 c= co part cflatten * part cparts f0 b0 b0 c==> c~ c==> c= cflatten cflatten cMAP * part cparts f0 f1 cflatten cMAP * * part co part cflatten * part cparts f0 f1 c==> c= cMAP * * part co part cflatten * part cparts f0 f1 f1 c= cflatten cflatten cMAP * part cparts f0 f1 cflatten f1 cF c==> cnormal_list f0 f1 c==> ! c==> cMEM b0 f1 c= co part cflatten * part cparts f0 b0 b0 c==> c~ c==> c= cflatten cflatten cMAP * part cparts f0 f1 cflatten cMAP * * part co part cflatten * part cparts f0 f1 c==> c= cMAP * * part co part cflatten * part cparts f0 f1 f1 c= cflatten cflatten cMAP * part cparts f0 f1 cflatten f1 cF c==> cnormal_list f0 f1 c==> ! c==> cMEM b0 f1 c= co part cflatten * part cparts f0 b0 b0 c==> c~ c==> c= cflatten cflatten cMAP * part cparts f0 f1 cflatten cMAP * * part co part cflatten * part cparts f0 f1 c==> c= cMAP * * part co part cflatten * part cparts f0 f1 f1 c= cflatten cflatten cMAP * part cparts f0 f1 cflatten f1 cF
+- ((normal_list L) N) |- (((MEM r) N) ==> ((~ (?L. (?N. (((normal_list L) N) /\ ((MEM r) N))))) ==> F))
+T c==> cnormal_list f0 f1 c==> cMEM f2 f1 c==> c~ c? / c? / c/\ cnormal_list b0 b1 cMEM f2 b1 cF
++ (P c), (b = c) |- (P b)
+T c==> * f0 f1 c==> c= f2 f1 * f0 f2
++ ((normal_list L) N) |- (((MEM r) N) ==> ((flatten ((parts L) r)) = r))
+T c==> cnormal_list f0 f1 c==> cMEM f2 f1 c= cflatten cparts f0 f2 f2
++ |- (((b = c) ==> (!P. ((P c) ==> (P b)))) = T)
+T c= c==> c= f0 f1 ! c==> * b0 f1 * b0 f0 cT
++ (!r. (((MEM r) N) ==> (((flatten o (parts L)) r) = r))), ((normal_list L) N) |- ((((flatten (flatten ((MAP (parts L)) N))) = (flatten ((MAP (flatten o (parts L))) N))) ==> ((((MAP (flatten o (parts L))) N) = N) ==> ((flatten (flatten ((MAP (parts L)) N))) = (flatten N)))) /\ ((flatten (flatten ((MAP (parts L)) N))) = (flatten ((MAP (flatten o (parts L))) N))))
+T c==> ! c==> cMEM b0 f0 c= co part cflatten * part cparts f1 b0 b0 c==> cnormal_list f1 f0 c/\ c==> c= cflatten cflatten cMAP * part cparts f1 f0 cflatten cMAP * * part co part cflatten * part cparts f1 f0 c==> c= cMAP * * part co part cflatten * part cparts f1 f0 f0 c= cflatten cflatten cMAP * part cparts f1 f0 cflatten f0 c= cflatten cflatten cMAP * part cparts f1 f0 cflatten cMAP * * part co part cflatten * part cparts f1 f0
++ (A = F) |- ((((A ==> B) /\ A) ==> B) = (((F ==> B) /\ F) ==> B))
+T c==> c= f0 cF c= c==> c/\ c==> f0 f1 f0 f1 c==> c/\ c==> cF f1 cF f1
++ ((flatten (flatten ((MAP (parts L)) N))) = (flatten ((MAP (flatten o (parts L))) N))) |- (((I flatten) (flatten ((MAP (parts L)) N))) = ((I flatten) ((MAP (flatten o (parts L))) N)))
+T c==> c= cflatten cflatten cMAP * part cparts f0 f1 cflatten cMAP * * part co part cflatten * part cparts f0 f1 c= cI part cflatten cflatten cMAP * part cparts f0 f1 cI part cflatten cMAP * * part co part cflatten * part cparts f0 f1
+- |- ((!L. (((normal_list L) N) ==> (((MEM r) N) ==> (?L. (?N. (((normal_list L) N) /\ ((MEM r) N))))))) = T)
+T c= ! c==> cnormal_list b0 f0 c==> cMEM f1 f0 c? / c? / c/\ cnormal_list b1 b1 cMEM f1 b1 cT
++ (!r. (((MEM r) N) ==> (((flatten o (parts L)) r) = r))), (((MAP (flatten o (parts L))) N) = ((MAP I) N)), ((normal_list L) N) |- ((flatten (flatten ((MAP (parts L)) N))) = (flatten N))
+T c==> ! c==> cMEM b0 f0 c= co part cflatten * part cparts f1 b0 b0 c==> c= cMAP * * part co part cflatten * part cparts f1 f0 cMAP part cI f0 c==> cnormal_list f1 f0 c= cflatten cflatten cMAP * part cparts f1 f0 cflatten f0
+- ((((flatten (flatten ((MAP (parts L)) N))) = (flatten ((MAP (flatten o (parts L))) N))) ==> B) /\ ((flatten (flatten ((MAP (parts L)) N))) = (flatten ((MAP (flatten o (parts L))) N)))), (((((flatten (flatten ((MAP (parts L)) N))) = (flatten ((MAP (flatten o (parts L))) N))) ==> B) /\ ((flatten (flatten ((MAP (parts L)) N))) = (flatten ((MAP (flatten o (parts L))) N)))) ==> B) |- ((((((flatten (flatten ((MAP (parts L)) N))) = (flatten ((MAP (flatten o (parts L))) N))) ==> B) /\ ((flatten (flatten ((MAP (parts L)) N))) = (flatten ((MAP (flatten o (parts L))) N)))) ==> B) /\ B)
+T c==> c/\ c==> c= cflatten cflatten cMAP * part cparts f0 f1 cflatten cMAP * * part co part cflatten * part cparts f0 f1 f2 c= cflatten cflatten cMAP * part cparts f0 f1 cflatten cMAP * * part co part cflatten * part cparts f0 f1 c==> c==> c/\ c==> c= cflatten cflatten cMAP * part cparts f0 f1 cflatten cMAP * * part co part cflatten * part cparts f0 f1 f2 c= cflatten cflatten cMAP * part cparts f0 f1 cflatten cMAP * * part co part cflatten * part cparts f0 f1 f2 c/\ c==> c/\ c==> c= cflatten cflatten cMAP * part cparts f0 f1 cflatten cMAP * * part co part cflatten * part cparts f0 f1 f2 c= cflatten cflatten cMAP * part cparts f0 f1 cflatten cMAP * * part co part cflatten * part cparts f0 f1 f2 f2
++ |- ((!N. (((normal_list L) N) ==> ((flatten (flatten ((MAP (parts L)) N))) = (flatten N)))) = T)
+T c= ! c==> cnormal_list f0 b0 c= cflatten cflatten cMAP * part cparts f0 b0 cflatten b0 cT
++ (~ (?L. (?N. (((normal_list L) N) /\ ((MEM r) N))))) |- (((!N. ((~ ((normal_list _10134923) N)) \/ (~ ((MEM r) N)))) ==> ((\N. ((~ ((normal_list _10134923) N)) \/ (~ ((MEM r) N)))) _10134924)) = ((\N. ((~ ((normal_list _10134923) N)) \/ (~ ((MEM r) N)))) _10134924))
+T c==> c~ c? / c? / c/\ cnormal_list b0 b1 cMEM f0 b1 c= c==> ! c\/ c~ cnormal_list f1 b0 c~ cMEM f0 b0 * / c\/ c~ cnormal_list f1 b0 c~ cMEM f0 b0 f2 * / c\/ c~ cnormal_list f1 b0 c~ cMEM f0 b0 f2
+- |- (MAP = map)
+T c= part cMAP part cmap
+- |- (LENGTH = sizel)
+T c= part cLENGTH part csizel
++ ((MEM r) N), ((normal_list L) N) |- ((\x. ((\v. (v = r)) x)) (flatten ((parts L) r)))
+T c==> cMEM f0 f1 c==> cnormal_list f2 f1 * / * / c= b1 f0 b0 cflatten cparts f2 f0
+- ((((normal_list L) N) ==> ((!r. (((MEM r) N) ==> (((flatten o (parts L)) r) = r))) ==> ((~ (((flatten (flatten ((MAP (parts L)) N))) = (flatten ((MAP (flatten o (parts L))) N))) ==> ((((MAP (flatten o (parts L))) N) = N) ==> ((flatten (flatten ((MAP (parts L)) N))) = (flatten N))))) ==> F))) ==> (((normal_list L) N) ==> ((!r. (((MEM r) N) ==> (((flatten o (parts L)) r) = r))) ==> ((~ (((flatten (flatten ((MAP (parts L)) N))) = (flatten ((MAP (flatten o (parts L))) N))) ==> ((((MAP (flatten o (parts L))) N) = N) ==> ((flatten (flatten ((MAP (parts L)) N))) = (flatten N))))) ==> F)))), (((normal_list L) N) ==> ((!r. (((MEM r) N) ==> (((flatten o (parts L)) r) = r))) ==> ((~ (((flatten (flatten ((MAP (parts L)) N))) = (flatten ((MAP (flatten o (parts L))) N))) ==> ((((MAP (flatten o (parts L))) N) = N) ==> ((flatten (flatten ((MAP (parts L)) N))) = (flatten N))))) ==> F))) |- ((((normal_list L) N) ==> ((!r. (((MEM r) N) ==> (((flatten o (parts L)) r) = r))) ==> ((~ (((flatten (flatten ((MAP (parts L)) N))) = (flatten ((MAP (flatten o (parts L))) N))) ==> ((((MAP (flatten o (parts L))) N) = N) ==> ((flatten (flatten ((MAP (parts L)) N))) = (flatten N))))) ==> F))) /\ (((normal_list L) N) ==> ((!r. (((MEM r) N) ==> (((flatten o (parts L)) r) = r))) ==> ((~ (((flatten (flatten ((MAP (parts L)) N))) = (flatten ((MAP (flatten o (parts L))) N))) ==> ((((MAP (flatten o (parts L))) N) = N) ==> ((flatten (flatten ((MAP (parts L)) N))) = (flatten N))))) ==> F))))
+T c==> c==> c==> cnormal_list f0 f1 c==> ! c==> cMEM b0 f1 c= co part cflatten * part cparts f0 b0 b0 c==> c~ c==> c= cflatten cflatten cMAP * part cparts f0 f1 cflatten cMAP * * part co part cflatten * part cparts f0 f1 c==> c= cMAP * * part co part cflatten * part cparts f0 f1 f1 c= cflatten cflatten cMAP * part cparts f0 f1 cflatten f1 cF c==> cnormal_list f0 f1 c==> ! c==> cMEM b0 f1 c= co part cflatten * part cparts f0 b0 b0 c==> c~ c==> c= cflatten cflatten cMAP * part cparts f0 f1 cflatten cMAP * * part co part cflatten * part cparts f0 f1 c==> c= cMAP * * part co part cflatten * part cparts f0 f1 f1 c= cflatten cflatten cMAP * part cparts f0 f1 cflatten f1 cF c==> c==> cnormal_list f0 f1 c==> ! c==> cMEM b0 f1 c= co part cflatten * part cparts f0 b0 b0 c==> c~ c==> c= cflatten cflatten cMAP * part cparts f0 f1 cflatten cMAP * * part co part cflatten * part cparts f0 f1 c==> c= cMAP * * part co part cflatten * part cparts f0 f1 f1 c= cflatten cflatten cMAP * part cparts f0 f1 cflatten f1 cF c/\ c==> cnormal_list f0 f1 c==> ! c==> cMEM b0 f1 c= co part cflatten * part cparts f0 b0 b0 c==> c~ c==> c= cflatten cflatten cMAP * part cparts f0 f1 cflatten cMAP * * part co part cflatten * part cparts f0 f1 c==> c= cMAP * * part co part cflatten * part cparts f0 f1 f1 c= cflatten cflatten cMAP * part cparts f0 f1 cflatten f1 cF c==> cnormal_list f0 f1 c==> ! c==> cMEM b0 f1 c= co part cflatten * part cparts f0 b0 b0 c==> c~ c==> c= cflatten cflatten cMAP * part cparts f0 f1 cflatten cMAP * * part co part cflatten * part cparts f0 f1 c==> c= cMAP * * part co part cflatten * part cparts f0 f1 f1 c= cflatten cflatten cMAP * part cparts f0 f1 cflatten f1 cF
++ ((\N. (((normal_list L) N) /\ ((MEM r) N))) N) |- (((normal_list L) N) /\ ((MEM r) N))
+T c==> * / c/\ cnormal_list f0 b0 cMEM f1 b0 f2 c/\ cnormal_list f0 f2 cMEM f1 f2
+- |- ((~ (_10134952 = _10134953)) \/ ((parts _10134952) = (parts _10134953)))
+T c\/ c~ c= f0 f1 c= * part cparts f0 * part cparts f1
+- |- ((?N. (P N)) = ((P T) \/ (P F)))
+T c= c? / * f0 b0 c\/ * f0 cT * f0 cF
++ |- (((!s. (((all a) s) = (!x. (((MEM x) s) ==> (a x))))) ==> ((\s. (((all a) s) = (!x. (((MEM x) s) ==> (a x))))) s)) = ((\s. (((all a) s) = (!x. (((MEM x) s) ==> (a x))))) s))
+T c= c==> ! c= call f0 b0 ! c==> cMEM b1 b0 * f0 b1 * / c= call f0 b0 ! c==> cMEM b1 b0 * f0 b1 f1 * / c= call f0 b0 ! c==> cMEM b1 b0 * f0 b1 f1
++ |- (((!L. (!r. (((uniq r) /\ (~ (r = NIL))) ==> ((flatten ((parts L) r)) = r)))) ==> ((\L. (!r. (((uniq r) /\ (~ (r = NIL))) ==> ((flatten ((parts L) r)) = r)))) L)) = ((\L. (!r. (((uniq r) /\ (~ (r = NIL))) ==> ((flatten ((parts L) r)) = r)))) L))
+T c= c==> ! ! c==> c/\ cuniq b1 c~ c= b1 cNIL c= cflatten cparts b0 b1 b1 * / ! c==> c/\ cuniq b1 c~ c= b1 cNIL c= cflatten cparts b0 b1 b1 f0 * / ! c==> c/\ cuniq b1 c~ c= b1 cNIL c= cflatten cparts b0 b1 b1 f0
++ |- (((!g. (!l. (((ALL (\x. ((f x) = (g x)))) l) ==> (((MAP f) l) = ((MAP g) l))))) ==> ((\g. (!l. (((ALL (\x. ((f x) = (g x)))) l) ==> (((MAP f) l) = ((MAP g) l))))) g)) = ((\g. (!l. (((ALL (\x. ((f x) = (g x)))) l) ==> (((MAP f) l) = ((MAP g) l))))) g))
+T c= c==> ! ! c==> cALL / c= * f0 b2 * b0 b2 b1 c= cMAP f0 b1 cMAP b0 b1 * / ! c==> cALL / c= * f0 b2 * b0 b2 b1 c= cMAP f0 b1 cMAP b0 b1 f1 * / ! c==> cALL / c= * f0 b2 * b0 b2 b1 c= cMAP f0 b1 cMAP b0 b1 f1
+- |- (((((((flatten (flatten ((MAP (parts L)) N))) = (flatten ((MAP (flatten o (parts L))) N))) ==> B) /\ ((flatten (flatten ((MAP (parts L)) N))) = (flatten ((MAP (flatten o (parts L))) N)))) ==> B) ==> (((((flatten (flatten ((MAP (parts L)) N))) = (flatten ((MAP (flatten o (parts L))) N))) ==> B) /\ ((flatten (flatten ((MAP (parts L)) N))) = (flatten ((MAP (flatten o (parts L))) N)))) ==> B)) = (((((flatten (flatten ((MAP (parts L)) N))) = (flatten ((MAP (flatten o (parts L))) N))) ==> B) /\ ((flatten (flatten ((MAP (parts L)) N))) = (flatten ((MAP (flatten o (parts L))) N)))) ==> B))
+T c= c==> c==> c/\ c==> c= cflatten cflatten cMAP * part cparts f0 f1 cflatten cMAP * * part co part cflatten * part cparts f0 f1 f2 c= cflatten cflatten cMAP * part cparts f0 f1 cflatten cMAP * * part co part cflatten * part cparts f0 f1 f2 c==> c/\ c==> c= cflatten cflatten cMAP * part cparts f0 f1 cflatten cMAP * * part co part cflatten * part cparts f0 f1 f2 c= cflatten cflatten cMAP * part cparts f0 f1 cflatten cMAP * * part co part cflatten * part cparts f0 f1 f2 c==> c/\ c==> c= cflatten cflatten cMAP * part cparts f0 f1 cflatten cMAP * * part co part cflatten * part cparts f0 f1 f2 c= cflatten cflatten cMAP * part cparts f0 f1 cflatten cMAP * * part co part cflatten * part cparts f0 f1 f2
++ ((MEM r) N), ((normal_list L) N) |- (((((uniq r) /\ (~ (r = NIL))) /\ ((\x. ((\v. (v = r)) x)) r)) ==> ((\x. ((\v. (v = r)) x)) (flatten ((parts L) r)))) = ((\x. ((\v. (v = r)) x)) (flatten ((parts L) r))))
+T c==> cMEM f0 f1 c==> cnormal_list f2 f1 c= c==> c/\ c/\ cuniq f0 c~ c= f0 cNIL * / * / c= b1 f0 b0 f0 * / * / c= b1 f0 b0 cflatten cparts f2 f0 * / * / c= b1 f0 b0 cflatten cparts f2 f0
++ |- ((t ==> t) = T)
+T c= c==> f0 f0 cT
++ (!L. (!N. (!r. ((((normal_list L) N) /\ ((MEM r) N)) ==> ((uniq r) /\ (~ (r = NIL))))))) |- (((?L. (?N. (((normal_list L) N) /\ ((MEM r) N)))) ==> ((uniq r) /\ (~ (r = NIL)))) = T)
+T c==> ! ! ! c==> c/\ cnormal_list b0 b1 cMEM b2 b1 c/\ cuniq b2 c~ c= b2 cNIL c= c==> c? / c? / c/\ cnormal_list b0 b1 cMEM f0 b1 c/\ cuniq f0 c~ c= f0 cNIL cT
+- |- ((\x0. ((~ (NIL = s)) ==> ((LAST s) = ((last x0) s)))) x0)
+T * / c==> c~ c= cNIL f0 c= cLAST f0 clast b0 f0 f1
+- |- ((p \/ p) = p)
+T c= c\/ f0 f0 f0
+- |- ((~ (NIL = s)) ==> ((LAST s) = ((last x0) s)))
+T c==> c~ c= cNIL f0 c= cLAST f0 clast f1 f0
+- (_10134934 = _10134936), (_10134935 = _10134937) |- ((_10134935 = _10134937) /\ (((normal_list _10134936) _10134937) \/ (~ ((normal_list _10134934) _10134935))))
+T c==> c= f0 f1 c==> c= f2 f3 c/\ c= f2 f3 c\/ cnormal_list f1 f3 c~ cnormal_list f0 f2
++ |- (((T ==> B) /\ T) ==> B)
+T c==> c/\ c==> cT f0 cT f0
+- ((((normal_list L) N) ==> ((!r. (((MEM r) N) ==> (((flatten o (parts L)) r) = r))) ==> ((~ (((flatten (flatten ((MAP (parts L)) N))) = (flatten ((MAP (flatten o (parts L))) N))) ==> ((((MAP (flatten o (parts L))) N) = N) ==> ((flatten (flatten ((MAP (parts L)) N))) = (flatten N))))) ==> F))) ==> (((normal_list L) N) ==> ((!r. (((MEM r) N) ==> (((flatten o (parts L)) r) = r))) ==> ((~ (((flatten (flatten ((MAP (parts L)) N))) = (flatten ((MAP (flatten o (parts L))) N))) ==> ((((MAP (flatten o (parts L))) N) = N) ==> ((flatten (flatten ((MAP (parts L)) N))) = (flatten N))))) ==> F)))), (((normal_list L) N) ==> ((!r. (((MEM r) N) ==> (((flatten o (parts L)) r) = r))) ==> ((~ (((flatten (flatten ((MAP (parts L)) N))) = (flatten ((MAP (flatten o (parts L))) N))) ==> ((((MAP (flatten o (parts L))) N) = N) ==> ((flatten (flatten ((MAP (parts L)) N))) = (flatten N))))) ==> F))) |- (((((normal_list L) N) ==> ((!r. (((MEM r) N) ==> (((flatten o (parts L)) r) = r))) ==> ((~ (((flatten (flatten ((MAP (parts L)) N))) = (flatten ((MAP (flatten o (parts L))) N))) ==> ((((MAP (flatten o (parts L))) N) = N) ==> ((flatten (flatten ((MAP (parts L)) N))) = (flatten N))))) ==> F))) ==> (((normal_list L) N) ==> ((!r. (((MEM r) N) ==> (((flatten o (parts L)) r) = r))) ==> ((~ (((flatten (flatten ((MAP (parts L)) N))) = (flatten ((MAP (flatten o (parts L))) N))) ==> ((((MAP (flatten o (parts L))) N) = N) ==> ((flatten (flatten ((MAP (parts L)) N))) = (flatten N))))) ==> F)))) /\ (((normal_list L) N) ==> ((!r. (((MEM r) N) ==> (((flatten o (parts L)) r) = r))) ==> ((~ (((flatten (flatten ((MAP (parts L)) N))) = (flatten ((MAP (flatten o (parts L))) N))) ==> ((((MAP (flatten o (parts L))) N) = N) ==> ((flatten (flatten ((MAP (parts L)) N))) = (flatten N))))) ==> F))))
+T c==> c==> c==> cnormal_list f0 f1 c==> ! c==> cMEM b0 f1 c= co part cflatten * part cparts f0 b0 b0 c==> c~ c==> c= cflatten cflatten cMAP * part cparts f0 f1 cflatten cMAP * * part co part cflatten * part cparts f0 f1 c==> c= cMAP * * part co part cflatten * part cparts f0 f1 f1 c= cflatten cflatten cMAP * part cparts f0 f1 cflatten f1 cF c==> cnormal_list f0 f1 c==> ! c==> cMEM b0 f1 c= co part cflatten * part cparts f0 b0 b0 c==> c~ c==> c= cflatten cflatten cMAP * part cparts f0 f1 cflatten cMAP * * part co part cflatten * part cparts f0 f1 c==> c= cMAP * * part co part cflatten * part cparts f0 f1 f1 c= cflatten cflatten cMAP * part cparts f0 f1 cflatten f1 cF c==> c==> cnormal_list f0 f1 c==> ! c==> cMEM b0 f1 c= co part cflatten * part cparts f0 b0 b0 c==> c~ c==> c= cflatten cflatten cMAP * part cparts f0 f1 cflatten cMAP * * part co part cflatten * part cparts f0 f1 c==> c= cMAP * * part co part cflatten * part cparts f0 f1 f1 c= cflatten cflatten cMAP * part cparts f0 f1 cflatten f1 cF c/\ c==> c==> cnormal_list f0 f1 c==> ! c==> cMEM b0 f1 c= co part cflatten * part cparts f0 b0 b0 c==> c~ c==> c= cflatten cflatten cMAP * part cparts f0 f1 cflatten cMAP * * part co part cflatten * part cparts f0 f1 c==> c= cMAP * * part co part cflatten * part cparts f0 f1 f1 c= cflatten cflatten cMAP * part cparts f0 f1 cflatten f1 cF c==> cnormal_list f0 f1 c==> ! c==> cMEM b0 f1 c= co part cflatten * part cparts f0 b0 b0 c==> c~ c==> c= cflatten cflatten cMAP * part cparts f0 f1 cflatten cMAP * * part co part cflatten * part cparts f0 f1 c==> c= cMAP * * part co part cflatten * part cparts f0 f1 f1 c= cflatten cflatten cMAP * part cparts f0 f1 cflatten f1 cF c==> cnormal_list f0 f1 c==> ! c==> cMEM b0 f1 c= co part cflatten * part cparts f0 b0 b0 c==> c~ c==> c= cflatten cflatten cMAP * part cparts f0 f1 cflatten cMAP * * part co part cflatten * part cparts f0 f1 c==> c= cMAP * * part co part cflatten * part cparts f0 f1 f1 c= cflatten cflatten cMAP * part cparts f0 f1 cflatten f1 cF
++ (!r. (((MEM r) N) ==> (((flatten o (parts L)) r) = r))), ((normal_list L) N) |- ((((MAP (flatten o (parts L))) N) = N) ==> ((flatten (flatten ((MAP (parts L)) N))) = (flatten N)))
+T c==> ! c==> cMEM b0 f0 c= co part cflatten * part cparts f1 b0 b0 c==> cnormal_list f1 f0 c==> c= cMAP * * part co part cflatten * part cparts f1 f0 f0 c= cflatten cflatten cMAP * part cparts f1 f0 cflatten f0
+- (_10134955 = _10134957), (_10134954 = _10134956) |- ((_10134955 = _10134957) /\ ((_10134954 o _10134955) = (_10134956 o _10134957)))
+T c==> c= f0 f1 c==> c= f2 f3 c/\ c= f0 f1 c= * * part co f2 f0 * * part co f3 f1
+- |- ((\t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))) t3)
+T * / c= c\/ f0 c\/ f1 b0 c\/ c\/ f0 f1 b0 f2
++ |- (!N. (!L. (((normal_list L) N) ==> ((!r. (((MEM r) N) ==> (((flatten o (parts L)) r) = r))) ==> (((flatten (flatten ((MAP (parts L)) N))) = (flatten ((MAP (flatten o (parts L))) N))) ==> ((((MAP (flatten o (parts L))) N) = N) ==> ((flatten (flatten ((MAP (parts L)) N))) = (flatten N))))))))
+T c==> cnormal_list f0 f1 c==> ! c==> cMEM b0 f1 c= co part cflatten * part cparts f0 b0 b0 c==> c= cflatten cflatten cMAP * part cparts f0 f1 cflatten cMAP * * part co part cflatten * part cparts f0 f1 c==> c= cMAP * * part co part cflatten * part cparts f0 f1 f1 c= cflatten cflatten cMAP * part cparts f0 f1 cflatten f1
++ (~ ((flatten (flatten ((MAP (parts L)) N))) = (flatten N))), ((flatten (flatten ((MAP (parts L)) N))) = (flatten ((MAP (flatten o (parts L))) N))), (((MAP (flatten o (parts L))) N) = N) |- F
+T c==> c~ c= cflatten cflatten cMAP * part cparts f0 f1 cflatten f1 c==> c= cflatten cflatten cMAP * part cparts f0 f1 cflatten cMAP * * part co part cflatten * part cparts f0 f1 c==> c= cMAP * * part co part cflatten * part cparts f0 f1 f1 cF
+- ((((normal_list L) N) ==> (((MEM r) N) ==> ((~ (?L. (?N. (((normal_list L) N) /\ ((MEM r) N))))) ==> F))) ==> (((normal_list L) N) ==> (((MEM r) N) ==> ((~ (?L. (?N. (((normal_list L) N) /\ ((MEM r) N))))) ==> F)))), (((normal_list L) N) ==> (((MEM r) N) ==> ((~ (?L. (?N. (((normal_list L) N) /\ ((MEM r) N))))) ==> F))) |- (((((normal_list L) N) ==> (((MEM r) N) ==> ((~ (?L. (?N. (((normal_list L) N) /\ ((MEM r) N))))) ==> F))) ==> (((normal_list L) N) ==> (((MEM r) N) ==> ((~ (?L. (?N. (((normal_list L) N) /\ ((MEM r) N))))) ==> F)))) /\ (((normal_list L) N) ==> (((MEM r) N) ==> ((~ (?L. (?N. (((normal_list L) N) /\ ((MEM r) N))))) ==> F))))
+T c==> c==> c==> cnormal_list f0 f1 c==> cMEM f2 f1 c==> c~ c? / c? / c/\ cnormal_list b0 b1 cMEM f2 b1 cF c==> cnormal_list f0 f1 c==> cMEM f2 f1 c==> c~ c? / c? / c/\ cnormal_list b0 b1 cMEM f2 b1 cF c==> c==> cnormal_list f0 f1 c==> cMEM f2 f1 c==> c~ c? / c? / c/\ cnormal_list b0 b1 cMEM f2 b1 cF c/\ c==> c==> cnormal_list f0 f1 c==> cMEM f2 f1 c==> c~ c? / c? / c/\ cnormal_list b0 b1 cMEM f2 b1 cF c==> cnormal_list f0 f1 c==> cMEM f2 f1 c==> c~ c? / c? / c/\ cnormal_list b0 b1 cMEM f2 b1 cF c==> cnormal_list f0 f1 c==> cMEM f2 f1 c==> c~ c? / c? / c/\ cnormal_list b0 b1 cMEM f2 b1 cF
+- |- (((!f. (!g. (!l. (((ALL (\x. ((f x) = (g x)))) l) ==> (((MAP f) l) = ((MAP g) l)))))) ==> (!f. (!g. (!l. (((ALL (\x. ((f x) = (g x)))) l) ==> (((MAP f) l) = ((MAP g) l))))))) = (!f. (!g. (!l. (((ALL (\x. ((f x) = (g x)))) l) ==> (((MAP f) l) = ((MAP g) l)))))))
+T c= c==> ! ! ! c==> cALL / c= * b0 b3 * b1 b3 b2 c= cMAP b0 b2 cMAP b1 b2 ! ! ! c==> cALL / c= * b0 b3 * b1 b3 b2 c= cMAP b0 b2 cMAP b1 b2 ! ! ! c==> cALL / c= * b0 b3 * b1 b3 b2 c= cMAP b0 b2 cMAP b1 b2
++ |- (((F ==> B) /\ F) ==> B)
+T c==> c/\ c==> cF f0 cF f0
++ (!L. (!r. (!P. ((((uniq r) /\ (~ (r = NIL))) /\ (P r)) ==> (P (flatten ((parts L) r))))))) |- (!r. (!P. ((((uniq r) /\ (~ (r = NIL))) /\ (P r)) ==> (P (flatten ((parts L) r))))))
+T c==> ! ! ! c==> c/\ c/\ cuniq b1 c~ c= b1 cNIL * b2 b1 * b2 cflatten cparts b0 b1 ! ! c==> c/\ c/\ cuniq b0 c~ c= b0 cNIL * b1 b0 * b1 cflatten cparts f0 b0
+- |- (((~ p) ==> p) = p)
+T c= c==> c~ f0 f0 f0
+- |- (((x = x) ==> p) = p)
+T c= c==> c= f0 f0 f1 f1
++ |- (((!N. (!L. (((normal_list L) N) ==> ((!r. (((MEM r) N) ==> (((flatten o (parts L)) r) = r))) ==> ((~ (((flatten (flatten ((MAP (parts L)) N))) = (flatten ((MAP (flatten o (parts L))) N))) ==> ((((MAP (flatten o (parts L))) N) = N) ==> ((flatten (flatten ((MAP (parts L)) N))) = (flatten N))))) ==> F))))) ==> ((\N. (!L. (((normal_list L) N) ==> ((!r. (((MEM r) N) ==> (((flatten o (parts L)) r) = r))) ==> ((~ (((flatten (flatten ((MAP (parts L)) N))) = (flatten ((MAP (flatten o (parts L))) N))) ==> ((((MAP (flatten o (parts L))) N) = N) ==> ((flatten (flatten ((MAP (parts L)) N))) = (flatten N))))) ==> F))))) N)) = ((\N. (!L. (((normal_list L) N) ==> ((!r. (((MEM r) N) ==> (((flatten o (parts L)) r) = r))) ==> ((~ (((flatten (flatten ((MAP (parts L)) N))) = (flatten ((MAP (flatten o (parts L))) N))) ==> ((((MAP (flatten o (parts L))) N) = N) ==> ((flatten (flatten ((MAP (parts L)) N))) = (flatten N))))) ==> F))))) N))
+T c= c==> ! ! c==> cnormal_list b1 b0 c==> ! c==> cMEM b2 b0 c= co part cflatten * part cparts b1 b2 b2 c==> c~ c==> c= cflatten cflatten cMAP * part cparts b1 b0 cflatten cMAP * * part co part cflatten * part cparts b1 b0 c==> c= cMAP * * part co part cflatten * part cparts b1 b0 b0 c= cflatten cflatten cMAP * part cparts b1 b0 cflatten b0 cF * / ! c==> cnormal_list b1 b0 c==> ! c==> cMEM b2 b0 c= co part cflatten * part cparts b1 b2 b2 c==> c~ c==> c= cflatten cflatten cMAP * part cparts b1 b0 cflatten cMAP * * part co part cflatten * part cparts b1 b0 c==> c= cMAP * * part co part cflatten * part cparts b1 b0 b0 c= cflatten cflatten cMAP * part cparts b1 b0 cflatten b0 cF f0 * / ! c==> cnormal_list b1 b0 c==> ! c==> cMEM b2 b0 c= co part cflatten * part cparts b1 b2 b2 c==> c~ c==> c= cflatten cflatten cMAP * part cparts b1 b0 cflatten cMAP * * part co part cflatten * part cparts b1 b0 c==> c= cMAP * * part co part cflatten * part cparts b1 b0 b0 c= cflatten cflatten cMAP * part cparts b1 b0 cflatten b0 cF f0
+- (!f. (!g. (!l. (((ALL (\x. ((f x) = (g x)))) l) ==> (((MAP f) l) = ((MAP g) l)))))) |- ((\g. (!l. (((ALL (\x. ((f x) = (g x)))) l) ==> (((MAP f) l) = ((MAP g) l))))) g)
+T c==> ! ! ! c==> cALL / c= * b0 b3 * b1 b3 b2 c= cMAP b0 b2 cMAP b1 b2 * / ! c==> cALL / c= * f0 b2 * b0 b2 b1 c= cMAP f0 b1 cMAP b0 b1 f1
+- (!f. (!g. (!l. (((ALL (\x. ((f x) = (g x)))) l) ==> (((MAP f) l) = ((MAP g) l)))))) |- ((!g. (!l. (((ALL (\x. ((f x) = (g x)))) l) ==> (((MAP f) l) = ((MAP g) l))))) = T)
+T c==> ! ! ! c==> cALL / c= * b0 b3 * b1 b3 b2 c= cMAP b0 b2 cMAP b1 b2 c= ! ! c==> cALL / c= * f0 b2 * b0 b2 b1 c= cMAP f0 b1 cMAP b0 b1 cT
++ (~ (?L. (?N. (((normal_list L) N) /\ ((MEM r) N))))), ((MEM r) N), ((normal_list L) N) |- ((~ (?L. (?N. (((normal_list L) N) /\ ((MEM r) N))))) /\ F)
+T c==> c~ c? / c? / c/\ cnormal_list b0 b1 cMEM f0 b1 c==> cMEM f0 f1 c==> cnormal_list f2 f1 c/\ c~ c? / c? / c/\ cnormal_list b0 b1 cMEM f0 b1 cF
+- (!f. (!g. (!l. (((ALL (\x. ((f x) = (g x)))) l) ==> (((MAP f) l) = ((MAP g) l)))))) |- ((\l. (((ALL (\x. ((f x) = (g x)))) l) ==> (((MAP f) l) = ((MAP g) l)))) l)
+T c==> ! ! ! c==> cALL / c= * b0 b3 * b1 b3 b2 c= cMAP b0 b2 cMAP b1 b2 * / c==> cALL / c= * f0 b1 * f1 b1 b0 c= cMAP f0 b0 cMAP f1 b0 f2
+- |- ((_10134931 = _10134933) ==> ((~ (_10134930 = _10134932)) \/ (((MEM _10134932) _10134933) \/ (~ ((MEM _10134930) _10134931)))))
+T c==> c= f0 f1 c\/ c~ c= f2 f3 c\/ cMEM f3 f1 c~ cMEM f2 f0
++ ((flatten (flatten ((MAP (parts L)) N))) = (flatten ((MAP (flatten o (parts L))) N))) |- (((I flatten) ((MAP (flatten o (parts L))) N)) = ((I flatten) (flatten ((MAP (parts L)) N))))
+T c==> c= cflatten cflatten cMAP * part cparts f0 f1 cflatten cMAP * * part co part cflatten * part cparts f0 f1 c= cI part cflatten cMAP * * part co part cflatten * part cparts f0 f1 cI part cflatten cflatten cMAP * part cparts f0 f1
++ |- ((((\L. (?N. (((normal_list L) N) /\ ((MEM r) N)))) L) ==> ((!L. (!N. (!r. ((((normal_list L) N) /\ ((MEM r) N)) ==> ((uniq r) /\ (~ (r = NIL))))))) ==> ((uniq r) /\ (~ (r = NIL))))) = T)
+T c= c==> * / c? / c/\ cnormal_list b0 b1 cMEM f0 b1 f1 c==> ! ! ! c==> c/\ cnormal_list b0 b1 cMEM b2 b1 c/\ cuniq b2 c~ c= b2 cNIL c/\ cuniq f0 c~ c= f0 cNIL cT
+- (b = c) |- ((P c) = (P c))
+T c==> c= f0 f1 c= * f2 f1 * f2 f1
++ ((flatten (flatten ((MAP (parts L)) N))) = (flatten ((MAP (flatten o (parts L))) N))) |- (((flatten (flatten ((MAP (parts L)) N))) = (flatten ((MAP (flatten o (parts L))) N))) /\ ((((MAP (flatten o (parts L))) N) = N) ==> ((flatten (flatten ((MAP (parts L)) N))) = (flatten N))))
+T c==> c= cflatten cflatten cMAP * part cparts f0 f1 cflatten cMAP * * part co part cflatten * part cparts f0 f1 c/\ c= cflatten cflatten cMAP * part cparts f0 f1 cflatten cMAP * * part co part cflatten * part cparts f0 f1 c==> c= cMAP * * part co part cflatten * part cparts f0 f1 f1 c= cflatten cflatten cMAP * part cparts f0 f1 cflatten f1
++ |- ((f x) = ((I f) x))
+T c= * f0 f1 cI f0 f1
+- (~ ((normal_list L) N)), ((normal_list L) N) |- ((~ ((normal_list L) N)) /\ ((normal_list L) N))
+T c==> c~ cnormal_list f0 f1 c==> cnormal_list f0 f1 c/\ c~ cnormal_list f0 f1 cnormal_list f0 f1
++ (~ (?L. (?N. (((normal_list L) N) /\ ((MEM r) N))))) |- (!L. (!N. ((~ ((normal_list L) N)) \/ (~ ((MEM r) N)))))
+T c==> c~ c? / c? / c/\ cnormal_list b0 b1 cMEM f0 b1 ! ! c\/ c~ cnormal_list b0 b1 c~ cMEM f0 b1
+- |- ((t ==> F) = (~ t))
+T c= c==> f0 cF c~ f0
+- (!f. (!g. (!l. (((ALL (\x. ((f x) = (g x)))) l) ==> (((MAP f) l) = ((MAP g) l)))))) |- ((!f. (!g. (!l. (((ALL (\x. ((f x) = (g x)))) l) ==> (((MAP f) l) = ((MAP g) l)))))) /\ (!f. (!g. (!l. (((ALL (\x. ((f x) = (g x)))) l) ==> (((MAP f) l) = ((MAP g) l)))))))
+T c==> ! ! ! c==> cALL / c= * b0 b3 * b1 b3 b2 c= cMAP b0 b2 cMAP b1 b2 c/\ ! ! ! c==> cALL / c= * b0 b3 * b1 b3 b2 c= cMAP b0 b2 cMAP b1 b2 ! ! ! c==> cALL / c= * b0 b3 * b1 b3 b2 c= cMAP b0 b2 cMAP b1 b2
++ |- ((!r. (((MEM r) N) ==> ((flatten ((parts L) r)) = r))) = (!r. (((MEM r) N) ==> (((flatten o (parts L)) r) = r))))
+T c= ! c==> cMEM b0 f0 c= cflatten cparts f1 b0 b0 ! c==> cMEM b0 f0 c= co part cflatten * part cparts f1 b0 b0
++ (!L. (!r. (!P. ((((uniq r) /\ (~ (r = NIL))) /\ (P r)) ==> (P (flatten ((parts L) r))))))) |- ((\L. (!r. (!P. ((((uniq r) /\ (~ (r = NIL))) /\ (P r)) ==> (P (flatten ((parts L) r))))))) L)
+T c==> ! ! ! c==> c/\ c/\ cuniq b1 c~ c= b1 cNIL * b2 b1 * b2 cflatten cparts b0 b1 * / ! ! c==> c/\ c/\ cuniq b1 c~ c= b1 cNIL * b2 b1 * b2 cflatten cparts b0 b1 f0
+- |- ((((normal_list L) N) ==> (((MEM r) N) ==> ((~ (?L. (?N. (((normal_list L) N) /\ ((MEM r) N))))) ==> F))) ==> (((normal_list L) N) ==> (((MEM r) N) ==> ((~ (?L. (?N. (((normal_list L) N) /\ ((MEM r) N))))) ==> F))))
+T c==> c==> cnormal_list f0 f1 c==> cMEM f2 f1 c==> c~ c? / c? / c/\ cnormal_list b0 b1 cMEM f2 b1 cF c==> cnormal_list f0 f1 c==> cMEM f2 f1 c==> c~ c? / c? / c/\ cnormal_list b0 b1 cMEM f2 b1 cF
+- (_10134942 = _10134943) |- ((_10134942 = _10134943) /\ ((flatten _10134942) = (flatten _10134943)))
+T c==> c= f0 f1 c/\ c= f0 f1 c= cflatten f0 cflatten f1
+- |- ((!r. (!N. (!L. (((normal_list L) N) ==> (((MEM r) N) ==> (?L. (?N. (((normal_list L) N) /\ ((MEM r) N))))))))) = (!r. (!N. (!L. (((normal_list L) N) ==> (((MEM r) N) ==> ((~ (?L. (?N. (((normal_list L) N) /\ ((MEM r) N))))) ==> F)))))))
+T c= ! ! ! c==> cnormal_list b2 b1 c==> cMEM b0 b1 c? / c? / c/\ cnormal_list b3 b3 cMEM b0 b3 ! ! ! c==> cnormal_list b2 b1 c==> cMEM b0 b1 c==> c~ c? / c? / c/\ cnormal_list b3 b3 cMEM b0 b3 cF
++ (!L. (!r. (!P. ((((uniq r) /\ (~ (r = NIL))) /\ (P r)) ==> (P (flatten ((parts L) r))))))) |- ((!L. (!r. ((((uniq r) /\ (~ (r = NIL))) /\ (P r)) ==> (P (flatten ((parts L) r)))))) = T)
+T c==> ! ! ! c==> c/\ c/\ cuniq b1 c~ c= b1 cNIL * b2 b1 * b2 cflatten cparts b0 b1 c= ! ! c==> c/\ c/\ cuniq b1 c~ c= b1 cNIL * f0 b1 * f0 cflatten cparts b0 b1 cT
++ |- (((!g. (!x. (((f o g) x) = (f (g x))))) ==> ((\g. (!x. (((f o g) x) = (f (g x))))) g)) = ((\g. (!x. (((f o g) x) = (f (g x))))) g))
+T c= c==> ! ! c= co f0 b0 b1 * f0 * b0 b1 * / ! c= co f0 b0 b1 * f0 * b0 b1 f1 * / ! c= co f0 b0 b1 * f0 * b0 b1 f1
++ |- (p = ((~ p) ==> F))
+T c= f0 c==> c~ f0 cF
+- |- ((?N. t) = t)
+T c= c? / f0 f0
++ |- ((!L. (!N. (!r. ((((normal_list L) N) /\ ((MEM r) N)) ==> ((uniq r) /\ (~ (r = NIL))))))) ==> (!r. ((?L. (?N. (((normal_list L) N) /\ ((MEM r) N)))) ==> ((uniq r) /\ (~ (r = NIL))))))
+T c==> ! ! ! c==> c/\ cnormal_list b0 b1 cMEM b2 b1 c/\ cuniq b2 c~ c= b2 cNIL ! c==> c? / c? / c/\ cnormal_list b1 b2 cMEM b0 b2 c/\ cuniq b0 c~ c= b0 cNIL
++ |- ((\s. (((all a) s) = (!x. (((MEM x) s) ==> (a x))))) s)
+T * / c= call f0 b0 ! c==> cMEM b1 b0 * f0 b1 f1
++ (!r. (((MEM r) N) ==> (((flatten o (parts L)) r) = r))) |- ((((MEM r) N) ==> (((flatten o (parts L)) r) = r)) = T)
+T c==> ! c==> cMEM b0 f0 c= co part cflatten * part cparts f1 b0 b0 c= c==> cMEM f2 f0 c= co part cflatten * part cparts f1 f2 f2 cT
++ |- (((!g. (!l. (((MAP (g o f)) l) = ((MAP g) ((MAP f) l))))) ==> ((\g. (!l. (((MAP (g o f)) l) = ((MAP g) ((MAP f) l))))) g)) = ((\g. (!l. (((MAP (g o f)) l) = ((MAP g) ((MAP f) l))))) g))
+T c= c==> ! ! c= cMAP * * part co b0 f0 b1 cMAP b0 cMAP f0 b1 * / ! c= cMAP * * part co b0 f0 b1 cMAP b0 cMAP f0 b1 f1 * / ! c= cMAP * * part co b0 f0 b1 cMAP b0 cMAP f0 b1 f1
+- ((~ (!a. (!b. (!c. ((a ==> (b = c)) ==> (!P. ((a /\ (P c)) ==> (P b)))))))) ==> F) |- (((~ (!a. (!b. (!c. ((a ==> (b = c)) ==> (!P. ((a /\ (P c)) ==> (P b)))))))) ==> F) /\ ((~ (!a. (!b. (!c. ((a ==> (b = c)) ==> (!P. ((a /\ (P c)) ==> (P b)))))))) ==> F))
+T c==> c==> c~ ! ! ! c==> c==> b0 c= b1 b2 ! c==> c/\ b0 * b3 b2 * b3 b1 cF c/\ c==> c~ ! ! ! c==> c==> b0 c= b1 b2 ! c==> c/\ b0 * b3 b2 * b3 b1 cF c==> c~ ! ! ! c==> c==> b0 c= b1 b2 ! c==> c/\ b0 * b3 b2 * b3 b1 cF
++ |- (((!r. ((((uniq r) /\ (~ (r = NIL))) /\ (P r)) ==> (P (flatten ((parts L) r))))) ==> ((\r. ((((uniq r) /\ (~ (r = NIL))) /\ (P r)) ==> (P (flatten ((parts L) r))))) r)) = ((\r. ((((uniq r) /\ (~ (r = NIL))) /\ (P r)) ==> (P (flatten ((parts L) r))))) r))
+T c= c==> ! c==> c/\ c/\ cuniq b0 c~ c= b0 cNIL * f0 b0 * f0 cflatten cparts f1 b0 * / c==> c/\ c/\ cuniq b0 c~ c= b0 cNIL * f0 b0 * f0 cflatten cparts f1 b0 f2 * / c==> c/\ c/\ cuniq b0 c~ c= b0 cNIL * f0 b0 * f0 cflatten cparts f1 b0 f2
++ (A = T) |- ((A = T) /\ (((A ==> B) /\ A) ==> B))
+T c==> c= f0 cT c/\ c= f0 cT c==> c/\ c==> f0 f1 f0 f1
+- |- (((((~ (!a. (!b. (!c. ((a ==> (b = c)) ==> (!P. ((a /\ (P c)) ==> (P b)))))))) ==> F) ==> ((~ (!a. (!b. (!c. ((a ==> (b = c)) ==> (!P. ((a /\ (P c)) ==> (P b)))))))) ==> F)) ==> (((~ (!a. (!b. (!c. ((a ==> (b = c)) ==> (!P. ((a /\ (P c)) ==> (P b)))))))) ==> F) ==> ((~ (!a. (!b. (!c. ((a ==> (b = c)) ==> (!P. ((a /\ (P c)) ==> (P b)))))))) ==> F))) = (((~ (!a. (!b. (!c. ((a ==> (b = c)) ==> (!P. ((a /\ (P c)) ==> (P b)))))))) ==> F) ==> ((~ (!a. (!b. (!c. ((a ==> (b = c)) ==> (!P. ((a /\ (P c)) ==> (P b)))))))) ==> F)))
+T c= c==> c==> c==> c~ ! ! ! c==> c==> b0 c= b1 b2 ! c==> c/\ b0 * b3 b2 * b3 b1 cF c==> c~ ! ! ! c==> c==> b0 c= b1 b2 ! c==> c/\ b0 * b3 b2 * b3 b1 cF c==> c==> c~ ! ! ! c==> c==> b0 c= b1 b2 ! c==> c/\ b0 * b3 b2 * b3 b1 cF c==> c~ ! ! ! c==> c==> b0 c= b1 b2 ! c==> c/\ b0 * b3 b2 * b3 b1 cF c==> c==> c~ ! ! ! c==> c==> b0 c= b1 b2 ! c==> c/\ b0 * b3 b2 * b3 b1 cF c==> c~ ! ! ! c==> c==> b0 c= b1 b2 ! c==> c/\ b0 * b3 b2 * b3 b1 cF
++ (!L. (!r. (!P. ((((uniq r) /\ (~ (r = NIL))) /\ (P r)) ==> (P (flatten ((parts L) r))))))) |- ((\P. ((((uniq r) /\ (~ (r = NIL))) /\ (P r)) ==> (P (flatten ((parts L) r))))) P)
+T c==> ! ! ! c==> c/\ c/\ cuniq b1 c~ c= b1 cNIL * b2 b1 * b2 cflatten cparts b0 b1 * / c==> c/\ c/\ cuniq f0 c~ c= f0 cNIL * b0 f0 * b0 cflatten cparts f1 f0 f2
++ (!L. (!N. (!r. ((((normal_list L) N) /\ ((MEM r) N)) ==> ((uniq r) /\ (~ (r = NIL))))))) |- ((!L. (!N. (!r. ((((normal_list L) N) /\ ((MEM r) N)) ==> ((uniq r) /\ (~ (r = NIL))))))) /\ (!r. ((?L. (?N. (((normal_list L) N) /\ ((MEM r) N)))) ==> ((uniq r) /\ (~ (r = NIL))))))
+T c==> ! ! ! c==> c/\ cnormal_list b0 b1 cMEM b2 b1 c/\ cuniq b2 c~ c= b2 cNIL c/\ ! ! ! c==> c/\ cnormal_list b0 b1 cMEM b2 b1 c/\ cuniq b2 c~ c= b2 cNIL ! c==> c? / c? / c/\ cnormal_list b1 b2 cMEM b0 b2 c/\ cuniq b0 c~ c= b0 cNIL
+- |- ((((normal_list L) N) ==> (((MEM r) N) ==> (?L. (?N. (((normal_list L) N) /\ ((MEM r) N)))))) = T)
+T c= c==> cnormal_list f0 f1 c==> cMEM f2 f1 c? / c? / c/\ cnormal_list b0 b1 cMEM f2 b1 cT
++ ((MEM r) N), ((normal_list L) N) |- (((MEM r) N) /\ ((flatten ((parts L) r)) = r))
+T c==> cMEM f0 f1 c==> cnormal_list f2 f1 c/\ cMEM f0 f1 c= cflatten cparts f2 f0 f0
++ |- (((!f. (!g. (!x. (((f o g) x) = (f (g x)))))) ==> ((\f. (!g. (!x. (((f o g) x) = (f (g x)))))) f)) = ((\f. (!g. (!x. (((f o g) x) = (f (g x)))))) f))
+T c= c==> ! ! ! c= co b0 b1 b2 * b0 * b1 b2 * / ! ! c= co b0 b1 b2 * b0 * b1 b2 f0 * / ! ! c= co b0 b1 b2 * b0 * b1 b2 f0
++ (!r. (((MEM r) N) ==> (((flatten o (parts L)) r) = r))), ((normal_list L) N) |- ((flatten (flatten ((MAP (parts L)) N))) = (flatten N))
+T c==> ! c==> cMEM b0 f0 c= co part cflatten * part cparts f1 b0 b0 c==> cnormal_list f1 f0 c= cflatten cflatten cMAP * part cparts f1 f0 cflatten f0
++ ((MEM r) N), ((normal_list L) N) |- (((?L. (?N. (((normal_list L) N) /\ ((MEM r) N)))) ==> ((uniq r) /\ (~ (r = NIL)))) = ((uniq r) /\ (~ (r = NIL))))
+T c==> cMEM f0 f1 c==> cnormal_list f2 f1 c= c==> c? / c? / c/\ cnormal_list b0 b1 cMEM f0 b1 c/\ cuniq f0 c~ c= f0 cNIL c/\ cuniq f0 c~ c= f0 cNIL
+- ((normal_list L) N) |- (((normal_list L) N) = T)
+T c==> cnormal_list f0 f1 c= cnormal_list f0 f1 cT
+- (~ F), (~ ((flatten (flatten ((MAP (parts L)) N))) = (flatten N))), ((flatten (flatten ((MAP (parts L)) N))) = (flatten ((MAP (flatten o (parts L))) N))), (((MAP (flatten o (parts L))) N) = N) |- ((~ F) /\ F)
+T c==> c~ cF c==> c~ c= cflatten cflatten cMAP * part cparts f0 f1 cflatten f1 c==> c= cflatten cflatten cMAP * part cparts f0 f1 cflatten cMAP * * part co part cflatten * part cparts f0 f1 c==> c= cMAP * * part co part cflatten * part cparts f0 f1 f1 c/\ c~ cF cF
+- |- (T = (((~ (x = y)) \/ ((~ (x = z)) \/ (y = z))) = ((y = z) \/ ((~ (x = y)) \/ (~ (x = z))))))
+T c= cT c= c\/ c~ c= f0 f1 c\/ c~ c= f0 f2 c= f1 f2 c\/ c= f1 f2 c\/ c~ c= f0 f1 c~ c= f0 f2
++ |- (!b. (!c. ((b = c) ==> (!P. ((P c) ==> (P b))))))
+T c==> c= f0 f1 ! c==> * b0 f1 * b0 f0
++ (~ (P b)), (P c), (b = c) |- ((~ (P b)) /\ F)
+T c==> c~ * f0 f1 c==> * f0 f2 c==> c= f1 f2 c/\ c~ * f0 f1 cF
+- ((ALL (\x. ((f x) = (g x)))) l) |- ((!f. (!g. (!l. (((ALL (\x. ((f x) = (g x)))) l) ==> (((MAP f) l) = ((MAP g) l)))))) ==> (((MAP f) l) = ((MAP g) l)))
+T c==> cALL / c= * f0 b0 * f1 b0 f2 c==> ! ! ! c==> cALL / c= * b0 b3 * b1 b3 b2 c= cMAP b0 b2 cMAP b1 b2 c= cMAP f0 f2 cMAP f1 f2
+- (((uniq r) /\ (~ (r = NIL))) /\ (P r)) |- ((!L. (!r. (!P. ((((uniq r) /\ (~ (r = NIL))) /\ (P r)) ==> (P (flatten ((parts L) r))))))) ==> (P (flatten ((parts L) r))))
+T c==> c/\ c/\ cuniq f0 c~ c= f0 cNIL * f1 f0 c==> ! ! ! c==> c/\ c/\ cuniq b1 c~ c= b1 cNIL * b2 b1 * b2 cflatten cparts b0 b1 * f1 cflatten cparts f2 f0
+- (~ (((I flatten) (flatten ((MAP (parts L)) N))) = ((I flatten) ((MAP (flatten o (parts L))) N)))), ((flatten (flatten ((MAP (parts L)) N))) = (flatten ((MAP (flatten o (parts L))) N))) |- ((~ (((I flatten) (flatten ((MAP (parts L)) N))) = ((I flatten) ((MAP (flatten o (parts L))) N)))) /\ (((I flatten) (flatten ((MAP (parts L)) N))) = ((I flatten) ((MAP (flatten o (parts L))) N))))
+T c==> c~ c= cI part cflatten cflatten cMAP * part cparts f0 f1 cI part cflatten cMAP * * part co part cflatten * part cparts f0 f1 c==> c= cflatten cflatten cMAP * part cparts f0 f1 cflatten cMAP * * part co part cflatten * part cparts f0 f1 c/\ c~ c= cI part cflatten cflatten cMAP * part cparts f0 f1 cI part cflatten cMAP * * part co part cflatten * part cparts f0 f1 c= cI part cflatten cflatten cMAP * part cparts f0 f1 cI part cflatten cMAP * * part co part cflatten * part cparts f0 f1
++ |- ((T ==> t) = t)
+T c= c==> cT f0 f0
+- |- ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))
+T c= c\/ f0 c\/ f1 f2 c\/ c\/ f0 f1 f2
++ |- ((\x. ((I x) = x)) x)
+T * / c= cI b0 b0 f0
++ |- ((a ==> (b = c)) ==> (!P. ((a /\ (P c)) ==> (P b))))
+T c==> c==> f0 c= f1 f2 ! c==> c/\ f0 * b0 f2 * b0 f1
+- |- ((~ (_10134954 = _10134956)) \/ ((~ (_10134955 = _10134957)) \/ ((_10134954 o _10134955) = (_10134956 o _10134957))))
+T c\/ c~ c= f0 f1 c\/ c~ c= f2 f3 c= * * part co f0 f2 * * part co f1 f3
++ (b = c) |- ((b = c) /\ (!P. ((P c) ==> (P b))))
+T c==> c= f0 f1 c/\ c= f0 f1 ! c==> * b0 f1 * b0 f0
++ |- ((?L. (?N. (((normal_list L) N) /\ ((MEM r) N)))) ==> ((uniq r) /\ (~ (r = NIL))))
+T c==> c? / c? / c/\ cnormal_list b0 b1 cMEM f0 b1 c/\ cuniq f0 c~ c= f0 cNIL
++ ((normal_list L) N) |- (!r. (((MEM r) N) ==> ((flatten ((parts L) r)) = r)))
+T c==> cnormal_list f0 f1 ! c==> cMEM b0 f1 c= cflatten cparts f0 b0 b0
+- (_10134931 = _10134933) |- ((_10134930 = _10134932) ==> (((MEM _10134932) _10134933) \/ (~ ((MEM _10134930) _10134931))))
+T c==> c= f0 f1 c==> c= f2 f3 c\/ cMEM f3 f1 c~ cMEM f2 f0
+- ((flatten (flatten ((MAP (parts L)) N))) = (flatten ((MAP (flatten o (parts L))) N))) |- ((~ (((I flatten) ((MAP (flatten o (parts L))) N)) = ((I flatten) (flatten ((MAP (parts L)) N))))) ==> (((I flatten) ((MAP (flatten o (parts L))) N)) = ((I flatten) (flatten ((MAP (parts L)) N)))))
+T c==> c= cflatten cflatten cMAP * part cparts f0 f1 cflatten cMAP * * part co part cflatten * part cparts f0 f1 c==> c~ c= cI part cflatten cMAP * * part co part cflatten * part cparts f0 f1 cI part cflatten cflatten cMAP * part cparts f0 f1 c= cI part cflatten cMAP * * part co part cflatten * part cparts f0 f1 cI part cflatten cflatten cMAP * part cparts f0 f1
++ (~ ((flatten (flatten ((MAP (parts L)) N))) = (flatten N))), ((flatten (flatten ((MAP (parts L)) N))) = (flatten ((MAP (flatten o (parts L))) N))), (((MAP (flatten o (parts L))) N) = N) |- ((~ ((flatten (flatten ((MAP (parts L)) N))) = (flatten N))) /\ F)
+T c==> c~ c= cflatten cflatten cMAP * part cparts f0 f1 cflatten f1 c==> c= cflatten cflatten cMAP * part cparts f0 f1 cflatten cMAP * * part co part cflatten * part cparts f0 f1 c==> c= cMAP * * part co part cflatten * part cparts f0 f1 f1 c/\ c~ c= cflatten cflatten cMAP * part cparts f0 f1 cflatten f1 cF
+- (_10134944 = _10134946) |- ((_10134945 = _10134947) ==> (((MAP _10134944) _10134945) = ((MAP _10134946) _10134947)))
+T c==> c= f0 f1 c==> c= f2 f3 c= cMAP f0 f2 cMAP f1 f3
++ (A = F) |- ((((F ==> B) /\ F) ==> B) = (((A ==> B) /\ A) ==> B))
+T c==> c= f0 cF c= c==> c/\ c==> cF f1 cF f1 c==> c/\ c==> f0 f1 f0 f1
++ |- ((!L. (!r. (!P. ((((uniq r) /\ (~ (r = NIL))) /\ (P r)) ==> (P (flatten ((parts L) r))))))) ==> (!P. (!L. (!r. ((((uniq r) /\ (~ (r = NIL))) /\ (P r)) ==> (P (flatten ((parts L) r))))))))
+T c==> ! ! ! c==> c/\ c/\ cuniq b1 c~ c= b1 cNIL * b2 b1 * b2 cflatten cparts b0 b1 ! ! ! c==> c/\ c/\ cuniq b2 c~ c= b2 cNIL * b0 b2 * b0 cflatten cparts b1 b2
+- ((~ (!a. (!b. (!c. ((a ==> (b = c)) ==> (!P. ((a /\ (P c)) ==> (P b)))))))) ==> F) |- ((((~ (!a. (!b. (!c. ((a ==> (b = c)) ==> (!P. ((a /\ (P c)) ==> (P b)))))))) ==> F) ==> ((~ (!a. (!b. (!c. ((a ==> (b = c)) ==> (!P. ((a /\ (P c)) ==> (P b)))))))) ==> F)) ==> ((~ (!a. (!b. (!c. ((a ==> (b = c)) ==> (!P. ((a /\ (P c)) ==> (P b)))))))) ==> F))
+T c==> c==> c~ ! ! ! c==> c==> b0 c= b1 b2 ! c==> c/\ b0 * b3 b2 * b3 b1 cF c==> c==> c==> c~ ! ! ! c==> c==> b0 c= b1 b2 ! c==> c/\ b0 * b3 b2 * b3 b1 cF c==> c~ ! ! ! c==> c==> b0 c= b1 b2 ! c==> c/\ b0 * b3 b2 * b3 b1 cF c==> c~ ! ! ! c==> c==> b0 c= b1 b2 ! c==> c/\ b0 * b3 b2 * b3 b1 cF
++ |- (((~ (((flatten (flatten ((MAP (parts L)) N))) = (flatten ((MAP (flatten o (parts L))) N))) ==> ((((MAP (flatten o (parts L))) N) = N) ==> ((flatten (flatten ((MAP (parts L)) N))) = (flatten N))))) ==> F) = (((flatten (flatten ((MAP (parts L)) N))) = (flatten ((MAP (flatten o (parts L))) N))) ==> ((((MAP (flatten o (parts L))) N) = N) ==> ((flatten (flatten ((MAP (parts L)) N))) = (flatten N)))))
+T c= c==> c~ c==> c= cflatten cflatten cMAP * part cparts f0 f1 cflatten cMAP * * part co part cflatten * part cparts f0 f1 c==> c= cMAP * * part co part cflatten * part cparts f0 f1 f1 c= cflatten cflatten cMAP * part cparts f0 f1 cflatten f1 cF c==> c= cflatten cflatten cMAP * part cparts f0 f1 cflatten cMAP * * part co part cflatten * part cparts f0 f1 c==> c= cMAP * * part co part cflatten * part cparts f0 f1 f1 c= cflatten cflatten cMAP * part cparts f0 f1 cflatten f1
++ |- ((\P. (!L. (!r. ((((uniq r) /\ (~ (r = NIL))) /\ (P r)) ==> (P (flatten ((parts L) r))))))) P)
+T * / ! ! c==> c/\ c/\ cuniq b2 c~ c= b2 cNIL * b0 b2 * b0 cflatten cparts b1 b2 f0
++ ((!x. (((MEM x) s) ==> (a x))) = ((all a) s)) |- (((all a) s) = (!x. (((MEM x) s) ==> (a x))))
+T c==> c= ! c==> cMEM b0 f0 * f1 b0 call f1 f0 c= call f1 f0 ! c==> cMEM b0 f0 * f1 b0
++ (~ (?L. (?N. (((normal_list L) N) /\ ((MEM r) N))))), ((MEM r) N), ((normal_list L) N) |- F
+T c==> c~ c? / c? / c/\ cnormal_list b0 b1 cMEM f0 b1 c==> cMEM f0 f1 c==> cnormal_list f2 f1 cF
++ (P c), (b = c) |- ((~ (P b)) ==> F)
+T c==> * f0 f1 c==> c= f2 f1 c==> c~ * f0 f2 cF
++ (~ (P b)), (b = c) |- (~ (P c))
+T c==> c~ * f0 f1 c==> c= f1 f2 c~ * f0 f2
++ |- ((A = F) ==> (((A ==> B) /\ A) ==> B))
+T c==> c= f0 cF c==> c/\ c==> f0 f1 f0 f1
++ ((flatten (flatten ((MAP (parts L)) N))) = (flatten ((MAP (flatten o (parts L))) N))) |- ((((I flatten) ((MAP (flatten o (parts L))) N)) = ((I flatten) N)) = ((((I flatten) ((MAP (flatten o (parts L))) N)) = ((I flatten) (flatten ((MAP (parts L)) N)))) /\ (((I flatten) ((MAP (flatten o (parts L))) N)) = ((I flatten) N))))
+T c==> c= cflatten cflatten cMAP * part cparts f0 f1 cflatten cMAP * * part co part cflatten * part cparts f0 f1 c= c= cI part cflatten cMAP * * part co part cflatten * part cparts f0 f1 cI part cflatten f1 c/\ c= cI part cflatten cMAP * * part co part cflatten * part cparts f0 f1 cI part cflatten cflatten cMAP * part cparts f0 f1 c= cI part cflatten cMAP * * part co part cflatten * part cparts f0 f1 cI part cflatten f1
++ |- ((!a. (!b. (!c. ((a ==> (b = c)) ==> (!P. ((a /\ (P c)) ==> (P b))))))) = ((!b. (!c. ((T ==> (b = c)) ==> (!P. ((T /\ (P c)) ==> (P b)))))) /\ (!b. (!c. ((F ==> (b = c)) ==> (!P. ((F /\ (P c)) ==> (P b))))))))
+T c= ! ! ! c==> c==> b0 c= b1 b2 ! c==> c/\ b0 * b3 b2 * b3 b1 c/\ ! ! c==> c==> cT c= b0 b1 ! c==> c/\ cT * b2 b1 * b2 b0 ! ! c==> c==> cF c= b0 b1 ! c==> c/\ cF * b2 b1 * b2 b0
++ (!L. (!r. (!P. ((((uniq r) /\ (~ (r = NIL))) /\ (P r)) ==> (P (flatten ((parts L) r))))))) |- (!P. ((((uniq r) /\ (~ (r = NIL))) /\ (P r)) ==> (P (flatten ((parts L) r)))))
+T c==> ! ! ! c==> c/\ c/\ cuniq b1 c~ c= b1 cNIL * b2 b1 * b2 cflatten cparts b0 b1 ! c==> c/\ c/\ cuniq f0 c~ c= f0 cNIL * b0 f0 * b0 cflatten cparts f1 f0
++ |- (((!P. (!L. (!r. ((((uniq r) /\ (~ (r = NIL))) /\ (P r)) ==> (P (flatten ((parts L) r))))))) ==> ((\P. (!L. (!r. ((((uniq r) /\ (~ (r = NIL))) /\ (P r)) ==> (P (flatten ((parts L) r))))))) P)) = ((\P. (!L. (!r. ((((uniq r) /\ (~ (r = NIL))) /\ (P r)) ==> (P (flatten ((parts L) r))))))) P))
+T c= c==> ! ! ! c==> c/\ c/\ cuniq b2 c~ c= b2 cNIL * b0 b2 * b0 cflatten cparts b1 b2 * / ! ! c==> c/\ c/\ cuniq b2 c~ c= b2 cNIL * b0 b2 * b0 cflatten cparts b1 b2 f0 * / ! ! c==> c/\ c/\ cuniq b2 c~ c= b2 cNIL * b0 b2 * b0 cflatten cparts b1 b2 f0
++ (!L. (!N. (!r. ((((normal_list L) N) /\ ((MEM r) N)) ==> ((uniq r) /\ (~ (r = NIL))))))), (?L. (?N. (((normal_list L) N) /\ ((MEM r) N)))) |- ((?L. (?N. (((normal_list L) N) /\ ((MEM r) N)))) /\ ((uniq r) /\ (~ (r = NIL))))
+T c==> ! ! ! c==> c/\ cnormal_list b0 b1 cMEM b2 b1 c/\ cuniq b2 c~ c= b2 cNIL c==> c? / c? / c/\ cnormal_list b0 b1 cMEM f0 b1 c/\ c? / c? / c/\ cnormal_list b0 b1 cMEM f0 b1 c/\ cuniq f0 c~ c= f0 cNIL
+- |- ((!N'. ((~ ((normal_list L) N')) \/ (~ ((MEM r) N)))) = ((!N. (~ ((normal_list L) N))) \/ (~ ((MEM r) N))))
+T c= ! c\/ c~ cnormal_list f0 b0 c~ cMEM f1 f2 c\/ ! c~ cnormal_list f0 b0 c~ cMEM f1 f2
+- |- ((\t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3)))) t2)
+T * / ! c= c\/ f0 c\/ b0 b1 c\/ c\/ f0 b0 b1 f1
+- |- ((!r. ((P r) \/ Q)) = ((!r. (P r)) \/ Q))
+T c= ! c\/ * f0 b0 f1 c\/ ! * f0 b0 f1
++ |- (((~ (P b)) ==> F) = (P b))
+T c= c==> c~ * f0 f1 cF * f0 f1
+- (!r. (((MEM r) N) ==> (((flatten o (parts L)) r) = r))) |- ((\r. ((~ ((MEM r) N)) \/ (((I (flatten o (parts L))) r) = r))) _10134929)
+T c==> ! c==> cMEM b0 f0 c= co part cflatten * part cparts f1 b0 b0 * / c\/ c~ cMEM b0 f0 c= cI * * part co part cflatten * part cparts f1 b0 b0 f2
+- (~ (((I flatten) (flatten ((MAP (parts L)) N))) = ((I flatten) N))), ((flatten (flatten ((MAP (parts L)) N))) = (flatten ((MAP (flatten o (parts L))) N))), (((MAP (flatten o (parts L))) N) = N) |- ((~ (((I flatten) (flatten ((MAP (parts L)) N))) = ((I flatten) N))) /\ (((I flatten) (flatten ((MAP (parts L)) N))) = ((I flatten) N)))
+T c==> c~ c= cI part cflatten cflatten cMAP * part cparts f0 f1 cI part cflatten f1 c==> c= cflatten cflatten cMAP * part cparts f0 f1 cflatten cMAP * * part co part cflatten * part cparts f0 f1 c==> c= cMAP * * part co part cflatten * part cparts f0 f1 f1 c/\ c~ c= cI part cflatten cflatten cMAP * part cparts f0 f1 cI part cflatten f1 c= cI part cflatten cflatten cMAP * part cparts f0 f1 cI part cflatten f1
+- (_10134930 = _10134932), (_10134931 = _10134933) |- ((_10134930 = _10134932) /\ (((MEM _10134932) _10134933) \/ (~ ((MEM _10134930) _10134931))))
+T c==> c= f0 f1 c==> c= f2 f3 c/\ c= f0 f1 c\/ cMEM f1 f3 c~ cMEM f0 f2
++ ((\N. (((normal_list L) N) /\ ((MEM r) N))) N) |- (((((normal_list L) N) /\ ((MEM r) N)) ==> ((!L. (!N. (!r. ((((normal_list L) N) /\ ((MEM r) N)) ==> ((uniq r) /\ (~ (r = NIL))))))) ==> ((uniq r) /\ (~ (r = NIL))))) = ((!L. (!N. (!r. ((((normal_list L) N) /\ ((MEM r) N)) ==> ((uniq r) /\ (~ (r = NIL))))))) ==> ((uniq r) /\ (~ (r = NIL)))))
+T c==> * / c/\ cnormal_list f0 b0 cMEM f1 b0 f2 c= c==> c/\ cnormal_list f0 f2 cMEM f1 f2 c==> ! ! ! c==> c/\ cnormal_list b0 b1 cMEM b2 b1 c/\ cuniq b2 c~ c= b2 cNIL c/\ cuniq f1 c~ c= f1 cNIL c==> ! ! ! c==> c/\ cnormal_list b0 b1 cMEM b2 b1 c/\ cuniq b2 c~ c= b2 cNIL c/\ cuniq f1 c~ c= f1 cNIL
+- |- (((!N. (!L. (((normal_list L) N) ==> (((MEM r) N) ==> ((~ (?L. (?N. (((normal_list L) N) /\ ((MEM r) N))))) ==> F))))) ==> ((\N. (!L. (((normal_list L) N) ==> (((MEM r) N) ==> ((~ (?L. (?N. (((normal_list L) N) /\ ((MEM r) N))))) ==> F))))) N)) = ((\N. (!L. (((normal_list L) N) ==> (((MEM r) N) ==> ((~ (?L. (?N. (((normal_list L) N) /\ ((MEM r) N))))) ==> F))))) N))
+T c= c==> ! ! c==> cnormal_list b1 b0 c==> cMEM f0 b0 c==> c~ c? / c? / c/\ cnormal_list b2 b2 cMEM f0 b2 cF * / ! c==> cnormal_list b1 b0 c==> cMEM f0 b0 c==> c~ c? / c? / c/\ cnormal_list b2 b2 cMEM f0 b2 cF f1 * / ! c==> cnormal_list b1 b0 c==> cMEM f0 b0 c==> c~ c? / c? / c/\ cnormal_list b2 b2 cMEM f0 b2 cF f1
++ ((flatten (flatten ((MAP (parts L)) N))) = (flatten ((MAP (flatten o (parts L))) N))), (((MAP (flatten o (parts L))) N) = N) |- ((((I flatten) ((MAP (flatten o (parts L))) N)) = ((I flatten) (flatten ((MAP (parts L)) N)))) /\ (((I flatten) ((MAP (flatten o (parts L))) N)) = ((I flatten) N)))
+T c==> c= cflatten cflatten cMAP * part cparts f0 f1 cflatten cMAP * * part co part cflatten * part cparts f0 f1 c==> c= cMAP * * part co part cflatten * part cparts f0 f1 f1 c/\ c= cI part cflatten cMAP * * part co part cflatten * part cparts f0 f1 cI part cflatten cflatten cMAP * part cparts f0 f1 c= cI part cflatten cMAP * * part co part cflatten * part cparts f0 f1 cI part cflatten f1
+- |- ((((((normal_list L) N) ==> (((MEM r) N) ==> ((~ (?L. (?N. (((normal_list L) N) /\ ((MEM r) N))))) ==> F))) ==> (((normal_list L) N) ==> (((MEM r) N) ==> ((~ (?L. (?N. (((normal_list L) N) /\ ((MEM r) N))))) ==> F)))) ==> ((((normal_list L) N) ==> (((MEM r) N) ==> ((~ (?L. (?N. (((normal_list L) N) /\ ((MEM r) N))))) ==> F))) ==> (((normal_list L) N) ==> (((MEM r) N) ==> ((~ (?L. (?N. (((normal_list L) N) /\ ((MEM r) N))))) ==> F))))) = ((((normal_list L) N) ==> (((MEM r) N) ==> ((~ (?L. (?N. (((normal_list L) N) /\ ((MEM r) N))))) ==> F))) ==> (((normal_list L) N) ==> (((MEM r) N) ==> ((~ (?L. (?N. (((normal_list L) N) /\ ((MEM r) N))))) ==> F)))))
+T c= c==> c==> c==> cnormal_list f0 f1 c==> cMEM f2 f1 c==> c~ c? / c? / c/\ cnormal_list b0 b1 cMEM f2 b1 cF c==> cnormal_list f0 f1 c==> cMEM f2 f1 c==> c~ c? / c? / c/\ cnormal_list b0 b1 cMEM f2 b1 cF c==> c==> cnormal_list f0 f1 c==> cMEM f2 f1 c==> c~ c? / c? / c/\ cnormal_list b0 b1 cMEM f2 b1 cF c==> cnormal_list f0 f1 c==> cMEM f2 f1 c==> c~ c? / c? / c/\ cnormal_list b0 b1 cMEM f2 b1 cF c==> c==> cnormal_list f0 f1 c==> cMEM f2 f1 c==> c~ c? / c? / c/\ cnormal_list b0 b1 cMEM f2 b1 cF c==> cnormal_list f0 f1 c==> cMEM f2 f1 c==> c~ c? / c? / c/\ cnormal_list b0 b1 cMEM f2 b1 cF
++ |- (((!x. (((\L. (?N. (((normal_list L) N) /\ ((MEM r) N)))) x) ==> ((!L. (!N. (!r. ((((normal_list L) N) /\ ((MEM r) N)) ==> ((uniq r) /\ (~ (r = NIL))))))) ==> ((uniq r) /\ (~ (r = NIL)))))) ==> ((?L. (?N. (((normal_list L) N) /\ ((MEM r) N)))) ==> ((!L. (!N. (!r. ((((normal_list L) N) /\ ((MEM r) N)) ==> ((uniq r) /\ (~ (r = NIL))))))) ==> ((uniq r) /\ (~ (r = NIL)))))) = ((?L. (?N. (((normal_list L) N) /\ ((MEM r) N)))) ==> ((!L. (!N. (!r. ((((normal_list L) N) /\ ((MEM r) N)) ==> ((uniq r) /\ (~ (r = NIL))))))) ==> ((uniq r) /\ (~ (r = NIL))))))
+T c= c==> ! c==> * / c? / c/\ cnormal_list b1 b2 cMEM f0 b2 b0 c==> ! ! ! c==> c/\ cnormal_list b1 b2 cMEM b3 b2 c/\ cuniq b3 c~ c= b3 cNIL c/\ cuniq f0 c~ c= f0 cNIL c==> c? / c? / c/\ cnormal_list b0 b1 cMEM f0 b1 c==> ! ! ! c==> c/\ cnormal_list b0 b1 cMEM b2 b1 c/\ cuniq b2 c~ c= b2 cNIL c/\ cuniq f0 c~ c= f0 cNIL c==> c? / c? / c/\ cnormal_list b0 b1 cMEM f0 b1 c==> ! ! ! c==> c/\ cnormal_list b0 b1 cMEM b2 b1 c/\ cuniq b2 c~ c= b2 cNIL c/\ cuniq f0 c~ c= f0 cNIL
++ |- (((~ ((flatten (flatten ((MAP (parts L)) N))) = (flatten N))) ==> F) = ((flatten (flatten ((MAP (parts L)) N))) = (flatten N)))
+T c= c==> c~ c= cflatten cflatten cMAP * part cparts f0 f1 cflatten f1 cF c= cflatten cflatten cMAP * part cparts f0 f1 cflatten f1
++ ((MEM r) N), ((normal_list L) N) |- (((normal_list L) N) /\ ((MEM r) N))
+T c==> cMEM f0 f1 c==> cnormal_list f2 f1 c/\ cnormal_list f2 f1 cMEM f0 f1
++ |- (((((MAP (flatten o (parts L))) N) = N) ==> ((flatten (flatten ((MAP (parts L)) N))) = (flatten N))) = ((((MAP (flatten o (parts L))) N) = ((MAP I) N)) ==> ((flatten (flatten ((MAP (parts L)) N))) = (flatten N))))
+T c= c==> c= cMAP * * part co part cflatten * part cparts f0 f1 f1 c= cflatten cflatten cMAP * part cparts f0 f1 cflatten f1 c==> c= cMAP * * part co part cflatten * part cparts f0 f1 cMAP part cI f1 c= cflatten cflatten cMAP * part cparts f0 f1 cflatten f1
++ ((A = T) ==> (((A ==> B) /\ A) ==> B)), ((A = F) ==> (((A ==> B) /\ A) ==> B)) |- (((A ==> B) /\ A) ==> B)
+T c==> c==> c= f0 cT c==> c/\ c==> f0 f1 f0 f1 c==> c==> c= f0 cF c==> c/\ c==> f0 f1 f0 f1 c==> c/\ c==> f0 f1 f0 f1
+- (~ F), (~ (?L. (?N. (((normal_list L) N) /\ ((MEM r) N))))), ((MEM r) N), ((normal_list L) N) |- ((~ F) /\ F)
+T c==> c~ cF c==> c~ c? / c? / c/\ cnormal_list b0 b1 cMEM f0 b1 c==> cMEM f0 f1 c==> cnormal_list f2 f1 c/\ c~ cF cF
++ |- ((\r. (((uniq r) /\ (~ (r = NIL))) ==> ((flatten ((parts L) r)) = r))) r)
+T * / c==> c/\ cuniq b0 c~ c= b0 cNIL c= cflatten cparts f0 b0 b0 f1
++ ((\L. (?N. (((normal_list L) N) /\ ((MEM r) N)))) L) |- (?N. (((normal_list L) N) /\ ((MEM r) N)))
+T c==> * / c? / c/\ cnormal_list b0 b1 cMEM f0 b1 f1 c? / c/\ cnormal_list f1 b0 cMEM f0 b0
++ |- ((\N. (!L. (((normal_list L) N) ==> ((!r. (((MEM r) N) ==> (((flatten o (parts L)) r) = r))) ==> ((~ (((flatten (flatten ((MAP (parts L)) N))) = (flatten ((MAP (flatten o (parts L))) N))) ==> ((((MAP (flatten o (parts L))) N) = N) ==> ((flatten (flatten ((MAP (parts L)) N))) = (flatten N))))) ==> F))))) N)
+T * / ! c==> cnormal_list b1 b0 c==> ! c==> cMEM b2 b0 c= co part cflatten * part cparts b1 b2 b2 c==> c~ c==> c= cflatten cflatten cMAP * part cparts b1 b0 cflatten cMAP * * part co part cflatten * part cparts b1 b0 c==> c= cMAP * * part co part cflatten * part cparts b1 b0 b0 c= cflatten cflatten cMAP * part cparts b1 b0 cflatten b0 cF f0
+- |- (((!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3)))) ==> ((\t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3)))) t2)) = ((\t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3)))) t2))
+T c= c==> ! ! c= c\/ f0 c\/ b0 b1 c\/ c\/ f0 b0 b1 * / ! c= c\/ f0 c\/ b0 b1 c\/ c\/ f0 b0 b1 f1 * / ! c= c\/ f0 c\/ b0 b1 c\/ c\/ f0 b0 b1 f1
+- (!r. (((MEM r) N) ==> (((flatten o (parts L)) r) = r))) |- (((!r. ((~ ((MEM r) N)) \/ (((I (flatten o (parts L))) r) = r))) ==> ((\r. ((~ ((MEM r) N)) \/ (((I (flatten o (parts L))) r) = r))) _10134929)) = ((\r. ((~ ((MEM r) N)) \/ (((I (flatten o (parts L))) r) = r))) _10134929))
+T c==> ! c==> cMEM b0 f0 c= co part cflatten * part cparts f1 b0 b0 c= c==> ! c\/ c~ cMEM b0 f0 c= cI * * part co part cflatten * part cparts f1 b0 b0 * / c\/ c~ cMEM b0 f0 c= cI * * part co part cflatten * part cparts f1 b0 b0 f2 * / c\/ c~ cMEM b0 f0 c= cI * * part co part cflatten * part cparts f1 b0 b0 f2
++ (P c), (b = c) |- ((P c) /\ (P b))
+T c==> * f0 f1 c==> c= f2 f1 c/\ * f0 f1 * f0 f2
+- |- (((((normal_list L) N) ==> (((MEM r) N) ==> ((~ (?L. (?N. (((normal_list L) N) /\ ((MEM r) N))))) ==> F))) ==> (((normal_list L) N) ==> (((MEM r) N) ==> ((~ (?L. (?N. (((normal_list L) N) /\ ((MEM r) N))))) ==> F)))) ==> ((((normal_list L) N) ==> (((MEM r) N) ==> ((~ (?L. (?N. (((normal_list L) N) /\ ((MEM r) N))))) ==> F))) ==> (((normal_list L) N) ==> (((MEM r) N) ==> ((~ (?L. (?N. (((normal_list L) N) /\ ((MEM r) N))))) ==> F)))))
+T c==> c==> c==> cnormal_list f0 f1 c==> cMEM f2 f1 c==> c~ c? / c? / c/\ cnormal_list b0 b1 cMEM f2 b1 cF c==> cnormal_list f0 f1 c==> cMEM f2 f1 c==> c~ c? / c? / c/\ cnormal_list b0 b1 cMEM f2 b1 cF c==> c==> cnormal_list f0 f1 c==> cMEM f2 f1 c==> c~ c? / c? / c/\ cnormal_list b0 b1 cMEM f2 b1 cF c==> cnormal_list f0 f1 c==> cMEM f2 f1 c==> c~ c? / c? / c/\ cnormal_list b0 b1 cMEM f2 b1 cF
+- (_10134954 = _10134956) |- ((_10134954 = _10134956) /\ ((~ (_10134955 = _10134957)) \/ ((_10134954 o _10134955) = (_10134956 o _10134957))))
+T c==> c= f0 f1 c/\ c= f0 f1 c\/ c~ c= f2 f3 c= * * part co f0 f2 * * part co f1 f3
++ |- (T = (((T ==> B) /\ T) ==> B))
+T c= cT c==> c/\ c==> cT f0 cT f0
++ |- ((\L. (!r. ((((uniq r) /\ (~ (r = NIL))) /\ (P r)) ==> (P (flatten ((parts L) r)))))) L)
+T * / ! c==> c/\ c/\ cuniq b1 c~ c= b1 cNIL * f0 b1 * f0 cflatten cparts b0 b1 f1
++ |- (((!a. (!s. (((all a) s) = (!x. (((MEM x) s) ==> (a x)))))) ==> ((\a. (!s. (((all a) s) = (!x. (((MEM x) s) ==> (a x)))))) a)) = ((\a. (!s. (((all a) s) = (!x. (((MEM x) s) ==> (a x)))))) a))
+T c= c==> ! ! c= call b0 b1 ! c==> cMEM b2 b1 * b0 b2 * / ! c= call b0 b1 ! c==> cMEM b2 b1 * b0 b2 f0 * / ! c= call b0 b1 ! c==> cMEM b2 b1 * b0 b2 f0
++ ((MEM r) N), ((normal_list L) N) |- ((flatten ((parts L) r)) = r)
+T c==> cMEM f0 f1 c==> cnormal_list f2 f1 c= cflatten cparts f2 f0 f0
++ (((MAP (flatten o (parts L))) N) = N) |- ((((flatten = flatten) /\ (((MAP (flatten o (parts L))) N) = N)) ==> (((I flatten) ((MAP (flatten o (parts L))) N)) = ((I flatten) N))) = (((I flatten) ((MAP (flatten o (parts L))) N)) = ((I flatten) N)))
+T c==> c= cMAP * * part co part cflatten * part cparts f0 f1 f1 c= c==> c/\ c= part cflatten part cflatten c= cMAP * * part co part cflatten * part cparts f0 f1 f1 c= cI part cflatten cMAP * * part co part cflatten * part cparts f0 f1 cI part cflatten f1 c= cI part cflatten cMAP * * part co part cflatten * part cparts f0 f1 cI part cflatten f1
++ ((MEM r) N), ((normal_list L) N) |- (?L. (?N. (((normal_list L) N) /\ ((MEM r) N))))
+T c==> cMEM f0 f1 c==> cnormal_list f2 f1 c? / c? / c/\ cnormal_list b0 b1 cMEM f0 b1
+- |- ((~ (_10134942 = _10134943)) \/ ((flatten _10134942) = (flatten _10134943)))
+T c\/ c~ c= f0 f1 c= cflatten f0 cflatten f1
++ |- ((x = x) = T)
+T c= c= f0 f0 cT
++ |- ((\l. (((ALL (\x. ((f x) = (g x)))) l) ==> (((MAP f) l) = ((MAP g) l)))) l)
+T * / c==> cALL / c= * f0 b1 * f1 b1 b0 c= cMAP f0 b0 cMAP f1 b0 f2
++ (!L. (!N. (!r. ((((normal_list L) N) /\ ((MEM r) N)) ==> ((uniq r) /\ (~ (r = NIL))))))) |- ((\r. ((((normal_list L) N) /\ ((MEM r) N)) ==> ((uniq r) /\ (~ (r = NIL))))) r)
+T c==> ! ! ! c==> c/\ cnormal_list b0 b1 cMEM b2 b1 c/\ cuniq b2 c~ c= b2 cNIL * / c==> c/\ cnormal_list f0 f1 cMEM b0 f1 c/\ cuniq b0 c~ c= b0 cNIL f2
+- |- ((((~ (!a. (!b. (!c. ((a ==> (b = c)) ==> (!P. ((a /\ (P c)) ==> (P b)))))))) ==> F) ==> ((~ (!a. (!b. (!c. ((a ==> (b = c)) ==> (!P. ((a /\ (P c)) ==> (P b)))))))) ==> F)) ==> (((~ (!a. (!b. (!c. ((a ==> (b = c)) ==> (!P. ((a /\ (P c)) ==> (P b)))))))) ==> F) ==> ((~ (!a. (!b. (!c. ((a ==> (b = c)) ==> (!P. ((a /\ (P c)) ==> (P b)))))))) ==> F)))
+T c==> c==> c==> c~ ! ! ! c==> c==> b0 c= b1 b2 ! c==> c/\ b0 * b3 b2 * b3 b1 cF c==> c~ ! ! ! c==> c==> b0 c= b1 b2 ! c==> c/\ b0 * b3 b2 * b3 b1 cF c==> c==> c~ ! ! ! c==> c==> b0 c= b1 b2 ! c==> c/\ b0 * b3 b2 * b3 b1 cF c==> c~ ! ! ! c==> c==> b0 c= b1 b2 ! c==> c/\ b0 * b3 b2 * b3 b1 cF
++ (!L. (!r. (!P. ((((uniq r) /\ (~ (r = NIL))) /\ (P r)) ==> (P (flatten ((parts L) r))))))) |- ((!L. (!r. (!P. ((((uniq r) /\ (~ (r = NIL))) /\ (P r)) ==> (P (flatten ((parts L) r))))))) /\ (!P. (!L. (!r. ((((uniq r) /\ (~ (r = NIL))) /\ (P r)) ==> (P (flatten ((parts L) r))))))))
+T c==> ! ! ! c==> c/\ c/\ cuniq b1 c~ c= b1 cNIL * b2 b1 * b2 cflatten cparts b0 b1 c/\ ! ! ! c==> c/\ c/\ cuniq b1 c~ c= b1 cNIL * b2 b1 * b2 cflatten cparts b0 b1 ! ! ! c==> c/\ c/\ cuniq b2 c~ c= b2 cNIL * b0 b2 * b0 cflatten cparts b1 b2
++ (!L. (!N. (!r. ((((normal_list L) N) /\ ((MEM r) N)) ==> ((uniq r) /\ (~ (r = NIL))))))), (((normal_list L) N) /\ ((MEM r) N)) |- ((uniq r) /\ (~ (r = NIL)))
+T c==> ! ! ! c==> c/\ cnormal_list b0 b1 cMEM b2 b1 c/\ cuniq b2 c~ c= b2 cNIL c==> c/\ cnormal_list f0 f1 cMEM f2 f1 c/\ cuniq f2 c~ c= f2 cNIL
++ ((flatten (flatten ((MAP (parts L)) N))) = (flatten ((MAP (flatten o (parts L))) N))) |- ((((I flatten) (flatten ((MAP (parts L)) N))) = ((I flatten) ((MAP (flatten o (parts L))) N))) /\ (((I flatten) (flatten ((MAP (parts L)) N))) = ((I flatten) (flatten ((MAP (parts L)) N)))))
+T c==> c= cflatten cflatten cMAP * part cparts f0 f1 cflatten cMAP * * part co part cflatten * part cparts f0 f1 c/\ c= cI part cflatten cflatten cMAP * part cparts f0 f1 cI part cflatten cMAP * * part co part cflatten * part cparts f0 f1 c= cI part cflatten cflatten cMAP * part cparts f0 f1 cI part cflatten cflatten cMAP * part cparts f0 f1
++ |- ((p \/ (q \/ r)) = (q \/ (p \/ r)))
+T c= c\/ f0 c\/ f1 f2 c\/ f1 c\/ f0 f2
+- (!f. (!g. (!l. (((ALL (\x. ((f x) = (g x)))) l) ==> (((MAP f) l) = ((MAP g) l)))))) |- (((!l. (((ALL (\x. ((f x) = (g x)))) l) ==> (((MAP f) l) = ((MAP g) l)))) ==> ((\l. (((ALL (\x. ((f x) = (g x)))) l) ==> (((MAP f) l) = ((MAP g) l)))) l)) = ((\l. (((ALL (\x. ((f x) = (g x)))) l) ==> (((MAP f) l) = ((MAP g) l)))) l))
+T c==> ! ! ! c==> cALL / c= * b0 b3 * b1 b3 b2 c= cMAP b0 b2 cMAP b1 b2 c= c==> ! c==> cALL / c= * f0 b1 * f1 b1 b0 c= cMAP f0 b0 cMAP f1 b0 * / c==> cALL / c= * f0 b1 * f1 b1 b0 c= cMAP f0 b0 cMAP f1 b0 f2 * / c==> cALL / c= * f0 b1 * f1 b1 b0 c= cMAP f0 b0 cMAP f1 b0 f2
++ ((\L. (?N. (((normal_list L) N) /\ ((MEM r) N)))) L) |- (((\L. (?N. (((normal_list L) N) /\ ((MEM r) N)))) L) /\ ((!L. (!N. (!r. ((((normal_list L) N) /\ ((MEM r) N)) ==> ((uniq r) /\ (~ (r = NIL))))))) ==> ((uniq r) /\ (~ (r = NIL)))))
+T c==> * / c? / c/\ cnormal_list b0 b1 cMEM f0 b1 f1 c/\ * / c? / c/\ cnormal_list b0 b1 cMEM f0 b1 f1 c==> ! ! ! c==> c/\ cnormal_list b0 b1 cMEM b2 b1 c/\ cuniq b2 c~ c= b2 cNIL c/\ cuniq f0 c~ c= f0 cNIL
++ |- ((a ==> b) = ((~ a) \/ b))
+T c= c==> f0 f1 c\/ c~ f0 f1
+- (!L. (!r. (!P. ((((uniq r) /\ (~ (r = NIL))) /\ (P r)) ==> (P (flatten ((parts L) r))))))), (((uniq r) /\ (~ (r = NIL))) /\ (P r)) |- ((!L. (!r. (!P. ((((uniq r) /\ (~ (r = NIL))) /\ (P r)) ==> (P (flatten ((parts L) r))))))) /\ (P (flatten ((parts L) r))))
+T c==> ! ! ! c==> c/\ c/\ cuniq b1 c~ c= b1 cNIL * b2 b1 * b2 cflatten cparts b0 b1 c==> c/\ c/\ cuniq f0 c~ c= f0 cNIL * f1 f0 c/\ ! ! ! c==> c/\ c/\ cuniq b1 c~ c= b1 cNIL * b2 b1 * b2 cflatten cparts b0 b1 * f1 cflatten cparts f2 f0
+- ((MEM r) N) |- ((~ ((MEM r) N)) ==> ((MEM r) N))
+T c==> cMEM f0 f1 c==> c~ cMEM f0 f1 cMEM f0 f1
++ (!L. (!r. (!P. ((((uniq r) /\ (~ (r = NIL))) /\ (P r)) ==> (P (flatten ((parts L) r))))))) |- (!r. ((((uniq r) /\ (~ (r = NIL))) /\ (P r)) ==> (P (flatten ((parts L) r)))))
+T c==> ! ! ! c==> c/\ c/\ cuniq b1 c~ c= b1 cNIL * b2 b1 * b2 cflatten cparts b0 b1 ! c==> c/\ c/\ cuniq b0 c~ c= b0 cNIL * f0 b0 * f0 cflatten cparts f1 b0
+- |- ((!N'. ((~ ((normal_list L) N)) \/ (~ ((MEM r) N')))) = ((~ ((normal_list L) N)) \/ (!N. (~ ((MEM r) N)))))
+T c= ! c\/ c~ cnormal_list f0 f1 c~ cMEM f2 b0 c\/ c~ cnormal_list f0 f1 ! c~ cMEM f2 b0
+- ((flatten (flatten ((MAP (parts L)) N))) = (flatten ((MAP (flatten o (parts L))) N))), (((MAP (flatten o (parts L))) N) = N) |- ((~ (((I flatten) (flatten ((MAP (parts L)) N))) = ((I flatten) N))) ==> (((I flatten) (flatten ((MAP (parts L)) N))) = ((I flatten) N)))
+T c==> c= cflatten cflatten cMAP * part cparts f0 f1 cflatten cMAP * * part co part cflatten * part cparts f0 f1 c==> c= cMAP * * part co part cflatten * part cparts f0 f1 f1 c==> c~ c= cI part cflatten cflatten cMAP * part cparts f0 f1 cI part cflatten f1 c= cI part cflatten cflatten cMAP * part cparts f0 f1 cI part cflatten f1
+- (~ (((I flatten) ((MAP (flatten o (parts L))) N)) = ((I flatten) N))), (((MAP (flatten o (parts L))) N) = N) |- ((~ (((I flatten) ((MAP (flatten o (parts L))) N)) = ((I flatten) N))) /\ (((I flatten) ((MAP (flatten o (parts L))) N)) = ((I flatten) N)))
+T c==> c~ c= cI part cflatten cMAP * * part co part cflatten * part cparts f0 f1 cI part cflatten f1 c==> c= cMAP * * part co part cflatten * part cparts f0 f1 f1 c/\ c~ c= cI part cflatten cMAP * * part co part cflatten * part cparts f0 f1 cI part cflatten f1 c= cI part cflatten cMAP * * part co part cflatten * part cparts f0 f1 cI part cflatten f1
+- ((((flatten (flatten ((MAP (parts L)) N))) = (flatten ((MAP (flatten o (parts L))) N))) ==> B) /\ ((flatten (flatten ((MAP (parts L)) N))) = (flatten ((MAP (flatten o (parts L))) N)))), (((((flatten (flatten ((MAP (parts L)) N))) = (flatten ((MAP (flatten o (parts L))) N))) ==> B) /\ ((flatten (flatten ((MAP (parts L)) N))) = (flatten ((MAP (flatten o (parts L))) N)))) ==> B) |- (((((flatten (flatten ((MAP (parts L)) N))) = (flatten ((MAP (flatten o (parts L))) N))) ==> B) /\ ((flatten (flatten ((MAP (parts L)) N))) = (flatten ((MAP (flatten o (parts L))) N)))) /\ B)
+T c==> c/\ c==> c= cflatten cflatten cMAP * part cparts f0 f1 cflatten cMAP * * part co part cflatten * part cparts f0 f1 f2 c= cflatten cflatten cMAP * part cparts f0 f1 cflatten cMAP * * part co part cflatten * part cparts f0 f1 c==> c==> c/\ c==> c= cflatten cflatten cMAP * part cparts f0 f1 cflatten cMAP * * part co part cflatten * part cparts f0 f1 f2 c= cflatten cflatten cMAP * part cparts f0 f1 cflatten cMAP * * part co part cflatten * part cparts f0 f1 f2 c/\ c/\ c==> c= cflatten cflatten cMAP * part cparts f0 f1 cflatten cMAP * * part co part cflatten * part cparts f0 f1 f2 c= cflatten cflatten cMAP * part cparts f0 f1 cflatten cMAP * * part co part cflatten * part cparts f0 f1 f2
+- ((((normal_list L) N) ==> ((!r. (((MEM r) N) ==> (((flatten o (parts L)) r) = r))) ==> ((~ (((flatten (flatten ((MAP (parts L)) N))) = (flatten ((MAP (flatten o (parts L))) N))) ==> ((((MAP (flatten o (parts L))) N) = N) ==> ((flatten (flatten ((MAP (parts L)) N))) = (flatten N))))) ==> F))) ==> (((normal_list L) N) ==> ((!r. (((MEM r) N) ==> (((flatten o (parts L)) r) = r))) ==> ((~ (((flatten (flatten ((MAP (parts L)) N))) = (flatten ((MAP (flatten o (parts L))) N))) ==> ((((MAP (flatten o (parts L))) N) = N) ==> ((flatten (flatten ((MAP (parts L)) N))) = (flatten N))))) ==> F)))) |- (((((normal_list L) N) ==> ((!r. (((MEM r) N) ==> (((flatten o (parts L)) r) = r))) ==> ((~ (((flatten (flatten ((MAP (parts L)) N))) = (flatten ((MAP (flatten o (parts L))) N))) ==> ((((MAP (flatten o (parts L))) N) = N) ==> ((flatten (flatten ((MAP (parts L)) N))) = (flatten N))))) ==> F))) ==> (((normal_list L) N) ==> ((!r. (((MEM r) N) ==> (((flatten o (parts L)) r) = r))) ==> ((~ (((flatten (flatten ((MAP (parts L)) N))) = (flatten ((MAP (flatten o (parts L))) N))) ==> ((((MAP (flatten o (parts L))) N) = N) ==> ((flatten (flatten ((MAP (parts L)) N))) = (flatten N))))) ==> F)))) /\ ((((normal_list L) N) ==> ((!r. (((MEM r) N) ==> (((flatten o (parts L)) r) = r))) ==> ((~ (((flatten (flatten ((MAP (parts L)) N))) = (flatten ((MAP (flatten o (parts L))) N))) ==> ((((MAP (flatten o (parts L))) N) = N) ==> ((flatten (flatten ((MAP (parts L)) N))) = (flatten N))))) ==> F))) ==> (((normal_list L) N) ==> ((!r. (((MEM r) N) ==> (((flatten o (parts L)) r) = r))) ==> ((~ (((flatten (flatten ((MAP (parts L)) N))) = (flatten ((MAP (flatten o (parts L))) N))) ==> ((((MAP (flatten o (parts L))) N) = N) ==> ((flatten (flatten ((MAP (parts L)) N))) = (flatten N))))) ==> F)))))
+T c==> c==> c==> cnormal_list f0 f1 c==> ! c==> cMEM b0 f1 c= co part cflatten * part cparts f0 b0 b0 c==> c~ c==> c= cflatten cflatten cMAP * part cparts f0 f1 cflatten cMAP * * part co part cflatten * part cparts f0 f1 c==> c= cMAP * * part co part cflatten * part cparts f0 f1 f1 c= cflatten cflatten cMAP * part cparts f0 f1 cflatten f1 cF c==> cnormal_list f0 f1 c==> ! c==> cMEM b0 f1 c= co part cflatten * part cparts f0 b0 b0 c==> c~ c==> c= cflatten cflatten cMAP * part cparts f0 f1 cflatten cMAP * * part co part cflatten * part cparts f0 f1 c==> c= cMAP * * part co part cflatten * part cparts f0 f1 f1 c= cflatten cflatten cMAP * part cparts f0 f1 cflatten f1 cF c/\ c==> c==> cnormal_list f0 f1 c==> ! c==> cMEM b0 f1 c= co part cflatten * part cparts f0 b0 b0 c==> c~ c==> c= cflatten cflatten cMAP * part cparts f0 f1 cflatten cMAP * * part co part cflatten * part cparts f0 f1 c==> c= cMAP * * part co part cflatten * part cparts f0 f1 f1 c= cflatten cflatten cMAP * part cparts f0 f1 cflatten f1 cF c==> cnormal_list f0 f1 c==> ! c==> cMEM b0 f1 c= co part cflatten * part cparts f0 b0 b0 c==> c~ c==> c= cflatten cflatten cMAP * part cparts f0 f1 cflatten cMAP * * part co part cflatten * part cparts f0 f1 c==> c= cMAP * * part co part cflatten * part cparts f0 f1 f1 c= cflatten cflatten cMAP * part cparts f0 f1 cflatten f1 cF c==> c==> cnormal_list f0 f1 c==> ! c==> cMEM b0 f1 c= co part cflatten * part cparts f0 b0 b0 c==> c~ c==> c= cflatten cflatten cMAP * part cparts f0 f1 cflatten cMAP * * part co part cflatten * part cparts f0 f1 c==> c= cMAP * * part co part cflatten * part cparts f0 f1 f1 c= cflatten cflatten cMAP * part cparts f0 f1 cflatten f1 cF c==> cnormal_list f0 f1 c==> ! c==> cMEM b0 f1 c= co part cflatten * part cparts f0 b0 b0 c==> c~ c==> c= cflatten cflatten cMAP * part cparts f0 f1 cflatten cMAP * * part co part cflatten * part cparts f0 f1 c==> c= cMAP * * part co part cflatten * part cparts f0 f1 f1 c= cflatten cflatten cMAP * part cparts f0 f1 cflatten f1 cF
+- |- ((~ (_10134944 = _10134946)) \/ ((~ (_10134945 = _10134947)) \/ (((MAP _10134944) _10134945) = ((MAP _10134946) _10134947))))
+T c\/ c~ c= f0 f1 c\/ c~ c= f2 f3 c= cMAP f0 f2 cMAP f1 f3
+- (!r. (((MEM r) N) ==> (((flatten o (parts L)) r) = r))) |- (!r. ((~ ((MEM r) N)) \/ (((I (flatten o (parts L))) r) = r)))
+T c==> ! c==> cMEM b0 f0 c= co part cflatten * part cparts f1 b0 b0 ! c\/ c~ cMEM b0 f0 c= cI * * part co part cflatten * part cparts f1 b0 b0
++ |- (((~ a) \/ (~ b)) = (~ (a /\ b)))
+T c= c\/ c~ f0 c~ f1 c~ c/\ f0 f1
+- |- (T = (((~ (_10134948 = _10134950)) \/ ((~ (_10134949 = _10134951)) \/ (((I _10134948) _10134949) = ((I _10134950) _10134951)))) = ((((I _10134948) _10134949) = ((I _10134950) _10134951)) \/ ((~ (_10134948 = _10134950)) \/ (~ (_10134949 = _10134951))))))
+T c= cT c= c\/ c~ c= f0 f1 c\/ c~ c= f2 f3 c= cI f0 f2 cI f1 f3 c\/ c= cI f0 f2 cI f1 f3 c\/ c~ c= f0 f1 c~ c= f2 f3
+- |- (((!r. (!N. (!L. (((normal_list L) N) ==> (((MEM r) N) ==> ((~ (?L. (?N. (((normal_list L) N) /\ ((MEM r) N))))) ==> F)))))) ==> ((\r. (!N. (!L. (((normal_list L) N) ==> (((MEM r) N) ==> ((~ (?L. (?N. (((normal_list L) N) /\ ((MEM r) N))))) ==> F)))))) r)) = ((\r. (!N. (!L. (((normal_list L) N) ==> (((MEM r) N) ==> ((~ (?L. (?N. (((normal_list L) N) /\ ((MEM r) N))))) ==> F)))))) r))
+T c= c==> ! ! ! c==> cnormal_list b2 b1 c==> cMEM b0 b1 c==> c~ c? / c? / c/\ cnormal_list b3 b3 cMEM b0 b3 cF * / ! ! c==> cnormal_list b2 b1 c==> cMEM b0 b1 c==> c~ c? / c? / c/\ cnormal_list b3 b3 cMEM b0 b3 cF f0 * / ! ! c==> cnormal_list b2 b1 c==> cMEM b0 b1 c==> c~ c? / c? / c/\ cnormal_list b3 b3 cMEM b0 b3 cF f0
+- |- ((~ (flatten = flatten)) ==> (flatten = flatten))
+T c==> c~ c= part cflatten part cflatten c= part cflatten part cflatten
++ ((flatten (flatten ((MAP (parts L)) N))) = (flatten ((MAP (flatten o (parts L))) N))), (((MAP (flatten o (parts L))) N) = N) |- ((((MAP (flatten o (parts L))) N) = N) /\ ((flatten (flatten ((MAP (parts L)) N))) = (flatten N)))
+T c==> c= cflatten cflatten cMAP * part cparts f0 f1 cflatten cMAP * * part co part cflatten * part cparts f0 f1 c==> c= cMAP * * part co part cflatten * part cparts f0 f1 f1 c/\ c= cMAP * * part co part cflatten * part cparts f0 f1 f1 c= cflatten cflatten cMAP * part cparts f0 f1 cflatten f1
+- (~ (!a. (!b. (!c. ((a ==> (b = c)) ==> (!P. ((a /\ (P c)) ==> (P b)))))))) |- ((~ (!a. (!b. (!c. ((a ==> (b = c)) ==> (!P. ((a /\ (P c)) ==> (P b)))))))) /\ F)
+T c==> c~ ! ! ! c==> c==> b0 c= b1 b2 ! c==> c/\ b0 * b3 b2 * b3 b1 c/\ c~ ! ! ! c==> c==> b0 c= b1 b2 ! c==> c/\ b0 * b3 b2 * b3 b1 cF
++ |- ((\L. (!r. (((uniq r) /\ (~ (r = NIL))) ==> ((flatten ((parts L) r)) = r)))) L)
+T * / ! c==> c/\ cuniq b1 c~ c= b1 cNIL c= cflatten cparts b0 b1 b1 f0
++ ((A = F) ==> (((A ==> B) /\ A) ==> B)) |- (((A ==> B) /\ A) ==> B)
+T c==> c==> c= f0 cF c==> c/\ c==> f0 f1 f0 f1 c==> c/\ c==> f0 f1 f0 f1
++ (!L. (!N. (!r. ((((normal_list L) N) /\ ((MEM r) N)) ==> ((uniq r) /\ (~ (r = NIL))))))) |- (!r. ((((normal_list L) N) /\ ((MEM r) N)) ==> ((uniq r) /\ (~ (r = NIL)))))
+T c==> ! ! ! c==> c/\ cnormal_list b0 b1 cMEM b2 b1 c/\ cuniq b2 c~ c= b2 cNIL ! c==> c/\ cnormal_list f0 f1 cMEM b0 f1 c/\ cuniq b0 c~ c= b0 cNIL
++ |- ((p \/ q) = (q \/ p))
+T c= c\/ f0 f1 c\/ f1 f0
++ (~ (P b)), (P c), (b = c) |- F
+T c==> c~ * f0 f1 c==> * f0 f2 c==> c= f1 f2 cF
++ |- (((!x. (((f o g) x) = (f (g x)))) ==> ((\x. (((f o g) x) = (f (g x)))) x)) = ((\x. (((f o g) x) = (f (g x)))) x))
+T c= c==> ! c= co f0 f1 b0 * f0 * f1 b0 * / c= co f0 f1 b0 * f0 * f1 b0 f2 * / c= co f0 f1 b0 * f0 * f1 b0 f2
+- |- ((p \/ (p \/ q)) = (p \/ q))
+T c= c\/ f0 c\/ f0 f1 c\/ f0 f1
++ (!r. (((MEM r) N) ==> (((flatten o (parts L)) r) = r))) |- ((!r. (((MEM r) N) ==> (((flatten o (parts L)) r) = r))) /\ (((flatten (flatten ((MAP (parts L)) N))) = (flatten ((MAP (flatten o (parts L))) N))) ==> ((((MAP (flatten o (parts L))) N) = N) ==> ((flatten (flatten ((MAP (parts L)) N))) = (flatten N)))))
+T c==> ! c==> cMEM b0 f0 c= co part cflatten * part cparts f1 b0 b0 c/\ ! c==> cMEM b0 f0 c= co part cflatten * part cparts f1 b0 b0 c==> c= cflatten cflatten cMAP * part cparts f1 f0 cflatten cMAP * * part co part cflatten * part cparts f1 f0 c==> c= cMAP * * part co part cflatten * part cparts f1 f0 f0 c= cflatten cflatten cMAP * part cparts f1 f0 cflatten f0
++ (b = c) |- ((P c) ==> (P b))
+T c==> c= f0 f1 c==> * f2 f1 * f2 f0
++ |- ((\g. (!l. (((ALL (\x. ((f x) = (g x)))) l) ==> (((MAP f) l) = ((MAP g) l))))) g)
+T * / ! c==> cALL / c= * f0 b2 * b0 b2 b1 c= cMAP f0 b1 cMAP b0 b1 f1
+- (~ (((I flatten) (flatten ((MAP (parts L)) N))) = ((I flatten) (flatten ((MAP (parts L)) N))))) |- ((~ (((I flatten) (flatten ((MAP (parts L)) N))) = ((I flatten) (flatten ((MAP (parts L)) N))))) /\ (((I flatten) (flatten ((MAP (parts L)) N))) = ((I flatten) (flatten ((MAP (parts L)) N)))))
+T c==> c~ c= cI part cflatten cflatten cMAP * part cparts f0 f1 cI part cflatten cflatten cMAP * part cparts f0 f1 c/\ c~ c= cI part cflatten cflatten cMAP * part cparts f0 f1 cI part cflatten cflatten cMAP * part cparts f0 f1 c= cI part cflatten cflatten cMAP * part cparts f0 f1 cI part cflatten cflatten cMAP * part cparts f0 f1
+- (!f. (!g. (!l. (((ALL (\x. ((f x) = (g x)))) l) ==> (((MAP f) l) = ((MAP g) l)))))), ((ALL (\x. ((f x) = (g x)))) l) |- ((!f. (!g. (!l. (((ALL (\x. ((f x) = (g x)))) l) ==> (((MAP f) l) = ((MAP g) l)))))) /\ (((MAP f) l) = ((MAP g) l)))
+T c==> ! ! ! c==> cALL / c= * b0 b3 * b1 b3 b2 c= cMAP b0 b2 cMAP b1 b2 c==> cALL / c= * f0 b0 * f1 b0 f2 c/\ ! ! ! c==> cALL / c= * b0 b3 * b1 b3 b2 c= cMAP b0 b2 cMAP b1 b2 c= cMAP f0 f2 cMAP f1 f2
+- |- (((!x0. ((~ (NIL = s)) ==> ((LAST s) = ((last x0) s)))) ==> ((\x0. ((~ (NIL = s)) ==> ((LAST s) = ((last x0) s)))) x0)) = ((\x0. ((~ (NIL = s)) ==> ((LAST s) = ((last x0) s)))) x0))
+T c= c==> ! c==> c~ c= cNIL f0 c= cLAST f0 clast b0 f0 * / c==> c~ c= cNIL f0 c= cLAST f0 clast b0 f0 f1 * / c==> c~ c= cNIL f0 c= cLAST f0 clast b0 f0 f1
+- |- ((~ (((I flatten) (flatten ((MAP (parts L)) N))) = ((I flatten) (flatten ((MAP (parts L)) N))))) ==> (((I flatten) (flatten ((MAP (parts L)) N))) = ((I flatten) (flatten ((MAP (parts L)) N)))))
+T c==> c~ c= cI part cflatten cflatten cMAP * part cparts f0 f1 cI part cflatten cflatten cMAP * part cparts f0 f1 c= cI part cflatten cflatten cMAP * part cparts f0 f1 cI part cflatten cflatten cMAP * part cparts f0 f1
+- |- ((_10134942 = _10134943) ==> ((flatten _10134942) = (flatten _10134943)))
+T c==> c= f0 f1 c= cflatten f0 cflatten f1
+- |- ((\N. (!L. (((normal_list L) N) ==> (((MEM r) N) ==> ((~ (?L. (?N. (((normal_list L) N) /\ ((MEM r) N))))) ==> F))))) N)
+T * / ! c==> cnormal_list b1 b0 c==> cMEM f0 b0 c==> c~ c? / c? / c/\ cnormal_list b2 b2 cMEM f0 b2 cF f1
+- (b = c) |- (F = F)
+T c==> c= f0 f1 c= cF cF
++ |- (((!f. (!g. (!l. (((ALL (\x. ((f x) = (g x)))) l) ==> (((MAP f) l) = ((MAP g) l)))))) ==> ((\f. (!g. (!l. (((ALL (\x. ((f x) = (g x)))) l) ==> (((MAP f) l) = ((MAP g) l)))))) f)) = ((\f. (!g. (!l. (((ALL (\x. ((f x) = (g x)))) l) ==> (((MAP f) l) = ((MAP g) l)))))) f))
+T c= c==> ! ! ! c==> cALL / c= * b0 b3 * b1 b3 b2 c= cMAP b0 b2 cMAP b1 b2 * / ! ! c==> cALL / c= * b0 b3 * b1 b3 b2 c= cMAP b0 b2 cMAP b1 b2 f0 * / ! ! c==> cALL / c= * b0 b3 * b1 b3 b2 c= cMAP b0 b2 cMAP b1 b2 f0
+- (!f. (!g. (!l. (((ALL (\x. ((f x) = (g x)))) l) ==> (((MAP f) l) = ((MAP g) l)))))) |- (!g. (!l. (((ALL (\x. ((f x) = (g x)))) l) ==> (((MAP f) l) = ((MAP g) l)))))
+T c==> ! ! ! c==> cALL / c= * b0 b3 * b1 b3 b2 c= cMAP b0 b2 cMAP b1 b2 ! ! c==> cALL / c= * f0 b2 * b0 b2 b1 c= cMAP f0 b1 cMAP b0 b1
++ ((MEM r) N), ((normal_list L) N) |- (((uniq r) /\ (~ (r = NIL))) /\ (r = r))
+T c==> cMEM f0 f1 c==> cnormal_list f2 f1 c/\ c/\ cuniq f0 c~ c= f0 cNIL c= f0 f0
++ (~ ((flatten (flatten ((MAP (parts L)) N))) = (flatten N))) |- ((((I flatten) (flatten ((MAP (parts L)) N))) = ((I flatten) N)) ==> F)
+T c==> c~ c= cflatten cflatten cMAP * part cparts f0 f1 cflatten f1 c==> c= cI part cflatten cflatten cMAP * part cparts f0 f1 cI part cflatten f1 cF
+- ((normal_list L) N) |- ((~ ((normal_list L) N)) ==> ((normal_list L) N))
+T c==> cnormal_list f0 f1 c==> c~ cnormal_list f0 f1 cnormal_list f0 f1
+- (!f. (!g. (!l. (((ALL (\x. ((f x) = (g x)))) l) ==> (((MAP f) l) = ((MAP g) l)))))) |- ((((ALL (\x. ((f x) = (g x)))) l) ==> (((MAP f) l) = ((MAP g) l))) = T)
+T c==> ! ! ! c==> cALL / c= * b0 b3 * b1 b3 b2 c= cMAP b0 b2 cMAP b1 b2 c= c==> cALL / c= * f0 b0 * f1 b0 f2 c= cMAP f0 f2 cMAP f1 f2 cT
+- ((~ (!a. (!b. (!c. ((a ==> (b = c)) ==> (!P. ((a /\ (P c)) ==> (P b)))))))) ==> F), (((~ (!a. (!b. (!c. ((a ==> (b = c)) ==> (!P. ((a /\ (P c)) ==> (P b)))))))) ==> F) ==> ((~ (!a. (!b. (!c. ((a ==> (b = c)) ==> (!P. ((a /\ (P c)) ==> (P b)))))))) ==> F)) |- ((((~ (!a. (!b. (!c. ((a ==> (b = c)) ==> (!P. ((a /\ (P c)) ==> (P b)))))))) ==> F) ==> ((~ (!a. (!b. (!c. ((a ==> (b = c)) ==> (!P. ((a /\ (P c)) ==> (P b)))))))) ==> F)) /\ ((~ (!a. (!b. (!c. ((a ==> (b = c)) ==> (!P. ((a /\ (P c)) ==> (P b)))))))) ==> F))
+T c==> c==> c~ ! ! ! c==> c==> b0 c= b1 b2 ! c==> c/\ b0 * b3 b2 * b3 b1 cF c==> c==> c==> c~ ! ! ! c==> c==> b0 c= b1 b2 ! c==> c/\ b0 * b3 b2 * b3 b1 cF c==> c~ ! ! ! c==> c==> b0 c= b1 b2 ! c==> c/\ b0 * b3 b2 * b3 b1 cF c/\ c==> c==> c~ ! ! ! c==> c==> b0 c= b1 b2 ! c==> c/\ b0 * b3 b2 * b3 b1 cF c==> c~ ! ! ! c==> c==> b0 c= b1 b2 ! c==> c/\ b0 * b3 b2 * b3 b1 cF c==> c~ ! ! ! c==> c==> b0 c= b1 b2 ! c==> c/\ b0 * b3 b2 * b3 b1 cF
++ |- (!y. (((\x. ((\v. (v = r)) x)) y) = ((\v. (v = r)) y)))
+T c= * / * / c= b1 f0 b0 f1 * / c= b0 f0 f1
+- |- (((((normal_list L) N) ==> ((!r. (((MEM r) N) ==> (((flatten o (parts L)) r) = r))) ==> ((~ (((flatten (flatten ((MAP (parts L)) N))) = (flatten ((MAP (flatten o (parts L))) N))) ==> ((((MAP (flatten o (parts L))) N) = N) ==> ((flatten (flatten ((MAP (parts L)) N))) = (flatten N))))) ==> F))) ==> (((normal_list L) N) ==> ((!r. (((MEM r) N) ==> (((flatten o (parts L)) r) = r))) ==> ((~ (((flatten (flatten ((MAP (parts L)) N))) = (flatten ((MAP (flatten o (parts L))) N))) ==> ((((MAP (flatten o (parts L))) N) = N) ==> ((flatten (flatten ((MAP (parts L)) N))) = (flatten N))))) ==> F)))) = (((normal_list L) N) ==> ((!r. (((MEM r) N) ==> (((flatten o (parts L)) r) = r))) ==> ((~ (((flatten (flatten ((MAP (parts L)) N))) = (flatten ((MAP (flatten o (parts L))) N))) ==> ((((MAP (flatten o (parts L))) N) = N) ==> ((flatten (flatten ((MAP (parts L)) N))) = (flatten N))))) ==> F))))
+T c= c==> c==> cnormal_list f0 f1 c==> ! c==> cMEM b0 f1 c= co part cflatten * part cparts f0 b0 b0 c==> c~ c==> c= cflatten cflatten cMAP * part cparts f0 f1 cflatten cMAP * * part co part cflatten * part cparts f0 f1 c==> c= cMAP * * part co part cflatten * part cparts f0 f1 f1 c= cflatten cflatten cMAP * part cparts f0 f1 cflatten f1 cF c==> cnormal_list f0 f1 c==> ! c==> cMEM b0 f1 c= co part cflatten * part cparts f0 b0 b0 c==> c~ c==> c= cflatten cflatten cMAP * part cparts f0 f1 cflatten cMAP * * part co part cflatten * part cparts f0 f1 c==> c= cMAP * * part co part cflatten * part cparts f0 f1 f1 c= cflatten cflatten cMAP * part cparts f0 f1 cflatten f1 cF c==> cnormal_list f0 f1 c==> ! c==> cMEM b0 f1 c= co part cflatten * part cparts f0 b0 b0 c==> c~ c==> c= cflatten cflatten cMAP * part cparts f0 f1 cflatten cMAP * * part co part cflatten * part cparts f0 f1 c==> c= cMAP * * part co part cflatten * part cparts f0 f1 f1 c= cflatten cflatten cMAP * part cparts f0 f1 cflatten f1 cF
++ |- ((!L. (((normal_list L) N) ==> ((!r. (((MEM r) N) ==> (((flatten o (parts L)) r) = r))) ==> (((flatten (flatten ((MAP (parts L)) N))) = (flatten ((MAP (flatten o (parts L))) N))) ==> ((((MAP (flatten o (parts L))) N) = N) ==> ((flatten (flatten ((MAP (parts L)) N))) = (flatten N))))))) = T)
+T c= ! c==> cnormal_list b0 f0 c==> ! c==> cMEM b1 f0 c= co part cflatten * part cparts b0 b1 b1 c==> c= cflatten cflatten cMAP * part cparts b0 f0 cflatten cMAP * * part co part cflatten * part cparts b0 f0 c==> c= cMAP * * part co part cflatten * part cparts b0 f0 f0 c= cflatten cflatten cMAP * part cparts b0 f0 cflatten f0 cT
++ |- ((\l. (((MAP (g o f)) l) = ((MAP g) ((MAP f) l)))) l)
+T * / c= cMAP * * part co f0 f1 b0 cMAP f0 cMAP f1 b0 f2
++ ((flatten (flatten ((MAP (parts L)) N))) = (flatten ((MAP (flatten o (parts L))) N))) |- ((((((I flatten) (flatten ((MAP (parts L)) N))) = ((I flatten) ((MAP (flatten o (parts L))) N))) /\ (((I flatten) (flatten ((MAP (parts L)) N))) = ((I flatten) (flatten ((MAP (parts L)) N))))) ==> (((I flatten) ((MAP (flatten o (parts L))) N)) = ((I flatten) (flatten ((MAP (parts L)) N))))) = (((I flatten) ((MAP (flatten o (parts L))) N)) = ((I flatten) (flatten ((MAP (parts L)) N)))))
+T c==> c= cflatten cflatten cMAP * part cparts f0 f1 cflatten cMAP * * part co part cflatten * part cparts f0 f1 c= c==> c/\ c= cI part cflatten cflatten cMAP * part cparts f0 f1 cI part cflatten cMAP * * part co part cflatten * part cparts f0 f1 c= cI part cflatten cflatten cMAP * part cparts f0 f1 cI part cflatten cflatten cMAP * part cparts f0 f1 c= cI part cflatten cMAP * * part co part cflatten * part cparts f0 f1 cI part cflatten cflatten cMAP * part cparts f0 f1 c= cI part cflatten cMAP * * part co part cflatten * part cparts f0 f1 cI part cflatten cflatten cMAP * part cparts f0 f1
++ |- ((((uniq r) /\ (~ (r = NIL))) /\ (P r)) ==> (P (flatten ((parts L) r))))
+T c==> c/\ c/\ cuniq f0 c~ c= f0 cNIL * f1 f0 * f1 cflatten cparts f2 f0
+- |- (((t1 \/ t2) \/ t3) = (t1 \/ (t2 \/ t3)))
+T c= c\/ c\/ f0 f1 f2 c\/ f0 c\/ f1 f2
++ |- ((~ (a \/ b)) = ((~ a) /\ (~ b)))
+T c= c~ c\/ f0 f1 c/\ c~ f0 c~ f1
++ |- (((!a. (!b. (!c. ((a ==> (b = c)) ==> (!P. ((a /\ (P c)) ==> (P b))))))) ==> ((\a. (!b. (!c. ((a ==> (b = c)) ==> (!P. ((a /\ (P c)) ==> (P b))))))) a)) = ((\a. (!b. (!c. ((a ==> (b = c)) ==> (!P. ((a /\ (P c)) ==> (P b))))))) a))
+T c= c==> ! ! ! c==> c==> b0 c= b1 b2 ! c==> c/\ b0 * b3 b2 * b3 b1 * / ! ! c==> c==> b0 c= b1 b2 ! c==> c/\ b0 * b3 b2 * b3 b1 f0 * / ! ! c==> c==> b0 c= b1 b2 ! c==> c/\ b0 * b3 b2 * b3 b1 f0
+- |- ((_10134944 = _10134946) ==> ((~ (_10134945 = _10134947)) \/ (((MAP _10134944) _10134945) = ((MAP _10134946) _10134947))))
+T c==> c= f0 f1 c\/ c~ c= f2 f3 c= cMAP f0 f2 cMAP f1 f3
++ (~ (?L. (?N. (((normal_list L) N) /\ ((MEM r) N))))) |- ((((normal_list _10134923) _10134924) /\ ((MEM r) _10134924)) ==> F)
+T c==> c~ c? / c? / c/\ cnormal_list b0 b1 cMEM f0 b1 c==> c/\ cnormal_list f1 f2 cMEM f0 f2 cF
++ |- ((\b. (!c. ((a ==> (b = c)) ==> (!P. ((a /\ (P c)) ==> (P b)))))) b)
+T * / ! c==> c==> f0 c= b0 b1 ! c==> c/\ f0 * b2 b1 * b2 b0 f1
++ |- (T = ((flatten (flatten ((MAP (parts L)) N))) = (flatten ((MAP (flatten o (parts L))) N))))
+T c= cT c= cflatten cflatten cMAP * part cparts f0 f1 cflatten cMAP * * part co part cflatten * part cparts f0 f1
+- (_10134934 = _10134936), (_10134935 = _10134937) |- (((((normal_list _10134934) _10134935) = ((normal_list _10134936) _10134937)) ==> (((normal_list _10134936) _10134937) \/ (~ ((normal_list _10134934) _10134935)))) = (((normal_list _10134936) _10134937) \/ (~ ((normal_list _10134934) _10134935))))
+T c==> c= f0 f1 c==> c= f2 f3 c= c==> c= cnormal_list f0 f2 cnormal_list f1 f3 c\/ cnormal_list f1 f3 c~ cnormal_list f0 f2 c\/ cnormal_list f1 f3 c~ cnormal_list f0 f2
+- (!r. (((MEM r) N) ==> (((flatten o (parts L)) r) = r))), (~ (((flatten (flatten ((MAP (parts L)) N))) = (flatten ((MAP (flatten o (parts L))) N))) ==> ((((MAP (flatten o (parts L))) N) = N) ==> ((flatten (flatten ((MAP (parts L)) N))) = (flatten N))))), ((normal_list L) N) |- F
+T c==> ! c==> cMEM b0 f0 c= co part cflatten * part cparts f1 b0 b0 c==> c~ c==> c= cflatten cflatten cMAP * part cparts f1 f0 cflatten cMAP * * part co part cflatten * part cparts f1 f0 c==> c= cMAP * * part co part cflatten * part cparts f1 f0 f0 c= cflatten cflatten cMAP * part cparts f1 f0 cflatten f0 c==> cnormal_list f1 f0 cF
+- ((uniq r) /\ (~ (r = NIL))) |- (((uniq r) /\ (~ (r = NIL))) /\ ((flatten ((parts L) r)) = r))
+T c==> c/\ cuniq f0 c~ c= f0 cNIL c/\ c/\ cuniq f0 c~ c= f0 cNIL c= cflatten cparts f1 f0 f0
++ |- (((!c. ((a ==> (b = c)) ==> (!P. ((a /\ (P c)) ==> (P b))))) ==> ((\c. ((a ==> (b = c)) ==> (!P. ((a /\ (P c)) ==> (P b))))) c)) = ((\c. ((a ==> (b = c)) ==> (!P. ((a /\ (P c)) ==> (P b))))) c))
+T c= c==> ! c==> c==> f0 c= f1 b0 ! c==> c/\ f0 * b1 b0 * b1 f1 * / c==> c==> f0 c= f1 b0 ! c==> c/\ f0 * b1 b0 * b1 f1 f2 * / c==> c==> f0 c= f1 b0 ! c==> c/\ f0 * b1 b0 * b1 f1 f2
++ (!L. (!N. (!r. ((((normal_list L) N) /\ ((MEM r) N)) ==> ((uniq r) /\ (~ (r = NIL))))))) |- ((?L. (?N. (((normal_list L) N) /\ ((MEM r) N)))) ==> ((uniq r) /\ (~ (r = NIL))))
+T c==> ! ! ! c==> c/\ cnormal_list b0 b1 cMEM b2 b1 c/\ cuniq b2 c~ c= b2 cNIL c==> c? / c? / c/\ cnormal_list b0 b1 cMEM f0 b1 c/\ cuniq f0 c~ c= f0 cNIL
++ |- ((\a. (!s. (((all a) s) = (!x. (((MEM x) s) ==> (a x)))))) a)
+T * / ! c= call b0 b1 ! c==> cMEM b2 b1 * b0 b2 f0
++ (!L. (!r. (!P. ((((uniq r) /\ (~ (r = NIL))) /\ (P r)) ==> (P (flatten ((parts L) r))))))) |- (!L. (!r. ((((uniq r) /\ (~ (r = NIL))) /\ (P r)) ==> (P (flatten ((parts L) r))))))
+T c==> ! ! ! c==> c/\ c/\ cuniq b1 c~ c= b1 cNIL * b2 b1 * b2 cflatten cparts b0 b1 ! ! c==> c/\ c/\ cuniq b1 c~ c= b1 cNIL * f0 b1 * f0 cflatten cparts b0 b1
++ (b = c) |- (((P c) ==> (P b)) = T)
+T c==> c= f0 f1 c= c==> * f2 f1 * f2 f0 cT
+- (~ (flatten = flatten)) |- ((~ (flatten = flatten)) /\ (flatten = flatten))
+T c==> c~ c= part cflatten part cflatten c/\ c~ c= part cflatten part cflatten c= part cflatten part cflatten
++ |- ((!r. (((MEM r) N) ==> (((flatten o (parts L)) r) = r))) ==> (((flatten (flatten ((MAP (parts L)) N))) = (flatten ((MAP (flatten o (parts L))) N))) ==> ((((MAP (flatten o (parts L))) N) = N) ==> ((flatten (flatten ((MAP (parts L)) N))) = (flatten N)))))
+T c==> ! c==> cMEM b0 f0 c= co part cflatten * part cparts f1 b0 b0 c==> c= cflatten cflatten cMAP * part cparts f1 f0 cflatten cMAP * * part co part cflatten * part cparts f1 f0 c==> c= cMAP * * part co part cflatten * part cparts f1 f0 f0 c= cflatten cflatten cMAP * part cparts f1 f0 cflatten f0
++ |- (((!r. (((uniq r) /\ (~ (r = NIL))) ==> ((flatten ((parts L) r)) = r))) ==> ((\r. (((uniq r) /\ (~ (r = NIL))) ==> ((flatten ((parts L) r)) = r))) r)) = ((\r. (((uniq r) /\ (~ (r = NIL))) ==> ((flatten ((parts L) r)) = r))) r))
+T c= c==> ! c==> c/\ cuniq b0 c~ c= b0 cNIL c= cflatten cparts f0 b0 b0 * / c==> c/\ cuniq b0 c~ c= b0 cNIL c= cflatten cparts f0 b0 b0 f1 * / c==> c/\ cuniq b0 c~ c= b0 cNIL c= cflatten cparts f0 b0 b0 f1
++ (A = T) |- ((((T ==> B) /\ T) ==> B) = (((A ==> B) /\ A) ==> B))
+T c==> c= f0 cT c= c==> c/\ c==> cT f1 cT f1 c==> c/\ c==> f0 f1 f0 f1
++ |- (((!b. (!c. ((a ==> (b = c)) ==> (!P. ((a /\ (P c)) ==> (P b)))))) ==> ((\b. (!c. ((a ==> (b = c)) ==> (!P. ((a /\ (P c)) ==> (P b)))))) b)) = ((\b. (!c. ((a ==> (b = c)) ==> (!P. ((a /\ (P c)) ==> (P b)))))) b))
+T c= c==> ! ! c==> c==> f0 c= b0 b1 ! c==> c/\ f0 * b2 b1 * b2 b0 * / ! c==> c==> f0 c= b0 b1 ! c==> c/\ f0 * b2 b1 * b2 b0 f1 * / ! c==> c==> f0 c= b0 b1 ! c==> c/\ f0 * b2 b1 * b2 b0 f1
+- |- (((!s. (!x0. ((~ (NIL = s)) ==> ((LAST s) = ((last x0) s))))) ==> ((\s. (!x0. ((~ (NIL = s)) ==> ((LAST s) = ((last x0) s))))) s)) = ((\s. (!x0. ((~ (NIL = s)) ==> ((LAST s) = ((last x0) s))))) s))
+T c= c==> ! ! c==> c~ c= cNIL b0 c= cLAST b0 clast b1 b0 * / ! c==> c~ c= cNIL b0 c= cLAST b0 clast b1 b0 f0 * / ! c==> c~ c= cNIL b0 c= cLAST b0 clast b1 b0 f0
+- (_10134944 = _10134946) |- ((_10134944 = _10134946) /\ ((~ (_10134945 = _10134947)) \/ (((MAP _10134944) _10134945) = ((MAP _10134946) _10134947))))
+T c==> c= f0 f1 c/\ c= f0 f1 c\/ c~ c= f2 f3 c= cMAP f0 f2 cMAP f1 f3
++ (~ (?L. (?N. (((normal_list L) N) /\ ((MEM r) N))))) |- (!N. ((~ ((normal_list _10134923) N)) \/ (~ ((MEM r) N))))
+T c==> c~ c? / c? / c/\ cnormal_list b0 b1 cMEM f0 b1 ! c\/ c~ cnormal_list f1 b0 c~ cMEM f0 b0
+- (~ (P c)), (P c) |- ((~ (P c)) /\ (P c))
+T c==> c~ * f0 f1 c==> * f0 f1 c/\ c~ * f0 f1 * f0 f1
+- (!L. (!r. (!P. ((((uniq r) /\ (~ (r = NIL))) /\ (P r)) ==> (P (flatten ((parts L) r))))))), (((uniq r) /\ (~ (r = NIL))) /\ (P r)) |- ((((uniq r) /\ (~ (r = NIL))) /\ (P r)) /\ (P (flatten ((parts L) r))))
+T c==> ! ! ! c==> c/\ c/\ cuniq b1 c~ c= b1 cNIL * b2 b1 * b2 cflatten cparts b0 b1 c==> c/\ c/\ cuniq f0 c~ c= f0 cNIL * f1 f0 c/\ c/\ c/\ cuniq f0 c~ c= f0 cNIL * f1 f0 * f1 cflatten cparts f2 f0
++ (!L. (!N. (!r. ((((normal_list L) N) /\ ((MEM r) N)) ==> ((uniq r) /\ (~ (r = NIL))))))) |- (((!N. (!r. ((((normal_list L) N) /\ ((MEM r) N)) ==> ((uniq r) /\ (~ (r = NIL)))))) ==> ((\N. (!r. ((((normal_list L) N) /\ ((MEM r) N)) ==> ((uniq r) /\ (~ (r = NIL)))))) N)) = ((\N. (!r. ((((normal_list L) N) /\ ((MEM r) N)) ==> ((uniq r) /\ (~ (r = NIL)))))) N))
+T c==> ! ! ! c==> c/\ cnormal_list b0 b1 cMEM b2 b1 c/\ cuniq b2 c~ c= b2 cNIL c= c==> ! ! c==> c/\ cnormal_list f0 b0 cMEM b1 b0 c/\ cuniq b1 c~ c= b1 cNIL * / ! c==> c/\ cnormal_list f0 b0 cMEM b1 b0 c/\ cuniq b1 c~ c= b1 cNIL f1 * / ! c==> c/\ cnormal_list f0 b0 cMEM b1 b0 c/\ cuniq b1 c~ c= b1 cNIL f1
+- |- (((flatten ((parts L) r)) = r) = ((\x. ((\v. (v = r)) x)) (flatten ((parts L) r))))
+T c= c= cflatten cparts f0 f1 f1 * / * / c= b1 f1 b0 cflatten cparts f0 f1
++ |- ((\f. (!g. (!x. (((f o g) x) = (f (g x)))))) f)
+T * / ! ! c= co b0 b1 b2 * b0 * b1 b2 f0
+- (_10134931 = _10134933) |- ((_10134931 = _10134933) /\ ((~ (_10134930 = _10134932)) \/ (((MEM _10134932) _10134933) \/ (~ ((MEM _10134930) _10134931)))))
+T c==> c= f0 f1 c/\ c= f0 f1 c\/ c~ c= f2 f3 c\/ cMEM f3 f1 c~ cMEM f2 f0
+- |- ((!r'. ((~ ((MEM r) N)) \/ (((flatten o (parts L)) r') = r'))) = ((~ ((MEM r) N)) \/ (!r. (((flatten o (parts L)) r) = r))))
+T c= ! c\/ c~ cMEM f0 f1 c= co part cflatten * part cparts f2 b0 b0 c\/ c~ cMEM f0 f1 ! c= co part cflatten * part cparts f2 b0 b0
++ (((normal_list L) N) /\ ((MEM r) N)) |- ((((normal_list L) N) /\ ((MEM r) N)) /\ ((!L. (!N. (!r. ((((normal_list L) N) /\ ((MEM r) N)) ==> ((uniq r) /\ (~ (r = NIL))))))) ==> ((uniq r) /\ (~ (r = NIL)))))
+T c==> c/\ cnormal_list f0 f1 cMEM f2 f1 c/\ c/\ cnormal_list f0 f1 cMEM f2 f1 c==> ! ! ! c==> c/\ cnormal_list b0 b1 cMEM b2 b1 c/\ cuniq b2 c~ c= b2 cNIL c/\ cuniq f2 c~ c= f2 cNIL
++ (!L. (!N. (!r. ((((normal_list L) N) /\ ((MEM r) N)) ==> ((uniq r) /\ (~ (r = NIL))))))), (((normal_list L) N) /\ ((MEM r) N)) |- ((!L. (!N. (!r. ((((normal_list L) N) /\ ((MEM r) N)) ==> ((uniq r) /\ (~ (r = NIL))))))) /\ ((uniq r) /\ (~ (r = NIL))))
+T c==> ! ! ! c==> c/\ cnormal_list b0 b1 cMEM b2 b1 c/\ cuniq b2 c~ c= b2 cNIL c==> c/\ cnormal_list f0 f1 cMEM f2 f1 c/\ ! ! ! c==> c/\ cnormal_list b0 b1 cMEM b2 b1 c/\ cuniq b2 c~ c= b2 cNIL c/\ cuniq f2 c~ c= f2 cNIL
+- |- ((!r. (P \/ (Q r))) = (P \/ (!r. (Q r))))
+T c= ! c\/ f0 * f1 b0 c\/ f0 ! * f1 b0
++ |- ((F ==> t) = T)
+T c= c==> cF f0 cT
+- (!f. (!g. (!l. (((ALL (\x. ((f x) = (g x)))) l) ==> (((MAP f) l) = ((MAP g) l)))))), ((ALL (\x. ((f x) = (g x)))) l) |- (((ALL (\x. ((f x) = (g x)))) l) /\ (((MAP f) l) = ((MAP g) l)))
+T c==> ! ! ! c==> cALL / c= * b0 b3 * b1 b3 b2 c= cMAP b0 b2 cMAP b1 b2 c==> cALL / c= * f0 b0 * f1 b0 f2 c/\ cALL / c= * f0 b0 * f1 b0 f2 c= cMAP f0 f2 cMAP f1 f2
++ |- (((!L. (((normal_list L) N) ==> ((!r. (((MEM r) N) ==> (((flatten o (parts L)) r) = r))) ==> ((~ (((flatten (flatten ((MAP (parts L)) N))) = (flatten ((MAP (flatten o (parts L))) N))) ==> ((((MAP (flatten o (parts L))) N) = N) ==> ((flatten (flatten ((MAP (parts L)) N))) = (flatten N))))) ==> F)))) ==> ((\L. (((normal_list L) N) ==> ((!r. (((MEM r) N) ==> (((flatten o (parts L)) r) = r))) ==> ((~ (((flatten (flatten ((MAP (parts L)) N))) = (flatten ((MAP (flatten o (parts L))) N))) ==> ((((MAP (flatten o (parts L))) N) = N) ==> ((flatten (flatten ((MAP (parts L)) N))) = (flatten N))))) ==> F)))) L)) = ((\L. (((normal_list L) N) ==> ((!r. (((MEM r) N) ==> (((flatten o (parts L)) r) = r))) ==> ((~ (((flatten (flatten ((MAP (parts L)) N))) = (flatten ((MAP (flatten o (parts L))) N))) ==> ((((MAP (flatten o (parts L))) N) = N) ==> ((flatten (flatten ((MAP (parts L)) N))) = (flatten N))))) ==> F)))) L))
+T c= c==> ! c==> cnormal_list b0 f0 c==> ! c==> cMEM b1 f0 c= co part cflatten * part cparts b0 b1 b1 c==> c~ c==> c= cflatten cflatten cMAP * part cparts b0 f0 cflatten cMAP * * part co part cflatten * part cparts b0 f0 c==> c= cMAP * * part co part cflatten * part cparts b0 f0 f0 c= cflatten cflatten cMAP * part cparts b0 f0 cflatten f0 cF * / c==> cnormal_list b0 f0 c==> ! c==> cMEM b1 f0 c= co part cflatten * part cparts b0 b1 b1 c==> c~ c==> c= cflatten cflatten cMAP * part cparts b0 f0 cflatten cMAP * * part co part cflatten * part cparts b0 f0 c==> c= cMAP * * part co part cflatten * part cparts b0 f0 f0 c= cflatten cflatten cMAP * part cparts b0 f0 cflatten f0 cF f1 * / c==> cnormal_list b0 f0 c==> ! c==> cMEM b1 f0 c= co part cflatten * part cparts b0 b1 b1 c==> c~ c==> c= cflatten cflatten cMAP * part cparts b0 f0 cflatten cMAP * * part co part cflatten * part cparts b0 f0 c==> c= cMAP * * part co part cflatten * part cparts b0 f0 f0 c= cflatten cflatten cMAP * part cparts b0 f0 cflatten f0 cF f1
++ |- ((\r. ((?L. (?N. (((normal_list L) N) /\ ((MEM r) N)))) ==> ((uniq r) /\ (~ (r = NIL))))) r)
+T * / c==> c? / c? / c/\ cnormal_list b1 b2 cMEM b0 b2 c/\ cuniq b0 c~ c= b0 cNIL f0
+- (((~ (!a. (!b. (!c. ((a ==> (b = c)) ==> (!P. ((a /\ (P c)) ==> (P b)))))))) ==> F) ==> ((~ (!a. (!b. (!c. ((a ==> (b = c)) ==> (!P. ((a /\ (P c)) ==> (P b)))))))) ==> F)) |- ((((~ (!a. (!b. (!c. ((a ==> (b = c)) ==> (!P. ((a /\ (P c)) ==> (P b)))))))) ==> F) ==> ((~ (!a. (!b. (!c. ((a ==> (b = c)) ==> (!P. ((a /\ (P c)) ==> (P b)))))))) ==> F)) /\ (((~ (!a. (!b. (!c. ((a ==> (b = c)) ==> (!P. ((a /\ (P c)) ==> (P b)))))))) ==> F) ==> ((~ (!a. (!b. (!c. ((a ==> (b = c)) ==> (!P. ((a /\ (P c)) ==> (P b)))))))) ==> F)))
+T c==> c==> c==> c~ ! ! ! c==> c==> b0 c= b1 b2 ! c==> c/\ b0 * b3 b2 * b3 b1 cF c==> c~ ! ! ! c==> c==> b0 c= b1 b2 ! c==> c/\ b0 * b3 b2 * b3 b1 cF c/\ c==> c==> c~ ! ! ! c==> c==> b0 c= b1 b2 ! c==> c/\ b0 * b3 b2 * b3 b1 cF c==> c~ ! ! ! c==> c==> b0 c= b1 b2 ! c==> c/\ b0 * b3 b2 * b3 b1 cF c==> c==> c~ ! ! ! c==> c==> b0 c= b1 b2 ! c==> c/\ b0 * b3 b2 * b3 b1 cF c==> c~ ! ! ! c==> c==> b0 c= b1 b2 ! c==> c/\ b0 * b3 b2 * b3 b1 cF
+- |- (((!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))) ==> ((\t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))) t3)) = ((\t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))) t3))
+T c= c==> ! c= c\/ f0 c\/ f1 b0 c\/ c\/ f0 f1 b0 * / c= c\/ f0 c\/ f1 b0 c\/ c\/ f0 f1 b0 f2 * / c= c\/ f0 c\/ f1 b0 c\/ c\/ f0 f1 b0 f2
++ (!r. (((MEM r) N) ==> (((flatten o (parts L)) r) = r))), ((normal_list L) N) |- ((~ (((flatten (flatten ((MAP (parts L)) N))) = (flatten ((MAP (flatten o (parts L))) N))) ==> ((((MAP (flatten o (parts L))) N) = N) ==> ((flatten (flatten ((MAP (parts L)) N))) = (flatten N))))) ==> F)
+T c==> ! c==> cMEM b0 f0 c= co part cflatten * part cparts f1 b0 b0 c==> cnormal_list f1 f0 c==> c~ c==> c= cflatten cflatten cMAP * part cparts f1 f0 cflatten cMAP * * part co part cflatten * part cparts f1 f0 c==> c= cMAP * * part co part cflatten * part cparts f1 f0 f0 c= cflatten cflatten cMAP * part cparts f1 f0 cflatten f0 cF
+- (_10134954 = _10134956) |- ((_10134955 = _10134957) ==> ((_10134954 o _10134955) = (_10134956 o _10134957)))
+T c==> c= f0 f1 c==> c= f2 f3 c= * * part co f0 f2 * * part co f1 f3
+- (!r. (((MEM r) N) ==> (((flatten o (parts L)) r) = r))) |- ((~ ((MEM _10134929) N)) \/ (((I (flatten o (parts L))) _10134929) = _10134929))
+T c==> ! c==> cMEM b0 f0 c= co part cflatten * part cparts f1 b0 b0 c\/ c~ cMEM f2 f0 c= cI * * part co part cflatten * part cparts f1 f2 f2
+- |- ((\L. (((normal_list L) N) ==> (((MEM r) N) ==> ((~ (?L. (?N. (((normal_list L) N) /\ ((MEM r) N))))) ==> F)))) L)
+T * / c==> cnormal_list b0 f0 c==> cMEM f1 f0 c==> c~ c? / c? / c/\ cnormal_list b1 b1 cMEM f1 b1 cF f2
++ |- (((!f. (!g. (!l. (((MAP (g o f)) l) = ((MAP g) ((MAP f) l)))))) ==> ((\f. (!g. (!l. (((MAP (g o f)) l) = ((MAP g) ((MAP f) l)))))) f)) = ((\f. (!g. (!l. (((MAP (g o f)) l) = ((MAP g) ((MAP f) l)))))) f))
+T c= c==> ! ! ! c= cMAP * * part co b1 b0 b2 cMAP b1 cMAP b0 b2 * / ! ! c= cMAP * * part co b1 b0 b2 cMAP b1 cMAP b0 b2 f0 * / ! ! c= cMAP * * part co b1 b0 b2 cMAP b1 cMAP b0 b2 f0
+- (~ ((flatten (flatten ((MAP (parts L)) N))) = (flatten N))), ((flatten (flatten ((MAP (parts L)) N))) = (flatten ((MAP (flatten o (parts L))) N))), (((MAP (flatten o (parts L))) N) = N) |- ((~ F) ==> F)
+T c==> c~ c= cflatten cflatten cMAP * part cparts f0 f1 cflatten f1 c==> c= cflatten cflatten cMAP * part cparts f0 f1 cflatten cMAP * * part co part cflatten * part cparts f0 f1 c==> c= cMAP * * part co part cflatten * part cparts f0 f1 f1 c==> c~ cF cF
+- |- ((t /\ t) = t)
+T c= c/\ f0 f0 f0
++ |- ((F /\ t) = F)
+T c= c/\ cF f0 cF
+- |- ((a = b) ==> (b \/ (~ a)))
+T c==> c= f0 f1 c\/ f1 c~ f0
+- |- (((~ (NIL = s)) ==> ((LAST s) = ((last x0) s))) = T)
+T c= c==> c~ c= cNIL f0 c= cLAST f0 clast f1 f0 cT
+- |- (((~ (!a. (!b. (!c. ((a ==> (b = c)) ==> (!P. ((a /\ (P c)) ==> (P b)))))))) ==> F) ==> ((~ (!a. (!b. (!c. ((a ==> (b = c)) ==> (!P. ((a /\ (P c)) ==> (P b)))))))) ==> F))
+T c==> c==> c~ ! ! ! c==> c==> b0 c= b1 b2 ! c==> c/\ b0 * b3 b2 * b3 b1 cF c==> c~ ! ! ! c==> c==> b0 c= b1 b2 ! c==> c/\ b0 * b3 b2 * b3 b1 cF
++ (!L. (!N. (!r. ((((normal_list L) N) /\ ((MEM r) N)) ==> ((uniq r) /\ (~ (r = NIL))))))) |- ((\N. (!r. ((((normal_list L) N) /\ ((MEM r) N)) ==> ((uniq r) /\ (~ (r = NIL)))))) N)
+T c==> ! ! ! c==> c/\ cnormal_list b0 b1 cMEM b2 b1 c/\ cuniq b2 c~ c= b2 cNIL * / ! c==> c/\ cnormal_list f0 b0 cMEM b1 b0 c/\ cuniq b1 c~ c= b1 cNIL f1
++ ((normal_list L) N) |- (!r. (((MEM r) N) ==> (((flatten o (parts L)) r) = r)))
+T c==> cnormal_list f0 f1 ! c==> cMEM b0 f1 c= co part cflatten * part cparts f0 b0 b0
++ ((normal_list L) N) |- (((normal_list L) N) /\ ((flatten (flatten ((MAP (parts L)) N))) = (flatten N)))
+T c==> cnormal_list f0 f1 c/\ cnormal_list f0 f1 c= cflatten cflatten cMAP * part cparts f0 f1 cflatten f1
+- ((MEM r) N), ((normal_list L) N) |- (((MEM r) N) /\ (?L. (?N. (((normal_list L) N) /\ ((MEM r) N)))))
+T c==> cMEM f0 f1 c==> cnormal_list f2 f1 c/\ cMEM f0 f1 c? / c? / c/\ cnormal_list b0 b1 cMEM f0 b1
+- |- ((LENGTH = sizel) /\ ((FILTER = filter) /\ ((REVERSE = rev) /\ ((!s. (!x0. ((~ (NIL = s)) ==> ((LAST s) = ((last x0) s))))) /\ ((APPEND = cat) /\ (ALL = all))))))
+T c/\ c= part cLENGTH part csizel c/\ c= part cFILTER part cfilter c/\ c= part cREVERSE part crev c/\ ! ! c==> c~ c= cNIL b0 c= cLAST b0 clast b1 b0 c/\ c= part cAPPEND part ccat c= part cALL part call
+- |- ((((((flatten (flatten ((MAP (parts L)) N))) = (flatten ((MAP (flatten o (parts L))) N))) ==> B) /\ ((flatten (flatten ((MAP (parts L)) N))) = (flatten ((MAP (flatten o (parts L))) N)))) ==> B) ==> (((((flatten (flatten ((MAP (parts L)) N))) = (flatten ((MAP (flatten o (parts L))) N))) ==> B) /\ ((flatten (flatten ((MAP (parts L)) N))) = (flatten ((MAP (flatten o (parts L))) N)))) ==> B))
+T c==> c==> c/\ c==> c= cflatten cflatten cMAP * part cparts f0 f1 cflatten cMAP * * part co part cflatten * part cparts f0 f1 f2 c= cflatten cflatten cMAP * part cparts f0 f1 cflatten cMAP * * part co part cflatten * part cparts f0 f1 f2 c==> c/\ c==> c= cflatten cflatten cMAP * part cparts f0 f1 cflatten cMAP * * part co part cflatten * part cparts f0 f1 f2 c= cflatten cflatten cMAP * part cparts f0 f1 cflatten cMAP * * part co part cflatten * part cparts f0 f1 f2
++ (!r. (((MEM r) N) ==> (((flatten o (parts L)) r) = r))), ((normal_list L) N) |- ((((((flatten (flatten ((MAP (parts L)) N))) = (flatten ((MAP (flatten o (parts L))) N))) ==> ((((MAP (flatten o (parts L))) N) = N) ==> ((flatten (flatten ((MAP (parts L)) N))) = (flatten N)))) /\ ((flatten (flatten ((MAP (parts L)) N))) = (flatten ((MAP (flatten o (parts L))) N)))) ==> ((((MAP (flatten o (parts L))) N) = N) ==> ((flatten (flatten ((MAP (parts L)) N))) = (flatten N)))) = ((((MAP (flatten o (parts L))) N) = N) ==> ((flatten (flatten ((MAP (parts L)) N))) = (flatten N))))
+T c==> ! c==> cMEM b0 f0 c= co part cflatten * part cparts f1 b0 b0 c==> cnormal_list f1 f0 c= c==> c/\ c==> c= cflatten cflatten cMAP * part cparts f1 f0 cflatten cMAP * * part co part cflatten * part cparts f1 f0 c==> c= cMAP * * part co part cflatten * part cparts f1 f0 f0 c= cflatten cflatten cMAP * part cparts f1 f0 cflatten f0 c= cflatten cflatten cMAP * part cparts f1 f0 cflatten cMAP * * part co part cflatten * part cparts f1 f0 c==> c= cMAP * * part co part cflatten * part cparts f1 f0 f0 c= cflatten cflatten cMAP * part cparts f1 f0 cflatten f0 c==> c= cMAP * * part co part cflatten * part cparts f1 f0 f0 c= cflatten cflatten cMAP * part cparts f1 f0 cflatten f0
++ |- (((flatten (flatten ((MAP (parts L)) N))) = (flatten ((MAP (flatten o (parts L))) N))) ==> ((((MAP (flatten o (parts L))) N) = N) ==> ((flatten (flatten ((MAP (parts L)) N))) = (flatten N))))
+T c==> c= cflatten cflatten cMAP * part cparts f0 f1 cflatten cMAP * * part co part cflatten * part cparts f0 f1 c==> c= cMAP * * part co part cflatten * part cparts f0 f1 f1 c= cflatten cflatten cMAP * part cparts f0 f1 cflatten f1
+- (_10134930 = _10134932), (_10134931 = _10134933) |- (((((MEM _10134930) _10134931) = ((MEM _10134932) _10134933)) ==> (((MEM _10134932) _10134933) \/ (~ ((MEM _10134930) _10134931)))) = (((MEM _10134932) _10134933) \/ (~ ((MEM _10134930) _10134931))))
+T c==> c= f0 f1 c==> c= f2 f3 c= c==> c= cMEM f0 f2 cMEM f1 f3 c\/ cMEM f1 f3 c~ cMEM f0 f2 c\/ cMEM f1 f3 c~ cMEM f0 f2
+- ((((normal_list L) N) ==> (((MEM r) N) ==> ((~ (?L. (?N. (((normal_list L) N) /\ ((MEM r) N))))) ==> F))) ==> (((normal_list L) N) ==> (((MEM r) N) ==> ((~ (?L. (?N. (((normal_list L) N) /\ ((MEM r) N))))) ==> F)))), (((normal_list L) N) ==> (((MEM r) N) ==> ((~ (?L. (?N. (((normal_list L) N) /\ ((MEM r) N))))) ==> F))) |- ((((normal_list L) N) ==> (((MEM r) N) ==> ((~ (?L. (?N. (((normal_list L) N) /\ ((MEM r) N))))) ==> F))) /\ (((normal_list L) N) ==> (((MEM r) N) ==> ((~ (?L. (?N. (((normal_list L) N) /\ ((MEM r) N))))) ==> F))))
+T c==> c==> c==> cnormal_list f0 f1 c==> cMEM f2 f1 c==> c~ c? / c? / c/\ cnormal_list b0 b1 cMEM f2 b1 cF c==> cnormal_list f0 f1 c==> cMEM f2 f1 c==> c~ c? / c? / c/\ cnormal_list b0 b1 cMEM f2 b1 cF c==> c==> cnormal_list f0 f1 c==> cMEM f2 f1 c==> c~ c? / c? / c/\ cnormal_list b0 b1 cMEM f2 b1 cF c/\ c==> cnormal_list f0 f1 c==> cMEM f2 f1 c==> c~ c? / c? / c/\ cnormal_list b0 b1 cMEM f2 b1 cF c==> cnormal_list f0 f1 c==> cMEM f2 f1 c==> c~ c? / c? / c/\ cnormal_list b0 b1 cMEM f2 b1 cF
++ |- ((\r. ((((uniq r) /\ (~ (r = NIL))) /\ (P r)) ==> (P (flatten ((parts L) r))))) r)
+T * / c==> c/\ c/\ cuniq b0 c~ c= b0 cNIL * f0 b0 * f0 cflatten cparts f1 b0 f2
+- ((~ (!a. (!b. (!c. ((a ==> (b = c)) ==> (!P. ((a /\ (P c)) ==> (P b)))))))) ==> F), (((~ (!a. (!b. (!c. ((a ==> (b = c)) ==> (!P. ((a /\ (P c)) ==> (P b)))))))) ==> F) ==> ((~ (!a. (!b. (!c. ((a ==> (b = c)) ==> (!P. ((a /\ (P c)) ==> (P b)))))))) ==> F)) |- (((~ (!a. (!b. (!c. ((a ==> (b = c)) ==> (!P. ((a /\ (P c)) ==> (P b)))))))) ==> F) /\ ((~ (!a. (!b. (!c. ((a ==> (b = c)) ==> (!P. ((a /\ (P c)) ==> (P b)))))))) ==> F))
+T c==> c==> c~ ! ! ! c==> c==> b0 c= b1 b2 ! c==> c/\ b0 * b3 b2 * b3 b1 cF c==> c==> c==> c~ ! ! ! c==> c==> b0 c= b1 b2 ! c==> c/\ b0 * b3 b2 * b3 b1 cF c==> c~ ! ! ! c==> c==> b0 c= b1 b2 ! c==> c/\ b0 * b3 b2 * b3 b1 cF c/\ c==> c~ ! ! ! c==> c==> b0 c= b1 b2 ! c==> c/\ b0 * b3 b2 * b3 b1 cF c==> c~ ! ! ! c==> c==> b0 c= b1 b2 ! c==> c/\ b0 * b3 b2 * b3 b1 cF
++ |- (((!y. (((\x. ((\v. (v = r)) x)) y) = ((\v. (v = r)) y))) ==> ((\y. (((\x. ((\v. (v = r)) x)) y) = ((\v. (v = r)) y))) (flatten ((parts L) r)))) = ((\y. (((\x. ((\v. (v = r)) x)) y) = ((\v. (v = r)) y))) (flatten ((parts L) r))))
+T c= c==> ! c= * / * / c= b2 f0 b1 b0 * / c= b1 f0 b0 * / c= * / * / c= b2 f0 b1 b0 * / c= b1 f0 b0 cflatten cparts f1 f0 * / c= * / * / c= b2 f0 b1 b0 * / c= b1 f0 b0 cflatten cparts f1 f0
+- ((((normal_list L) N) ==> (((MEM r) N) ==> ((~ (?L. (?N. (((normal_list L) N) /\ ((MEM r) N))))) ==> F))) ==> (((normal_list L) N) ==> (((MEM r) N) ==> ((~ (?L. (?N. (((normal_list L) N) /\ ((MEM r) N))))) ==> F)))) |- (((((normal_list L) N) ==> (((MEM r) N) ==> ((~ (?L. (?N. (((normal_list L) N) /\ ((MEM r) N))))) ==> F))) ==> (((normal_list L) N) ==> (((MEM r) N) ==> ((~ (?L. (?N. (((normal_list L) N) /\ ((MEM r) N))))) ==> F)))) /\ ((((normal_list L) N) ==> (((MEM r) N) ==> ((~ (?L. (?N. (((normal_list L) N) /\ ((MEM r) N))))) ==> F))) ==> (((normal_list L) N) ==> (((MEM r) N) ==> ((~ (?L. (?N. (((normal_list L) N) /\ ((MEM r) N))))) ==> F)))))
+T c==> c==> c==> cnormal_list f0 f1 c==> cMEM f2 f1 c==> c~ c? / c? / c/\ cnormal_list b0 b1 cMEM f2 b1 cF c==> cnormal_list f0 f1 c==> cMEM f2 f1 c==> c~ c? / c? / c/\ cnormal_list b0 b1 cMEM f2 b1 cF c/\ c==> c==> cnormal_list f0 f1 c==> cMEM f2 f1 c==> c~ c? / c? / c/\ cnormal_list b0 b1 cMEM f2 b1 cF c==> cnormal_list f0 f1 c==> cMEM f2 f1 c==> c~ c? / c? / c/\ cnormal_list b0 b1 cMEM f2 b1 cF c==> c==> cnormal_list f0 f1 c==> cMEM f2 f1 c==> c~ c? / c? / c/\ cnormal_list b0 b1 cMEM f2 b1 cF c==> cnormal_list f0 f1 c==> cMEM f2 f1 c==> c~ c? / c? / c/\ cnormal_list b0 b1 cMEM f2 b1 cF
++ ((normal_list L) N) |- ((((MEM r) N) ==> ((flatten ((parts L) r)) = r)) = T)
+T c==> cnormal_list f0 f1 c= c==> cMEM f2 f1 c= cflatten cparts f0 f2 f2 cT
++ (!r. (((MEM r) N) ==> (((flatten o (parts L)) r) = r))) |- ((ALL (\x. (((flatten o (parts L)) x) = (I x)))) N)
+T c==> ! c==> cMEM b0 f0 c= co part cflatten * part cparts f1 b0 b0 cALL / c= co part cflatten * part cparts f1 b0 cI b0 f0
++ (A = F) |- ((A = F) /\ (((A ==> B) /\ A) ==> B))
+T c==> c= f0 cF c/\ c= f0 cF c==> c/\ c==> f0 f1 f0 f1
+- (_10134930 = _10134932), (_10134931 = _10134933) |- (((MEM _10134932) _10134933) \/ (~ ((MEM _10134930) _10134931)))
+T c==> c= f0 f1 c==> c= f2 f3 c\/ cMEM f1 f3 c~ cMEM f0 f2
++ |- ((!N. (!L. (((normal_list L) N) ==> ((!r. (((MEM r) N) ==> (((flatten o (parts L)) r) = r))) ==> (((flatten (flatten ((MAP (parts L)) N))) = (flatten ((MAP (flatten o (parts L))) N))) ==> ((((MAP (flatten o (parts L))) N) = N) ==> ((flatten (flatten ((MAP (parts L)) N))) = (flatten N)))))))) = (!N. (!L. (((normal_list L) N) ==> ((!r. (((MEM r) N) ==> (((flatten o (parts L)) r) = r))) ==> ((~ (((flatten (flatten ((MAP (parts L)) N))) = (flatten ((MAP (flatten o (parts L))) N))) ==> ((((MAP (flatten o (parts L))) N) = N) ==> ((flatten (flatten ((MAP (parts L)) N))) = (flatten N))))) ==> F))))))
+T c= ! ! c==> cnormal_list b1 b0 c==> ! c==> cMEM b2 b0 c= co part cflatten * part cparts b1 b2 b2 c==> c= cflatten cflatten cMAP * part cparts b1 b0 cflatten cMAP * * part co part cflatten * part cparts b1 b0 c==> c= cMAP * * part co part cflatten * part cparts b1 b0 b0 c= cflatten cflatten cMAP * part cparts b1 b0 cflatten b0 ! ! c==> cnormal_list b1 b0 c==> ! c==> cMEM b2 b0 c= co part cflatten * part cparts b1 b2 b2 c==> c~ c==> c= cflatten cflatten cMAP * part cparts b1 b0 cflatten cMAP * * part co part cflatten * part cparts b1 b0 c==> c= cMAP * * part co part cflatten * part cparts b1 b0 b0 c= cflatten cflatten cMAP * part cparts b1 b0 cflatten b0 cF
++ |- ((\f. (!g. (!l. (((MAP (g o f)) l) = ((MAP g) ((MAP f) l)))))) f)
+T * / ! ! c= cMAP * * part co b1 b0 b2 cMAP b1 cMAP b0 b2 f0
++ |- ((\g. (!l. (((MAP (g o f)) l) = ((MAP g) ((MAP f) l))))) g)
+T * / ! c= cMAP * * part co b0 f0 b1 cMAP b0 cMAP f0 b1 f1
+- |- ((!r'. ((~ ((MEM r') N)) \/ (((flatten o (parts L)) r) = r))) = ((!r. (~ ((MEM r) N))) \/ (((flatten o (parts L)) r) = r)))
+T c= ! c\/ c~ cMEM b0 f0 c= co part cflatten * part cparts f1 f2 f2 c\/ ! c~ cMEM b0 f0 c= co part cflatten * part cparts f1 f2 f2
++ |- (!N. (((\N. (((normal_list L) N) /\ ((MEM r) N))) N) ==> ((!L. (!N. (!r. ((((normal_list L) N) /\ ((MEM r) N)) ==> ((uniq r) /\ (~ (r = NIL))))))) ==> ((uniq r) /\ (~ (r = NIL))))))
+T c==> * / c/\ cnormal_list f0 b0 cMEM f1 b0 f2 c==> ! ! ! c==> c/\ cnormal_list b0 b1 cMEM b2 b1 c/\ cuniq b2 c~ c= b2 cNIL c/\ cuniq f1 c~ c= f1 cNIL
++ |- ((!b. (!c. ((b = c) ==> (!P. ((P c) ==> (P b)))))) = ((~ (!a. (!b. (!c. ((a ==> (b = c)) ==> (!P. ((a /\ (P c)) ==> (P b)))))))) ==> F))
+T c= ! ! c==> c= b0 b1 ! c==> * b2 b1 * b2 b0 c==> c~ ! ! ! c==> c==> b0 c= b1 b2 ! c==> c/\ b0 * b3 b2 * b3 b1 cF
++ ((normal_list L) N) |- (((normal_list L) N) /\ ((!r. (((MEM r) N) ==> (((flatten o (parts L)) r) = r))) ==> (((flatten (flatten ((MAP (parts L)) N))) = (flatten ((MAP (flatten o (parts L))) N))) ==> ((((MAP (flatten o (parts L))) N) = N) ==> ((flatten (flatten ((MAP (parts L)) N))) = (flatten N))))))
+T c==> cnormal_list f0 f1 c/\ cnormal_list f0 f1 c==> ! c==> cMEM b0 f1 c= co part cflatten * part cparts f0 b0 b0 c==> c= cflatten cflatten cMAP * part cparts f0 f1 cflatten cMAP * * part co part cflatten * part cparts f0 f1 c==> c= cMAP * * part co part cflatten * part cparts f0 f1 f1 c= cflatten cflatten cMAP * part cparts f0 f1 cflatten f1
++ (!L. (!r. (!P. ((((uniq r) /\ (~ (r = NIL))) /\ (P r)) ==> (P (flatten ((parts L) r))))))) |- (((((uniq r) /\ (~ (r = NIL))) /\ (P r)) ==> (P (flatten ((parts L) r)))) = T)
+T c==> ! ! ! c==> c/\ c/\ cuniq b1 c~ c= b1 cNIL * b2 b1 * b2 cflatten cparts b0 b1 c= c==> c/\ c/\ cuniq f0 c~ c= f0 cNIL * f1 f0 * f1 cflatten cparts f2 f0 cT
+- |- ((!N. (!L. (((normal_list L) N) ==> (((MEM r) N) ==> (?L. (?N. (((normal_list L) N) /\ ((MEM r) N)))))))) = T)
+T c= ! ! c==> cnormal_list b1 b0 c==> cMEM f0 b0 c? / c? / c/\ cnormal_list b2 b2 cMEM f0 b2 cT
+- |- ((?N'. (((normal_list L) N') /\ ((MEM r) N))) = ((?N. ((normal_list L) N)) /\ ((MEM r) N)))
+T c= c? / c/\ cnormal_list f0 b0 cMEM f1 f2 c/\ c? / cnormal_list f0 b0 cMEM f1 f2
+- (((MAP (flatten o (parts L))) N) = N) |- ((~ (((MAP (flatten o (parts L))) N) = N)) ==> (((MAP (flatten o (parts L))) N) = N))
+T c==> c= cMAP * * part co part cflatten * part cparts f0 f1 f1 c==> c~ c= cMAP * * part co part cflatten * part cparts f0 f1 f1 c= cMAP * * part co part cflatten * part cparts f0 f1 f1
+- (((normal_list L) N) ==> ((!r. (((MEM r) N) ==> (((flatten o (parts L)) r) = r))) ==> ((~ (((flatten (flatten ((MAP (parts L)) N))) = (flatten ((MAP (flatten o (parts L))) N))) ==> ((((MAP (flatten o (parts L))) N) = N) ==> ((flatten (flatten ((MAP (parts L)) N))) = (flatten N))))) ==> F))) |- ((((normal_list L) N) ==> ((!r. (((MEM r) N) ==> (((flatten o (parts L)) r) = r))) ==> ((~ (((flatten (flatten ((MAP (parts L)) N))) = (flatten ((MAP (flatten o (parts L))) N))) ==> ((((MAP (flatten o (parts L))) N) = N) ==> ((flatten (flatten ((MAP (parts L)) N))) = (flatten N))))) ==> F))) /\ (((normal_list L) N) ==> ((!r. (((MEM r) N) ==> (((flatten o (parts L)) r) = r))) ==> ((~ (((flatten (flatten ((MAP (parts L)) N))) = (flatten ((MAP (flatten o (parts L))) N))) ==> ((((MAP (flatten o (parts L))) N) = N) ==> ((flatten (flatten ((MAP (parts L)) N))) = (flatten N))))) ==> F))))
+T c==> c==> cnormal_list f0 f1 c==> ! c==> cMEM b0 f1 c= co part cflatten * part cparts f0 b0 b0 c==> c~ c==> c= cflatten cflatten cMAP * part cparts f0 f1 cflatten cMAP * * part co part cflatten * part cparts f0 f1 c==> c= cMAP * * part co part cflatten * part cparts f0 f1 f1 c= cflatten cflatten cMAP * part cparts f0 f1 cflatten f1 cF c/\ c==> cnormal_list f0 f1 c==> ! c==> cMEM b0 f1 c= co part cflatten * part cparts f0 b0 b0 c==> c~ c==> c= cflatten cflatten cMAP * part cparts f0 f1 cflatten cMAP * * part co part cflatten * part cparts f0 f1 c==> c= cMAP * * part co part cflatten * part cparts f0 f1 f1 c= cflatten cflatten cMAP * part cparts f0 f1 cflatten f1 cF c==> cnormal_list f0 f1 c==> ! c==> cMEM b0 f1 c= co part cflatten * part cparts f0 b0 b0 c==> c~ c==> c= cflatten cflatten cMAP * part cparts f0 f1 cflatten cMAP * * part co part cflatten * part cparts f0 f1 c==> c= cMAP * * part co part cflatten * part cparts f0 f1 f1 c= cflatten cflatten cMAP * part cparts f0 f1 cflatten f1 cF
+- |- (((((normal_list L) N) ==> ((!r. (((MEM r) N) ==> (((flatten o (parts L)) r) = r))) ==> ((~ (((flatten (flatten ((MAP (parts L)) N))) = (flatten ((MAP (flatten o (parts L))) N))) ==> ((((MAP (flatten o (parts L))) N) = N) ==> ((flatten (flatten ((MAP (parts L)) N))) = (flatten N))))) ==> F))) ==> (((normal_list L) N) ==> ((!r. (((MEM r) N) ==> (((flatten o (parts L)) r) = r))) ==> ((~ (((flatten (flatten ((MAP (parts L)) N))) = (flatten ((MAP (flatten o (parts L))) N))) ==> ((((MAP (flatten o (parts L))) N) = N) ==> ((flatten (flatten ((MAP (parts L)) N))) = (flatten N))))) ==> F)))) ==> ((((normal_list L) N) ==> ((!r. (((MEM r) N) ==> (((flatten o (parts L)) r) = r))) ==> ((~ (((flatten (flatten ((MAP (parts L)) N))) = (flatten ((MAP (flatten o (parts L))) N))) ==> ((((MAP (flatten o (parts L))) N) = N) ==> ((flatten (flatten ((MAP (parts L)) N))) = (flatten N))))) ==> F))) ==> (((normal_list L) N) ==> ((!r. (((MEM r) N) ==> (((flatten o (parts L)) r) = r))) ==> ((~ (((flatten (flatten ((MAP (parts L)) N))) = (flatten ((MAP (flatten o (parts L))) N))) ==> ((((MAP (flatten o (parts L))) N) = N) ==> ((flatten (flatten ((MAP (parts L)) N))) = (flatten N))))) ==> F)))))
+T c==> c==> c==> cnormal_list f0 f1 c==> ! c==> cMEM b0 f1 c= co part cflatten * part cparts f0 b0 b0 c==> c~ c==> c= cflatten cflatten cMAP * part cparts f0 f1 cflatten cMAP * * part co part cflatten * part cparts f0 f1 c==> c= cMAP * * part co part cflatten * part cparts f0 f1 f1 c= cflatten cflatten cMAP * part cparts f0 f1 cflatten f1 cF c==> cnormal_list f0 f1 c==> ! c==> cMEM b0 f1 c= co part cflatten * part cparts f0 b0 b0 c==> c~ c==> c= cflatten cflatten cMAP * part cparts f0 f1 cflatten cMAP * * part co part cflatten * part cparts f0 f1 c==> c= cMAP * * part co part cflatten * part cparts f0 f1 f1 c= cflatten cflatten cMAP * part cparts f0 f1 cflatten f1 cF c==> c==> cnormal_list f0 f1 c==> ! c==> cMEM b0 f1 c= co part cflatten * part cparts f0 b0 b0 c==> c~ c==> c= cflatten cflatten cMAP * part cparts f0 f1 cflatten cMAP * * part co part cflatten * part cparts f0 f1 c==> c= cMAP * * part co part cflatten * part cparts f0 f1 f1 c= cflatten cflatten cMAP * part cparts f0 f1 cflatten f1 cF c==> cnormal_list f0 f1 c==> ! c==> cMEM b0 f1 c= co part cflatten * part cparts f0 b0 b0 c==> c~ c==> c= cflatten cflatten cMAP * part cparts f0 f1 cflatten cMAP * * part co part cflatten * part cparts f0 f1 c==> c= cMAP * * part co part cflatten * part cparts f0 f1 f1 c= cflatten cflatten cMAP * part cparts f0 f1 cflatten f1 cF
+- (!f. (!g. (!l. (((ALL (\x. ((f x) = (g x)))) l) ==> (((MAP f) l) = ((MAP g) l)))))) |- (((!g. (!l. (((ALL (\x. ((f x) = (g x)))) l) ==> (((MAP f) l) = ((MAP g) l))))) ==> ((\g. (!l. (((ALL (\x. ((f x) = (g x)))) l) ==> (((MAP f) l) = ((MAP g) l))))) g)) = ((\g. (!l. (((ALL (\x. ((f x) = (g x)))) l) ==> (((MAP f) l) = ((MAP g) l))))) g))
+T c==> ! ! ! c==> cALL / c= * b0 b3 * b1 b3 b2 c= cMAP b0 b2 cMAP b1 b2 c= c==> ! ! c==> cALL / c= * f0 b2 * b0 b2 b1 c= cMAP f0 b1 cMAP b0 b1 * / ! c==> cALL / c= * f0 b2 * b0 b2 b1 c= cMAP f0 b1 cMAP b0 b1 f1 * / ! c==> cALL / c= * f0 b2 * b0 b2 b1 c= cMAP f0 b1 cMAP b0 b1 f1
+- (_10134934 = _10134936) |- ((_10134935 = _10134937) ==> (((normal_list _10134936) _10134937) \/ (~ ((normal_list _10134934) _10134935))))
+T c==> c= f0 f1 c==> c= f2 f3 c\/ cnormal_list f1 f3 c~ cnormal_list f0 f2
+- |- (((!t1. (!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))))) ==> ((\t1. (!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))))) t1)) = ((\t1. (!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))))) t1))
+T c= c==> ! ! ! c= c\/ b0 c\/ b1 b2 c\/ c\/ b0 b1 b2 * / ! ! c= c\/ b0 c\/ b1 b2 c\/ c\/ b0 b1 b2 f0 * / ! ! c= c\/ b0 c\/ b1 b2 c\/ c\/ b0 b1 b2 f0
+- |- ((_10134952 = _10134953) ==> ((parts _10134952) = (parts _10134953)))
+T c==> c= f0 f1 c= * part cparts f0 * part cparts f1
+- (?N. (((normal_list L) N) /\ ((MEM r) N))) |- ((?N. (((normal_list L) N) /\ ((MEM r) N))) /\ ((!L. (!N. (!r. ((((normal_list L) N) /\ ((MEM r) N)) ==> ((uniq r) /\ (~ (r = NIL))))))) ==> ((uniq r) /\ (~ (r = NIL)))))
+T c==> c? / c/\ cnormal_list f0 b0 cMEM f1 b0 c/\ c? / c/\ cnormal_list f0 b0 cMEM f1 b0 c==> ! ! ! c==> c/\ cnormal_list b0 b1 cMEM b2 b1 c/\ cuniq b2 c~ c= b2 cNIL c/\ cuniq f1 c~ c= f1 cNIL
+- ((((flatten (flatten ((MAP (parts L)) N))) = (flatten ((MAP (flatten o (parts L))) N))) ==> B) /\ ((flatten (flatten ((MAP (parts L)) N))) = (flatten ((MAP (flatten o (parts L))) N)))) |- ((((((flatten (flatten ((MAP (parts L)) N))) = (flatten ((MAP (flatten o (parts L))) N))) ==> B) /\ ((flatten (flatten ((MAP (parts L)) N))) = (flatten ((MAP (flatten o (parts L))) N)))) ==> B) ==> B)
+T c==> c/\ c==> c= cflatten cflatten cMAP * part cparts f0 f1 cflatten cMAP * * part co part cflatten * part cparts f0 f1 f2 c= cflatten cflatten cMAP * part cparts f0 f1 cflatten cMAP * * part co part cflatten * part cparts f0 f1 c==> c==> c/\ c==> c= cflatten cflatten cMAP * part cparts f0 f1 cflatten cMAP * * part co part cflatten * part cparts f0 f1 f2 c= cflatten cflatten cMAP * part cparts f0 f1 cflatten cMAP * * part co part cflatten * part cparts f0 f1 f2 f2
+- ((flatten (flatten ((MAP (parts L)) N))) = (flatten ((MAP (flatten o (parts L))) N))) |- ((~ (((I flatten) (flatten ((MAP (parts L)) N))) = ((I flatten) ((MAP (flatten o (parts L))) N)))) ==> (((I flatten) (flatten ((MAP (parts L)) N))) = ((I flatten) ((MAP (flatten o (parts L))) N))))
+T c==> c= cflatten cflatten cMAP * part cparts f0 f1 cflatten cMAP * * part co part cflatten * part cparts f0 f1 c==> c~ c= cI part cflatten cflatten cMAP * part cparts f0 f1 cI part cflatten cMAP * * part co part cflatten * part cparts f0 f1 c= cI part cflatten cflatten cMAP * part cparts f0 f1 cI part cflatten cMAP * * part co part cflatten * part cparts f0 f1
+- |- ((APPEND = cat) /\ (ALL = all))
+T c/\ c= part cAPPEND part ccat c= part cALL part call
+- |- (FILTER = filter)
+T c= part cFILTER part cfilter
+- (P c) |- ((~ (P c)) ==> (P c))
+T c==> * f0 f1 c==> c~ * f0 f1 * f0 f1
+- |- ((((~ (!a. (!b. (!c. ((a ==> (b = c)) ==> (!P. ((a /\ (P c)) ==> (P b)))))))) ==> F) ==> ((~ (!a. (!b. (!c. ((a ==> (b = c)) ==> (!P. ((a /\ (P c)) ==> (P b)))))))) ==> F)) = ((~ (!a. (!b. (!c. ((a ==> (b = c)) ==> (!P. ((a /\ (P c)) ==> (P b)))))))) ==> F))
+T c= c==> c==> c~ ! ! ! c==> c==> b0 c= b1 b2 ! c==> c/\ b0 * b3 b2 * b3 b1 cF c==> c~ ! ! ! c==> c==> b0 c= b1 b2 ! c==> c/\ b0 * b3 b2 * b3 b1 cF c==> c~ ! ! ! c==> c==> b0 c= b1 b2 ! c==> c/\ b0 * b3 b2 * b3 b1 cF
+- |- ((\r. (!N. (!L. (((normal_list L) N) ==> (((MEM r) N) ==> ((~ (?L. (?N. (((normal_list L) N) /\ ((MEM r) N))))) ==> F)))))) r)
+T * / ! ! c==> cnormal_list b2 b1 c==> cMEM b0 b1 c==> c~ c? / c? / c/\ cnormal_list b3 b3 cMEM b0 b3 cF f0
+- (!r. (((MEM r) N) ==> (((flatten o (parts L)) r) = r))), (~ (((flatten (flatten ((MAP (parts L)) N))) = (flatten ((MAP (flatten o (parts L))) N))) ==> ((((MAP (flatten o (parts L))) N) = N) ==> ((flatten (flatten ((MAP (parts L)) N))) = (flatten N))))), ((normal_list L) N) |- ((~ (((flatten (flatten ((MAP (parts L)) N))) = (flatten ((MAP (flatten o (parts L))) N))) ==> ((((MAP (flatten o (parts L))) N) = N) ==> ((flatten (flatten ((MAP (parts L)) N))) = (flatten N))))) /\ F)
+T c==> ! c==> cMEM b0 f0 c= co part cflatten * part cparts f1 b0 b0 c==> c~ c==> c= cflatten cflatten cMAP * part cparts f1 f0 cflatten cMAP * * part co part cflatten * part cparts f1 f0 c==> c= cMAP * * part co part cflatten * part cparts f1 f0 f0 c= cflatten cflatten cMAP * part cparts f1 f0 cflatten f0 c==> cnormal_list f1 f0 c/\ c~ c==> c= cflatten cflatten cMAP * part cparts f1 f0 cflatten cMAP * * part co part cflatten * part cparts f1 f0 c==> c= cMAP * * part co part cflatten * part cparts f1 f0 f0 c= cflatten cflatten cMAP * part cparts f1 f0 cflatten f0 cF
+- |- ((?N. (P /\ (Q N))) = (P /\ (?N. (Q N))))
+T c= c? / c/\ f0 * f1 b0 c/\ f0 c? / * f1 b0
+- |- ((((((normal_list L) N) ==> ((!r. (((MEM r) N) ==> (((flatten o (parts L)) r) = r))) ==> ((~ (((flatten (flatten ((MAP (parts L)) N))) = (flatten ((MAP (flatten o (parts L))) N))) ==> ((((MAP (flatten o (parts L))) N) = N) ==> ((flatten (flatten ((MAP (parts L)) N))) = (flatten N))))) ==> F))) ==> (((normal_list L) N) ==> ((!r. (((MEM r) N) ==> (((flatten o (parts L)) r) = r))) ==> ((~ (((flatten (flatten ((MAP (parts L)) N))) = (flatten ((MAP (flatten o (parts L))) N))) ==> ((((MAP (flatten o (parts L))) N) = N) ==> ((flatten (flatten ((MAP (parts L)) N))) = (flatten N))))) ==> F)))) ==> ((((normal_list L) N) ==> ((!r. (((MEM r) N) ==> (((flatten o (parts L)) r) = r))) ==> ((~ (((flatten (flatten ((MAP (parts L)) N))) = (flatten ((MAP (flatten o (parts L))) N))) ==> ((((MAP (flatten o (parts L))) N) = N) ==> ((flatten (flatten ((MAP (parts L)) N))) = (flatten N))))) ==> F))) ==> (((normal_list L) N) ==> ((!r. (((MEM r) N) ==> (((flatten o (parts L)) r) = r))) ==> ((~ (((flatten (flatten ((MAP (parts L)) N))) = (flatten ((MAP (flatten o (parts L))) N))) ==> ((((MAP (flatten o (parts L))) N) = N) ==> ((flatten (flatten ((MAP (parts L)) N))) = (flatten N))))) ==> F))))) = ((((normal_list L) N) ==> ((!r. (((MEM r) N) ==> (((flatten o (parts L)) r) = r))) ==> ((~ (((flatten (flatten ((MAP (parts L)) N))) = (flatten ((MAP (flatten o (parts L))) N))) ==> ((((MAP (flatten o (parts L))) N) = N) ==> ((flatten (flatten ((MAP (parts L)) N))) = (flatten N))))) ==> F))) ==> (((normal_list L) N) ==> ((!r. (((MEM r) N) ==> (((flatten o (parts L)) r) = r))) ==> ((~ (((flatten (flatten ((MAP (parts L)) N))) = (flatten ((MAP (flatten o (parts L))) N))) ==> ((((MAP (flatten o (parts L))) N) = N) ==> ((flatten (flatten ((MAP (parts L)) N))) = (flatten N))))) ==> F)))))
+T c= c==> c==> c==> cnormal_list f0 f1 c==> ! c==> cMEM b0 f1 c= co part cflatten * part cparts f0 b0 b0 c==> c~ c==> c= cflatten cflatten cMAP * part cparts f0 f1 cflatten cMAP * * part co part cflatten * part cparts f0 f1 c==> c= cMAP * * part co part cflatten * part cparts f0 f1 f1 c= cflatten cflatten cMAP * part cparts f0 f1 cflatten f1 cF c==> cnormal_list f0 f1 c==> ! c==> cMEM b0 f1 c= co part cflatten * part cparts f0 b0 b0 c==> c~ c==> c= cflatten cflatten cMAP * part cparts f0 f1 cflatten cMAP * * part co part cflatten * part cparts f0 f1 c==> c= cMAP * * part co part cflatten * part cparts f0 f1 f1 c= cflatten cflatten cMAP * part cparts f0 f1 cflatten f1 cF c==> c==> cnormal_list f0 f1 c==> ! c==> cMEM b0 f1 c= co part cflatten * part cparts f0 b0 b0 c==> c~ c==> c= cflatten cflatten cMAP * part cparts f0 f1 cflatten cMAP * * part co part cflatten * part cparts f0 f1 c==> c= cMAP * * part co part cflatten * part cparts f0 f1 f1 c= cflatten cflatten cMAP * part cparts f0 f1 cflatten f1 cF c==> cnormal_list f0 f1 c==> ! c==> cMEM b0 f1 c= co part cflatten * part cparts f0 b0 b0 c==> c~ c==> c= cflatten cflatten cMAP * part cparts f0 f1 cflatten cMAP * * part co part cflatten * part cparts f0 f1 c==> c= cMAP * * part co part cflatten * part cparts f0 f1 f1 c= cflatten cflatten cMAP * part cparts f0 f1 cflatten f1 cF c==> c==> cnormal_list f0 f1 c==> ! c==> cMEM b0 f1 c= co part cflatten * part cparts f0 b0 b0 c==> c~ c==> c= cflatten cflatten cMAP * part cparts f0 f1 cflatten cMAP * * part co part cflatten * part cparts f0 f1 c==> c= cMAP * * part co part cflatten * part cparts f0 f1 f1 c= cflatten cflatten cMAP * part cparts f0 f1 cflatten f1 cF c==> cnormal_list f0 f1 c==> ! c==> cMEM b0 f1 c= co part cflatten * part cparts f0 b0 b0 c==> c~ c==> c= cflatten cflatten cMAP * part cparts f0 f1 cflatten cMAP * * part co part cflatten * part cparts f0 f1 c==> c= cMAP * * part co part cflatten * part cparts f0 f1 f1 c= cflatten cflatten cMAP * part cparts f0 f1 cflatten f1 cF
+- (_10134934 = _10134936) |- ((_10134934 = _10134936) /\ ((~ (_10134935 = _10134937)) \/ (((normal_list _10134936) _10134937) \/ (~ ((normal_list _10134934) _10134935)))))
+T c==> c= f0 f1 c/\ c= f0 f1 c\/ c~ c= f2 f3 c\/ cnormal_list f1 f3 c~ cnormal_list f0 f2
+- |- (((\x. (f x)) y) = (f y))
+T c= * / * f0 b0 f1 * f0 f1
+- (~ (((I flatten) ((MAP (flatten o (parts L))) N)) = ((I flatten) (flatten ((MAP (parts L)) N))))), ((flatten (flatten ((MAP (parts L)) N))) = (flatten ((MAP (flatten o (parts L))) N))) |- ((~ (((I flatten) ((MAP (flatten o (parts L))) N)) = ((I flatten) (flatten ((MAP (parts L)) N))))) /\ (((I flatten) ((MAP (flatten o (parts L))) N)) = ((I flatten) (flatten ((MAP (parts L)) N)))))
+T c==> c~ c= cI part cflatten cMAP * * part co part cflatten * part cparts f0 f1 cI part cflatten cflatten cMAP * part cparts f0 f1 c==> c= cflatten cflatten cMAP * part cparts f0 f1 cflatten cMAP * * part co part cflatten * part cparts f0 f1 c/\ c~ c= cI part cflatten cMAP * * part co part cflatten * part cparts f0 f1 cI part cflatten cflatten cMAP * part cparts f0 f1 c= cI part cflatten cMAP * * part co part cflatten * part cparts f0 f1 cI part cflatten cflatten cMAP * part cparts f0 f1
+- |- ((?N'. (((normal_list L) N) /\ ((MEM r) N'))) = (((normal_list L) N) /\ (?N. ((MEM r) N))))
+T c= c? / c/\ cnormal_list f0 f1 cMEM f2 b0 c/\ cnormal_list f0 f1 c? / cMEM f2 b0
+- |- (((((normal_list L) N) ==> (((MEM r) N) ==> ((~ (?L. (?N. (((normal_list L) N) /\ ((MEM r) N))))) ==> F))) ==> (((normal_list L) N) ==> (((MEM r) N) ==> ((~ (?L. (?N. (((normal_list L) N) /\ ((MEM r) N))))) ==> F)))) = (((normal_list L) N) ==> (((MEM r) N) ==> ((~ (?L. (?N. (((normal_list L) N) /\ ((MEM r) N))))) ==> F))))
+T c= c==> c==> cnormal_list f0 f1 c==> cMEM f2 f1 c==> c~ c? / c? / c/\ cnormal_list b0 b1 cMEM f2 b1 cF c==> cnormal_list f0 f1 c==> cMEM f2 f1 c==> c~ c? / c? / c/\ cnormal_list b0 b1 cMEM f2 b1 cF c==> cnormal_list f0 f1 c==> cMEM f2 f1 c==> c~ c? / c? / c/\ cnormal_list b0 b1 cMEM f2 b1 cF
+- ((normal_list L) N) |- (((normal_list L) N) /\ (((MEM r) N) ==> (?L. (?N. (((normal_list L) N) /\ ((MEM r) N))))))
+T c==> cnormal_list f0 f1 c/\ cnormal_list f0 f1 c==> cMEM f2 f1 c? / c? / c/\ cnormal_list b0 b1 cMEM f2 b1
+- |- ((_10134954 = _10134956) ==> ((~ (_10134955 = _10134957)) \/ ((_10134954 o _10134955) = (_10134956 o _10134957))))
+T c==> c= f0 f1 c\/ c~ c= f2 f3 c= * * part co f0 f2 * * part co f1 f3
+- (((((flatten (flatten ((MAP (parts L)) N))) = (flatten ((MAP (flatten o (parts L))) N))) ==> B) /\ ((flatten (flatten ((MAP (parts L)) N))) = (flatten ((MAP (flatten o (parts L))) N)))) ==> B) |- ((((((flatten (flatten ((MAP (parts L)) N))) = (flatten ((MAP (flatten o (parts L))) N))) ==> B) /\ ((flatten (flatten ((MAP (parts L)) N))) = (flatten ((MAP (flatten o (parts L))) N)))) ==> B) /\ (((((flatten (flatten ((MAP (parts L)) N))) = (flatten ((MAP (flatten o (parts L))) N))) ==> B) /\ ((flatten (flatten ((MAP (parts L)) N))) = (flatten ((MAP (flatten o (parts L))) N)))) ==> B))
+T c==> c==> c/\ c==> c= cflatten cflatten cMAP * part cparts f0 f1 cflatten cMAP * * part co part cflatten * part cparts f0 f1 f2 c= cflatten cflatten cMAP * part cparts f0 f1 cflatten cMAP * * part co part cflatten * part cparts f0 f1 f2 c/\ c==> c/\ c==> c= cflatten cflatten cMAP * part cparts f0 f1 cflatten cMAP * * part co part cflatten * part cparts f0 f1 f2 c= cflatten cflatten cMAP * part cparts f0 f1 cflatten cMAP * * part co part cflatten * part cparts f0 f1 f2 c==> c/\ c==> c= cflatten cflatten cMAP * part cparts f0 f1 cflatten cMAP * * part co part cflatten * part cparts f0 f1 f2 c= cflatten cflatten cMAP * part cparts f0 f1 cflatten cMAP * * part co part cflatten * part cparts f0 f1 f2
+- (((normal_list L) N) ==> (((MEM r) N) ==> ((~ (?L. (?N. (((normal_list L) N) /\ ((MEM r) N))))) ==> F))) |- ((((normal_list L) N) ==> (((MEM r) N) ==> ((~ (?L. (?N. (((normal_list L) N) /\ ((MEM r) N))))) ==> F))) /\ (((normal_list L) N) ==> (((MEM r) N) ==> ((~ (?L. (?N. (((normal_list L) N) /\ ((MEM r) N))))) ==> F))))
+T c==> c==> cnormal_list f0 f1 c==> cMEM f2 f1 c==> c~ c? / c? / c/\ cnormal_list b0 b1 cMEM f2 b1 cF c/\ c==> cnormal_list f0 f1 c==> cMEM f2 f1 c==> c~ c? / c? / c/\ cnormal_list b0 b1 cMEM f2 b1 cF c==> cnormal_list f0 f1 c==> cMEM f2 f1 c==> c~ c? / c? / c/\ cnormal_list b0 b1 cMEM f2 b1 cF
+- (((MAP (flatten o (parts L))) N) = N) |- ((~ (((I flatten) ((MAP (flatten o (parts L))) N)) = ((I flatten) N))) ==> (((I flatten) ((MAP (flatten o (parts L))) N)) = ((I flatten) N)))
+T c==> c= cMAP * * part co part cflatten * part cparts f0 f1 f1 c==> c~ c= cI part cflatten cMAP * * part co part cflatten * part cparts f0 f1 cI part cflatten f1 c= cI part cflatten cMAP * * part co part cflatten * part cparts f0 f1 cI part cflatten f1
+- |- ((!f. (!g. (!l. (((ALL (\x. ((f x) = (g x)))) l) ==> (((MAP f) l) = ((MAP g) l)))))) ==> (!f. (!g. (!l. (((ALL (\x. ((f x) = (g x)))) l) ==> (((MAP f) l) = ((MAP g) l)))))))
+T c==> ! ! ! c==> cALL / c= * b0 b3 * b1 b3 b2 c= cMAP b0 b2 cMAP b1 b2 ! ! ! c==> cALL / c= * b0 b3 * b1 b3 b2 c= cMAP b0 b2 cMAP b1 b2
+- |- (((!L. (((normal_list L) N) ==> (((MEM r) N) ==> ((~ (?L. (?N. (((normal_list L) N) /\ ((MEM r) N))))) ==> F)))) ==> ((\L. (((normal_list L) N) ==> (((MEM r) N) ==> ((~ (?L. (?N. (((normal_list L) N) /\ ((MEM r) N))))) ==> F)))) L)) = ((\L. (((normal_list L) N) ==> (((MEM r) N) ==> ((~ (?L. (?N. (((normal_list L) N) /\ ((MEM r) N))))) ==> F)))) L))
+T c= c==> ! c==> cnormal_list b0 f0 c==> cMEM f1 f0 c==> c~ c? / c? / c/\ cnormal_list b1 b1 cMEM f1 b1 cF * / c==> cnormal_list b0 f0 c==> cMEM f1 f0 c==> c~ c? / c? / c/\ cnormal_list b1 b1 cMEM f1 b1 cF f2 * / c==> cnormal_list b0 f0 c==> cMEM f1 f0 c==> c~ c? / c? / c/\ cnormal_list b1 b1 cMEM f1 b1 cF f2
+- (~ ((MEM r) N)), ((MEM r) N) |- ((~ ((MEM r) N)) /\ ((MEM r) N))
+T c==> c~ cMEM f0 f1 c==> cMEM f0 f1 c/\ c~ cMEM f0 f1 cMEM f0 f1
+- (_10134952 = _10134953) |- ((_10134952 = _10134953) /\ ((parts _10134952) = (parts _10134953)))
+T c==> c= f0 f1 c/\ c= f0 f1 c= * part cparts f0 * part cparts f1
+- |- ((~ (_10134931 = _10134933)) \/ ((~ (_10134930 = _10134932)) \/ (((MEM _10134932) _10134933) \/ (~ ((MEM _10134930) _10134931)))))
+T c\/ c~ c= f0 f1 c\/ c~ c= f2 f3 c\/ cMEM f3 f1 c~ cMEM f2 f0
+- (!f. (!g. (!l. (((ALL (\x. ((f x) = (g x)))) l) ==> (((MAP f) l) = ((MAP g) l)))))), ((ALL (\x. ((f x) = (g x)))) l) |- (((MAP f) l) = ((MAP g) l))
+T c==> ! ! ! c==> cALL / c= * b0 b3 * b1 b3 b2 c= cMAP b0 b2 cMAP b1 b2 c==> cALL / c= * f0 b0 * f1 b0 f2 c= cMAP f0 f2 cMAP f1 f2
+- (((normal_list L) N) ==> (((MEM r) N) ==> ((~ (?L. (?N. (((normal_list L) N) /\ ((MEM r) N))))) ==> F))) |- (((((normal_list L) N) ==> (((MEM r) N) ==> ((~ (?L. (?N. (((normal_list L) N) /\ ((MEM r) N))))) ==> F))) ==> (((normal_list L) N) ==> (((MEM r) N) ==> ((~ (?L. (?N. (((normal_list L) N) /\ ((MEM r) N))))) ==> F)))) ==> (((normal_list L) N) ==> (((MEM r) N) ==> ((~ (?L. (?N. (((normal_list L) N) /\ ((MEM r) N))))) ==> F))))
+T c==> c==> cnormal_list f0 f1 c==> cMEM f2 f1 c==> c~ c? / c? / c/\ cnormal_list b0 b1 cMEM f2 b1 cF c==> c==> c==> cnormal_list f0 f1 c==> cMEM f2 f1 c==> c~ c? / c? / c/\ cnormal_list b0 b1 cMEM f2 b1 cF c==> cnormal_list f0 f1 c==> cMEM f2 f1 c==> c~ c? / c? / c/\ cnormal_list b0 b1 cMEM f2 b1 cF c==> cnormal_list f0 f1 c==> cMEM f2 f1 c==> c~ c? / c? / c/\ cnormal_list b0 b1 cMEM f2 b1 cF
+- (~ (((MAP (flatten o (parts L))) N) = N)), (((MAP (flatten o (parts L))) N) = N) |- ((~ (((MAP (flatten o (parts L))) N) = N)) /\ (((MAP (flatten o (parts L))) N) = N))
+T c==> c~ c= cMAP * * part co part cflatten * part cparts f0 f1 f1 c==> c= cMAP * * part co part cflatten * part cparts f0 f1 f1 c/\ c~ c= cMAP * * part co part cflatten * part cparts f0 f1 f1 c= cMAP * * part co part cflatten * part cparts f0 f1 f1
+- (~ (P b)), (P c), (b = c) |- ((~ F) ==> F)
+T c==> c~ * f0 f1 c==> * f0 f2 c==> c= f1 f2 c==> c~ cF cF
+- (_10134944 = _10134946), (_10134945 = _10134947) |- ((_10134945 = _10134947) /\ (((MAP _10134944) _10134945) = ((MAP _10134946) _10134947)))
+T c==> c= f0 f1 c==> c= f2 f3 c/\ c= f2 f3 c= cMAP f0 f2 cMAP f1 f3
+- |- ((((normal_list L) N) ==> ((!r. (((MEM r) N) ==> (((flatten o (parts L)) r) = r))) ==> ((~ (((flatten (flatten ((MAP (parts L)) N))) = (flatten ((MAP (flatten o (parts L))) N))) ==> ((((MAP (flatten o (parts L))) N) = N) ==> ((flatten (flatten ((MAP (parts L)) N))) = (flatten N))))) ==> F))) ==> (((normal_list L) N) ==> ((!r. (((MEM r) N) ==> (((flatten o (parts L)) r) = r))) ==> ((~ (((flatten (flatten ((MAP (parts L)) N))) = (flatten ((MAP (flatten o (parts L))) N))) ==> ((((MAP (flatten o (parts L))) N) = N) ==> ((flatten (flatten ((MAP (parts L)) N))) = (flatten N))))) ==> F))))
+T c==> c==> cnormal_list f0 f1 c==> ! c==> cMEM b0 f1 c= co part cflatten * part cparts f0 b0 b0 c==> c~ c==> c= cflatten cflatten cMAP * part cparts f0 f1 cflatten cMAP * * part co part cflatten * part cparts f0 f1 c==> c= cMAP * * part co part cflatten * part cparts f0 f1 f1 c= cflatten cflatten cMAP * part cparts f0 f1 cflatten f1 cF c==> cnormal_list f0 f1 c==> ! c==> cMEM b0 f1 c= co part cflatten * part cparts f0 b0 b0 c==> c~ c==> c= cflatten cflatten cMAP * part cparts f0 f1 cflatten cMAP * * part co part cflatten * part cparts f0 f1 c==> c= cMAP * * part co part cflatten * part cparts f0 f1 f1 c= cflatten cflatten cMAP * part cparts f0 f1 cflatten f1 cF
+- |- ((?N. ((P N) /\ Q)) = ((?N. (P N)) /\ Q))
+T c= c? / c/\ * f0 b0 f1 c/\ c? / * f0 b0 f1
+- (!f. (!g. (!l. (((ALL (\x. ((f x) = (g x)))) l) ==> (((MAP f) l) = ((MAP g) l)))))) |- (!l. (((ALL (\x. ((f x) = (g x)))) l) ==> (((MAP f) l) = ((MAP g) l))))
+T c==> ! ! ! c==> cALL / c= * b0 b3 * b1 b3 b2 c= cMAP b0 b2 cMAP b1 b2 ! c==> cALL / c= * f0 b1 * f1 b1 b0 c= cMAP f0 b0 cMAP f1 b0
+- |- ((\s. (!x0. ((~ (NIL = s)) ==> ((LAST s) = ((last x0) s))))) s)
+T * / ! c==> c~ c= cNIL b0 c= cLAST b0 clast b1 b0 f0

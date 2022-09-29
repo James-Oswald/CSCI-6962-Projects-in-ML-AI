@@ -1,0 +1,154 @@
+N Seq2.next_el_permutes
+C |- (!s. ((uniq s) ==> ((permutes (next_el s)) (set_of_list s))))
+T c==> cuniq f0 cpermutes * part cnext_el f0 * part cset_of_list f0
+D IN_SET_OF_LIST
+A |- (!x. (!l. ((x IN (set_of_list l)) = ((MEM x) l))))
+T c= cIN f0 * part cset_of_list f1 cMEM f0 f1
+D permutes
+A |- (!s. (!p. (((permutes p) s) = ((!x. ((~ (x IN s)) ==> ((p x) = x))) /\ (!y. (?!x. ((p x) = y)))))))
+T c= cpermutes f0 f1 c/\ ! c==> c~ cIN b0 f1 c= * f0 b0 b0 ! c?! / c= * f0 b1 b0
+D Seq2.next_el_outside
+A |- (!s. (!x. ((~ ((MEM x) s)) ==> (((next_el s) x) = x))))
+T c==> c~ cMEM f0 f1 c= cnext_el f1 f0 f0
+D Seq2.prev_next_id
+A |- (!x. (!s. ((uniq s) ==> (((prev_el s) ((next_el s) x)) = x))))
+T c==> cuniq f0 c= cprev_el f0 cnext_el f0 f1 f1
+D Seq2.prev_el_inj
+A |- (!s. (!x. (!y. ((uniq s) ==> ((((prev_el s) x) = ((prev_el s) y)) = (x = y))))))
+T c==> cuniq f0 c= c= cprev_el f0 f1 cprev_el f0 f2 c= f1 f2
+- |- ((A /\ T) = A)
+T c= c/\ f0 cT f0
++ |- ((\x. (!y. ((uniq s1) ==> ((((prev_el s1) x) = ((prev_el s1) y)) = (x = y))))) ((next_el s) z))
+T * / ! c==> cuniq f0 c= c= cprev_el f0 b0 cprev_el f0 b1 c= b0 b1 cnext_el f1 f2
+- |- ((!y. ((uniq s1) ==> ((((prev_el s1) x) = ((prev_el s1) y)) = (x = y)))) = T)
+T c= ! c==> cuniq f0 c= c= cprev_el f0 f1 cprev_el f0 b0 c= f1 b0 cT
++ |- ((!y'. ((((next_el s) y') = y) = (((prev_el s) y) = y'))) = ((\x. (!y'. ((((next_el s) y') = y) = (x = y')))) ((prev_el s) y)))
+T c= ! c= c= cnext_el f0 b0 f1 c= cprev_el f0 f1 b0 * / ! c= c= cnext_el f0 b1 f1 c= b0 b1 cprev_el f0 f1
++ (!s1. (!y. ((uniq s1) ==> ((((prev_el s1) ((next_el s) z)) = ((prev_el s1) y)) = (((next_el s) z) = y))))) |- ((!s1. (!y. ((uniq s1) ==> ((((prev_el s1) ((next_el s) z)) = ((prev_el s1) y)) = (((next_el s) z) = y))))) /\ (!s1. ((uniq s1) ==> (!y. ((((prev_el s1) ((next_el s) z)) = ((prev_el s1) y)) = (((next_el s) z) = y))))))
+T c==> ! ! c==> cuniq b0 c= c= cprev_el b0 cnext_el f0 f1 cprev_el b0 b1 c= cnext_el f0 f1 b1 c/\ ! ! c==> cuniq b0 c= c= cprev_el b0 cnext_el f0 f1 cprev_el b0 b1 c= cnext_el f0 f1 b1 ! c==> cuniq b0 ! c= c= cprev_el b0 cnext_el f0 f1 cprev_el b0 b1 c= cnext_el f0 f1 b1
++ |- (((!l. ((x IN (set_of_list l)) = ((MEM x) l))) ==> ((\l. ((x IN (set_of_list l)) = ((MEM x) l))) l)) = ((\l. ((x IN (set_of_list l)) = ((MEM x) l))) l))
+T c= c==> ! c= cIN f0 * part cset_of_list b0 cMEM f0 b0 * / c= cIN f0 * part cset_of_list b0 cMEM f0 b0 f1 * / c= cIN f0 * part cset_of_list b0 cMEM f0 b0 f1
++ |- (((!x. (!y. ((uniq s1) ==> ((((prev_el s1) x) = ((prev_el s1) y)) = (x = y))))) ==> ((\x. (!y. ((uniq s1) ==> ((((prev_el s1) x) = ((prev_el s1) y)) = (x = y))))) ((next_el s) z))) = ((\x. (!y. ((uniq s1) ==> ((((prev_el s1) x) = ((prev_el s1) y)) = (x = y))))) ((next_el s) z)))
+T c= c==> ! ! c==> cuniq f0 c= c= cprev_el f0 b0 cprev_el f0 b1 c= b0 b1 * / ! c==> cuniq f0 c= c= cprev_el f0 b0 cprev_el f0 b1 c= b0 b1 cnext_el f1 f2 * / ! c==> cuniq f0 c= c= cprev_el f0 b0 cprev_el f0 b1 c= b0 b1 cnext_el f1 f2
++ |- ((?!x. (P x)) = (?x. (!y. ((P y) = (x = y)))))
+T c= c?! / * f0 b0 c? / ! c= * f0 b1 c= b0 b1
+- (uniq s1) |- ((uniq s1) /\ ((((prev_el s1) ((next_el s) z)) = ((prev_el s1) y)) = (((next_el s) z) = y)))
+T c==> cuniq f0 c/\ cuniq f0 c= c= cprev_el f0 cnext_el f1 f2 cprev_el f0 f3 c= cnext_el f1 f2 f3
+- ((!x. (P ==> (Q x))) = (P ==> (!x. (Q x)))) |- ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))
+T c==> c= ! c==> f0 * f1 b0 c==> f0 ! * f1 b0 c= c==> f0 ! * f1 b0 ! c==> f0 * f1 b0
++ |- (((uniq s) ==> ((permutes (next_el s)) (set_of_list s))) = T)
+T c= c==> cuniq f0 cpermutes * part cnext_el f0 * part cset_of_list f0 cT
+- (uniq s) |- ((uniq s) /\ (((prev_el s) ((next_el s) x)) = x))
+T c==> cuniq f0 c/\ cuniq f0 c= cprev_el f0 cnext_el f0 f1 f1
++ |- ((!s1. (!y. ((uniq s1) ==> ((((prev_el s1) ((next_el s) z)) = ((prev_el s1) y)) = (((next_el s) z) = y))))) ==> (!s1. ((uniq s1) ==> (!y. ((((prev_el s1) ((next_el s) z)) = ((prev_el s1) y)) = (((next_el s) z) = y))))))
+T c==> ! ! c==> cuniq b0 c= c= cprev_el b0 cnext_el f0 f1 cprev_el b0 b1 c= cnext_el f0 f1 b1 ! c==> cuniq b0 ! c= c= cprev_el b0 cnext_el f0 f1 cprev_el b0 b1 c= cnext_el f0 f1 b1
+- |- ((\P. (!Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x)))))) P)
+T * / ! c= c==> b0 ! * b1 b2 ! c==> b0 * b1 b2 f0
+- (~ ((MEM x) s)) |- (((((next_el s) x) = x) ==> (((next_el s) x) = x)) = (((next_el s) x) = x))
+T c==> c~ cMEM f0 f1 c= c==> c= cnext_el f1 f0 f0 c= cnext_el f1 f0 f0 c= cnext_el f1 f0 f0
+- |- (((T /\ A) = A) /\ ((A /\ T) = A))
+T c/\ c= c/\ cT f0 f0 c= c/\ f0 cT f0
++ |- (((~ ((MEM x) s)) ==> (((next_el s) x) = x)) = T)
+T c= c==> c~ cMEM f0 f1 c= cnext_el f1 f0 f0 cT
++ (uniq s) |- ((((prev_el s) ((next_el s) z)) = ((prev_el s) y)) = (((prev_el s) y) = z))
+T c==> cuniq f0 c= c= cprev_el f0 cnext_el f0 f1 cprev_el f0 f2 c= cprev_el f0 f2 f1
+- |- ((t ==> t) = T)
+T c= c==> f0 f0 cT
++ (uniq s) |- (?x. (!y'. ((((next_el s) y') = y) = (x = y'))))
+T c==> cuniq f0 c? / ! c= c= cnext_el f0 b1 f1 c= b0 b1
++ |- ((\s. (!p. (((permutes p) s) = ((!x. ((~ (x IN s)) ==> ((p x) = x))) /\ (!y. (?!x. ((p x) = y))))))) s)
+T * / ! c= cpermutes b1 b0 c/\ ! c==> c~ cIN b2 b0 c= * b1 b2 b2 ! c?! / c= * b1 b3 b2 f0
++ (!s1. (!y. ((uniq s1) ==> ((((prev_el s1) ((next_el s) z)) = ((prev_el s1) y)) = (((next_el s) z) = y))))) |- ((\s1. (!y. ((uniq s1) ==> ((((prev_el s1) ((next_el s) z)) = ((prev_el s1) y)) = (((next_el s) z) = y))))) s1)
+T c==> ! ! c==> cuniq b0 c= c= cprev_el b0 cnext_el f0 f1 cprev_el b0 b1 c= cnext_el f0 f1 b1 * / ! c==> cuniq b0 c= c= cprev_el b0 cnext_el f0 f1 cprev_el b0 b1 c= cnext_el f0 f1 b1 f2
+- |- (((x = x) ==> p) = p)
+T c= c==> c= f0 f0 f1 f1
++ |- ((((prev_el s) ((next_el s) z)) = z) ==> ((((prev_el s) ((next_el s) z)) = ((prev_el s) y)) = (((prev_el s) y) = z)))
+T c==> c= cprev_el f0 cnext_el f0 f1 f1 c= c= cprev_el f0 cnext_el f0 f1 cprev_el f0 f2 c= cprev_el f0 f2 f1
++ |- (((uniq s) ==> ((!x. ((~ (x IN (set_of_list s))) ==> (((next_el s) x) = x))) /\ (!y. (?!x. (((next_el s) x) = y))))) = ((uniq s) ==> ((permutes (next_el s)) (set_of_list s))))
+T c= c==> cuniq f0 c/\ ! c==> c~ cIN b0 * part cset_of_list f0 c= cnext_el f0 b0 b0 ! c?! / c= cnext_el f0 b1 b0 c==> cuniq f0 cpermutes * part cnext_el f0 * part cset_of_list f0
++ (!s1. (!y. ((uniq s1) ==> ((((prev_el s1) ((next_el s) z)) = ((prev_el s1) y)) = (((next_el s) z) = y))))) |- (!y. ((uniq s1) ==> ((((prev_el s1) ((next_el s) z)) = ((prev_el s1) y)) = (((next_el s) z) = y))))
+T c==> ! ! c==> cuniq b0 c= c= cprev_el b0 cnext_el f0 f1 cprev_el b0 b1 c= cnext_el f0 f1 b1 ! c==> cuniq f2 c= c= cprev_el f2 cnext_el f0 f1 cprev_el f2 b0 c= cnext_el f0 f1 b0
++ |- ((uniq s) ==> ((!x. ((~ (x IN (set_of_list s))) ==> (((next_el s) x) = x))) /\ (!y. (?!x. (((next_el s) x) = y)))))
+T c==> cuniq f0 c/\ ! c==> c~ cIN b0 * part cset_of_list f0 c= cnext_el f0 b0 b0 ! c?! / c= cnext_el f0 b1 b0
++ |- (((!x. (!y. ((x = y) = (y = x)))) ==> ((\x. (!y. ((x = y) = (y = x)))) z)) = ((\x. (!y. ((x = y) = (y = x)))) z))
+T c= c==> ! ! c= c= b0 b1 c= b1 b0 * / ! c= c= b0 b1 c= b1 b0 f0 * / ! c= c= b0 b1 c= b1 b0 f0
++ |- (((!y. ((z = y) = (y = z))) ==> ((\y. ((z = y) = (y = z))) y)) = ((\y. ((z = y) = (y = z))) y))
+T c= c==> ! c= c= f0 b0 c= b0 f0 * / c= c= f0 b0 c= b0 f0 f1 * / c= c= f0 b0 c= b0 f0 f1
+- |- (((!y. ((uniq s1) ==> ((((prev_el s1) x) = ((prev_el s1) y)) = (x = y)))) ==> ((\y. ((uniq s1) ==> ((((prev_el s1) x) = ((prev_el s1) y)) = (x = y)))) y)) = ((\y. ((uniq s1) ==> ((((prev_el s1) x) = ((prev_el s1) y)) = (x = y)))) y))
+T c= c==> ! c==> cuniq f0 c= c= cprev_el f0 f1 cprev_el f0 b0 c= f1 b0 * / c==> cuniq f0 c= c= cprev_el f0 f1 cprev_el f0 b0 c= f1 b0 f2 * / c==> cuniq f0 c= c= cprev_el f0 f1 cprev_el f0 b0 c= f1 b0 f2
++ |- (((!x. (!l. ((x IN (set_of_list l)) = ((MEM x) l)))) ==> ((\x. (!l. ((x IN (set_of_list l)) = ((MEM x) l)))) x)) = ((\x. (!l. ((x IN (set_of_list l)) = ((MEM x) l)))) x))
+T c= c==> ! ! c= cIN b0 * part cset_of_list b1 cMEM b0 b1 * / ! c= cIN b0 * part cset_of_list b1 cMEM b0 b1 f0 * / ! c= cIN b0 * part cset_of_list b1 cMEM b0 b1 f0
++ |- ((\x. ((~ ((MEM x) s)) ==> (((next_el s) x) = x))) x)
+T * / c==> c~ cMEM b0 f0 c= cnext_el f0 b0 b0 f1
++ (uniq s) |- (!y. ((((prev_el s) ((next_el s) z)) = ((prev_el s) y)) = (((next_el s) z) = y)))
+T c==> cuniq f0 ! c= c= cprev_el f0 cnext_el f0 f1 cprev_el f0 b0 c= cnext_el f0 f1 b0
++ ((((prev_el s) ((next_el s) z)) = ((prev_el s) y)) = (((next_el s) z) = y)) |- ((((next_el s) z) = y) = (((prev_el s) ((next_el s) z)) = ((prev_el s) y)))
+T c==> c= c= cprev_el f0 cnext_el f0 f1 cprev_el f0 f2 c= cnext_el f0 f1 f2 c= c= cnext_el f0 f1 f2 c= cprev_el f0 cnext_el f0 f1 cprev_el f0 f2
+- |- ((T ==> A) = A)
+T c= c==> cT f0 f0
++ (((prev_el s) ((next_el s) z)) = z) |- (((z = ((prev_el s) y)) = (((prev_el s) y) = z)) = ((((prev_el s) ((next_el s) z)) = ((prev_el s) y)) = (((prev_el s) y) = z)))
+T c==> c= cprev_el f0 cnext_el f0 f1 f1 c= c= c= f1 cprev_el f0 f2 c= cprev_el f0 f2 f1 c= c= cprev_el f0 cnext_el f0 f1 cprev_el f0 f2 c= cprev_el f0 f2 f1
++ (!s1. (!y. ((uniq s1) ==> ((((prev_el s1) ((next_el s) z)) = ((prev_el s1) y)) = (((next_el s) z) = y))))) |- (((uniq s1) ==> (!y. ((((prev_el s1) ((next_el s) z)) = ((prev_el s1) y)) = (((next_el s) z) = y)))) = T)
+T c==> ! ! c==> cuniq b0 c= c= cprev_el b0 cnext_el f0 f1 cprev_el b0 b1 c= cnext_el f0 f1 b1 c= c==> cuniq f2 ! c= c= cprev_el f2 cnext_el f0 f1 cprev_el f2 b0 c= cnext_el f0 f1 b0 cT
++ |- ((z = y) = (y = z))
+T c= c= f0 f1 c= f1 f0
++ |- (((!x. ((~ ((MEM x) s)) ==> (((next_el s) x) = x))) ==> ((\x. ((~ ((MEM x) s)) ==> (((next_el s) x) = x))) x)) = ((\x. ((~ ((MEM x) s)) ==> (((next_el s) x) = x))) x))
+T c= c==> ! c==> c~ cMEM b0 f0 c= cnext_el f0 b0 b0 * / c==> c~ cMEM b0 f0 c= cnext_el f0 b0 b0 f1 * / c==> c~ cMEM b0 f0 c= cnext_el f0 b0 b0 f1
++ |- ((\s. (!x. ((~ ((MEM x) s)) ==> (((next_el s) x) = x)))) s)
+T * / ! c==> c~ cMEM b1 b0 c= cnext_el b0 b1 b1 f0
++ ((((next_el s) z) = y) = (((prev_el s) ((next_el s) z)) = ((prev_el s) y))) |- ((((prev_el s) ((next_el s) z)) = ((prev_el s) y)) = (((next_el s) z) = y))
+T c==> c= c= cnext_el f0 f1 f2 c= cprev_el f0 cnext_el f0 f1 cprev_el f0 f2 c= c= cprev_el f0 cnext_el f0 f1 cprev_el f0 f2 c= cnext_el f0 f1 f2
++ |- ((\x. (!l. ((x IN (set_of_list l)) = ((MEM x) l)))) x)
+T * / ! c= cIN b0 * part cset_of_list b1 cMEM b0 b1 f0
++ |- ((!y. ((uniq s1) ==> ((((prev_el s1) ((next_el s) z)) = ((prev_el s1) y)) = (((next_el s) z) = y)))) = T)
+T c= ! c==> cuniq f0 c= c= cprev_el f0 cnext_el f1 f2 cprev_el f0 b0 c= cnext_el f1 f2 b0 cT
+- |- (T = ((((next_el s) x) = x) ==> (((next_el s) x) = x)))
+T c= cT c==> c= cnext_el f0 f1 f1 c= cnext_el f0 f1 f1
+- |- ((\y. ((uniq s1) ==> ((((prev_el s1) ((next_el s) z)) = ((prev_el s1) y)) = (((next_el s) z) = y)))) y)
+T * / c==> cuniq f0 c= c= cprev_el f0 cnext_el f1 f2 cprev_el f0 b0 c= cnext_el f1 f2 b0 f3
++ |- ((\y. ((z = y) = (y = z))) y)
+T * / c= c= f0 b0 c= b0 f0 f1
+- |- (((uniq s1) ==> ((((prev_el s1) ((next_el s) z)) = ((prev_el s1) y)) = (((next_el s) z) = y))) = T)
+T c= c==> cuniq f0 c= c= cprev_el f0 cnext_el f1 f2 cprev_el f0 f3 c= cnext_el f1 f2 f3 cT
++ (uniq s) |- (!y'. ((((next_el s) y') = y) = (((prev_el s) y) = y')))
+T c==> cuniq f0 ! c= c= cnext_el f0 b0 f1 c= cprev_el f0 f1 b0
++ (uniq s) |- ((((next_el s) z) = y) = (((prev_el s) y) = z))
+T c==> cuniq f0 c= c= cnext_el f0 f1 f2 c= cprev_el f0 f2 f1
+- |- ((x = x) = T)
+T c= c= f0 f0 cT
+- |- ((\Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))) Q)
+T * / c= c==> f0 ! * b0 b1 ! c==> f0 * b0 b1 f1
+- |- (((!x. (!y. ((uniq s1) ==> ((((prev_el s1) x) = ((prev_el s1) y)) = (x = y))))) ==> ((\x. (!y. ((uniq s1) ==> ((((prev_el s1) x) = ((prev_el s1) y)) = (x = y))))) x)) = ((\x. (!y. ((uniq s1) ==> ((((prev_el s1) x) = ((prev_el s1) y)) = (x = y))))) x))
+T c= c==> ! ! c==> cuniq f0 c= c= cprev_el f0 b0 cprev_el f0 b1 c= b0 b1 * / ! c==> cuniq f0 c= c= cprev_el f0 b0 cprev_el f0 b1 c= b0 b1 f1 * / ! c==> cuniq f0 c= c= cprev_el f0 b0 cprev_el f0 b1 c= b0 b1 f1
+- |- ((\y. ((uniq s1) ==> ((((prev_el s1) x) = ((prev_el s1) y)) = (x = y)))) y)
+T * / c==> cuniq f0 c= c= cprev_el f0 f1 cprev_el f0 b0 c= f1 b0 f2
+- |- (((((prev_el s) y) = z) = (((prev_el s) y) = z)) = ((z = ((prev_el s) y)) = (((prev_el s) y) = z)))
+T c= c= c= cprev_el f0 f1 f2 c= cprev_el f0 f1 f2 c= c= f2 cprev_el f0 f1 c= cprev_el f0 f1 f2
+- |- (((!P. (!Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x)))))) ==> ((\P. (!Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x)))))) P)) = ((\P. (!Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x)))))) P))
+T c= c==> ! ! c= c==> b0 ! * b1 b2 ! c==> b0 * b1 b2 * / ! c= c==> b0 ! * b1 b2 ! c==> b0 * b1 b2 f0 * / ! c= c==> b0 ! * b1 b2 ! c==> b0 * b1 b2 f0
+- |- ((((next_el s) x) = x) ==> (((next_el s) x) = x))
+T c==> c= cnext_el f0 f1 f1 c= cnext_el f0 f1 f1
+- |- (T = ((((prev_el s) y) = z) = (((prev_el s) y) = z)))
+T c= cT c= c= cprev_el f0 f1 f2 c= cprev_el f0 f1 f2
+- (uniq s1) |- ((uniq s1) /\ ((((prev_el s1) x) = ((prev_el s1) y)) = (x = y)))
+T c==> cuniq f0 c/\ cuniq f0 c= c= cprev_el f0 f1 cprev_el f0 f2 c= f1 f2
+- (uniq s) |- (T = (uniq s))
+T c==> cuniq f0 c= cT cuniq f0
+- ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x)))) |- ((!x. (P ==> (Q x))) = (P ==> (!x. (Q x))))
+T c==> c= c==> f0 ! * f1 b0 ! c==> f0 * f1 b0 c= ! c==> f0 * f1 b0 c==> f0 ! * f1 b0
+- |- (((!y. ((uniq s1) ==> ((((prev_el s1) ((next_el s) z)) = ((prev_el s1) y)) = (((next_el s) z) = y)))) ==> ((\y. ((uniq s1) ==> ((((prev_el s1) ((next_el s) z)) = ((prev_el s1) y)) = (((next_el s) z) = y)))) y)) = ((\y. ((uniq s1) ==> ((((prev_el s1) ((next_el s) z)) = ((prev_el s1) y)) = (((next_el s) z) = y)))) y))
+T c= c==> ! c==> cuniq f0 c= c= cprev_el f0 cnext_el f1 f2 cprev_el f0 b0 c= cnext_el f1 f2 b0 * / c==> cuniq f0 c= c= cprev_el f0 cnext_el f1 f2 cprev_el f0 b0 c= cnext_el f1 f2 b0 f3 * / c==> cuniq f0 c= c= cprev_el f0 cnext_el f1 f2 cprev_el f0 b0 c= cnext_el f1 f2 b0 f3
+- |- ((\x. (!y. ((uniq s1) ==> ((((prev_el s1) x) = ((prev_el s1) y)) = (x = y))))) x)
+T * / ! c==> cuniq f0 c= c= cprev_el f0 b0 cprev_el f0 b1 c= b0 b1 f1
+- |- (((uniq s1) ==> ((((prev_el s1) x) = ((prev_el s1) y)) = (x = y))) = T)
+T c= c==> cuniq f0 c= c= cprev_el f0 f1 cprev_el f0 f2 c= f1 f2 cT
+- |- ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))
+T c= c==> f0 ! * f1 b0 ! c==> f0 * f1 b0
+- (uniq s) |- ((uniq s) = T)
+T c==> cuniq f0 c= cuniq f0 cT
+- (~ ((MEM x) s)) |- ((~ ((MEM x) s)) /\ (((next_el s) x) = x))
+T c==> c~ cMEM f0 f1 c/\ c~ cMEM f0 f1 c= cnext_el f1 f0 f0
+- |- ((T /\ A) = A)
+T c= c/\ cT f0 f0
+- |- (((!Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))) ==> ((\Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))) Q)) = ((\Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))) Q))
+T c= c==> ! c= c==> f0 ! * b0 b1 ! c==> f0 * b0 b1 * / c= c==> f0 ! * b0 b1 ! c==> f0 * b0 b1 f1 * / c= c==> f0 ! * b0 b1 ! c==> f0 * b0 b1 f1

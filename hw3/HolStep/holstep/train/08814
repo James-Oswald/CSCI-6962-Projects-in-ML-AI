@@ -1,0 +1,149 @@
+N Tame_list.last_filter
+C |- (!f. (!xs. (((~ (xs = NIL)) /\ (f (LAST xs))) ==> ((LAST ((filter f) xs)) = (LAST xs)))))
+T c==> c/\ c~ c= f0 cNIL * f1 cLAST f0 c= cLAST cfilter f1 f0 cLAST f0
+D TRUTH
+A |- T
+T cT
+D BOOL_CASES_AX
+A |- (!t. ((t = T) \/ (t = F)))
+T c\/ c= f0 cT c= f0 cF
+D COND_CLAUSES
+A |- (!t1. (!t2. (((((COND T) t1) t2) = t1) /\ ((((COND F) t1) t2) = t2))))
+T c/\ c= cCOND cT f0 f1 f0 c= cCOND cF f0 f1 f1
+D Seq.filter_rcons
+A |- (!a. (!s. (!x. (((filter a) ((rcons s) x)) = (((COND (a x)) ((rcons ((filter a) s)) x)) ((filter a) s))))))
+T c= cfilter f0 crcons f1 f2 cCOND * f0 f2 crcons cfilter f0 f1 f2 cfilter f0 f1
+D Tame_list.LISTR_INDUCT
+A |- (!f. (((f NIL) /\ (!h. (!t. ((f t) ==> (f ((rcons t) h)))))) ==> (!r. (f r))))
+T c==> c/\ * f0 cNIL ! ! c==> * f0 b1 * f0 crcons b1 b0 ! * f0 b0
+D Tame_list.LAST_rcons
+A |- (!t. (!h. ((LAST ((rcons t) h)) = h)))
+T c= cLAST crcons f0 f1 f1
++ |- ((\f. (((f NIL) /\ (!h. (!t. ((f t) ==> (f ((rcons t) h)))))) ==> (!r. (f r)))) f)
+T * / c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 crcons b2 b1 ! * b0 b1 f0
+- |- ((!f. (((f NIL) /\ (!h. (!t. ((f t) ==> (f ((rcons t) h)))))) ==> (!r. (f r)))) ==> (!f. (((f NIL) /\ (!h. (!t. ((f t) ==> (f ((rcons t) h)))))) ==> (!r. (f r)))))
+T c==> ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 crcons b2 b1 ! * b0 b1 ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 crcons b2 b1 ! * b0 b1
++ |- ((\q'. ((((~ (((rcons t) h) = NIL)) /\ (f (LAST ((rcons t) h)))) = p') ==> ((p' ==> (((LAST ((filter f) ((rcons t) h))) = (LAST ((rcons t) h))) = q')) ==> ((((~ (((rcons t) h) = NIL)) /\ (f (LAST ((rcons t) h)))) ==> ((LAST ((filter f) ((rcons t) h))) = (LAST ((rcons t) h)))) = (p' ==> q'))))) q')
+T * / c==> c= c/\ c~ c= crcons f0 f1 cNIL * f2 cLAST crcons f0 f1 f3 c==> c==> f3 c= c= cLAST cfilter f2 crcons f0 f1 cLAST crcons f0 f1 b0 c= c==> c/\ c~ c= crcons f0 f1 cNIL * f2 cLAST crcons f0 f1 c= cLAST cfilter f2 crcons f0 f1 cLAST crcons f0 f1 c==> f3 b0 f4
++ |- ((\q'. ((((~ (t = NIL)) /\ (f (LAST t))) = p') ==> ((p' ==> (((LAST ((filter f) t)) = (LAST t)) = q')) ==> ((((~ (t = NIL)) /\ (f (LAST t))) ==> ((LAST ((filter f) t)) = (LAST t))) = (p' ==> q'))))) q')
+T * / c==> c= c/\ c~ c= f0 cNIL * f1 cLAST f0 f2 c==> c==> f2 c= c= cLAST cfilter f1 f0 cLAST f0 b0 c= c==> c/\ c~ c= f0 cNIL * f1 cLAST f0 c= cLAST cfilter f1 f0 cLAST f0 c==> f2 b0 f3
++ |- ((((~ (t = NIL)) /\ (f (LAST t))) ==> ((LAST ((filter f) t)) = (LAST t))) ==> ((((~ (((rcons t) h) = NIL)) /\ (f (LAST ((rcons t) h)))) ==> ((LAST ((filter f) ((rcons t) h))) = (LAST ((rcons t) h)))) = T))
+T c==> c==> c/\ c~ c= f0 cNIL * f1 cLAST f0 c= cLAST cfilter f1 f0 cLAST f0 c= c==> c/\ c~ c= crcons f0 f2 cNIL * f1 cLAST crcons f0 f2 c= cLAST cfilter f1 crcons f0 f2 cLAST crcons f0 f2 cT
++ ((~ (((rcons t) h) = NIL)) /\ (f h)) |- (((~ T) ==> (((filter f) t) = e')) ==> ((((COND (f h)) ((rcons ((filter f) t)) h)) ((filter f) t)) = (((COND T) ((rcons ((filter f) t)) h)) e')))
+T c==> c/\ c~ c= crcons f0 f1 cNIL * f2 f1 c==> c==> c~ cT c= cfilter f2 f0 f3 c= cCOND * f2 f1 crcons cfilter f2 f0 f1 cfilter f2 f0 cCOND cT crcons cfilter f2 f0 f1 f3
+- ((~ (((rcons t) h) = NIL)) /\ (f h)) |- (((~ (NIL = ((rcons t) h))) ==> ((NIL = ((rcons t) h)) = F)) = ((NIL = ((rcons t) h)) = F))
+T c==> c/\ c~ c= crcons f0 f1 cNIL * f2 f1 c= c==> c~ c= cNIL crcons f0 f1 c= c= cNIL crcons f0 f1 cF c= c= cNIL crcons f0 f1 cF
++ |- (((!t. (!h. ((LAST ((rcons t) h)) = h))) ==> ((\t. (!h. ((LAST ((rcons t) h)) = h))) t)) = ((\t. (!h. ((LAST ((rcons t) h)) = h))) t))
+T c= c==> ! ! c= cLAST crcons b0 b1 b1 * / ! c= cLAST crcons b0 b1 b1 f0 * / ! c= cLAST crcons b0 b1 b1 f0
++ |- (((!e'. (((f h) = g') ==> ((g' ==> (((rcons ((filter f) t)) h) = t')) ==> (((~ g') ==> (((filter f) t) = e')) ==> ((((COND (f h)) ((rcons ((filter f) t)) h)) ((filter f) t)) = (((COND g') t') e')))))) ==> ((\e'. (((f h) = g') ==> ((g' ==> (((rcons ((filter f) t)) h) = t')) ==> (((~ g') ==> (((filter f) t) = e')) ==> ((((COND (f h)) ((rcons ((filter f) t)) h)) ((filter f) t)) = (((COND g') t') e')))))) e')) = ((\e'. (((f h) = g') ==> ((g' ==> (((rcons ((filter f) t)) h) = t')) ==> (((~ g') ==> (((filter f) t) = e')) ==> ((((COND (f h)) ((rcons ((filter f) t)) h)) ((filter f) t)) = (((COND g') t') e')))))) e'))
+T c= c==> ! c==> c= * f0 f1 f2 c==> c==> f2 c= crcons cfilter f0 f3 f1 f4 c==> c==> c~ f2 c= cfilter f0 f3 b0 c= cCOND * f0 f1 crcons cfilter f0 f3 f1 cfilter f0 f3 cCOND f2 f4 b0 * / c==> c= * f0 f1 f2 c==> c==> f2 c= crcons cfilter f0 f3 f1 f4 c==> c==> c~ f2 c= cfilter f0 f3 b0 c= cCOND * f0 f1 crcons cfilter f0 f3 f1 cfilter f0 f3 cCOND f2 f4 b0 f5 * / c==> c= * f0 f1 f2 c==> c==> f2 c= crcons cfilter f0 f3 f1 f4 c==> c==> c~ f2 c= cfilter f0 f3 b0 c= cCOND * f0 f1 crcons cfilter f0 f3 f1 cfilter f0 f3 cCOND f2 f4 b0 f5
++ |- (((((~ (t = NIL)) /\ (f (LAST t))) = ((~ (t = NIL)) /\ (f (LAST t)))) ==> ((((~ (t = NIL)) /\ (f (LAST t))) ==> (((LAST ((filter f) t)) = (LAST t)) = q')) ==> ((((~ (t = NIL)) /\ (f (LAST t))) ==> ((LAST ((filter f) t)) = (LAST t))) = (((~ (t = NIL)) /\ (f (LAST t))) ==> q')))) = ((((~ (t = NIL)) /\ (f (LAST t))) ==> (((LAST ((filter f) t)) = (LAST t)) = q')) ==> ((((~ (t = NIL)) /\ (f (LAST t))) ==> ((LAST ((filter f) t)) = (LAST t))) = (((~ (t = NIL)) /\ (f (LAST t))) ==> q'))))
+T c= c==> c= c/\ c~ c= f0 cNIL * f1 cLAST f0 c/\ c~ c= f0 cNIL * f1 cLAST f0 c==> c==> c/\ c~ c= f0 cNIL * f1 cLAST f0 c= c= cLAST cfilter f1 f0 cLAST f0 f2 c= c==> c/\ c~ c= f0 cNIL * f1 cLAST f0 c= cLAST cfilter f1 f0 cLAST f0 c==> c/\ c~ c= f0 cNIL * f1 cLAST f0 f2 c==> c==> c/\ c~ c= f0 cNIL * f1 cLAST f0 c= c= cLAST cfilter f1 f0 cLAST f0 f2 c= c==> c/\ c~ c= f0 cNIL * f1 cLAST f0 c= cLAST cfilter f1 f0 cLAST f0 c==> c/\ c~ c= f0 cNIL * f1 cLAST f0 f2
++ |- (((!f. (((f NIL) /\ (!h. (!t. ((f t) ==> (f ((rcons t) h)))))) ==> (!r. (f r)))) ==> ((\f. (((f NIL) /\ (!h. (!t. ((f t) ==> (f ((rcons t) h)))))) ==> (!r. (f r)))) f)) = ((\f. (((f NIL) /\ (!h. (!t. ((f t) ==> (f ((rcons t) h)))))) ==> (!r. (f r)))) f))
+T c= c==> ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 crcons b2 b1 ! * b0 b1 * / c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 crcons b2 b1 ! * b0 b1 f0 * / c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 crcons b2 b1 ! * b0 b1 f0
++ |- ((t ==> T) = T)
+T c= c==> f0 cT cT
++ |- ((\g'. (!t'. (!e'. (((f h) = g') ==> ((g' ==> (((rcons ((filter f) t)) h) = t')) ==> (((~ g') ==> (((filter f) t) = e')) ==> ((((COND (f h)) ((rcons ((filter f) t)) h)) ((filter f) t)) = (((COND g') t') e')))))))) g')
+T * / ! ! c==> c= * f0 f1 b0 c==> c==> b0 c= crcons cfilter f0 f2 f1 b1 c==> c==> c~ b0 c= cfilter f0 f2 b2 c= cCOND * f0 f1 crcons cfilter f0 f2 f1 cfilter f0 f2 cCOND b0 b1 b2 f3
+- |- ((t ==> t) = T)
+T c= c==> f0 f0 cT
++ |- ((!xs. (((~ (xs = NIL)) /\ (f (LAST xs))) ==> ((LAST ((filter f) xs)) = (LAST xs)))) = T)
+T c= ! c==> c/\ c~ c= b0 cNIL * f0 cLAST b0 c= cLAST cfilter f0 b0 cLAST b0 cT
++ |- ((\p'. (!q'. ((((~ (((rcons t) h) = NIL)) /\ (f (LAST ((rcons t) h)))) = p') ==> ((p' ==> (((LAST ((filter f) ((rcons t) h))) = (LAST ((rcons t) h))) = q')) ==> ((((~ (((rcons t) h) = NIL)) /\ (f (LAST ((rcons t) h)))) ==> ((LAST ((filter f) ((rcons t) h))) = (LAST ((rcons t) h)))) = (p' ==> q')))))) p')
+T * / ! c==> c= c/\ c~ c= crcons f0 f1 cNIL * f2 cLAST crcons f0 f1 b0 c==> c==> b0 c= c= cLAST cfilter f2 crcons f0 f1 cLAST crcons f0 f1 b1 c= c==> c/\ c~ c= crcons f0 f1 cNIL * f2 cLAST crcons f0 f1 c= cLAST cfilter f2 crcons f0 f1 cLAST crcons f0 f1 c==> b0 b1 f3
++ |- ((\q'. (((((~ (t = NIL)) /\ (f (LAST t))) ==> ((LAST ((filter f) t)) = (LAST t))) = p') ==> ((p' ==> ((((~ (((rcons t) h) = NIL)) /\ (f (LAST ((rcons t) h)))) ==> ((LAST ((filter f) ((rcons t) h))) = (LAST ((rcons t) h)))) = q')) ==> (((((~ (t = NIL)) /\ (f (LAST t))) ==> ((LAST ((filter f) t)) = (LAST t))) ==> (((~ (((rcons t) h) = NIL)) /\ (f (LAST ((rcons t) h)))) ==> ((LAST ((filter f) ((rcons t) h))) = (LAST ((rcons t) h))))) = (p' ==> q'))))) q')
+T * / c==> c= c==> c/\ c~ c= f0 cNIL * f1 cLAST f0 c= cLAST cfilter f1 f0 cLAST f0 f2 c==> c==> f2 c= c==> c/\ c~ c= crcons f0 f3 cNIL * f1 cLAST crcons f0 f3 c= cLAST cfilter f1 crcons f0 f3 cLAST crcons f0 f3 b0 c= c==> c==> c/\ c~ c= f0 cNIL * f1 cLAST f0 c= cLAST cfilter f1 f0 cLAST f0 c==> c/\ c~ c= crcons f0 f3 cNIL * f1 cLAST crcons f0 f3 c= cLAST cfilter f1 crcons f0 f3 cLAST crcons f0 f3 c==> f2 b0 f4
++ |- (((((~ (NIL = NIL)) /\ (f (LAST NIL))) = F) ==> ((F ==> (((LAST ((filter f) NIL)) = (LAST NIL)) = q')) ==> ((((~ (NIL = NIL)) /\ (f (LAST NIL))) ==> ((LAST ((filter f) NIL)) = (LAST NIL))) = (F ==> q')))) = ((F ==> (((LAST ((filter f) NIL)) = (LAST NIL)) = q')) ==> ((((~ (NIL = NIL)) /\ (f (LAST NIL))) ==> ((LAST ((filter f) NIL)) = (LAST NIL))) = (F ==> q'))))
+T c= c==> c= c/\ c~ c= cNIL cNIL * f0 cLAST cNIL cF c==> c==> cF c= c= cLAST cfilter f0 cNIL cLAST cNIL f1 c= c==> c/\ c~ c= cNIL cNIL * f0 cLAST cNIL c= cLAST cfilter f0 cNIL cLAST cNIL c==> cF f1 c==> c==> cF c= c= cLAST cfilter f0 cNIL cLAST cNIL f1 c= c==> c/\ c~ c= cNIL cNIL * f0 cLAST cNIL c= cLAST cfilter f0 cNIL cLAST cNIL c==> cF f1
++ |- (((f h) = g') ==> ((g' ==> (((rcons ((filter f) t)) h) = t')) ==> (((~ g') ==> (((filter f) t) = e')) ==> ((((COND (f h)) ((rcons ((filter f) t)) h)) ((filter f) t)) = (((COND g') t') e')))))
+T c==> c= * f0 f1 f2 c==> c==> f2 c= crcons cfilter f0 f3 f1 f4 c==> c==> c~ f2 c= cfilter f0 f3 f5 c= cCOND * f0 f1 crcons cfilter f0 f3 f1 cfilter f0 f3 cCOND f2 f4 f5
++ |- ((!t. t) = t)
+T c= ! f0 f0
++ |- (((!q'. (((((~ (t = NIL)) /\ (f (LAST t))) ==> ((LAST ((filter f) t)) = (LAST t))) = p') ==> ((p' ==> ((((~ (((rcons t) h) = NIL)) /\ (f (LAST ((rcons t) h)))) ==> ((LAST ((filter f) ((rcons t) h))) = (LAST ((rcons t) h)))) = q')) ==> (((((~ (t = NIL)) /\ (f (LAST t))) ==> ((LAST ((filter f) t)) = (LAST t))) ==> (((~ (((rcons t) h) = NIL)) /\ (f (LAST ((rcons t) h)))) ==> ((LAST ((filter f) ((rcons t) h))) = (LAST ((rcons t) h))))) = (p' ==> q'))))) ==> ((\q'. (((((~ (t = NIL)) /\ (f (LAST t))) ==> ((LAST ((filter f) t)) = (LAST t))) = p') ==> ((p' ==> ((((~ (((rcons t) h) = NIL)) /\ (f (LAST ((rcons t) h)))) ==> ((LAST ((filter f) ((rcons t) h))) = (LAST ((rcons t) h)))) = q')) ==> (((((~ (t = NIL)) /\ (f (LAST t))) ==> ((LAST ((filter f) t)) = (LAST t))) ==> (((~ (((rcons t) h) = NIL)) /\ (f (LAST ((rcons t) h)))) ==> ((LAST ((filter f) ((rcons t) h))) = (LAST ((rcons t) h))))) = (p' ==> q'))))) q')) = ((\q'. (((((~ (t = NIL)) /\ (f (LAST t))) ==> ((LAST ((filter f) t)) = (LAST t))) = p') ==> ((p' ==> ((((~ (((rcons t) h) = NIL)) /\ (f (LAST ((rcons t) h)))) ==> ((LAST ((filter f) ((rcons t) h))) = (LAST ((rcons t) h)))) = q')) ==> (((((~ (t = NIL)) /\ (f (LAST t))) ==> ((LAST ((filter f) t)) = (LAST t))) ==> (((~ (((rcons t) h) = NIL)) /\ (f (LAST ((rcons t) h)))) ==> ((LAST ((filter f) ((rcons t) h))) = (LAST ((rcons t) h))))) = (p' ==> q'))))) q'))
+T c= c==> ! c==> c= c==> c/\ c~ c= f0 cNIL * f1 cLAST f0 c= cLAST cfilter f1 f0 cLAST f0 f2 c==> c==> f2 c= c==> c/\ c~ c= crcons f0 f3 cNIL * f1 cLAST crcons f0 f3 c= cLAST cfilter f1 crcons f0 f3 cLAST crcons f0 f3 b0 c= c==> c==> c/\ c~ c= f0 cNIL * f1 cLAST f0 c= cLAST cfilter f1 f0 cLAST f0 c==> c/\ c~ c= crcons f0 f3 cNIL * f1 cLAST crcons f0 f3 c= cLAST cfilter f1 crcons f0 f3 cLAST crcons f0 f3 c==> f2 b0 * / c==> c= c==> c/\ c~ c= f0 cNIL * f1 cLAST f0 c= cLAST cfilter f1 f0 cLAST f0 f2 c==> c==> f2 c= c==> c/\ c~ c= crcons f0 f3 cNIL * f1 cLAST crcons f0 f3 c= cLAST cfilter f1 crcons f0 f3 cLAST crcons f0 f3 b0 c= c==> c==> c/\ c~ c= f0 cNIL * f1 cLAST f0 c= cLAST cfilter f1 f0 cLAST f0 c==> c/\ c~ c= crcons f0 f3 cNIL * f1 cLAST crcons f0 f3 c= cLAST cfilter f1 crcons f0 f3 cLAST crcons f0 f3 c==> f2 b0 f4 * / c==> c= c==> c/\ c~ c= f0 cNIL * f1 cLAST f0 c= cLAST cfilter f1 f0 cLAST f0 f2 c==> c==> f2 c= c==> c/\ c~ c= crcons f0 f3 cNIL * f1 cLAST crcons f0 f3 c= cLAST cfilter f1 crcons f0 f3 cLAST crcons f0 f3 b0 c= c==> c==> c/\ c~ c= f0 cNIL * f1 cLAST f0 c= cLAST cfilter f1 f0 cLAST f0 c==> c/\ c~ c= crcons f0 f3 cNIL * f1 cLAST crcons f0 f3 c= cLAST cfilter f1 crcons f0 f3 cLAST crcons f0 f3 c==> f2 b0 f4
++ |- ((\s. (!x. (((filter a) ((rcons s) x)) = (((COND (a x)) ((rcons ((filter a) s)) x)) ((filter a) s))))) s)
+T * / ! c= cfilter f0 crcons b0 b1 cCOND * f0 b1 crcons cfilter f0 b0 b1 cfilter f0 b0 f1
+- (!f. (((f NIL) /\ (!h. (!t. ((f t) ==> (f ((rcons t) h)))))) ==> (!r. (f r)))) |- ((((f NIL) /\ (!h. (!t. ((f t) ==> (f ((rcons t) h)))))) ==> (!r. (f r))) = T)
+T c==> ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 crcons b2 b1 ! * b0 b1 c= c==> c/\ * f0 cNIL ! ! c==> * f0 b1 * f0 crcons b1 b0 ! * f0 b0 cT
++ |- (((!h. ((LAST ((rcons t) h)) = h)) ==> ((\h. ((LAST ((rcons t) h)) = h)) h)) = ((\h. ((LAST ((rcons t) h)) = h)) h))
+T c= c==> ! c= cLAST crcons f0 b0 b0 * / c= cLAST crcons f0 b0 b0 f1 * / c= cLAST crcons f0 b0 b0 f1
++ |- (((!s. (!x. (((filter a) ((rcons s) x)) = (((COND (a x)) ((rcons ((filter a) s)) x)) ((filter a) s))))) ==> ((\s. (!x. (((filter a) ((rcons s) x)) = (((COND (a x)) ((rcons ((filter a) s)) x)) ((filter a) s))))) s)) = ((\s. (!x. (((filter a) ((rcons s) x)) = (((COND (a x)) ((rcons ((filter a) s)) x)) ((filter a) s))))) s))
+T c= c==> ! ! c= cfilter f0 crcons b0 b1 cCOND * f0 b1 crcons cfilter f0 b0 b1 cfilter f0 b0 * / ! c= cfilter f0 crcons b0 b1 cCOND * f0 b1 crcons cfilter f0 b0 b1 cfilter f0 b0 f1 * / ! c= cfilter f0 crcons b0 b1 cCOND * f0 b1 crcons cfilter f0 b0 b1 cfilter f0 b0 f1
++ |- (((!t'. (!e'. (((f h) = g') ==> ((g' ==> (((rcons ((filter f) t)) h) = t')) ==> (((~ g') ==> (((filter f) t) = e')) ==> ((((COND (f h)) ((rcons ((filter f) t)) h)) ((filter f) t)) = (((COND g') t') e'))))))) ==> ((\t'. (!e'. (((f h) = g') ==> ((g' ==> (((rcons ((filter f) t)) h) = t')) ==> (((~ g') ==> (((filter f) t) = e')) ==> ((((COND (f h)) ((rcons ((filter f) t)) h)) ((filter f) t)) = (((COND g') t') e'))))))) t')) = ((\t'. (!e'. (((f h) = g') ==> ((g' ==> (((rcons ((filter f) t)) h) = t')) ==> (((~ g') ==> (((filter f) t) = e')) ==> ((((COND (f h)) ((rcons ((filter f) t)) h)) ((filter f) t)) = (((COND g') t') e'))))))) t'))
+T c= c==> ! ! c==> c= * f0 f1 f2 c==> c==> f2 c= crcons cfilter f0 f3 f1 b0 c==> c==> c~ f2 c= cfilter f0 f3 b1 c= cCOND * f0 f1 crcons cfilter f0 f3 f1 cfilter f0 f3 cCOND f2 b0 b1 * / ! c==> c= * f0 f1 f2 c==> c==> f2 c= crcons cfilter f0 f3 f1 b0 c==> c==> c~ f2 c= cfilter f0 f3 b1 c= cCOND * f0 f1 crcons cfilter f0 f3 f1 cfilter f0 f3 cCOND f2 b0 b1 f4 * / ! c==> c= * f0 f1 f2 c==> c==> f2 c= crcons cfilter f0 f3 f1 b0 c==> c==> c~ f2 c= cfilter f0 f3 b1 c= cCOND * f0 f1 crcons cfilter f0 f3 f1 cfilter f0 f3 cCOND f2 b0 b1 f4
++ |- ((((~ T) ==> (((filter f) t) = ((filter f) t))) ==> ((((COND (f h)) ((rcons ((filter f) t)) h)) ((filter f) t)) = (((COND T) ((rcons ((filter f) t)) h)) ((filter f) t)))) = ((((COND (f h)) ((rcons ((filter f) t)) h)) ((filter f) t)) = (((COND T) ((rcons ((filter f) t)) h)) ((filter f) t))))
+T c= c==> c==> c~ cT c= cfilter f0 f1 cfilter f0 f1 c= cCOND * f0 f2 crcons cfilter f0 f1 f2 cfilter f0 f1 cCOND cT crcons cfilter f0 f1 f2 cfilter f0 f1 c= cCOND * f0 f2 crcons cfilter f0 f1 f2 cfilter f0 f1 cCOND cT crcons cfilter f0 f1 f2 cfilter f0 f1
++ |- (((!a. (!s. (!x. (((filter a) ((rcons s) x)) = (((COND (a x)) ((rcons ((filter a) s)) x)) ((filter a) s)))))) ==> ((\a. (!s. (!x. (((filter a) ((rcons s) x)) = (((COND (a x)) ((rcons ((filter a) s)) x)) ((filter a) s)))))) a)) = ((\a. (!s. (!x. (((filter a) ((rcons s) x)) = (((COND (a x)) ((rcons ((filter a) s)) x)) ((filter a) s)))))) a))
+T c= c==> ! ! ! c= cfilter b0 crcons b1 b2 cCOND * b0 b2 crcons cfilter b0 b1 b2 cfilter b0 b1 * / ! ! c= cfilter b0 crcons b1 b2 cCOND * b0 b2 crcons cfilter b0 b1 b2 cfilter b0 b1 f0 * / ! ! c= cfilter b0 crcons b1 b2 cCOND * b0 b2 crcons cfilter b0 b1 b2 cfilter b0 b1 f0
+- ((~ (((rcons t) h) = NIL)) /\ (f h)) |- (~ (NIL = ((rcons t) h)))
+T c==> c/\ c~ c= crcons f0 f1 cNIL * f2 f1 c~ c= cNIL crcons f0 f1
++ |- (((!p'. (!q'. (((((~ (t = NIL)) /\ (f (LAST t))) ==> ((LAST ((filter f) t)) = (LAST t))) = p') ==> ((p' ==> ((((~ (((rcons t) h) = NIL)) /\ (f (LAST ((rcons t) h)))) ==> ((LAST ((filter f) ((rcons t) h))) = (LAST ((rcons t) h)))) = q')) ==> (((((~ (t = NIL)) /\ (f (LAST t))) ==> ((LAST ((filter f) t)) = (LAST t))) ==> (((~ (((rcons t) h) = NIL)) /\ (f (LAST ((rcons t) h)))) ==> ((LAST ((filter f) ((rcons t) h))) = (LAST ((rcons t) h))))) = (p' ==> q')))))) ==> ((\p'. (!q'. (((((~ (t = NIL)) /\ (f (LAST t))) ==> ((LAST ((filter f) t)) = (LAST t))) = p') ==> ((p' ==> ((((~ (((rcons t) h) = NIL)) /\ (f (LAST ((rcons t) h)))) ==> ((LAST ((filter f) ((rcons t) h))) = (LAST ((rcons t) h)))) = q')) ==> (((((~ (t = NIL)) /\ (f (LAST t))) ==> ((LAST ((filter f) t)) = (LAST t))) ==> (((~ (((rcons t) h) = NIL)) /\ (f (LAST ((rcons t) h)))) ==> ((LAST ((filter f) ((rcons t) h))) = (LAST ((rcons t) h))))) = (p' ==> q')))))) p')) = ((\p'. (!q'. (((((~ (t = NIL)) /\ (f (LAST t))) ==> ((LAST ((filter f) t)) = (LAST t))) = p') ==> ((p' ==> ((((~ (((rcons t) h) = NIL)) /\ (f (LAST ((rcons t) h)))) ==> ((LAST ((filter f) ((rcons t) h))) = (LAST ((rcons t) h)))) = q')) ==> (((((~ (t = NIL)) /\ (f (LAST t))) ==> ((LAST ((filter f) t)) = (LAST t))) ==> (((~ (((rcons t) h) = NIL)) /\ (f (LAST ((rcons t) h)))) ==> ((LAST ((filter f) ((rcons t) h))) = (LAST ((rcons t) h))))) = (p' ==> q')))))) p'))
+T c= c==> ! ! c==> c= c==> c/\ c~ c= f0 cNIL * f1 cLAST f0 c= cLAST cfilter f1 f0 cLAST f0 b0 c==> c==> b0 c= c==> c/\ c~ c= crcons f0 f2 cNIL * f1 cLAST crcons f0 f2 c= cLAST cfilter f1 crcons f0 f2 cLAST crcons f0 f2 b1 c= c==> c==> c/\ c~ c= f0 cNIL * f1 cLAST f0 c= cLAST cfilter f1 f0 cLAST f0 c==> c/\ c~ c= crcons f0 f2 cNIL * f1 cLAST crcons f0 f2 c= cLAST cfilter f1 crcons f0 f2 cLAST crcons f0 f2 c==> b0 b1 * / ! c==> c= c==> c/\ c~ c= f0 cNIL * f1 cLAST f0 c= cLAST cfilter f1 f0 cLAST f0 b0 c==> c==> b0 c= c==> c/\ c~ c= crcons f0 f2 cNIL * f1 cLAST crcons f0 f2 c= cLAST cfilter f1 crcons f0 f2 cLAST crcons f0 f2 b1 c= c==> c==> c/\ c~ c= f0 cNIL * f1 cLAST f0 c= cLAST cfilter f1 f0 cLAST f0 c==> c/\ c~ c= crcons f0 f2 cNIL * f1 cLAST crcons f0 f2 c= cLAST cfilter f1 crcons f0 f2 cLAST crcons f0 f2 c==> b0 b1 f3 * / ! c==> c= c==> c/\ c~ c= f0 cNIL * f1 cLAST f0 c= cLAST cfilter f1 f0 cLAST f0 b0 c==> c==> b0 c= c==> c/\ c~ c= crcons f0 f2 cNIL * f1 cLAST crcons f0 f2 c= cLAST cfilter f1 crcons f0 f2 cLAST crcons f0 f2 b1 c= c==> c==> c/\ c~ c= f0 cNIL * f1 cLAST f0 c= cLAST cfilter f1 f0 cLAST f0 c==> c/\ c~ c= crcons f0 f2 cNIL * f1 cLAST crcons f0 f2 c= cLAST cfilter f1 crcons f0 f2 cLAST crcons f0 f2 c==> b0 b1 f3
++ |- ((((~ (((rcons t) h) = NIL)) /\ (f (LAST ((rcons t) h)))) = p') ==> ((p' ==> (((LAST ((filter f) ((rcons t) h))) = (LAST ((rcons t) h))) = q')) ==> ((((~ (((rcons t) h) = NIL)) /\ (f (LAST ((rcons t) h)))) ==> ((LAST ((filter f) ((rcons t) h))) = (LAST ((rcons t) h)))) = (p' ==> q'))))
+T c==> c= c/\ c~ c= crcons f0 f1 cNIL * f2 cLAST crcons f0 f1 f3 c==> c==> f3 c= c= cLAST cfilter f2 crcons f0 f1 cLAST crcons f0 f1 f4 c= c==> c/\ c~ c= crcons f0 f1 cNIL * f2 cLAST crcons f0 f1 c= cLAST cfilter f2 crcons f0 f1 cLAST crcons f0 f1 c==> f3 f4
++ |- (((~ (((rcons t) h) = NIL)) /\ (f h)) ==> (((LAST ((filter f) ((rcons t) h))) = (LAST ((rcons t) h))) = T))
+T c==> c/\ c~ c= crcons f0 f1 cNIL * f2 f1 c= c= cLAST cfilter f2 crcons f0 f1 cLAST crcons f0 f1 cT
+- T |- (T = T)
+T c==> cT c= cT cT
++ |- (((!p'. (!q'. ((((~ (NIL = NIL)) /\ (f (LAST NIL))) = p') ==> ((p' ==> (((LAST ((filter f) NIL)) = (LAST NIL)) = q')) ==> ((((~ (NIL = NIL)) /\ (f (LAST NIL))) ==> ((LAST ((filter f) NIL)) = (LAST NIL))) = (p' ==> q')))))) ==> ((\p'. (!q'. ((((~ (NIL = NIL)) /\ (f (LAST NIL))) = p') ==> ((p' ==> (((LAST ((filter f) NIL)) = (LAST NIL)) = q')) ==> ((((~ (NIL = NIL)) /\ (f (LAST NIL))) ==> ((LAST ((filter f) NIL)) = (LAST NIL))) = (p' ==> q')))))) p')) = ((\p'. (!q'. ((((~ (NIL = NIL)) /\ (f (LAST NIL))) = p') ==> ((p' ==> (((LAST ((filter f) NIL)) = (LAST NIL)) = q')) ==> ((((~ (NIL = NIL)) /\ (f (LAST NIL))) ==> ((LAST ((filter f) NIL)) = (LAST NIL))) = (p' ==> q')))))) p'))
+T c= c==> ! ! c==> c= c/\ c~ c= cNIL cNIL * f0 cLAST cNIL b0 c==> c==> b0 c= c= cLAST cfilter f0 cNIL cLAST cNIL b1 c= c==> c/\ c~ c= cNIL cNIL * f0 cLAST cNIL c= cLAST cfilter f0 cNIL cLAST cNIL c==> b0 b1 * / ! c==> c= c/\ c~ c= cNIL cNIL * f0 cLAST cNIL b0 c==> c==> b0 c= c= cLAST cfilter f0 cNIL cLAST cNIL b1 c= c==> c/\ c~ c= cNIL cNIL * f0 cLAST cNIL c= cLAST cfilter f0 cNIL cLAST cNIL c==> b0 b1 f1 * / ! c==> c= c/\ c~ c= cNIL cNIL * f0 cLAST cNIL b0 c==> c==> b0 c= c= cLAST cfilter f0 cNIL cLAST cNIL b1 c= c==> c/\ c~ c= cNIL cNIL * f0 cLAST cNIL c= cLAST cfilter f0 cNIL cLAST cNIL c==> b0 b1 f1
+- ((~ (((rcons t) h) = NIL)) /\ (f h)) |- (((~ (((rcons t) h) = NIL)) ==> ((((rcons t) h) = NIL) = F)) = ((((rcons t) h) = NIL) = F))
+T c==> c/\ c~ c= crcons f0 f1 cNIL * f2 f1 c= c==> c~ c= crcons f0 f1 cNIL c= c= crcons f0 f1 cNIL cF c= c= crcons f0 f1 cNIL cF
++ |- ((((((~ (t = NIL)) /\ (f (LAST t))) ==> ((LAST ((filter f) t)) = (LAST t))) = (((~ (t = NIL)) /\ (f (LAST t))) ==> ((LAST ((filter f) t)) = (LAST t)))) ==> (((((~ (t = NIL)) /\ (f (LAST t))) ==> ((LAST ((filter f) t)) = (LAST t))) ==> ((((~ (((rcons t) h) = NIL)) /\ (f (LAST ((rcons t) h)))) ==> ((LAST ((filter f) ((rcons t) h))) = (LAST ((rcons t) h)))) = q')) ==> (((((~ (t = NIL)) /\ (f (LAST t))) ==> ((LAST ((filter f) t)) = (LAST t))) ==> (((~ (((rcons t) h) = NIL)) /\ (f (LAST ((rcons t) h)))) ==> ((LAST ((filter f) ((rcons t) h))) = (LAST ((rcons t) h))))) = ((((~ (t = NIL)) /\ (f (LAST t))) ==> ((LAST ((filter f) t)) = (LAST t))) ==> q')))) = (((((~ (t = NIL)) /\ (f (LAST t))) ==> ((LAST ((filter f) t)) = (LAST t))) ==> ((((~ (((rcons t) h) = NIL)) /\ (f (LAST ((rcons t) h)))) ==> ((LAST ((filter f) ((rcons t) h))) = (LAST ((rcons t) h)))) = q')) ==> (((((~ (t = NIL)) /\ (f (LAST t))) ==> ((LAST ((filter f) t)) = (LAST t))) ==> (((~ (((rcons t) h) = NIL)) /\ (f (LAST ((rcons t) h)))) ==> ((LAST ((filter f) ((rcons t) h))) = (LAST ((rcons t) h))))) = ((((~ (t = NIL)) /\ (f (LAST t))) ==> ((LAST ((filter f) t)) = (LAST t))) ==> q'))))
+T c= c==> c= c==> c/\ c~ c= f0 cNIL * f1 cLAST f0 c= cLAST cfilter f1 f0 cLAST f0 c==> c/\ c~ c= f0 cNIL * f1 cLAST f0 c= cLAST cfilter f1 f0 cLAST f0 c==> c==> c==> c/\ c~ c= f0 cNIL * f1 cLAST f0 c= cLAST cfilter f1 f0 cLAST f0 c= c==> c/\ c~ c= crcons f0 f2 cNIL * f1 cLAST crcons f0 f2 c= cLAST cfilter f1 crcons f0 f2 cLAST crcons f0 f2 f3 c= c==> c==> c/\ c~ c= f0 cNIL * f1 cLAST f0 c= cLAST cfilter f1 f0 cLAST f0 c==> c/\ c~ c= crcons f0 f2 cNIL * f1 cLAST crcons f0 f2 c= cLAST cfilter f1 crcons f0 f2 cLAST crcons f0 f2 c==> c==> c/\ c~ c= f0 cNIL * f1 cLAST f0 c= cLAST cfilter f1 f0 cLAST f0 f3 c==> c==> c==> c/\ c~ c= f0 cNIL * f1 cLAST f0 c= cLAST cfilter f1 f0 cLAST f0 c= c==> c/\ c~ c= crcons f0 f2 cNIL * f1 cLAST crcons f0 f2 c= cLAST cfilter f1 crcons f0 f2 cLAST crcons f0 f2 f3 c= c==> c==> c/\ c~ c= f0 cNIL * f1 cLAST f0 c= cLAST cfilter f1 f0 cLAST f0 c==> c/\ c~ c= crcons f0 f2 cNIL * f1 cLAST crcons f0 f2 c= cLAST cfilter f1 crcons f0 f2 cLAST crcons f0 f2 c==> c==> c/\ c~ c= f0 cNIL * f1 cLAST f0 c= cLAST cfilter f1 f0 cLAST f0 f3
++ |- ((!q'. ((p = p') ==> ((p' ==> (q = q')) ==> ((p ==> q) = (p' ==> q'))))) = T)
+T c= ! c==> c= f0 f1 c==> c==> f1 c= f2 b0 c= c==> f0 f2 c==> f1 b0 cT
++ |- ((\a. (!s. (!x. (((filter a) ((rcons s) x)) = (((COND (a x)) ((rcons ((filter a) s)) x)) ((filter a) s)))))) a)
+T * / ! ! c= cfilter b0 crcons b1 b2 cCOND * b0 b2 crcons cfilter b0 b1 b2 cfilter b0 b1 f0
++ |- (((g = g') ==> ((g' ==> (t = t')) ==> (((~ g') ==> (e = e')) ==> ((((COND g) t) e) = (((COND g') t') e'))))) = T)
+T c= c==> c= f0 f1 c==> c==> f1 c= f2 f3 c==> c==> c~ f1 c= f4 f5 c= cCOND f0 f2 f4 cCOND f1 f3 f5 cT
+- ((~ (t = NIL)) /\ (f (LAST t))), (((~ (t = NIL)) /\ (f (LAST t))) ==> ((LAST ((filter f) t)) = (LAST t))) |- (((~ (t = NIL)) /\ (f (LAST t))) /\ ((LAST ((filter f) t)) = (LAST t)))
+T c==> c/\ c~ c= f0 cNIL * f1 cLAST f0 c==> c==> c/\ c~ c= f0 cNIL * f1 cLAST f0 c= cLAST cfilter f1 f0 cLAST f0 c/\ c/\ c~ c= f0 cNIL * f1 cLAST f0 c= cLAST cfilter f1 f0 cLAST f0
+- ((f NIL) /\ (!h. (!t. ((f t) ==> (f ((rcons t) h)))))) |- ((!f. (((f NIL) /\ (!h. (!t. ((f t) ==> (f ((rcons t) h)))))) ==> (!r. (f r)))) ==> (!r. (f r)))
+T c==> c/\ * f0 cNIL ! ! c==> * f0 b1 * f0 crcons b1 b0 c==> ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 crcons b2 b1 ! * b0 b1 ! * f0 b0
+- ((~ (t = NIL)) /\ (f (LAST t))) |- ((t = NIL) = F)
+T c==> c/\ c~ c= f0 cNIL * f1 cLAST f0 c= c= f0 cNIL cF
+- (NIL = t) |- (t = NIL)
+T c==> c= cNIL f0 c= f0 cNIL
+- |- (((!f. (((f NIL) /\ (!h. (!t. ((f t) ==> (f ((rcons t) h)))))) ==> (!r. (f r)))) ==> (!f. (((f NIL) /\ (!h. (!t. ((f t) ==> (f ((rcons t) h)))))) ==> (!r. (f r))))) = (!f. (((f NIL) /\ (!h. (!t. ((f t) ==> (f ((rcons t) h)))))) ==> (!r. (f r)))))
+T c= c==> ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 crcons b2 b1 ! * b0 b1 ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 crcons b2 b1 ! * b0 b1 ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 crcons b2 b1 ! * b0 b1
+- F |- (F = T)
+T c==> cF c= cF cT
+- (((rcons t) h) = NIL) |- (NIL = ((rcons t) h))
+T c==> c= crcons f0 f1 cNIL c= cNIL crcons f0 f1
+- ((~ (t = NIL)) /\ (f (LAST t))) |- (~ (NIL = t))
+T c==> c/\ c~ c= f0 cNIL * f1 cLAST f0 c~ c= cNIL f0
+- ((~ (t = NIL)) /\ (f (LAST t))) |- (((~ (t = NIL)) ==> ((t = NIL) = F)) = ((t = NIL) = F))
+T c==> c/\ c~ c= f0 cNIL * f1 cLAST f0 c= c==> c~ c= f0 cNIL c= c= f0 cNIL cF c= c= f0 cNIL cF
+- (!f. (((f NIL) /\ (!h. (!t. ((f t) ==> (f ((rcons t) h)))))) ==> (!r. (f r)))) |- ((\f. (((f NIL) /\ (!h. (!t. ((f t) ==> (f ((rcons t) h)))))) ==> (!r. (f r)))) f)
+T c==> ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 crcons b2 b1 ! * b0 b1 * / c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 crcons b2 b1 ! * b0 b1 f0
+- (NIL = ((rcons t) h)) |- (((rcons t) h) = NIL)
+T c==> c= cNIL crcons f0 f1 c= crcons f0 f1 cNIL
+- |- ((t /\ t) = t)
+T c= c/\ f0 f0 f0
+- ((~ (((rcons t) h) = NIL)) /\ (f h)) |- ((((rcons t) h) = NIL) = F)
+T c==> c/\ c~ c= crcons f0 f1 cNIL * f2 f1 c= c= crcons f0 f1 cNIL cF
+- ((~ (((rcons t) h) = NIL)) /\ (f h)) |- ((NIL = ((rcons t) h)) = F)
+T c==> c/\ c~ c= crcons f0 f1 cNIL * f2 f1 c= c= cNIL crcons f0 f1 cF
+- (!f. (((f NIL) /\ (!h. (!t. ((f t) ==> (f ((rcons t) h)))))) ==> (!r. (f r)))) |- ((!f. (((f NIL) /\ (!h. (!t. ((f t) ==> (f ((rcons t) h)))))) ==> (!r. (f r)))) /\ (!f. (((f NIL) /\ (!h. (!t. ((f t) ==> (f ((rcons t) h)))))) ==> (!r. (f r)))))
+T c==> ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 crcons b2 b1 ! * b0 b1 c/\ ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 crcons b2 b1 ! * b0 b1 ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 crcons b2 b1 ! * b0 b1
+- (~ T) |- (T = F)
+T c==> c~ cT c= cT cF
+- T |- ((T = T) = T)
+T c==> cT c= c= cT cT cT
+- ((~ (t = NIL)) /\ (f (LAST t))) |- ((f (LAST t)) = T)
+T c==> c/\ c~ c= f0 cNIL * f1 cLAST f0 c= * f1 cLAST f0 cT
+- (!f. (((f NIL) /\ (!h. (!t. ((f t) ==> (f ((rcons t) h)))))) ==> (!r. (f r)))), ((f NIL) /\ (!h. (!t. ((f t) ==> (f ((rcons t) h)))))) |- ((!f. (((f NIL) /\ (!h. (!t. ((f t) ==> (f ((rcons t) h)))))) ==> (!r. (f r)))) /\ (!r. (f r)))
+T c==> ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 crcons b2 b1 ! * b0 b1 c==> c/\ * f0 cNIL ! ! c==> * f0 b1 * f0 crcons b1 b0 c/\ ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 crcons b2 b1 ! * b0 b1 ! * f0 b0
+- ((~ (t = NIL)) /\ (f (LAST t))) |- ((NIL = t) = F)
+T c==> c/\ c~ c= f0 cNIL * f1 cLAST f0 c= c= cNIL f0 cF
+- (!f. (((f NIL) /\ (!h. (!t. ((f t) ==> (f ((rcons t) h)))))) ==> (!r. (f r)))), ((f NIL) /\ (!h. (!t. ((f t) ==> (f ((rcons t) h)))))) |- (((f NIL) /\ (!h. (!t. ((f t) ==> (f ((rcons t) h)))))) /\ (!r. (f r)))
+T c==> ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 crcons b2 b1 ! * b0 b1 c==> c/\ * f0 cNIL ! ! c==> * f0 b1 * f0 crcons b1 b0 c/\ c/\ * f0 cNIL ! ! c==> * f0 b1 * f0 crcons b1 b0 ! * f0 b0
+- ((~ (t = NIL)) /\ (f (LAST t))), (((~ (t = NIL)) /\ (f (LAST t))) ==> ((LAST ((filter f) t)) = (LAST t))) |- ((LAST ((filter f) t)) = (LAST t))
+T c==> c/\ c~ c= f0 cNIL * f1 cLAST f0 c==> c==> c/\ c~ c= f0 cNIL * f1 cLAST f0 c= cLAST cfilter f1 f0 cLAST f0 c= cLAST cfilter f1 f0 cLAST f0
+- (!f. (((f NIL) /\ (!h. (!t. ((f t) ==> (f ((rcons t) h)))))) ==> (!r. (f r)))), ((f NIL) /\ (!h. (!t. ((f t) ==> (f ((rcons t) h)))))) |- (!r. (f r))
+T c==> ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 crcons b2 b1 ! * b0 b1 c==> c/\ * f0 cNIL ! ! c==> * f0 b1 * f0 crcons b1 b0 ! * f0 b0
+- (t = NIL) |- (NIL = t)
+T c==> c= f0 cNIL c= cNIL f0
+- ((~ (t = NIL)) /\ (f (LAST t))) |- (((~ (NIL = t)) ==> ((NIL = t) = F)) = ((NIL = t) = F))
+T c==> c/\ c~ c= f0 cNIL * f1 cLAST f0 c= c==> c~ c= cNIL f0 c= c= cNIL f0 cF c= c= cNIL f0 cF

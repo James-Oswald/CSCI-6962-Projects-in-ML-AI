@@ -1,0 +1,304 @@
+N Aq23.LAST_FLATTEN_2
+C |- (!r. (((~ (r = NIL)) /\ (~ ((LAST r) = NIL))) ==> ((LAST (flatten r)) = (LAST (LAST r)))))
+T c==> c/\ c~ c= f0 cNIL c~ c= cLAST f0 cNIL c= cLAST cflatten f0 cLAST cLAST f0
+D TRUTH
+A |- T
+T cT
+D COND_CLAUSES
+A |- (!t1. (!t2. (((((COND T) t1) t2) = t1) /\ ((((COND F) t1) t2) = t2))))
+T c/\ c= cCOND cT f0 f1 f0 c= cCOND cF f0 f1 f1
+D list_INDUCT
+A |- (!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x))))
+T c==> c/\ * f0 cNIL ! ! c==> * f0 b1 * f0 cCONS b0 b1 ! * f0 b0
+D LAST
+A |- ((LAST ((CONS h) t)) = (((COND (t = NIL)) h) (LAST t)))
+T c= cLAST cCONS f0 f1 cCOND c= f1 cNIL f0 cLAST f1
+D LAST_APPEND
+A |- (!p. (!q. ((LAST ((APPEND p) q)) = (((COND (q = NIL)) (LAST p)) (LAST q)))))
+T c= cLAST cAPPEND f0 f1 cCOND c= f1 cNIL cLAST f0 cLAST f1
+D Nkezbfc_local.lemma
+A |- (!A. (A \/ (~ A)))
+T c\/ f0 c~ f0
+D Seq2.mem_flatten
+A |- (!x. (!L. (((MEM x) (flatten L)) = (?l. (((MEM l) L) /\ ((MEM x) l))))))
+T c= cMEM f0 cflatten f1 c? / c/\ cMEM b0 f1 cMEM f0 b0
+D List_hypermap.mem_not_nil
+A |- (!s. ((~ (s = NIL)) = (?x. ((MEM x) s))))
+T c= c~ c= f0 cNIL c? / cMEM b0 f0
+D Tame_list.concat_flatten
+A |- (!x. (!xs. (((flatten NIL) = NIL) /\ ((flatten ((CONS x) xs)) = ((APPEND x) (flatten xs))))))
+T c/\ c= cflatten cNIL cNIL c= cflatten cCONS f0 f1 cAPPEND f0 cflatten f1
+D Tame_list.MEM_LAST
+A |- (!s. ((~ (s = NIL)) ==> ((MEM (LAST s)) s)))
+T c==> c~ c= f0 cNIL cMEM cLAST f0 f0
+D Aq1.flatten_sing
+A |- ((flatten ((CONS s) NIL)) = s)
+T c= cflatten cCONS f0 cNIL f0
++ (((~ (t = NIL)) /\ (~ ((LAST t) = NIL))) ==> ((LAST (flatten t)) = (LAST (LAST t)))) |- (((t = NIL) \/ (~ (t = NIL))) ==> (((~ (((CONS h) t) = NIL)) /\ (~ ((((COND (t = NIL)) h) (LAST t)) = NIL))) ==> ((LAST (flatten ((CONS h) t))) = (LAST (((COND (t = NIL)) h) (LAST t))))))
+T c==> c==> c/\ c~ c= f0 cNIL c~ c= cLAST f0 cNIL c= cLAST cflatten f0 cLAST cLAST f0 c==> c\/ c= f0 cNIL c~ c= f0 cNIL c==> c/\ c~ c= cCONS f1 f0 cNIL c~ c= cCOND c= f0 cNIL f1 cLAST f0 cNIL c= cLAST cflatten cCONS f1 f0 cLAST cCOND c= f0 cNIL f1 cLAST f0
++ (~ (t = NIL)) |- (((\x. ((MEM x) (LAST t))) x) ==> (?x. ((MEM x) (flatten t))))
+T c==> c~ c= f0 cNIL c==> * / cMEM b0 cLAST f0 f1 c? / cMEM b0 cflatten f0
++ |- ((\L. (((MEM x) (flatten L)) = (?l. (((MEM l) L) /\ ((MEM x) l))))) L)
+T * / c= cMEM f0 cflatten b0 c? / c/\ cMEM b1 b0 cMEM f0 b1 f1
+- (~ (t = NIL)) |- ((NIL = t) = F)
+T c==> c~ c= f0 cNIL c= c= cNIL f0 cF
++ (~ (t = NIL)), ((~ (((CONS h) t) = NIL)) /\ (~ ((LAST t) = NIL))), (((~ (t = NIL)) /\ (~ ((LAST t) = NIL))) ==> ((LAST (flatten t)) = (LAST (LAST t)))) |- (((~ (((CONS h) t) = NIL)) /\ (~ ((LAST t) = NIL))) /\ ((LAST (flatten ((CONS h) t))) = (LAST (LAST t))))
+T c==> c~ c= f0 cNIL c==> c/\ c~ c= cCONS f1 f0 cNIL c~ c= cLAST f0 cNIL c==> c==> c/\ c~ c= f0 cNIL c~ c= cLAST f0 cNIL c= cLAST cflatten f0 cLAST cLAST f0 c/\ c/\ c~ c= cCONS f1 f0 cNIL c~ c= cLAST f0 cNIL c= cLAST cflatten cCONS f1 f0 cLAST cLAST f0
+- |- ((\t1. (!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))))) t1)
+T * / ! ! c= c\/ b0 c\/ b1 b2 c\/ c\/ b0 b1 b2 f0
++ |- ((\s. ((~ (s = NIL)) ==> ((MEM (LAST s)) s))) s)
+T * / c==> c~ c= b0 cNIL cMEM cLAST b0 b0 f0
++ (~ (t = NIL)), ((MEM x) (LAST t)) |- (?x. (?l. (((MEM l) t) /\ ((MEM x) l))))
+T c==> c~ c= f0 cNIL c==> cMEM f1 cLAST f0 c? / c? / c/\ cMEM b1 f0 cMEM b0 b1
+- |- ((flatten NIL) = NIL)
+T c= cflatten cNIL cNIL
++ (~ (t = NIL)), ((~ (((CONS h) t) = NIL)) /\ (~ ((LAST t) = NIL))), (((~ (t = NIL)) /\ (~ ((LAST t) = NIL))) ==> ((LAST (flatten t)) = (LAST (LAST t)))) |- ((LAST (flatten ((CONS h) t))) = (LAST (LAST t)))
+T c==> c~ c= f0 cNIL c==> c/\ c~ c= cCONS f1 f0 cNIL c~ c= cLAST f0 cNIL c==> c==> c/\ c~ c= f0 cNIL c~ c= cLAST f0 cNIL c= cLAST cflatten f0 cLAST cLAST f0 c= cLAST cflatten cCONS f1 f0 cLAST cLAST f0
++ ((\x. ((MEM x) (LAST t))) x) |- ((((MEM x) (LAST t)) ==> (?x. ((MEM x) (flatten t)))) = (?x. ((MEM x) (flatten t))))
+T c==> * / cMEM b0 cLAST f0 f1 c= c==> cMEM f1 cLAST f0 c? / cMEM b0 cflatten f0 c? / cMEM b0 cflatten f0
+- (~ (((CONS h) t) = NIL)) |- (((~ (NIL = ((CONS h) t))) ==> ((NIL = ((CONS h) t)) = F)) = ((NIL = ((CONS h) t)) = F))
+T c==> c~ c= cCONS f0 f1 cNIL c= c==> c~ c= cNIL cCONS f0 f1 c= c= cNIL cCONS f0 f1 cF c= c= cNIL cCONS f0 f1 cF
++ (~ (t = NIL)) |- (((!x. (((\x. ((MEM x) (LAST t))) x) ==> (?x. ((MEM x) (flatten t))))) ==> ((?x. ((MEM x) (LAST t))) ==> (?x. ((MEM x) (flatten t))))) = ((?x. ((MEM x) (LAST t))) ==> (?x. ((MEM x) (flatten t)))))
+T c==> c~ c= f0 cNIL c= c==> ! c==> * / cMEM b1 cLAST f0 b0 c? / cMEM b1 cflatten f0 c==> c? / cMEM b0 cLAST f0 c? / cMEM b0 cflatten f0 c==> c? / cMEM b0 cLAST f0 c? / cMEM b0 cflatten f0
++ |- ((t ==> T) = T)
+T c= c==> f0 cT cT
+- (?x. ((MEM x) (LAST t))), (~ (t = NIL)) |- ((?x. ((MEM x) (LAST t))) /\ (?x. ((MEM x) (flatten t))))
+T c==> c? / cMEM b0 cLAST f0 c==> c~ c= f0 cNIL c/\ c? / cMEM b0 cLAST f0 c? / cMEM b0 cflatten f0
++ ((LAST (flatten t)) = (LAST (LAST t))) |- (((((COND ((flatten t) = NIL)) (LAST h)) (LAST (LAST t))) = (LAST (LAST t))) = ((LAST (flatten ((CONS h) t))) = (LAST (LAST t))))
+T c==> c= cLAST cflatten f0 cLAST cLAST f0 c= c= cCOND c= cflatten f0 cNIL cLAST f1 cLAST cLAST f0 cLAST cLAST f0 c= cLAST cflatten cCONS f1 f0 cLAST cLAST f0
++ |- ((t = NIL) \/ (~ (t = NIL)))
+T c\/ c= f0 cNIL c~ c= f0 cNIL
++ (~ ((LAST t) = NIL)), (~ (t = NIL)), ((LAST (flatten t)) = (LAST (LAST t))) |- (((LAST (flatten t)) = (LAST (LAST t))) /\ ((LAST (flatten ((CONS h) t))) = (LAST (LAST t))))
+T c==> c~ c= cLAST f0 cNIL c==> c~ c= f0 cNIL c==> c= cLAST cflatten f0 cLAST cLAST f0 c/\ c= cLAST cflatten f0 cLAST cLAST f0 c= cLAST cflatten cCONS f1 f0 cLAST cLAST f0
+- |- (T = ((~ (!A. (A \/ (~ A)))) ==> F))
+T c= cT c==> c~ ! c\/ b0 c~ b0 cF
+- |- (((~ (!A. (A \/ (~ A)))) ==> F) ==> ((~ (!A. (A \/ (~ A)))) ==> F))
+T c==> c==> c~ ! c\/ b0 c~ b0 cF c==> c~ ! c\/ b0 c~ b0 cF
++ (~ (t = NIL)), ((MEM x) (LAST t)) |- (T = (((MEM (LAST t)) t) /\ ((MEM x) (LAST t))))
+T c==> c~ c= f0 cNIL c==> cMEM f1 cLAST f0 c= cT c/\ cMEM cLAST f0 f0 cMEM f1 cLAST f0
+- |- ((t ==> t) = T)
+T c= c==> f0 f0 cT
+- |- ((t \/ t) = t)
+T c= c\/ f0 f0 f0
+- (~ ((LAST t) = NIL)) |- (((~ (NIL = (LAST t))) ==> ((NIL = (LAST t)) = F)) = ((NIL = (LAST t)) = F))
+T c==> c~ c= cLAST f0 cNIL c= c==> c~ c= cNIL cLAST f0 c= c= cNIL cLAST f0 cF c= c= cNIL cLAST f0 cF
++ (~ (t = NIL)), (((~ (t = NIL)) /\ (~ ((LAST t) = NIL))) ==> ((LAST (flatten t)) = (LAST (LAST t)))) |- ((~ (t = NIL)) /\ (((~ (((CONS h) t) = NIL)) /\ (~ ((((COND (t = NIL)) h) (LAST t)) = NIL))) ==> ((LAST (flatten ((CONS h) t))) = (LAST (((COND (t = NIL)) h) (LAST t))))))
+T c==> c~ c= f0 cNIL c==> c==> c/\ c~ c= f0 cNIL c~ c= cLAST f0 cNIL c= cLAST cflatten f0 cLAST cLAST f0 c/\ c~ c= f0 cNIL c==> c/\ c~ c= cCONS f1 f0 cNIL c~ c= cCOND c= f0 cNIL f1 cLAST f0 cNIL c= cLAST cflatten cCONS f1 f0 cLAST cCOND c= f0 cNIL f1 cLAST f0
+- |- ((!A'. (A' \/ (~ A))) = ((!A. A) \/ (~ A)))
+T c= ! c\/ b0 c~ f0 c\/ ! b0 c~ f0
+- |- ((\t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))) t3)
+T * / c= c\/ f0 c\/ f1 b0 c\/ c\/ f0 f1 b0 f2
++ |- ((flatten ((CONS x) xs)) = ((APPEND x) (flatten xs)))
+T c= cflatten cCONS f0 f1 cAPPEND f0 cflatten f1
+- |- (((x = x) ==> p) = p)
+T c= c==> c= f0 f0 f1 f1
++ (~ ((flatten t) = NIL)) |- (((flatten t) = NIL) = F)
+T c==> c~ c= cflatten f0 cNIL c= c= cflatten f0 cNIL cF
+- |- ((!A. t) = t)
+T c= ! f0 f0
++ (~ (t = NIL)) |- (!x. (((\x. ((MEM x) (LAST t))) x) ==> (?x. ((MEM x) (flatten t)))))
+T c==> c~ c= f0 cNIL ! c==> * / cMEM b1 cLAST f0 b0 c? / cMEM b1 cflatten f0
+- |- ((t ==> F) = (~ t))
+T c= c==> f0 cF c~ f0
++ |- (((!x. (!xs. (((flatten NIL) = NIL) /\ ((flatten ((CONS x) xs)) = ((APPEND x) (flatten xs)))))) ==> ((\x. (!xs. (((flatten NIL) = NIL) /\ ((flatten ((CONS x) xs)) = ((APPEND x) (flatten xs)))))) x)) = ((\x. (!xs. (((flatten NIL) = NIL) /\ ((flatten ((CONS x) xs)) = ((APPEND x) (flatten xs)))))) x))
+T c= c==> ! ! c/\ c= cflatten cNIL cNIL c= cflatten cCONS b0 b1 cAPPEND b0 cflatten b1 * / ! c/\ c= cflatten cNIL cNIL c= cflatten cCONS b0 b1 cAPPEND b0 cflatten b1 f0 * / ! c/\ c= cflatten cNIL cNIL c= cflatten cCONS b0 b1 cAPPEND b0 cflatten b1 f0
++ ((MEM x) (LAST t)) |- (((MEM x) (LAST t)) = T)
+T c==> cMEM f0 cLAST f1 c= cMEM f0 cLAST f1 cT
++ ((~ (t = NIL)) ==> (((~ (((CONS h) t) = NIL)) /\ (~ ((((COND (t = NIL)) h) (LAST t)) = NIL))) ==> ((LAST (flatten ((CONS h) t))) = (LAST (((COND (t = NIL)) h) (LAST t)))))), ((t = NIL) \/ (~ (t = NIL))) |- (((~ (((CONS h) t) = NIL)) /\ (~ ((((COND (t = NIL)) h) (LAST t)) = NIL))) ==> ((LAST (flatten ((CONS h) t))) = (LAST (((COND (t = NIL)) h) (LAST t)))))
+T c==> c==> c~ c= f0 cNIL c==> c/\ c~ c= cCONS f1 f0 cNIL c~ c= cCOND c= f0 cNIL f1 cLAST f0 cNIL c= cLAST cflatten cCONS f1 f0 cLAST cCOND c= f0 cNIL f1 cLAST f0 c==> c\/ c= f0 cNIL c~ c= f0 cNIL c==> c/\ c~ c= cCONS f1 f0 cNIL c~ c= cCOND c= f0 cNIL f1 cLAST f0 cNIL c= cLAST cflatten cCONS f1 f0 cLAST cCOND c= f0 cNIL f1 cLAST f0
++ |- (((!s. ((~ (s = NIL)) ==> ((MEM (LAST s)) s))) ==> ((\s. ((~ (s = NIL)) ==> ((MEM (LAST s)) s))) s)) = ((\s. ((~ (s = NIL)) ==> ((MEM (LAST s)) s))) s))
+T c= c==> ! c==> c~ c= b0 cNIL cMEM cLAST b0 b0 * / c==> c~ c= b0 cNIL cMEM cLAST b0 b0 f0 * / c==> c~ c= b0 cNIL cMEM cLAST b0 b0 f0
+- (~ (t = NIL)), (((~ (t = NIL)) /\ (~ ((LAST t) = NIL))) ==> ((LAST (flatten t)) = (LAST (LAST t)))) |- ((~ (t = NIL)) /\ ((~ (((CONS h) t) = NIL)) ==> ((~ ((LAST t) = NIL)) ==> ((LAST (flatten ((CONS h) t))) = (LAST (LAST t))))))
+T c==> c~ c= f0 cNIL c==> c==> c/\ c~ c= f0 cNIL c~ c= cLAST f0 cNIL c= cLAST cflatten f0 cLAST cLAST f0 c/\ c~ c= f0 cNIL c==> c~ c= cCONS f1 f0 cNIL c==> c~ c= cLAST f0 cNIL c= cLAST cflatten cCONS f1 f0 cLAST cLAST f0
+- (~ ((LAST t) = NIL)) |- (~ (NIL = (LAST t)))
+T c==> c~ c= cLAST f0 cNIL c~ c= cNIL cLAST f0
++ |- ((\A. (A \/ (~ A))) (t = NIL))
+T * / c\/ b0 c~ b0 c= f0 cNIL
+- |- (p = ((~ p) ==> F))
+T c= f0 c==> c~ f0 cF
++ |- (!h. (!t. ((((~ (t = NIL)) /\ (~ ((LAST t) = NIL))) ==> ((LAST (flatten t)) = (LAST (LAST t)))) ==> (((~ (((CONS h) t) = NIL)) /\ (~ ((LAST ((CONS h) t)) = NIL))) ==> ((LAST (flatten ((CONS h) t))) = (LAST (LAST ((CONS h) t))))))))
+T c==> c==> c/\ c~ c= f0 cNIL c~ c= cLAST f0 cNIL c= cLAST cflatten f0 cLAST cLAST f0 c==> c/\ c~ c= cCONS f1 f0 cNIL c~ c= cLAST cCONS f1 f0 cNIL c= cLAST cflatten cCONS f1 f0 cLAST cLAST cCONS f1 f0
+- |- ((?l. t) = t)
+T c= c? / f0 f0
++ ((\x. ((MEM x) (LAST t))) x) |- ((MEM x) (LAST t))
+T c==> * / cMEM b0 cLAST f0 f1 cMEM f1 cLAST f0
+- (~ ((flatten t) = NIL)) |- ((NIL = (flatten t)) = F)
+T c==> c~ c= cflatten f0 cNIL c= c= cNIL cflatten f0 cF
++ (~ (t = NIL)), ((MEM x) (LAST t)) |- (?l. (((MEM l) t) /\ ((MEM x) l)))
+T c==> c~ c= f0 cNIL c==> cMEM f1 cLAST f0 c? / c/\ cMEM b0 f0 cMEM f1 b0
++ (((~ (t = NIL)) /\ (~ ((LAST t) = NIL))) ==> ((LAST (flatten t)) = (LAST (LAST t)))) |- ((((~ (t = NIL)) /\ (~ ((LAST t) = NIL))) ==> ((LAST (flatten t)) = (LAST (LAST t)))) /\ (((~ (((CONS h) t) = NIL)) /\ (~ ((LAST ((CONS h) t)) = NIL))) ==> ((LAST (flatten ((CONS h) t))) = (LAST (LAST ((CONS h) t))))))
+T c==> c==> c/\ c~ c= f0 cNIL c~ c= cLAST f0 cNIL c= cLAST cflatten f0 cLAST cLAST f0 c/\ c==> c/\ c~ c= f0 cNIL c~ c= cLAST f0 cNIL c= cLAST cflatten f0 cLAST cLAST f0 c==> c/\ c~ c= cCONS f1 f0 cNIL c~ c= cLAST cCONS f1 f0 cNIL c= cLAST cflatten cCONS f1 f0 cLAST cLAST cCONS f1 f0
+- (((~ (t = NIL)) /\ (~ ((LAST t) = NIL))) ==> ((LAST (flatten t)) = (LAST (LAST t)))) |- ((~ (t = NIL)) ==> ((~ (((CONS h) t) = NIL)) ==> ((~ ((LAST t) = NIL)) ==> ((LAST (flatten ((CONS h) t))) = (LAST (LAST t))))))
+T c==> c==> c/\ c~ c= f0 cNIL c~ c= cLAST f0 cNIL c= cLAST cflatten f0 cLAST cLAST f0 c==> c~ c= f0 cNIL c==> c~ c= cCONS f1 f0 cNIL c==> c~ c= cLAST f0 cNIL c= cLAST cflatten cCONS f1 f0 cLAST cLAST f0
++ |- (((((~ (t = NIL)) /\ (~ ((LAST t) = NIL))) ==> ((LAST (flatten t)) = (LAST (LAST t)))) ==> (((~ (((CONS h) t) = NIL)) /\ (~ ((LAST ((CONS h) t)) = NIL))) ==> ((LAST (flatten ((CONS h) t))) = (LAST (LAST ((CONS h) t)))))) = T)
+T c= c==> c==> c/\ c~ c= f0 cNIL c~ c= cLAST f0 cNIL c= cLAST cflatten f0 cLAST cLAST f0 c==> c/\ c~ c= cCONS f1 f0 cNIL c~ c= cLAST cCONS f1 f0 cNIL c= cLAST cflatten cCONS f1 f0 cLAST cLAST cCONS f1 f0 cT
++ (t = NIL) |- (T = (((~ (((CONS h) t) = NIL)) /\ (~ ((((COND (t = NIL)) h) (LAST t)) = NIL))) ==> ((LAST (flatten ((CONS h) t))) = (LAST (((COND (t = NIL)) h) (LAST t))))))
+T c==> c= f0 cNIL c= cT c==> c/\ c~ c= cCONS f1 f0 cNIL c~ c= cCOND c= f0 cNIL f1 cLAST f0 cNIL c= cLAST cflatten cCONS f1 f0 cLAST cCOND c= f0 cNIL f1 cLAST f0
++ |- (((!xs. (((flatten NIL) = NIL) /\ ((flatten ((CONS x) xs)) = ((APPEND x) (flatten xs))))) ==> ((\xs. (((flatten NIL) = NIL) /\ ((flatten ((CONS x) xs)) = ((APPEND x) (flatten xs))))) xs)) = ((\xs. (((flatten NIL) = NIL) /\ ((flatten ((CONS x) xs)) = ((APPEND x) (flatten xs))))) xs))
+T c= c==> ! c/\ c= cflatten cNIL cNIL c= cflatten cCONS f0 b0 cAPPEND f0 cflatten b0 * / c/\ c= cflatten cNIL cNIL c= cflatten cCONS f0 b0 cAPPEND f0 cflatten b0 f1 * / c/\ c= cflatten cNIL cNIL c= cflatten cCONS f0 b0 cAPPEND f0 cflatten b0 f1
++ (~ (t = NIL)) |- (((MEM x) (LAST t)) ==> (?x. ((MEM x) (flatten t))))
+T c==> c~ c= f0 cNIL c==> cMEM f1 cLAST f0 c? / cMEM b0 cflatten f0
+- |- ((!A. (A \/ (~ A))) = ((T \/ (~ T)) /\ (F \/ (~ F))))
+T c= ! c\/ b0 c~ b0 c/\ c\/ cT c~ cT c\/ cF c~ cF
++ |- (((~ (NIL = NIL)) /\ (~ ((LAST NIL) = NIL))) ==> ((LAST (flatten NIL)) = (LAST (LAST NIL))))
+T c==> c/\ c~ c= cNIL cNIL c~ c= cLAST cNIL cNIL c= cLAST cflatten cNIL cLAST cLAST cNIL
+- ((flatten t) = NIL) |- (NIL = (flatten t))
+T c==> c= cflatten f0 cNIL c= cNIL cflatten f0
++ |- ((T ==> t) = t)
+T c= c==> cT f0 f0
+- (NIL = (flatten t)) |- ((flatten t) = NIL)
+T c==> c= cNIL cflatten f0 c= cflatten f0 cNIL
+- |- ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))
+T c= c\/ f0 c\/ f1 f2 c\/ c\/ f0 f1 f2
++ (t = NIL) |- ((t = NIL) /\ (((~ (((CONS h) t) = NIL)) /\ (~ ((((COND (t = NIL)) h) (LAST t)) = NIL))) ==> ((LAST (flatten ((CONS h) t))) = (LAST (((COND (t = NIL)) h) (LAST t))))))
+T c==> c= f0 cNIL c/\ c= f0 cNIL c==> c/\ c~ c= cCONS f1 f0 cNIL c~ c= cCOND c= f0 cNIL f1 cLAST f0 cNIL c= cLAST cflatten cCONS f1 f0 cLAST cCOND c= f0 cNIL f1 cLAST f0
++ (~ ((LAST t) = NIL)), (~ (t = NIL)), ((LAST (flatten t)) = (LAST (LAST t))) |- ((((COND ((flatten t) = NIL)) (LAST h)) (LAST (LAST t))) = (LAST (LAST t)))
+T c==> c~ c= cLAST f0 cNIL c==> c~ c= f0 cNIL c==> c= cLAST cflatten f0 cLAST cLAST f0 c= cCOND c= cflatten f0 cNIL cLAST f1 cLAST cLAST f0 cLAST cLAST f0
++ (((~ (t = NIL)) /\ (~ ((LAST t) = NIL))) ==> ((LAST (flatten t)) = (LAST (LAST t)))) |- ((~ (t = NIL)) ==> (((~ (((CONS h) t) = NIL)) /\ (~ ((((COND (t = NIL)) h) (LAST t)) = NIL))) ==> ((LAST (flatten ((CONS h) t))) = (LAST (((COND (t = NIL)) h) (LAST t))))))
+T c==> c==> c/\ c~ c= f0 cNIL c~ c= cLAST f0 cNIL c= cLAST cflatten f0 cLAST cLAST f0 c==> c~ c= f0 cNIL c==> c/\ c~ c= cCONS f1 f0 cNIL c~ c= cCOND c= f0 cNIL f1 cLAST f0 cNIL c= cLAST cflatten cCONS f1 f0 cLAST cCOND c= f0 cNIL f1 cLAST f0
++ |- ((\x. (!xs. (((flatten NIL) = NIL) /\ ((flatten ((CONS x) xs)) = ((APPEND x) (flatten xs)))))) x)
+T * / ! c/\ c= cflatten cNIL cNIL c= cflatten cCONS b0 b1 cAPPEND b0 cflatten b1 f0
++ |- ((\x. (!L. (((MEM x) (flatten L)) = (?l. (((MEM l) L) /\ ((MEM x) l)))))) x)
+T * / ! c= cMEM b0 cflatten b1 c? / c/\ cMEM b2 b1 cMEM b0 b2 f0
+- (~ (!A. (A \/ (~ A)))) |- F
+T c==> c~ ! c\/ b0 c~ b0 cF
++ |- ((((~ (NIL = NIL)) /\ (~ ((LAST NIL) = NIL))) ==> ((LAST (flatten NIL)) = (LAST (LAST NIL)))) /\ (!h. (!t. ((((~ (t = NIL)) /\ (~ ((LAST t) = NIL))) ==> ((LAST (flatten t)) = (LAST (LAST t)))) ==> (((~ (((CONS h) t) = NIL)) /\ (~ ((LAST ((CONS h) t)) = NIL))) ==> ((LAST (flatten ((CONS h) t))) = (LAST (LAST ((CONS h) t)))))))))
+T c/\ c==> c/\ c~ c= cNIL cNIL c~ c= cLAST cNIL cNIL c= cLAST cflatten cNIL cLAST cLAST cNIL ! ! c==> c==> c/\ c~ c= b1 cNIL c~ c= cLAST b1 cNIL c= cLAST cflatten b1 cLAST cLAST b1 c==> c/\ c~ c= cCONS b0 b1 cNIL c~ c= cLAST cCONS b0 b1 cNIL c= cLAST cflatten cCONS b0 b1 cLAST cLAST cCONS b0 b1
+- ((LAST t) = NIL) |- (NIL = (LAST t))
+T c==> c= cLAST f0 cNIL c= cNIL cLAST f0
+- |- ((\t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3)))) t2)
+T * / ! c= c\/ f0 c\/ b0 b1 c\/ c\/ f0 b0 b1 f1
+- |- ((!A. ((P A) \/ Q)) = ((!A. (P A)) \/ Q))
+T c= ! c\/ * f0 b0 f1 c\/ ! * f0 b0 f1
+- |- ((((~ (!A. (A \/ (~ A)))) ==> F) ==> ((~ (!A. (A \/ (~ A)))) ==> F)) = ((~ (!A. (A \/ (~ A)))) ==> F))
+T c= c==> c==> c~ ! c\/ b0 c~ b0 cF c==> c~ ! c\/ b0 c~ b0 cF c==> c~ ! c\/ b0 c~ b0 cF
+- |- ((((~ (!A. (A \/ (~ A)))) ==> F) ==> ((~ (!A. (A \/ (~ A)))) ==> F)) ==> (((~ (!A. (A \/ (~ A)))) ==> F) ==> ((~ (!A. (A \/ (~ A)))) ==> F)))
+T c==> c==> c==> c~ ! c\/ b0 c~ b0 cF c==> c~ ! c\/ b0 c~ b0 cF c==> c==> c~ ! c\/ b0 c~ b0 cF c==> c~ ! c\/ b0 c~ b0 cF
+- ((~ (!A. (A \/ (~ A)))) ==> F), (((~ (!A. (A \/ (~ A)))) ==> F) ==> ((~ (!A. (A \/ (~ A)))) ==> F)) |- (((~ (!A. (A \/ (~ A)))) ==> F) /\ ((~ (!A. (A \/ (~ A)))) ==> F))
+T c==> c==> c~ ! c\/ b0 c~ b0 cF c==> c==> c==> c~ ! c\/ b0 c~ b0 cF c==> c~ ! c\/ b0 c~ b0 cF c/\ c==> c~ ! c\/ b0 c~ b0 cF c==> c~ ! c\/ b0 c~ b0 cF
+- (?x. ((MEM x) (LAST t))), (~ (t = NIL)) |- (?x. ((MEM x) (flatten t)))
+T c==> c? / cMEM b0 cLAST f0 c==> c~ c= f0 cNIL c? / cMEM b0 cflatten f0
++ |- ((?x. (?l. (((MEM l) t) /\ ((MEM x) l)))) = (?x. ((MEM x) (flatten t))))
+T c= c? / c? / c/\ cMEM b1 f0 cMEM b0 b1 c? / cMEM b0 cflatten f0
++ (((~ (t = NIL)) /\ (~ ((LAST t) = NIL))) ==> ((LAST (flatten t)) = (LAST (LAST t)))) |- (((~ (((CONS h) t) = NIL)) /\ (~ ((((COND (t = NIL)) h) (LAST t)) = NIL))) ==> ((LAST (flatten ((CONS h) t))) = (LAST (((COND (t = NIL)) h) (LAST t)))))
+T c==> c==> c/\ c~ c= f0 cNIL c~ c= cLAST f0 cNIL c= cLAST cflatten f0 cLAST cLAST f0 c==> c/\ c~ c= cCONS f1 f0 cNIL c~ c= cCOND c= f0 cNIL f1 cLAST f0 cNIL c= cLAST cflatten cCONS f1 f0 cLAST cCOND c= f0 cNIL f1 cLAST f0
+- (~ (t = NIL)) |- (T = (~ (t = NIL)))
+T c==> c~ c= f0 cNIL c= cT c~ c= f0 cNIL
+- (~ (((CONS h) t) = NIL)) |- ((((CONS h) t) = NIL) = F)
+T c==> c~ c= cCONS f0 f1 cNIL c= c= cCONS f0 f1 cNIL cF
++ (~ ((LAST t) = NIL)), (~ (t = NIL)), (((~ (t = NIL)) /\ (~ ((LAST t) = NIL))) ==> ((LAST (flatten t)) = (LAST (LAST t)))) |- ((LAST (flatten ((CONS h) t))) = (LAST (LAST t)))
+T c==> c~ c= cLAST f0 cNIL c==> c~ c= f0 cNIL c==> c==> c/\ c~ c= f0 cNIL c~ c= cLAST f0 cNIL c= cLAST cflatten f0 cLAST cLAST f0 c= cLAST cflatten cCONS f1 f0 cLAST cLAST f0
++ (~ (t = NIL)) |- (((MEM (LAST t)) t) = T)
+T c==> c~ c= f0 cNIL c= cMEM cLAST f0 f0 cT
++ |- ((\p. (!q. ((LAST ((APPEND p) q)) = (((COND (q = NIL)) (LAST p)) (LAST q))))) p)
+T * / ! c= cLAST cAPPEND b0 b1 cCOND c= b1 cNIL cLAST b0 cLAST b1 f0
++ |- (((?x. ((MEM x) (LAST t))) ==> (?x. ((MEM x) (flatten t)))) = ((~ ((LAST t) = NIL)) ==> (~ ((flatten t) = NIL))))
+T c= c==> c? / cMEM b0 cLAST f0 c? / cMEM b0 cflatten f0 c==> c~ c= cLAST f0 cNIL c~ c= cflatten f0 cNIL
+- (~ (((CONS h) t) = NIL)) |- ((NIL = ((CONS h) t)) = F)
+T c==> c~ c= cCONS f0 f1 cNIL c= c= cNIL cCONS f0 f1 cF
+- |- (((!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3)))) ==> ((\t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3)))) t2)) = ((\t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3)))) t2))
+T c= c==> ! ! c= c\/ f0 c\/ b0 b1 c\/ c\/ f0 b0 b1 * / ! c= c\/ f0 c\/ b0 b1 c\/ c\/ f0 b0 b1 f1 * / ! c= c\/ f0 c\/ b0 b1 c\/ c\/ f0 b0 b1 f1
+- (NIL = t) |- (t = NIL)
+T c==> c= cNIL f0 c= f0 cNIL
+- |- ((((COND (x = x)) y) z) = y)
+T c= cCOND c= f0 f0 f1 f2 f1
++ |- ((((((~ (NIL = NIL)) /\ (~ ((LAST NIL) = NIL))) ==> ((LAST (flatten NIL)) = (LAST (LAST NIL)))) /\ (!h. (!t. ((((~ (t = NIL)) /\ (~ ((LAST t) = NIL))) ==> ((LAST (flatten t)) = (LAST (LAST t)))) ==> (((~ (((CONS h) t) = NIL)) /\ (~ ((LAST ((CONS h) t)) = NIL))) ==> ((LAST (flatten ((CONS h) t))) = (LAST (LAST ((CONS h) t))))))))) ==> (!r. (((~ (r = NIL)) /\ (~ ((LAST r) = NIL))) ==> ((LAST (flatten r)) = (LAST (LAST r)))))) = (!r. (((~ (r = NIL)) /\ (~ ((LAST r) = NIL))) ==> ((LAST (flatten r)) = (LAST (LAST r))))))
+T c= c==> c/\ c==> c/\ c~ c= cNIL cNIL c~ c= cLAST cNIL cNIL c= cLAST cflatten cNIL cLAST cLAST cNIL ! ! c==> c==> c/\ c~ c= b1 cNIL c~ c= cLAST b1 cNIL c= cLAST cflatten b1 cLAST cLAST b1 c==> c/\ c~ c= cCONS b0 b1 cNIL c~ c= cLAST cCONS b0 b1 cNIL c= cLAST cflatten cCONS b0 b1 cLAST cLAST cCONS b0 b1 ! c==> c/\ c~ c= b0 cNIL c~ c= cLAST b0 cNIL c= cLAST cflatten b0 cLAST cLAST b0 ! c==> c/\ c~ c= b0 cNIL c~ c= cLAST b0 cNIL c= cLAST cflatten b0 cLAST cLAST b0
++ |- (((!s. ((~ (s = NIL)) = (?x. ((MEM x) s)))) ==> ((\s. ((~ (s = NIL)) = (?x. ((MEM x) s)))) s)) = ((\s. ((~ (s = NIL)) = (?x. ((MEM x) s)))) s))
+T c= c==> ! c= c~ c= b0 cNIL c? / cMEM b1 b0 * / c= c~ c= b0 cNIL c? / cMEM b1 b0 f0 * / c= c~ c= b0 cNIL c? / cMEM b1 b0 f0
++ (~ (t = NIL)), ((MEM x) (LAST t)) |- ((\x. (?l. (((MEM l) t) /\ ((MEM x) l)))) x)
+T c==> c~ c= f0 cNIL c==> cMEM f1 cLAST f0 * / c? / c/\ cMEM b1 f0 cMEM b0 b1 f1
+- (NIL = ((CONS h) t)) |- (((CONS h) t) = NIL)
+T c==> c= cNIL cCONS f0 f1 c= cCONS f0 f1 cNIL
++ (~ (t = NIL)), (~ (((CONS h) t) = NIL)), (((~ (t = NIL)) /\ (~ ((LAST t) = NIL))) ==> ((LAST (flatten t)) = (LAST (LAST t)))) |- ((~ (((CONS h) t) = NIL)) /\ ((~ ((LAST t) = NIL)) ==> ((LAST (flatten ((CONS h) t))) = (LAST (LAST t)))))
+T c==> c~ c= f0 cNIL c==> c~ c= cCONS f1 f0 cNIL c==> c==> c/\ c~ c= f0 cNIL c~ c= cLAST f0 cNIL c= cLAST cflatten f0 cLAST cLAST f0 c/\ c~ c= cCONS f1 f0 cNIL c==> c~ c= cLAST f0 cNIL c= cLAST cflatten cCONS f1 f0 cLAST cLAST f0
++ |- ((x = x) = T)
+T c= c= f0 f0 cT
+- (NIL = (LAST t)) |- ((LAST t) = NIL)
+T c==> c= cNIL cLAST f0 c= cLAST f0 cNIL
++ |- (((!p. (!q. ((LAST ((APPEND p) q)) = (((COND (q = NIL)) (LAST p)) (LAST q))))) ==> ((\p. (!q. ((LAST ((APPEND p) q)) = (((COND (q = NIL)) (LAST p)) (LAST q))))) p)) = ((\p. (!q. ((LAST ((APPEND p) q)) = (((COND (q = NIL)) (LAST p)) (LAST q))))) p))
+T c= c==> ! ! c= cLAST cAPPEND b0 b1 cCOND c= b1 cNIL cLAST b0 cLAST b1 * / ! c= cLAST cAPPEND b0 b1 cCOND c= b1 cNIL cLAST b0 cLAST b1 f0 * / ! c= cLAST cAPPEND b0 b1 cCOND c= b1 cNIL cLAST b0 cLAST b1 f0
++ |- ((?l. (((MEM l) t) /\ ((MEM x) l))) = ((\x. (?l. (((MEM l) t) /\ ((MEM x) l)))) x))
+T c= c? / c/\ cMEM b0 f0 cMEM f1 b0 * / c? / c/\ cMEM b1 f0 cMEM b0 b1 f1
++ |- ((!h. (!t. ((((~ (t = NIL)) /\ (~ ((LAST t) = NIL))) ==> ((LAST (flatten t)) = (LAST (LAST t)))) ==> (((~ (((CONS h) t) = NIL)) /\ (~ ((LAST ((CONS h) t)) = NIL))) ==> ((LAST (flatten ((CONS h) t))) = (LAST (LAST ((CONS h) t)))))))) = ((((~ (NIL = NIL)) /\ (~ ((LAST NIL) = NIL))) ==> ((LAST (flatten NIL)) = (LAST (LAST NIL)))) /\ (!h. (!t. ((((~ (t = NIL)) /\ (~ ((LAST t) = NIL))) ==> ((LAST (flatten t)) = (LAST (LAST t)))) ==> (((~ (((CONS h) t) = NIL)) /\ (~ ((LAST ((CONS h) t)) = NIL))) ==> ((LAST (flatten ((CONS h) t))) = (LAST (LAST ((CONS h) t))))))))))
+T c= ! ! c==> c==> c/\ c~ c= b1 cNIL c~ c= cLAST b1 cNIL c= cLAST cflatten b1 cLAST cLAST b1 c==> c/\ c~ c= cCONS b0 b1 cNIL c~ c= cLAST cCONS b0 b1 cNIL c= cLAST cflatten cCONS b0 b1 cLAST cLAST cCONS b0 b1 c/\ c==> c/\ c~ c= cNIL cNIL c~ c= cLAST cNIL cNIL c= cLAST cflatten cNIL cLAST cLAST cNIL ! ! c==> c==> c/\ c~ c= b1 cNIL c~ c= cLAST b1 cNIL c= cLAST cflatten b1 cLAST cLAST b1 c==> c/\ c~ c= cCONS b0 b1 cNIL c~ c= cLAST cCONS b0 b1 cNIL c= cLAST cflatten cCONS b0 b1 cLAST cLAST cCONS b0 b1
+- (~ (!A. (A \/ (~ A)))) |- ((~ (!A. (A \/ (~ A)))) /\ F)
+T c==> c~ ! c\/ b0 c~ b0 c/\ c~ ! c\/ b0 c~ b0 cF
+- (((~ (!A. (A \/ (~ A)))) ==> F) ==> ((~ (!A. (A \/ (~ A)))) ==> F)) |- ((((~ (!A. (A \/ (~ A)))) ==> F) ==> ((~ (!A. (A \/ (~ A)))) ==> F)) /\ (((~ (!A. (A \/ (~ A)))) ==> F) ==> ((~ (!A. (A \/ (~ A)))) ==> F)))
+T c==> c==> c==> c~ ! c\/ b0 c~ b0 cF c==> c~ ! c\/ b0 c~ b0 cF c/\ c==> c==> c~ ! c\/ b0 c~ b0 cF c==> c~ ! c\/ b0 c~ b0 cF c==> c==> c~ ! c\/ b0 c~ b0 cF c==> c~ ! c\/ b0 c~ b0 cF
+- (~ (t = NIL)) |- (~ (NIL = t))
+T c==> c~ c= f0 cNIL c~ c= cNIL f0
+- (((~ (t = NIL)) /\ (~ ((LAST t) = NIL))) ==> ((LAST (flatten t)) = (LAST (LAST t)))) |- ((((~ (t = NIL)) /\ (~ ((LAST t) = NIL))) ==> ((LAST (flatten t)) = (LAST (LAST t)))) = T)
+T c==> c==> c/\ c~ c= f0 cNIL c~ c= cLAST f0 cNIL c= cLAST cflatten f0 cLAST cLAST f0 c= c==> c/\ c~ c= f0 cNIL c~ c= cLAST f0 cNIL c= cLAST cflatten f0 cLAST cLAST f0 cT
+- (((CONS h) t) = NIL) |- (NIL = ((CONS h) t))
+T c==> c= cCONS f0 f1 cNIL c= cNIL cCONS f0 f1
+- (~ ((LAST t) = NIL)) |- ((NIL = (LAST t)) = F)
+T c==> c~ c= cLAST f0 cNIL c= c= cNIL cLAST f0 cF
+- |- (((t1 \/ t2) \/ t3) = (t1 \/ (t2 \/ t3)))
+T c= c\/ c\/ f0 f1 f2 c\/ f0 c\/ f1 f2
++ |- ((t = NIL) ==> (((~ (((CONS h) t) = NIL)) /\ (~ ((((COND (t = NIL)) h) (LAST t)) = NIL))) ==> ((LAST (flatten ((CONS h) t))) = (LAST (((COND (t = NIL)) h) (LAST t))))))
+T c==> c= f0 cNIL c==> c/\ c~ c= cCONS f1 f0 cNIL c~ c= cCOND c= f0 cNIL f1 cLAST f0 cNIL c= cLAST cflatten cCONS f1 f0 cLAST cCOND c= f0 cNIL f1 cLAST f0
++ (~ (s = NIL)) |- ((~ (s = NIL)) /\ (((MEM (LAST s)) s) = T))
+T c==> c~ c= f0 cNIL c/\ c~ c= f0 cNIL c= cMEM cLAST f0 f0 cT
++ (~ (t = NIL)), (((~ (t = NIL)) /\ (~ ((LAST t) = NIL))) ==> ((LAST (flatten t)) = (LAST (LAST t)))) |- ((~ (((CONS h) t) = NIL)) ==> ((~ ((LAST t) = NIL)) ==> ((LAST (flatten ((CONS h) t))) = (LAST (LAST t)))))
+T c==> c~ c= f0 cNIL c==> c==> c/\ c~ c= f0 cNIL c~ c= cLAST f0 cNIL c= cLAST cflatten f0 cLAST cLAST f0 c==> c~ c= cCONS f1 f0 cNIL c==> c~ c= cLAST f0 cNIL c= cLAST cflatten cCONS f1 f0 cLAST cLAST f0
++ |- ((((COND F) t1) t2) = t2)
+T c= cCOND cF f0 f1 f1
+- (~ (t = NIL)) |- (((~ (NIL = t)) ==> ((NIL = t) = F)) = ((NIL = t) = F))
+T c==> c~ c= f0 cNIL c= c==> c~ c= cNIL f0 c= c= cNIL f0 cF c= c= cNIL f0 cF
++ |- ((\q. ((LAST ((APPEND p) q)) = (((COND (q = NIL)) (LAST p)) (LAST q)))) q)
+T * / c= cLAST cAPPEND f0 b0 cCOND c= b0 cNIL cLAST f0 cLAST b0 f1
+- ((~ (!A. (A \/ (~ A)))) ==> F), (((~ (!A. (A \/ (~ A)))) ==> F) ==> ((~ (!A. (A \/ (~ A)))) ==> F)) |- ((((~ (!A. (A \/ (~ A)))) ==> F) ==> ((~ (!A. (A \/ (~ A)))) ==> F)) /\ ((~ (!A. (A \/ (~ A)))) ==> F))
+T c==> c==> c~ ! c\/ b0 c~ b0 cF c==> c==> c==> c~ ! c\/ b0 c~ b0 cF c==> c~ ! c\/ b0 c~ b0 cF c/\ c==> c==> c~ ! c\/ b0 c~ b0 cF c==> c~ ! c\/ b0 c~ b0 cF c==> c~ ! c\/ b0 c~ b0 cF
++ |- (((!A. (A \/ (~ A))) ==> ((\A. (A \/ (~ A))) (t = NIL))) = ((\A. (A \/ (~ A))) (t = NIL)))
+T c= c==> ! c\/ b0 c~ b0 * / c\/ b0 c~ b0 c= f0 cNIL * / c\/ b0 c~ b0 c= f0 cNIL
+- |- ((T \/ t) = T)
+T c= c\/ cT f0 cT
++ (~ (t = NIL)), (~ (((CONS h) t) = NIL)), ((~ (((CONS h) t) = NIL)) /\ (~ ((LAST t) = NIL))), (((~ (t = NIL)) /\ (~ ((LAST t) = NIL))) ==> ((LAST (flatten t)) = (LAST (LAST t)))) |- ((LAST (flatten ((CONS h) t))) = (LAST (LAST t)))
+T c==> c~ c= f0 cNIL c==> c~ c= cCONS f1 f0 cNIL c==> c/\ c~ c= cCONS f1 f0 cNIL c~ c= cLAST f0 cNIL c==> c==> c/\ c~ c= f0 cNIL c~ c= cLAST f0 cNIL c= cLAST cflatten f0 cLAST cLAST f0 c= cLAST cflatten cCONS f1 f0 cLAST cLAST f0
+- |- ((!A. (P \/ (Q A))) = (P \/ (!A. (Q A))))
+T c= ! c\/ f0 * f1 b0 c\/ f0 ! * f1 b0
++ |- ((F ==> t) = T)
+T c= c==> cF f0 cT
++ |- ((((t = NIL) \/ (~ (t = NIL))) ==> (((~ (((CONS h) t) = NIL)) /\ (~ ((((COND (t = NIL)) h) (LAST t)) = NIL))) ==> ((LAST (flatten ((CONS h) t))) = (LAST (((COND (t = NIL)) h) (LAST t)))))) = (((~ (((CONS h) t) = NIL)) /\ (~ ((((COND (t = NIL)) h) (LAST t)) = NIL))) ==> ((LAST (flatten ((CONS h) t))) = (LAST (((COND (t = NIL)) h) (LAST t))))))
+T c= c==> c\/ c= f0 cNIL c~ c= f0 cNIL c==> c/\ c~ c= cCONS f1 f0 cNIL c~ c= cCOND c= f0 cNIL f1 cLAST f0 cNIL c= cLAST cflatten cCONS f1 f0 cLAST cCOND c= f0 cNIL f1 cLAST f0 c==> c/\ c~ c= cCONS f1 f0 cNIL c~ c= cCOND c= f0 cNIL f1 cLAST f0 cNIL c= cLAST cflatten cCONS f1 f0 cLAST cCOND c= f0 cNIL f1 cLAST f0
+- |- (((!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))) ==> ((\t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))) t3)) = ((\t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))) t3))
+T c= c==> ! c= c\/ f0 c\/ f1 b0 c\/ c\/ f0 f1 b0 * / c= c\/ f0 c\/ f1 b0 c\/ c\/ f0 f1 b0 f2 * / c= c\/ f0 c\/ f1 b0 c\/ c\/ f0 f1 b0 f2
+- |- ((t /\ t) = t)
+T c= c/\ f0 f0 f0
++ |- ((F /\ t) = F)
+T c= c/\ cF f0 cF
++ (~ ((LAST t) = NIL)), (~ (t = NIL)) |- (~ ((flatten t) = NIL))
+T c==> c~ c= cLAST f0 cNIL c==> c~ c= f0 cNIL c~ c= cflatten f0 cNIL
+- |- (((((~ (!A. (A \/ (~ A)))) ==> F) ==> ((~ (!A. (A \/ (~ A)))) ==> F)) ==> (((~ (!A. (A \/ (~ A)))) ==> F) ==> ((~ (!A. (A \/ (~ A)))) ==> F))) = (((~ (!A. (A \/ (~ A)))) ==> F) ==> ((~ (!A. (A \/ (~ A)))) ==> F)))
+T c= c==> c==> c==> c~ ! c\/ b0 c~ b0 cF c==> c~ ! c\/ b0 c~ b0 cF c==> c==> c~ ! c\/ b0 c~ b0 cF c==> c~ ! c\/ b0 c~ b0 cF c==> c==> c~ ! c\/ b0 c~ b0 cF c==> c~ ! c\/ b0 c~ b0 cF
++ (~ (t = NIL)), (((~ (t = NIL)) /\ (~ ((LAST t) = NIL))) ==> ((LAST (flatten t)) = (LAST (LAST t)))) |- (((~ (((CONS h) t) = NIL)) /\ (~ ((LAST t) = NIL))) ==> ((LAST (flatten ((CONS h) t))) = (LAST (LAST t))))
+T c==> c~ c= f0 cNIL c==> c==> c/\ c~ c= f0 cNIL c~ c= cLAST f0 cNIL c= cLAST cflatten f0 cLAST cLAST f0 c==> c/\ c~ c= cCONS f1 f0 cNIL c~ c= cLAST f0 cNIL c= cLAST cflatten cCONS f1 f0 cLAST cLAST f0
++ |- ((\s. ((~ (s = NIL)) = (?x. ((MEM x) s)))) s)
+T * / c= c~ c= b0 cNIL c? / cMEM b1 b0 f0
+- ((~ (!A. (A \/ (~ A)))) ==> F) |- (((~ (!A. (A \/ (~ A)))) ==> F) /\ ((~ (!A. (A \/ (~ A)))) ==> F))
+T c==> c==> c~ ! c\/ b0 c~ b0 cF c/\ c==> c~ ! c\/ b0 c~ b0 cF c==> c~ ! c\/ b0 c~ b0 cF
++ |- ((~ T) = F)
+T c= c~ cT cF
+- |- ((F \/ t) = t)
+T c= c\/ cF f0 f0
+- |- ((!A. (P A)) = ((P T) /\ (P F)))
+T c= ! * f0 b0 c/\ * f0 cT * f0 cF
+- |- (((!t1. (!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))))) ==> ((\t1. (!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))))) t1)) = ((\t1. (!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))))) t1))
+T c= c==> ! ! ! c= c\/ b0 c\/ b1 b2 c\/ c\/ b0 b1 b2 * / ! ! c= c\/ b0 c\/ b1 b2 c\/ c\/ b0 b1 b2 f0 * / ! ! c= c\/ b0 c\/ b1 b2 c\/ c\/ b0 b1 b2 f0
+- |- ((~ (~ t)) = t)
+T c= c~ c~ f0 f0
+- (~ ((flatten t) = NIL)) |- (((~ (NIL = (flatten t))) ==> ((NIL = (flatten t)) = F)) = ((NIL = (flatten t)) = F))
+T c==> c~ c= cflatten f0 cNIL c= c==> c~ c= cNIL cflatten f0 c= c= cNIL cflatten f0 cF c= c= cNIL cflatten f0 cF
+- (~ ((flatten t) = NIL)) |- (~ (NIL = (flatten t)))
+T c==> c~ c= cflatten f0 cNIL c~ c= cNIL cflatten f0
+- (~ ((flatten t) = NIL)) |- (T = ((((COND ((flatten t) = NIL)) (LAST h)) (LAST (LAST t))) = (LAST (LAST t))))
+T c==> c~ c= cflatten f0 cNIL c= cT c= cCOND c= cflatten f0 cNIL cLAST f1 cLAST cLAST f0 cLAST cLAST f0
+- (~ (((CONS h) t) = NIL)) |- (~ (NIL = ((CONS h) t)))
+T c==> c~ c= cCONS f0 f1 cNIL c~ c= cNIL cCONS f0 f1
+- |- (((~ (!A. (A \/ (~ A)))) ==> F) = (!A. (A \/ (~ A))))
+T c= c==> c~ ! c\/ b0 c~ b0 cF ! c\/ b0 c~ b0
+- ((~ (!A. (A \/ (~ A)))) ==> F) |- ((((~ (!A. (A \/ (~ A)))) ==> F) ==> ((~ (!A. (A \/ (~ A)))) ==> F)) ==> ((~ (!A. (A \/ (~ A)))) ==> F))
+T c==> c==> c~ ! c\/ b0 c~ b0 cF c==> c==> c==> c~ ! c\/ b0 c~ b0 cF c==> c~ ! c\/ b0 c~ b0 cF c==> c~ ! c\/ b0 c~ b0 cF
+- (t = NIL) |- (NIL = t)
+T c==> c= f0 cNIL c= cNIL f0

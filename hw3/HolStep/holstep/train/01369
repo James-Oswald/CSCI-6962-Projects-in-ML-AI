@@ -1,0 +1,585 @@
+N PERMUTES_INVERSE
+C |- (!p. (!s. (((permutes p) s) ==> ((permutes (inverse p)) s))))
+T c==> cpermutes f0 f1 cpermutes * part cinverse f0 f1
+D TRUTH
+A |- T
+T cT
+D ETA_AX
+A |- (!t. ((\x. (t x)) = t))
+T c= / * f0 b0 f0
+D EXCLUDED_MIDDLE
+A |- (!t. (t \/ (~ t)))
+T c\/ f0 c~ f0
+D BOOL_CASES_AX
+A |- (!t. ((t = T) \/ (t = F)))
+T c\/ c= f0 cT c= f0 cF
+D DE_MORGAN_THM
+A |- (!t1. (!t2. (((~ (t1 /\ t2)) = ((~ t1) \/ (~ t2))) /\ ((~ (t1 \/ t2)) = ((~ t1) /\ (~ t2))))))
+T c/\ c= c~ c/\ f0 f1 c\/ c~ f0 c~ f1 c= c~ c\/ f0 f1 c/\ c~ f0 c~ f1
+D NOT_CLAUSES
+A |- ((!t. ((~ (~ t)) = t)) /\ (((~ T) = F) /\ ((~ F) = T)))
+T c/\ ! c= c~ c~ b0 b0 c/\ c= c~ cT cF c= c~ cF cT
+D NOT_IMP
+A |- (!t1. (!t2. ((~ (t1 ==> t2)) = (t1 /\ (~ t2)))))
+T c= c~ c==> f0 f1 c/\ f0 c~ f1
+D NOT_EXISTS_THM
+A |- (!P. ((~ (?x. (P x))) = (!x. (~ (P x)))))
+T c= c~ c? / * f0 b0 ! c~ * f0 b0
+D NOT_FORALL_THM
+A |- (!P. ((~ (!x. (P x))) = (?x. (~ (P x)))))
+T c= c~ ! * f0 b0 c? / c~ * f0 b0
+D RIGHT_FORALL_OR_THM
+A |- (!P. (!Q. ((!x. (P \/ (Q x))) = (P \/ (!x. (Q x))))))
+T c= ! c\/ f0 * f1 b0 c\/ f0 ! * f1 b0
+D SKOLEM_THM
+A |- (!P. ((!x. (?y. ((P x) y))) = (?y. (!x. ((P x) (y x))))))
+T c= ! c? / * * f0 b0 b1 c? / ! * * f0 b1 * b0 b1
+D I_THM
+A |- (!x. ((I x) = x))
+T c= cI f0 f0
+D permutes
+A |- (!s. (!p. (((permutes p) s) = ((!x. ((~ (x IN s)) ==> ((p x) = x))) /\ (!y. (?!x. ((p x) = y)))))))
+T c= cpermutes f0 f1 c/\ ! c==> c~ cIN b0 f1 c= * f0 b0 b0 ! c?! / c= * f0 b1 b0
+D PERMUTES_INVERSE_EQ
+A |- (!p. (!s. (((permutes p) s) ==> (!x. (!y. ((((inverse p) y) = x) = ((p x) = y)))))))
+T c==> cpermutes f0 f1 ! ! c= c= cinverse f0 b1 b0 c= * f0 b0 b1
++ |- ((!x. ((!y. ((((inverse p) y) = x) \/ (~ ((p x) = y)))) /\ (!y. ((~ (((inverse p) y) = x)) \/ ((p x) = y))))) = ((!x. (!y. ((((inverse p) y) = x) \/ (~ ((p x) = y))))) /\ (!x. (!y. ((~ (((inverse p) y) = x)) \/ ((p x) = y))))))
+T c= ! c/\ ! c\/ c= cinverse f0 b1 b0 c~ c= * f0 b0 b1 ! c\/ c~ c= cinverse f0 b1 b0 c= * f0 b0 b1 c/\ ! ! c\/ c= cinverse f0 b1 b0 c~ c= * f0 b0 b1 ! ! c\/ c~ c= cinverse f0 b1 b0 c= * f0 b0 b1
++ (!x. (!y. ((((inverse p) y) = x) = ((p x) = y)))), ((((inverse p) x) = y) /\ ((((inverse p) x') = y) /\ (~ (x' = x)))) |- (x' = x)
+T c==> ! ! c= c= cinverse f0 b1 b0 c= * f0 b0 b1 c==> c/\ c= cinverse f0 f1 f2 c/\ c= cinverse f0 f3 f2 c~ c= f3 f1 c= f3 f1
++ |- ((?x'. ((((inverse p) x) = y) /\ ((((inverse p) x') = y) /\ (~ (x' = x))))) = ((((inverse p) x) = y) /\ (?x'. ((((inverse p) x') = y) /\ (~ (x' = x))))))
+T c= c? / c/\ c= cinverse f0 f1 f2 c/\ c= cinverse f0 b0 f2 c~ c= b0 f1 c/\ c= cinverse f0 f1 f2 c? / c/\ c= cinverse f0 b0 f2 c~ c= b0 f1
+- ((!x. ((x IN s) \/ ((p x) = x))) /\ ((!y. ((p (x'' y)) = y)) /\ (!y. (!x. ((~ ((p x) = y)) \/ (!x'. ((~ ((p x') = y)) \/ (x' = x)))))))), ((~ (y IN s)) /\ (~ (((inverse p) y) = y))) |- ((~ (((I p) y) = y)) ==> (((I p) y) = y))
+T c==> c/\ ! c\/ cIN b0 f0 c= * f1 b0 b0 c/\ ! c= * f1 * f2 b0 b0 ! ! c\/ c~ c= * f1 b1 b0 ! c\/ c~ c= * f1 b2 b0 c= b2 b1 c==> c/\ c~ cIN f3 f0 c~ c= cinverse f1 f3 f3 c==> c~ c= cI f1 f3 f3 c= cI f1 f3 f3
+- (!x. (!y. ((((inverse p) y) = x) = ((p x) = y)))), ((((inverse p) x) = y) /\ ((((inverse p) x') = y) /\ (~ (x' = x)))) |- ((~ (((I p) ((inverse p) x')) = x)) ==> (((I p) ((inverse p) x')) = x))
+T c==> ! ! c= c= cinverse f0 b1 b0 c= * f0 b0 b1 c==> c/\ c= cinverse f0 f1 f2 c/\ c= cinverse f0 f3 f2 c~ c= f3 f1 c==> c~ c= cI f0 cinverse f0 f3 f1 c= cI f0 cinverse f0 f3 f1
++ (!x. (!y. ((((inverse p) y) = x) = ((p x) = y)))), ((((inverse p) x) = y) /\ ((((inverse p) x') = y) /\ (~ (x' = x)))) |- ((((((I p) ((inverse p) x')) = x') /\ (((I p) ((inverse p) x')) = x)) ==> (x' = x)) = (x' = x))
+T c==> ! ! c= c= cinverse f0 b1 b0 c= * f0 b0 b1 c==> c/\ c= cinverse f0 f1 f2 c/\ c= cinverse f0 f3 f2 c~ c= f3 f1 c= c==> c/\ c= cI f0 cinverse f0 f3 f3 c= cI f0 cinverse f0 f3 f1 c= f3 f1 c= f3 f1
++ ((!x. ((x IN s) \/ ((p x) = x))) /\ ((!y. ((p (x'' y)) = y)) /\ (!y. (!x. ((~ ((p x) = y)) \/ (!x'. ((~ ((p x') = y)) \/ (x' = x)))))))), ((~ (y IN s)) /\ (~ (((inverse p) y) = y))) |- (((I p) y) = y)
+T c==> c/\ ! c\/ cIN b0 f0 c= * f1 b0 b0 c/\ ! c= * f1 * f2 b0 b0 ! ! c\/ c~ c= * f1 b1 b0 ! c\/ c~ c= * f1 b2 b0 c= b2 b1 c==> c/\ c~ cIN f3 f0 c~ c= cinverse f1 f3 f3 c= cI f1 f3 f3
+- ((((inverse p) x) = y) /\ ((((inverse p) x') = y) /\ (~ (x' = x)))) |- (((~ (((I p) _219677) = _219676)) \/ ((~ (((I p) _219678) = _219676)) \/ (_219678 = _219677))) = ((~ (((I p) _219677) = _219676)) \/ ((~ (((I p) _219678) = _219676)) \/ (_219678 = _219677))))
+T c==> c/\ c= cinverse f0 f1 f2 c/\ c= cinverse f0 f3 f2 c~ c= f3 f1 c= c\/ c~ c= cI f0 f4 f5 c\/ c~ c= cI f0 f6 f5 c= f6 f4 c\/ c~ c= cI f0 f4 f5 c\/ c~ c= cI f0 f6 f5 c= f6 f4
+- |- ((\t1. (!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))))) t1)
+T * / ! ! c= c\/ b0 c\/ b1 b2 c\/ c\/ b0 b1 b2 f0
++ (!x. (!y. ((((inverse p) y) = x) = ((p x) = y)))), (((((inverse p) x) = y) /\ ((((inverse p) x') = y) /\ (~ (x' = x)))) ==> F), ((!x. (~ (((inverse p) x) = y))) \/ ((((inverse p) x) = y) /\ ((((inverse p) x') = y) /\ (~ (x' = x))))) |- F
+T c==> ! ! c= c= cinverse f0 b1 b0 c= * f0 b0 b1 c==> c==> c/\ c= cinverse f0 f1 f2 c/\ c= cinverse f0 f3 f2 c~ c= f3 f1 cF c==> c\/ ! c~ c= cinverse f0 b0 f2 c/\ c= cinverse f0 f1 f2 c/\ c= cinverse f0 f3 f2 c~ c= f3 f1 cF
++ (!x. (!y. ((((inverse p) y) = x) = ((p x) = y)))), ((!x. ((x IN s) \/ ((p x) = x))) /\ ((!y. ((p (x'' y)) = y)) /\ (!y. (!x. ((~ ((p x) = y)) \/ (!x'. ((~ ((p x') = y)) \/ (x' = x)))))))), ((~ (y IN s)) /\ (~ (((inverse p) y) = y))) |- (((((inverse p) y) = y) ==> F) = F)
+T c==> ! ! c= c= cinverse f0 b1 b0 c= * f0 b0 b1 c==> c/\ ! c\/ cIN b0 f1 c= * f0 b0 b0 c/\ ! c= * f0 * f2 b0 b0 ! ! c\/ c~ c= * f0 b1 b0 ! c\/ c~ c= * f0 b2 b0 c= b2 b1 c==> c/\ c~ cIN f3 f1 c~ c= cinverse f0 f3 f3 c= c==> c= cinverse f0 f3 f3 cF cF
++ |- (((!x. ((x IN s) \/ ((p x) = x))) /\ (?x. ((!y. ((p (x y)) = y)) /\ (!y. (!x. ((~ ((p x) = y)) \/ (!x'. ((~ ((p x') = y)) \/ (x' = x))))))))) = (?x. ((!x. ((x IN s) \/ ((p x) = x))) /\ ((!y. ((p (x y)) = y)) /\ (!y. (!x. ((~ ((p x) = y)) \/ (!x'. ((~ ((p x') = y)) \/ (x' = x))))))))))
+T c= c/\ ! c\/ cIN b0 f0 c= * f1 b0 b0 c? / c/\ ! c= * f1 * b0 b1 b1 ! ! c\/ c~ c= * f1 b2 b1 ! c\/ c~ c= * f1 b3 b1 c= b3 b2 c? / c/\ ! c\/ cIN b1 f0 c= * f1 b1 b1 c/\ ! c= * f1 * b0 b1 b1 ! ! c\/ c~ c= * f1 b2 b1 ! c\/ c~ c= * f1 b3 b1 c= b3 b2
++ (!x. (!y. ((((inverse p) y) = x) = ((p x) = y)))), ((!x. ((~ (x IN s)) ==> ((p x) = x))) /\ (!y. (?!x. ((p x) = y)))) |- (((\x'. (((~ (y IN s)) /\ (~ (((inverse p) y) = y))) \/ ((!x. (~ (((inverse p) x) = y))) \/ ((((inverse p) x) = y) /\ ((((inverse p) x') = y) /\ (~ (x' = x))))))) x') ==> F)
+T c==> ! ! c= c= cinverse f0 b1 b0 c= * f0 b0 b1 c==> c/\ ! c==> c~ cIN b0 f1 c= * f0 b0 b0 ! c?! / c= * f0 b1 b0 c==> * / c\/ c/\ c~ cIN f2 f1 c~ c= cinverse f0 f2 f2 c\/ ! c~ c= cinverse f0 b1 f2 c/\ c= cinverse f0 f3 f2 c/\ c= cinverse f0 b0 f2 c~ c= b0 f3 f4 cF
++ (!x. (!y. ((((inverse p) y) = x) = ((p x) = y)))) |- ((((I p) _219681) = _219682) \/ (~ (((inverse p) _219682) = _219681)))
+T c==> ! ! c= c= cinverse f0 b1 b0 c= * f0 b0 b1 c\/ c= cI f0 f1 f2 c~ c= cinverse f0 f2 f1
++ |- ((a \/ b) = ((~ b) ==> a))
+T c= c\/ f0 f1 c==> c~ f1 f0
++ (!x. (~ (((inverse p) x) = y))) |- (~ (((inverse p) _219673) = y))
+T c==> ! c~ c= cinverse f0 b0 f1 c~ c= cinverse f0 f2 f1
++ ((\x. (?x'. (((~ (y IN s)) /\ (~ (((inverse p) y) = y))) \/ ((!x. (~ (((inverse p) x) = y))) \/ ((((inverse p) x) = y) /\ ((((inverse p) x') = y) /\ (~ (x' = x)))))))) x) |- (((?x'. (((~ (y IN s)) /\ (~ (((inverse p) y) = y))) \/ ((!x. (~ (((inverse p) x) = y))) \/ ((((inverse p) x) = y) /\ ((((inverse p) x') = y) /\ (~ (x' = x))))))) ==> F) = F)
+T c==> * / c? / c\/ c/\ c~ cIN f0 f1 c~ c= cinverse f2 f0 f0 c\/ ! c~ c= cinverse f2 b2 f0 c/\ c= cinverse f2 b0 f0 c/\ c= cinverse f2 b1 f0 c~ c= b1 b0 f3 c= c==> c? / c\/ c/\ c~ cIN f0 f1 c~ c= cinverse f2 f0 f0 c\/ ! c~ c= cinverse f2 b1 f0 c/\ c= cinverse f2 f3 f0 c/\ c= cinverse f2 b0 f0 c~ c= b0 f3 cF cF
++ |- ((\s. (((permutes p) s) ==> (!x. (!y. ((((inverse p) y) = x) = ((p x) = y)))))) s)
+T * / c==> cpermutes f0 b0 ! ! c= c= cinverse f0 b2 b1 c= * f0 b1 b2 f1
+- |- ((P \/ (!x'. (Q x'))) = (!x'. (P \/ (Q x'))))
+T c= c\/ f0 ! * f1 b0 ! c\/ f0 * f1 b0
++ (!x. (!y. ((((inverse p) y) = x) = ((p x) = y)))), ((!x. ((~ (x IN s)) ==> ((p x) = x))) /\ (!y. (?!x. ((p x) = y)))) |- (((!x'. (((\x'. (((~ (y IN s)) /\ (~ (((inverse p) y) = y))) \/ ((!x. (~ (((inverse p) x) = y))) \/ ((((inverse p) x) = y) /\ ((((inverse p) x') = y) /\ (~ (x' = x))))))) x') ==> F)) ==> ((?x'. (((~ (y IN s)) /\ (~ (((inverse p) y) = y))) \/ ((!x. (~ (((inverse p) x) = y))) \/ ((((inverse p) x) = y) /\ ((((inverse p) x') = y) /\ (~ (x' = x))))))) ==> F)) = ((?x'. (((~ (y IN s)) /\ (~ (((inverse p) y) = y))) \/ ((!x. (~ (((inverse p) x) = y))) \/ ((((inverse p) x) = y) /\ ((((inverse p) x') = y) /\ (~ (x' = x))))))) ==> F))
+T c==> ! ! c= c= cinverse f0 b1 b0 c= * f0 b0 b1 c==> c/\ ! c==> c~ cIN b0 f1 c= * f0 b0 b0 ! c?! / c= * f0 b1 b0 c= c==> ! c==> * / c\/ c/\ c~ cIN f2 f1 c~ c= cinverse f0 f2 f2 c\/ ! c~ c= cinverse f0 b1 f2 c/\ c= cinverse f0 f3 f2 c/\ c= cinverse f0 b1 f2 c~ c= b1 f3 b0 cF c==> c? / c\/ c/\ c~ cIN f2 f1 c~ c= cinverse f0 f2 f2 c\/ ! c~ c= cinverse f0 b1 f2 c/\ c= cinverse f0 f3 f2 c/\ c= cinverse f0 b0 f2 c~ c= b0 f3 cF c==> c? / c\/ c/\ c~ cIN f2 f1 c~ c= cinverse f0 f2 f2 c\/ ! c~ c= cinverse f0 b1 f2 c/\ c= cinverse f0 f3 f2 c/\ c= cinverse f0 b0 f2 c~ c= b0 f3 cF
++ (!x. (!y. ((((inverse p) y) = x) = ((p x) = y)))) |- ((!x. (!y. ((((inverse p) y) = x) \/ (~ ((p x) = y))))) /\ (!x. (!y. ((~ (((inverse p) y) = x)) \/ ((p x) = y)))))
+T c==> ! ! c= c= cinverse f0 b1 b0 c= * f0 b0 b1 c/\ ! ! c\/ c= cinverse f0 b1 b0 c~ c= * f0 b0 b1 ! ! c\/ c~ c= cinverse f0 b1 b0 c= * f0 b0 b1
+- |- ((!x'. ((x' IN s) \/ ((p x) = x))) = ((!x. (x IN s)) \/ ((p x) = x)))
+T c= ! c\/ cIN b0 f0 c= * f1 f2 f2 c\/ ! cIN b0 f0 c= * f1 f2 f2
++ (!x. (!y. ((((inverse p) y) = x) = ((p x) = y)))) |- ((((inverse p) _219682) = _219681) ==> (((I p) _219681) = _219682))
+T c==> ! ! c= c= cinverse f0 b1 b0 c= * f0 b0 b1 c==> c= cinverse f0 f1 f2 c= cI f0 f2 f1
++ (!x. (!y. ((((inverse p) y) = x) = ((p x) = y)))), ((!x. ((~ (x IN s)) ==> ((p x) = x))) /\ (!y. (?!x. ((p x) = y)))), (((~ (y IN s)) /\ (~ (((inverse p) y) = y))) \/ ((!x. (~ (((inverse p) x) = y))) \/ ((((inverse p) x) = y) /\ ((((inverse p) x') = y) /\ (~ (x' = x)))))) |- ((((~ (y IN s)) /\ (~ (((inverse p) y) = y))) \/ ((!x. (~ (((inverse p) x) = y))) \/ ((((inverse p) x) = y) /\ ((((inverse p) x') = y) /\ (~ (x' = x)))))) /\ F)
+T c==> ! ! c= c= cinverse f0 b1 b0 c= * f0 b0 b1 c==> c/\ ! c==> c~ cIN b0 f1 c= * f0 b0 b0 ! c?! / c= * f0 b1 b0 c==> c\/ c/\ c~ cIN f2 f1 c~ c= cinverse f0 f2 f2 c\/ ! c~ c= cinverse f0 b0 f2 c/\ c= cinverse f0 f3 f2 c/\ c= cinverse f0 f4 f2 c~ c= f4 f3 c/\ c\/ c/\ c~ cIN f2 f1 c~ c= cinverse f0 f2 f2 c\/ ! c~ c= cinverse f0 b0 f2 c/\ c= cinverse f0 f3 f2 c/\ c= cinverse f0 f4 f2 c~ c= f4 f3 cF
++ |- (((((inverse p) x) = y) /\ (?x'. ((((inverse p) x') = y) /\ (~ (x' = x))))) = (?x'. ((((inverse p) x) = y) /\ ((((inverse p) x') = y) /\ (~ (x' = x))))))
+T c= c/\ c= cinverse f0 f1 f2 c? / c/\ c= cinverse f0 b0 f2 c~ c= b0 f1 c? / c/\ c= cinverse f0 f1 f2 c/\ c= cinverse f0 b0 f2 c~ c= b0 f1
+- (~ (((I p) y) = y)), ((!x. ((x IN s) \/ ((p x) = x))) /\ ((!y. ((p (x'' y)) = y)) /\ (!y. (!x. ((~ ((p x) = y)) \/ (!x'. ((~ ((p x') = y)) \/ (x' = x)))))))), ((~ (y IN s)) /\ (~ (((inverse p) y) = y))) |- ((~ (((I p) y) = y)) /\ (((I p) y) = y))
+T c==> c~ c= cI f0 f1 f1 c==> c/\ ! c\/ cIN b0 f2 c= * f0 b0 b0 c/\ ! c= * f0 * f3 b0 b0 ! ! c\/ c~ c= * f0 b1 b0 ! c\/ c~ c= * f0 b2 b0 c= b2 b1 c==> c/\ c~ cIN f1 f2 c~ c= cinverse f0 f1 f1 c/\ c~ c= cI f0 f1 f1 c= cI f0 f1 f1
+- |- ((\p. (!s. ((~ (((!x. ((~ (x IN s)) ==> ((p x) = x))) /\ (!y. (?!x. ((p x) = y)))) ==> ((!x. (!y. ((((inverse p) y) = x) = ((p x) = y)))) ==> ((!x. ((~ (x IN s)) ==> (((inverse p) x) = x))) /\ (!y. (?!x. (((inverse p) x) = y))))))) ==> F))) p)
+T * / ! c==> c~ c==> c/\ ! c==> c~ cIN b2 b1 c= * b0 b2 b2 ! c?! / c= * b0 b3 b2 c==> ! ! c= c= cinverse b0 b3 b2 c= * b0 b2 b3 c/\ ! c==> c~ cIN b2 b1 c= cinverse b0 b2 b2 ! c?! / c= cinverse b0 b3 b2 cF f0
++ |- (((?x. (P x)) /\ Q) = (?x. ((P x) /\ Q)))
+T c= c/\ c? / * f0 b0 f1 c? / c/\ * f0 b0 f1
+- |- ((t ==> t) = T)
+T c= c==> f0 f0 cT
+- (!x. (!y. ((((inverse p) y) = x) = ((p x) = y)))), (?x. (?x'. (((~ (y IN s)) /\ (~ (((inverse p) y) = y))) \/ ((!x. (~ (((inverse p) x) = y))) \/ ((((inverse p) x) = y) /\ ((((inverse p) x') = y) /\ (~ (x' = x)))))))), ((!x. ((~ (x IN s)) ==> ((p x) = x))) /\ (!y. (?!x. ((p x) = y)))) |- F
+T c==> ! ! c= c= cinverse f0 b1 b0 c= * f0 b0 b1 c==> c? / c? / c\/ c/\ c~ cIN f1 f2 c~ c= cinverse f0 f1 f1 c\/ ! c~ c= cinverse f0 b2 f1 c/\ c= cinverse f0 b0 f1 c/\ c= cinverse f0 b1 f1 c~ c= b1 b0 c==> c/\ ! c==> c~ cIN b0 f2 c= * f0 b0 b0 ! c?! / c= * f0 b1 b0 cF
+- |- ((p \/ p) = p)
+T c= c\/ f0 f0 f0
+- ((!x. ((x IN s) \/ ((p x) = x))) /\ ((!y. ((p (x'' y)) = y)) /\ (!y. (!x. ((~ ((p x) = y)) \/ (!x'. ((~ ((p x') = y)) \/ (x' = x)))))))) |- (((!y. (!x. (!x'. ((~ (((I p) x) = y)) \/ ((~ (((I p) x') = y)) \/ (x' = x)))))) ==> ((\y. (!x. (!x'. ((~ (((I p) x) = y)) \/ ((~ (((I p) x') = y)) \/ (x' = x)))))) _219676)) = ((\y. (!x. (!x'. ((~ (((I p) x) = y)) \/ ((~ (((I p) x') = y)) \/ (x' = x)))))) _219676))
+T c==> c/\ ! c\/ cIN b0 f0 c= * f1 b0 b0 c/\ ! c= * f1 * f2 b0 b0 ! ! c\/ c~ c= * f1 b1 b0 ! c\/ c~ c= * f1 b2 b0 c= b2 b1 c= c==> ! ! ! c\/ c~ c= cI f1 b1 b0 c\/ c~ c= cI f1 b2 b0 c= b2 b1 * / ! ! c\/ c~ c= cI f1 b1 b0 c\/ c~ c= cI f1 b2 b0 c= b2 b1 f3 * / ! ! c\/ c~ c= cI f1 b1 b0 c\/ c~ c= cI f1 b2 b0 c= b2 b1 f3
++ (!x. (!y. ((((inverse p) y) = x) = ((p x) = y)))) |- (((inverse p) ((I p) y)) = y)
+T c==> ! ! c= c= cinverse f0 b1 b0 c= * f0 b0 b1 c= cinverse f0 cI f0 f1 f1
++ |- ((\s. (!p. (((permutes p) s) = ((!x. ((~ (x IN s)) ==> ((p x) = x))) /\ (!y. (?!x. ((p x) = y))))))) s)
+T * / ! c= cpermutes b1 b0 c/\ ! c==> c~ cIN b2 b0 c= * b1 b2 b2 ! c?! / c= * b1 b3 b2 f0
++ |- (((!s. (((permutes p) s) ==> (!x. (!y. ((((inverse p) y) = x) = ((p x) = y)))))) ==> ((\s. (((permutes p) s) ==> (!x. (!y. ((((inverse p) y) = x) = ((p x) = y)))))) s)) = ((\s. (((permutes p) s) ==> (!x. (!y. ((((inverse p) y) = x) = ((p x) = y)))))) s))
+T c= c==> ! c==> cpermutes f0 b0 ! ! c= c= cinverse f0 b2 b1 c= * f0 b1 b2 * / c==> cpermutes f0 b0 ! ! c= c= cinverse f0 b2 b1 c= * f0 b1 b2 f1 * / c==> cpermutes f0 b0 ! ! c= c= cinverse f0 b2 b1 c= * f0 b1 b2 f1
+- |- ((\t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))) t3)
+T * / c= c\/ f0 c\/ f1 b0 c\/ c\/ f0 f1 b0 f2
+- (!x. (!y. ((((inverse p) y) = x) = ((p x) = y)))), (!x. (~ (((inverse p) x) = y))), (~ F) |- ((~ F) /\ F)
+T c==> ! ! c= c= cinverse f0 b1 b0 c= * f0 b0 b1 c==> ! c~ c= cinverse f0 b0 f1 c==> c~ cF c/\ c~ cF cF
+- |- ((!x'. ((~ ((p x') = y)) \/ (!x'. ((~ ((p x') = y)) \/ (x' = x))))) = ((!x. (~ ((p x) = y))) \/ (!x'. ((~ ((p x') = y)) \/ (x' = x)))))
+T c= ! c\/ c~ c= * f0 b0 f1 ! c\/ c~ c= * f0 b1 f1 c= b1 f2 c\/ ! c~ c= * f0 b0 f1 ! c\/ c~ c= * f0 b0 f1 c= b0 f2
+- (~ (((!x. ((~ (x IN s)) ==> ((p x) = x))) /\ (!y. (?!x. ((p x) = y)))) ==> ((!x. (!y. ((((inverse p) y) = x) = ((p x) = y)))) ==> ((!x. ((~ (x IN s)) ==> (((inverse p) x) = x))) /\ (!y. (?!x. (((inverse p) x) = y))))))) |- ((~ (((!x. ((~ (x IN s)) ==> ((p x) = x))) /\ (!y. (?!x. ((p x) = y)))) ==> ((!x. (!y. ((((inverse p) y) = x) = ((p x) = y)))) ==> ((!x. ((~ (x IN s)) ==> (((inverse p) x) = x))) /\ (!y. (?!x. (((inverse p) x) = y))))))) /\ F)
+T c==> c~ c==> c/\ ! c==> c~ cIN b0 f0 c= * f1 b0 b0 ! c?! / c= * f1 b1 b0 c==> ! ! c= c= cinverse f1 b1 b0 c= * f1 b0 b1 c/\ ! c==> c~ cIN b0 f0 c= cinverse f1 b0 b0 ! c?! / c= cinverse f1 b1 b0 c/\ c~ c==> c/\ ! c==> c~ cIN b0 f0 c= * f1 b0 b0 ! c?! / c= * f1 b1 b0 c==> ! ! c= c= cinverse f1 b1 b0 c= * f1 b0 b1 c/\ ! c==> c~ cIN b0 f0 c= cinverse f1 b0 b0 ! c?! / c= cinverse f1 b1 b0 cF
+- (_219732 = _219734) |- ((_219731 = _219733) ==> (((inverse _219731) _219732) = ((inverse _219733) _219734)))
+T c==> c= f0 f1 c==> c= f2 f3 c= cinverse f2 f0 cinverse f3 f1
+- (_219732 = _219734), (_219731 = _219733) |- ((_219731 = _219733) /\ (((inverse _219731) _219732) = ((inverse _219733) _219734)))
+T c==> c= f0 f1 c==> c= f2 f3 c/\ c= f2 f3 c= cinverse f2 f0 cinverse f3 f1
+- ((!x. ((x IN s) \/ ((p x) = x))) /\ ((!y. ((p (x'' y)) = y)) /\ (!y. (!x. ((~ ((p x) = y)) \/ (!x'. ((~ ((p x') = y)) \/ (x' = x)))))))) |- (((!y. (((I p) (x'' y)) = y)) ==> ((\y. (((I p) (x'' y)) = y)) _219675)) = ((\y. (((I p) (x'' y)) = y)) _219675))
+T c==> c/\ ! c\/ cIN b0 f0 c= * f1 b0 b0 c/\ ! c= * f1 * f2 b0 b0 ! ! c\/ c~ c= * f1 b1 b0 ! c\/ c~ c= * f1 b2 b0 c= b2 b1 c= c==> ! c= cI f1 * f2 b0 b0 * / c= cI f1 * f2 b0 b0 f3 * / c= cI f1 * f2 b0 b0 f3
++ ((~ (y IN s)) /\ (~ (((inverse p) y) = y))) |- (((~ (y IN s)) ==> (((I p) y) = y)) = (((I p) y) = y))
+T c==> c/\ c~ cIN f0 f1 c~ c= cinverse f2 f0 f0 c= c==> c~ cIN f0 f1 c= cI f2 f0 f0 c= cI f2 f0 f0
+- |- (((~ p) ==> p) = p)
+T c= c==> c~ f0 f0 f0
++ ((!x. ((x IN s) \/ ((p x) = x))) /\ ((!y. ((p (x'' y)) = y)) /\ (!y. (!x. ((~ ((p x) = y)) \/ (!x'. ((~ ((p x') = y)) \/ (x' = x)))))))) |- ((((I p) _219655) = _219655) \/ (_219655 IN s))
+T c==> c/\ ! c\/ cIN b0 f0 c= * f1 b0 b0 c/\ ! c= * f1 * f2 b0 b0 ! ! c\/ c~ c= * f1 b1 b0 ! c\/ c~ c= * f1 b2 b0 c= b2 b1 c\/ c= cI f1 f3 f3 cIN f3 f0
+- |- ((!x'. t) = t)
+T c= ! f0 f0
+- (!x. (!y. ((((inverse p) y) = x) = ((p x) = y)))), (!x. (~ (((inverse p) x) = y))) |- ((~ F) ==> F)
+T c==> ! ! c= c= cinverse f0 b1 b0 c= * f0 b0 b1 c==> ! c~ c= cinverse f0 b0 f1 c==> c~ cF cF
++ (!x. (!y. ((((inverse p) y) = x) = ((p x) = y)))), (((~ (y IN s)) /\ (~ (((inverse p) y) = y))) \/ ((!x. (~ (((inverse p) x) = y))) \/ ((((inverse p) x) = y) /\ ((((inverse p) x') = y) /\ (~ (x' = x)))))) |- (!x''. (((\x. ((!x. ((x IN s) \/ ((p x) = x))) /\ ((!y. ((p (x y)) = y)) /\ (!y. (!x. ((~ ((p x) = y)) \/ (!x'. ((~ ((p x') = y)) \/ (x' = x))))))))) x'') ==> F))
+T c==> ! ! c= c= cinverse f0 b1 b0 c= * f0 b0 b1 c==> c\/ c/\ c~ cIN f1 f2 c~ c= cinverse f0 f1 f1 c\/ ! c~ c= cinverse f0 b0 f1 c/\ c= cinverse f0 f3 f1 c/\ c= cinverse f0 f4 f1 c~ c= f4 f3 ! c==> * / c/\ ! c\/ cIN b2 f2 c= * f0 b2 b2 c/\ ! c= * f0 * b1 b2 b2 ! ! c\/ c~ c= * f0 b3 b2 ! c\/ c~ c= * f0 b4 b2 c= b4 b3 b0 cF
++ (!x. (!y. ((((inverse p) y) = x) = ((p x) = y)))), ((!x. ((x IN s) \/ ((p x) = x))) /\ ((!y. ((p (x'' y)) = y)) /\ (!y. (!x. ((~ ((p x) = y)) \/ (!x'. ((~ ((p x') = y)) \/ (x' = x)))))))), ((~ (y IN s)) /\ (~ (((inverse p) y) = y))) |- (((~ (y IN s)) /\ (~ (((inverse p) y) = y))) /\ F)
+T c==> ! ! c= c= cinverse f0 b1 b0 c= * f0 b0 b1 c==> c/\ ! c\/ cIN b0 f1 c= * f0 b0 b0 c/\ ! c= * f0 * f2 b0 b0 ! ! c\/ c~ c= * f0 b1 b0 ! c\/ c~ c= * f0 b2 b0 c= b2 b1 c==> c/\ c~ cIN f3 f1 c~ c= cinverse f0 f3 f3 c/\ c/\ c~ cIN f3 f1 c~ c= cinverse f0 f3 f3 cF
++ |- ((f x) = ((I f) x))
+T c= * f0 f1 cI f0 f1
+- |- ((~ (_219727 = _219729)) \/ ((~ (_219728 = _219730)) \/ ((_219729 IN _219730) \/ (~ (_219727 IN _219728)))))
+T c\/ c~ c= f0 f1 c\/ c~ c= f2 f3 c\/ cIN f1 f3 c~ cIN f0 f2
+- |- ((t ==> F) = (~ t))
+T c= c==> f0 cF c~ f0
++ ((\x. ((!x. ((x IN s) \/ ((p x) = x))) /\ ((!y. ((p (x y)) = y)) /\ (!y. (!x. ((~ ((p x) = y)) \/ (!x'. ((~ ((p x') = y)) \/ (x' = x))))))))) x'') |- ((((!x. ((x IN s) \/ ((p x) = x))) /\ ((!y. ((p (x'' y)) = y)) /\ (!y. (!x. ((~ ((p x) = y)) \/ (!x'. ((~ ((p x') = y)) \/ (x' = x)))))))) ==> F) = F)
+T c==> * / c/\ ! c\/ cIN b1 f0 c= * f1 b1 b1 c/\ ! c= * f1 * b0 b1 b1 ! ! c\/ c~ c= * f1 b2 b1 ! c\/ c~ c= * f1 b3 b1 c= b3 b2 f2 c= c==> c/\ ! c\/ cIN b0 f0 c= * f1 b0 b0 c/\ ! c= * f1 * f2 b0 b0 ! ! c\/ c~ c= * f1 b1 b0 ! c\/ c~ c= * f1 b2 b0 c= b2 b1 cF cF
++ (!x. (!y. ((((inverse p) y) = x) = ((p x) = y)))) |- (((((inverse p) x) = y) /\ ((((inverse p) x') = y) /\ (~ (x' = x)))) ==> F)
+T c==> ! ! c= c= cinverse f0 b1 b0 c= * f0 b0 b1 c==> c/\ c= cinverse f0 f1 f2 c/\ c= cinverse f0 f3 f2 c~ c= f3 f1 cF
++ (!x. (!y. ((((inverse p) y) = x) = ((p x) = y)))), ((!x. ((~ (x IN s)) ==> ((p x) = x))) /\ (!y. (?!x. ((p x) = y)))) |- ((((\x'. (((~ (y IN s)) /\ (~ (((inverse p) y) = y))) \/ ((!x. (~ (((inverse p) x) = y))) \/ ((((inverse p) x) = y) /\ ((((inverse p) x') = y) /\ (~ (x' = x))))))) x') ==> F) = T)
+T c==> ! ! c= c= cinverse f0 b1 b0 c= * f0 b0 b1 c==> c/\ ! c==> c~ cIN b0 f1 c= * f0 b0 b0 ! c?! / c= * f0 b1 b0 c= c==> * / c\/ c/\ c~ cIN f2 f1 c~ c= cinverse f0 f2 f2 c\/ ! c~ c= cinverse f0 b1 f2 c/\ c= cinverse f0 f3 f2 c/\ c= cinverse f0 b0 f2 c~ c= b0 f3 f4 cF cT
+- ((((inverse p) x) = y) /\ ((((inverse p) x') = y) /\ (~ (x' = x)))) |- (((((inverse p) _219680) = _219679) \/ (~ (((I p) _219679) = _219680))) = ((((inverse p) _219680) = _219679) \/ (~ (((I p) _219679) = _219680))))
+T c==> c/\ c= cinverse f0 f1 f2 c/\ c= cinverse f0 f3 f2 c~ c= f3 f1 c= c\/ c= cinverse f0 f4 f5 c~ c= cI f0 f5 f4 c\/ c= cinverse f0 f4 f5 c~ c= cI f0 f5 f4
++ ((\y. (?x. (?x'. (((~ (y IN s)) /\ (~ (((inverse p) y) = y))) \/ ((!x. (~ (((inverse p) x) = y))) \/ ((((inverse p) x) = y) /\ ((((inverse p) x') = y) /\ (~ (x' = x))))))))) y) |- (((?x. (?x'. (((~ (y IN s)) /\ (~ (((inverse p) y) = y))) \/ ((!x. (~ (((inverse p) x) = y))) \/ ((((inverse p) x) = y) /\ ((((inverse p) x') = y) /\ (~ (x' = x)))))))) ==> F) = F)
+T c==> * / c? / c? / c\/ c/\ c~ cIN b0 f0 c~ c= cinverse f1 b0 b0 c\/ ! c~ c= cinverse f1 b3 b0 c/\ c= cinverse f1 b1 b0 c/\ c= cinverse f1 b2 b0 c~ c= b2 b1 f2 c= c==> c? / c? / c\/ c/\ c~ cIN f2 f0 c~ c= cinverse f1 f2 f2 c\/ ! c~ c= cinverse f1 b2 f2 c/\ c= cinverse f1 b0 f2 c/\ c= cinverse f1 b1 f2 c~ c= b1 b0 cF cF
++ |- (p = ((~ p) ==> F))
+T c= f0 c==> c~ f0 cF
+- |- ((?x'. t) = t)
+T c= c? / f0 f0
+- (!x. (!y. ((((inverse p) y) = x) = ((p x) = y)))), (~ (x' = x)), ((((inverse p) x) = y) /\ ((((inverse p) x') = y) /\ (~ (x' = x)))) |- ((~ (x' = x)) /\ (x' = x))
+T c==> ! ! c= c= cinverse f0 b1 b0 c= * f0 b0 b1 c==> c~ c= f1 f2 c==> c/\ c= cinverse f0 f2 f3 c/\ c= cinverse f0 f1 f3 c~ c= f1 f2 c/\ c~ c= f1 f2 c= f1 f2
+- (~ (((I p) y) = ((I p) y))) |- ((~ (((I p) y) = ((I p) y))) /\ (((I p) y) = ((I p) y)))
+T c==> c~ c= cI f0 f1 cI f0 f1 c/\ c~ c= cI f0 f1 cI f0 f1 c= cI f0 f1 cI f0 f1
+- ((((inverse p) x) = y) /\ ((((inverse p) x') = y) /\ (~ (x' = x)))) |- (F = F)
+T c==> c/\ c= cinverse f0 f1 f2 c/\ c= cinverse f0 f3 f2 c~ c= f3 f1 c= cF cF
+- (~ (((inverse p) x) = ((inverse p) x'))), ((((inverse p) x) = y) /\ ((((inverse p) x') = y) /\ (~ (x' = x)))) |- ((~ (((inverse p) x) = ((inverse p) x'))) /\ (((inverse p) x) = ((inverse p) x')))
+T c==> c~ c= cinverse f0 f1 cinverse f0 f2 c==> c/\ c= cinverse f0 f1 f3 c/\ c= cinverse f0 f2 f3 c~ c= f2 f1 c/\ c~ c= cinverse f0 f1 cinverse f0 f2 c= cinverse f0 f1 cinverse f0 f2
++ (!x. (!y. ((((inverse p) y) = x) = ((p x) = y)))), ((!x. ((~ (x IN s)) ==> ((p x) = x))) /\ (!y. (?!x. ((p x) = y)))) |- ((((\x. (?x'. (((~ (y IN s)) /\ (~ (((inverse p) y) = y))) \/ ((!x. (~ (((inverse p) x) = y))) \/ ((((inverse p) x) = y) /\ ((((inverse p) x') = y) /\ (~ (x' = x)))))))) x) ==> F) = T)
+T c==> ! ! c= c= cinverse f0 b1 b0 c= * f0 b0 b1 c==> c/\ ! c==> c~ cIN b0 f1 c= * f0 b0 b0 ! c?! / c= * f0 b1 b0 c= c==> * / c? / c\/ c/\ c~ cIN f2 f1 c~ c= cinverse f0 f2 f2 c\/ ! c~ c= cinverse f0 b2 f2 c/\ c= cinverse f0 b0 f2 c/\ c= cinverse f0 b1 f2 c~ c= b1 b0 f3 cF cT
+- (!x. (!y. ((((inverse p) y) = x) = ((p x) = y)))), ((!x. ((x IN s) \/ ((p x) = x))) /\ ((!y. ((p (x'' y)) = y)) /\ (!y. (!x. ((~ ((p x) = y)) \/ (!x'. ((~ ((p x') = y)) \/ (x' = x)))))))), ((~ (y IN s)) /\ (~ (((inverse p) y) = y))) |- ((~ (((inverse p) y) = y)) ==> (((inverse p) y) = y))
+T c==> ! ! c= c= cinverse f0 b1 b0 c= * f0 b0 b1 c==> c/\ ! c\/ cIN b0 f1 c= * f0 b0 b0 c/\ ! c= * f0 * f2 b0 b0 ! ! c\/ c~ c= * f0 b1 b0 ! c\/ c~ c= * f0 b2 b0 c= b2 b1 c==> c/\ c~ cIN f3 f1 c~ c= cinverse f0 f3 f3 c==> c~ c= cinverse f0 f3 f3 c= cinverse f0 f3 f3
+- ((!x. ((x IN s) \/ ((p x) = x))) /\ ((!y. ((p (x'' y)) = y)) /\ (!y. (!x. ((~ ((p x) = y)) \/ (!x'. ((~ ((p x') = y)) \/ (x' = x)))))))) |- (!y. (!x. ((~ (((I p) x) = y)) \/ (!x'. ((~ (((I p) x') = y)) \/ (x' = x))))))
+T c==> c/\ ! c\/ cIN b0 f0 c= * f1 b0 b0 c/\ ! c= * f1 * f2 b0 b0 ! ! c\/ c~ c= * f1 b1 b0 ! c\/ c~ c= * f1 b2 b0 c= b2 b1 ! ! c\/ c~ c= cI f1 b1 b0 ! c\/ c~ c= cI f1 b2 b0 c= b2 b1
+- |- ((!y'. ((~ (((inverse p) y') = x)) \/ ((p x) = y))) = ((!y. (~ (((inverse p) y) = x))) \/ ((p x) = y)))
+T c= ! c\/ c~ c= cinverse f0 b0 f1 c= * f0 f1 f2 c\/ ! c~ c= cinverse f0 b0 f1 c= * f0 f1 f2
+- ((!x. ((x IN s) \/ ((p x) = x))) /\ ((!y. ((p (x'' y)) = y)) /\ (!y. (!x. ((~ ((p x) = y)) \/ (!x'. ((~ ((p x') = y)) \/ (x' = x)))))))) |- (!y. (((I p) (x'' y)) = y))
+T c==> c/\ ! c\/ cIN b0 f0 c= * f1 b0 b0 c/\ ! c= * f1 * f2 b0 b0 ! ! c\/ c~ c= * f1 b1 b0 ! c\/ c~ c= * f1 b2 b0 c= b2 b1 ! c= cI f1 * f2 b0 b0
++ |- (((((inverse p) x') = ((inverse p) x')) ==> (((I p) ((inverse p) x')) = x')) = (((I p) ((inverse p) x')) = x'))
+T c= c==> c= cinverse f0 f1 cinverse f0 f1 c= cI f0 cinverse f0 f1 f1 c= cI f0 cinverse f0 f1 f1
++ (!x. (!y. ((((inverse p) y) = x) = ((p x) = y)))) |- ((((I p) ((inverse p) x')) = x) = ((((I p) ((inverse p) x')) = x') /\ (((I p) ((inverse p) x')) = x)))
+T c==> ! ! c= c= cinverse f0 b1 b0 c= * f0 b0 b1 c= c= cI f0 cinverse f0 f1 f2 c/\ c= cI f0 cinverse f0 f1 f1 c= cI f0 cinverse f0 f1 f2
+- |- (T = (((~ (x = y)) \/ ((~ (x = z)) \/ (y = z))) = ((y = z) \/ ((~ (x = y)) \/ (~ (x = z))))))
+T c= cT c= c\/ c~ c= f0 f1 c\/ c~ c= f0 f2 c= f1 f2 c\/ c= f1 f2 c\/ c~ c= f0 f1 c~ c= f0 f2
++ (!x. (!y. ((((inverse p) y) = x) = ((p x) = y)))), (((~ (y IN s)) /\ (~ (((inverse p) y) = y))) \/ ((!x. (~ (((inverse p) x) = y))) \/ ((((inverse p) x) = y) /\ ((((inverse p) x') = y) /\ (~ (x' = x)))))) |- (((!x. ((x IN s) \/ ((p x) = x))) /\ ((!y. ((p (x'' y)) = y)) /\ (!y. (!x. ((~ ((p x) = y)) \/ (!x'. ((~ ((p x') = y)) \/ (x' = x)))))))) ==> F)
+T c==> ! ! c= c= cinverse f0 b1 b0 c= * f0 b0 b1 c==> c\/ c/\ c~ cIN f1 f2 c~ c= cinverse f0 f1 f1 c\/ ! c~ c= cinverse f0 b0 f1 c/\ c= cinverse f0 f3 f1 c/\ c= cinverse f0 f4 f1 c~ c= f4 f3 c==> c/\ ! c\/ cIN b0 f2 c= * f0 b0 b0 c/\ ! c= * f0 * f5 b0 b0 ! ! c\/ c~ c= * f0 b1 b0 ! c\/ c~ c= * f0 b2 b0 c= b2 b1 cF
+- (!x. (!y. ((((inverse p) y) = x) = ((p x) = y)))), ((!x. ((x IN s) \/ ((p x) = x))) /\ ((!y. ((p (x'' y)) = y)) /\ (!y. (!x. ((~ ((p x) = y)) \/ (!x'. ((~ ((p x') = y)) \/ (x' = x)))))))), ((~ (y IN s)) /\ (~ (((inverse p) y) = y))) |- ((~ F) ==> F)
+T c==> ! ! c= c= cinverse f0 b1 b0 c= * f0 b0 b1 c==> c/\ ! c\/ cIN b0 f1 c= * f0 b0 b0 c/\ ! c= * f0 * f2 b0 b0 ! ! c\/ c~ c= * f0 b1 b0 ! c\/ c~ c= * f0 b2 b0 c= b2 b1 c==> c/\ c~ cIN f3 f1 c~ c= cinverse f0 f3 f3 c==> c~ cF cF
++ (!x. (!y. ((((inverse p) y) = x) = ((p x) = y)))), ((!x. (~ (((inverse p) x) = y))) \/ ((((inverse p) x) = y) /\ ((((inverse p) x') = y) /\ (~ (x' = x))))) |- (((!x. (~ (((inverse p) x) = y))) \/ ((((inverse p) x) = y) /\ ((((inverse p) x') = y) /\ (~ (x' = x))))) /\ F)
+T c==> ! ! c= c= cinverse f0 b1 b0 c= * f0 b0 b1 c==> c\/ ! c~ c= cinverse f0 b0 f1 c/\ c= cinverse f0 f2 f1 c/\ c= cinverse f0 f3 f1 c~ c= f3 f2 c/\ c\/ ! c~ c= cinverse f0 b0 f1 c/\ c= cinverse f0 f2 f1 c/\ c= cinverse f0 f3 f1 c~ c= f3 f2 cF
+- |- (((!p. (!s. ((~ (((!x. ((~ (x IN s)) ==> ((p x) = x))) /\ (!y. (?!x. ((p x) = y)))) ==> ((!x. (!y. ((((inverse p) y) = x) = ((p x) = y)))) ==> ((!x. ((~ (x IN s)) ==> (((inverse p) x) = x))) /\ (!y. (?!x. (((inverse p) x) = y))))))) ==> F))) ==> ((\p. (!s. ((~ (((!x. ((~ (x IN s)) ==> ((p x) = x))) /\ (!y. (?!x. ((p x) = y)))) ==> ((!x. (!y. ((((inverse p) y) = x) = ((p x) = y)))) ==> ((!x. ((~ (x IN s)) ==> (((inverse p) x) = x))) /\ (!y. (?!x. (((inverse p) x) = y))))))) ==> F))) p)) = ((\p. (!s. ((~ (((!x. ((~ (x IN s)) ==> ((p x) = x))) /\ (!y. (?!x. ((p x) = y)))) ==> ((!x. (!y. ((((inverse p) y) = x) = ((p x) = y)))) ==> ((!x. ((~ (x IN s)) ==> (((inverse p) x) = x))) /\ (!y. (?!x. (((inverse p) x) = y))))))) ==> F))) p))
+T c= c==> ! ! c==> c~ c==> c/\ ! c==> c~ cIN b2 b1 c= * b0 b2 b2 ! c?! / c= * b0 b3 b2 c==> ! ! c= c= cinverse b0 b3 b2 c= * b0 b2 b3 c/\ ! c==> c~ cIN b2 b1 c= cinverse b0 b2 b2 ! c?! / c= cinverse b0 b3 b2 cF * / ! c==> c~ c==> c/\ ! c==> c~ cIN b2 b1 c= * b0 b2 b2 ! c?! / c= * b0 b3 b2 c==> ! ! c= c= cinverse b0 b3 b2 c= * b0 b2 b3 c/\ ! c==> c~ cIN b2 b1 c= cinverse b0 b2 b2 ! c?! / c= cinverse b0 b3 b2 cF f0 * / ! c==> c~ c==> c/\ ! c==> c~ cIN b2 b1 c= * b0 b2 b2 ! c?! / c= * b0 b3 b2 c==> ! ! c= c= cinverse b0 b3 b2 c= * b0 b2 b3 c/\ ! c==> c~ cIN b2 b1 c= cinverse b0 b2 b2 ! c?! / c= cinverse b0 b3 b2 cF f0
+- |- ((!x'. ((x IN s) \/ ((p x') = x'))) = ((x IN s) \/ (!x. ((p x) = x))))
+T c= ! c\/ cIN f0 f1 c= * f2 b0 b0 c\/ cIN f0 f1 ! c= * f2 b0 b0
+- |- ((?x'. ((((inverse p) x') = y) /\ (?x'. ((((inverse p) x') = y) /\ (~ (x' = x)))))) = ((?x. (((inverse p) x) = y)) /\ (?x'. ((((inverse p) x') = y) /\ (~ (x' = x))))))
+T c= c? / c/\ c= cinverse f0 b0 f1 c? / c/\ c= cinverse f0 b1 f1 c~ c= b1 f2 c/\ c? / c= cinverse f0 b0 f1 c? / c/\ c= cinverse f0 b0 f1 c~ c= b0 f2
+- |- ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))
+T c= c\/ f0 c\/ f1 f2 c\/ c\/ f0 f1 f2
++ ((!x. ((x IN s) \/ ((p x) = x))) /\ ((!y. ((p (x'' y)) = y)) /\ (!y. (!x. ((~ ((p x) = y)) \/ (!x'. ((~ ((p x') = y)) \/ (x' = x)))))))) |- ((!x. ((x IN s) \/ (((I p) x) = x))) /\ ((!y. (((I p) (x'' y)) = y)) /\ (!y. (!x. ((~ (((I p) x) = y)) \/ (!x'. ((~ (((I p) x') = y)) \/ (x' = x))))))))
+T c==> c/\ ! c\/ cIN b0 f0 c= * f1 b0 b0 c/\ ! c= * f1 * f2 b0 b0 ! ! c\/ c~ c= * f1 b1 b0 ! c\/ c~ c= * f1 b2 b0 c= b2 b1 c/\ ! c\/ cIN b0 f0 c= cI f1 b0 b0 c/\ ! c= cI f1 * f2 b0 b0 ! ! c\/ c~ c= cI f1 b1 b0 ! c\/ c~ c= cI f1 b2 b0 c= b2 b1
+- (((~ (((!x. ((~ (x IN s)) ==> ((p x) = x))) /\ (!y. (?!x. ((p x) = y)))) ==> ((!x. (!y. ((((inverse p) y) = x) = ((p x) = y)))) ==> ((!x. ((~ (x IN s)) ==> (((inverse p) x) = x))) /\ (!y. (?!x. (((inverse p) x) = y))))))) ==> F) ==> ((~ (((!x. ((~ (x IN s)) ==> ((p x) = x))) /\ (!y. (?!x. ((p x) = y)))) ==> ((!x. (!y. ((((inverse p) y) = x) = ((p x) = y)))) ==> ((!x. ((~ (x IN s)) ==> (((inverse p) x) = x))) /\ (!y. (?!x. (((inverse p) x) = y))))))) ==> F)) |- ((((~ (((!x. ((~ (x IN s)) ==> ((p x) = x))) /\ (!y. (?!x. ((p x) = y)))) ==> ((!x. (!y. ((((inverse p) y) = x) = ((p x) = y)))) ==> ((!x. ((~ (x IN s)) ==> (((inverse p) x) = x))) /\ (!y. (?!x. (((inverse p) x) = y))))))) ==> F) ==> ((~ (((!x. ((~ (x IN s)) ==> ((p x) = x))) /\ (!y. (?!x. ((p x) = y)))) ==> ((!x. (!y. ((((inverse p) y) = x) = ((p x) = y)))) ==> ((!x. ((~ (x IN s)) ==> (((inverse p) x) = x))) /\ (!y. (?!x. (((inverse p) x) = y))))))) ==> F)) /\ (((~ (((!x. ((~ (x IN s)) ==> ((p x) = x))) /\ (!y. (?!x. ((p x) = y)))) ==> ((!x. (!y. ((((inverse p) y) = x) = ((p x) = y)))) ==> ((!x. ((~ (x IN s)) ==> (((inverse p) x) = x))) /\ (!y. (?!x. (((inverse p) x) = y))))))) ==> F) ==> ((~ (((!x. ((~ (x IN s)) ==> ((p x) = x))) /\ (!y. (?!x. ((p x) = y)))) ==> ((!x. (!y. ((((inverse p) y) = x) = ((p x) = y)))) ==> ((!x. ((~ (x IN s)) ==> (((inverse p) x) = x))) /\ (!y. (?!x. (((inverse p) x) = y))))))) ==> F)))
+T c==> c==> c==> c~ c==> c/\ ! c==> c~ cIN b0 f0 c= * f1 b0 b0 ! c?! / c= * f1 b1 b0 c==> ! ! c= c= cinverse f1 b1 b0 c= * f1 b0 b1 c/\ ! c==> c~ cIN b0 f0 c= cinverse f1 b0 b0 ! c?! / c= cinverse f1 b1 b0 cF c==> c~ c==> c/\ ! c==> c~ cIN b0 f0 c= * f1 b0 b0 ! c?! / c= * f1 b1 b0 c==> ! ! c= c= cinverse f1 b1 b0 c= * f1 b0 b1 c/\ ! c==> c~ cIN b0 f0 c= cinverse f1 b0 b0 ! c?! / c= cinverse f1 b1 b0 cF c/\ c==> c==> c~ c==> c/\ ! c==> c~ cIN b0 f0 c= * f1 b0 b0 ! c?! / c= * f1 b1 b0 c==> ! ! c= c= cinverse f1 b1 b0 c= * f1 b0 b1 c/\ ! c==> c~ cIN b0 f0 c= cinverse f1 b0 b0 ! c?! / c= cinverse f1 b1 b0 cF c==> c~ c==> c/\ ! c==> c~ cIN b0 f0 c= * f1 b0 b0 ! c?! / c= * f1 b1 b0 c==> ! ! c= c= cinverse f1 b1 b0 c= * f1 b0 b1 c/\ ! c==> c~ cIN b0 f0 c= cinverse f1 b0 b0 ! c?! / c= cinverse f1 b1 b0 cF c==> c==> c~ c==> c/\ ! c==> c~ cIN b0 f0 c= * f1 b0 b0 ! c?! / c= * f1 b1 b0 c==> ! ! c= c= cinverse f1 b1 b0 c= * f1 b0 b1 c/\ ! c==> c~ cIN b0 f0 c= cinverse f1 b0 b0 ! c?! / c= cinverse f1 b1 b0 cF c==> c~ c==> c/\ ! c==> c~ cIN b0 f0 c= * f1 b0 b0 ! c?! / c= * f1 b1 b0 c==> ! ! c= c= cinverse f1 b1 b0 c= * f1 b0 b1 c/\ ! c==> c~ cIN b0 f0 c= cinverse f1 b0 b0 ! c?! / c= cinverse f1 b1 b0 cF
+- |- ((~ (_219732 = _219734)) \/ ((~ (_219731 = _219733)) \/ (((inverse _219731) _219732) = ((inverse _219733) _219734))))
+T c\/ c~ c= f0 f1 c\/ c~ c= f2 f3 c= cinverse f2 f0 cinverse f3 f1
++ ((permutes p) s) |- (((permutes p) s) /\ ((permutes (inverse p)) s))
+T c==> cpermutes f0 f1 c/\ cpermutes f0 f1 cpermutes * part cinverse f0 f1
+- |- ((!x''. ((~ ((p x'') = y)) \/ (x' = x))) = ((!x'. (~ ((p x') = y))) \/ (x' = x)))
+T c= ! c\/ c~ c= * f0 b0 f1 c= f2 f3 c\/ ! c~ c= * f0 b0 f1 c= f2 f3
+- |- (T = (((~ (((inverse p) _219682) = _219681)) \/ (((I p) _219681) = _219682)) = ((((I p) _219681) = _219682) \/ (~ (((inverse p) _219682) = _219681)))))
+T c= cT c= c\/ c~ c= cinverse f0 f1 f2 c= cI f0 f2 f1 c\/ c= cI f0 f2 f1 c~ c= cinverse f0 f1 f2
++ |- ((?y. ((!x. (~ (((inverse p) x) = y))) \/ (?x. (?x'. ((((inverse p) x) = y) /\ ((((inverse p) x') = y) /\ (~ (x' = x)))))))) = ((?y. (!x. (~ (((inverse p) x) = y)))) \/ (?y. (?x. (?x'. ((((inverse p) x) = y) /\ ((((inverse p) x') = y) /\ (~ (x' = x)))))))))
+T c= c? / c\/ ! c~ c= cinverse f0 b1 b0 c? / c? / c/\ c= cinverse f0 b1 b0 c/\ c= cinverse f0 b2 b0 c~ c= b2 b1 c\/ c? / ! c~ c= cinverse f0 b1 b0 c? / c? / c? / c/\ c= cinverse f0 b1 b0 c/\ c= cinverse f0 b2 b0 c~ c= b2 b1
++ (!x. (!y. ((((inverse p) y) = x) = ((p x) = y)))), ((!x. ((~ (x IN s)) ==> ((p x) = x))) /\ (!y. (?!x. ((p x) = y)))), ((\x'. (((~ (y IN s)) /\ (~ (((inverse p) y) = y))) \/ ((!x. (~ (((inverse p) x) = y))) \/ ((((inverse p) x) = y) /\ ((((inverse p) x') = y) /\ (~ (x' = x))))))) x') |- (((\x'. (((~ (y IN s)) /\ (~ (((inverse p) y) = y))) \/ ((!x. (~ (((inverse p) x) = y))) \/ ((((inverse p) x) = y) /\ ((((inverse p) x') = y) /\ (~ (x' = x))))))) x') /\ F)
+T c==> ! ! c= c= cinverse f0 b1 b0 c= * f0 b0 b1 c==> c/\ ! c==> c~ cIN b0 f1 c= * f0 b0 b0 ! c?! / c= * f0 b1 b0 c==> * / c\/ c/\ c~ cIN f2 f1 c~ c= cinverse f0 f2 f2 c\/ ! c~ c= cinverse f0 b1 f2 c/\ c= cinverse f0 f3 f2 c/\ c= cinverse f0 b0 f2 c~ c= b0 f3 f4 c/\ * / c\/ c/\ c~ cIN f2 f1 c~ c= cinverse f0 f2 f2 c\/ ! c~ c= cinverse f0 b1 f2 c/\ c= cinverse f0 f3 f2 c/\ c= cinverse f0 b0 f2 c~ c= b0 f3 f4 cF
+- ((!x. ((x IN s) \/ ((p x) = x))) /\ ((!y. ((p (x'' y)) = y)) /\ (!y. (!x. ((~ ((p x) = y)) \/ (!x'. ((~ ((p x') = y)) \/ (x' = x)))))))) |- (((!x. (!x'. ((~ (((I p) x) = _219676)) \/ ((~ (((I p) x') = _219676)) \/ (x' = x))))) ==> ((\x. (!x'. ((~ (((I p) x) = _219676)) \/ ((~ (((I p) x') = _219676)) \/ (x' = x))))) _219677)) = ((\x. (!x'. ((~ (((I p) x) = _219676)) \/ ((~ (((I p) x') = _219676)) \/ (x' = x))))) _219677))
+T c==> c/\ ! c\/ cIN b0 f0 c= * f1 b0 b0 c/\ ! c= * f1 * f2 b0 b0 ! ! c\/ c~ c= * f1 b1 b0 ! c\/ c~ c= * f1 b2 b0 c= b2 b1 c= c==> ! ! c\/ c~ c= cI f1 b0 f3 c\/ c~ c= cI f1 b1 f3 c= b1 b0 * / ! c\/ c~ c= cI f1 b0 f3 c\/ c~ c= cI f1 b1 f3 c= b1 b0 f4 * / ! c\/ c~ c= cI f1 b0 f3 c\/ c~ c= cI f1 b1 f3 c= b1 b0 f4
++ (!x. (!y. ((((inverse p) y) = x) = ((p x) = y)))), (((~ (y IN s)) /\ (~ (((inverse p) y) = y))) \/ ((!x. (~ (((inverse p) x) = y))) \/ ((((inverse p) x) = y) /\ ((((inverse p) x') = y) /\ (~ (x' = x)))))) |- ((((\x. ((!x. ((x IN s) \/ ((p x) = x))) /\ ((!y. ((p (x y)) = y)) /\ (!y. (!x. ((~ ((p x) = y)) \/ (!x'. ((~ ((p x') = y)) \/ (x' = x))))))))) x'') ==> F) = T)
+T c==> ! ! c= c= cinverse f0 b1 b0 c= * f0 b0 b1 c==> c\/ c/\ c~ cIN f1 f2 c~ c= cinverse f0 f1 f1 c\/ ! c~ c= cinverse f0 b0 f1 c/\ c= cinverse f0 f3 f1 c/\ c= cinverse f0 f4 f1 c~ c= f4 f3 c= c==> * / c/\ ! c\/ cIN b1 f2 c= * f0 b1 b1 c/\ ! c= * f0 * b0 b1 b1 ! ! c\/ c~ c= * f0 b2 b1 ! c\/ c~ c= * f0 b3 b1 c= b3 b2 f5 cF cT
++ (!x. (!y. ((((inverse p) y) = x) = ((p x) = y)))), ((!x. ((~ (x IN s)) ==> ((p x) = x))) /\ (!y. (?!x. ((p x) = y)))) |- ((!x. ((~ (x IN s)) ==> (((inverse p) x) = x))) /\ (!y. (?!x. (((inverse p) x) = y))))
+T c==> ! ! c= c= cinverse f0 b1 b0 c= * f0 b0 b1 c==> c/\ ! c==> c~ cIN b0 f1 c= * f0 b0 b0 ! c?! / c= * f0 b1 b0 c/\ ! c==> c~ cIN b0 f1 c= cinverse f0 b0 b0 ! c?! / c= cinverse f0 b1 b0
+- ((!x. ((x IN s) \/ ((p x) = x))) /\ ((!y. ((p (x'' y)) = y)) /\ (!y. (!x. ((~ ((p x) = y)) \/ (!x'. ((~ ((p x') = y)) \/ (x' = x)))))))) |- (!x'. ((~ (((I p) _219677) = _219676)) \/ ((~ (((I p) x') = _219676)) \/ (x' = _219677))))
+T c==> c/\ ! c\/ cIN b0 f0 c= * f1 b0 b0 c/\ ! c= * f1 * f2 b0 b0 ! ! c\/ c~ c= * f1 b1 b0 ! c\/ c~ c= * f1 b2 b0 c= b2 b1 ! c\/ c~ c= cI f1 f3 f4 c\/ c~ c= cI f1 b0 f4 c= b0 f3
++ (!x. (!y. ((((inverse p) y) = x) = ((p x) = y)))), (((~ (y IN s)) /\ (~ (((inverse p) y) = y))) \/ ((!x. (~ (((inverse p) x) = y))) \/ ((((inverse p) x) = y) /\ ((((inverse p) x') = y) /\ (~ (x' = x)))))), ((\x. ((!x. ((x IN s) \/ ((p x) = x))) /\ ((!y. ((p (x y)) = y)) /\ (!y. (!x. ((~ ((p x) = y)) \/ (!x'. ((~ ((p x') = y)) \/ (x' = x))))))))) x'') |- (((\x. ((!x. ((x IN s) \/ ((p x) = x))) /\ ((!y. ((p (x y)) = y)) /\ (!y. (!x. ((~ ((p x) = y)) \/ (!x'. ((~ ((p x') = y)) \/ (x' = x))))))))) x'') /\ F)
+T c==> ! ! c= c= cinverse f0 b1 b0 c= * f0 b0 b1 c==> c\/ c/\ c~ cIN f1 f2 c~ c= cinverse f0 f1 f1 c\/ ! c~ c= cinverse f0 b0 f1 c/\ c= cinverse f0 f3 f1 c/\ c= cinverse f0 f4 f1 c~ c= f4 f3 c==> * / c/\ ! c\/ cIN b1 f2 c= * f0 b1 b1 c/\ ! c= * f0 * b0 b1 b1 ! ! c\/ c~ c= * f0 b2 b1 ! c\/ c~ c= * f0 b3 b1 c= b3 b2 f5 c/\ * / c/\ ! c\/ cIN b1 f2 c= * f0 b1 b1 c/\ ! c= * f0 * b0 b1 b1 ! ! c\/ c~ c= * f0 b2 b1 ! c\/ c~ c= * f0 b3 b1 c= b3 b2 f5 cF
++ ((((inverse p) x) = y) /\ ((((inverse p) x') = y) /\ (~ (x' = x)))) |- (((((inverse p) x) = ((inverse p) x')) ==> (((I p) ((inverse p) x')) = x)) = (((I p) ((inverse p) x')) = x))
+T c==> c/\ c= cinverse f0 f1 f2 c/\ c= cinverse f0 f3 f2 c~ c= f3 f1 c= c==> c= cinverse f0 f1 cinverse f0 f3 c= cI f0 cinverse f0 f3 f1 c= cI f0 cinverse f0 f3 f1
++ (!x. (!y. ((((inverse p) y) = x) = ((p x) = y)))) |- ((!x. (~ (((inverse p) x) = y))) ==> F)
+T c==> ! ! c= c= cinverse f0 b1 b0 c= * f0 b0 b1 c==> ! c~ c= cinverse f0 b0 f1 cF
+- (~ (((!x. ((~ (x IN s)) ==> ((p x) = x))) /\ (!y. (?!x. ((p x) = y)))) ==> ((!x. (!y. ((((inverse p) y) = x) = ((p x) = y)))) ==> ((!x. ((~ (x IN s)) ==> (((inverse p) x) = x))) /\ (!y. (?!x. (((inverse p) x) = y))))))) |- F
+T c==> c~ c==> c/\ ! c==> c~ cIN b0 f0 c= * f1 b0 b0 ! c?! / c= * f1 b1 b0 c==> ! ! c= c= cinverse f1 b1 b0 c= * f1 b0 b1 c/\ ! c==> c~ cIN b0 f0 c= cinverse f1 b0 b0 ! c?! / c= cinverse f1 b1 b0 cF
++ (!x. (!y. ((((inverse p) y) = x) = ((p x) = y)))), ((!x. ((x IN s) \/ ((p x) = x))) /\ ((!y. ((p (x'' y)) = y)) /\ (!y. (!x. ((~ ((p x) = y)) \/ (!x'. ((~ ((p x') = y)) \/ (x' = x)))))))), (((~ (y IN s)) /\ (~ (((inverse p) y) = y))) \/ ((!x. (~ (((inverse p) x) = y))) \/ ((((inverse p) x) = y) /\ ((((inverse p) x') = y) /\ (~ (x' = x)))))) |- F
+T c==> ! ! c= c= cinverse f0 b1 b0 c= * f0 b0 b1 c==> c/\ ! c\/ cIN b0 f1 c= * f0 b0 b0 c/\ ! c= * f0 * f2 b0 b0 ! ! c\/ c~ c= * f0 b1 b0 ! c\/ c~ c= * f0 b2 b0 c= b2 b1 c==> c\/ c/\ c~ cIN f3 f1 c~ c= cinverse f0 f3 f3 c\/ ! c~ c= cinverse f0 b0 f3 c/\ c= cinverse f0 f4 f3 c/\ c= cinverse f0 f5 f3 c~ c= f5 f4 cF
+- ((!x. ((x IN s) \/ ((p x) = x))) /\ ((!y. ((p (x'' y)) = y)) /\ (!y. (!x. ((~ ((p x) = y)) \/ (!x'. ((~ ((p x') = y)) \/ (x' = x)))))))) |- ((\y. (!x. (!x'. ((~ (((I p) x) = y)) \/ ((~ (((I p) x') = y)) \/ (x' = x)))))) _219676)
+T c==> c/\ ! c\/ cIN b0 f0 c= * f1 b0 b0 c/\ ! c= * f1 * f2 b0 b0 ! ! c\/ c~ c= * f1 b1 b0 ! c\/ c~ c= * f1 b2 b0 c= b2 b1 * / ! ! c\/ c~ c= cI f1 b1 b0 c\/ c~ c= cI f1 b2 b0 c= b2 b1 f3
+- |- ((\t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3)))) t2)
+T * / ! c= c\/ f0 c\/ b0 b1 c\/ c\/ f0 b0 b1 f1
+- |- ((!y. ((P y) \/ Q)) = ((!y. (P y)) \/ Q))
+T c= ! c\/ * f0 b0 f1 c\/ ! * f0 b0 f1
+- |- (T = (((_219655 IN s) \/ (((I p) _219655) = _219655)) = ((((I p) _219655) = _219655) \/ (_219655 IN s))))
+T c= cT c= c\/ cIN f0 f1 c= cI f2 f0 f0 c\/ c= cI f2 f0 f0 cIN f0 f1
+- ((!x. ((x IN s) \/ ((p x) = x))) /\ ((!y. ((p (x'' y)) = y)) /\ (!y. (!x. ((~ ((p x) = y)) \/ (!x'. ((~ ((p x') = y)) \/ (x' = x)))))))) |- ((!y. (((I p) (x'' y)) = y)) /\ (!y. (!x. ((~ (((I p) x) = y)) \/ (!x'. ((~ (((I p) x') = y)) \/ (x' = x)))))))
+T c==> c/\ ! c\/ cIN b0 f0 c= * f1 b0 b0 c/\ ! c= * f1 * f2 b0 b0 ! ! c\/ c~ c= * f1 b1 b0 ! c\/ c~ c= * f1 b2 b0 c= b2 b1 c/\ ! c= cI f1 * f2 b0 b0 ! ! c\/ c~ c= cI f1 b1 b0 ! c\/ c~ c= cI f1 b2 b0 c= b2 b1
+- ((!x. ((x IN s) \/ ((p x) = x))) /\ ((!y. ((p (x'' y)) = y)) /\ (!y. (!x. ((~ ((p x) = y)) \/ (!x'. ((~ ((p x') = y)) \/ (x' = x)))))))) |- (((I p) (x'' _219675)) = _219675)
+T c==> c/\ ! c\/ cIN b0 f0 c= * f1 b0 b0 c/\ ! c= * f1 * f2 b0 b0 ! ! c\/ c~ c= * f1 b1 b0 ! c\/ c~ c= * f1 b2 b0 c= b2 b1 c= cI f1 * f2 f3 f3
++ (!x. (!y. ((((inverse p) y) = x) = ((p x) = y)))), ((!x. ((~ (x IN s)) ==> ((p x) = x))) /\ (!y. (?!x. ((p x) = y)))) |- ((?y. (?x. (?x'. (((~ (y IN s)) /\ (~ (((inverse p) y) = y))) \/ ((!x. (~ (((inverse p) x) = y))) \/ ((((inverse p) x) = y) /\ ((((inverse p) x') = y) /\ (~ (x' = x))))))))) ==> F)
+T c==> ! ! c= c= cinverse f0 b1 b0 c= * f0 b0 b1 c==> c/\ ! c==> c~ cIN b0 f1 c= * f0 b0 b0 ! c?! / c= * f0 b1 b0 c==> c? / c? / c? / c\/ c/\ c~ cIN b0 f1 c~ c= cinverse f0 b0 b0 c\/ ! c~ c= cinverse f0 b3 b0 c/\ c= cinverse f0 b1 b0 c/\ c= cinverse f0 b2 b0 c~ c= b2 b1 cF
++ |- ((\p. (((permutes p) s) = ((!x. ((~ (x IN s)) ==> ((p x) = x))) /\ (!y. (?!x. ((p x) = y)))))) p)
+T * / c= cpermutes b0 f0 c/\ ! c==> c~ cIN b1 f0 c= * b0 b1 b1 ! c?! / c= * b0 b2 b1 f1
++ (!x. (!y. ((((inverse p) y) = x) = ((p x) = y)))), ((!x. ((~ (x IN s)) ==> ((p x) = x))) /\ (!y. (?!x. ((p x) = y)))) |- ((((\y. (?x. (?x'. (((~ (y IN s)) /\ (~ (((inverse p) y) = y))) \/ ((!x. (~ (((inverse p) x) = y))) \/ ((((inverse p) x) = y) /\ ((((inverse p) x') = y) /\ (~ (x' = x))))))))) y) ==> F) = T)
+T c==> ! ! c= c= cinverse f0 b1 b0 c= * f0 b0 b1 c==> c/\ ! c==> c~ cIN b0 f1 c= * f0 b0 b0 ! c?! / c= * f0 b1 b0 c= c==> * / c? / c? / c\/ c/\ c~ cIN b0 f1 c~ c= cinverse f0 b0 b0 c\/ ! c~ c= cinverse f0 b3 b0 c/\ c= cinverse f0 b1 b0 c/\ c= cinverse f0 b2 b0 c~ c= b2 b1 f2 cF cT
+- ((!x. ((x IN s) \/ ((p x) = x))) /\ ((!y. ((p (x'' y)) = y)) /\ (!y. (!x. ((~ ((p x) = y)) \/ (!x'. ((~ ((p x') = y)) \/ (x' = x)))))))) |- (!x. (!x'. ((~ (((I p) x) = _219676)) \/ ((~ (((I p) x') = _219676)) \/ (x' = x)))))
+T c==> c/\ ! c\/ cIN b0 f0 c= * f1 b0 b0 c/\ ! c= * f1 * f2 b0 b0 ! ! c\/ c~ c= * f1 b1 b0 ! c\/ c~ c= * f1 b2 b0 c= b2 b1 ! ! c\/ c~ c= cI f1 b0 f3 c\/ c~ c= cI f1 b1 f3 c= b1 b0
++ |- (((!p. (!s. (((permutes p) s) ==> (!x. (!y. ((((inverse p) y) = x) = ((p x) = y))))))) ==> ((\p. (!s. (((permutes p) s) ==> (!x. (!y. ((((inverse p) y) = x) = ((p x) = y))))))) p)) = ((\p. (!s. (((permutes p) s) ==> (!x. (!y. ((((inverse p) y) = x) = ((p x) = y))))))) p))
+T c= c==> ! ! c==> cpermutes b0 b1 ! ! c= c= cinverse b0 b3 b2 c= * b0 b2 b3 * / ! c==> cpermutes b0 b1 ! ! c= c= cinverse b0 b3 b2 c= * b0 b2 b3 f0 * / ! c==> cpermutes b0 b1 ! ! c= c= cinverse b0 b3 b2 c= * b0 b2 b3 f0
++ (!x. (!y. ((((inverse p) y) = x) = ((p x) = y)))), ((!x. ((~ (x IN s)) ==> ((p x) = x))) /\ (!y. (?!x. ((p x) = y)))) |- ((?x'. (((~ (y IN s)) /\ (~ (((inverse p) y) = y))) \/ ((!x. (~ (((inverse p) x) = y))) \/ ((((inverse p) x) = y) /\ ((((inverse p) x') = y) /\ (~ (x' = x))))))) ==> F)
+T c==> ! ! c= c= cinverse f0 b1 b0 c= * f0 b0 b1 c==> c/\ ! c==> c~ cIN b0 f1 c= * f0 b0 b0 ! c?! / c= * f0 b1 b0 c==> c? / c\/ c/\ c~ cIN f2 f1 c~ c= cinverse f0 f2 f2 c\/ ! c~ c= cinverse f0 b1 f2 c/\ c= cinverse f0 f3 f2 c/\ c= cinverse f0 b0 f2 c~ c= b0 f3 cF
+- |- (((~ (((!x. ((~ (x IN s)) ==> ((p x) = x))) /\ (!y. (?!x. ((p x) = y)))) ==> ((!x. (!y. ((((inverse p) y) = x) = ((p x) = y)))) ==> ((!x. ((~ (x IN s)) ==> (((inverse p) x) = x))) /\ (!y. (?!x. (((inverse p) x) = y))))))) ==> F) = (((!x. ((~ (x IN s)) ==> ((p x) = x))) /\ (!y. (?!x. ((p x) = y)))) ==> ((!x. (!y. ((((inverse p) y) = x) = ((p x) = y)))) ==> ((!x. ((~ (x IN s)) ==> (((inverse p) x) = x))) /\ (!y. (?!x. (((inverse p) x) = y)))))))
+T c= c==> c~ c==> c/\ ! c==> c~ cIN b0 f0 c= * f1 b0 b0 ! c?! / c= * f1 b1 b0 c==> ! ! c= c= cinverse f1 b1 b0 c= * f1 b0 b1 c/\ ! c==> c~ cIN b0 f0 c= cinverse f1 b0 b0 ! c?! / c= cinverse f1 b1 b0 cF c==> c/\ ! c==> c~ cIN b0 f0 c= * f1 b0 b0 ! c?! / c= * f1 b1 b0 c==> ! ! c= c= cinverse f1 b1 b0 c= * f1 b0 b1 c/\ ! c==> c~ cIN b0 f0 c= cinverse f1 b0 b0 ! c?! / c= cinverse f1 b1 b0
+- |- ((_219732 = _219734) ==> ((~ (_219731 = _219733)) \/ (((inverse _219731) _219732) = ((inverse _219733) _219734))))
+T c==> c= f0 f1 c\/ c~ c= f2 f3 c= cinverse f2 f0 cinverse f3 f1
+- |- (((!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3)))) ==> ((\t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3)))) t2)) = ((\t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3)))) t2))
+T c= c==> ! ! c= c\/ f0 c\/ b0 b1 c\/ c\/ f0 b0 b1 * / ! c= c\/ f0 c\/ b0 b1 c\/ c\/ f0 b0 b1 f1 * / ! c= c\/ f0 c\/ b0 b1 c\/ c\/ f0 b0 b1 f1
+- |- ((!y'. ((((inverse p) y) = x) \/ (~ ((p x) = y')))) = ((((inverse p) y) = x) \/ (!y. (~ ((p x) = y)))))
+T c= ! c\/ c= cinverse f0 f1 f2 c~ c= * f0 f2 b0 c\/ c= cinverse f0 f1 f2 ! c~ c= * f0 f2 b0
++ (!x. (~ (((inverse p) x) = y))) |- ((((inverse p) _219673) = y) ==> F)
+T c==> ! c~ c= cinverse f0 b0 f1 c==> c= cinverse f0 f2 f1 cF
++ ((((inverse p) x) = y) /\ ((((inverse p) x') = y) /\ (~ (x' = x)))) |- ((((inverse p) x) = y) = (((inverse p) x) = ((inverse p) x')))
+T c==> c/\ c= cinverse f0 f1 f2 c/\ c= cinverse f0 f3 f2 c~ c= f3 f1 c= c= cinverse f0 f1 f2 c= cinverse f0 f1 cinverse f0 f3
++ (!x. (!y. ((((inverse p) y) = x) = ((p x) = y)))), ((!x. ((~ (x IN s)) ==> ((p x) = x))) /\ (!y. (?!x. ((p x) = y)))) |- (!y. (((\y. (?x. (?x'. (((~ (y IN s)) /\ (~ (((inverse p) y) = y))) \/ ((!x. (~ (((inverse p) x) = y))) \/ ((((inverse p) x) = y) /\ ((((inverse p) x') = y) /\ (~ (x' = x))))))))) y) ==> F))
+T c==> ! ! c= c= cinverse f0 b1 b0 c= * f0 b0 b1 c==> c/\ ! c==> c~ cIN b0 f1 c= * f0 b0 b0 ! c?! / c= * f0 b1 b0 ! c==> * / c? / c? / c\/ c/\ c~ cIN b1 f1 c~ c= cinverse f0 b1 b1 c\/ ! c~ c= cinverse f0 b3 b1 c/\ c= cinverse f0 b1 b1 c/\ c= cinverse f0 b2 b1 c~ c= b2 b1 b0 cF
++ (!x. (~ (((inverse p) x) = y))) |- ((\x. (~ (((inverse p) x) = y))) _219673)
+T c==> ! c~ c= cinverse f0 b0 f1 * / c~ c= cinverse f0 b0 f1 f2
+- |- ((_219727 = _219729) ==> ((~ (_219728 = _219730)) \/ ((_219729 IN _219730) \/ (~ (_219727 IN _219728)))))
+T c==> c= f0 f1 c\/ c~ c= f2 f3 c\/ cIN f1 f3 c~ cIN f0 f2
+- (_219735 = _219736) |- ((_219735 = _219736) /\ ((x'' _219735) = (x'' _219736)))
+T c==> c= f0 f1 c/\ c= f0 f1 c= * f2 f0 * f2 f1
++ (!x. (!y. ((((inverse p) y) = x) = ((p x) = y)))) |- ((!x. (!y. ((((inverse p) y) = x) \/ (~ (((I p) x) = y))))) /\ (!x. (!y. ((~ (((inverse p) y) = x)) \/ (((I p) x) = y)))))
+T c==> ! ! c= c= cinverse f0 b1 b0 c= * f0 b0 b1 c/\ ! ! c\/ c= cinverse f0 b1 b0 c~ c= cI f0 b0 b1 ! ! c\/ c~ c= cinverse f0 b1 b0 c= cI f0 b0 b1
++ (!x. (!y. ((((inverse p) y) = x) = ((p x) = y)))), ((!x. ((x IN s) \/ ((p x) = x))) /\ ((!y. ((p (x'' y)) = y)) /\ (!y. (!x. ((~ ((p x) = y)) \/ (!x'. ((~ ((p x') = y)) \/ (x' = x)))))))), (((~ (y IN s)) /\ (~ (((inverse p) y) = y))) \/ ((!x. (~ (((inverse p) x) = y))) \/ ((((inverse p) x) = y) /\ ((((inverse p) x') = y) /\ (~ (x' = x)))))) |- (((!x. ((x IN s) \/ ((p x) = x))) /\ ((!y. ((p (x'' y)) = y)) /\ (!y. (!x. ((~ ((p x) = y)) \/ (!x'. ((~ ((p x') = y)) \/ (x' = x)))))))) /\ F)
+T c==> ! ! c= c= cinverse f0 b1 b0 c= * f0 b0 b1 c==> c/\ ! c\/ cIN b0 f1 c= * f0 b0 b0 c/\ ! c= * f0 * f2 b0 b0 ! ! c\/ c~ c= * f0 b1 b0 ! c\/ c~ c= * f0 b2 b0 c= b2 b1 c==> c\/ c/\ c~ cIN f3 f1 c~ c= cinverse f0 f3 f3 c\/ ! c~ c= cinverse f0 b0 f3 c/\ c= cinverse f0 f4 f3 c/\ c= cinverse f0 f5 f3 c~ c= f5 f4 c/\ c/\ ! c\/ cIN b0 f1 c= * f0 b0 b0 c/\ ! c= * f0 * f2 b0 b0 ! ! c\/ c~ c= * f0 b1 b0 ! c\/ c~ c= * f0 b2 b0 c= b2 b1 cF
+- (_219732 = _219734) |- ((_219732 = _219734) /\ ((~ (_219731 = _219733)) \/ (((inverse _219731) _219732) = ((inverse _219733) _219734))))
+T c==> c= f0 f1 c/\ c= f0 f1 c\/ c~ c= f2 f3 c= cinverse f2 f0 cinverse f3 f1
+- |- ((x = x) = T)
+T c= c= f0 f0 cT
++ (!x. (!y. ((((inverse p) y) = x) = ((p x) = y)))), ((!x. ((~ (x IN s)) ==> ((p x) = x))) /\ (!y. (?!x. ((p x) = y)))) |- (((!x. (((\y. (?x. (?x'. (((~ (y IN s)) /\ (~ (((inverse p) y) = y))) \/ ((!x. (~ (((inverse p) x) = y))) \/ ((((inverse p) x) = y) /\ ((((inverse p) x') = y) /\ (~ (x' = x))))))))) x) ==> F)) ==> ((?y. (?x. (?x'. (((~ (y IN s)) /\ (~ (((inverse p) y) = y))) \/ ((!x. (~ (((inverse p) x) = y))) \/ ((((inverse p) x) = y) /\ ((((inverse p) x') = y) /\ (~ (x' = x))))))))) ==> F)) = ((?y. (?x. (?x'. (((~ (y IN s)) /\ (~ (((inverse p) y) = y))) \/ ((!x. (~ (((inverse p) x) = y))) \/ ((((inverse p) x) = y) /\ ((((inverse p) x') = y) /\ (~ (x' = x))))))))) ==> F))
+T c==> ! ! c= c= cinverse f0 b1 b0 c= * f0 b0 b1 c==> c/\ ! c==> c~ cIN b0 f1 c= * f0 b0 b0 ! c?! / c= * f0 b1 b0 c= c==> ! c==> * / c? / c? / c\/ c/\ c~ cIN b1 f1 c~ c= cinverse f0 b1 b1 c\/ ! c~ c= cinverse f0 b3 b1 c/\ c= cinverse f0 b2 b1 c/\ c= cinverse f0 b2 b1 c~ c= b2 b2 b0 cF c==> c? / c? / c? / c\/ c/\ c~ cIN b0 f1 c~ c= cinverse f0 b0 b0 c\/ ! c~ c= cinverse f0 b3 b0 c/\ c= cinverse f0 b1 b0 c/\ c= cinverse f0 b2 b0 c~ c= b2 b1 cF c==> c? / c? / c? / c\/ c/\ c~ cIN b0 f1 c~ c= cinverse f0 b0 b0 c\/ ! c~ c= cinverse f0 b3 b0 c/\ c= cinverse f0 b1 b0 c/\ c= cinverse f0 b2 b0 c~ c= b2 b1 cF
++ (!x. (!y. ((((inverse p) y) = x) = ((p x) = y)))) |- (((((inverse p) ((I p) y)) = y) ==> F) = F)
+T c==> ! ! c= c= cinverse f0 b1 b0 c= * f0 b0 b1 c= c==> c= cinverse f0 cI f0 f1 f1 cF cF
+- ((((inverse p) x) = y) /\ ((((inverse p) x') = y) /\ (~ (x' = x)))) |- ((((I p) (x'' _219675)) = _219675) = (((I p) (x'' _219675)) = _219675))
+T c==> c/\ c= cinverse f0 f1 f2 c/\ c= cinverse f0 f3 f2 c~ c= f3 f1 c= c= cI f0 * f4 f5 f5 c= cI f0 * f4 f5 f5
+- |- ((?x'. ((~ (x IN s)) /\ (~ (((inverse p) x') = x')))) = ((~ (x IN s)) /\ (?x. (~ (((inverse p) x) = x)))))
+T c= c? / c/\ c~ cIN f0 f1 c~ c= cinverse f2 b0 b0 c/\ c~ cIN f0 f1 c? / c~ c= cinverse f2 b0 b0
++ |- ((p \/ (q \/ r)) = (q \/ (p \/ r)))
+T c= c\/ f0 c\/ f1 f2 c\/ f1 c\/ f0 f2
++ ((((inverse p) x) = y) /\ ((((inverse p) x') = y) /\ (~ (x' = x)))) |- (((inverse p) x) = ((inverse p) x'))
+T c==> c/\ c= cinverse f0 f1 f2 c/\ c= cinverse f0 f3 f2 c~ c= f3 f1 c= cinverse f0 f1 cinverse f0 f3
++ (~ ((!x. ((~ (x IN s)) ==> (((inverse p) x) = x))) /\ (!y. (?!x. (((inverse p) x) = y))))) |- (?y. (?x. (?x'. (((~ (y IN s)) /\ (~ (((inverse p) y) = y))) \/ ((!x. (~ (((inverse p) x) = y))) \/ ((((inverse p) x) = y) /\ ((((inverse p) x') = y) /\ (~ (x' = x)))))))))
+T c==> c~ c/\ ! c==> c~ cIN b0 f0 c= cinverse f1 b0 b0 ! c?! / c= cinverse f1 b1 b0 c? / c? / c? / c\/ c/\ c~ cIN b0 f0 c~ c= cinverse f1 b0 b0 c\/ ! c~ c= cinverse f1 b3 b0 c/\ c= cinverse f1 b1 b0 c/\ c= cinverse f1 b2 b0 c~ c= b2 b1
+- (!x. (!y. ((((inverse p) y) = x) = ((p x) = y)))) |- ((~ (((inverse p) ((I p) y)) = y)) ==> (((inverse p) ((I p) y)) = y))
+T c==> ! ! c= c= cinverse f0 b1 b0 c= * f0 b0 b1 c==> c~ c= cinverse f0 cI f0 f1 f1 c= cinverse f0 cI f0 f1 f1
+- |- ((\s. ((~ (((!x. ((~ (x IN s)) ==> ((p x) = x))) /\ (!y. (?!x. ((p x) = y)))) ==> ((!x. (!y. ((((inverse p) y) = x) = ((p x) = y)))) ==> ((!x. ((~ (x IN s)) ==> (((inverse p) x) = x))) /\ (!y. (?!x. (((inverse p) x) = y))))))) ==> F)) s)
+T * / c==> c~ c==> c/\ ! c==> c~ cIN b1 b0 c= * f0 b1 b1 ! c?! / c= * f0 b2 b1 c==> ! ! c= c= cinverse f0 b2 b1 c= * f0 b1 b2 c/\ ! c==> c~ cIN b1 b0 c= cinverse f0 b1 b1 ! c?! / c= cinverse f0 b2 b1 cF f1
+- |- ((a ==> b) = ((~ a) \/ b))
+T c= c==> f0 f1 c\/ c~ f0 f1
+- (~ (((inverse p) x') = ((inverse p) x'))) |- ((~ (((inverse p) x') = ((inverse p) x'))) /\ (((inverse p) x') = ((inverse p) x')))
+T c==> c~ c= cinverse f0 f1 cinverse f0 f1 c/\ c~ c= cinverse f0 f1 cinverse f0 f1 c= cinverse f0 f1 cinverse f0 f1
++ (!x. (!y. ((((inverse p) y) = x) = ((p x) = y)))), ((!x. ((~ (x IN s)) ==> ((p x) = x))) /\ (!y. (?!x. ((p x) = y)))) |- ((~ ((!x. ((~ (x IN s)) ==> (((inverse p) x) = x))) /\ (!y. (?!x. (((inverse p) x) = y))))) ==> F)
+T c==> ! ! c= c= cinverse f0 b1 b0 c= * f0 b0 b1 c==> c/\ ! c==> c~ cIN b0 f1 c= * f0 b0 b0 ! c?! / c= * f0 b1 b0 c==> c~ c/\ ! c==> c~ cIN b0 f1 c= cinverse f0 b0 b0 ! c?! / c= cinverse f0 b1 b0 cF
+- (!x. (!y. ((((inverse p) y) = x) = ((p x) = y)))), (~ (((inverse p) y) = y)), ((!x. ((x IN s) \/ ((p x) = x))) /\ ((!y. ((p (x'' y)) = y)) /\ (!y. (!x. ((~ ((p x) = y)) \/ (!x'. ((~ ((p x') = y)) \/ (x' = x)))))))), ((~ (y IN s)) /\ (~ (((inverse p) y) = y))) |- ((~ (((inverse p) y) = y)) /\ (((inverse p) y) = y))
+T c==> ! ! c= c= cinverse f0 b1 b0 c= * f0 b0 b1 c==> c~ c= cinverse f0 f1 f1 c==> c/\ ! c\/ cIN b0 f2 c= * f0 b0 b0 c/\ ! c= * f0 * f3 b0 b0 ! ! c\/ c~ c= * f0 b1 b0 ! c\/ c~ c= * f0 b2 b0 c= b2 b1 c==> c/\ c~ cIN f1 f2 c~ c= cinverse f0 f1 f1 c/\ c~ c= cinverse f0 f1 f1 c= cinverse f0 f1 f1
++ (!x. (!y. ((((inverse p) y) = x) = ((p x) = y)))) |- (((I p) ((inverse p) x')) = x')
+T c==> ! ! c= c= cinverse f0 b1 b0 c= * f0 b0 b1 c= cI f0 cinverse f0 f1 f1
++ |- (((!s. (!p. (((permutes p) s) = ((!x. ((~ (x IN s)) ==> ((p x) = x))) /\ (!y. (?!x. ((p x) = y))))))) ==> ((\s. (!p. (((permutes p) s) = ((!x. ((~ (x IN s)) ==> ((p x) = x))) /\ (!y. (?!x. ((p x) = y))))))) s)) = ((\s. (!p. (((permutes p) s) = ((!x. ((~ (x IN s)) ==> ((p x) = x))) /\ (!y. (?!x. ((p x) = y))))))) s))
+T c= c==> ! ! c= cpermutes b1 b0 c/\ ! c==> c~ cIN b2 b0 c= * b1 b2 b2 ! c?! / c= * b1 b3 b2 * / ! c= cpermutes b1 b0 c/\ ! c==> c~ cIN b2 b0 c= * b1 b2 b2 ! c?! / c= * b1 b3 b2 f0 * / ! c= cpermutes b1 b0 c/\ ! c==> c~ cIN b2 b0 c= * b1 b2 b2 ! c?! / c= * b1 b3 b2 f0
+- ((~ (y IN s)) /\ (~ (((inverse p) y) = y))), (y IN s) |- ((y IN s) /\ (~ (y IN s)))
+T c==> c/\ c~ cIN f0 f1 c~ c= cinverse f2 f0 f0 c==> cIN f0 f1 c/\ cIN f0 f1 c~ cIN f0 f1
+- |- ((_219738 = _219740) ==> ((~ (_219737 = _219739)) \/ (((I _219737) _219738) = ((I _219739) _219740))))
+T c==> c= f0 f1 c\/ c~ c= f2 f3 c= cI f2 f0 cI f3 f1
++ |- ((!s. (((permutes p) s) ==> ((permutes (inverse p)) s))) = T)
+T c= ! c==> cpermutes f0 b0 cpermutes * part cinverse f0 b0 cT
++ |- ((p \/ q) = (q \/ p))
+T c= c\/ f0 f1 c\/ f1 f0
+- |- ((p ==> (~ p)) = (~ p))
+T c= c==> f0 c~ f0 c~ f0
+- |- ((_219735 = _219736) ==> ((x'' _219735) = (x'' _219736)))
+T c==> c= f0 f1 c= * f2 f0 * f2 f1
+- (_219738 = _219740), (_219737 = _219739) |- ((_219737 = _219739) /\ (((I _219737) _219738) = ((I _219739) _219740)))
+T c==> c= f0 f1 c==> c= f2 f3 c/\ c= f2 f3 c= cI f2 f0 cI f3 f1
+- (!x. (!y. ((((inverse p) y) = x) = ((p x) = y)))), (~ F), ((!x. ((x IN s) \/ ((p x) = x))) /\ ((!y. ((p (x'' y)) = y)) /\ (!y. (!x. ((~ ((p x) = y)) \/ (!x'. ((~ ((p x') = y)) \/ (x' = x)))))))), ((~ (y IN s)) /\ (~ (((inverse p) y) = y))) |- ((~ F) /\ F)
+T c==> ! ! c= c= cinverse f0 b1 b0 c= * f0 b0 b1 c==> c~ cF c==> c/\ ! c\/ cIN b0 f1 c= * f0 b0 b0 c/\ ! c= * f0 * f2 b0 b0 ! ! c\/ c~ c= * f0 b1 b0 ! c\/ c~ c= * f0 b2 b0 c= b2 b1 c==> c/\ c~ cIN f3 f1 c~ c= cinverse f0 f3 f3 c/\ c~ cF cF
+- |- ((p \/ (p \/ q)) = (p \/ q))
+T c= c\/ f0 c\/ f0 f1 c\/ f0 f1
++ (!x. (!y. ((((inverse p) y) = x) = ((p x) = y)))), ((!x. ((~ (x IN s)) ==> ((p x) = x))) /\ (!y. (?!x. ((p x) = y)))), ((\x. (?x'. (((~ (y IN s)) /\ (~ (((inverse p) y) = y))) \/ ((!x. (~ (((inverse p) x) = y))) \/ ((((inverse p) x) = y) /\ ((((inverse p) x') = y) /\ (~ (x' = x)))))))) x) |- (((\x. (?x'. (((~ (y IN s)) /\ (~ (((inverse p) y) = y))) \/ ((!x. (~ (((inverse p) x) = y))) \/ ((((inverse p) x) = y) /\ ((((inverse p) x') = y) /\ (~ (x' = x)))))))) x) /\ F)
+T c==> ! ! c= c= cinverse f0 b1 b0 c= * f0 b0 b1 c==> c/\ ! c==> c~ cIN b0 f1 c= * f0 b0 b0 ! c?! / c= * f0 b1 b0 c==> * / c? / c\/ c/\ c~ cIN f2 f1 c~ c= cinverse f0 f2 f2 c\/ ! c~ c= cinverse f0 b2 f2 c/\ c= cinverse f0 b0 f2 c/\ c= cinverse f0 b1 f2 c~ c= b1 b0 f3 c/\ * / c? / c\/ c/\ c~ cIN f2 f1 c~ c= cinverse f0 f2 f2 c\/ ! c~ c= cinverse f0 b2 f2 c/\ c= cinverse f0 b0 f2 c/\ c= cinverse f0 b1 f2 c~ c= b1 b0 f3 cF
+- |- ((~ (((I p) y) = ((I p) y))) ==> (((I p) y) = ((I p) y)))
+T c==> c~ c= cI f0 f1 cI f0 f1 c= cI f0 f1 cI f0 f1
+- |- ((!y'. ((((inverse p) y') = x) \/ (~ ((p x) = y)))) = ((!y. (((inverse p) y) = x)) \/ (~ ((p x) = y))))
+T c= ! c\/ c= cinverse f0 b0 f1 c~ c= * f0 f1 f2 c\/ ! c= cinverse f0 b0 f1 c~ c= * f0 f1 f2
++ (!x. (!y. ((((inverse p) y) = x) = ((p x) = y)))), ((!x. ((~ (x IN s)) ==> ((p x) = x))) /\ (!y. (?!x. ((p x) = y)))) |- (((!x. (((\x. (?x'. (((~ (y IN s)) /\ (~ (((inverse p) y) = y))) \/ ((!x. (~ (((inverse p) x) = y))) \/ ((((inverse p) x) = y) /\ ((((inverse p) x') = y) /\ (~ (x' = x)))))))) x) ==> F)) ==> ((?x. (?x'. (((~ (y IN s)) /\ (~ (((inverse p) y) = y))) \/ ((!x. (~ (((inverse p) x) = y))) \/ ((((inverse p) x) = y) /\ ((((inverse p) x') = y) /\ (~ (x' = x)))))))) ==> F)) = ((?x. (?x'. (((~ (y IN s)) /\ (~ (((inverse p) y) = y))) \/ ((!x. (~ (((inverse p) x) = y))) \/ ((((inverse p) x) = y) /\ ((((inverse p) x') = y) /\ (~ (x' = x)))))))) ==> F))
+T c==> ! ! c= c= cinverse f0 b1 b0 c= * f0 b0 b1 c==> c/\ ! c==> c~ cIN b0 f1 c= * f0 b0 b0 ! c?! / c= * f0 b1 b0 c= c==> ! c==> * / c? / c\/ c/\ c~ cIN f2 f1 c~ c= cinverse f0 f2 f2 c\/ ! c~ c= cinverse f0 b2 f2 c/\ c= cinverse f0 b1 f2 c/\ c= cinverse f0 b1 f2 c~ c= b1 b1 b0 cF c==> c? / c? / c\/ c/\ c~ cIN f2 f1 c~ c= cinverse f0 f2 f2 c\/ ! c~ c= cinverse f0 b2 f2 c/\ c= cinverse f0 b0 f2 c/\ c= cinverse f0 b1 f2 c~ c= b1 b0 cF c==> c? / c? / c\/ c/\ c~ cIN f2 f1 c~ c= cinverse f0 f2 f2 c\/ ! c~ c= cinverse f0 b2 f2 c/\ c= cinverse f0 b0 f2 c/\ c= cinverse f0 b1 f2 c~ c= b1 b0 cF
++ ((!x. ((x IN s) \/ ((p x) = x))) /\ ((!y. ((p (x'' y)) = y)) /\ (!y. (!x. ((~ ((p x) = y)) \/ (!x'. ((~ ((p x') = y)) \/ (x' = x)))))))) |- ((~ (_219655 IN s)) ==> (((I p) _219655) = _219655))
+T c==> c/\ ! c\/ cIN b0 f0 c= * f1 b0 b0 c/\ ! c= * f1 * f2 b0 b0 ! ! c\/ c~ c= * f1 b1 b0 ! c\/ c~ c= * f1 b2 b0 c= b2 b1 c==> c~ cIN f3 f0 c= cI f1 f3 f3
+- |- ((!y'. ((~ (((inverse p) y) = x)) \/ ((p x) = y'))) = ((~ (((inverse p) y) = x)) \/ (!y. ((p x) = y))))
+T c= ! c\/ c~ c= cinverse f0 f1 f2 c= * f0 f2 b0 c\/ c~ c= cinverse f0 f1 f2 ! c= * f0 f2 b0
+- |- ((!p. (!s. (((!x. ((~ (x IN s)) ==> ((p x) = x))) /\ (!y. (?!x. ((p x) = y)))) ==> ((!x. (!y. ((((inverse p) y) = x) = ((p x) = y)))) ==> ((!x. ((~ (x IN s)) ==> (((inverse p) x) = x))) /\ (!y. (?!x. (((inverse p) x) = y)))))))) = (!p. (!s. ((~ (((!x. ((~ (x IN s)) ==> ((p x) = x))) /\ (!y. (?!x. ((p x) = y)))) ==> ((!x. (!y. ((((inverse p) y) = x) = ((p x) = y)))) ==> ((!x. ((~ (x IN s)) ==> (((inverse p) x) = x))) /\ (!y. (?!x. (((inverse p) x) = y))))))) ==> F))))
+T c= ! ! c==> c/\ ! c==> c~ cIN b2 b1 c= * b0 b2 b2 ! c?! / c= * b0 b3 b2 c==> ! ! c= c= cinverse b0 b3 b2 c= * b0 b2 b3 c/\ ! c==> c~ cIN b2 b1 c= cinverse b0 b2 b2 ! c?! / c= cinverse b0 b3 b2 ! ! c==> c~ c==> c/\ ! c==> c~ cIN b2 b1 c= * b0 b2 b2 ! c?! / c= * b0 b3 b2 c==> ! ! c= c= cinverse b0 b3 b2 c= * b0 b2 b3 c/\ ! c==> c~ cIN b2 b1 c= cinverse b0 b2 b2 ! c?! / c= cinverse b0 b3 b2 cF
++ (!x. (!y. ((((inverse p) y) = x) = ((p x) = y)))), ((!x. ((~ (x IN s)) ==> ((p x) = x))) /\ (!y. (?!x. ((p x) = y)))) |- (((\y. (?x. (?x'. (((~ (y IN s)) /\ (~ (((inverse p) y) = y))) \/ ((!x. (~ (((inverse p) x) = y))) \/ ((((inverse p) x) = y) /\ ((((inverse p) x') = y) /\ (~ (x' = x))))))))) y) ==> F)
+T c==> ! ! c= c= cinverse f0 b1 b0 c= * f0 b0 b1 c==> c/\ ! c==> c~ cIN b0 f1 c= * f0 b0 b0 ! c?! / c= * f0 b1 b0 c==> * / c? / c? / c\/ c/\ c~ cIN b0 f1 c~ c= cinverse f0 b0 b0 c\/ ! c~ c= cinverse f0 b3 b0 c/\ c= cinverse f0 b1 b0 c/\ c= cinverse f0 b2 b0 c~ c= b2 b1 f2 cF
+- ((!x. ((x IN s) \/ ((p x) = x))) /\ ((!y. ((p (x'' y)) = y)) /\ (!y. (!x. ((~ ((p x) = y)) \/ (!x'. ((~ ((p x') = y)) \/ (x' = x)))))))) |- ((~ (((I p) _219677) = _219676)) \/ ((~ (((I p) _219678) = _219676)) \/ (_219678 = _219677)))
+T c==> c/\ ! c\/ cIN b0 f0 c= * f1 b0 b0 c/\ ! c= * f1 * f2 b0 b0 ! ! c\/ c~ c= * f1 b1 b0 ! c\/ c~ c= * f1 b2 b0 c= b2 b1 c\/ c~ c= cI f1 f3 f4 c\/ c~ c= cI f1 f5 f4 c= f5 f3
++ |- (((!p. (((permutes p) s) = ((!x. ((~ (x IN s)) ==> ((p x) = x))) /\ (!y. (?!x. ((p x) = y)))))) ==> ((\p. (((permutes p) s) = ((!x. ((~ (x IN s)) ==> ((p x) = x))) /\ (!y. (?!x. ((p x) = y)))))) p)) = ((\p. (((permutes p) s) = ((!x. ((~ (x IN s)) ==> ((p x) = x))) /\ (!y. (?!x. ((p x) = y)))))) p))
+T c= c==> ! c= cpermutes b0 f0 c/\ ! c==> c~ cIN b1 f0 c= * b0 b1 b1 ! c?! / c= * b0 b2 b1 * / c= cpermutes b0 f0 c/\ ! c==> c~ cIN b1 f0 c= * b0 b1 b1 ! c?! / c= * b0 b2 b1 f1 * / c= cpermutes b0 f0 c/\ ! c==> c~ cIN b1 f0 c= * b0 b1 b1 ! c?! / c= * b0 b2 b1 f1
++ ((\x'. (((~ (y IN s)) /\ (~ (((inverse p) y) = y))) \/ ((!x. (~ (((inverse p) x) = y))) \/ ((((inverse p) x) = y) /\ ((((inverse p) x') = y) /\ (~ (x' = x))))))) x') |- (((((~ (y IN s)) /\ (~ (((inverse p) y) = y))) \/ ((!x. (~ (((inverse p) x) = y))) \/ ((((inverse p) x) = y) /\ ((((inverse p) x') = y) /\ (~ (x' = x)))))) ==> F) = F)
+T c==> * / c\/ c/\ c~ cIN f0 f1 c~ c= cinverse f2 f0 f0 c\/ ! c~ c= cinverse f2 b1 f0 c/\ c= cinverse f2 f3 f0 c/\ c= cinverse f2 b0 f0 c~ c= b0 f3 f4 c= c==> c\/ c/\ c~ cIN f0 f1 c~ c= cinverse f2 f0 f0 c\/ ! c~ c= cinverse f2 b0 f0 c/\ c= cinverse f2 f3 f0 c/\ c= cinverse f2 f4 f0 c~ c= f4 f3 cF cF
++ (!x. (!y. ((((inverse p) y) = x) = ((p x) = y)))), ((((inverse p) x) = y) /\ ((((inverse p) x') = y) /\ (~ (x' = x)))) |- (((x' = x) ==> F) = F)
+T c==> ! ! c= c= cinverse f0 b1 b0 c= * f0 b0 b1 c==> c/\ c= cinverse f0 f1 f2 c/\ c= cinverse f0 f3 f2 c~ c= f3 f1 c= c==> c= f3 f1 cF cF
+- (!x. (!y. ((((inverse p) y) = x) = ((p x) = y)))), ((((inverse p) x) = y) /\ ((((inverse p) x') = y) /\ (~ (x' = x)))) |- ((~ (x' = x)) ==> (x' = x))
+T c==> ! ! c= c= cinverse f0 b1 b0 c= * f0 b0 b1 c==> c/\ c= cinverse f0 f1 f2 c/\ c= cinverse f0 f3 f2 c~ c= f3 f1 c==> c~ c= f3 f1 c= f3 f1
+- |- ((((!x. ((~ (x IN s)) ==> ((p x) = x))) /\ (!y. (?!x. ((p x) = y)))) ==> ((!x. (!y. ((((inverse p) y) = x) = ((p x) = y)))) ==> ((!x. ((~ (x IN s)) ==> (((inverse p) x) = x))) /\ (!y. (?!x. (((inverse p) x) = y)))))) = T)
+T c= c==> c/\ ! c==> c~ cIN b0 f0 c= * f1 b0 b0 ! c?! / c= * f1 b1 b0 c==> ! ! c= c= cinverse f1 b1 b0 c= * f1 b0 b1 c/\ ! c==> c~ cIN b0 f0 c= cinverse f1 b0 b0 ! c?! / c= cinverse f1 b1 b0 cT
++ ((!x. ((x IN s) \/ ((p x) = x))) /\ ((!y. ((p (x'' y)) = y)) /\ (!y. (!x. ((~ ((p x) = y)) \/ (!x'. ((~ ((p x') = y)) \/ (x' = x)))))))) |- (!x. ((x IN s) \/ (((I p) x) = x)))
+T c==> c/\ ! c\/ cIN b0 f0 c= * f1 b0 b0 c/\ ! c= * f1 * f2 b0 b0 ! ! c\/ c~ c= * f1 b1 b0 ! c\/ c~ c= * f1 b2 b0 c= b2 b1 ! c\/ cIN b0 f0 c= cI f1 b0 b0
++ ((!x. ((~ (x IN s)) ==> ((p x) = x))) /\ (!y. (?!x. ((p x) = y)))) |- (((?x. ((!x. ((x IN s) \/ ((p x) = x))) /\ ((!y. ((p (x y)) = y)) /\ (!y. (!x. ((~ ((p x) = y)) \/ (!x'. ((~ ((p x') = y)) \/ (x' = x))))))))) ==> F) = F)
+T c==> c/\ ! c==> c~ cIN b0 f0 c= * f1 b0 b0 ! c?! / c= * f1 b1 b0 c= c==> c? / c/\ ! c\/ cIN b1 f0 c= * f1 b1 b1 c/\ ! c= * f1 * b0 b1 b1 ! ! c\/ c~ c= * f1 b2 b1 ! c\/ c~ c= * f1 b3 b1 c= b3 b2 cF cF
++ (~ ((!x. ((~ (x IN s)) ==> (((inverse p) x) = x))) /\ (!y. (?!x. (((inverse p) x) = y))))) |- (((?y. (?x. (?x'. (((~ (y IN s)) /\ (~ (((inverse p) y) = y))) \/ ((!x. (~ (((inverse p) x) = y))) \/ ((((inverse p) x) = y) /\ ((((inverse p) x') = y) /\ (~ (x' = x))))))))) ==> F) = F)
+T c==> c~ c/\ ! c==> c~ cIN b0 f0 c= cinverse f1 b0 b0 ! c?! / c= cinverse f1 b1 b0 c= c==> c? / c? / c? / c\/ c/\ c~ cIN b0 f0 c~ c= cinverse f1 b0 b0 c\/ ! c~ c= cinverse f1 b3 b0 c/\ c= cinverse f1 b1 b0 c/\ c= cinverse f1 b2 b0 c~ c= b2 b1 cF cF
+- ((!x. ((x IN s) \/ ((p x) = x))) /\ ((!y. ((p (x'' y)) = y)) /\ (!y. (!x. ((~ ((p x) = y)) \/ (!x'. ((~ ((p x') = y)) \/ (x' = x)))))))) |- ((\x'. ((~ (((I p) _219677) = _219676)) \/ ((~ (((I p) x') = _219676)) \/ (x' = _219677)))) _219678)
+T c==> c/\ ! c\/ cIN b0 f0 c= * f1 b0 b0 c/\ ! c= * f1 * f2 b0 b0 ! ! c\/ c~ c= * f1 b1 b0 ! c\/ c~ c= * f1 b2 b0 c= b2 b1 * / c\/ c~ c= cI f1 f3 f4 c\/ c~ c= cI f1 b0 f4 c= b0 f3 f5
+- |- (((t1 \/ t2) \/ t3) = (t1 \/ (t2 \/ t3)))
+T c= c\/ c\/ f0 f1 f2 c\/ f0 c\/ f1 f2
+- |- (((!s. ((~ (((!x. ((~ (x IN s)) ==> ((p x) = x))) /\ (!y. (?!x. ((p x) = y)))) ==> ((!x. (!y. ((((inverse p) y) = x) = ((p x) = y)))) ==> ((!x. ((~ (x IN s)) ==> (((inverse p) x) = x))) /\ (!y. (?!x. (((inverse p) x) = y))))))) ==> F)) ==> ((\s. ((~ (((!x. ((~ (x IN s)) ==> ((p x) = x))) /\ (!y. (?!x. ((p x) = y)))) ==> ((!x. (!y. ((((inverse p) y) = x) = ((p x) = y)))) ==> ((!x. ((~ (x IN s)) ==> (((inverse p) x) = x))) /\ (!y. (?!x. (((inverse p) x) = y))))))) ==> F)) s)) = ((\s. ((~ (((!x. ((~ (x IN s)) ==> ((p x) = x))) /\ (!y. (?!x. ((p x) = y)))) ==> ((!x. (!y. ((((inverse p) y) = x) = ((p x) = y)))) ==> ((!x. ((~ (x IN s)) ==> (((inverse p) x) = x))) /\ (!y. (?!x. (((inverse p) x) = y))))))) ==> F)) s))
+T c= c==> ! c==> c~ c==> c/\ ! c==> c~ cIN b1 b0 c= * f0 b1 b1 ! c?! / c= * f0 b2 b1 c==> ! ! c= c= cinverse f0 b2 b1 c= * f0 b1 b2 c/\ ! c==> c~ cIN b1 b0 c= cinverse f0 b1 b1 ! c?! / c= cinverse f0 b2 b1 cF * / c==> c~ c==> c/\ ! c==> c~ cIN b1 b0 c= * f0 b1 b1 ! c?! / c= * f0 b2 b1 c==> ! ! c= c= cinverse f0 b2 b1 c= * f0 b1 b2 c/\ ! c==> c~ cIN b1 b0 c= cinverse f0 b1 b1 ! c?! / c= cinverse f0 b2 b1 cF f1 * / c==> c~ c==> c/\ ! c==> c~ cIN b1 b0 c= * f0 b1 b1 ! c?! / c= * f0 b2 b1 c==> ! ! c= c= cinverse f0 b2 b1 c= * f0 b1 b2 c/\ ! c==> c~ cIN b1 b0 c= cinverse f0 b1 b1 ! c?! / c= cinverse f0 b2 b1 cF f1
++ |- ((~ (a \/ b)) = ((~ a) /\ (~ b)))
+T c= c~ c\/ f0 f1 c/\ c~ f0 c~ f1
+- (!x. (!y. ((((inverse p) y) = x) = ((p x) = y)))), ((((inverse p) x) = y) /\ ((((inverse p) x') = y) /\ (~ (x' = x)))) |- ((~ F) ==> F)
+T c==> ! ! c= c= cinverse f0 b1 b0 c= * f0 b0 b1 c==> c/\ c= cinverse f0 f1 f2 c/\ c= cinverse f0 f3 f2 c~ c= f3 f1 c==> c~ cF cF
+- ((~ (((!x. ((~ (x IN s)) ==> ((p x) = x))) /\ (!y. (?!x. ((p x) = y)))) ==> ((!x. (!y. ((((inverse p) y) = x) = ((p x) = y)))) ==> ((!x. ((~ (x IN s)) ==> (((inverse p) x) = x))) /\ (!y. (?!x. (((inverse p) x) = y))))))) ==> F), (((~ (((!x. ((~ (x IN s)) ==> ((p x) = x))) /\ (!y. (?!x. ((p x) = y)))) ==> ((!x. (!y. ((((inverse p) y) = x) = ((p x) = y)))) ==> ((!x. ((~ (x IN s)) ==> (((inverse p) x) = x))) /\ (!y. (?!x. (((inverse p) x) = y))))))) ==> F) ==> ((~ (((!x. ((~ (x IN s)) ==> ((p x) = x))) /\ (!y. (?!x. ((p x) = y)))) ==> ((!x. (!y. ((((inverse p) y) = x) = ((p x) = y)))) ==> ((!x. ((~ (x IN s)) ==> (((inverse p) x) = x))) /\ (!y. (?!x. (((inverse p) x) = y))))))) ==> F)) |- ((((~ (((!x. ((~ (x IN s)) ==> ((p x) = x))) /\ (!y. (?!x. ((p x) = y)))) ==> ((!x. (!y. ((((inverse p) y) = x) = ((p x) = y)))) ==> ((!x. ((~ (x IN s)) ==> (((inverse p) x) = x))) /\ (!y. (?!x. (((inverse p) x) = y))))))) ==> F) ==> ((~ (((!x. ((~ (x IN s)) ==> ((p x) = x))) /\ (!y. (?!x. ((p x) = y)))) ==> ((!x. (!y. ((((inverse p) y) = x) = ((p x) = y)))) ==> ((!x. ((~ (x IN s)) ==> (((inverse p) x) = x))) /\ (!y. (?!x. (((inverse p) x) = y))))))) ==> F)) /\ ((~ (((!x. ((~ (x IN s)) ==> ((p x) = x))) /\ (!y. (?!x. ((p x) = y)))) ==> ((!x. (!y. ((((inverse p) y) = x) = ((p x) = y)))) ==> ((!x. ((~ (x IN s)) ==> (((inverse p) x) = x))) /\ (!y. (?!x. (((inverse p) x) = y))))))) ==> F))
+T c==> c==> c~ c==> c/\ ! c==> c~ cIN b0 f0 c= * f1 b0 b0 ! c?! / c= * f1 b1 b0 c==> ! ! c= c= cinverse f1 b1 b0 c= * f1 b0 b1 c/\ ! c==> c~ cIN b0 f0 c= cinverse f1 b0 b0 ! c?! / c= cinverse f1 b1 b0 cF c==> c==> c==> c~ c==> c/\ ! c==> c~ cIN b0 f0 c= * f1 b0 b0 ! c?! / c= * f1 b1 b0 c==> ! ! c= c= cinverse f1 b1 b0 c= * f1 b0 b1 c/\ ! c==> c~ cIN b0 f0 c= cinverse f1 b0 b0 ! c?! / c= cinverse f1 b1 b0 cF c==> c~ c==> c/\ ! c==> c~ cIN b0 f0 c= * f1 b0 b0 ! c?! / c= * f1 b1 b0 c==> ! ! c= c= cinverse f1 b1 b0 c= * f1 b0 b1 c/\ ! c==> c~ cIN b0 f0 c= cinverse f1 b0 b0 ! c?! / c= cinverse f1 b1 b0 cF c/\ c==> c==> c~ c==> c/\ ! c==> c~ cIN b0 f0 c= * f1 b0 b0 ! c?! / c= * f1 b1 b0 c==> ! ! c= c= cinverse f1 b1 b0 c= * f1 b0 b1 c/\ ! c==> c~ cIN b0 f0 c= cinverse f1 b0 b0 ! c?! / c= cinverse f1 b1 b0 cF c==> c~ c==> c/\ ! c==> c~ cIN b0 f0 c= * f1 b0 b0 ! c?! / c= * f1 b1 b0 c==> ! ! c= c= cinverse f1 b1 b0 c= * f1 b0 b1 c/\ ! c==> c~ cIN b0 f0 c= cinverse f1 b0 b0 ! c?! / c= cinverse f1 b1 b0 cF c==> c~ c==> c/\ ! c==> c~ cIN b0 f0 c= * f1 b0 b0 ! c?! / c= * f1 b1 b0 c==> ! ! c= c= cinverse f1 b1 b0 c= * f1 b0 b1 c/\ ! c==> c~ cIN b0 f0 c= cinverse f1 b0 b0 ! c?! / c= cinverse f1 b1 b0 cF
+- |- ((~ (_219738 = _219740)) \/ ((~ (_219737 = _219739)) \/ (((I _219737) _219738) = ((I _219739) _219740))))
+T c\/ c~ c= f0 f1 c\/ c~ c= f2 f3 c= cI f2 f0 cI f3 f1
+- (_219727 = _219729) |- ((_219727 = _219729) /\ ((~ (_219728 = _219730)) \/ ((_219729 IN _219730) \/ (~ (_219727 IN _219728)))))
+T c==> c= f0 f1 c/\ c= f0 f1 c\/ c~ c= f2 f3 c\/ cIN f1 f3 c~ cIN f0 f2
+- |- ((?x''. ((((inverse p) x'') = y) /\ (~ (x' = x)))) = ((?x'. (((inverse p) x') = y)) /\ (~ (x' = x))))
+T c= c? / c/\ c= cinverse f0 b0 f1 c~ c= f2 f3 c/\ c? / c= cinverse f0 b0 f1 c~ c= f2 f3
++ |- ((((permutes p) s) ==> ((permutes (inverse p)) s)) = T)
+T c= c==> cpermutes f0 f1 cpermutes * part cinverse f0 f1 cT
++ ((!x. ((~ (x IN s)) ==> ((p x) = x))) /\ (!y. (?!x. ((p x) = y)))) |- (?x. ((!x. ((x IN s) \/ ((p x) = x))) /\ ((!y. ((p (x y)) = y)) /\ (!y. (!x. ((~ ((p x) = y)) \/ (!x'. ((~ ((p x') = y)) \/ (x' = x)))))))))
+T c==> c/\ ! c==> c~ cIN b0 f0 c= * f1 b0 b0 ! c?! / c= * f1 b1 b0 c? / c/\ ! c\/ cIN b1 f0 c= * f1 b1 b1 c/\ ! c= * f1 * b0 b1 b1 ! ! c\/ c~ c= * f1 b2 b1 ! c\/ c~ c= * f1 b3 b1 c= b3 b2
+- (_219727 = _219729), (_219728 = _219730) |- ((((_219727 IN _219728) = (_219729 IN _219730)) ==> ((_219729 IN _219730) \/ (~ (_219727 IN _219728)))) = ((_219729 IN _219730) \/ (~ (_219727 IN _219728))))
+T c==> c= f0 f1 c==> c= f2 f3 c= c==> c= cIN f0 f2 cIN f1 f3 c\/ cIN f1 f3 c~ cIN f0 f2 c\/ cIN f1 f3 c~ cIN f0 f2
+- ((~ (((!x. ((~ (x IN s)) ==> ((p x) = x))) /\ (!y. (?!x. ((p x) = y)))) ==> ((!x. (!y. ((((inverse p) y) = x) = ((p x) = y)))) ==> ((!x. ((~ (x IN s)) ==> (((inverse p) x) = x))) /\ (!y. (?!x. (((inverse p) x) = y))))))) ==> F) |- (((~ (((!x. ((~ (x IN s)) ==> ((p x) = x))) /\ (!y. (?!x. ((p x) = y)))) ==> ((!x. (!y. ((((inverse p) y) = x) = ((p x) = y)))) ==> ((!x. ((~ (x IN s)) ==> (((inverse p) x) = x))) /\ (!y. (?!x. (((inverse p) x) = y))))))) ==> F) /\ ((~ (((!x. ((~ (x IN s)) ==> ((p x) = x))) /\ (!y. (?!x. ((p x) = y)))) ==> ((!x. (!y. ((((inverse p) y) = x) = ((p x) = y)))) ==> ((!x. ((~ (x IN s)) ==> (((inverse p) x) = x))) /\ (!y. (?!x. (((inverse p) x) = y))))))) ==> F))
+T c==> c==> c~ c==> c/\ ! c==> c~ cIN b0 f0 c= * f1 b0 b0 ! c?! / c= * f1 b1 b0 c==> ! ! c= c= cinverse f1 b1 b0 c= * f1 b0 b1 c/\ ! c==> c~ cIN b0 f0 c= cinverse f1 b0 b0 ! c?! / c= cinverse f1 b1 b0 cF c/\ c==> c~ c==> c/\ ! c==> c~ cIN b0 f0 c= * f1 b0 b0 ! c?! / c= * f1 b1 b0 c==> ! ! c= c= cinverse f1 b1 b0 c= * f1 b0 b1 c/\ ! c==> c~ cIN b0 f0 c= cinverse f1 b0 b0 ! c?! / c= cinverse f1 b1 b0 cF c==> c~ c==> c/\ ! c==> c~ cIN b0 f0 c= * f1 b0 b0 ! c?! / c= * f1 b1 b0 c==> ! ! c= c= cinverse f1 b1 b0 c= * f1 b0 b1 c/\ ! c==> c~ cIN b0 f0 c= cinverse f1 b0 b0 ! c?! / c= cinverse f1 b1 b0 cF
++ ((((inverse p) x) = y) /\ ((((inverse p) x') = y) /\ (~ (x' = x)))) |- (~ (x' = x))
+T c==> c/\ c= cinverse f0 f1 f2 c/\ c= cinverse f0 f3 f2 c~ c= f3 f1 c~ c= f3 f1
++ ((((inverse p) x) = y) /\ ((((inverse p) x') = y) /\ (~ (x' = x)))) |- (y = ((inverse p) x'))
+T c==> c/\ c= cinverse f0 f1 f2 c/\ c= cinverse f0 f3 f2 c~ c= f3 f1 c= f2 cinverse f0 f3
++ (!x. (!y. ((((inverse p) y) = x) = ((p x) = y)))), ((!x. ((~ (x IN s)) ==> ((p x) = x))) /\ (!y. (?!x. ((p x) = y)))), ((\y. (?x. (?x'. (((~ (y IN s)) /\ (~ (((inverse p) y) = y))) \/ ((!x. (~ (((inverse p) x) = y))) \/ ((((inverse p) x) = y) /\ ((((inverse p) x') = y) /\ (~ (x' = x))))))))) y) |- (((\y. (?x. (?x'. (((~ (y IN s)) /\ (~ (((inverse p) y) = y))) \/ ((!x. (~ (((inverse p) x) = y))) \/ ((((inverse p) x) = y) /\ ((((inverse p) x') = y) /\ (~ (x' = x))))))))) y) /\ F)
+T c==> ! ! c= c= cinverse f0 b1 b0 c= * f0 b0 b1 c==> c/\ ! c==> c~ cIN b0 f1 c= * f0 b0 b0 ! c?! / c= * f0 b1 b0 c==> * / c? / c? / c\/ c/\ c~ cIN b0 f1 c~ c= cinverse f0 b0 b0 c\/ ! c~ c= cinverse f0 b3 b0 c/\ c= cinverse f0 b1 b0 c/\ c= cinverse f0 b2 b0 c~ c= b2 b1 f2 c/\ * / c? / c? / c\/ c/\ c~ cIN b0 f1 c~ c= cinverse f0 b0 b0 c\/ ! c~ c= cinverse f0 b3 b0 c/\ c= cinverse f0 b1 b0 c/\ c= cinverse f0 b2 b0 c~ c= b2 b1 f2 cF
+- (!x. (!y. ((((inverse p) y) = x) = ((p x) = y)))), (~ (((I p) ((inverse p) x')) = x')) |- ((~ (((I p) ((inverse p) x')) = x')) /\ (((I p) ((inverse p) x')) = x'))
+T c==> ! ! c= c= cinverse f0 b1 b0 c= * f0 b0 b1 c==> c~ c= cI f0 cinverse f0 f1 f1 c/\ c~ c= cI f0 cinverse f0 f1 f1 c= cI f0 cinverse f0 f1 f1
++ |- ((((~ (y IN s)) /\ (~ (((inverse p) y) = y))) \/ (?x'. ((!x. (~ (((inverse p) x) = y))) \/ ((((inverse p) x) = y) /\ ((((inverse p) x') = y) /\ (~ (x' = x))))))) = (?x'. (((~ (y IN s)) /\ (~ (((inverse p) y) = y))) \/ ((!x. (~ (((inverse p) x) = y))) \/ ((((inverse p) x) = y) /\ ((((inverse p) x') = y) /\ (~ (x' = x))))))))
+T c= c\/ c/\ c~ cIN f0 f1 c~ c= cinverse f2 f0 f0 c? / c\/ ! c~ c= cinverse f2 b1 f0 c/\ c= cinverse f2 f3 f0 c/\ c= cinverse f2 b0 f0 c~ c= b0 f3 c? / c\/ c/\ c~ cIN f0 f1 c~ c= cinverse f2 f0 f0 c\/ ! c~ c= cinverse f2 b1 f0 c/\ c= cinverse f2 f3 f0 c/\ c= cinverse f2 b0 f0 c~ c= b0 f3
++ ((\x'. (((~ (y IN s)) /\ (~ (((inverse p) y) = y))) \/ ((!x. (~ (((inverse p) x) = y))) \/ ((((inverse p) x) = y) /\ ((((inverse p) x') = y) /\ (~ (x' = x))))))) x') |- (((~ (y IN s)) /\ (~ (((inverse p) y) = y))) \/ ((!x. (~ (((inverse p) x) = y))) \/ ((((inverse p) x) = y) /\ ((((inverse p) x') = y) /\ (~ (x' = x))))))
+T c==> * / c\/ c/\ c~ cIN f0 f1 c~ c= cinverse f2 f0 f0 c\/ ! c~ c= cinverse f2 b1 f0 c/\ c= cinverse f2 f3 f0 c/\ c= cinverse f2 b0 f0 c~ c= b0 f3 f4 c\/ c/\ c~ cIN f0 f1 c~ c= cinverse f2 f0 f0 c\/ ! c~ c= cinverse f2 b0 f0 c/\ c= cinverse f2 f3 f0 c/\ c= cinverse f2 f4 f0 c~ c= f4 f3
+- (!x. (!y. ((((inverse p) y) = x) = ((p x) = y)))) |- ((~ (((I p) ((inverse p) x')) = x')) ==> (((I p) ((inverse p) x')) = x'))
+T c==> ! ! c= c= cinverse f0 b1 b0 c= * f0 b0 b1 c==> c~ c= cI f0 cinverse f0 f1 f1 c= cI f0 cinverse f0 f1 f1
++ (!x. (!y. ((((inverse p) y) = x) = ((p x) = y)))), ((!x. ((~ (x IN s)) ==> ((p x) = x))) /\ (!y. (?!x. ((p x) = y)))) |- ((?x. (?x'. (((~ (y IN s)) /\ (~ (((inverse p) y) = y))) \/ ((!x. (~ (((inverse p) x) = y))) \/ ((((inverse p) x) = y) /\ ((((inverse p) x') = y) /\ (~ (x' = x)))))))) ==> F)
+T c==> ! ! c= c= cinverse f0 b1 b0 c= * f0 b0 b1 c==> c/\ ! c==> c~ cIN b0 f1 c= * f0 b0 b0 ! c?! / c= * f0 b1 b0 c==> c? / c? / c\/ c/\ c~ cIN f2 f1 c~ c= cinverse f0 f2 f2 c\/ ! c~ c= cinverse f0 b2 f2 c/\ c= cinverse f0 b0 f2 c/\ c= cinverse f0 b1 f2 c~ c= b1 b0 cF
++ ((\x. ((!x. ((x IN s) \/ ((p x) = x))) /\ ((!y. ((p (x y)) = y)) /\ (!y. (!x. ((~ ((p x) = y)) \/ (!x'. ((~ ((p x') = y)) \/ (x' = x))))))))) x'') |- ((!x. ((x IN s) \/ ((p x) = x))) /\ ((!y. ((p (x'' y)) = y)) /\ (!y. (!x. ((~ ((p x) = y)) \/ (!x'. ((~ ((p x') = y)) \/ (x' = x))))))))
+T c==> * / c/\ ! c\/ cIN b1 f0 c= * f1 b1 b1 c/\ ! c= * f1 * b0 b1 b1 ! ! c\/ c~ c= * f1 b2 b1 ! c\/ c~ c= * f1 b3 b1 c= b3 b2 f2 c/\ ! c\/ cIN b0 f0 c= * f1 b0 b0 c/\ ! c= * f1 * f2 b0 b0 ! ! c\/ c~ c= * f1 b1 b0 ! c\/ c~ c= * f1 b2 b0 c= b2 b1
+- |- (((~ (((!x. ((~ (x IN s)) ==> ((p x) = x))) /\ (!y. (?!x. ((p x) = y)))) ==> ((!x. (!y. ((((inverse p) y) = x) = ((p x) = y)))) ==> ((!x. ((~ (x IN s)) ==> (((inverse p) x) = x))) /\ (!y. (?!x. (((inverse p) x) = y))))))) ==> F) ==> ((~ (((!x. ((~ (x IN s)) ==> ((p x) = x))) /\ (!y. (?!x. ((p x) = y)))) ==> ((!x. (!y. ((((inverse p) y) = x) = ((p x) = y)))) ==> ((!x. ((~ (x IN s)) ==> (((inverse p) x) = x))) /\ (!y. (?!x. (((inverse p) x) = y))))))) ==> F))
+T c==> c==> c~ c==> c/\ ! c==> c~ cIN b0 f0 c= * f1 b0 b0 ! c?! / c= * f1 b1 b0 c==> ! ! c= c= cinverse f1 b1 b0 c= * f1 b0 b1 c/\ ! c==> c~ cIN b0 f0 c= cinverse f1 b0 b0 ! c?! / c= cinverse f1 b1 b0 cF c==> c~ c==> c/\ ! c==> c~ cIN b0 f0 c= * f1 b0 b0 ! c?! / c= * f1 b1 b0 c==> ! ! c= c= cinverse f1 b1 b0 c= * f1 b0 b1 c/\ ! c==> c~ cIN b0 f0 c= cinverse f1 b0 b0 ! c?! / c= cinverse f1 b1 b0 cF
++ (!x. (!y. ((((inverse p) y) = x) = ((p x) = y)))), ((((inverse p) x) = y) /\ ((((inverse p) x') = y) /\ (~ (x' = x)))) |- (((((inverse p) x) = y) /\ ((((inverse p) x') = y) /\ (~ (x' = x)))) /\ F)
+T c==> ! ! c= c= cinverse f0 b1 b0 c= * f0 b0 b1 c==> c/\ c= cinverse f0 f1 f2 c/\ c= cinverse f0 f3 f2 c~ c= f3 f1 c/\ c/\ c= cinverse f0 f1 f2 c/\ c= cinverse f0 f3 f2 c~ c= f3 f1 cF
+- |- (((!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))) ==> ((\t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))) t3)) = ((\t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))) t3))
+T c= c==> ! c= c\/ f0 c\/ f1 b0 c\/ c\/ f0 f1 b0 * / c= c\/ f0 c\/ f1 b0 c\/ c\/ f0 f1 b0 f2 * / c= c\/ f0 c\/ f1 b0 c\/ c\/ f0 f1 b0 f2
++ (!x. (!y. ((((inverse p) y) = x) = ((p x) = y)))), ((!x. ((~ (x IN s)) ==> ((p x) = x))) /\ (!y. (?!x. ((p x) = y)))) |- (!x. (((\x. (?x'. (((~ (y IN s)) /\ (~ (((inverse p) y) = y))) \/ ((!x. (~ (((inverse p) x) = y))) \/ ((((inverse p) x) = y) /\ ((((inverse p) x') = y) /\ (~ (x' = x)))))))) x) ==> F))
+T c==> ! ! c= c= cinverse f0 b1 b0 c= * f0 b0 b1 c==> c/\ ! c==> c~ cIN b0 f1 c= * f0 b0 b0 ! c?! / c= * f0 b1 b0 ! c==> * / c? / c\/ c/\ c~ cIN f2 f1 c~ c= cinverse f0 f2 f2 c\/ ! c~ c= cinverse f0 b2 f2 c/\ c= cinverse f0 b1 f2 c/\ c= cinverse f0 b1 f2 c~ c= b1 b1 b0 cF
++ |- ((((?y. ((~ (y IN s)) /\ (~ (((inverse p) y) = y)))) \/ (?y. (?x. (?x'. ((!x. (~ (((inverse p) x) = y))) \/ ((((inverse p) x) = y) /\ ((((inverse p) x') = y) /\ (~ (x' = x))))))))) = (?y. (((~ (y IN s)) /\ (~ (((inverse p) y) = y))) \/ (?x. (?x'. ((!x. (~ (((inverse p) x) = y))) \/ ((((inverse p) x) = y) /\ ((((inverse p) x') = y) /\ (~ (x' = x)))))))))) = (((?x. ((~ (x IN s)) /\ (~ (((inverse p) x) = x)))) \/ (?y. (?x. (?x'. ((!x. (~ (((inverse p) x) = y))) \/ ((((inverse p) x) = y) /\ ((((inverse p) x') = y) /\ (~ (x' = x))))))))) = (?y. (((~ (y IN s)) /\ (~ (((inverse p) y) = y))) \/ (?x. (?x'. ((!x. (~ (((inverse p) x) = y))) \/ ((((inverse p) x) = y) /\ ((((inverse p) x') = y) /\ (~ (x' = x)))))))))))
+T c= c= c\/ c? / c/\ c~ cIN b0 f0 c~ c= cinverse f1 b0 b0 c? / c? / c? / c\/ ! c~ c= cinverse f1 b3 b0 c/\ c= cinverse f1 b1 b0 c/\ c= cinverse f1 b2 b0 c~ c= b2 b1 c? / c\/ c/\ c~ cIN b0 f0 c~ c= cinverse f1 b0 b0 c? / c? / c\/ ! c~ c= cinverse f1 b3 b0 c/\ c= cinverse f1 b1 b0 c/\ c= cinverse f1 b2 b0 c~ c= b2 b1 c= c\/ c? / c/\ c~ cIN b0 f0 c~ c= cinverse f1 b0 b0 c? / c? / c? / c\/ ! c~ c= cinverse f1 b3 b0 c/\ c= cinverse f1 b1 b0 c/\ c= cinverse f1 b2 b0 c~ c= b2 b1 c? / c\/ c/\ c~ cIN b0 f0 c~ c= cinverse f1 b0 b0 c? / c? / c\/ ! c~ c= cinverse f1 b3 b0 c/\ c= cinverse f1 b1 b0 c/\ c= cinverse f1 b2 b0 c~ c= b2 b1
+- |- ((t /\ t) = t)
+T c= c/\ f0 f0 f0
+- |- ((a = b) ==> (b \/ (~ a)))
+T c==> c= f0 f1 c\/ f1 c~ f0
++ |- ((((!x. ((~ (x IN s)) ==> ((p x) = x))) /\ (!y. (?!x. ((p x) = y)))) ==> ((!x. (!y. ((((inverse p) y) = x) = ((p x) = y)))) ==> ((!x. ((~ (x IN s)) ==> (((inverse p) x) = x))) /\ (!y. (?!x. (((inverse p) x) = y)))))) = (((permutes p) s) ==> ((!x. (!y. ((((inverse p) y) = x) = ((p x) = y)))) ==> ((permutes (inverse p)) s))))
+T c= c==> c/\ ! c==> c~ cIN b0 f0 c= * f1 b0 b0 ! c?! / c= * f1 b1 b0 c==> ! ! c= c= cinverse f1 b1 b0 c= * f1 b0 b1 c/\ ! c==> c~ cIN b0 f0 c= cinverse f1 b0 b0 ! c?! / c= cinverse f1 b1 b0 c==> cpermutes f1 f0 c==> ! ! c= c= cinverse f1 b1 b0 c= * f1 b0 b1 cpermutes * part cinverse f1 f0
+- |- ((?x'. ((~ (x' IN s)) /\ (~ (((inverse p) x) = x)))) = ((?x. (~ (x IN s))) /\ (~ (((inverse p) x) = x))))
+T c= c? / c/\ c~ cIN b0 f0 c~ c= cinverse f1 f2 f2 c/\ c? / c~ cIN b0 f0 c~ c= cinverse f1 f2 f2
++ |- ((!x'. ((~ ((p x) = y)) \/ ((~ ((p x') = y)) \/ (x' = x)))) = ((~ ((p x) = y)) \/ (!x'. ((~ ((p x') = y)) \/ (x' = x)))))
+T c= ! c\/ c~ c= * f0 f1 f2 c\/ c~ c= * f0 b0 f2 c= b0 f1 c\/ c~ c= * f0 f1 f2 ! c\/ c~ c= * f0 b0 f2 c= b0 f1
+- |- (((~ (((I p) x) = y)) \/ (!x'. ((~ (((I p) x') = y)) \/ (x' = x)))) = (!x'. ((~ (((I p) x) = y)) \/ ((~ (((I p) x') = y)) \/ (x' = x)))))
+T c= c\/ c~ c= cI f0 f1 f2 ! c\/ c~ c= cI f0 b0 f2 c= b0 f1 ! c\/ c~ c= cI f0 f1 f2 c\/ c~ c= cI f0 b0 f2 c= b0 f1
+- ((((inverse p) x) = y) /\ ((((inverse p) x') = y) /\ (~ (x' = x)))) |- (((~ (((inverse p) _219682) = _219681)) \/ (((I p) _219681) = _219682)) = ((~ (((inverse p) _219682) = _219681)) \/ (((I p) _219681) = _219682)))
+T c==> c/\ c= cinverse f0 f1 f2 c/\ c= cinverse f0 f3 f2 c~ c= f3 f1 c= c\/ c~ c= cinverse f0 f4 f5 c= cI f0 f5 f4 c\/ c~ c= cinverse f0 f4 f5 c= cI f0 f5 f4
++ (!x. (!y. ((((inverse p) y) = x) = ((p x) = y)))), ((!x. ((x IN s) \/ ((p x) = x))) /\ ((!y. ((p (x'' y)) = y)) /\ (!y. (!x. ((~ ((p x) = y)) \/ (!x'. ((~ ((p x') = y)) \/ (x' = x)))))))), ((~ (y IN s)) /\ (~ (((inverse p) y) = y))) |- (((inverse p) y) = y)
+T c==> ! ! c= c= cinverse f0 b1 b0 c= * f0 b0 b1 c==> c/\ ! c\/ cIN b0 f1 c= * f0 b0 b0 c/\ ! c= * f0 * f2 b0 b0 ! ! c\/ c~ c= * f0 b1 b0 ! c\/ c~ c= * f0 b2 b0 c= b2 b1 c==> c/\ c~ cIN f3 f1 c~ c= cinverse f0 f3 f3 c= cinverse f0 f3 f3
+- ((~ (((!x. ((~ (x IN s)) ==> ((p x) = x))) /\ (!y. (?!x. ((p x) = y)))) ==> ((!x. (!y. ((((inverse p) y) = x) = ((p x) = y)))) ==> ((!x. ((~ (x IN s)) ==> (((inverse p) x) = x))) /\ (!y. (?!x. (((inverse p) x) = y))))))) ==> F) |- ((((~ (((!x. ((~ (x IN s)) ==> ((p x) = x))) /\ (!y. (?!x. ((p x) = y)))) ==> ((!x. (!y. ((((inverse p) y) = x) = ((p x) = y)))) ==> ((!x. ((~ (x IN s)) ==> (((inverse p) x) = x))) /\ (!y. (?!x. (((inverse p) x) = y))))))) ==> F) ==> ((~ (((!x. ((~ (x IN s)) ==> ((p x) = x))) /\ (!y. (?!x. ((p x) = y)))) ==> ((!x. (!y. ((((inverse p) y) = x) = ((p x) = y)))) ==> ((!x. ((~ (x IN s)) ==> (((inverse p) x) = x))) /\ (!y. (?!x. (((inverse p) x) = y))))))) ==> F)) ==> ((~ (((!x. ((~ (x IN s)) ==> ((p x) = x))) /\ (!y. (?!x. ((p x) = y)))) ==> ((!x. (!y. ((((inverse p) y) = x) = ((p x) = y)))) ==> ((!x. ((~ (x IN s)) ==> (((inverse p) x) = x))) /\ (!y. (?!x. (((inverse p) x) = y))))))) ==> F))
+T c==> c==> c~ c==> c/\ ! c==> c~ cIN b0 f0 c= * f1 b0 b0 ! c?! / c= * f1 b1 b0 c==> ! ! c= c= cinverse f1 b1 b0 c= * f1 b0 b1 c/\ ! c==> c~ cIN b0 f0 c= cinverse f1 b0 b0 ! c?! / c= cinverse f1 b1 b0 cF c==> c==> c==> c~ c==> c/\ ! c==> c~ cIN b0 f0 c= * f1 b0 b0 ! c?! / c= * f1 b1 b0 c==> ! ! c= c= cinverse f1 b1 b0 c= * f1 b0 b1 c/\ ! c==> c~ cIN b0 f0 c= cinverse f1 b0 b0 ! c?! / c= cinverse f1 b1 b0 cF c==> c~ c==> c/\ ! c==> c~ cIN b0 f0 c= * f1 b0 b0 ! c?! / c= * f1 b1 b0 c==> ! ! c= c= cinverse f1 b1 b0 c= * f1 b0 b1 c/\ ! c==> c~ cIN b0 f0 c= cinverse f1 b0 b0 ! c?! / c= cinverse f1 b1 b0 cF c==> c~ c==> c/\ ! c==> c~ cIN b0 f0 c= * f1 b0 b0 ! c?! / c= * f1 b1 b0 c==> ! ! c= c= cinverse f1 b1 b0 c= * f1 b0 b1 c/\ ! c==> c~ cIN b0 f0 c= cinverse f1 b0 b0 ! c?! / c= cinverse f1 b1 b0 cF
++ (!x. (!y. ((((inverse p) y) = x) = ((p x) = y)))) |- (!x. (!y. ((((inverse p) y) = x) \/ (~ (((I p) x) = y)))))
+T c==> ! ! c= c= cinverse f0 b1 b0 c= * f0 b0 b1 ! ! c\/ c= cinverse f0 b1 b0 c~ c= cI f0 b0 b1
+- |- ((~ (_219735 = _219736)) \/ ((x'' _219735) = (x'' _219736)))
+T c\/ c~ c= f0 f1 c= * f2 f0 * f2 f1
++ (!x. (!y. ((((inverse p) y) = x) = ((p x) = y)))) |- (((!x. (~ (((inverse p) x) = y))) \/ ((((inverse p) x) = y) /\ ((((inverse p) x') = y) /\ (~ (x' = x))))) ==> F)
+T c==> ! ! c= c= cinverse f0 b1 b0 c= * f0 b0 b1 c==> c\/ ! c~ c= cinverse f0 b0 f1 c/\ c= cinverse f0 f2 f1 c/\ c= cinverse f0 f3 f1 c~ c= f3 f2 cF
+- |- ((~ (((inverse p) x') = ((inverse p) x'))) ==> (((inverse p) x') = ((inverse p) x')))
+T c==> c~ c= cinverse f0 f1 cinverse f0 f1 c= cinverse f0 f1 cinverse f0 f1
++ ((\x. (?x'. (((~ (y IN s)) /\ (~ (((inverse p) y) = y))) \/ ((!x. (~ (((inverse p) x) = y))) \/ ((((inverse p) x) = y) /\ ((((inverse p) x') = y) /\ (~ (x' = x)))))))) x) |- (?x'. (((~ (y IN s)) /\ (~ (((inverse p) y) = y))) \/ ((!x. (~ (((inverse p) x) = y))) \/ ((((inverse p) x) = y) /\ ((((inverse p) x') = y) /\ (~ (x' = x)))))))
+T c==> * / c? / c\/ c/\ c~ cIN f0 f1 c~ c= cinverse f2 f0 f0 c\/ ! c~ c= cinverse f2 b2 f0 c/\ c= cinverse f2 b0 f0 c/\ c= cinverse f2 b1 f0 c~ c= b1 b0 f3 c? / c\/ c/\ c~ cIN f0 f1 c~ c= cinverse f2 f0 f0 c\/ ! c~ c= cinverse f2 b1 f0 c/\ c= cinverse f2 f3 f0 c/\ c= cinverse f2 b0 f0 c~ c= b0 f3
+- (!x. (!y. ((((inverse p) y) = x) = ((p x) = y)))), (~ (((inverse p) ((I p) y)) = y)) |- ((~ (((inverse p) ((I p) y)) = y)) /\ (((inverse p) ((I p) y)) = y))
+T c==> ! ! c= c= cinverse f0 b1 b0 c= * f0 b0 b1 c==> c~ c= cinverse f0 cI f0 f1 f1 c/\ c~ c= cinverse f0 cI f0 f1 f1 c= cinverse f0 cI f0 f1 f1
++ (!x. (!y. ((((inverse p) y) = x) = ((p x) = y)))), ((((inverse p) x) = y) /\ ((((inverse p) x') = y) /\ (~ (x' = x)))) |- ((((I p) ((inverse p) x')) = x') /\ (((I p) ((inverse p) x')) = x))
+T c==> ! ! c= c= cinverse f0 b1 b0 c= * f0 b0 b1 c==> c/\ c= cinverse f0 f1 f2 c/\ c= cinverse f0 f3 f2 c~ c= f3 f1 c/\ c= cI f0 cinverse f0 f3 f3 c= cI f0 cinverse f0 f3 f1
++ (!x. (!y. ((((inverse p) y) = x) = ((p x) = y)))), (((~ (y IN s)) /\ (~ (((inverse p) y) = y))) \/ ((!x. (~ (((inverse p) x) = y))) \/ ((((inverse p) x) = y) /\ ((((inverse p) x') = y) /\ (~ (x' = x)))))) |- (((\x. ((!x. ((x IN s) \/ ((p x) = x))) /\ ((!y. ((p (x y)) = y)) /\ (!y. (!x. ((~ ((p x) = y)) \/ (!x'. ((~ ((p x') = y)) \/ (x' = x))))))))) x'') ==> F)
+T c==> ! ! c= c= cinverse f0 b1 b0 c= * f0 b0 b1 c==> c\/ c/\ c~ cIN f1 f2 c~ c= cinverse f0 f1 f1 c\/ ! c~ c= cinverse f0 b0 f1 c/\ c= cinverse f0 f3 f1 c/\ c= cinverse f0 f4 f1 c~ c= f4 f3 c==> * / c/\ ! c\/ cIN b1 f2 c= * f0 b1 b1 c/\ ! c= * f0 * b0 b1 b1 ! ! c\/ c~ c= * f0 b2 b1 ! c\/ c~ c= * f0 b3 b1 c= b3 b2 f5 cF
++ (!x. (!y. ((((inverse p) y) = x) = ((p x) = y)))), (((~ (y IN s)) /\ (~ (((inverse p) y) = y))) \/ ((!x. (~ (((inverse p) x) = y))) \/ ((((inverse p) x) = y) /\ ((((inverse p) x') = y) /\ (~ (x' = x)))))) |- ((?x. ((!x. ((x IN s) \/ ((p x) = x))) /\ ((!y. ((p (x y)) = y)) /\ (!y. (!x. ((~ ((p x) = y)) \/ (!x'. ((~ ((p x') = y)) \/ (x' = x))))))))) ==> F)
+T c==> ! ! c= c= cinverse f0 b1 b0 c= * f0 b0 b1 c==> c\/ c/\ c~ cIN f1 f2 c~ c= cinverse f0 f1 f1 c\/ ! c~ c= cinverse f0 b0 f1 c/\ c= cinverse f0 f3 f1 c/\ c= cinverse f0 f4 f1 c~ c= f4 f3 c==> c? / c/\ ! c\/ cIN b1 f2 c= * f0 b1 b1 c/\ ! c= * f0 * b0 b1 b1 ! ! c\/ c~ c= * f0 b2 b1 ! c\/ c~ c= * f0 b3 b1 c= b3 b2 cF
++ (!x. (!y. ((((inverse p) y) = x) = ((p x) = y)))), (!x. (~ (((inverse p) x) = y))) |- ((!x. (~ (((inverse p) x) = y))) /\ F)
+T c==> ! ! c= c= cinverse f0 b1 b0 c= * f0 b0 b1 c==> ! c~ c= cinverse f0 b0 f1 c/\ ! c~ c= cinverse f0 b0 f1 cF
++ (!x. (!y. ((((inverse p) y) = x) = ((p x) = y)))), ((!x. ((x IN s) \/ ((p x) = x))) /\ ((!y. ((p (x'' y)) = y)) /\ (!y. (!x. ((~ ((p x) = y)) \/ (!x'. ((~ ((p x') = y)) \/ (x' = x)))))))), (((!x. (~ (((inverse p) x) = y))) \/ ((((inverse p) x) = y) /\ ((((inverse p) x') = y) /\ (~ (x' = x))))) ==> F), (((~ (y IN s)) /\ (~ (((inverse p) y) = y))) \/ ((!x. (~ (((inverse p) x) = y))) \/ ((((inverse p) x) = y) /\ ((((inverse p) x') = y) /\ (~ (x' = x)))))) |- F
+T c==> ! ! c= c= cinverse f0 b1 b0 c= * f0 b0 b1 c==> c/\ ! c\/ cIN b0 f1 c= * f0 b0 b0 c/\ ! c= * f0 * f2 b0 b0 ! ! c\/ c~ c= * f0 b1 b0 ! c\/ c~ c= * f0 b2 b0 c= b2 b1 c==> c==> c\/ ! c~ c= cinverse f0 b0 f3 c/\ c= cinverse f0 f4 f3 c/\ c= cinverse f0 f5 f3 c~ c= f5 f4 cF c==> c\/ c/\ c~ cIN f3 f1 c~ c= cinverse f0 f3 f3 c\/ ! c~ c= cinverse f0 b0 f3 c/\ c= cinverse f0 f4 f3 c/\ c= cinverse f0 f5 f3 c~ c= f5 f4 cF
++ |- ((\p. (!s. (((permutes p) s) ==> (!x. (!y. ((((inverse p) y) = x) = ((p x) = y))))))) p)
+T * / ! c==> cpermutes b0 b1 ! ! c= c= cinverse b0 b3 b2 c= * b0 b2 b3 f0
+- ((~ (y IN s)) /\ (~ (((inverse p) y) = y))) |- ((y IN s) ==> (~ (y IN s)))
+T c==> c/\ c~ cIN f0 f1 c~ c= cinverse f2 f0 f0 c==> cIN f0 f1 c~ cIN f0 f1
++ (!x. (!y. ((((inverse p) y) = x) = ((p x) = y)))), (((~ (y IN s)) /\ (~ (((inverse p) y) = y))) \/ ((!x. (~ (((inverse p) x) = y))) \/ ((((inverse p) x) = y) /\ ((((inverse p) x') = y) /\ (~ (x' = x)))))) |- (((!x. (((\x. ((!x. ((x IN s) \/ ((p x) = x))) /\ ((!y. ((p (x y)) = y)) /\ (!y. (!x. ((~ ((p x) = y)) \/ (!x'. ((~ ((p x') = y)) \/ (x' = x))))))))) x) ==> F)) ==> ((?x. ((!x. ((x IN s) \/ ((p x) = x))) /\ ((!y. ((p (x y)) = y)) /\ (!y. (!x. ((~ ((p x) = y)) \/ (!x'. ((~ ((p x') = y)) \/ (x' = x))))))))) ==> F)) = ((?x. ((!x. ((x IN s) \/ ((p x) = x))) /\ ((!y. ((p (x y)) = y)) /\ (!y. (!x. ((~ ((p x) = y)) \/ (!x'. ((~ ((p x') = y)) \/ (x' = x))))))))) ==> F))
+T c==> ! ! c= c= cinverse f0 b1 b0 c= * f0 b0 b1 c==> c\/ c/\ c~ cIN f1 f2 c~ c= cinverse f0 f1 f1 c\/ ! c~ c= cinverse f0 b0 f1 c/\ c= cinverse f0 f3 f1 c/\ c= cinverse f0 f4 f1 c~ c= f4 f3 c= c==> ! c==> * / c/\ ! c\/ cIN b1 f2 c= * f0 b1 b1 c/\ ! c= * f0 * b1 b1 b1 ! ! c\/ c~ c= * f0 b2 b1 ! c\/ c~ c= * f0 b3 b1 c= b3 b2 b0 cF c==> c? / c/\ ! c\/ cIN b1 f2 c= * f0 b1 b1 c/\ ! c= * f0 * b0 b1 b1 ! ! c\/ c~ c= * f0 b2 b1 ! c\/ c~ c= * f0 b3 b1 c= b3 b2 cF c==> c? / c/\ ! c\/ cIN b1 f2 c= * f0 b1 b1 c/\ ! c= * f0 * b0 b1 b1 ! ! c\/ c~ c= * f0 b2 b1 ! c\/ c~ c= * f0 b3 b1 c= b3 b2 cF
+- |- ((((~ (((!x. ((~ (x IN s)) ==> ((p x) = x))) /\ (!y. (?!x. ((p x) = y)))) ==> ((!x. (!y. ((((inverse p) y) = x) = ((p x) = y)))) ==> ((!x. ((~ (x IN s)) ==> (((inverse p) x) = x))) /\ (!y. (?!x. (((inverse p) x) = y))))))) ==> F) ==> ((~ (((!x. ((~ (x IN s)) ==> ((p x) = x))) /\ (!y. (?!x. ((p x) = y)))) ==> ((!x. (!y. ((((inverse p) y) = x) = ((p x) = y)))) ==> ((!x. ((~ (x IN s)) ==> (((inverse p) x) = x))) /\ (!y. (?!x. (((inverse p) x) = y))))))) ==> F)) ==> (((~ (((!x. ((~ (x IN s)) ==> ((p x) = x))) /\ (!y. (?!x. ((p x) = y)))) ==> ((!x. (!y. ((((inverse p) y) = x) = ((p x) = y)))) ==> ((!x. ((~ (x IN s)) ==> (((inverse p) x) = x))) /\ (!y. (?!x. (((inverse p) x) = y))))))) ==> F) ==> ((~ (((!x. ((~ (x IN s)) ==> ((p x) = x))) /\ (!y. (?!x. ((p x) = y)))) ==> ((!x. (!y. ((((inverse p) y) = x) = ((p x) = y)))) ==> ((!x. ((~ (x IN s)) ==> (((inverse p) x) = x))) /\ (!y. (?!x. (((inverse p) x) = y))))))) ==> F)))
+T c==> c==> c==> c~ c==> c/\ ! c==> c~ cIN b0 f0 c= * f1 b0 b0 ! c?! / c= * f1 b1 b0 c==> ! ! c= c= cinverse f1 b1 b0 c= * f1 b0 b1 c/\ ! c==> c~ cIN b0 f0 c= cinverse f1 b0 b0 ! c?! / c= cinverse f1 b1 b0 cF c==> c~ c==> c/\ ! c==> c~ cIN b0 f0 c= * f1 b0 b0 ! c?! / c= * f1 b1 b0 c==> ! ! c= c= cinverse f1 b1 b0 c= * f1 b0 b1 c/\ ! c==> c~ cIN b0 f0 c= cinverse f1 b0 b0 ! c?! / c= cinverse f1 b1 b0 cF c==> c==> c~ c==> c/\ ! c==> c~ cIN b0 f0 c= * f1 b0 b0 ! c?! / c= * f1 b1 b0 c==> ! ! c= c= cinverse f1 b1 b0 c= * f1 b0 b1 c/\ ! c==> c~ cIN b0 f0 c= cinverse f1 b0 b0 ! c?! / c= cinverse f1 b1 b0 cF c==> c~ c==> c/\ ! c==> c~ cIN b0 f0 c= * f1 b0 b0 ! c?! / c= * f1 b1 b0 c==> ! ! c= c= cinverse f1 b1 b0 c= * f1 b0 b1 c/\ ! c==> c~ cIN b0 f0 c= cinverse f1 b0 b0 ! c?! / c= cinverse f1 b1 b0 cF
+- |- ((!x'. ((~ ((p x) = y)) \/ (!x''. ((~ ((p x'') = y)) \/ (x'' = x'))))) = ((~ ((p x) = y)) \/ (!x. (!x'. ((~ ((p x') = y)) \/ (x' = x))))))
+T c= ! c\/ c~ c= * f0 f1 f2 ! c\/ c~ c= * f0 b1 f2 c= b1 b0 c\/ c~ c= * f0 f1 f2 ! ! c\/ c~ c= * f0 b1 f2 c= b1 b0
++ |- ((((~ (y IN s)) /\ (~ (((inverse p) y) = y))) \/ (?x. (?x'. ((!x. (~ (((inverse p) x) = y))) \/ ((((inverse p) x) = y) /\ ((((inverse p) x') = y) /\ (~ (x' = x)))))))) = (?x. (((~ (y IN s)) /\ (~ (((inverse p) y) = y))) \/ (?x'. ((!x. (~ (((inverse p) x) = y))) \/ ((((inverse p) x) = y) /\ ((((inverse p) x') = y) /\ (~ (x' = x)))))))))
+T c= c\/ c/\ c~ cIN f0 f1 c~ c= cinverse f2 f0 f0 c? / c? / c\/ ! c~ c= cinverse f2 b2 f0 c/\ c= cinverse f2 b0 f0 c/\ c= cinverse f2 b1 f0 c~ c= b1 b0 c? / c\/ c/\ c~ cIN f0 f1 c~ c= cinverse f2 f0 f0 c? / c\/ ! c~ c= cinverse f2 b2 f0 c/\ c= cinverse f2 b0 f0 c/\ c= cinverse f2 b1 f0 c~ c= b1 b0
+- ((((inverse p) x) = y) /\ ((((inverse p) x') = y) /\ (~ (x' = x)))) |- ((~ (((inverse p) x) = ((inverse p) x'))) ==> (((inverse p) x) = ((inverse p) x')))
+T c==> c/\ c= cinverse f0 f1 f2 c/\ c= cinverse f0 f3 f2 c~ c= f3 f1 c==> c~ c= cinverse f0 f1 cinverse f0 f3 c= cinverse f0 f1 cinverse f0 f3
+- (!x. (!y. ((((inverse p) y) = x) = ((p x) = y)))), (~ F), ((((inverse p) x) = y) /\ ((((inverse p) x') = y) /\ (~ (x' = x)))) |- ((~ F) /\ F)
+T c==> ! ! c= c= cinverse f0 b1 b0 c= * f0 b0 b1 c==> c~ cF c==> c/\ c= cinverse f0 f1 f2 c/\ c= cinverse f0 f3 f2 c~ c= f3 f1 c/\ c~ cF cF
++ (!x. (!y. ((((inverse p) y) = x) = ((p x) = y)))), ((!x. ((~ (x IN s)) ==> ((p x) = x))) /\ (!y. (?!x. ((p x) = y)))) |- (((\x. (?x'. (((~ (y IN s)) /\ (~ (((inverse p) y) = y))) \/ ((!x. (~ (((inverse p) x) = y))) \/ ((((inverse p) x) = y) /\ ((((inverse p) x') = y) /\ (~ (x' = x)))))))) x) ==> F)
+T c==> ! ! c= c= cinverse f0 b1 b0 c= * f0 b0 b1 c==> c/\ ! c==> c~ cIN b0 f1 c= * f0 b0 b0 ! c?! / c= * f0 b1 b0 c==> * / c? / c\/ c/\ c~ cIN f2 f1 c~ c= cinverse f0 f2 f2 c\/ ! c~ c= cinverse f0 b2 f2 c/\ c= cinverse f0 b0 f2 c/\ c= cinverse f0 b1 f2 c~ c= b1 b0 f3 cF
++ |- ((!y. ((?x. ((p x) = y)) /\ (!x. (!x'. ((~ ((p x) = y)) \/ ((~ ((p x') = y)) \/ (x' = x))))))) = ((!y. (?x. ((p x) = y))) /\ (!y. (!x. (!x'. ((~ ((p x) = y)) \/ ((~ ((p x') = y)) \/ (x' = x))))))))
+T c= ! c/\ c? / c= * f0 b1 b0 ! ! c\/ c~ c= * f0 b1 b0 c\/ c~ c= * f0 b2 b0 c= b2 b1 c/\ ! c? / c= * f0 b1 b0 ! ! ! c\/ c~ c= * f0 b1 b0 c\/ c~ c= * f0 b2 b0 c= b2 b1
++ (!x. (!y. ((((inverse p) y) = x) = ((p x) = y)))), ((((inverse p) x) = y) /\ ((((inverse p) x') = y) /\ (~ (x' = x)))) |- (((I p) ((inverse p) x')) = x)
+T c==> ! ! c= c= cinverse f0 b1 b0 c= * f0 b0 b1 c==> c/\ c= cinverse f0 f1 f2 c/\ c= cinverse f0 f3 f2 c~ c= f3 f1 c= cI f0 cinverse f0 f3 f1
+- |- ((!x''. ((~ ((p x') = y)) \/ (x'' = x))) = ((~ ((p x') = y)) \/ (!x'. (x' = x))))
+T c= ! c\/ c~ c= * f0 f1 f2 c= b0 f3 c\/ c~ c= * f0 f1 f2 ! c= b0 f3
++ ((~ (y IN s)) /\ (~ (((inverse p) y) = y))) |- ((((inverse p) y) = y) ==> F)
+T c==> c/\ c~ cIN f0 f1 c~ c= cinverse f2 f0 f0 c==> c= cinverse f2 f0 f0 cF
++ |- (((?y. (P y)) \/ (?y. (Q y))) = (?y. ((P y) \/ (Q y))))
+T c= c\/ c? / * f0 b0 c? / * f1 b0 c? / c\/ * f0 b0 * f1 b0
+- |- ((!y. (P y)) = ((P T) /\ (P F)))
+T c= ! * f0 b0 c/\ * f0 cT * f0 cF
++ |- (((?x. (!y. ((p (x y)) = y))) /\ (!y. (!x. ((~ ((p x) = y)) \/ (!x'. ((~ ((p x') = y)) \/ (x' = x))))))) = (?x. ((!y. ((p (x y)) = y)) /\ (!y. (!x. ((~ ((p x) = y)) \/ (!x'. ((~ ((p x') = y)) \/ (x' = x)))))))))
+T c= c/\ c? / ! c= * f0 * b0 b1 b1 ! ! c\/ c~ c= * f0 b1 b0 ! c\/ c~ c= * f0 b2 b0 c= b2 b1 c? / c/\ ! c= * f0 * b0 b1 b1 ! ! c\/ c~ c= * f0 b2 b1 ! c\/ c~ c= * f0 b3 b1 c= b3 b2
++ |- (((((I p) y) = ((I p) y)) ==> (((inverse p) ((I p) y)) = y)) = (((inverse p) ((I p) y)) = y))
+T c= c==> c= cI f0 f1 cI f0 f1 c= cinverse f0 cI f0 f1 f1 c= cinverse f0 cI f0 f1 f1
+- |- (((!t1. (!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))))) ==> ((\t1. (!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))))) t1)) = ((\t1. (!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))))) t1))
+T c= c==> ! ! ! c= c\/ b0 c\/ b1 b2 c\/ c\/ b0 b1 b2 * / ! ! c= c\/ b0 c\/ b1 b2 c\/ c\/ b0 b1 b2 f0 * / ! ! c= c\/ b0 c\/ b1 b2 c\/ c\/ b0 b1 b2 f0
+- (_219738 = _219740) |- ((_219737 = _219739) ==> (((I _219737) _219738) = ((I _219739) _219740)))
+T c==> c= f0 f1 c==> c= f2 f3 c= cI f2 f0 cI f3 f1
++ ((((inverse p) x) = y) /\ ((((inverse p) x') = y) /\ (~ (x' = x)))) |- (((inverse p) x') = y)
+T c==> c/\ c= cinverse f0 f1 f2 c/\ c= cinverse f0 f3 f2 c~ c= f3 f1 c= cinverse f0 f3 f2
++ (!x. (!y. ((((inverse p) y) = x) = ((p x) = y)))), ((!x. ((x IN s) \/ ((p x) = x))) /\ ((!y. ((p (x'' y)) = y)) /\ (!y. (!x. ((~ ((p x) = y)) \/ (!x'. ((~ ((p x') = y)) \/ (x' = x)))))))) |- (((~ (y IN s)) /\ (~ (((inverse p) y) = y))) ==> F)
+T c==> ! ! c= c= cinverse f0 b1 b0 c= * f0 b0 b1 c==> c/\ ! c\/ cIN b0 f1 c= * f0 b0 b0 c/\ ! c= * f0 * f2 b0 b0 ! ! c\/ c~ c= * f0 b1 b0 ! c\/ c~ c= * f0 b2 b0 c= b2 b1 c==> c/\ c~ cIN f3 f1 c~ c= cinverse f0 f3 f3 cF
++ ((!x. ((~ (x IN s)) ==> ((p x) = x))) /\ (!y. (?!x. ((p x) = y)))) |- (((!x. ((~ (x IN s)) ==> ((p x) = x))) /\ (!y. (?!x. ((p x) = y)))) /\ ((!x. (!y. ((((inverse p) y) = x) = ((p x) = y)))) ==> ((!x. ((~ (x IN s)) ==> (((inverse p) x) = x))) /\ (!y. (?!x. (((inverse p) x) = y))))))
+T c==> c/\ ! c==> c~ cIN b0 f0 c= * f1 b0 b0 ! c?! / c= * f1 b1 b0 c/\ c/\ ! c==> c~ cIN b0 f0 c= * f1 b0 b0 ! c?! / c= * f1 b1 b0 c==> ! ! c= c= cinverse f1 b1 b0 c= * f1 b0 b1 c/\ ! c==> c~ cIN b0 f0 c= cinverse f1 b0 b0 ! c?! / c= cinverse f1 b1 b0
+- ((((inverse p) x) = y) /\ ((((inverse p) x') = y) /\ (~ (x' = x)))) |- (((_219674 IN s) \/ (((I p) _219674) = _219674)) = ((_219674 IN s) \/ (((I p) _219674) = _219674)))
+T c==> c/\ c= cinverse f0 f1 f2 c/\ c= cinverse f0 f3 f2 c~ c= f3 f1 c= c\/ cIN f4 f5 c= cI f0 f4 f4 c\/ cIN f4 f5 c= cI f0 f4 f4
++ |- ((!x. ((P x) /\ (Q x))) = ((!x. (P x)) /\ (!x. (Q x))))
+T c= ! c/\ * f0 b0 * f1 b0 c/\ ! * f0 b0 ! * f1 b0
++ |- (((?y. (!x. (~ (((inverse p) x) = y)))) \/ (?y. (?x. (?x'. ((((inverse p) x) = y) /\ ((((inverse p) x') = y) /\ (~ (x' = x)))))))) = (?y. ((!x. (~ (((inverse p) x) = y))) \/ (?x. (?x'. ((((inverse p) x) = y) /\ ((((inverse p) x') = y) /\ (~ (x' = x)))))))))
+T c= c\/ c? / ! c~ c= cinverse f0 b1 b0 c? / c? / c? / c/\ c= cinverse f0 b1 b0 c/\ c= cinverse f0 b2 b0 c~ c= b2 b1 c? / c\/ ! c~ c= cinverse f0 b1 b0 c? / c? / c/\ c= cinverse f0 b1 b0 c/\ c= cinverse f0 b2 b0 c~ c= b2 b1
+- |- ((!s. (((!x. ((~ (x IN s)) ==> ((p x) = x))) /\ (!y. (?!x. ((p x) = y)))) ==> ((!x. (!y. ((((inverse p) y) = x) = ((p x) = y)))) ==> ((!x. ((~ (x IN s)) ==> (((inverse p) x) = x))) /\ (!y. (?!x. (((inverse p) x) = y))))))) = T)
+T c= ! c==> c/\ ! c==> c~ cIN b1 b0 c= * f0 b1 b1 ! c?! / c= * f0 b2 b1 c==> ! ! c= c= cinverse f0 b2 b1 c= * f0 b1 b2 c/\ ! c==> c~ cIN b1 b0 c= cinverse f0 b1 b1 ! c?! / c= cinverse f0 b2 b1 cT
++ |- ((!y. (((((inverse p) y) = x) \/ (~ ((p x) = y))) /\ ((~ (((inverse p) y) = x)) \/ ((p x) = y)))) = ((!y. ((((inverse p) y) = x) \/ (~ ((p x) = y)))) /\ (!y. ((~ (((inverse p) y) = x)) \/ ((p x) = y)))))
+T c= ! c/\ c\/ c= cinverse f0 b0 f1 c~ c= * f0 f1 b0 c\/ c~ c= cinverse f0 b0 f1 c= * f0 f1 b0 c/\ ! c\/ c= cinverse f0 b0 f1 c~ c= * f0 f1 b0 ! c\/ c~ c= cinverse f0 b0 f1 c= * f0 f1 b0
+- |- ((?x'. ((((inverse p) x) = y) /\ (?x''. ((((inverse p) x'') = y) /\ (~ (x'' = x')))))) = ((((inverse p) x) = y) /\ (?x. (?x'. ((((inverse p) x') = y) /\ (~ (x' = x)))))))
+T c= c? / c/\ c= cinverse f0 f1 f2 c? / c/\ c= cinverse f0 b1 f2 c~ c= b1 b0 c/\ c= cinverse f0 f1 f2 c? / c? / c/\ c= cinverse f0 b1 f2 c~ c= b1 b0
++ ((\y. (?x. (?x'. (((~ (y IN s)) /\ (~ (((inverse p) y) = y))) \/ ((!x. (~ (((inverse p) x) = y))) \/ ((((inverse p) x) = y) /\ ((((inverse p) x') = y) /\ (~ (x' = x))))))))) y) |- (?x. (?x'. (((~ (y IN s)) /\ (~ (((inverse p) y) = y))) \/ ((!x. (~ (((inverse p) x) = y))) \/ ((((inverse p) x) = y) /\ ((((inverse p) x') = y) /\ (~ (x' = x))))))))
+T c==> * / c? / c? / c\/ c/\ c~ cIN b0 f0 c~ c= cinverse f1 b0 b0 c\/ ! c~ c= cinverse f1 b3 b0 c/\ c= cinverse f1 b1 b0 c/\ c= cinverse f1 b2 b0 c~ c= b2 b1 f2 c? / c? / c\/ c/\ c~ cIN f2 f0 c~ c= cinverse f1 f2 f2 c\/ ! c~ c= cinverse f1 b2 f2 c/\ c= cinverse f1 b0 f2 c/\ c= cinverse f1 b1 f2 c~ c= b1 b0
+- ((((inverse p) x) = y) /\ ((((inverse p) x') = y) /\ (~ (x' = x)))) |- ((~ (x' = x)) = (~ (x' = x)))
+T c==> c/\ c= cinverse f0 f1 f2 c/\ c= cinverse f0 f3 f2 c~ c= f3 f1 c= c~ c= f3 f1 c~ c= f3 f1
+- (!x. (!y. ((((inverse p) y) = x) = ((p x) = y)))), (~ (((I p) ((inverse p) x')) = x)), ((((inverse p) x) = y) /\ ((((inverse p) x') = y) /\ (~ (x' = x)))) |- ((~ (((I p) ((inverse p) x')) = x)) /\ (((I p) ((inverse p) x')) = x))
+T c==> ! ! c= c= cinverse f0 b1 b0 c= * f0 b0 b1 c==> c~ c= cI f0 cinverse f0 f1 f2 c==> c/\ c= cinverse f0 f2 f3 c/\ c= cinverse f0 f1 f3 c~ c= f1 f2 c/\ c~ c= cI f0 cinverse f0 f1 f2 c= cI f0 cinverse f0 f1 f2
++ |- ((?y. ((P y) \/ (Q y))) = ((?y. (P y)) \/ (?y. (Q y))))
+T c= c? / c\/ * f0 b0 * f1 b0 c\/ c? / * f0 b0 c? / * f1 b0
++ ((permutes p) s) |- (((!x. (!y. ((((inverse p) y) = x) = ((p x) = y)))) ==> ((permutes (inverse p)) s)) = ((permutes (inverse p)) s))
+T c==> cpermutes f0 f1 c= c==> ! ! c= c= cinverse f0 b1 b0 c= * f0 b0 b1 cpermutes * part cinverse f0 f1 cpermutes * part cinverse f0 f1
++ ((permutes p) s) |- ((!x. (!y. ((((inverse p) y) = x) = ((p x) = y)))) ==> ((permutes (inverse p)) s))
+T c==> cpermutes f0 f1 c==> ! ! c= c= cinverse f0 b1 b0 c= * f0 b0 b1 cpermutes * part cinverse f0 f1
+- (!x. (!y. ((((inverse p) y) = x) = ((p x) = y)))), (?x'. (((~ (y IN s)) /\ (~ (((inverse p) y) = y))) \/ ((!x. (~ (((inverse p) x) = y))) \/ ((((inverse p) x) = y) /\ ((((inverse p) x') = y) /\ (~ (x' = x))))))), ((!x. ((~ (x IN s)) ==> ((p x) = x))) /\ (!y. (?!x. ((p x) = y)))) |- ((?x'. (((~ (y IN s)) /\ (~ (((inverse p) y) = y))) \/ ((!x. (~ (((inverse p) x) = y))) \/ ((((inverse p) x) = y) /\ ((((inverse p) x') = y) /\ (~ (x' = x))))))) /\ F)
+T c==> ! ! c= c= cinverse f0 b1 b0 c= * f0 b0 b1 c==> c? / c\/ c/\ c~ cIN f1 f2 c~ c= cinverse f0 f1 f1 c\/ ! c~ c= cinverse f0 b1 f1 c/\ c= cinverse f0 f3 f1 c/\ c= cinverse f0 b0 f1 c~ c= b0 f3 c==> c/\ ! c==> c~ cIN b0 f2 c= * f0 b0 b0 ! c?! / c= * f0 b1 b0 c/\ c? / c\/ c/\ c~ cIN f1 f2 c~ c= cinverse f0 f1 f1 c\/ ! c~ c= cinverse f0 b1 f1 c/\ c= cinverse f0 f3 f1 c/\ c= cinverse f0 b0 f1 c~ c= b0 f3 cF
+- (!x. (!y. ((((inverse p) y) = x) = ((p x) = y)))), (?x. (?x'. (((~ (y IN s)) /\ (~ (((inverse p) y) = y))) \/ ((!x. (~ (((inverse p) x) = y))) \/ ((((inverse p) x) = y) /\ ((((inverse p) x') = y) /\ (~ (x' = x)))))))), ((!x. ((~ (x IN s)) ==> ((p x) = x))) /\ (!y. (?!x. ((p x) = y)))) |- ((?x. (?x'. (((~ (y IN s)) /\ (~ (((inverse p) y) = y))) \/ ((!x. (~ (((inverse p) x) = y))) \/ ((((inverse p) x) = y) /\ ((((inverse p) x') = y) /\ (~ (x' = x)))))))) /\ F)
+T c==> ! ! c= c= cinverse f0 b1 b0 c= * f0 b0 b1 c==> c? / c? / c\/ c/\ c~ cIN f1 f2 c~ c= cinverse f0 f1 f1 c\/ ! c~ c= cinverse f0 b2 f1 c/\ c= cinverse f0 b0 f1 c/\ c= cinverse f0 b1 f1 c~ c= b1 b0 c==> c/\ ! c==> c~ cIN b0 f2 c= * f0 b0 b0 ! c?! / c= * f0 b1 b0 c/\ c? / c? / c\/ c/\ c~ cIN f1 f2 c~ c= cinverse f0 f1 f1 c\/ ! c~ c= cinverse f0 b2 f1 c/\ c= cinverse f0 b0 f1 c/\ c= cinverse f0 b1 f1 c~ c= b1 b0 cF
++ |- (((!x. (~ (((inverse p) x) = y))) \/ (?x'. ((((inverse p) x) = y) /\ ((((inverse p) x') = y) /\ (~ (x' = x)))))) = (?x'. ((!x. (~ (((inverse p) x) = y))) \/ ((((inverse p) x) = y) /\ ((((inverse p) x') = y) /\ (~ (x' = x)))))))
+T c= c\/ ! c~ c= cinverse f0 b0 f1 c? / c/\ c= cinverse f0 f2 f1 c/\ c= cinverse f0 b0 f1 c~ c= b0 f2 c? / c\/ ! c~ c= cinverse f0 b1 f1 c/\ c= cinverse f0 f2 f1 c/\ c= cinverse f0 b0 f1 c~ c= b0 f2
+- |- ((((~ (((!x. ((~ (x IN s)) ==> ((p x) = x))) /\ (!y. (?!x. ((p x) = y)))) ==> ((!x. (!y. ((((inverse p) y) = x) = ((p x) = y)))) ==> ((!x. ((~ (x IN s)) ==> (((inverse p) x) = x))) /\ (!y. (?!x. (((inverse p) x) = y))))))) ==> F) ==> ((~ (((!x. ((~ (x IN s)) ==> ((p x) = x))) /\ (!y. (?!x. ((p x) = y)))) ==> ((!x. (!y. ((((inverse p) y) = x) = ((p x) = y)))) ==> ((!x. ((~ (x IN s)) ==> (((inverse p) x) = x))) /\ (!y. (?!x. (((inverse p) x) = y))))))) ==> F)) = ((~ (((!x. ((~ (x IN s)) ==> ((p x) = x))) /\ (!y. (?!x. ((p x) = y)))) ==> ((!x. (!y. ((((inverse p) y) = x) = ((p x) = y)))) ==> ((!x. ((~ (x IN s)) ==> (((inverse p) x) = x))) /\ (!y. (?!x. (((inverse p) x) = y))))))) ==> F))
+T c= c==> c==> c~ c==> c/\ ! c==> c~ cIN b0 f0 c= * f1 b0 b0 ! c?! / c= * f1 b1 b0 c==> ! ! c= c= cinverse f1 b1 b0 c= * f1 b0 b1 c/\ ! c==> c~ cIN b0 f0 c= cinverse f1 b0 b0 ! c?! / c= cinverse f1 b1 b0 cF c==> c~ c==> c/\ ! c==> c~ cIN b0 f0 c= * f1 b0 b0 ! c?! / c= * f1 b1 b0 c==> ! ! c= c= cinverse f1 b1 b0 c= * f1 b0 b1 c/\ ! c==> c~ cIN b0 f0 c= cinverse f1 b0 b0 ! c?! / c= cinverse f1 b1 b0 cF c==> c~ c==> c/\ ! c==> c~ cIN b0 f0 c= * f1 b0 b0 ! c?! / c= * f1 b1 b0 c==> ! ! c= c= cinverse f1 b1 b0 c= * f1 b0 b1 c/\ ! c==> c~ cIN b0 f0 c= cinverse f1 b0 b0 ! c?! / c= cinverse f1 b1 b0 cF
++ (!x. (!y. ((((inverse p) y) = x) = ((p x) = y)))) |- ((((I p) _219669) = _219670) ==> (((inverse p) _219670) = _219669))
+T c==> ! ! c= c= cinverse f0 b1 b0 c= * f0 b0 b1 c==> c= cI f0 f1 f2 c= cinverse f0 f2 f1
+- |- (((((~ (((!x. ((~ (x IN s)) ==> ((p x) = x))) /\ (!y. (?!x. ((p x) = y)))) ==> ((!x. (!y. ((((inverse p) y) = x) = ((p x) = y)))) ==> ((!x. ((~ (x IN s)) ==> (((inverse p) x) = x))) /\ (!y. (?!x. (((inverse p) x) = y))))))) ==> F) ==> ((~ (((!x. ((~ (x IN s)) ==> ((p x) = x))) /\ (!y. (?!x. ((p x) = y)))) ==> ((!x. (!y. ((((inverse p) y) = x) = ((p x) = y)))) ==> ((!x. ((~ (x IN s)) ==> (((inverse p) x) = x))) /\ (!y. (?!x. (((inverse p) x) = y))))))) ==> F)) ==> (((~ (((!x. ((~ (x IN s)) ==> ((p x) = x))) /\ (!y. (?!x. ((p x) = y)))) ==> ((!x. (!y. ((((inverse p) y) = x) = ((p x) = y)))) ==> ((!x. ((~ (x IN s)) ==> (((inverse p) x) = x))) /\ (!y. (?!x. (((inverse p) x) = y))))))) ==> F) ==> ((~ (((!x. ((~ (x IN s)) ==> ((p x) = x))) /\ (!y. (?!x. ((p x) = y)))) ==> ((!x. (!y. ((((inverse p) y) = x) = ((p x) = y)))) ==> ((!x. ((~ (x IN s)) ==> (((inverse p) x) = x))) /\ (!y. (?!x. (((inverse p) x) = y))))))) ==> F))) = (((~ (((!x. ((~ (x IN s)) ==> ((p x) = x))) /\ (!y. (?!x. ((p x) = y)))) ==> ((!x. (!y. ((((inverse p) y) = x) = ((p x) = y)))) ==> ((!x. ((~ (x IN s)) ==> (((inverse p) x) = x))) /\ (!y. (?!x. (((inverse p) x) = y))))))) ==> F) ==> ((~ (((!x. ((~ (x IN s)) ==> ((p x) = x))) /\ (!y. (?!x. ((p x) = y)))) ==> ((!x. (!y. ((((inverse p) y) = x) = ((p x) = y)))) ==> ((!x. ((~ (x IN s)) ==> (((inverse p) x) = x))) /\ (!y. (?!x. (((inverse p) x) = y))))))) ==> F)))
+T c= c==> c==> c==> c~ c==> c/\ ! c==> c~ cIN b0 f0 c= * f1 b0 b0 ! c?! / c= * f1 b1 b0 c==> ! ! c= c= cinverse f1 b1 b0 c= * f1 b0 b1 c/\ ! c==> c~ cIN b0 f0 c= cinverse f1 b0 b0 ! c?! / c= cinverse f1 b1 b0 cF c==> c~ c==> c/\ ! c==> c~ cIN b0 f0 c= * f1 b0 b0 ! c?! / c= * f1 b1 b0 c==> ! ! c= c= cinverse f1 b1 b0 c= * f1 b0 b1 c/\ ! c==> c~ cIN b0 f0 c= cinverse f1 b0 b0 ! c?! / c= cinverse f1 b1 b0 cF c==> c==> c~ c==> c/\ ! c==> c~ cIN b0 f0 c= * f1 b0 b0 ! c?! / c= * f1 b1 b0 c==> ! ! c= c= cinverse f1 b1 b0 c= * f1 b0 b1 c/\ ! c==> c~ cIN b0 f0 c= cinverse f1 b0 b0 ! c?! / c= cinverse f1 b1 b0 cF c==> c~ c==> c/\ ! c==> c~ cIN b0 f0 c= * f1 b0 b0 ! c?! / c= * f1 b1 b0 c==> ! ! c= c= cinverse f1 b1 b0 c= * f1 b0 b1 c/\ ! c==> c~ cIN b0 f0 c= cinverse f1 b0 b0 ! c?! / c= cinverse f1 b1 b0 cF c==> c==> c~ c==> c/\ ! c==> c~ cIN b0 f0 c= * f1 b0 b0 ! c?! / c= * f1 b1 b0 c==> ! ! c= c= cinverse f1 b1 b0 c= * f1 b0 b1 c/\ ! c==> c~ cIN b0 f0 c= cinverse f1 b0 b0 ! c?! / c= cinverse f1 b1 b0 cF c==> c~ c==> c/\ ! c==> c~ cIN b0 f0 c= * f1 b0 b0 ! c?! / c= * f1 b1 b0 c==> ! ! c= c= cinverse f1 b1 b0 c= * f1 b0 b1 c/\ ! c==> c~ cIN b0 f0 c= cinverse f1 b0 b0 ! c?! / c= cinverse f1 b1 b0 cF
++ |- ((P /\ (?x'. (Q x'))) = (?x'. (P /\ (Q x'))))
+T c= c/\ f0 c? / * f1 b0 c? / c/\ f0 * f1 b0
++ |- ((~ p) = (p ==> F))
+T c= c~ f0 c==> f0 cF
++ ((((inverse p) x) = y) /\ ((((inverse p) x') = y) /\ (~ (x' = x)))) |- ((x' = x) ==> F)
+T c==> c/\ c= cinverse f0 f1 f2 c/\ c= cinverse f0 f3 f2 c~ c= f3 f1 c==> c= f3 f1 cF
++ |- ((P \/ (?x'. (Q x'))) = (?x'. (P \/ (Q x'))))
+T c= c\/ f0 c? / * f1 b0 c? / c\/ f0 * f1 b0
++ (!x. (!y. ((((inverse p) y) = x) = ((p x) = y)))), ((!x. ((~ (x IN s)) ==> ((p x) = x))) /\ (!y. (?!x. ((p x) = y)))) |- (!x'. (((\x'. (((~ (y IN s)) /\ (~ (((inverse p) y) = y))) \/ ((!x. (~ (((inverse p) x) = y))) \/ ((((inverse p) x) = y) /\ ((((inverse p) x') = y) /\ (~ (x' = x))))))) x') ==> F))
+T c==> ! ! c= c= cinverse f0 b1 b0 c= * f0 b0 b1 c==> c/\ ! c==> c~ cIN b0 f1 c= * f0 b0 b0 ! c?! / c= * f0 b1 b0 ! c==> * / c\/ c/\ c~ cIN f2 f1 c~ c= cinverse f0 f2 f2 c\/ ! c~ c= cinverse f0 b1 f2 c/\ c= cinverse f0 f3 f2 c/\ c= cinverse f0 b1 f2 c~ c= b1 f3 b0 cF
++ |- (((!x. (~ (((inverse p) x) = y))) \/ (?x. (?x'. ((((inverse p) x) = y) /\ ((((inverse p) x') = y) /\ (~ (x' = x))))))) = (?x. ((!x. (~ (((inverse p) x) = y))) \/ (?x'. ((((inverse p) x) = y) /\ ((((inverse p) x') = y) /\ (~ (x' = x))))))))
+T c= c\/ ! c~ c= cinverse f0 b0 f1 c? / c? / c/\ c= cinverse f0 b0 f1 c/\ c= cinverse f0 b1 f1 c~ c= b1 b0 c? / c\/ ! c~ c= cinverse f0 b1 f1 c? / c/\ c= cinverse f0 b0 f1 c/\ c= cinverse f0 b1 f1 c~ c= b1 b0
+- |- ((?x''. ((((inverse p) x') = y) /\ (~ (x'' = x)))) = ((((inverse p) x') = y) /\ (?x'. (~ (x' = x)))))
+T c= c? / c/\ c= cinverse f0 f1 f2 c~ c= b0 f3 c/\ c= cinverse f0 f1 f2 c? / c~ c= b0 f3
+- ((!x. ((x IN s) \/ ((p x) = x))) /\ ((!y. ((p (x'' y)) = y)) /\ (!y. (!x. ((~ ((p x) = y)) \/ (!x'. ((~ ((p x') = y)) \/ (x' = x)))))))) |- ((\y. (((I p) (x'' y)) = y)) _219675)
+T c==> c/\ ! c\/ cIN b0 f0 c= * f1 b0 b0 c/\ ! c= * f1 * f2 b0 b0 ! ! c\/ c~ c= * f1 b1 b0 ! c\/ c~ c= * f1 b2 b0 c= b2 b1 * / c= cI f1 * f2 b0 b0 f3
++ |- ((!y. (?x. ((p x) = y))) = (?x. (!y. ((p (x y)) = y))))
+T c= ! c? / c= * f0 b1 b0 c? / ! c= * f0 * b0 b1 b1
++ |- (((x = y) /\ (x = z)) ==> (y = z))
+T c==> c/\ c= f0 f1 c= f0 f2 c= f1 f2
++ |- (((?x. ((~ (x IN s)) /\ (~ (((inverse p) x) = x)))) \/ (?y. (?x. (?x'. ((!x. (~ (((inverse p) x) = y))) \/ ((((inverse p) x) = y) /\ ((((inverse p) x') = y) /\ (~ (x' = x))))))))) = (?y. (((~ (y IN s)) /\ (~ (((inverse p) y) = y))) \/ (?x. (?x'. ((!x. (~ (((inverse p) x) = y))) \/ ((((inverse p) x) = y) /\ ((((inverse p) x') = y) /\ (~ (x' = x))))))))))
+T c= c\/ c? / c/\ c~ cIN b0 f0 c~ c= cinverse f1 b0 b0 c? / c? / c? / c\/ ! c~ c= cinverse f1 b3 b0 c/\ c= cinverse f1 b1 b0 c/\ c= cinverse f1 b2 b0 c~ c= b2 b1 c? / c\/ c/\ c~ cIN b0 f0 c~ c= cinverse f1 b0 b0 c? / c? / c\/ ! c~ c= cinverse f1 b3 b0 c/\ c= cinverse f1 b1 b0 c/\ c= cinverse f1 b2 b0 c~ c= b2 b1
++ (!x. (!y. ((((inverse p) y) = x) = ((p x) = y)))), ((!x. ((~ (x IN s)) ==> ((p x) = x))) /\ (!y. (?!x. ((p x) = y)))) |- ((((~ (y IN s)) /\ (~ (((inverse p) y) = y))) \/ ((!x. (~ (((inverse p) x) = y))) \/ ((((inverse p) x) = y) /\ ((((inverse p) x') = y) /\ (~ (x' = x)))))) ==> F)
+T c==> ! ! c= c= cinverse f0 b1 b0 c= * f0 b0 b1 c==> c/\ ! c==> c~ cIN b0 f1 c= * f0 b0 b0 ! c?! / c= * f0 b1 b0 c==> c\/ c/\ c~ cIN f2 f1 c~ c= cinverse f0 f2 f2 c\/ ! c~ c= cinverse f0 b0 f2 c/\ c= cinverse f0 f3 f2 c/\ c= cinverse f0 f4 f2 c~ c= f4 f3 cF
+- ((!x. ((x IN s) \/ ((p x) = x))) /\ ((!y. ((p (x'' y)) = y)) /\ (!y. (!x. ((~ ((p x) = y)) \/ (!x'. ((~ ((p x') = y)) \/ (x' = x)))))))) |- ((\x. (!x'. ((~ (((I p) x) = _219676)) \/ ((~ (((I p) x') = _219676)) \/ (x' = x))))) _219677)
+T c==> c/\ ! c\/ cIN b0 f0 c= * f1 b0 b0 c/\ ! c= * f1 * f2 b0 b0 ! ! c\/ c~ c= * f1 b1 b0 ! c\/ c~ c= * f1 b2 b0 c= b2 b1 * / ! c\/ c~ c= cI f1 b0 f3 c\/ c~ c= cI f1 b1 f3 c= b1 b0 f4
+- ((!x. ((x IN s) \/ ((p x) = x))) /\ ((!y. ((p (x'' y)) = y)) /\ (!y. (!x. ((~ ((p x) = y)) \/ (!x'. ((~ ((p x') = y)) \/ (x' = x)))))))) |- (!y. (!x. (!x'. ((~ (((I p) x) = y)) \/ ((~ (((I p) x') = y)) \/ (x' = x))))))
+T c==> c/\ ! c\/ cIN b0 f0 c= * f1 b0 b0 c/\ ! c= * f1 * f2 b0 b0 ! ! c\/ c~ c= * f1 b1 b0 ! c\/ c~ c= * f1 b2 b0 c= b2 b1 ! ! ! c\/ c~ c= cI f1 b1 b0 c\/ c~ c= cI f1 b2 b0 c= b2 b1
+- ((!x. ((x IN s) \/ ((p x) = x))) /\ ((!y. ((p (x'' y)) = y)) /\ (!y. (!x. ((~ ((p x) = y)) \/ (!x'. ((~ ((p x') = y)) \/ (x' = x)))))))) |- (((!x'. ((~ (((I p) _219677) = _219676)) \/ ((~ (((I p) x') = _219676)) \/ (x' = _219677)))) ==> ((\x'. ((~ (((I p) _219677) = _219676)) \/ ((~ (((I p) x') = _219676)) \/ (x' = _219677)))) _219678)) = ((\x'. ((~ (((I p) _219677) = _219676)) \/ ((~ (((I p) x') = _219676)) \/ (x' = _219677)))) _219678))
+T c==> c/\ ! c\/ cIN b0 f0 c= * f1 b0 b0 c/\ ! c= * f1 * f2 b0 b0 ! ! c\/ c~ c= * f1 b1 b0 ! c\/ c~ c= * f1 b2 b0 c= b2 b1 c= c==> ! c\/ c~ c= cI f1 f3 f4 c\/ c~ c= cI f1 b0 f4 c= b0 f3 * / c\/ c~ c= cI f1 f3 f4 c\/ c~ c= cI f1 b0 f4 c= b0 f3 f5 * / c\/ c~ c= cI f1 f3 f4 c\/ c~ c= cI f1 b0 f4 c= b0 f3 f5
+- |- ((?x'. ((P x') /\ Q)) = ((?x'. (P x')) /\ Q))
+T c= c? / c/\ * f0 b0 f1 c/\ c? / * f0 b0 f1
+- ((~ (((!x. ((~ (x IN s)) ==> ((p x) = x))) /\ (!y. (?!x. ((p x) = y)))) ==> ((!x. (!y. ((((inverse p) y) = x) = ((p x) = y)))) ==> ((!x. ((~ (x IN s)) ==> (((inverse p) x) = x))) /\ (!y. (?!x. (((inverse p) x) = y))))))) ==> F), (((~ (((!x. ((~ (x IN s)) ==> ((p x) = x))) /\ (!y. (?!x. ((p x) = y)))) ==> ((!x. (!y. ((((inverse p) y) = x) = ((p x) = y)))) ==> ((!x. ((~ (x IN s)) ==> (((inverse p) x) = x))) /\ (!y. (?!x. (((inverse p) x) = y))))))) ==> F) ==> ((~ (((!x. ((~ (x IN s)) ==> ((p x) = x))) /\ (!y. (?!x. ((p x) = y)))) ==> ((!x. (!y. ((((inverse p) y) = x) = ((p x) = y)))) ==> ((!x. ((~ (x IN s)) ==> (((inverse p) x) = x))) /\ (!y. (?!x. (((inverse p) x) = y))))))) ==> F)) |- (((~ (((!x. ((~ (x IN s)) ==> ((p x) = x))) /\ (!y. (?!x. ((p x) = y)))) ==> ((!x. (!y. ((((inverse p) y) = x) = ((p x) = y)))) ==> ((!x. ((~ (x IN s)) ==> (((inverse p) x) = x))) /\ (!y. (?!x. (((inverse p) x) = y))))))) ==> F) /\ ((~ (((!x. ((~ (x IN s)) ==> ((p x) = x))) /\ (!y. (?!x. ((p x) = y)))) ==> ((!x. (!y. ((((inverse p) y) = x) = ((p x) = y)))) ==> ((!x. ((~ (x IN s)) ==> (((inverse p) x) = x))) /\ (!y. (?!x. (((inverse p) x) = y))))))) ==> F))
+T c==> c==> c~ c==> c/\ ! c==> c~ cIN b0 f0 c= * f1 b0 b0 ! c?! / c= * f1 b1 b0 c==> ! ! c= c= cinverse f1 b1 b0 c= * f1 b0 b1 c/\ ! c==> c~ cIN b0 f0 c= cinverse f1 b0 b0 ! c?! / c= cinverse f1 b1 b0 cF c==> c==> c==> c~ c==> c/\ ! c==> c~ cIN b0 f0 c= * f1 b0 b0 ! c?! / c= * f1 b1 b0 c==> ! ! c= c= cinverse f1 b1 b0 c= * f1 b0 b1 c/\ ! c==> c~ cIN b0 f0 c= cinverse f1 b0 b0 ! c?! / c= cinverse f1 b1 b0 cF c==> c~ c==> c/\ ! c==> c~ cIN b0 f0 c= * f1 b0 b0 ! c?! / c= * f1 b1 b0 c==> ! ! c= c= cinverse f1 b1 b0 c= * f1 b0 b1 c/\ ! c==> c~ cIN b0 f0 c= cinverse f1 b0 b0 ! c?! / c= cinverse f1 b1 b0 cF c/\ c==> c~ c==> c/\ ! c==> c~ cIN b0 f0 c= * f1 b0 b0 ! c?! / c= * f1 b1 b0 c==> ! ! c= c= cinverse f1 b1 b0 c= * f1 b0 b1 c/\ ! c==> c~ cIN b0 f0 c= cinverse f1 b0 b0 ! c?! / c= cinverse f1 b1 b0 cF c==> c~ c==> c/\ ! c==> c~ cIN b0 f0 c= * f1 b0 b0 ! c?! / c= * f1 b1 b0 c==> ! ! c= c= cinverse f1 b1 b0 c= * f1 b0 b1 c/\ ! c==> c~ cIN b0 f0 c= cinverse f1 b0 b0 ! c?! / c= cinverse f1 b1 b0 cF
+- (!x. (!y. ((((inverse p) y) = x) = ((p x) = y)))), (?x'. (((~ (y IN s)) /\ (~ (((inverse p) y) = y))) \/ ((!x. (~ (((inverse p) x) = y))) \/ ((((inverse p) x) = y) /\ ((((inverse p) x') = y) /\ (~ (x' = x))))))), ((!x. ((~ (x IN s)) ==> ((p x) = x))) /\ (!y. (?!x. ((p x) = y)))) |- F
+T c==> ! ! c= c= cinverse f0 b1 b0 c= * f0 b0 b1 c==> c? / c\/ c/\ c~ cIN f1 f2 c~ c= cinverse f0 f1 f1 c\/ ! c~ c= cinverse f0 b1 f1 c/\ c= cinverse f0 f3 f1 c/\ c= cinverse f0 b0 f1 c~ c= b0 f3 c==> c/\ ! c==> c~ cIN b0 f2 c= * f0 b0 b0 ! c?! / c= * f0 b1 b0 cF
+- (_219727 = _219729) |- ((_219728 = _219730) ==> ((_219729 IN _219730) \/ (~ (_219727 IN _219728))))
+T c==> c= f0 f1 c==> c= f2 f3 c\/ cIN f1 f3 c~ cIN f0 f2
+- (_219738 = _219740) |- ((_219738 = _219740) /\ ((~ (_219737 = _219739)) \/ (((I _219737) _219738) = ((I _219739) _219740))))
+T c==> c= f0 f1 c/\ c= f0 f1 c\/ c~ c= f2 f3 c= cI f2 f0 cI f3 f1
+- (_219727 = _219729), (_219728 = _219730) |- ((_219728 = _219730) /\ ((_219729 IN _219730) \/ (~ (_219727 IN _219728))))
+T c==> c= f0 f1 c==> c= f2 f3 c/\ c= f2 f3 c\/ cIN f1 f3 c~ cIN f0 f2

@@ -1,0 +1,542 @@
+N Seq2.count_filterI
+C |- (!a1. (!a2. (!s. (((count a1) ((filter a2) s)) = ((count ((predI a1) a2)) s)))))
+T c= ccount f0 cfilter f1 f2 ccount * * part cpredI f0 f1 f2
+D TRUTH
+A |- T
+T cT
+D BOOL_CASES_AX
+A |- (!t. ((t = T) \/ (t = F)))
+T c\/ c= f0 cT c= f0 cF
+D COND_CLAUSES
+A |- (!t1. (!t2. (((((COND T) t1) t2) = t1) /\ ((((COND F) t1) t2) = t2))))
+T c/\ c= cCOND cT f0 f1 f0 c= cCOND cF f0 f1 f1
+D Ssrnat.add0n
+A |- (!n. (((NUMERAL _0) + n) = n))
+T c= c+ cNUMERAL c_0 f0 f0
+D list_INDUCT
+A |- (!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x))))
+T c==> c/\ * f0 cNIL ! ! c==> * f0 b1 * f0 cCONS b0 b1 ! * f0 b0
+D bool_elim
+A |- (!P. (((P T) /\ (P F)) ==> (!x. (P x))))
+T c==> c/\ * f0 cT * f0 cF ! * f0 b0
+D Ssrbool.predI
+A |- (!p1. (!p2. (((predI p1) p2) = (\x. ((p1 x) /\ (p2 x))))))
+T c= * * part cpredI f0 f1 / c/\ * f0 b0 * f1 b0
+D Seq.filter
+A |- (!a. (!x. (!s'. ((((filter a) NIL) = NIL) /\ (((filter a) ((CONS x) s')) = (((COND (a x)) ((CONS x) ((filter a) s'))) ((filter a) s')))))))
+T c/\ c= cfilter f0 cNIL cNIL c= cfilter f0 cCONS f1 f2 cCOND * f0 f1 cCONS f1 cfilter f0 f2 cfilter f0 f2
+D Seq.count
+A |- (!a. (!x. (!s'. ((((count a) NIL) = (NUMERAL _0)) /\ (((count a) ((CONS x) s')) = ((((COND (a x)) (NUMERAL (BIT1 _0))) (NUMERAL _0)) + ((count a) s')))))))
+T c/\ c= ccount f0 cNIL cNUMERAL c_0 c= ccount f0 cCONS f1 f2 c+ cCOND * f0 f1 cNUMERAL cBIT1 c_0 cNUMERAL c_0 ccount f0 f2
+- (((count a1) ((filter a2) t)) = ((count ((predI a1) a2)) t)) |- ((((count a1) ((CONS h) ((filter a2) t))) = ((((COND (a1 h)) (NUMERAL (BIT1 _0))) (NUMERAL _0)) + ((count ((predI a1) a2)) t))) = (((count a1) ((CONS h) ((filter a2) t))) = ((((COND (a1 h)) (NUMERAL (BIT1 _0))) (NUMERAL _0)) + ((count a1) ((filter a2) t)))))
+T c==> c= ccount f0 cfilter f1 f2 ccount * * part cpredI f0 f1 f2 c= c= ccount f0 cCONS f3 cfilter f1 f2 c+ cCOND * f0 f3 cNUMERAL cBIT1 c_0 cNUMERAL c_0 ccount * * part cpredI f0 f1 f2 c= ccount f0 cCONS f3 cfilter f1 f2 c+ cCOND * f0 f3 cNUMERAL cBIT1 c_0 cNUMERAL c_0 ccount f0 cfilter f1 f2
+- |- ((\g'. (!t'. (!e'. ((((a1 h) /\ (a2 h)) = g') ==> ((g' ==> ((NUMERAL (BIT1 _0)) = t')) ==> (((~ g') ==> ((NUMERAL _0) = e')) ==> ((((COND ((a1 h) /\ (a2 h))) (NUMERAL (BIT1 _0))) (NUMERAL _0)) = (((COND g') t') e')))))))) g')
+T * / ! ! c==> c= c/\ * f0 f1 * f2 f1 b0 c==> c==> b0 c= cNUMERAL cBIT1 c_0 b1 c==> c==> c~ b0 c= cNUMERAL c_0 b2 c= cCOND c/\ * f0 f1 * f2 f1 cNUMERAL cBIT1 c_0 cNUMERAL c_0 cCOND b0 b1 b2 f3
++ |- (F ==> ((NUMERAL (BIT1 _0)) = (NUMERAL (BIT1 _0))))
+T c==> cF c= cNUMERAL cBIT1 c_0 cNUMERAL cBIT1 c_0
++ |- ((t /\ T) = t)
+T c= c/\ f0 cT f0
++ |- ((((~ ((a1 h) /\ (a2 h))) ==> ((NUMERAL _0) = (NUMERAL _0))) ==> ((((COND ((\x. ((a1 x) /\ (a2 x))) h)) (NUMERAL (BIT1 _0))) (NUMERAL _0)) = (((COND ((a1 h) /\ (a2 h))) (NUMERAL (BIT1 _0))) (NUMERAL _0)))) = ((((COND ((\x. ((a1 x) /\ (a2 x))) h)) (NUMERAL (BIT1 _0))) (NUMERAL _0)) = (((COND ((a1 h) /\ (a2 h))) (NUMERAL (BIT1 _0))) (NUMERAL _0))))
+T c= c==> c==> c~ c/\ * f0 f1 * f2 f1 c= cNUMERAL c_0 cNUMERAL c_0 c= cCOND * / c/\ * f0 b0 * f2 b0 f1 cNUMERAL cBIT1 c_0 cNUMERAL c_0 cCOND c/\ * f0 f1 * f2 f1 cNUMERAL cBIT1 c_0 cNUMERAL c_0 c= cCOND * / c/\ * f0 b0 * f2 b0 f1 cNUMERAL cBIT1 c_0 cNUMERAL c_0 cCOND c/\ * f0 f1 * f2 f1 cNUMERAL cBIT1 c_0 cNUMERAL c_0
++ |- (((!a. (!x. (!s'. ((((filter a) NIL) = NIL) /\ (((filter a) ((CONS x) s')) = (((COND (a x)) ((CONS x) ((filter a) s'))) ((filter a) s'))))))) ==> ((\a. (!x. (!s'. ((((filter a) NIL) = NIL) /\ (((filter a) ((CONS x) s')) = (((COND (a x)) ((CONS x) ((filter a) s'))) ((filter a) s'))))))) a)) = ((\a. (!x. (!s'. ((((filter a) NIL) = NIL) /\ (((filter a) ((CONS x) s')) = (((COND (a x)) ((CONS x) ((filter a) s'))) ((filter a) s'))))))) a))
+T c= c==> ! ! ! c/\ c= cfilter b0 cNIL cNIL c= cfilter b0 cCONS b1 b2 cCOND * b0 b1 cCONS b1 cfilter b0 b2 cfilter b0 b2 * / ! ! c/\ c= cfilter b0 cNIL cNIL c= cfilter b0 cCONS b1 b2 cCOND * b0 b1 cCONS b1 cfilter b0 b2 cfilter b0 b2 f0 * / ! ! c/\ c= cfilter b0 cNIL cNIL c= cfilter b0 cCONS b1 b2 cCOND * b0 b1 cCONS b1 cfilter b0 b2 cfilter b0 b2 f0
+- ((P T) /\ (P F)) |- ((!P. (((P T) /\ (P F)) ==> (!x. (P x)))) ==> (!x. (P x)))
+T c==> c/\ * f0 cT * f0 cF c==> ! c==> c/\ * b0 cT * b0 cF ! * b0 b1 ! * f0 b0
++ |- (((((a1 h) /\ F) = F) ==> ((F ==> ((NUMERAL (BIT1 _0)) = t')) ==> (((~ F) ==> ((NUMERAL _0) = e')) ==> ((((COND ((a1 h) /\ F)) (NUMERAL (BIT1 _0))) (NUMERAL _0)) = (((COND F) t') e'))))) = ((F ==> ((NUMERAL (BIT1 _0)) = t')) ==> (((~ F) ==> ((NUMERAL _0) = e')) ==> ((((COND ((a1 h) /\ F)) (NUMERAL (BIT1 _0))) (NUMERAL _0)) = (((COND F) t') e')))))
+T c= c==> c= c/\ * f0 f1 cF cF c==> c==> cF c= cNUMERAL cBIT1 c_0 f2 c==> c==> c~ cF c= cNUMERAL c_0 f3 c= cCOND c/\ * f0 f1 cF cNUMERAL cBIT1 c_0 cNUMERAL c_0 cCOND cF f2 f3 c==> c==> cF c= cNUMERAL cBIT1 c_0 f2 c==> c==> c~ cF c= cNUMERAL c_0 f3 c= cCOND c/\ * f0 f1 cF cNUMERAL cBIT1 c_0 cNUMERAL c_0 cCOND cF f2 f3
+- ((!x. (P ==> (Q x))) = (P ==> (!x. (Q x)))) |- ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))
+T c==> c= ! c==> f0 * f1 b0 c==> f0 ! * f1 b0 c= c==> f0 ! * f1 b0 ! c==> f0 * f1 b0
++ |- ((((((count a1) (((COND T) ((CONS h) ((filter a2) t))) ((filter a2) t))) = ((((COND ((a1 h) /\ T)) (NUMERAL (BIT1 _0))) (NUMERAL _0)) + ((count a1) ((filter a2) t)))) /\ (((count a1) (((COND F) ((CONS h) ((filter a2) t))) ((filter a2) t))) = ((((COND ((a1 h) /\ F)) (NUMERAL (BIT1 _0))) (NUMERAL _0)) + ((count a1) ((filter a2) t))))) ==> (!x. (((count a1) (((COND x) ((CONS h) ((filter a2) t))) ((filter a2) t))) = ((((COND ((a1 h) /\ x)) (NUMERAL (BIT1 _0))) (NUMERAL _0)) + ((count a1) ((filter a2) t)))))) = (!x. (((count a1) (((COND x) ((CONS h) ((filter a2) t))) ((filter a2) t))) = ((((COND ((a1 h) /\ x)) (NUMERAL (BIT1 _0))) (NUMERAL _0)) + ((count a1) ((filter a2) t))))))
+T c= c==> c/\ c= ccount f0 cCOND cT cCONS f1 cfilter f2 f3 cfilter f2 f3 c+ cCOND c/\ * f0 f1 cT cNUMERAL cBIT1 c_0 cNUMERAL c_0 ccount f0 cfilter f2 f3 c= ccount f0 cCOND cF cCONS f1 cfilter f2 f3 cfilter f2 f3 c+ cCOND c/\ * f0 f1 cF cNUMERAL cBIT1 c_0 cNUMERAL c_0 ccount f0 cfilter f2 f3 ! c= ccount f0 cCOND b0 cCONS f1 cfilter f2 f3 cfilter f2 f3 c+ cCOND c/\ * f0 f1 b0 cNUMERAL cBIT1 c_0 cNUMERAL c_0 ccount f0 cfilter f2 f3 ! c= ccount f0 cCOND b0 cCONS f1 cfilter f2 f3 cfilter f2 f3 c+ cCOND c/\ * f0 f1 b0 cNUMERAL cBIT1 c_0 cNUMERAL c_0 ccount f0 cfilter f2 f3
++ (a1 h) |- ((a1 h) /\ ((NUMERAL (BIT1 _0)) = (NUMERAL (BIT1 _0))))
+T c==> * f0 f1 c/\ * f0 f1 c= cNUMERAL cBIT1 c_0 cNUMERAL cBIT1 c_0
++ |- (((((a1 h) /\ T) = (a1 h)) ==> (((a1 h) ==> ((NUMERAL (BIT1 _0)) = t')) ==> (((~ (a1 h)) ==> ((NUMERAL _0) = e')) ==> ((((COND ((a1 h) /\ T)) (NUMERAL (BIT1 _0))) (NUMERAL _0)) = (((COND (a1 h)) t') e'))))) = (((a1 h) ==> ((NUMERAL (BIT1 _0)) = t')) ==> (((~ (a1 h)) ==> ((NUMERAL _0) = e')) ==> ((((COND ((a1 h) /\ T)) (NUMERAL (BIT1 _0))) (NUMERAL _0)) = (((COND (a1 h)) t') e')))))
+T c= c==> c= c/\ * f0 f1 cT * f0 f1 c==> c==> * f0 f1 c= cNUMERAL cBIT1 c_0 f2 c==> c==> c~ * f0 f1 c= cNUMERAL c_0 f3 c= cCOND c/\ * f0 f1 cT cNUMERAL cBIT1 c_0 cNUMERAL c_0 cCOND * f0 f1 f2 f3 c==> c==> * f0 f1 c= cNUMERAL cBIT1 c_0 f2 c==> c==> c~ * f0 f1 c= cNUMERAL c_0 f3 c= cCOND c/\ * f0 f1 cT cNUMERAL cBIT1 c_0 cNUMERAL c_0 cCOND * f0 f1 f2 f3
++ |- (((!t'. (!e'. ((((\x. ((a1 x) /\ (a2 x))) h) = g') ==> ((g' ==> ((NUMERAL (BIT1 _0)) = t')) ==> (((~ g') ==> ((NUMERAL _0) = e')) ==> ((((COND ((\x. ((a1 x) /\ (a2 x))) h)) (NUMERAL (BIT1 _0))) (NUMERAL _0)) = (((COND g') t') e'))))))) ==> ((\t'. (!e'. ((((\x. ((a1 x) /\ (a2 x))) h) = g') ==> ((g' ==> ((NUMERAL (BIT1 _0)) = t')) ==> (((~ g') ==> ((NUMERAL _0) = e')) ==> ((((COND ((\x. ((a1 x) /\ (a2 x))) h)) (NUMERAL (BIT1 _0))) (NUMERAL _0)) = (((COND g') t') e'))))))) t')) = ((\t'. (!e'. ((((\x. ((a1 x) /\ (a2 x))) h) = g') ==> ((g' ==> ((NUMERAL (BIT1 _0)) = t')) ==> (((~ g') ==> ((NUMERAL _0) = e')) ==> ((((COND ((\x. ((a1 x) /\ (a2 x))) h)) (NUMERAL (BIT1 _0))) (NUMERAL _0)) = (((COND g') t') e'))))))) t'))
+T c= c==> ! ! c==> c= * / c/\ * f0 b2 * f1 b2 f2 f3 c==> c==> f3 c= cNUMERAL cBIT1 c_0 b0 c==> c==> c~ f3 c= cNUMERAL c_0 b1 c= cCOND * / c/\ * f0 b2 * f1 b2 f2 cNUMERAL cBIT1 c_0 cNUMERAL c_0 cCOND f3 b0 b1 * / ! c==> c= * / c/\ * f0 b2 * f1 b2 f2 f3 c==> c==> f3 c= cNUMERAL cBIT1 c_0 b0 c==> c==> c~ f3 c= cNUMERAL c_0 b1 c= cCOND * / c/\ * f0 b2 * f1 b2 f2 cNUMERAL cBIT1 c_0 cNUMERAL c_0 cCOND f3 b0 b1 f4 * / ! c==> c= * / c/\ * f0 b2 * f1 b2 f2 f3 c==> c==> f3 c= cNUMERAL cBIT1 c_0 b0 c==> c==> c~ f3 c= cNUMERAL c_0 b1 c= cCOND * / c/\ * f0 b2 * f1 b2 f2 cNUMERAL cBIT1 c_0 cNUMERAL c_0 cCOND f3 b0 b1 f4
++ |- (((count a1) NIL) = ((count ((predI a1) a2)) NIL))
+T c= ccount f0 cNIL ccount * * part cpredI f0 f1 cNIL
++ |- (((!a. (!x. (!s'. ((((count a) NIL) = (NUMERAL _0)) /\ (((count a) ((CONS x) s')) = ((((COND (a x)) (NUMERAL (BIT1 _0))) (NUMERAL _0)) + ((count a) s'))))))) ==> ((\a. (!x. (!s'. ((((count a) NIL) = (NUMERAL _0)) /\ (((count a) ((CONS x) s')) = ((((COND (a x)) (NUMERAL (BIT1 _0))) (NUMERAL _0)) + ((count a) s'))))))) a)) = ((\a. (!x. (!s'. ((((count a) NIL) = (NUMERAL _0)) /\ (((count a) ((CONS x) s')) = ((((COND (a x)) (NUMERAL (BIT1 _0))) (NUMERAL _0)) + ((count a) s'))))))) a))
+T c= c==> ! ! ! c/\ c= ccount b0 cNIL cNUMERAL c_0 c= ccount b0 cCONS b1 b2 c+ cCOND * b0 b1 cNUMERAL cBIT1 c_0 cNUMERAL c_0 ccount b0 b2 * / ! ! c/\ c= ccount b0 cNIL cNUMERAL c_0 c= ccount b0 cCONS b1 b2 c+ cCOND * b0 b1 cNUMERAL cBIT1 c_0 cNUMERAL c_0 ccount b0 b2 f0 * / ! ! c/\ c= ccount b0 cNIL cNUMERAL c_0 c= ccount b0 cCONS b1 b2 c+ cCOND * b0 b1 cNUMERAL cBIT1 c_0 cNUMERAL c_0 ccount b0 b2 f0
++ |- ((((count a1) ((filter a2) t)) = ((count a1) ((filter a2) t))) = (((count a1) ((filter a2) t)) = ((NUMERAL _0) + ((count a1) ((filter a2) t)))))
+T c= c= ccount f0 cfilter f1 f2 ccount f0 cfilter f1 f2 c= ccount f0 cfilter f1 f2 c+ cNUMERAL c_0 ccount f0 cfilter f1 f2
+- |- ((\P. (!Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x)))))) P)
+T * / ! c= c==> b0 ! * b1 b2 ! c==> b0 * b1 b2 f0
+- |- ((s = s1) ==> (((count a1) ((filter a2) s)) = ((count ((predI a1) a2)) s)))
+T c==> c= f0 f1 c= ccount f2 cfilter f3 f0 ccount * * part cpredI f2 f3 f0
+- ((a2 h) = x) |- ((\x. ((a2 h) = x)) x)
+T c==> c= * f0 f1 f2 * / c= * f0 f1 b0 f2
++ |- ((((COND ((a1 h) /\ T)) (NUMERAL (BIT1 _0))) (NUMERAL _0)) = (((COND (a1 h)) (NUMERAL (BIT1 _0))) (NUMERAL _0)))
+T c= cCOND c/\ * f0 f1 cT cNUMERAL cBIT1 c_0 cNUMERAL c_0 cCOND * f0 f1 cNUMERAL cBIT1 c_0 cNUMERAL c_0
++ (((count a1) ((filter a2) t)) = ((count ((predI a1) a2)) t)) |- (((count ((predI a1) a2)) t) = ((count a1) ((filter a2) t)))
+T c==> c= ccount f0 cfilter f1 f2 ccount * * part cpredI f0 f1 f2 c= ccount * * part cpredI f0 f1 f2 ccount f0 cfilter f1 f2
++ |- (((count a1) (((COND (a2 h)) ((CONS h) ((filter a2) t))) ((filter a2) t))) = ((((COND ((a1 h) /\ (a2 h))) (NUMERAL (BIT1 _0))) (NUMERAL _0)) + ((count a1) ((filter a2) t))))
+T c= ccount f0 cCOND * f1 f2 cCONS f2 cfilter f1 f3 cfilter f1 f3 c+ cCOND c/\ * f0 f2 * f1 f2 cNUMERAL cBIT1 c_0 cNUMERAL c_0 ccount f0 cfilter f1 f3
++ |- ((((((count a1) ((filter a2) NIL)) = ((count ((predI a1) a2)) NIL)) /\ (!a0. (!a1. ((((count a1) ((filter a2) a1)) = ((count ((predI a1) a2)) a1)) ==> (((count a1) ((filter a2) ((CONS a0) a1))) = ((count ((predI a1) a2)) ((CONS a0) a1))))))) ==> (!s. (((count a1) ((filter a2) s)) = ((count ((predI a1) a2)) s)))) = (!s. (((count a1) ((filter a2) s)) = ((count ((predI a1) a2)) s))))
+T c= c==> c/\ c= ccount f0 cfilter f1 cNIL ccount * * part cpredI f0 f1 cNIL ! ! c==> c= ccount f0 cfilter f1 b1 ccount * * part cpredI f0 f1 b1 c= ccount f0 cfilter f1 cCONS b0 b1 ccount * * part cpredI f0 f1 cCONS b0 b1 ! c= ccount f0 cfilter f1 b0 ccount * * part cpredI f0 f1 b0 ! c= ccount f0 cfilter f1 b0 ccount * * part cpredI f0 f1 b0
+- |- ((\t'. (!e'. (((a1 h) = g') ==> ((g' ==> ((NUMERAL (BIT1 _0)) = t')) ==> (((~ g') ==> ((NUMERAL _0) = e')) ==> ((((COND (a1 h)) (NUMERAL (BIT1 _0))) (NUMERAL _0)) = (((COND g') t') e'))))))) t')
+T * / ! c==> c= * f0 f1 f2 c==> c==> f2 c= cNUMERAL cBIT1 c_0 b0 c==> c==> c~ f2 c= cNUMERAL c_0 b1 c= cCOND * f0 f1 cNUMERAL cBIT1 c_0 cNUMERAL c_0 cCOND f2 b0 b1 f3
++ |- (((!p2. (((predI p1) p2) = (\x. ((p1 x) /\ (p2 x))))) ==> ((\p2. (((predI p1) p2) = (\x. ((p1 x) /\ (p2 x))))) p2)) = ((\p2. (((predI p1) p2) = (\x. ((p1 x) /\ (p2 x))))) p2))
+T c= c==> ! c= * * part cpredI f0 b0 / c/\ * f0 b1 * b0 b1 * / c= * * part cpredI f0 b0 / c/\ * f0 b1 * b0 b1 f1 * / c= * * part cpredI f0 b0 / c/\ * f0 b1 * b0 b1 f1
++ ((a1 h) /\ (a2 h)) |- (((a1 h) /\ (a2 h)) /\ ((NUMERAL (BIT1 _0)) = (NUMERAL (BIT1 _0))))
+T c==> c/\ * f0 f1 * f2 f1 c/\ c/\ * f0 f1 * f2 f1 c= cNUMERAL cBIT1 c_0 cNUMERAL cBIT1 c_0
+- ((a2 h) = x) |- (((a2 h) = x) /\ (?x. ((a2 h) = x)))
+T c==> c= * f0 f1 f2 c/\ c= * f0 f1 f2 c? / c= * f0 f1 b0
+- |- (((!e'. (((a2 h) = g') ==> ((g' ==> (((CONS h) ((filter a2) t)) = t')) ==> (((~ g') ==> (((filter a2) t) = e')) ==> ((((COND (a2 h)) ((CONS h) ((filter a2) t))) ((filter a2) t)) = (((COND g') t') e')))))) ==> ((\e'. (((a2 h) = g') ==> ((g' ==> (((CONS h) ((filter a2) t)) = t')) ==> (((~ g') ==> (((filter a2) t) = e')) ==> ((((COND (a2 h)) ((CONS h) ((filter a2) t))) ((filter a2) t)) = (((COND g') t') e')))))) e')) = ((\e'. (((a2 h) = g') ==> ((g' ==> (((CONS h) ((filter a2) t)) = t')) ==> (((~ g') ==> (((filter a2) t) = e')) ==> ((((COND (a2 h)) ((CONS h) ((filter a2) t))) ((filter a2) t)) = (((COND g') t') e')))))) e'))
+T c= c==> ! c==> c= * f0 f1 f2 c==> c==> f2 c= cCONS f1 cfilter f0 f3 f4 c==> c==> c~ f2 c= cfilter f0 f3 b0 c= cCOND * f0 f1 cCONS f1 cfilter f0 f3 cfilter f0 f3 cCOND f2 f4 b0 * / c==> c= * f0 f1 f2 c==> c==> f2 c= cCONS f1 cfilter f0 f3 f4 c==> c==> c~ f2 c= cfilter f0 f3 b0 c= cCOND * f0 f1 cCONS f1 cfilter f0 f3 cfilter f0 f3 cCOND f2 f4 b0 f5 * / c==> c= * f0 f1 f2 c==> c==> f2 c= cCONS f1 cfilter f0 f3 f4 c==> c==> c~ f2 c= cfilter f0 f3 b0 c= cCOND * f0 f1 cCONS f1 cfilter f0 f3 cfilter f0 f3 cCOND f2 f4 b0 f5
++ |- ((\P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))) P)
+T * / c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 f0
++ |- (((!n. (((NUMERAL _0) + n) = n)) ==> ((\n. (((NUMERAL _0) + n) = n)) n)) = ((\n. (((NUMERAL _0) + n) = n)) n))
+T c= c==> ! c= c+ cNUMERAL c_0 b0 b0 * / c= c+ cNUMERAL c_0 b0 b0 f0 * / c= c+ cNUMERAL c_0 b0 b0 f0
+- |- ((((a1 h) = (a1 h)) ==> (((a1 h) ==> ((NUMERAL (BIT1 _0)) = t')) ==> (((~ (a1 h)) ==> ((NUMERAL _0) = e')) ==> ((((COND (a1 h)) (NUMERAL (BIT1 _0))) (NUMERAL _0)) = (((COND (a1 h)) t') e'))))) = (((a1 h) ==> ((NUMERAL (BIT1 _0)) = t')) ==> (((~ (a1 h)) ==> ((NUMERAL _0) = e')) ==> ((((COND (a1 h)) (NUMERAL (BIT1 _0))) (NUMERAL _0)) = (((COND (a1 h)) t') e')))))
+T c= c==> c= * f0 f1 * f0 f1 c==> c==> * f0 f1 c= cNUMERAL cBIT1 c_0 f2 c==> c==> c~ * f0 f1 c= cNUMERAL c_0 f3 c= cCOND * f0 f1 cNUMERAL cBIT1 c_0 cNUMERAL c_0 cCOND * f0 f1 f2 f3 c==> c==> * f0 f1 c= cNUMERAL cBIT1 c_0 f2 c==> c==> c~ * f0 f1 c= cNUMERAL c_0 f3 c= cCOND * f0 f1 cNUMERAL cBIT1 c_0 cNUMERAL c_0 cCOND * f0 f1 f2 f3
++ |- (((((\x. ((a1 x) /\ (a2 x))) h) = ((a1 h) /\ (a2 h))) ==> ((((a1 h) /\ (a2 h)) ==> ((NUMERAL (BIT1 _0)) = t')) ==> (((~ ((a1 h) /\ (a2 h))) ==> ((NUMERAL _0) = e')) ==> ((((COND ((\x. ((a1 x) /\ (a2 x))) h)) (NUMERAL (BIT1 _0))) (NUMERAL _0)) = (((COND ((a1 h) /\ (a2 h))) t') e'))))) = ((((a1 h) /\ (a2 h)) ==> ((NUMERAL (BIT1 _0)) = t')) ==> (((~ ((a1 h) /\ (a2 h))) ==> ((NUMERAL _0) = e')) ==> ((((COND ((\x. ((a1 x) /\ (a2 x))) h)) (NUMERAL (BIT1 _0))) (NUMERAL _0)) = (((COND ((a1 h) /\ (a2 h))) t') e')))))
+T c= c==> c= * / c/\ * f0 b0 * f1 b0 f2 c/\ * f0 f2 * f1 f2 c==> c==> c/\ * f0 f2 * f1 f2 c= cNUMERAL cBIT1 c_0 f3 c==> c==> c~ c/\ * f0 f2 * f1 f2 c= cNUMERAL c_0 f4 c= cCOND * / c/\ * f0 b0 * f1 b0 f2 cNUMERAL cBIT1 c_0 cNUMERAL c_0 cCOND c/\ * f0 f2 * f1 f2 f3 f4 c==> c==> c/\ * f0 f2 * f1 f2 c= cNUMERAL cBIT1 c_0 f3 c==> c==> c~ c/\ * f0 f2 * f1 f2 c= cNUMERAL c_0 f4 c= cCOND * / c/\ * f0 b0 * f1 b0 f2 cNUMERAL cBIT1 c_0 cNUMERAL c_0 cCOND c/\ * f0 f2 * f1 f2 f3 f4
+- |- (((~ (a1 h)) ==> ((NUMERAL _0) = e')) ==> ((((COND (a1 h)) (NUMERAL (BIT1 _0))) (NUMERAL _0)) = (((COND (a1 h)) (NUMERAL (BIT1 _0))) e')))
+T c==> c==> c~ * f0 f1 c= cNUMERAL c_0 f2 c= cCOND * f0 f1 cNUMERAL cBIT1 c_0 cNUMERAL c_0 cCOND * f0 f1 cNUMERAL cBIT1 c_0 f2
+- ((a1 h) /\ (a2 h)) |- ((a1 h) = T)
+T c==> c/\ * f0 f1 * f2 f1 c= * f0 f1 cT
++ |- ((\t'. (!e'. ((((a1 h) /\ T) = g') ==> ((g' ==> ((NUMERAL (BIT1 _0)) = t')) ==> (((~ g') ==> ((NUMERAL _0) = e')) ==> ((((COND ((a1 h) /\ T)) (NUMERAL (BIT1 _0))) (NUMERAL _0)) = (((COND g') t') e'))))))) t')
+T * / ! c==> c= c/\ * f0 f1 cT f2 c==> c==> f2 c= cNUMERAL cBIT1 c_0 b0 c==> c==> c~ f2 c= cNUMERAL c_0 b1 c= cCOND c/\ * f0 f1 cT cNUMERAL cBIT1 c_0 cNUMERAL c_0 cCOND f2 b0 b1 f3
+- |- (((a2 h) = x) = ((\x. ((a2 h) = x)) x))
+T c= c= * f0 f1 f2 * / c= * f0 f1 b0 f2
++ |- ((((~ F) ==> ((NUMERAL _0) = (NUMERAL _0))) ==> ((((COND ((a1 h) /\ F)) (NUMERAL (BIT1 _0))) (NUMERAL _0)) = (((COND F) (NUMERAL (BIT1 _0))) (NUMERAL _0)))) = ((((COND ((a1 h) /\ F)) (NUMERAL (BIT1 _0))) (NUMERAL _0)) = (((COND F) (NUMERAL (BIT1 _0))) (NUMERAL _0))))
+T c= c==> c==> c~ cF c= cNUMERAL c_0 cNUMERAL c_0 c= cCOND c/\ * f0 f1 cF cNUMERAL cBIT1 c_0 cNUMERAL c_0 cCOND cF cNUMERAL cBIT1 c_0 cNUMERAL c_0 c= cCOND c/\ * f0 f1 cF cNUMERAL cBIT1 c_0 cNUMERAL c_0 cCOND cF cNUMERAL cBIT1 c_0 cNUMERAL c_0
+- |- ((((a1 h) ==> ((NUMERAL (BIT1 _0)) = (NUMERAL (BIT1 _0)))) ==> (((~ (a1 h)) ==> ((NUMERAL _0) = e')) ==> ((((COND (a1 h)) (NUMERAL (BIT1 _0))) (NUMERAL _0)) = (((COND (a1 h)) (NUMERAL (BIT1 _0))) e')))) = (((~ (a1 h)) ==> ((NUMERAL _0) = e')) ==> ((((COND (a1 h)) (NUMERAL (BIT1 _0))) (NUMERAL _0)) = (((COND (a1 h)) (NUMERAL (BIT1 _0))) e'))))
+T c= c==> c==> * f0 f1 c= cNUMERAL cBIT1 c_0 cNUMERAL cBIT1 c_0 c==> c==> c~ * f0 f1 c= cNUMERAL c_0 f2 c= cCOND * f0 f1 cNUMERAL cBIT1 c_0 cNUMERAL c_0 cCOND * f0 f1 cNUMERAL cBIT1 c_0 f2 c==> c==> c~ * f0 f1 c= cNUMERAL c_0 f2 c= cCOND * f0 f1 cNUMERAL cBIT1 c_0 cNUMERAL c_0 cCOND * f0 f1 cNUMERAL cBIT1 c_0 f2
++ |- ((\g'. (!t'. (!e'. ((((\x. ((a1 x) /\ (a2 x))) h) = g') ==> ((g' ==> ((NUMERAL (BIT1 _0)) = t')) ==> (((~ g') ==> ((NUMERAL _0) = e')) ==> ((((COND ((\x. ((a1 x) /\ (a2 x))) h)) (NUMERAL (BIT1 _0))) (NUMERAL _0)) = (((COND g') t') e')))))))) g')
+T * / ! ! c==> c= * / c/\ * f0 b3 * f1 b3 f2 b0 c==> c==> b0 c= cNUMERAL cBIT1 c_0 b1 c==> c==> c~ b0 c= cNUMERAL c_0 b2 c= cCOND * / c/\ * f0 b3 * f1 b3 f2 cNUMERAL cBIT1 c_0 cNUMERAL c_0 cCOND b0 b1 b2 f3
+- (!P. (((P T) /\ (P F)) ==> (!x. (P x)))) |- ((\P. (((P T) /\ (P F)) ==> (!x. (P x)))) P)
+T c==> ! c==> c/\ * b0 cT * b0 cF ! * b0 b1 * / c==> c/\ * b0 cT * b0 cF ! * b0 b1 f0
++ (~ (a1 h)) |- ((~ (a1 h)) /\ ((NUMERAL _0) = (NUMERAL _0)))
+T c==> c~ * f0 f1 c/\ c~ * f0 f1 c= cNUMERAL c_0 cNUMERAL c_0
++ |- ((~ F) ==> ((NUMERAL _0) = (NUMERAL _0)))
+T c==> c~ cF c= cNUMERAL c_0 cNUMERAL c_0
+- |- (!s1. (((\s1. (s = s1)) s1) ==> (?s1. (s = s1))))
+T c==> * / c= f0 b0 f1 c? / c= f0 b0
++ ((\x. ((a2 h) = x)) x) |- ((((a2 h) = x) ==> (((count a1) (((COND (a2 h)) ((CONS h) ((filter a2) t))) ((filter a2) t))) = ((((COND ((a1 h) /\ (a2 h))) (NUMERAL (BIT1 _0))) (NUMERAL _0)) + ((count a1) ((filter a2) t))))) = (((count a1) (((COND (a2 h)) ((CONS h) ((filter a2) t))) ((filter a2) t))) = ((((COND ((a1 h) /\ (a2 h))) (NUMERAL (BIT1 _0))) (NUMERAL _0)) + ((count a1) ((filter a2) t)))))
+T c==> * / c= * f0 f1 b0 f2 c= c==> c= * f0 f1 f2 c= ccount f3 cCOND * f0 f1 cCONS f1 cfilter f0 f4 cfilter f0 f4 c+ cCOND c/\ * f3 f1 * f0 f1 cNUMERAL cBIT1 c_0 cNUMERAL c_0 ccount f3 cfilter f0 f4 c= ccount f3 cCOND * f0 f1 cCONS f1 cfilter f0 f4 cfilter f0 f4 c+ cCOND c/\ * f3 f1 * f0 f1 cNUMERAL cBIT1 c_0 cNUMERAL c_0 ccount f3 cfilter f0 f4
+- |- ((\s1. (s = s1)) s)
+T * / c= f0 b0 f0
++ |- (((!s'. ((((filter a) NIL) = NIL) /\ (((filter a) ((CONS x) s')) = (((COND (a x)) ((CONS x) ((filter a) s'))) ((filter a) s'))))) ==> ((\s'. ((((filter a) NIL) = NIL) /\ (((filter a) ((CONS x) s')) = (((COND (a x)) ((CONS x) ((filter a) s'))) ((filter a) s'))))) s')) = ((\s'. ((((filter a) NIL) = NIL) /\ (((filter a) ((CONS x) s')) = (((COND (a x)) ((CONS x) ((filter a) s'))) ((filter a) s'))))) s'))
+T c= c==> ! c/\ c= cfilter f0 cNIL cNIL c= cfilter f0 cCONS f1 b0 cCOND * f0 f1 cCONS f1 cfilter f0 b0 cfilter f0 b0 * / c/\ c= cfilter f0 cNIL cNIL c= cfilter f0 cCONS f1 b0 cCOND * f0 f1 cCONS f1 cfilter f0 b0 cfilter f0 b0 f2 * / c/\ c= cfilter f0 cNIL cNIL c= cfilter f0 cCONS f1 b0 cCOND * f0 f1 cCONS f1 cfilter f0 b0 cfilter f0 b0 f2
++ |- ((\s'. ((((count a) NIL) = (NUMERAL _0)) /\ (((count a) ((CONS x) s')) = ((((COND (a x)) (NUMERAL (BIT1 _0))) (NUMERAL _0)) + ((count a) s'))))) s')
+T * / c/\ c= ccount f0 cNIL cNUMERAL c_0 c= ccount f0 cCONS f1 b0 c+ cCOND * f0 f1 cNUMERAL cBIT1 c_0 cNUMERAL c_0 ccount f0 b0 f2
+- ((\s1. (s = s1)) s1) |- (((s = s1) ==> (((count a1) ((filter a2) s)) = ((count ((predI a1) a2)) s))) = (((count a1) ((filter a2) s)) = ((count ((predI a1) a2)) s)))
+T c==> * / c= f0 b0 f1 c= c==> c= f0 f1 c= ccount f2 cfilter f3 f0 ccount * * part cpredI f2 f3 f0 c= ccount f2 cfilter f3 f0 ccount * * part cpredI f2 f3 f0
++ |- ((((\x. ((a1 x) /\ (a2 x))) h) = g') ==> ((g' ==> ((NUMERAL (BIT1 _0)) = t')) ==> (((~ g') ==> ((NUMERAL _0) = e')) ==> ((((COND ((\x. ((a1 x) /\ (a2 x))) h)) (NUMERAL (BIT1 _0))) (NUMERAL _0)) = (((COND g') t') e')))))
+T c==> c= * / c/\ * f0 b0 * f1 b0 f2 f3 c==> c==> f3 c= cNUMERAL cBIT1 c_0 f4 c==> c==> c~ f3 c= cNUMERAL c_0 f5 c= cCOND * / c/\ * f0 b0 * f1 b0 f2 cNUMERAL cBIT1 c_0 cNUMERAL c_0 cCOND f3 f4 f5
++ |- (((!e'. ((((a1 h) /\ F) = g') ==> ((g' ==> ((NUMERAL (BIT1 _0)) = t')) ==> (((~ g') ==> ((NUMERAL _0) = e')) ==> ((((COND ((a1 h) /\ F)) (NUMERAL (BIT1 _0))) (NUMERAL _0)) = (((COND g') t') e')))))) ==> ((\e'. ((((a1 h) /\ F) = g') ==> ((g' ==> ((NUMERAL (BIT1 _0)) = t')) ==> (((~ g') ==> ((NUMERAL _0) = e')) ==> ((((COND ((a1 h) /\ F)) (NUMERAL (BIT1 _0))) (NUMERAL _0)) = (((COND g') t') e')))))) e')) = ((\e'. ((((a1 h) /\ F) = g') ==> ((g' ==> ((NUMERAL (BIT1 _0)) = t')) ==> (((~ g') ==> ((NUMERAL _0) = e')) ==> ((((COND ((a1 h) /\ F)) (NUMERAL (BIT1 _0))) (NUMERAL _0)) = (((COND g') t') e')))))) e'))
+T c= c==> ! c==> c= c/\ * f0 f1 cF f2 c==> c==> f2 c= cNUMERAL cBIT1 c_0 f3 c==> c==> c~ f2 c= cNUMERAL c_0 b0 c= cCOND c/\ * f0 f1 cF cNUMERAL cBIT1 c_0 cNUMERAL c_0 cCOND f2 f3 b0 * / c==> c= c/\ * f0 f1 cF f2 c==> c==> f2 c= cNUMERAL cBIT1 c_0 f3 c==> c==> c~ f2 c= cNUMERAL c_0 b0 c= cCOND c/\ * f0 f1 cF cNUMERAL cBIT1 c_0 cNUMERAL c_0 cCOND f2 f3 b0 f4 * / c==> c= c/\ * f0 f1 cF f2 c==> c==> f2 c= cNUMERAL cBIT1 c_0 f3 c==> c==> c~ f2 c= cNUMERAL c_0 b0 c= cCOND c/\ * f0 f1 cF cNUMERAL cBIT1 c_0 cNUMERAL c_0 cCOND f2 f3 b0 f4
+- |- ((\e'. (((a1 h) = g') ==> ((g' ==> ((NUMERAL (BIT1 _0)) = t')) ==> (((~ g') ==> ((NUMERAL _0) = e')) ==> ((((COND (a1 h)) (NUMERAL (BIT1 _0))) (NUMERAL _0)) = (((COND g') t') e')))))) e')
+T * / c==> c= * f0 f1 f2 c==> c==> f2 c= cNUMERAL cBIT1 c_0 f3 c==> c==> c~ f2 c= cNUMERAL c_0 b0 c= cCOND * f0 f1 cNUMERAL cBIT1 c_0 cNUMERAL c_0 cCOND f2 f3 b0 f4
++ (((count a1) ((filter a2) t)) = ((count ((predI a1) a2)) t)) |- ((((count a1) (((COND (a2 h)) ((CONS h) ((filter a2) t))) ((filter a2) t))) = ((((COND ((a1 h) /\ (a2 h))) (NUMERAL (BIT1 _0))) (NUMERAL _0)) + ((count a1) ((filter a2) t)))) = (((count a1) (((COND (a2 h)) ((CONS h) ((filter a2) t))) ((filter a2) t))) = ((((COND ((a1 h) /\ (a2 h))) (NUMERAL (BIT1 _0))) (NUMERAL _0)) + ((count ((predI a1) a2)) t))))
+T c==> c= ccount f0 cfilter f1 f2 ccount * * part cpredI f0 f1 f2 c= c= ccount f0 cCOND * f1 f3 cCONS f3 cfilter f1 f2 cfilter f1 f2 c+ cCOND c/\ * f0 f3 * f1 f3 cNUMERAL cBIT1 c_0 cNUMERAL c_0 ccount f0 cfilter f1 f2 c= ccount f0 cCOND * f1 f3 cCONS f3 cfilter f1 f2 cfilter f1 f2 c+ cCOND c/\ * f0 f3 * f1 f3 cNUMERAL cBIT1 c_0 cNUMERAL c_0 ccount * * part cpredI f0 f1 f2
+- (!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))), ((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) |- ((!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))) /\ (!x. (P x)))
+T c==> ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 c==> c/\ * f0 cNIL ! ! c==> * f0 b1 * f0 cCONS b0 b1 c/\ ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 ! * f0 b0
+- |- ((((a1 h) /\ (a2 h)) = g') ==> ((g' ==> ((NUMERAL (BIT1 _0)) = t')) ==> (((~ g') ==> ((NUMERAL _0) = e')) ==> ((((COND ((a1 h) /\ (a2 h))) (NUMERAL (BIT1 _0))) (NUMERAL _0)) = (((COND g') t') e')))))
+T c==> c= c/\ * f0 f1 * f2 f1 f3 c==> c==> f3 c= cNUMERAL cBIT1 c_0 f4 c==> c==> c~ f3 c= cNUMERAL c_0 f5 c= cCOND c/\ * f0 f1 * f2 f1 cNUMERAL cBIT1 c_0 cNUMERAL c_0 cCOND f3 f4 f5
++ |- (((!x. (!s'. ((((count a) NIL) = (NUMERAL _0)) /\ (((count a) ((CONS x) s')) = ((((COND (a x)) (NUMERAL (BIT1 _0))) (NUMERAL _0)) + ((count a) s')))))) ==> ((\x. (!s'. ((((count a) NIL) = (NUMERAL _0)) /\ (((count a) ((CONS x) s')) = ((((COND (a x)) (NUMERAL (BIT1 _0))) (NUMERAL _0)) + ((count a) s')))))) x)) = ((\x. (!s'. ((((count a) NIL) = (NUMERAL _0)) /\ (((count a) ((CONS x) s')) = ((((COND (a x)) (NUMERAL (BIT1 _0))) (NUMERAL _0)) + ((count a) s')))))) x))
+T c= c==> ! ! c/\ c= ccount f0 cNIL cNUMERAL c_0 c= ccount f0 cCONS b0 b1 c+ cCOND * f0 b0 cNUMERAL cBIT1 c_0 cNUMERAL c_0 ccount f0 b1 * / ! c/\ c= ccount f0 cNIL cNUMERAL c_0 c= ccount f0 cCONS b0 b1 c+ cCOND * f0 b0 cNUMERAL cBIT1 c_0 cNUMERAL c_0 ccount f0 b1 f1 * / ! c/\ c= ccount f0 cNIL cNUMERAL c_0 c= ccount f0 cCONS b0 b1 c+ cCOND * f0 b0 cNUMERAL cBIT1 c_0 cNUMERAL c_0 ccount f0 b1 f1
++ |- ((\n. (((NUMERAL _0) + n) = n)) n)
+T * / c= c+ cNUMERAL c_0 b0 b0 f0
++ |- ((F ==> ((NUMERAL (BIT1 _0)) = t')) ==> (((~ F) ==> ((NUMERAL _0) = e')) ==> ((((COND ((a1 h) /\ F)) (NUMERAL (BIT1 _0))) (NUMERAL _0)) = (((COND F) t') e'))))
+T c==> c==> cF c= cNUMERAL cBIT1 c_0 f0 c==> c==> c~ cF c= cNUMERAL c_0 f1 c= cCOND c/\ * f2 f3 cF cNUMERAL cBIT1 c_0 cNUMERAL c_0 cCOND cF f0 f1
++ |- (((((count a1) ((filter a2) NIL)) = ((count ((predI a1) a2)) NIL)) /\ (!a0. (!a1. ((((count a1) ((filter a2) a1)) = ((count ((predI a1) a2)) a1)) ==> (((count a1) ((filter a2) ((CONS a0) a1))) = ((count ((predI a1) a2)) ((CONS a0) a1))))))) ==> (!s. (((count a1) ((filter a2) s)) = ((count ((predI a1) a2)) s))))
+T c==> c/\ c= ccount f0 cfilter f1 cNIL ccount * * part cpredI f0 f1 cNIL ! ! c==> c= ccount f0 cfilter f1 b1 ccount * * part cpredI f0 f1 b1 c= ccount f0 cfilter f1 cCONS b0 b1 ccount * * part cpredI f0 f1 cCONS b0 b1 ! c= ccount f0 cfilter f1 b0 ccount * * part cpredI f0 f1 b0
++ |- (((!x. (((count a1) (((COND x) ((CONS h) ((filter a2) t))) ((filter a2) t))) = ((((COND ((a1 h) /\ x)) (NUMERAL (BIT1 _0))) (NUMERAL _0)) + ((count a1) ((filter a2) t))))) ==> ((\x. (((count a1) (((COND x) ((CONS h) ((filter a2) t))) ((filter a2) t))) = ((((COND ((a1 h) /\ x)) (NUMERAL (BIT1 _0))) (NUMERAL _0)) + ((count a1) ((filter a2) t))))) x)) = ((\x. (((count a1) (((COND x) ((CONS h) ((filter a2) t))) ((filter a2) t))) = ((((COND ((a1 h) /\ x)) (NUMERAL (BIT1 _0))) (NUMERAL _0)) + ((count a1) ((filter a2) t))))) x))
+T c= c==> ! c= ccount f0 cCOND b0 cCONS f1 cfilter f2 f3 cfilter f2 f3 c+ cCOND c/\ * f0 f1 b0 cNUMERAL cBIT1 c_0 cNUMERAL c_0 ccount f0 cfilter f2 f3 * / c= ccount f0 cCOND b0 cCONS f1 cfilter f2 f3 cfilter f2 f3 c+ cCOND c/\ * f0 f1 b0 cNUMERAL cBIT1 c_0 cNUMERAL c_0 ccount f0 cfilter f2 f3 f4 * / c= ccount f0 cCOND b0 cCONS f1 cfilter f2 f3 cfilter f2 f3 c+ cCOND c/\ * f0 f1 b0 cNUMERAL cBIT1 c_0 cNUMERAL c_0 ccount f0 cfilter f2 f3 f4
+- |- ((((count a1) ((filter a2) s)) = ((count ((predI a1) a2)) s)) = T)
+T c= c= ccount f0 cfilter f1 f2 ccount * * part cpredI f0 f1 f2 cT
+- |- (((a1 h) = g') ==> ((g' ==> ((NUMERAL (BIT1 _0)) = t')) ==> (((~ g') ==> ((NUMERAL _0) = e')) ==> ((((COND (a1 h)) (NUMERAL (BIT1 _0))) (NUMERAL _0)) = (((COND g') t') e')))))
+T c==> c= * f0 f1 f2 c==> c==> f2 c= cNUMERAL cBIT1 c_0 f3 c==> c==> c~ f2 c= cNUMERAL c_0 f4 c= cCOND * f0 f1 cNUMERAL cBIT1 c_0 cNUMERAL c_0 cCOND f2 f3 f4
++ |- (((!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))) ==> ((\P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))) P)) = ((\P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))) P))
+T c= c==> ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 * / c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 f0 * / c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 f0
+- ((a1 h) /\ (a2 h)) |- ((a2 h) = T)
+T c==> c/\ * f0 f1 * f2 f1 c= * f2 f1 cT
+- (!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))), ((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) |- (!x. (P x))
+T c==> ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 c==> c/\ * f0 cNIL ! ! c==> * f0 b1 * f0 cCONS b0 b1 ! * f0 b0
++ |- ((!a1. ((((count a1) ((filter a2) a1)) = ((count ((predI a1) a2)) a1)) ==> (((count a1) ((filter a2) ((CONS h) a1))) = ((count ((predI a1) a2)) ((CONS h) a1))))) = T)
+T c= ! c==> c= ccount f0 cfilter f1 b0 ccount * * part cpredI f0 f1 b0 c= ccount f0 cfilter f1 cCONS f2 b0 ccount * * part cpredI f0 f1 cCONS f2 b0 cT
++ |- (((!x. (((\x. ((a2 h) = x)) x) ==> (((count a1) (((COND (a2 h)) ((CONS h) ((filter a2) t))) ((filter a2) t))) = ((((COND ((a1 h) /\ (a2 h))) (NUMERAL (BIT1 _0))) (NUMERAL _0)) + ((count a1) ((filter a2) t)))))) ==> ((?x. ((a2 h) = x)) ==> (((count a1) (((COND (a2 h)) ((CONS h) ((filter a2) t))) ((filter a2) t))) = ((((COND ((a1 h) /\ (a2 h))) (NUMERAL (BIT1 _0))) (NUMERAL _0)) + ((count a1) ((filter a2) t)))))) = ((?x. ((a2 h) = x)) ==> (((count a1) (((COND (a2 h)) ((CONS h) ((filter a2) t))) ((filter a2) t))) = ((((COND ((a1 h) /\ (a2 h))) (NUMERAL (BIT1 _0))) (NUMERAL _0)) + ((count a1) ((filter a2) t))))))
+T c= c==> ! c==> * / c= * f0 f1 b1 b0 c= ccount f2 cCOND * f0 f1 cCONS f1 cfilter f0 f3 cfilter f0 f3 c+ cCOND c/\ * f2 f1 * f0 f1 cNUMERAL cBIT1 c_0 cNUMERAL c_0 ccount f2 cfilter f0 f3 c==> c? / c= * f0 f1 b0 c= ccount f2 cCOND * f0 f1 cCONS f1 cfilter f0 f3 cfilter f0 f3 c+ cCOND c/\ * f2 f1 * f0 f1 cNUMERAL cBIT1 c_0 cNUMERAL c_0 ccount f2 cfilter f0 f3 c==> c? / c= * f0 f1 b0 c= ccount f2 cCOND * f0 f1 cCONS f1 cfilter f0 f3 cfilter f0 f3 c+ cCOND c/\ * f2 f1 * f0 f1 cNUMERAL cBIT1 c_0 cNUMERAL c_0 ccount f2 cfilter f0 f3
+- |- ((\e'. ((((a1 h) /\ (a2 h)) = g') ==> ((g' ==> ((NUMERAL (BIT1 _0)) = t')) ==> (((~ g') ==> ((NUMERAL _0) = e')) ==> ((((COND ((a1 h) /\ (a2 h))) (NUMERAL (BIT1 _0))) (NUMERAL _0)) = (((COND g') t') e')))))) e')
+T * / c==> c= c/\ * f0 f1 * f2 f1 f3 c==> c==> f3 c= cNUMERAL cBIT1 c_0 f4 c==> c==> c~ f3 c= cNUMERAL c_0 b0 c= cCOND c/\ * f0 f1 * f2 f1 cNUMERAL cBIT1 c_0 cNUMERAL c_0 cCOND f3 f4 b0 f5
+- (!P. (((P T) /\ (P F)) ==> (!x. (P x)))), ((P T) /\ (P F)) |- (!x. (P x))
+T c==> ! c==> c/\ * b0 cT * b0 cF ! * b0 b1 c==> c/\ * f0 cT * f0 cF ! * f0 b0
++ (~ ((a1 h) /\ (a2 h))) |- ((~ ((a1 h) /\ (a2 h))) /\ ((NUMERAL _0) = (NUMERAL _0)))
+T c==> c~ c/\ * f0 f1 * f2 f1 c/\ c~ c/\ * f0 f1 * f2 f1 c= cNUMERAL c_0 cNUMERAL c_0
++ |- ((((count a1) ((CONS h) ((filter a2) t))) = ((((COND (a1 h)) (NUMERAL (BIT1 _0))) (NUMERAL _0)) + ((count a1) ((filter a2) t)))) = (((count a1) (((COND T) ((CONS h) ((filter a2) t))) ((filter a2) t))) = ((((COND ((a1 h) /\ T)) (NUMERAL (BIT1 _0))) (NUMERAL _0)) + ((count a1) ((filter a2) t)))))
+T c= c= ccount f0 cCONS f1 cfilter f2 f3 c+ cCOND * f0 f1 cNUMERAL cBIT1 c_0 cNUMERAL c_0 ccount f0 cfilter f2 f3 c= ccount f0 cCOND cT cCONS f1 cfilter f2 f3 cfilter f2 f3 c+ cCOND c/\ * f0 f1 cT cNUMERAL cBIT1 c_0 cNUMERAL c_0 ccount f0 cfilter f2 f3
++ |- (((filter a) ((CONS x) s')) = (((COND (a x)) ((CONS x) ((filter a) s'))) ((filter a) s')))
+T c= cfilter f0 cCONS f1 f2 cCOND * f0 f1 cCONS f1 cfilter f0 f2 cfilter f0 f2
++ |- (((((count a1) (((COND T) ((CONS h) ((filter a2) t))) ((filter a2) t))) = ((((COND ((a1 h) /\ T)) (NUMERAL (BIT1 _0))) (NUMERAL _0)) + ((count a1) ((filter a2) t)))) /\ (((count a1) (((COND F) ((CONS h) ((filter a2) t))) ((filter a2) t))) = ((((COND ((a1 h) /\ F)) (NUMERAL (BIT1 _0))) (NUMERAL _0)) + ((count a1) ((filter a2) t))))) ==> (!x. (((count a1) (((COND x) ((CONS h) ((filter a2) t))) ((filter a2) t))) = ((((COND ((a1 h) /\ x)) (NUMERAL (BIT1 _0))) (NUMERAL _0)) + ((count a1) ((filter a2) t))))))
+T c==> c/\ c= ccount f0 cCOND cT cCONS f1 cfilter f2 f3 cfilter f2 f3 c+ cCOND c/\ * f0 f1 cT cNUMERAL cBIT1 c_0 cNUMERAL c_0 ccount f0 cfilter f2 f3 c= ccount f0 cCOND cF cCONS f1 cfilter f2 f3 cfilter f2 f3 c+ cCOND c/\ * f0 f1 cF cNUMERAL cBIT1 c_0 cNUMERAL c_0 ccount f0 cfilter f2 f3 ! c= ccount f0 cCOND b0 cCONS f1 cfilter f2 f3 cfilter f2 f3 c+ cCOND c/\ * f0 f1 b0 cNUMERAL cBIT1 c_0 cNUMERAL c_0 ccount f0 cfilter f2 f3
+- |- (!s1. (((\s1. (s = s1)) s1) ==> (((count a1) ((filter a2) s)) = ((count ((predI a1) a2)) s))))
+T c==> * / c= f0 b0 f1 c= ccount f2 cfilter f3 f0 ccount * * part cpredI f2 f3 f0
++ (((count a1) ((filter a2) t)) = ((count ((predI a1) a2)) t)) |- (((count a1) (((COND (a2 h)) ((CONS h) ((filter a2) t))) ((filter a2) t))) = ((count ((predI a1) a2)) ((CONS h) t)))
+T c==> c= ccount f0 cfilter f1 f2 ccount * * part cpredI f0 f1 f2 c= ccount f0 cCOND * f1 f3 cCONS f3 cfilter f1 f2 cfilter f1 f2 ccount * * part cpredI f0 f1 cCONS f3 f2
++ |- ((\x. (!s'. ((((count a) NIL) = (NUMERAL _0)) /\ (((count a) ((CONS x) s')) = ((((COND (a x)) (NUMERAL (BIT1 _0))) (NUMERAL _0)) + ((count a) s')))))) x)
+T * / ! c/\ c= ccount f0 cNIL cNUMERAL c_0 c= ccount f0 cCONS b0 b1 c+ cCOND * f0 b0 cNUMERAL cBIT1 c_0 cNUMERAL c_0 ccount f0 b1 f1
+- |- ((s = s1) = ((\s1. (s = s1)) s1))
+T c= c= f0 f1 * / c= f0 b0 f1
++ ((\x. ((a2 h) = x)) x) |- ((a2 h) = x)
+T c==> * / c= * f0 f1 b0 f2 c= * f0 f1 f2
++ |- ((((count a1) NIL) = ((count ((predI a1) a2)) NIL)) = (((count a1) ((filter a2) NIL)) = ((count ((predI a1) a2)) NIL)))
+T c= c= ccount f0 cNIL ccount * * part cpredI f0 f1 cNIL c= ccount f0 cfilter f1 cNIL ccount * * part cpredI f0 f1 cNIL
+- |- (((!s. (((count a1) ((filter a2) s)) = ((count ((predI a1) a2)) s))) ==> ((\s. (((count a1) ((filter a2) s)) = ((count ((predI a1) a2)) s))) s1)) = ((\s. (((count a1) ((filter a2) s)) = ((count ((predI a1) a2)) s))) s1))
+T c= c==> ! c= ccount f0 cfilter f1 b0 ccount * * part cpredI f0 f1 b0 * / c= ccount f0 cfilter f1 b0 ccount * * part cpredI f0 f1 b0 f2 * / c= ccount f0 cfilter f1 b0 ccount * * part cpredI f0 f1 b0 f2
++ |- (((g = g') ==> ((g' ==> (t = t')) ==> (((~ g') ==> (e = e')) ==> ((((COND g) t) e) = (((COND g') t') e'))))) = T)
+T c= c==> c= f0 f1 c==> c==> f1 c= f2 f3 c==> c==> c~ f1 c= f4 f5 c= cCOND f0 f2 f4 cCOND f1 f3 f5 cT
+- |- ((((COND ((a1 h) /\ (a2 h))) (NUMERAL (BIT1 _0))) (NUMERAL _0)) = (((COND ((a1 h) /\ (a2 h))) (NUMERAL (BIT1 _0))) (NUMERAL _0)))
+T c= cCOND c/\ * f0 f1 * f2 f1 cNUMERAL cBIT1 c_0 cNUMERAL c_0 cCOND c/\ * f0 f1 * f2 f1 cNUMERAL cBIT1 c_0 cNUMERAL c_0
+- |- (((a2 h) = x) ==> (?x. ((a2 h) = x)))
+T c==> c= * f0 f1 f2 c? / c= * f0 f1 b0
+- ((\x. ((a2 h) = x)) x) |- ((((a2 h) = x) ==> (?x. ((a2 h) = x))) = (?x. ((a2 h) = x)))
+T c==> * / c= * f0 f1 b0 f2 c= c==> c= * f0 f1 f2 c? / c= * f0 f1 b0 c? / c= * f0 f1 b0
+- (((count ((predI a1) a2)) t) = ((count a1) ((filter a2) t))) |- (((count a1) ((filter a2) t)) = ((count ((predI a1) a2)) t))
+T c==> c= ccount * * part cpredI f0 f1 f2 ccount f0 cfilter f1 f2 c= ccount f0 cfilter f1 f2 ccount * * part cpredI f0 f1 f2
+- |- (((!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))) ==> (!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x))))) = (!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))))
+T c= c==> ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1
++ |- (((!t'. (!e'. ((((a1 h) /\ T) = g') ==> ((g' ==> ((NUMERAL (BIT1 _0)) = t')) ==> (((~ g') ==> ((NUMERAL _0) = e')) ==> ((((COND ((a1 h) /\ T)) (NUMERAL (BIT1 _0))) (NUMERAL _0)) = (((COND g') t') e'))))))) ==> ((\t'. (!e'. ((((a1 h) /\ T) = g') ==> ((g' ==> ((NUMERAL (BIT1 _0)) = t')) ==> (((~ g') ==> ((NUMERAL _0) = e')) ==> ((((COND ((a1 h) /\ T)) (NUMERAL (BIT1 _0))) (NUMERAL _0)) = (((COND g') t') e'))))))) t')) = ((\t'. (!e'. ((((a1 h) /\ T) = g') ==> ((g' ==> ((NUMERAL (BIT1 _0)) = t')) ==> (((~ g') ==> ((NUMERAL _0) = e')) ==> ((((COND ((a1 h) /\ T)) (NUMERAL (BIT1 _0))) (NUMERAL _0)) = (((COND g') t') e'))))))) t'))
+T c= c==> ! ! c==> c= c/\ * f0 f1 cT f2 c==> c==> f2 c= cNUMERAL cBIT1 c_0 b0 c==> c==> c~ f2 c= cNUMERAL c_0 b1 c= cCOND c/\ * f0 f1 cT cNUMERAL cBIT1 c_0 cNUMERAL c_0 cCOND f2 b0 b1 * / ! c==> c= c/\ * f0 f1 cT f2 c==> c==> f2 c= cNUMERAL cBIT1 c_0 b0 c==> c==> c~ f2 c= cNUMERAL c_0 b1 c= cCOND c/\ * f0 f1 cT cNUMERAL cBIT1 c_0 cNUMERAL c_0 cCOND f2 b0 b1 f3 * / ! c==> c= c/\ * f0 f1 cT f2 c==> c==> f2 c= cNUMERAL cBIT1 c_0 b0 c==> c==> c~ f2 c= cNUMERAL c_0 b1 c= cCOND c/\ * f0 f1 cT cNUMERAL cBIT1 c_0 cNUMERAL c_0 cCOND f2 b0 b1 f3
++ |- ((\a. (!x. (!s'. ((((filter a) NIL) = NIL) /\ (((filter a) ((CONS x) s')) = (((COND (a x)) ((CONS x) ((filter a) s'))) ((filter a) s'))))))) a)
+T * / ! ! c/\ c= cfilter b0 cNIL cNIL c= cfilter b0 cCONS b1 b2 cCOND * b0 b1 cCONS b1 cfilter b0 b2 cfilter b0 b2 f0
+- |- (((((a1 h) /\ (a2 h)) ==> ((NUMERAL (BIT1 _0)) = (NUMERAL (BIT1 _0)))) ==> (((~ ((a1 h) /\ (a2 h))) ==> ((NUMERAL _0) = e')) ==> ((((COND ((a1 h) /\ (a2 h))) (NUMERAL (BIT1 _0))) (NUMERAL _0)) = (((COND ((a1 h) /\ (a2 h))) (NUMERAL (BIT1 _0))) e')))) = (((~ ((a1 h) /\ (a2 h))) ==> ((NUMERAL _0) = e')) ==> ((((COND ((a1 h) /\ (a2 h))) (NUMERAL (BIT1 _0))) (NUMERAL _0)) = (((COND ((a1 h) /\ (a2 h))) (NUMERAL (BIT1 _0))) e'))))
+T c= c==> c==> c/\ * f0 f1 * f2 f1 c= cNUMERAL cBIT1 c_0 cNUMERAL cBIT1 c_0 c==> c==> c~ c/\ * f0 f1 * f2 f1 c= cNUMERAL c_0 f3 c= cCOND c/\ * f0 f1 * f2 f1 cNUMERAL cBIT1 c_0 cNUMERAL c_0 cCOND c/\ * f0 f1 * f2 f1 cNUMERAL cBIT1 c_0 f3 c==> c==> c~ c/\ * f0 f1 * f2 f1 c= cNUMERAL c_0 f3 c= cCOND c/\ * f0 f1 * f2 f1 cNUMERAL cBIT1 c_0 cNUMERAL c_0 cCOND c/\ * f0 f1 * f2 f1 cNUMERAL cBIT1 c_0 f3
+- (!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))), ((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) |- (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) /\ (!x. (P x)))
+T c==> ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 c==> c/\ * f0 cNIL ! ! c==> * f0 b1 * f0 cCONS b0 b1 c/\ c/\ * f0 cNIL ! ! c==> * f0 b1 * f0 cCONS b0 b1 ! * f0 b0
++ |- ((((count a1) (((COND (a2 h)) ((CONS h) ((filter a2) t))) ((filter a2) t))) = ((((COND ((a1 h) /\ (a2 h))) (NUMERAL (BIT1 _0))) (NUMERAL _0)) + ((count ((predI a1) a2)) t))) = (((count a1) (((COND (a2 h)) ((CONS h) ((filter a2) t))) ((filter a2) t))) = ((((COND ((\x. ((a1 x) /\ (a2 x))) h)) (NUMERAL (BIT1 _0))) (NUMERAL _0)) + ((count ((predI a1) a2)) t))))
+T c= c= ccount f0 cCOND * f1 f2 cCONS f2 cfilter f1 f3 cfilter f1 f3 c+ cCOND c/\ * f0 f2 * f1 f2 cNUMERAL cBIT1 c_0 cNUMERAL c_0 ccount * * part cpredI f0 f1 f3 c= ccount f0 cCOND * f1 f2 cCONS f2 cfilter f1 f3 cfilter f1 f3 c+ cCOND * / c/\ * f0 b0 * f1 b0 f2 cNUMERAL cBIT1 c_0 cNUMERAL c_0 ccount * * part cpredI f0 f1 f3
+- (s = s1) |- ((((count a1) ((filter a2) s1)) = ((count ((predI a1) a2)) s)) = (((count a1) ((filter a2) s)) = ((count ((predI a1) a2)) s)))
+T c==> c= f0 f1 c= c= ccount f2 cfilter f3 f1 ccount * * part cpredI f2 f3 f0 c= ccount f2 cfilter f3 f0 ccount * * part cpredI f2 f3 f0
++ |- ((NUMERAL _0) = (NUMERAL _0))
+T c= cNUMERAL c_0 cNUMERAL c_0
+- ((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) |- ((!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))) ==> (!x. (P x)))
+T c==> c/\ * f0 cNIL ! ! c==> * f0 b1 * f0 cCONS b0 b1 c==> ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 ! * f0 b0
++ |- (!a0. (!a1. ((((count a1) ((filter a2) a1)) = ((count ((predI a1) a2)) a1)) ==> (((count a1) ((filter a2) ((CONS a0) a1))) = ((count ((predI a1) a2)) ((CONS a0) a1))))))
+T c==> c= ccount f0 cfilter f1 f2 ccount * * part cpredI f0 f1 f2 c= ccount f0 cfilter f1 cCONS f3 f2 ccount * * part cpredI f0 f1 cCONS f3 f2
++ |- ((\s'. ((((filter a) NIL) = NIL) /\ (((filter a) ((CONS x) s')) = (((COND (a x)) ((CONS x) ((filter a) s'))) ((filter a) s'))))) s')
+T * / c/\ c= cfilter f0 cNIL cNIL c= cfilter f0 cCONS f1 b0 cCOND * f0 f1 cCONS f1 cfilter f0 b0 cfilter f0 b0 f2
+- (~ F) |- ((F = F) = T)
+T c==> c~ cF c= c= cF cF cT
++ |- (((count a) NIL) = (NUMERAL _0))
+T c= ccount f0 cNIL cNUMERAL c_0
++ |- ((NUMERAL _0) = ((count ((predI a1) a2)) NIL))
+T c= cNUMERAL c_0 ccount * * part cpredI f0 f1 cNIL
++ |- ((\P. (((P T) /\ (P F)) ==> (!x. (P x)))) P)
+T * / c==> c/\ * b0 cT * b0 cF ! * b0 b1 f0
+- |- ((?s1. (s = s1)) ==> (?s1. (s = s1)))
+T c==> c? / c= f0 b0 c? / c= f0 b0
++ |- ((x = x) = T)
+T c= c= f0 f0 cT
+- |- ((\Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))) Q)
+T * / c= c==> f0 ! * b0 b1 ! c==> f0 * b0 b1 f1
+- (!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))) |- ((\P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))) P)
+T c==> ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 * / c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 f0
+- |- ((((~ (a2 h)) ==> (((filter a2) t) = ((filter a2) t))) ==> ((((COND (a2 h)) ((CONS h) ((filter a2) t))) ((filter a2) t)) = (((COND (a2 h)) ((CONS h) ((filter a2) t))) ((filter a2) t)))) = ((((COND (a2 h)) ((CONS h) ((filter a2) t))) ((filter a2) t)) = (((COND (a2 h)) ((CONS h) ((filter a2) t))) ((filter a2) t))))
+T c= c==> c==> c~ * f0 f1 c= cfilter f0 f2 cfilter f0 f2 c= cCOND * f0 f1 cCONS f1 cfilter f0 f2 cfilter f0 f2 cCOND * f0 f1 cCONS f1 cfilter f0 f2 cfilter f0 f2 c= cCOND * f0 f1 cCONS f1 cfilter f0 f2 cfilter f0 f2 cCOND * f0 f1 cCONS f1 cfilter f0 f2 cfilter f0 f2
+- (s = s1) |- (s1 = s)
+T c==> c= f0 f1 c= f1 f0
+- F |- (F = T)
+T c==> cF c= cF cT
+- |- (((!g'. (!t'. (!e'. (((a2 h) = g') ==> ((g' ==> (((CONS h) ((filter a2) t)) = t')) ==> (((~ g') ==> (((filter a2) t) = e')) ==> ((((COND (a2 h)) ((CONS h) ((filter a2) t))) ((filter a2) t)) = (((COND g') t') e')))))))) ==> ((\g'. (!t'. (!e'. (((a2 h) = g') ==> ((g' ==> (((CONS h) ((filter a2) t)) = t')) ==> (((~ g') ==> (((filter a2) t) = e')) ==> ((((COND (a2 h)) ((CONS h) ((filter a2) t))) ((filter a2) t)) = (((COND g') t') e')))))))) g')) = ((\g'. (!t'. (!e'. (((a2 h) = g') ==> ((g' ==> (((CONS h) ((filter a2) t)) = t')) ==> (((~ g') ==> (((filter a2) t) = e')) ==> ((((COND (a2 h)) ((CONS h) ((filter a2) t))) ((filter a2) t)) = (((COND g') t') e')))))))) g'))
+T c= c==> ! ! ! c==> c= * f0 f1 b0 c==> c==> b0 c= cCONS f1 cfilter f0 f2 b1 c==> c==> c~ b0 c= cfilter f0 f2 b2 c= cCOND * f0 f1 cCONS f1 cfilter f0 f2 cfilter f0 f2 cCOND b0 b1 b2 * / ! ! c==> c= * f0 f1 b0 c==> c==> b0 c= cCONS f1 cfilter f0 f2 b1 c==> c==> c~ b0 c= cfilter f0 f2 b2 c= cCOND * f0 f1 cCONS f1 cfilter f0 f2 cfilter f0 f2 cCOND b0 b1 b2 f3 * / ! ! c==> c= * f0 f1 b0 c==> c==> b0 c= cCONS f1 cfilter f0 f2 b1 c==> c==> c~ b0 c= cfilter f0 f2 b2 c= cCOND * f0 f1 cCONS f1 cfilter f0 f2 cfilter f0 f2 cCOND b0 b1 b2 f3
++ |- ((\p1. (!p2. (((predI p1) p2) = (\x. ((p1 x) /\ (p2 x)))))) p1)
+T * / ! c= * * part cpredI b0 b1 / c/\ * b0 b2 * b1 b2 f0
+- ((\s1. (s = s1)) s1) |- (((s = s1) ==> (?s1. (s = s1))) = (?s1. (s = s1)))
+T c==> * / c= f0 b0 f1 c= c==> c= f0 f1 c? / c= f0 b0 c? / c= f0 b0
++ |- (((!e'. ((((a1 h) /\ T) = g') ==> ((g' ==> ((NUMERAL (BIT1 _0)) = t')) ==> (((~ g') ==> ((NUMERAL _0) = e')) ==> ((((COND ((a1 h) /\ T)) (NUMERAL (BIT1 _0))) (NUMERAL _0)) = (((COND g') t') e')))))) ==> ((\e'. ((((a1 h) /\ T) = g') ==> ((g' ==> ((NUMERAL (BIT1 _0)) = t')) ==> (((~ g') ==> ((NUMERAL _0) = e')) ==> ((((COND ((a1 h) /\ T)) (NUMERAL (BIT1 _0))) (NUMERAL _0)) = (((COND g') t') e')))))) e')) = ((\e'. ((((a1 h) /\ T) = g') ==> ((g' ==> ((NUMERAL (BIT1 _0)) = t')) ==> (((~ g') ==> ((NUMERAL _0) = e')) ==> ((((COND ((a1 h) /\ T)) (NUMERAL (BIT1 _0))) (NUMERAL _0)) = (((COND g') t') e')))))) e'))
+T c= c==> ! c==> c= c/\ * f0 f1 cT f2 c==> c==> f2 c= cNUMERAL cBIT1 c_0 f3 c==> c==> c~ f2 c= cNUMERAL c_0 b0 c= cCOND c/\ * f0 f1 cT cNUMERAL cBIT1 c_0 cNUMERAL c_0 cCOND f2 f3 b0 * / c==> c= c/\ * f0 f1 cT f2 c==> c==> f2 c= cNUMERAL cBIT1 c_0 f3 c==> c==> c~ f2 c= cNUMERAL c_0 b0 c= cCOND c/\ * f0 f1 cT cNUMERAL cBIT1 c_0 cNUMERAL c_0 cCOND f2 f3 b0 f4 * / c==> c= c/\ * f0 f1 cT f2 c==> c==> f2 c= cNUMERAL cBIT1 c_0 f3 c==> c==> c~ f2 c= cNUMERAL c_0 b0 c= cCOND c/\ * f0 f1 cT cNUMERAL cBIT1 c_0 cNUMERAL c_0 cCOND f2 f3 b0 f4
+- |- (((!x. (((\x. ((a2 h) = x)) x) ==> (?x. ((a2 h) = x)))) ==> ((?x. ((a2 h) = x)) ==> (?x. ((a2 h) = x)))) = ((?x. ((a2 h) = x)) ==> (?x. ((a2 h) = x))))
+T c= c==> ! c==> * / c= * f0 f1 b1 b0 c? / c= * f0 f1 b1 c==> c? / c= * f0 f1 b0 c? / c= * f0 f1 b0 c==> c? / c= * f0 f1 b0 c? / c= * f0 f1 b0
++ |- (((F ==> ((NUMERAL (BIT1 _0)) = (NUMERAL (BIT1 _0)))) ==> (((~ F) ==> ((NUMERAL _0) = e')) ==> ((((COND ((a1 h) /\ F)) (NUMERAL (BIT1 _0))) (NUMERAL _0)) = (((COND F) (NUMERAL (BIT1 _0))) e')))) = (((~ F) ==> ((NUMERAL _0) = e')) ==> ((((COND ((a1 h) /\ F)) (NUMERAL (BIT1 _0))) (NUMERAL _0)) = (((COND F) (NUMERAL (BIT1 _0))) e'))))
+T c= c==> c==> cF c= cNUMERAL cBIT1 c_0 cNUMERAL cBIT1 c_0 c==> c==> c~ cF c= cNUMERAL c_0 f0 c= cCOND c/\ * f1 f2 cF cNUMERAL cBIT1 c_0 cNUMERAL c_0 cCOND cF cNUMERAL cBIT1 c_0 f0 c==> c==> c~ cF c= cNUMERAL c_0 f0 c= cCOND c/\ * f1 f2 cF cNUMERAL cBIT1 c_0 cNUMERAL c_0 cCOND cF cNUMERAL cBIT1 c_0 f0
+- |- ((\t'. (!e'. ((((a1 h) /\ (a2 h)) = g') ==> ((g' ==> ((NUMERAL (BIT1 _0)) = t')) ==> (((~ g') ==> ((NUMERAL _0) = e')) ==> ((((COND ((a1 h) /\ (a2 h))) (NUMERAL (BIT1 _0))) (NUMERAL _0)) = (((COND g') t') e'))))))) t')
+T * / ! c==> c= c/\ * f0 f1 * f2 f1 f3 c==> c==> f3 c= cNUMERAL cBIT1 c_0 b0 c==> c==> c~ f3 c= cNUMERAL c_0 b1 c= cCOND c/\ * f0 f1 * f2 f1 cNUMERAL cBIT1 c_0 cNUMERAL c_0 cCOND f3 b0 b1 f4
++ |- (((!t'. (!e'. ((((a1 h) /\ F) = g') ==> ((g' ==> ((NUMERAL (BIT1 _0)) = t')) ==> (((~ g') ==> ((NUMERAL _0) = e')) ==> ((((COND ((a1 h) /\ F)) (NUMERAL (BIT1 _0))) (NUMERAL _0)) = (((COND g') t') e'))))))) ==> ((\t'. (!e'. ((((a1 h) /\ F) = g') ==> ((g' ==> ((NUMERAL (BIT1 _0)) = t')) ==> (((~ g') ==> ((NUMERAL _0) = e')) ==> ((((COND ((a1 h) /\ F)) (NUMERAL (BIT1 _0))) (NUMERAL _0)) = (((COND g') t') e'))))))) t')) = ((\t'. (!e'. ((((a1 h) /\ F) = g') ==> ((g' ==> ((NUMERAL (BIT1 _0)) = t')) ==> (((~ g') ==> ((NUMERAL _0) = e')) ==> ((((COND ((a1 h) /\ F)) (NUMERAL (BIT1 _0))) (NUMERAL _0)) = (((COND g') t') e'))))))) t'))
+T c= c==> ! ! c==> c= c/\ * f0 f1 cF f2 c==> c==> f2 c= cNUMERAL cBIT1 c_0 b0 c==> c==> c~ f2 c= cNUMERAL c_0 b1 c= cCOND c/\ * f0 f1 cF cNUMERAL cBIT1 c_0 cNUMERAL c_0 cCOND f2 b0 b1 * / ! c==> c= c/\ * f0 f1 cF f2 c==> c==> f2 c= cNUMERAL cBIT1 c_0 b0 c==> c==> c~ f2 c= cNUMERAL c_0 b1 c= cCOND c/\ * f0 f1 cF cNUMERAL cBIT1 c_0 cNUMERAL c_0 cCOND f2 b0 b1 f3 * / ! c==> c= c/\ * f0 f1 cF f2 c==> c==> f2 c= cNUMERAL cBIT1 c_0 b0 c==> c==> c~ f2 c= cNUMERAL c_0 b1 c= cCOND c/\ * f0 f1 cF cNUMERAL cBIT1 c_0 cNUMERAL c_0 cCOND f2 b0 b1 f3
+- |- ((!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))) ==> (!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))))
+T c==> ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1
+- |- ((s = s) = ((\s1. (s = s1)) s))
+T c= c= f0 f0 * / c= f0 b0 f0
+- |- (((!t'. (!e'. (((a2 h) = g') ==> ((g' ==> (((CONS h) ((filter a2) t)) = t')) ==> (((~ g') ==> (((filter a2) t) = e')) ==> ((((COND (a2 h)) ((CONS h) ((filter a2) t))) ((filter a2) t)) = (((COND g') t') e'))))))) ==> ((\t'. (!e'. (((a2 h) = g') ==> ((g' ==> (((CONS h) ((filter a2) t)) = t')) ==> (((~ g') ==> (((filter a2) t) = e')) ==> ((((COND (a2 h)) ((CONS h) ((filter a2) t))) ((filter a2) t)) = (((COND g') t') e'))))))) t')) = ((\t'. (!e'. (((a2 h) = g') ==> ((g' ==> (((CONS h) ((filter a2) t)) = t')) ==> (((~ g') ==> (((filter a2) t) = e')) ==> ((((COND (a2 h)) ((CONS h) ((filter a2) t))) ((filter a2) t)) = (((COND g') t') e'))))))) t'))
+T c= c==> ! ! c==> c= * f0 f1 f2 c==> c==> f2 c= cCONS f1 cfilter f0 f3 b0 c==> c==> c~ f2 c= cfilter f0 f3 b1 c= cCOND * f0 f1 cCONS f1 cfilter f0 f3 cfilter f0 f3 cCOND f2 b0 b1 * / ! c==> c= * f0 f1 f2 c==> c==> f2 c= cCONS f1 cfilter f0 f3 b0 c==> c==> c~ f2 c= cfilter f0 f3 b1 c= cCOND * f0 f1 cCONS f1 cfilter f0 f3 cfilter f0 f3 cCOND f2 b0 b1 f4 * / ! c==> c= * f0 f1 f2 c==> c==> f2 c= cCONS f1 cfilter f0 f3 b0 c==> c==> c~ f2 c= cfilter f0 f3 b1 c= cCOND * f0 f1 cCONS f1 cfilter f0 f3 cfilter f0 f3 cCOND f2 b0 b1 f4
+- (s = s1) |- ((((count a1) ((filter a2) s1)) = ((count ((predI a1) a2)) s1)) = (((count a1) ((filter a2) s1)) = ((count ((predI a1) a2)) s)))
+T c==> c= f0 f1 c= c= ccount f2 cfilter f3 f1 ccount * * part cpredI f2 f3 f1 c= ccount f2 cfilter f3 f1 ccount * * part cpredI f2 f3 f0
++ |- (((~ F) ==> ((NUMERAL _0) = e')) ==> ((((COND ((a1 h) /\ F)) (NUMERAL (BIT1 _0))) (NUMERAL _0)) = (((COND F) (NUMERAL (BIT1 _0))) e')))
+T c==> c==> c~ cF c= cNUMERAL c_0 f0 c= cCOND c/\ * f1 f2 cF cNUMERAL cBIT1 c_0 cNUMERAL c_0 cCOND cF cNUMERAL cBIT1 c_0 f0
+- (~ (a1 h)) |- ((a1 h) = F)
+T c==> c~ * f0 f1 c= * f0 f1 cF
++ |- (((a1 h) /\ (a2 h)) ==> ((NUMERAL (BIT1 _0)) = (NUMERAL (BIT1 _0))))
+T c==> c/\ * f0 f1 * f2 f1 c= cNUMERAL cBIT1 c_0 cNUMERAL cBIT1 c_0
+- |- (((a1 h) ==> ((NUMERAL (BIT1 _0)) = t')) ==> (((~ (a1 h)) ==> ((NUMERAL _0) = e')) ==> ((((COND (a1 h)) (NUMERAL (BIT1 _0))) (NUMERAL _0)) = (((COND (a1 h)) t') e'))))
+T c==> c==> * f0 f1 c= cNUMERAL cBIT1 c_0 f2 c==> c==> c~ * f0 f1 c= cNUMERAL c_0 f3 c= cCOND * f0 f1 cNUMERAL cBIT1 c_0 cNUMERAL c_0 cCOND * f0 f1 f2 f3
++ |- ((\e'. ((((\x. ((a1 x) /\ (a2 x))) h) = g') ==> ((g' ==> ((NUMERAL (BIT1 _0)) = t')) ==> (((~ g') ==> ((NUMERAL _0) = e')) ==> ((((COND ((\x. ((a1 x) /\ (a2 x))) h)) (NUMERAL (BIT1 _0))) (NUMERAL _0)) = (((COND g') t') e')))))) e')
+T * / c==> c= * / c/\ * f0 b1 * f1 b1 f2 f3 c==> c==> f3 c= cNUMERAL cBIT1 c_0 f4 c==> c==> c~ f3 c= cNUMERAL c_0 b0 c= cCOND * / c/\ * f0 b1 * f1 b1 f2 cNUMERAL cBIT1 c_0 cNUMERAL c_0 cCOND f3 f4 b0 f5
++ |- (!g'. (!t'. (!e'. ((g = g') ==> ((g' ==> (t = t')) ==> (((~ g') ==> (e = e')) ==> ((((COND g) t) e) = (((COND g') t') e'))))))))
+T c==> c= f0 f1 c==> c==> f1 c= f2 f3 c==> c==> c~ f1 c= f4 f5 c= cCOND f0 f2 f4 cCOND f1 f3 f5
++ |- ((((count a1) ((filter a2) t)) = ((NUMERAL _0) + ((count a1) ((filter a2) t)))) = (((count a1) (((COND F) ((CONS h) ((filter a2) t))) ((filter a2) t))) = ((((COND ((a1 h) /\ F)) (NUMERAL (BIT1 _0))) (NUMERAL _0)) + ((count a1) ((filter a2) t)))))
+T c= c= ccount f0 cfilter f1 f2 c+ cNUMERAL c_0 ccount f0 cfilter f1 f2 c= ccount f0 cCOND cF cCONS f3 cfilter f1 f2 cfilter f1 f2 c+ cCOND c/\ * f0 f3 cF cNUMERAL cBIT1 c_0 cNUMERAL c_0 ccount f0 cfilter f1 f2
+- (!P. (((P T) /\ (P F)) ==> (!x. (P x)))) |- ((((P T) /\ (P F)) ==> (!x. (P x))) = T)
+T c==> ! c==> c/\ * b0 cT * b0 cF ! * b0 b1 c= c==> c/\ * f0 cT * f0 cF ! * f0 b0 cT
++ |- ((a1 h) ==> ((NUMERAL (BIT1 _0)) = (NUMERAL (BIT1 _0))))
+T c==> * f0 f1 c= cNUMERAL cBIT1 c_0 cNUMERAL cBIT1 c_0
++ |- (((!e'. ((((\x. ((a1 x) /\ (a2 x))) h) = g') ==> ((g' ==> ((NUMERAL (BIT1 _0)) = t')) ==> (((~ g') ==> ((NUMERAL _0) = e')) ==> ((((COND ((\x. ((a1 x) /\ (a2 x))) h)) (NUMERAL (BIT1 _0))) (NUMERAL _0)) = (((COND g') t') e')))))) ==> ((\e'. ((((\x. ((a1 x) /\ (a2 x))) h) = g') ==> ((g' ==> ((NUMERAL (BIT1 _0)) = t')) ==> (((~ g') ==> ((NUMERAL _0) = e')) ==> ((((COND ((\x. ((a1 x) /\ (a2 x))) h)) (NUMERAL (BIT1 _0))) (NUMERAL _0)) = (((COND g') t') e')))))) e')) = ((\e'. ((((\x. ((a1 x) /\ (a2 x))) h) = g') ==> ((g' ==> ((NUMERAL (BIT1 _0)) = t')) ==> (((~ g') ==> ((NUMERAL _0) = e')) ==> ((((COND ((\x. ((a1 x) /\ (a2 x))) h)) (NUMERAL (BIT1 _0))) (NUMERAL _0)) = (((COND g') t') e')))))) e'))
+T c= c==> ! c==> c= * / c/\ * f0 b1 * f1 b1 f2 f3 c==> c==> f3 c= cNUMERAL cBIT1 c_0 f4 c==> c==> c~ f3 c= cNUMERAL c_0 b0 c= cCOND * / c/\ * f0 b1 * f1 b1 f2 cNUMERAL cBIT1 c_0 cNUMERAL c_0 cCOND f3 f4 b0 * / c==> c= * / c/\ * f0 b1 * f1 b1 f2 f3 c==> c==> f3 c= cNUMERAL cBIT1 c_0 f4 c==> c==> c~ f3 c= cNUMERAL c_0 b0 c= cCOND * / c/\ * f0 b1 * f1 b1 f2 cNUMERAL cBIT1 c_0 cNUMERAL c_0 cCOND f3 f4 b0 f5 * / c==> c= * / c/\ * f0 b1 * f1 b1 f2 f3 c==> c==> f3 c= cNUMERAL cBIT1 c_0 f4 c==> c==> c~ f3 c= cNUMERAL c_0 b0 c= cCOND * / c/\ * f0 b1 * f1 b1 f2 cNUMERAL cBIT1 c_0 cNUMERAL c_0 cCOND f3 f4 b0 f5
+- |- (((!P. (!Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x)))))) ==> ((\P. (!Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x)))))) P)) = ((\P. (!Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x)))))) P))
+T c= c==> ! ! c= c==> b0 ! * b1 b2 ! c==> b0 * b1 b2 * / ! c= c==> b0 ! * b1 b2 ! c==> b0 * b1 b2 f0 * / ! c= c==> b0 ! * b1 b2 ! c==> b0 * b1 b2 f0
++ |- ((!a0. (!a1. ((((count a1) ((filter a2) a1)) = ((count ((predI a1) a2)) a1)) ==> (((count a1) ((filter a2) ((CONS a0) a1))) = ((count ((predI a1) a2)) ((CONS a0) a1)))))) = ((((count a1) ((filter a2) NIL)) = ((count ((predI a1) a2)) NIL)) /\ (!a0. (!a1. ((((count a1) ((filter a2) a1)) = ((count ((predI a1) a2)) a1)) ==> (((count a1) ((filter a2) ((CONS a0) a1))) = ((count ((predI a1) a2)) ((CONS a0) a1))))))))
+T c= ! ! c==> c= ccount f0 cfilter f1 b1 ccount * * part cpredI f0 f1 b1 c= ccount f0 cfilter f1 cCONS b0 b1 ccount * * part cpredI f0 f1 cCONS b0 b1 c/\ c= ccount f0 cfilter f1 cNIL ccount * * part cpredI f0 f1 cNIL ! ! c==> c= ccount f0 cfilter f1 b1 ccount * * part cpredI f0 f1 b1 c= ccount f0 cfilter f1 cCONS b0 b1 ccount * * part cpredI f0 f1 cCONS b0 b1
++ |- (((!p1. (!p2. (((predI p1) p2) = (\x. ((p1 x) /\ (p2 x)))))) ==> ((\p1. (!p2. (((predI p1) p2) = (\x. ((p1 x) /\ (p2 x)))))) p1)) = ((\p1. (!p2. (((predI p1) p2) = (\x. ((p1 x) /\ (p2 x)))))) p1))
+T c= c==> ! ! c= * * part cpredI b0 b1 / c/\ * b0 b2 * b1 b2 * / ! c= * * part cpredI b0 b1 / c/\ * b0 b2 * b1 b2 f0 * / ! c= * * part cpredI b0 b1 / c/\ * b0 b2 * b1 b2 f0
++ |- (((((a1 h) /\ (a2 h)) ==> ((NUMERAL (BIT1 _0)) = (NUMERAL (BIT1 _0)))) ==> (((~ ((a1 h) /\ (a2 h))) ==> ((NUMERAL _0) = e')) ==> ((((COND ((\x. ((a1 x) /\ (a2 x))) h)) (NUMERAL (BIT1 _0))) (NUMERAL _0)) = (((COND ((a1 h) /\ (a2 h))) (NUMERAL (BIT1 _0))) e')))) = (((~ ((a1 h) /\ (a2 h))) ==> ((NUMERAL _0) = e')) ==> ((((COND ((\x. ((a1 x) /\ (a2 x))) h)) (NUMERAL (BIT1 _0))) (NUMERAL _0)) = (((COND ((a1 h) /\ (a2 h))) (NUMERAL (BIT1 _0))) e'))))
+T c= c==> c==> c/\ * f0 f1 * f2 f1 c= cNUMERAL cBIT1 c_0 cNUMERAL cBIT1 c_0 c==> c==> c~ c/\ * f0 f1 * f2 f1 c= cNUMERAL c_0 f3 c= cCOND * / c/\ * f0 b0 * f2 b0 f1 cNUMERAL cBIT1 c_0 cNUMERAL c_0 cCOND c/\ * f0 f1 * f2 f1 cNUMERAL cBIT1 c_0 f3 c==> c==> c~ c/\ * f0 f1 * f2 f1 c= cNUMERAL c_0 f3 c= cCOND * / c/\ * f0 b0 * f2 b0 f1 cNUMERAL cBIT1 c_0 cNUMERAL c_0 cCOND c/\ * f0 f1 * f2 f1 cNUMERAL cBIT1 c_0 f3
++ |- ((((count a1) (((COND T) ((CONS h) ((filter a2) t))) ((filter a2) t))) = ((((COND ((a1 h) /\ T)) (NUMERAL (BIT1 _0))) (NUMERAL _0)) + ((count a1) ((filter a2) t)))) /\ (((count a1) (((COND F) ((CONS h) ((filter a2) t))) ((filter a2) t))) = ((((COND ((a1 h) /\ F)) (NUMERAL (BIT1 _0))) (NUMERAL _0)) + ((count a1) ((filter a2) t)))))
+T c/\ c= ccount f0 cCOND cT cCONS f1 cfilter f2 f3 cfilter f2 f3 c+ cCOND c/\ * f0 f1 cT cNUMERAL cBIT1 c_0 cNUMERAL c_0 ccount f0 cfilter f2 f3 c= ccount f0 cCOND cF cCONS f1 cfilter f2 f3 cfilter f2 f3 c+ cCOND c/\ * f0 f1 cF cNUMERAL cBIT1 c_0 cNUMERAL c_0 ccount f0 cfilter f2 f3
++ (((count a1) ((filter a2) t)) = ((count ((predI a1) a2)) t)) |- (((count a1) (((COND (a2 h)) ((CONS h) ((filter a2) t))) ((filter a2) t))) = ((((COND ((\x. ((a1 x) /\ (a2 x))) h)) (NUMERAL (BIT1 _0))) (NUMERAL _0)) + ((count ((predI a1) a2)) t)))
+T c==> c= ccount f0 cfilter f1 f2 ccount * * part cpredI f0 f1 f2 c= ccount f0 cCOND * f1 f3 cCONS f3 cfilter f1 f2 cfilter f1 f2 c+ cCOND * / c/\ * f0 b0 * f1 b0 f3 cNUMERAL cBIT1 c_0 cNUMERAL c_0 ccount * * part cpredI f0 f1 f2
++ |- ((((a1 h) /\ T) = g') ==> ((g' ==> ((NUMERAL (BIT1 _0)) = t')) ==> (((~ g') ==> ((NUMERAL _0) = e')) ==> ((((COND ((a1 h) /\ T)) (NUMERAL (BIT1 _0))) (NUMERAL _0)) = (((COND g') t') e')))))
+T c==> c= c/\ * f0 f1 cT f2 c==> c==> f2 c= cNUMERAL cBIT1 c_0 f3 c==> c==> c~ f2 c= cNUMERAL c_0 f4 c= cCOND c/\ * f0 f1 cT cNUMERAL cBIT1 c_0 cNUMERAL c_0 cCOND f2 f3 f4
++ |- ((\x. ((a2 h) = x)) (a2 h))
+T * / c= * f0 f1 b0 * f0 f1
+- |- ((((COND (a1 h)) (NUMERAL (BIT1 _0))) (NUMERAL _0)) = (((COND (a1 h)) (NUMERAL (BIT1 _0))) (NUMERAL _0)))
+T c= cCOND * f0 f1 cNUMERAL cBIT1 c_0 cNUMERAL c_0 cCOND * f0 f1 cNUMERAL cBIT1 c_0 cNUMERAL c_0
+- ((\s1. (s = s1)) s1) |- (s = s1)
+T c==> * / c= f0 b0 f1 c= f0 f1
+- (s = s1) |- ((s = s1) /\ (?s1. (s = s1)))
+T c==> c= f0 f1 c/\ c= f0 f1 c? / c= f0 b0
++ |- (((count a1) (((COND T) ((CONS h) ((filter a2) t))) ((filter a2) t))) = ((((COND ((a1 h) /\ T)) (NUMERAL (BIT1 _0))) (NUMERAL _0)) + ((count a1) ((filter a2) t))))
+T c= ccount f0 cCOND cT cCONS f1 cfilter f2 f3 cfilter f2 f3 c+ cCOND c/\ * f0 f1 cT cNUMERAL cBIT1 c_0 cNUMERAL c_0 ccount f0 cfilter f2 f3
+- (s = s1) |- (((count a1) ((filter a2) s1)) = ((count ((predI a1) a2)) s))
+T c==> c= f0 f1 c= ccount f2 cfilter f3 f1 ccount * * part cpredI f2 f3 f0
+- ((\s1. (s = s1)) s1) |- (((\s1. (s = s1)) s1) /\ (?s1. (s = s1)))
+T c==> * / c= f0 b0 f1 c/\ * / c= f0 b0 f1 c? / c= f0 b0
+- |- (((!t'. (!e'. (((a1 h) = g') ==> ((g' ==> ((NUMERAL (BIT1 _0)) = t')) ==> (((~ g') ==> ((NUMERAL _0) = e')) ==> ((((COND (a1 h)) (NUMERAL (BIT1 _0))) (NUMERAL _0)) = (((COND g') t') e'))))))) ==> ((\t'. (!e'. (((a1 h) = g') ==> ((g' ==> ((NUMERAL (BIT1 _0)) = t')) ==> (((~ g') ==> ((NUMERAL _0) = e')) ==> ((((COND (a1 h)) (NUMERAL (BIT1 _0))) (NUMERAL _0)) = (((COND g') t') e'))))))) t')) = ((\t'. (!e'. (((a1 h) = g') ==> ((g' ==> ((NUMERAL (BIT1 _0)) = t')) ==> (((~ g') ==> ((NUMERAL _0) = e')) ==> ((((COND (a1 h)) (NUMERAL (BIT1 _0))) (NUMERAL _0)) = (((COND g') t') e'))))))) t'))
+T c= c==> ! ! c==> c= * f0 f1 f2 c==> c==> f2 c= cNUMERAL cBIT1 c_0 b0 c==> c==> c~ f2 c= cNUMERAL c_0 b1 c= cCOND * f0 f1 cNUMERAL cBIT1 c_0 cNUMERAL c_0 cCOND f2 b0 b1 * / ! c==> c= * f0 f1 f2 c==> c==> f2 c= cNUMERAL cBIT1 c_0 b0 c==> c==> c~ f2 c= cNUMERAL c_0 b1 c= cCOND * f0 f1 cNUMERAL cBIT1 c_0 cNUMERAL c_0 cCOND f2 b0 b1 f3 * / ! c==> c= * f0 f1 f2 c==> c==> f2 c= cNUMERAL cBIT1 c_0 b0 c==> c==> c~ f2 c= cNUMERAL c_0 b1 c= cCOND * f0 f1 cNUMERAL cBIT1 c_0 cNUMERAL c_0 cCOND f2 b0 b1 f3
+- |- ((?s1. (s = s1)) ==> (((count a1) ((filter a2) s)) = ((count ((predI a1) a2)) s)))
+T c==> c? / c= f0 b0 c= ccount f1 cfilter f2 f0 ccount * * part cpredI f1 f2 f0
++ |- (((!P. (((P T) /\ (P F)) ==> (!x. (P x)))) ==> ((\P. (((P T) /\ (P F)) ==> (!x. (P x)))) P)) = ((\P. (((P T) /\ (P F)) ==> (!x. (P x)))) P))
+T c= c==> ! c==> c/\ * b0 cT * b0 cF ! * b0 b1 * / c==> c/\ * b0 cT * b0 cF ! * b0 b1 f0 * / c==> c/\ * b0 cT * b0 cF ! * b0 b1 f0
+- (a2 h) |- ((a2 h) /\ (((CONS h) ((filter a2) t)) = ((CONS h) ((filter a2) t))))
+T c==> * f0 f1 c/\ * f0 f1 c= cCONS f1 cfilter f0 f2 cCONS f1 cfilter f0 f2
+- |- ((a2 h) ==> (((CONS h) ((filter a2) t)) = ((CONS h) ((filter a2) t))))
+T c==> * f0 f1 c= cCONS f1 cfilter f0 f2 cCONS f1 cfilter f0 f2
+- |- ((((a2 h) ==> (((CONS h) ((filter a2) t)) = ((CONS h) ((filter a2) t)))) ==> (((~ (a2 h)) ==> (((filter a2) t) = e')) ==> ((((COND (a2 h)) ((CONS h) ((filter a2) t))) ((filter a2) t)) = (((COND (a2 h)) ((CONS h) ((filter a2) t))) e')))) = (((~ (a2 h)) ==> (((filter a2) t) = e')) ==> ((((COND (a2 h)) ((CONS h) ((filter a2) t))) ((filter a2) t)) = (((COND (a2 h)) ((CONS h) ((filter a2) t))) e'))))
+T c= c==> c==> * f0 f1 c= cCONS f1 cfilter f0 f2 cCONS f1 cfilter f0 f2 c==> c==> c~ * f0 f1 c= cfilter f0 f2 f3 c= cCOND * f0 f1 cCONS f1 cfilter f0 f2 cfilter f0 f2 cCOND * f0 f1 cCONS f1 cfilter f0 f2 f3 c==> c==> c~ * f0 f1 c= cfilter f0 f2 f3 c= cCOND * f0 f1 cCONS f1 cfilter f0 f2 cfilter f0 f2 cCOND * f0 f1 cCONS f1 cfilter f0 f2 f3
+- |- ((~ (a2 h)) ==> (((filter a2) t) = ((filter a2) t)))
+T c==> c~ * f0 f1 c= cfilter f0 f2 cfilter f0 f2
+- ((\s1. (s = s1)) s1) |- (((\s1. (s = s1)) s1) /\ (((count a1) ((filter a2) s)) = ((count ((predI a1) a2)) s)))
+T c==> * / c= f0 b0 f1 c/\ * / c= f0 b0 f1 c= ccount f2 cfilter f3 f0 ccount * * part cpredI f2 f3 f0
++ (~ F) |- ((~ F) /\ ((NUMERAL _0) = (NUMERAL _0)))
+T c==> c~ cF c/\ c~ cF c= cNUMERAL c_0 cNUMERAL c_0
++ |- ((((COND F) t1) t2) = t2)
+T c= cCOND cF f0 f1 f1
++ |- ((\t'. (!e'. ((((a1 h) /\ F) = g') ==> ((g' ==> ((NUMERAL (BIT1 _0)) = t')) ==> (((~ g') ==> ((NUMERAL _0) = e')) ==> ((((COND ((a1 h) /\ F)) (NUMERAL (BIT1 _0))) (NUMERAL _0)) = (((COND g') t') e'))))))) t')
+T * / ! c==> c= c/\ * f0 f1 cF f2 c==> c==> f2 c= cNUMERAL cBIT1 c_0 b0 c==> c==> c~ f2 c= cNUMERAL c_0 b1 c= cCOND c/\ * f0 f1 cF cNUMERAL cBIT1 c_0 cNUMERAL c_0 cCOND f2 b0 b1 f3
++ |- ((((COND ((\x. ((a1 x) /\ (a2 x))) h)) (NUMERAL (BIT1 _0))) (NUMERAL _0)) = (((COND ((a1 h) /\ (a2 h))) (NUMERAL (BIT1 _0))) (NUMERAL _0)))
+T c= cCOND * / c/\ * f0 b0 * f1 b0 f2 cNUMERAL cBIT1 c_0 cNUMERAL c_0 cCOND c/\ * f0 f2 * f1 f2 cNUMERAL cBIT1 c_0 cNUMERAL c_0
++ |- (?x. ((a2 h) = x))
+T c? / c= * f0 f1 b0
++ |- ((~ (a1 h)) ==> ((NUMERAL _0) = (NUMERAL _0)))
+T c==> c~ * f0 f1 c= cNUMERAL c_0 cNUMERAL c_0
+- |- (((!P. (((P T) /\ (P F)) ==> (!x. (P x)))) ==> (!P. (((P T) /\ (P F)) ==> (!x. (P x))))) = (!P. (((P T) /\ (P F)) ==> (!x. (P x)))))
+T c= c==> ! c==> c/\ * b0 cT * b0 cF ! * b0 b1 ! c==> c/\ * b0 cT * b0 cF ! * b0 b1 ! c==> c/\ * b0 cT * b0 cF ! * b0 b1
++ |- ((\x. (!s'. ((((filter a) NIL) = NIL) /\ (((filter a) ((CONS x) s')) = (((COND (a x)) ((CONS x) ((filter a) s'))) ((filter a) s')))))) x)
+T * / ! c/\ c= cfilter f0 cNIL cNIL c= cfilter f0 cCONS b0 b1 cCOND * f0 b0 cCONS b0 cfilter f0 b1 cfilter f0 b1 f1
++ |- ((!a2. (!s. (((count a1) ((filter a2) s)) = ((count ((predI a1) a2)) s)))) = T)
+T c= ! ! c= ccount f0 cfilter b0 b1 ccount * * part cpredI f0 b0 b1 cT
++ |- (((?x. ((a2 h) = x)) ==> (((count a1) (((COND (a2 h)) ((CONS h) ((filter a2) t))) ((filter a2) t))) = ((((COND ((a1 h) /\ (a2 h))) (NUMERAL (BIT1 _0))) (NUMERAL _0)) + ((count a1) ((filter a2) t))))) = (((count a1) (((COND (a2 h)) ((CONS h) ((filter a2) t))) ((filter a2) t))) = ((((COND ((a1 h) /\ (a2 h))) (NUMERAL (BIT1 _0))) (NUMERAL _0)) + ((count a1) ((filter a2) t)))))
+T c= c==> c? / c= * f0 f1 b0 c= ccount f2 cCOND * f0 f1 cCONS f1 cfilter f0 f3 cfilter f0 f3 c+ cCOND c/\ * f2 f1 * f0 f1 cNUMERAL cBIT1 c_0 cNUMERAL c_0 ccount f2 cfilter f0 f3 c= ccount f2 cCOND * f0 f1 cCONS f1 cfilter f0 f3 cfilter f0 f3 c+ cCOND c/\ * f2 f1 * f0 f1 cNUMERAL cBIT1 c_0 cNUMERAL c_0 ccount f2 cfilter f0 f3
+- (!P. (((P T) /\ (P F)) ==> (!x. (P x)))) |- ((!P. (((P T) /\ (P F)) ==> (!x. (P x)))) /\ (!P. (((P T) /\ (P F)) ==> (!x. (P x)))))
+T c==> ! c==> c/\ * b0 cT * b0 cF ! * b0 b1 c/\ ! c==> c/\ * b0 cT * b0 cF ! * b0 b1 ! c==> c/\ * b0 cT * b0 cF ! * b0 b1
+- |- ((\e'. (((a2 h) = g') ==> ((g' ==> (((CONS h) ((filter a2) t)) = t')) ==> (((~ g') ==> (((filter a2) t) = e')) ==> ((((COND (a2 h)) ((CONS h) ((filter a2) t))) ((filter a2) t)) = (((COND g') t') e')))))) e')
+T * / c==> c= * f0 f1 f2 c==> c==> f2 c= cCONS f1 cfilter f0 f3 f4 c==> c==> c~ f2 c= cfilter f0 f3 b0 c= cCOND * f0 f1 cCONS f1 cfilter f0 f3 cfilter f0 f3 cCOND f2 f4 b0 f5
+- ((a2 h) = x) |- ((((count a1) (((COND x) ((CONS h) ((filter a2) t))) ((filter a2) t))) = ((((COND ((a1 h) /\ x)) (NUMERAL (BIT1 _0))) (NUMERAL _0)) + ((count a1) ((filter a2) t)))) = (((count a1) (((COND (a2 h)) ((CONS h) ((filter a2) t))) ((filter a2) t))) = ((((COND ((a1 h) /\ (a2 h))) (NUMERAL (BIT1 _0))) (NUMERAL _0)) + ((count a1) ((filter a2) t)))))
+T c==> c= * f0 f1 f2 c= c= ccount f3 cCOND f2 cCONS f1 cfilter f0 f4 cfilter f0 f4 c+ cCOND c/\ * f3 f1 f2 cNUMERAL cBIT1 c_0 cNUMERAL c_0 ccount f3 cfilter f0 f4 c= ccount f3 cCOND * f0 f1 cCONS f1 cfilter f0 f4 cfilter f0 f4 c+ cCOND c/\ * f3 f1 * f0 f1 cNUMERAL cBIT1 c_0 cNUMERAL c_0 ccount f3 cfilter f0 f4
+- |- (((?s1. (s = s1)) ==> (((count a1) ((filter a2) s)) = ((count ((predI a1) a2)) s))) = (((count a1) ((filter a2) s)) = ((count ((predI a1) a2)) s)))
+T c= c==> c? / c= f0 b0 c= ccount f1 cfilter f2 f0 ccount * * part cpredI f1 f2 f0 c= ccount f1 cfilter f2 f0 ccount * * part cpredI f1 f2 f0
+- (s = s1) |- ((((count a1) ((filter a2) s1)) = ((count ((predI a1) a2)) s1)) = (((count a1) ((filter a2) s)) = ((count ((predI a1) a2)) s)))
+T c==> c= f0 f1 c= c= ccount f2 cfilter f3 f1 ccount * * part cpredI f2 f3 f1 c= ccount f2 cfilter f3 f0 ccount * * part cpredI f2 f3 f0
+- |- ((\g'. (!t'. (!e'. (((a1 h) = g') ==> ((g' ==> ((NUMERAL (BIT1 _0)) = t')) ==> (((~ g') ==> ((NUMERAL _0) = e')) ==> ((((COND (a1 h)) (NUMERAL (BIT1 _0))) (NUMERAL _0)) = (((COND g') t') e')))))))) g')
+T * / ! ! c==> c= * f0 f1 b0 c==> c==> b0 c= cNUMERAL cBIT1 c_0 b1 c==> c==> c~ b0 c= cNUMERAL c_0 b2 c= cCOND * f0 f1 cNUMERAL cBIT1 c_0 cNUMERAL c_0 cCOND b0 b1 b2 f2
++ |- ((\e'. ((((a1 h) /\ F) = g') ==> ((g' ==> ((NUMERAL (BIT1 _0)) = t')) ==> (((~ g') ==> ((NUMERAL _0) = e')) ==> ((((COND ((a1 h) /\ F)) (NUMERAL (BIT1 _0))) (NUMERAL _0)) = (((COND g') t') e')))))) e')
+T * / c==> c= c/\ * f0 f1 cF f2 c==> c==> f2 c= cNUMERAL cBIT1 c_0 f3 c==> c==> c~ f2 c= cNUMERAL c_0 b0 c= cCOND c/\ * f0 f1 cF cNUMERAL cBIT1 c_0 cNUMERAL c_0 cCOND f2 f3 b0 f4
++ |- (((!x. (!s'. ((((filter a) NIL) = NIL) /\ (((filter a) ((CONS x) s')) = (((COND (a x)) ((CONS x) ((filter a) s'))) ((filter a) s')))))) ==> ((\x. (!s'. ((((filter a) NIL) = NIL) /\ (((filter a) ((CONS x) s')) = (((COND (a x)) ((CONS x) ((filter a) s'))) ((filter a) s')))))) x)) = ((\x. (!s'. ((((filter a) NIL) = NIL) /\ (((filter a) ((CONS x) s')) = (((COND (a x)) ((CONS x) ((filter a) s'))) ((filter a) s')))))) x))
+T c= c==> ! ! c/\ c= cfilter f0 cNIL cNIL c= cfilter f0 cCONS b0 b1 cCOND * f0 b0 cCONS b0 cfilter f0 b1 cfilter f0 b1 * / ! c/\ c= cfilter f0 cNIL cNIL c= cfilter f0 cCONS b0 b1 cCOND * f0 b0 cCONS b0 cfilter f0 b1 cfilter f0 b1 f1 * / ! c/\ c= cfilter f0 cNIL cNIL c= cfilter f0 cCONS b0 b1 cCOND * f0 b0 cCONS b0 cfilter f0 b1 cfilter f0 b1 f1
+- |- ((((\s1. (s = s1)) s1) ==> (((count a1) ((filter a2) s)) = ((count ((predI a1) a2)) s))) = T)
+T c= c==> * / c= f0 b0 f1 c= ccount f2 cfilter f3 f0 ccount * * part cpredI f2 f3 f0 cT
+- (~ ((a1 h) /\ (a2 h))) |- (((a1 h) /\ (a2 h)) = F)
+T c==> c~ c/\ * f0 f1 * f2 f1 c= c/\ * f0 f1 * f2 f1 cF
+- |- (((!x. (((\s1. (s = s1)) x) ==> (?s1. (s = s1)))) ==> ((?s1. (s = s1)) ==> (?s1. (s = s1)))) = ((?s1. (s = s1)) ==> (?s1. (s = s1))))
+T c= c==> ! c==> * / c= f0 b1 b0 c? / c= f0 b1 c==> c? / c= f0 b0 c? / c= f0 b0 c==> c? / c= f0 b0 c? / c= f0 b0
++ (((count a1) ((filter a2) t)) = ((count ((predI a1) a2)) t)) |- (((count a1) (((COND (a2 h)) ((CONS h) ((filter a2) t))) ((filter a2) t))) = ((((COND ((a1 h) /\ (a2 h))) (NUMERAL (BIT1 _0))) (NUMERAL _0)) + ((count ((predI a1) a2)) t)))
+T c==> c= ccount f0 cfilter f1 f2 ccount * * part cpredI f0 f1 f2 c= ccount f0 cCOND * f1 f3 cCONS f3 cfilter f1 f2 cfilter f1 f2 c+ cCOND c/\ * f0 f3 * f1 f3 cNUMERAL cBIT1 c_0 cNUMERAL c_0 ccount * * part cpredI f0 f1 f2
+- |- ((((COND (a2 h)) ((CONS h) ((filter a2) t))) ((filter a2) t)) = (((COND (a2 h)) ((CONS h) ((filter a2) t))) ((filter a2) t)))
+T c= cCOND * f0 f1 cCONS f1 cfilter f0 f2 cfilter f0 f2 cCOND * f0 f1 cCONS f1 cfilter f0 f2 cfilter f0 f2
+- |- (!x. (((\x. ((a2 h) = x)) x) ==> (?x. ((a2 h) = x))))
+T c==> * / c= * f0 f1 b0 f2 c? / c= * f0 f1 b0
+- |- ((t /\ t) = t)
+T c= c/\ f0 f0 f0
++ |- ((!e'. ((g = g') ==> ((g' ==> (t = t')) ==> (((~ g') ==> (e = e')) ==> ((((COND g) t) e) = (((COND g') t') e')))))) = T)
+T c= ! c==> c= f0 f1 c==> c==> f1 c= f2 f3 c==> c==> c~ f1 c= f4 b0 c= cCOND f0 f2 f4 cCOND f1 f3 b0 cT
++ |- (((a2 h) = x) ==> (((count a1) (((COND (a2 h)) ((CONS h) ((filter a2) t))) ((filter a2) t))) = ((((COND ((a1 h) /\ (a2 h))) (NUMERAL (BIT1 _0))) (NUMERAL _0)) + ((count a1) ((filter a2) t)))))
+T c==> c= * f0 f1 f2 c= ccount f3 cCOND * f0 f1 cCONS f1 cfilter f0 f4 cfilter f0 f4 c+ cCOND c/\ * f3 f1 * f0 f1 cNUMERAL cBIT1 c_0 cNUMERAL c_0 ccount f3 cfilter f0 f4
+- |- ((?x. ((a2 h) = x)) ==> (?x. ((a2 h) = x)))
+T c==> c? / c= * f0 f1 b0 c? / c= * f0 f1 b0
+- |- (((a2 h) ==> (((CONS h) ((filter a2) t)) = t')) ==> (((~ (a2 h)) ==> (((filter a2) t) = e')) ==> ((((COND (a2 h)) ((CONS h) ((filter a2) t))) ((filter a2) t)) = (((COND (a2 h)) t') e'))))
+T c==> c==> * f0 f1 c= cCONS f1 cfilter f0 f2 f3 c==> c==> c~ * f0 f1 c= cfilter f0 f2 f4 c= cCOND * f0 f1 cCONS f1 cfilter f0 f2 cfilter f0 f2 cCOND * f0 f1 f3 f4
+- |- ((s = s1) ==> (?s1. (s = s1)))
+T c==> c= f0 f1 c? / c= f0 b0
+- |- (((!t'. (!e'. ((((a1 h) /\ (a2 h)) = g') ==> ((g' ==> ((NUMERAL (BIT1 _0)) = t')) ==> (((~ g') ==> ((NUMERAL _0) = e')) ==> ((((COND ((a1 h) /\ (a2 h))) (NUMERAL (BIT1 _0))) (NUMERAL _0)) = (((COND g') t') e'))))))) ==> ((\t'. (!e'. ((((a1 h) /\ (a2 h)) = g') ==> ((g' ==> ((NUMERAL (BIT1 _0)) = t')) ==> (((~ g') ==> ((NUMERAL _0) = e')) ==> ((((COND ((a1 h) /\ (a2 h))) (NUMERAL (BIT1 _0))) (NUMERAL _0)) = (((COND g') t') e'))))))) t')) = ((\t'. (!e'. ((((a1 h) /\ (a2 h)) = g') ==> ((g' ==> ((NUMERAL (BIT1 _0)) = t')) ==> (((~ g') ==> ((NUMERAL _0) = e')) ==> ((((COND ((a1 h) /\ (a2 h))) (NUMERAL (BIT1 _0))) (NUMERAL _0)) = (((COND g') t') e'))))))) t'))
+T c= c==> ! ! c==> c= c/\ * f0 f1 * f2 f1 f3 c==> c==> f3 c= cNUMERAL cBIT1 c_0 b0 c==> c==> c~ f3 c= cNUMERAL c_0 b1 c= cCOND c/\ * f0 f1 * f2 f1 cNUMERAL cBIT1 c_0 cNUMERAL c_0 cCOND f3 b0 b1 * / ! c==> c= c/\ * f0 f1 * f2 f1 f3 c==> c==> f3 c= cNUMERAL cBIT1 c_0 b0 c==> c==> c~ f3 c= cNUMERAL c_0 b1 c= cCOND c/\ * f0 f1 * f2 f1 cNUMERAL cBIT1 c_0 cNUMERAL c_0 cCOND f3 b0 b1 f4 * / ! c==> c= c/\ * f0 f1 * f2 f1 f3 c==> c==> f3 c= cNUMERAL cBIT1 c_0 b0 c==> c==> c~ f3 c= cNUMERAL c_0 b1 c= cCOND c/\ * f0 f1 * f2 f1 cNUMERAL cBIT1 c_0 cNUMERAL c_0 cCOND f3 b0 b1 f4
+- |- ((!P. (((P T) /\ (P F)) ==> (!x. (P x)))) ==> (!P. (((P T) /\ (P F)) ==> (!x. (P x)))))
+T c==> ! c==> c/\ * b0 cT * b0 cF ! * b0 b1 ! c==> c/\ * b0 cT * b0 cF ! * b0 b1
++ |- ((((count a1) (((COND (a2 h)) ((CONS h) ((filter a2) t))) ((filter a2) t))) = ((count ((predI a1) a2)) ((CONS h) t))) = (((count a1) ((filter a2) ((CONS h) t))) = ((count ((predI a1) a2)) ((CONS h) t))))
+T c= c= ccount f0 cCOND * f1 f2 cCONS f2 cfilter f1 f3 cfilter f1 f3 ccount * * part cpredI f0 f1 cCONS f2 f3 c= ccount f0 cfilter f1 cCONS f2 f3 ccount * * part cpredI f0 f1 cCONS f2 f3
++ |- (!x. (((\x. ((a2 h) = x)) x) ==> (((count a1) (((COND (a2 h)) ((CONS h) ((filter a2) t))) ((filter a2) t))) = ((((COND ((a1 h) /\ (a2 h))) (NUMERAL (BIT1 _0))) (NUMERAL _0)) + ((count a1) ((filter a2) t))))))
+T c==> * / c= * f0 f1 b0 f2 c= ccount f3 cCOND * f0 f1 cCONS f1 cfilter f0 f4 cfilter f0 f4 c+ cCOND c/\ * f3 f1 * f0 f1 cNUMERAL cBIT1 c_0 cNUMERAL c_0 ccount f3 cfilter f0 f4
++ |- (((!g'. (!t'. (!e'. ((((\x. ((a1 x) /\ (a2 x))) h) = g') ==> ((g' ==> ((NUMERAL (BIT1 _0)) = t')) ==> (((~ g') ==> ((NUMERAL _0) = e')) ==> ((((COND ((\x. ((a1 x) /\ (a2 x))) h)) (NUMERAL (BIT1 _0))) (NUMERAL _0)) = (((COND g') t') e')))))))) ==> ((\g'. (!t'. (!e'. ((((\x. ((a1 x) /\ (a2 x))) h) = g') ==> ((g' ==> ((NUMERAL (BIT1 _0)) = t')) ==> (((~ g') ==> ((NUMERAL _0) = e')) ==> ((((COND ((\x. ((a1 x) /\ (a2 x))) h)) (NUMERAL (BIT1 _0))) (NUMERAL _0)) = (((COND g') t') e')))))))) g')) = ((\g'. (!t'. (!e'. ((((\x. ((a1 x) /\ (a2 x))) h) = g') ==> ((g' ==> ((NUMERAL (BIT1 _0)) = t')) ==> (((~ g') ==> ((NUMERAL _0) = e')) ==> ((((COND ((\x. ((a1 x) /\ (a2 x))) h)) (NUMERAL (BIT1 _0))) (NUMERAL _0)) = (((COND g') t') e')))))))) g'))
+T c= c==> ! ! ! c==> c= * / c/\ * f0 b3 * f1 b3 f2 b0 c==> c==> b0 c= cNUMERAL cBIT1 c_0 b1 c==> c==> c~ b0 c= cNUMERAL c_0 b2 c= cCOND * / c/\ * f0 b3 * f1 b3 f2 cNUMERAL cBIT1 c_0 cNUMERAL c_0 cCOND b0 b1 b2 * / ! ! c==> c= * / c/\ * f0 b3 * f1 b3 f2 b0 c==> c==> b0 c= cNUMERAL cBIT1 c_0 b1 c==> c==> c~ b0 c= cNUMERAL c_0 b2 c= cCOND * / c/\ * f0 b3 * f1 b3 f2 cNUMERAL cBIT1 c_0 cNUMERAL c_0 cCOND b0 b1 b2 f3 * / ! ! c==> c= * / c/\ * f0 b3 * f1 b3 f2 b0 c==> c==> b0 c= cNUMERAL cBIT1 c_0 b1 c==> c==> c~ b0 c= cNUMERAL c_0 b2 c= cCOND * / c/\ * f0 b3 * f1 b3 f2 cNUMERAL cBIT1 c_0 cNUMERAL c_0 cCOND b0 b1 b2 f3
++ |- (((~ (a1 h)) ==> ((NUMERAL _0) = e')) ==> ((((COND ((a1 h) /\ T)) (NUMERAL (BIT1 _0))) (NUMERAL _0)) = (((COND (a1 h)) (NUMERAL (BIT1 _0))) e')))
+T c==> c==> c~ * f0 f1 c= cNUMERAL c_0 f2 c= cCOND c/\ * f0 f1 cT cNUMERAL cBIT1 c_0 cNUMERAL c_0 cCOND * f0 f1 cNUMERAL cBIT1 c_0 f2
+- |- (((!x. (((\s1. (s = s1)) x) ==> (((count a1) ((filter a2) s)) = ((count ((predI a1) a2)) s)))) ==> ((?s1. (s = s1)) ==> (((count a1) ((filter a2) s)) = ((count ((predI a1) a2)) s)))) = ((?s1. (s = s1)) ==> (((count a1) ((filter a2) s)) = ((count ((predI a1) a2)) s))))
+T c= c==> ! c==> * / c= f0 b1 b0 c= ccount f1 cfilter f2 f0 ccount * * part cpredI f1 f2 f0 c==> c? / c= f0 b0 c= ccount f1 cfilter f2 f0 ccount * * part cpredI f1 f2 f0 c==> c? / c= f0 b0 c= ccount f1 cfilter f2 f0 ccount * * part cpredI f1 f2 f0
++ |- ((~ ((a1 h) /\ (a2 h))) ==> ((NUMERAL _0) = (NUMERAL _0)))
+T c==> c~ c/\ * f0 f1 * f2 f1 c= cNUMERAL c_0 cNUMERAL c_0
+- (~ F) |- (F = F)
+T c==> c~ cF c= cF cF
++ |- ((\e'. ((((a1 h) /\ T) = g') ==> ((g' ==> ((NUMERAL (BIT1 _0)) = t')) ==> (((~ g') ==> ((NUMERAL _0) = e')) ==> ((((COND ((a1 h) /\ T)) (NUMERAL (BIT1 _0))) (NUMERAL _0)) = (((COND g') t') e')))))) e')
+T * / c==> c= c/\ * f0 f1 cT f2 c==> c==> f2 c= cNUMERAL cBIT1 c_0 f3 c==> c==> c~ f2 c= cNUMERAL c_0 b0 c= cCOND c/\ * f0 f1 cT cNUMERAL cBIT1 c_0 cNUMERAL c_0 cCOND f2 f3 b0 f4
+- |- ((((((COND (a1 h)) (NUMERAL (BIT1 _0))) (NUMERAL _0)) + ((count a1) ((filter a2) t))) = ((((COND (a1 h)) (NUMERAL (BIT1 _0))) (NUMERAL _0)) + ((count a1) ((filter a2) t)))) = (((count a1) ((CONS h) ((filter a2) t))) = ((((COND (a1 h)) (NUMERAL (BIT1 _0))) (NUMERAL _0)) + ((count a1) ((filter a2) t)))))
+T c= c= c+ cCOND * f0 f1 cNUMERAL cBIT1 c_0 cNUMERAL c_0 ccount f0 cfilter f2 f3 c+ cCOND * f0 f1 cNUMERAL cBIT1 c_0 cNUMERAL c_0 ccount f0 cfilter f2 f3 c= ccount f0 cCONS f1 cfilter f2 f3 c+ cCOND * f0 f1 cNUMERAL cBIT1 c_0 cNUMERAL c_0 ccount f0 cfilter f2 f3
+- (!P. (((P T) /\ (P F)) ==> (!x. (P x)))), ((P T) /\ (P F)) |- (((P T) /\ (P F)) /\ (!x. (P x)))
+T c==> ! c==> c/\ * b0 cT * b0 cF ! * b0 b1 c==> c/\ * f0 cT * f0 cF c/\ c/\ * f0 cT * f0 cF ! * f0 b0
+- ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x)))) |- ((!x. (P ==> (Q x))) = (P ==> (!x. (Q x))))
+T c==> c= c==> f0 ! * f1 b0 ! c==> f0 * f1 b0 c= ! c==> f0 * f1 b0 c==> f0 ! * f1 b0
++ |- ((\t'. (!e'. ((((\x. ((a1 x) /\ (a2 x))) h) = g') ==> ((g' ==> ((NUMERAL (BIT1 _0)) = t')) ==> (((~ g') ==> ((NUMERAL _0) = e')) ==> ((((COND ((\x. ((a1 x) /\ (a2 x))) h)) (NUMERAL (BIT1 _0))) (NUMERAL _0)) = (((COND g') t') e'))))))) t')
+T * / ! c==> c= * / c/\ * f0 b2 * f1 b2 f2 f3 c==> c==> f3 c= cNUMERAL cBIT1 c_0 b0 c==> c==> c~ f3 c= cNUMERAL c_0 b1 c= cCOND * / c/\ * f0 b2 * f1 b2 f2 cNUMERAL cBIT1 c_0 cNUMERAL c_0 cCOND f3 b0 b1 f4
+- ((a2 h) = x) |- (x = (a2 h))
+T c==> c= * f0 f1 f2 c= f2 * f0 f1
++ |- ((((~ (a1 h)) ==> ((NUMERAL _0) = (NUMERAL _0))) ==> ((((COND ((a1 h) /\ T)) (NUMERAL (BIT1 _0))) (NUMERAL _0)) = (((COND (a1 h)) (NUMERAL (BIT1 _0))) (NUMERAL _0)))) = ((((COND ((a1 h) /\ T)) (NUMERAL (BIT1 _0))) (NUMERAL _0)) = (((COND (a1 h)) (NUMERAL (BIT1 _0))) (NUMERAL _0))))
+T c= c==> c==> c~ * f0 f1 c= cNUMERAL c_0 cNUMERAL c_0 c= cCOND c/\ * f0 f1 cT cNUMERAL cBIT1 c_0 cNUMERAL c_0 cCOND * f0 f1 cNUMERAL cBIT1 c_0 cNUMERAL c_0 c= cCOND c/\ * f0 f1 cT cNUMERAL cBIT1 c_0 cNUMERAL c_0 cCOND * f0 f1 cNUMERAL cBIT1 c_0 cNUMERAL c_0
++ ((a2 h) = x) |- (((count a1) (((COND x) ((CONS h) ((filter a2) t))) ((filter a2) t))) = ((((COND ((a1 h) /\ (a2 h))) (NUMERAL (BIT1 _0))) (NUMERAL _0)) + ((count a1) ((filter a2) t))))
+T c==> c= * f0 f1 f2 c= ccount f3 cCOND f2 cCONS f1 cfilter f0 f4 cfilter f0 f4 c+ cCOND c/\ * f3 f1 * f0 f1 cNUMERAL cBIT1 c_0 cNUMERAL c_0 ccount f3 cfilter f0 f4
+- |- (T = (((count a1) ((filter a2) t)) = ((count a1) ((filter a2) t))))
+T c= cT c= ccount f0 cfilter f1 f2 ccount f0 cfilter f1 f2
++ ((a2 h) = x) |- (((a2 h) = x) /\ (((count a1) (((COND (a2 h)) ((CONS h) ((filter a2) t))) ((filter a2) t))) = ((((COND ((a1 h) /\ (a2 h))) (NUMERAL (BIT1 _0))) (NUMERAL _0)) + ((count a1) ((filter a2) t)))))
+T c==> c= * f0 f1 f2 c/\ c= * f0 f1 f2 c= ccount f3 cCOND * f0 f1 cCONS f1 cfilter f0 f4 cfilter f0 f4 c+ cCOND c/\ * f3 f1 * f0 f1 cNUMERAL cBIT1 c_0 cNUMERAL c_0 ccount f3 cfilter f0 f4
++ |- (((count a1) ((filter a2) t)) = ((NUMERAL _0) + ((count a1) ((filter a2) t))))
+T c= ccount f0 cfilter f1 f2 c+ cNUMERAL c_0 ccount f0 cfilter f1 f2
+- (!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))) |- ((((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x))) = T)
+T c==> ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 c= c==> c/\ * f0 cNIL ! ! c==> * f0 b1 * f0 cCONS b0 b1 ! * f0 b0 cT
++ |- (((a1 h) ==> ((NUMERAL (BIT1 _0)) = t')) ==> (((~ (a1 h)) ==> ((NUMERAL _0) = e')) ==> ((((COND ((a1 h) /\ T)) (NUMERAL (BIT1 _0))) (NUMERAL _0)) = (((COND (a1 h)) t') e'))))
+T c==> c==> * f0 f1 c= cNUMERAL cBIT1 c_0 f2 c==> c==> c~ * f0 f1 c= cNUMERAL c_0 f3 c= cCOND c/\ * f0 f1 cT cNUMERAL cBIT1 c_0 cNUMERAL c_0 cCOND * f0 f1 f2 f3
++ |- ((((count a1) ((filter a2) NIL)) = ((count ((predI a1) a2)) NIL)) /\ (!a0. (!a1. ((((count a1) ((filter a2) a1)) = ((count ((predI a1) a2)) a1)) ==> (((count a1) ((filter a2) ((CONS a0) a1))) = ((count ((predI a1) a2)) ((CONS a0) a1)))))))
+T c/\ c= ccount f0 cfilter f1 cNIL ccount * * part cpredI f0 f1 cNIL ! ! c==> c= ccount f0 cfilter f1 b1 ccount * * part cpredI f0 f1 b1 c= ccount f0 cfilter f1 cCONS b0 b1 ccount * * part cpredI f0 f1 cCONS b0 b1
++ |- (((count a) ((CONS x) s')) = ((((COND (a x)) (NUMERAL (BIT1 _0))) (NUMERAL _0)) + ((count a) s')))
+T c= ccount f0 cCONS f1 f2 c+ cCOND * f0 f1 cNUMERAL cBIT1 c_0 cNUMERAL c_0 ccount f0 f2
+- |- (((~ ((a1 h) /\ (a2 h))) ==> ((NUMERAL _0) = e')) ==> ((((COND ((a1 h) /\ (a2 h))) (NUMERAL (BIT1 _0))) (NUMERAL _0)) = (((COND ((a1 h) /\ (a2 h))) (NUMERAL (BIT1 _0))) e')))
+T c==> c==> c~ c/\ * f0 f1 * f2 f1 c= cNUMERAL c_0 f3 c= cCOND c/\ * f0 f1 * f2 f1 cNUMERAL cBIT1 c_0 cNUMERAL c_0 cCOND c/\ * f0 f1 * f2 f1 cNUMERAL cBIT1 c_0 f3
++ |- (((count a1) ((filter a2) NIL)) = ((count ((predI a1) a2)) NIL))
+T c= ccount f0 cfilter f1 cNIL ccount * * part cpredI f0 f1 cNIL
++ |- ((((\x. ((a2 h) = x)) x) ==> (((count a1) (((COND (a2 h)) ((CONS h) ((filter a2) t))) ((filter a2) t))) = ((((COND ((a1 h) /\ (a2 h))) (NUMERAL (BIT1 _0))) (NUMERAL _0)) + ((count a1) ((filter a2) t))))) = T)
+T c= c==> * / c= * f0 f1 b0 f2 c= ccount f3 cCOND * f0 f1 cCONS f1 cfilter f0 f4 cfilter f0 f4 c+ cCOND c/\ * f3 f1 * f0 f1 cNUMERAL cBIT1 c_0 cNUMERAL c_0 ccount f3 cfilter f0 f4 cT
+- |- ((\g'. (!t'. (!e'. (((a2 h) = g') ==> ((g' ==> (((CONS h) ((filter a2) t)) = t')) ==> (((~ g') ==> (((filter a2) t) = e')) ==> ((((COND (a2 h)) ((CONS h) ((filter a2) t))) ((filter a2) t)) = (((COND g') t') e')))))))) g')
+T * / ! ! c==> c= * f0 f1 b0 c==> c==> b0 c= cCONS f1 cfilter f0 f2 b1 c==> c==> c~ b0 c= cfilter f0 f2 b2 c= cCOND * f0 f1 cCONS f1 cfilter f0 f2 cfilter f0 f2 cCOND b0 b1 b2 f3
+- (s = s1) |- ((\s1. (s = s1)) s1)
+T c==> c= f0 f1 * / c= f0 b0 f1
++ ((a2 h) = x) |- ((((count a1) (((COND x) ((CONS h) ((filter a2) t))) ((filter a2) t))) = ((((COND ((a1 h) /\ x)) (NUMERAL (BIT1 _0))) (NUMERAL _0)) + ((count a1) ((filter a2) t)))) = (((count a1) (((COND x) ((CONS h) ((filter a2) t))) ((filter a2) t))) = ((((COND ((a1 h) /\ (a2 h))) (NUMERAL (BIT1 _0))) (NUMERAL _0)) + ((count a1) ((filter a2) t)))))
+T c==> c= * f0 f1 f2 c= c= ccount f3 cCOND f2 cCONS f1 cfilter f0 f4 cfilter f0 f4 c+ cCOND c/\ * f3 f1 f2 cNUMERAL cBIT1 c_0 cNUMERAL c_0 ccount f3 cfilter f0 f4 c= ccount f3 cCOND f2 cCONS f1 cfilter f0 f4 cfilter f0 f4 c+ cCOND c/\ * f3 f1 * f0 f1 cNUMERAL cBIT1 c_0 cNUMERAL c_0 ccount f3 cfilter f0 f4
++ |- (((NUMERAL _0) = (NUMERAL _0)) = ((NUMERAL _0) = ((count ((predI a1) a2)) NIL)))
+T c= c= cNUMERAL c_0 cNUMERAL c_0 c= cNUMERAL c_0 ccount * * part cpredI f0 f1 cNIL
+- (s = s1) |- (((count a1) ((filter a2) s1)) = ((count ((predI a1) a2)) s1))
+T c==> c= f0 f1 c= ccount f2 cfilter f3 f1 ccount * * part cpredI f2 f3 f1
++ (((count a1) ((filter a2) t)) = ((count ((predI a1) a2)) t)) |- ((((count a1) ((filter a2) t)) = ((count ((predI a1) a2)) t)) /\ (((count a1) ((filter a2) ((CONS h) t))) = ((count ((predI a1) a2)) ((CONS h) t))))
+T c==> c= ccount f0 cfilter f1 f2 ccount * * part cpredI f0 f1 f2 c/\ c= ccount f0 cfilter f1 f2 ccount * * part cpredI f0 f1 f2 c= ccount f0 cfilter f1 cCONS f3 f2 ccount * * part cpredI f0 f1 cCONS f3 f2
++ |- ((\p2. (((predI p1) p2) = (\x. ((p1 x) /\ (p2 x))))) p2)
+T * / c= * * part cpredI f0 b0 / c/\ * f0 b1 * b0 b1 f1
+- |- ((\s. (((count a1) ((filter a2) s)) = ((count ((predI a1) a2)) s))) s1)
+T * / c= ccount f0 cfilter f1 b0 ccount * * part cpredI f0 f1 b0 f2
++ |- ((?x. ((a2 h) = x)) ==> (((count a1) (((COND (a2 h)) ((CONS h) ((filter a2) t))) ((filter a2) t))) = ((((COND ((a1 h) /\ (a2 h))) (NUMERAL (BIT1 _0))) (NUMERAL _0)) + ((count a1) ((filter a2) t)))))
+T c==> c? / c= * f0 f1 b0 c= ccount f2 cCOND * f0 f1 cCONS f1 cfilter f0 f3 cfilter f0 f3 c+ cCOND c/\ * f2 f1 * f0 f1 cNUMERAL cBIT1 c_0 cNUMERAL c_0 ccount f2 cfilter f0 f3
++ |- ((\a. (!x. (!s'. ((((count a) NIL) = (NUMERAL _0)) /\ (((count a) ((CONS x) s')) = ((((COND (a x)) (NUMERAL (BIT1 _0))) (NUMERAL _0)) + ((count a) s'))))))) a)
+T * / ! ! c/\ c= ccount b0 cNIL cNUMERAL c_0 c= ccount b0 cCONS b1 b2 c+ cCOND * b0 b1 cNUMERAL cBIT1 c_0 cNUMERAL c_0 ccount b0 b2 f0
+- |- (T = (((((COND (a1 h)) (NUMERAL (BIT1 _0))) (NUMERAL _0)) + ((count a1) ((filter a2) t))) = ((((COND (a1 h)) (NUMERAL (BIT1 _0))) (NUMERAL _0)) + ((count a1) ((filter a2) t)))))
+T c= cT c= c+ cCOND * f0 f1 cNUMERAL cBIT1 c_0 cNUMERAL c_0 ccount f0 cfilter f2 f3 c+ cCOND * f0 f1 cNUMERAL cBIT1 c_0 cNUMERAL c_0 ccount f0 cfilter f2 f3
+- |- ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))
+T c= c==> f0 ! * f1 b0 ! c==> f0 * f1 b0
++ |- ((\x. (((count a1) (((COND x) ((CONS h) ((filter a2) t))) ((filter a2) t))) = ((((COND ((a1 h) /\ x)) (NUMERAL (BIT1 _0))) (NUMERAL _0)) + ((count a1) ((filter a2) t))))) x)
+T * / c= ccount f0 cCOND b0 cCONS f1 cfilter f2 f3 cfilter f2 f3 c+ cCOND c/\ * f0 f1 b0 cNUMERAL cBIT1 c_0 cNUMERAL c_0 ccount f0 cfilter f2 f3 f4
+- |- ((((\x. ((a2 h) = x)) x) ==> (?x. ((a2 h) = x))) = T)
+T c= c==> * / c= * f0 f1 b0 f2 c? / c= * f0 f1 b0 cT
++ |- ((((COND ((a1 h) /\ F)) (NUMERAL (BIT1 _0))) (NUMERAL _0)) = (((COND F) (NUMERAL (BIT1 _0))) (NUMERAL _0)))
+T c= cCOND c/\ * f0 f1 cF cNUMERAL cBIT1 c_0 cNUMERAL c_0 cCOND cF cNUMERAL cBIT1 c_0 cNUMERAL c_0
+- |- ((((~ ((a1 h) /\ (a2 h))) ==> ((NUMERAL _0) = (NUMERAL _0))) ==> ((((COND ((a1 h) /\ (a2 h))) (NUMERAL (BIT1 _0))) (NUMERAL _0)) = (((COND ((a1 h) /\ (a2 h))) (NUMERAL (BIT1 _0))) (NUMERAL _0)))) = ((((COND ((a1 h) /\ (a2 h))) (NUMERAL (BIT1 _0))) (NUMERAL _0)) = (((COND ((a1 h) /\ (a2 h))) (NUMERAL (BIT1 _0))) (NUMERAL _0))))
+T c= c==> c==> c~ c/\ * f0 f1 * f2 f1 c= cNUMERAL c_0 cNUMERAL c_0 c= cCOND c/\ * f0 f1 * f2 f1 cNUMERAL cBIT1 c_0 cNUMERAL c_0 cCOND c/\ * f0 f1 * f2 f1 cNUMERAL cBIT1 c_0 cNUMERAL c_0 c= cCOND c/\ * f0 f1 * f2 f1 cNUMERAL cBIT1 c_0 cNUMERAL c_0 cCOND c/\ * f0 f1 * f2 f1 cNUMERAL cBIT1 c_0 cNUMERAL c_0
++ |- ((((a1 h) /\ F) = g') ==> ((g' ==> ((NUMERAL (BIT1 _0)) = t')) ==> (((~ g') ==> ((NUMERAL _0) = e')) ==> ((((COND ((a1 h) /\ F)) (NUMERAL (BIT1 _0))) (NUMERAL _0)) = (((COND g') t') e')))))
+T c==> c= c/\ * f0 f1 cF f2 c==> c==> f2 c= cNUMERAL cBIT1 c_0 f3 c==> c==> c~ f2 c= cNUMERAL c_0 f4 c= cCOND c/\ * f0 f1 cF cNUMERAL cBIT1 c_0 cNUMERAL c_0 cCOND f2 f3 f4
++ |- (((a2 h) = (a2 h)) = ((\x. ((a2 h) = x)) (a2 h)))
+T c= c= * f0 f1 * f0 f1 * / c= * f0 f1 b0 * f0 f1
++ |- ((t /\ F) = F)
+T c= c/\ f0 cF cF
++ |- ((((a1 h) /\ (a2 h)) ==> ((NUMERAL (BIT1 _0)) = t')) ==> (((~ ((a1 h) /\ (a2 h))) ==> ((NUMERAL _0) = e')) ==> ((((COND ((\x. ((a1 x) /\ (a2 x))) h)) (NUMERAL (BIT1 _0))) (NUMERAL _0)) = (((COND ((a1 h) /\ (a2 h))) t') e'))))
+T c==> c==> c/\ * f0 f1 * f2 f1 c= cNUMERAL cBIT1 c_0 f3 c==> c==> c~ c/\ * f0 f1 * f2 f1 c= cNUMERAL c_0 f4 c= cCOND * / c/\ * f0 b0 * f2 b0 f1 cNUMERAL cBIT1 c_0 cNUMERAL c_0 cCOND c/\ * f0 f1 * f2 f1 f3 f4
+- (!P. (((P T) /\ (P F)) ==> (!x. (P x)))), ((P T) /\ (P F)) |- ((!P. (((P T) /\ (P F)) ==> (!x. (P x)))) /\ (!x. (P x)))
+T c==> ! c==> c/\ * b0 cT * b0 cF ! * b0 b1 c==> c/\ * f0 cT * f0 cF c/\ ! c==> c/\ * b0 cT * b0 cF ! * b0 b1 ! * f0 b0
+- |- ((((~ (a1 h)) ==> ((NUMERAL _0) = (NUMERAL _0))) ==> ((((COND (a1 h)) (NUMERAL (BIT1 _0))) (NUMERAL _0)) = (((COND (a1 h)) (NUMERAL (BIT1 _0))) (NUMERAL _0)))) = ((((COND (a1 h)) (NUMERAL (BIT1 _0))) (NUMERAL _0)) = (((COND (a1 h)) (NUMERAL (BIT1 _0))) (NUMERAL _0))))
+T c= c==> c==> c~ * f0 f1 c= cNUMERAL c_0 cNUMERAL c_0 c= cCOND * f0 f1 cNUMERAL cBIT1 c_0 cNUMERAL c_0 cCOND * f0 f1 cNUMERAL cBIT1 c_0 cNUMERAL c_0 c= cCOND * f0 f1 cNUMERAL cBIT1 c_0 cNUMERAL c_0 cCOND * f0 f1 cNUMERAL cBIT1 c_0 cNUMERAL c_0
+- |- (((~ (a2 h)) ==> (((filter a2) t) = e')) ==> ((((COND (a2 h)) ((CONS h) ((filter a2) t))) ((filter a2) t)) = (((COND (a2 h)) ((CONS h) ((filter a2) t))) e')))
+T c==> c==> c~ * f0 f1 c= cfilter f0 f2 f3 c= cCOND * f0 f1 cCONS f1 cfilter f0 f2 cfilter f0 f2 cCOND * f0 f1 cCONS f1 cfilter f0 f2 f3
++ |- (((!g'. (!t'. (!e'. ((((a1 h) /\ T) = g') ==> ((g' ==> ((NUMERAL (BIT1 _0)) = t')) ==> (((~ g') ==> ((NUMERAL _0) = e')) ==> ((((COND ((a1 h) /\ T)) (NUMERAL (BIT1 _0))) (NUMERAL _0)) = (((COND g') t') e')))))))) ==> ((\g'. (!t'. (!e'. ((((a1 h) /\ T) = g') ==> ((g' ==> ((NUMERAL (BIT1 _0)) = t')) ==> (((~ g') ==> ((NUMERAL _0) = e')) ==> ((((COND ((a1 h) /\ T)) (NUMERAL (BIT1 _0))) (NUMERAL _0)) = (((COND g') t') e')))))))) g')) = ((\g'. (!t'. (!e'. ((((a1 h) /\ T) = g') ==> ((g' ==> ((NUMERAL (BIT1 _0)) = t')) ==> (((~ g') ==> ((NUMERAL _0) = e')) ==> ((((COND ((a1 h) /\ T)) (NUMERAL (BIT1 _0))) (NUMERAL _0)) = (((COND g') t') e')))))))) g'))
+T c= c==> ! ! ! c==> c= c/\ * f0 f1 cT b0 c==> c==> b0 c= cNUMERAL cBIT1 c_0 b1 c==> c==> c~ b0 c= cNUMERAL c_0 b2 c= cCOND c/\ * f0 f1 cT cNUMERAL cBIT1 c_0 cNUMERAL c_0 cCOND b0 b1 b2 * / ! ! c==> c= c/\ * f0 f1 cT b0 c==> c==> b0 c= cNUMERAL cBIT1 c_0 b1 c==> c==> c~ b0 c= cNUMERAL c_0 b2 c= cCOND c/\ * f0 f1 cT cNUMERAL cBIT1 c_0 cNUMERAL c_0 cCOND b0 b1 b2 f2 * / ! ! c==> c= c/\ * f0 f1 cT b0 c==> c==> b0 c= cNUMERAL cBIT1 c_0 b1 c==> c==> c~ b0 c= cNUMERAL c_0 b2 c= cCOND c/\ * f0 f1 cT cNUMERAL cBIT1 c_0 cNUMERAL c_0 cCOND b0 b1 b2 f2
++ |- (((count a1) (((COND x) ((CONS h) ((filter a2) t))) ((filter a2) t))) = ((((COND ((a1 h) /\ x)) (NUMERAL (BIT1 _0))) (NUMERAL _0)) + ((count a1) ((filter a2) t))))
+T c= ccount f0 cCOND f1 cCONS f2 cfilter f3 f4 cfilter f3 f4 c+ cCOND c/\ * f0 f2 f1 cNUMERAL cBIT1 c_0 cNUMERAL c_0 ccount f0 cfilter f3 f4
+- |- (((\x. (f x)) y) = (f y))
+T c= * / * f0 b0 f1 * f0 f1
++ |- ((!s. (((count a1) ((filter a2) s)) = ((count ((predI a1) a2)) s))) = T)
+T c= ! c= ccount f0 cfilter f1 b0 ccount * * part cpredI f0 f1 b0 cT
++ |- (((((count a1) ((filter a2) t)) = ((count ((predI a1) a2)) t)) ==> (((count a1) ((filter a2) ((CONS h) t))) = ((count ((predI a1) a2)) ((CONS h) t)))) = T)
+T c= c==> c= ccount f0 cfilter f1 f2 ccount * * part cpredI f0 f1 f2 c= ccount f0 cfilter f1 cCONS f3 f2 ccount * * part cpredI f0 f1 cCONS f3 f2 cT
+- |- (?s1. (s = s1))
+T c? / c= f0 b0
+- |- ((((a2 h) = (a2 h)) ==> (((a2 h) ==> (((CONS h) ((filter a2) t)) = t')) ==> (((~ (a2 h)) ==> (((filter a2) t) = e')) ==> ((((COND (a2 h)) ((CONS h) ((filter a2) t))) ((filter a2) t)) = (((COND (a2 h)) t') e'))))) = (((a2 h) ==> (((CONS h) ((filter a2) t)) = t')) ==> (((~ (a2 h)) ==> (((filter a2) t) = e')) ==> ((((COND (a2 h)) ((CONS h) ((filter a2) t))) ((filter a2) t)) = (((COND (a2 h)) t') e')))))
+T c= c==> c= * f0 f1 * f0 f1 c==> c==> * f0 f1 c= cCONS f1 cfilter f0 f2 f3 c==> c==> c~ * f0 f1 c= cfilter f0 f2 f4 c= cCOND * f0 f1 cCONS f1 cfilter f0 f2 cfilter f0 f2 cCOND * f0 f1 f3 f4 c==> c==> * f0 f1 c= cCONS f1 cfilter f0 f2 f3 c==> c==> c~ * f0 f1 c= cfilter f0 f2 f4 c= cCOND * f0 f1 cCONS f1 cfilter f0 f2 cfilter f0 f2 cCOND * f0 f1 f3 f4
++ |- (T = ((NUMERAL _0) = (NUMERAL _0)))
+T c= cT c= cNUMERAL c_0 cNUMERAL c_0
+- |- (((!g'. (!t'. (!e'. (((a1 h) = g') ==> ((g' ==> ((NUMERAL (BIT1 _0)) = t')) ==> (((~ g') ==> ((NUMERAL _0) = e')) ==> ((((COND (a1 h)) (NUMERAL (BIT1 _0))) (NUMERAL _0)) = (((COND g') t') e')))))))) ==> ((\g'. (!t'. (!e'. (((a1 h) = g') ==> ((g' ==> ((NUMERAL (BIT1 _0)) = t')) ==> (((~ g') ==> ((NUMERAL _0) = e')) ==> ((((COND (a1 h)) (NUMERAL (BIT1 _0))) (NUMERAL _0)) = (((COND g') t') e')))))))) g')) = ((\g'. (!t'. (!e'. (((a1 h) = g') ==> ((g' ==> ((NUMERAL (BIT1 _0)) = t')) ==> (((~ g') ==> ((NUMERAL _0) = e')) ==> ((((COND (a1 h)) (NUMERAL (BIT1 _0))) (NUMERAL _0)) = (((COND g') t') e')))))))) g'))
+T c= c==> ! ! ! c==> c= * f0 f1 b0 c==> c==> b0 c= cNUMERAL cBIT1 c_0 b1 c==> c==> c~ b0 c= cNUMERAL c_0 b2 c= cCOND * f0 f1 cNUMERAL cBIT1 c_0 cNUMERAL c_0 cCOND b0 b1 b2 * / ! ! c==> c= * f0 f1 b0 c==> c==> b0 c= cNUMERAL cBIT1 c_0 b1 c==> c==> c~ b0 c= cNUMERAL c_0 b2 c= cCOND * f0 f1 cNUMERAL cBIT1 c_0 cNUMERAL c_0 cCOND b0 b1 b2 f2 * / ! ! c==> c= * f0 f1 b0 c==> c==> b0 c= cNUMERAL cBIT1 c_0 b1 c==> c==> c~ b0 c= cNUMERAL c_0 b2 c= cCOND * f0 f1 cNUMERAL cBIT1 c_0 cNUMERAL c_0 cCOND b0 b1 b2 f2
++ |- (((!g'. (!t'. (!e'. ((((a1 h) /\ F) = g') ==> ((g' ==> ((NUMERAL (BIT1 _0)) = t')) ==> (((~ g') ==> ((NUMERAL _0) = e')) ==> ((((COND ((a1 h) /\ F)) (NUMERAL (BIT1 _0))) (NUMERAL _0)) = (((COND g') t') e')))))))) ==> ((\g'. (!t'. (!e'. ((((a1 h) /\ F) = g') ==> ((g' ==> ((NUMERAL (BIT1 _0)) = t')) ==> (((~ g') ==> ((NUMERAL _0) = e')) ==> ((((COND ((a1 h) /\ F)) (NUMERAL (BIT1 _0))) (NUMERAL _0)) = (((COND g') t') e')))))))) g')) = ((\g'. (!t'. (!e'. ((((a1 h) /\ F) = g') ==> ((g' ==> ((NUMERAL (BIT1 _0)) = t')) ==> (((~ g') ==> ((NUMERAL _0) = e')) ==> ((((COND ((a1 h) /\ F)) (NUMERAL (BIT1 _0))) (NUMERAL _0)) = (((COND g') t') e')))))))) g'))
+T c= c==> ! ! ! c==> c= c/\ * f0 f1 cF b0 c==> c==> b0 c= cNUMERAL cBIT1 c_0 b1 c==> c==> c~ b0 c= cNUMERAL c_0 b2 c= cCOND c/\ * f0 f1 cF cNUMERAL cBIT1 c_0 cNUMERAL c_0 cCOND b0 b1 b2 * / ! ! c==> c= c/\ * f0 f1 cF b0 c==> c==> b0 c= cNUMERAL cBIT1 c_0 b1 c==> c==> c~ b0 c= cNUMERAL c_0 b2 c= cCOND c/\ * f0 f1 cF cNUMERAL cBIT1 c_0 cNUMERAL c_0 cCOND b0 b1 b2 f2 * / ! ! c==> c= c/\ * f0 f1 cF b0 c==> c==> b0 c= cNUMERAL cBIT1 c_0 b1 c==> c==> c~ b0 c= cNUMERAL c_0 b2 c= cCOND c/\ * f0 f1 cF cNUMERAL cBIT1 c_0 cNUMERAL c_0 cCOND b0 b1 b2 f2
++ ((a2 h) = x) |- ((((count a1) (((COND x) ((CONS h) ((filter a2) t))) ((filter a2) t))) = ((((COND ((a1 h) /\ (a2 h))) (NUMERAL (BIT1 _0))) (NUMERAL _0)) + ((count a1) ((filter a2) t)))) = (((count a1) (((COND (a2 h)) ((CONS h) ((filter a2) t))) ((filter a2) t))) = ((((COND ((a1 h) /\ (a2 h))) (NUMERAL (BIT1 _0))) (NUMERAL _0)) + ((count a1) ((filter a2) t)))))
+T c==> c= * f0 f1 f2 c= c= ccount f3 cCOND f2 cCONS f1 cfilter f0 f4 cfilter f0 f4 c+ cCOND c/\ * f3 f1 * f0 f1 cNUMERAL cBIT1 c_0 cNUMERAL c_0 ccount f3 cfilter f0 f4 c= ccount f3 cCOND * f0 f1 cCONS f1 cfilter f0 f4 cfilter f0 f4 c+ cCOND c/\ * f3 f1 * f0 f1 cNUMERAL cBIT1 c_0 cNUMERAL c_0 ccount f3 cfilter f0 f4
+- (s = s1) |- ((s = s1) /\ (((count a1) ((filter a2) s)) = ((count ((predI a1) a2)) s)))
+T c==> c= f0 f1 c/\ c= f0 f1 c= ccount f2 cfilter f3 f0 ccount * * part cpredI f2 f3 f0
+- ((a2 h) = x) |- (((count a1) (((COND x) ((CONS h) ((filter a2) t))) ((filter a2) t))) = ((((COND ((a1 h) /\ x)) (NUMERAL (BIT1 _0))) (NUMERAL _0)) + ((count a1) ((filter a2) t))))
+T c==> c= * f0 f1 f2 c= ccount f3 cCOND f2 cCONS f1 cfilter f0 f4 cfilter f0 f4 c+ cCOND c/\ * f3 f1 f2 cNUMERAL cBIT1 c_0 cNUMERAL c_0 ccount f3 cfilter f0 f4
+- |- ((((a1 h) /\ (a2 h)) ==> ((NUMERAL (BIT1 _0)) = t')) ==> (((~ ((a1 h) /\ (a2 h))) ==> ((NUMERAL _0) = e')) ==> ((((COND ((a1 h) /\ (a2 h))) (NUMERAL (BIT1 _0))) (NUMERAL _0)) = (((COND ((a1 h) /\ (a2 h))) t') e'))))
+T c==> c==> c/\ * f0 f1 * f2 f1 c= cNUMERAL cBIT1 c_0 f3 c==> c==> c~ c/\ * f0 f1 * f2 f1 c= cNUMERAL c_0 f4 c= cCOND c/\ * f0 f1 * f2 f1 cNUMERAL cBIT1 c_0 cNUMERAL c_0 cCOND c/\ * f0 f1 * f2 f1 f3 f4
+- (~ (a2 h)) |- ((~ (a2 h)) /\ (((filter a2) t) = ((filter a2) t)))
+T c==> c~ * f0 f1 c/\ c~ * f0 f1 c= cfilter f0 f2 cfilter f0 f2
+- |- (((!Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))) ==> ((\Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))) Q)) = ((\Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))) Q))
+T c= c==> ! c= c==> f0 ! * b0 b1 ! c==> f0 * b0 b1 * / c= c==> f0 ! * b0 b1 ! c==> f0 * b0 b1 f1 * / c= c==> f0 ! * b0 b1 ! c==> f0 * b0 b1 f1
+- |- (((!e'. ((((a1 h) /\ (a2 h)) = g') ==> ((g' ==> ((NUMERAL (BIT1 _0)) = t')) ==> (((~ g') ==> ((NUMERAL _0) = e')) ==> ((((COND ((a1 h) /\ (a2 h))) (NUMERAL (BIT1 _0))) (NUMERAL _0)) = (((COND g') t') e')))))) ==> ((\e'. ((((a1 h) /\ (a2 h)) = g') ==> ((g' ==> ((NUMERAL (BIT1 _0)) = t')) ==> (((~ g') ==> ((NUMERAL _0) = e')) ==> ((((COND ((a1 h) /\ (a2 h))) (NUMERAL (BIT1 _0))) (NUMERAL _0)) = (((COND g') t') e')))))) e')) = ((\e'. ((((a1 h) /\ (a2 h)) = g') ==> ((g' ==> ((NUMERAL (BIT1 _0)) = t')) ==> (((~ g') ==> ((NUMERAL _0) = e')) ==> ((((COND ((a1 h) /\ (a2 h))) (NUMERAL (BIT1 _0))) (NUMERAL _0)) = (((COND g') t') e')))))) e'))
+T c= c==> ! c==> c= c/\ * f0 f1 * f2 f1 f3 c==> c==> f3 c= cNUMERAL cBIT1 c_0 f4 c==> c==> c~ f3 c= cNUMERAL c_0 b0 c= cCOND c/\ * f0 f1 * f2 f1 cNUMERAL cBIT1 c_0 cNUMERAL c_0 cCOND f3 f4 b0 * / c==> c= c/\ * f0 f1 * f2 f1 f3 c==> c==> f3 c= cNUMERAL cBIT1 c_0 f4 c==> c==> c~ f3 c= cNUMERAL c_0 b0 c= cCOND c/\ * f0 f1 * f2 f1 cNUMERAL cBIT1 c_0 cNUMERAL c_0 cCOND f3 f4 b0 f5 * / c==> c= c/\ * f0 f1 * f2 f1 f3 c==> c==> f3 c= cNUMERAL cBIT1 c_0 f4 c==> c==> c~ f3 c= cNUMERAL c_0 b0 c= cCOND c/\ * f0 f1 * f2 f1 cNUMERAL cBIT1 c_0 cNUMERAL c_0 cCOND f3 f4 b0 f5
+- |- (((!g'. (!t'. (!e'. ((((a1 h) /\ (a2 h)) = g') ==> ((g' ==> ((NUMERAL (BIT1 _0)) = t')) ==> (((~ g') ==> ((NUMERAL _0) = e')) ==> ((((COND ((a1 h) /\ (a2 h))) (NUMERAL (BIT1 _0))) (NUMERAL _0)) = (((COND g') t') e')))))))) ==> ((\g'. (!t'. (!e'. ((((a1 h) /\ (a2 h)) = g') ==> ((g' ==> ((NUMERAL (BIT1 _0)) = t')) ==> (((~ g') ==> ((NUMERAL _0) = e')) ==> ((((COND ((a1 h) /\ (a2 h))) (NUMERAL (BIT1 _0))) (NUMERAL _0)) = (((COND g') t') e')))))))) g')) = ((\g'. (!t'. (!e'. ((((a1 h) /\ (a2 h)) = g') ==> ((g' ==> ((NUMERAL (BIT1 _0)) = t')) ==> (((~ g') ==> ((NUMERAL _0) = e')) ==> ((((COND ((a1 h) /\ (a2 h))) (NUMERAL (BIT1 _0))) (NUMERAL _0)) = (((COND g') t') e')))))))) g'))
+T c= c==> ! ! ! c==> c= c/\ * f0 f1 * f2 f1 b0 c==> c==> b0 c= cNUMERAL cBIT1 c_0 b1 c==> c==> c~ b0 c= cNUMERAL c_0 b2 c= cCOND c/\ * f0 f1 * f2 f1 cNUMERAL cBIT1 c_0 cNUMERAL c_0 cCOND b0 b1 b2 * / ! ! c==> c= c/\ * f0 f1 * f2 f1 b0 c==> c==> b0 c= cNUMERAL cBIT1 c_0 b1 c==> c==> c~ b0 c= cNUMERAL c_0 b2 c= cCOND c/\ * f0 f1 * f2 f1 cNUMERAL cBIT1 c_0 cNUMERAL c_0 cCOND b0 b1 b2 f3 * / ! ! c==> c= c/\ * f0 f1 * f2 f1 b0 c==> c==> b0 c= cNUMERAL cBIT1 c_0 b1 c==> c==> c~ b0 c= cNUMERAL c_0 b2 c= cCOND c/\ * f0 f1 * f2 f1 cNUMERAL cBIT1 c_0 cNUMERAL c_0 cCOND b0 b1 b2 f3
+- |- ((\t'. (!e'. (((a2 h) = g') ==> ((g' ==> (((CONS h) ((filter a2) t)) = t')) ==> (((~ g') ==> (((filter a2) t) = e')) ==> ((((COND (a2 h)) ((CONS h) ((filter a2) t))) ((filter a2) t)) = (((COND g') t') e'))))))) t')
+T * / ! c==> c= * f0 f1 f2 c==> c==> f2 c= cCONS f1 cfilter f0 f3 b0 c==> c==> c~ f2 c= cfilter f0 f3 b1 c= cCOND * f0 f1 cCONS f1 cfilter f0 f3 cfilter f0 f3 cCOND f2 b0 b1 f4
+- |- ((((\s1. (s = s1)) s1) ==> (?s1. (s = s1))) = T)
+T c= c==> * / c= f0 b0 f1 c? / c= f0 b0 cT
+- |- (((!e'. (((a1 h) = g') ==> ((g' ==> ((NUMERAL (BIT1 _0)) = t')) ==> (((~ g') ==> ((NUMERAL _0) = e')) ==> ((((COND (a1 h)) (NUMERAL (BIT1 _0))) (NUMERAL _0)) = (((COND g') t') e')))))) ==> ((\e'. (((a1 h) = g') ==> ((g' ==> ((NUMERAL (BIT1 _0)) = t')) ==> (((~ g') ==> ((NUMERAL _0) = e')) ==> ((((COND (a1 h)) (NUMERAL (BIT1 _0))) (NUMERAL _0)) = (((COND g') t') e')))))) e')) = ((\e'. (((a1 h) = g') ==> ((g' ==> ((NUMERAL (BIT1 _0)) = t')) ==> (((~ g') ==> ((NUMERAL _0) = e')) ==> ((((COND (a1 h)) (NUMERAL (BIT1 _0))) (NUMERAL _0)) = (((COND g') t') e')))))) e'))
+T c= c==> ! c==> c= * f0 f1 f2 c==> c==> f2 c= cNUMERAL cBIT1 c_0 f3 c==> c==> c~ f2 c= cNUMERAL c_0 b0 c= cCOND * f0 f1 cNUMERAL cBIT1 c_0 cNUMERAL c_0 cCOND f2 f3 b0 * / c==> c= * f0 f1 f2 c==> c==> f2 c= cNUMERAL cBIT1 c_0 f3 c==> c==> c~ f2 c= cNUMERAL c_0 b0 c= cCOND * f0 f1 cNUMERAL cBIT1 c_0 cNUMERAL c_0 cCOND f2 f3 b0 f4 * / c==> c= * f0 f1 f2 c==> c==> f2 c= cNUMERAL cBIT1 c_0 f3 c==> c==> c~ f2 c= cNUMERAL c_0 b0 c= cCOND * f0 f1 cNUMERAL cBIT1 c_0 cNUMERAL c_0 cCOND f2 f3 b0 f4
+- |- (((((a1 h) /\ (a2 h)) = ((a1 h) /\ (a2 h))) ==> ((((a1 h) /\ (a2 h)) ==> ((NUMERAL (BIT1 _0)) = t')) ==> (((~ ((a1 h) /\ (a2 h))) ==> ((NUMERAL _0) = e')) ==> ((((COND ((a1 h) /\ (a2 h))) (NUMERAL (BIT1 _0))) (NUMERAL _0)) = (((COND ((a1 h) /\ (a2 h))) t') e'))))) = ((((a1 h) /\ (a2 h)) ==> ((NUMERAL (BIT1 _0)) = t')) ==> (((~ ((a1 h) /\ (a2 h))) ==> ((NUMERAL _0) = e')) ==> ((((COND ((a1 h) /\ (a2 h))) (NUMERAL (BIT1 _0))) (NUMERAL _0)) = (((COND ((a1 h) /\ (a2 h))) t') e')))))
+T c= c==> c= c/\ * f0 f1 * f2 f1 c/\ * f0 f1 * f2 f1 c==> c==> c/\ * f0 f1 * f2 f1 c= cNUMERAL cBIT1 c_0 f3 c==> c==> c~ c/\ * f0 f1 * f2 f1 c= cNUMERAL c_0 f4 c= cCOND c/\ * f0 f1 * f2 f1 cNUMERAL cBIT1 c_0 cNUMERAL c_0 cCOND c/\ * f0 f1 * f2 f1 f3 f4 c==> c==> c/\ * f0 f1 * f2 f1 c= cNUMERAL cBIT1 c_0 f3 c==> c==> c~ c/\ * f0 f1 * f2 f1 c= cNUMERAL c_0 f4 c= cCOND c/\ * f0 f1 * f2 f1 cNUMERAL cBIT1 c_0 cNUMERAL c_0 cCOND c/\ * f0 f1 * f2 f1 f3 f4
+- ((\x. ((a2 h) = x)) x) |- (((\x. ((a2 h) = x)) x) /\ (?x. ((a2 h) = x)))
+T c==> * / c= * f0 f1 b0 f2 c/\ * / c= * f0 f1 b0 f2 c? / c= * f0 f1 b0
+- (!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))) |- ((!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))) /\ (!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))))
+T c==> ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 c/\ ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1
+- (a1 h) |- ((a1 h) = T)
+T c==> * f0 f1 c= * f0 f1 cT
+- |- (((a2 h) = g') ==> ((g' ==> (((CONS h) ((filter a2) t)) = t')) ==> (((~ g') ==> (((filter a2) t) = e')) ==> ((((COND (a2 h)) ((CONS h) ((filter a2) t))) ((filter a2) t)) = (((COND g') t') e')))))
+T c==> c= * f0 f1 f2 c==> c==> f2 c= cCONS f1 cfilter f0 f3 f4 c==> c==> c~ f2 c= cfilter f0 f3 f5 c= cCOND * f0 f1 cCONS f1 cfilter f0 f3 cfilter f0 f3 cCOND f2 f4 f5

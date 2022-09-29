@@ -1,0 +1,550 @@
+N UNION_SEGMENT
+C |- (!a. (!b. (!c. ((b IN (closed_segment ((CONS (a , c)) NIL))) ==> (((closed_segment ((CONS (a , b)) NIL)) UNION (closed_segment ((CONS (b , c)) NIL))) = (closed_segment ((CONS (a , c)) NIL)))))))
+T c==> cIN f0 * part cclosed_segment cCONS c, f1 f2 cNIL c= * * part cUNION * part cclosed_segment cCONS c, f1 f0 cNIL * part cclosed_segment cCONS c, f0 f2 cNIL * part cclosed_segment cCONS c, f1 f2 cNIL
+D TRUTH
+A |- T
+T cT
+D EXCLUDED_MIDDLE
+A |- (!t. (t \/ (~ t)))
+T c\/ f0 c~ f0
+D BOOL_CASES_AX
+A |- (!t. ((t = T) \/ (t = F)))
+T c\/ c= f0 cT c= f0 cF
+D NOT_CLAUSES
+A |- ((!t. ((~ (~ t)) = t)) /\ (((~ T) = F) /\ ((~ F) = T)))
+T c/\ ! c= c~ c~ b0 b0 c/\ c= c~ cT cF c= c~ cF cT
+D EXTENSION
+A |- (!s. (!t. ((s = t) = (!x. ((x IN s) = (x IN t))))))
+T c= c= f0 f1 ! c= cIN b0 f0 cIN b0 f1
+D NOT_IN_EMPTY
+A |- (!x. (~ (x IN EMPTY)))
+T c~ cIN f0 part cEMPTY
+D IN_INSERT
+A |- (!x. (!y. (!s. ((x IN (y INSERT s)) = ((x = y) \/ (x IN s))))))
+T c= cIN f0 * * part cINSERT f1 f2 c\/ c= f0 f1 cIN f0 f2
+D IN_DELETE
+A |- (!s. (!x. (!y. ((x IN (s DELETE y)) = ((x IN s) /\ (~ (x = y)))))))
+T c= cIN f0 * * part cDELETE f1 f2 c/\ cIN f0 f1 c~ c= f0 f2
+D IN_SING
+A |- (!x. (!y. ((x IN (y INSERT EMPTY)) = (x = y))))
+T c= cIN f0 * * part cINSERT f1 part cEMPTY c= f0 f1
+D UNION_IDEMPOT
+A |- (!s. ((s UNION s) = s))
+T c= * * part cUNION f0 f0 f0
+D UNION_COMM
+A |- (!s. (!t. ((s UNION t) = (t UNION s))))
+T c= * * part cUNION f0 f1 * * part cUNION f1 f0
+D UNIONS_2
+A |- ((UNIONS (s INSERT (t INSERT EMPTY))) = (s UNION t))
+T c= * part cUNIONS * * part cINSERT f0 * * part cINSERT f1 part cEMPTY * * part cUNION f0 f1
+D IMAGE_CLAUSES
+A |- ((((IMAGE f) EMPTY) = EMPTY) /\ (((IMAGE f) (x INSERT s)) = ((f x) INSERT ((IMAGE f) s))))
+T c/\ c= * * part cIMAGE f0 part cEMPTY part cEMPTY c= * * part cIMAGE f0 * * part cINSERT f1 f2 * * part cINSERT * f0 f1 * * part cIMAGE f0 f2
+D SIMPLE_IMAGE
+A |- (!f. (!s. ((GSPEC (\GEN%PVAR%11. (?x. (((SETSPEC GEN%PVAR%11) (x IN s)) (f x))))) = ((IMAGE f) s))))
+T c= * part cGSPEC / c? / cSETSPEC b0 cIN b1 f0 * f1 b1 * * part cIMAGE f1 f0
+D SEGMENT_REFL
+A |- ((!a. ((closed_segment ((CONS (a , a)) NIL)) = (a INSERT EMPTY))) /\ (!a. ((open_segment (a , a)) = EMPTY)))
+T c/\ ! c= * part cclosed_segment cCONS c, b0 b0 cNIL * * part cINSERT b0 part cEMPTY ! c= * part copen_segment c, b0 b0 part cEMPTY
+D CONVEX_HULL_EXCHANGE_UNION
+A |- (!s. (!a. ((a IN ((hull convex) s)) ==> (((hull convex) s) = (UNIONS (GSPEC (\GEN%PVAR%1573. (?b. (((SETSPEC GEN%PVAR%1573) (b IN s)) ((hull convex) (a INSERT (s DELETE b))))))))))))
+T c==> cIN f0 * * part chull part cconvex f1 c= * * part chull part cconvex f1 * part cUNIONS * part cGSPEC / c? / cSETSPEC b0 cIN b1 f1 * * part chull part cconvex * * part cINSERT f0 * * part cDELETE f1 b1
+D SEGMENT_CONVEX_HULL
+A |- (!a. (!b. ((closed_segment ((CONS (a , b)) NIL)) = ((hull convex) (a INSERT (b INSERT EMPTY))))))
+T c= * part cclosed_segment cCONS c, f0 f1 cNIL * * part chull part cconvex * * part cINSERT f0 * * part cINSERT f1 part cEMPTY
++ (x = a), (((x = a) \/ (x = c)) /\ (~ (x = a))) |- F
+T c==> c= f0 f1 c==> c/\ c\/ c= f0 f1 c= f0 f2 c~ c= f0 f1 cF
++ (~ (((x = a) \/ (x = b)) = ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = c)))))) |- ((((x = a) \/ (x = b)) /\ ((~ (x = b)) /\ (((~ (x = a)) /\ (~ (x = c))) \/ (x = c)))) \/ (((~ (x = a)) /\ (~ (x = b))) /\ ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = c))))))
+T c==> c~ c= c\/ c= f0 f1 c= f0 f2 c\/ c= f0 f2 c/\ c\/ c= f0 f1 c= f0 f3 c~ c= f0 f3 c\/ c/\ c\/ c= f0 f1 c= f0 f2 c/\ c~ c= f0 f2 c\/ c/\ c~ c= f0 f1 c~ c= f0 f3 c= f0 f3 c/\ c/\ c~ c= f0 f1 c~ c= f0 f2 c\/ c= f0 f2 c/\ c\/ c= f0 f1 c= f0 f3 c~ c= f0 f3
++ |- ((\a. (!b. ((closed_segment ((CONS (a , b)) NIL)) = ((hull convex) (a INSERT (b INSERT EMPTY)))))) a)
+T * / ! c= * part cclosed_segment cCONS c, b0 b1 cNIL * * part chull part cconvex * * part cINSERT b0 * * part cINSERT b1 part cEMPTY f0
++ (x = a), ((~ (x = a)) /\ (~ (x = c))) |- ((a = a) ==> F)
+T c==> c= f0 f1 c==> c/\ c~ c= f0 f1 c~ c= f0 f2 c==> c= f1 f1 cF
+- (x = c), (((x = b) \/ (x = c)) /\ ((~ (x = b)) /\ (((~ (x = a)) /\ (~ (x = c))) \/ (x = a)))) |- (~ (c = b))
+T c==> c= f0 f1 c==> c/\ c\/ c= f0 f2 c= f0 f1 c/\ c~ c= f0 f2 c\/ c/\ c~ c= f0 f3 c~ c= f0 f1 c= f0 f3 c~ c= f1 f2
++ |- (((!t. ((s UNION t) = (t UNION s))) ==> ((\t. ((s UNION t) = (t UNION s))) t)) = ((\t. ((s UNION t) = (t UNION s))) t))
+T c= c==> ! c= * * part cUNION f0 b0 * * part cUNION b0 f0 * / c= * * part cUNION f0 b0 * * part cUNION b0 f0 f1 * / c= * * part cUNION f0 b0 * * part cUNION b0 f0 f1
+- |- ((\b. ((~ ((~ (c = a)) ==> (!x. (((x = b) \/ (x = c)) = ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = a)))))))) ==> F)) b)
+T * / c==> c~ c==> c~ c= f0 f1 ! c= c\/ c= b1 b0 c= b1 f0 c\/ c= b1 b0 c/\ c\/ c= b1 f1 c= b1 f0 c~ c= b1 f1 cF f2
++ (((~ (x = b)) /\ (~ (x = c))) /\ ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = a))))) |- (~ (x = c))
+T c==> c/\ c/\ c~ c= f0 f1 c~ c= f0 f2 c\/ c= f0 f1 c/\ c\/ c= f0 f3 c= f0 f2 c~ c= f0 f3 c~ c= f0 f2
+- (x = a), (x = c) |- ((~ (c = b)) = (~ (a = b)))
+T c==> c= f0 f1 c==> c= f0 f2 c= c~ c= f2 f3 c~ c= f1 f3
++ |- ((t \/ F) = t)
+T c= c\/ f0 cF f0
+- |- ((!b. ((~ (c = a)) ==> (!x. (((x = b) \/ (x = c)) = ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = a)))))))) = T)
+T c= ! c==> c~ c= f0 f1 ! c= c\/ c= b1 b0 c= b1 f0 c\/ c= b1 b0 c/\ c\/ c= b1 f1 c= b1 f0 c~ c= b1 f1 cT
++ (x = a), ((~ (x = a)) /\ (~ (x = c))) |- (~ (a = a))
+T c==> c= f0 f1 c==> c/\ c~ c= f0 f1 c~ c= f0 f2 c~ c= f1 f1
+- (x = a) |- ((~ (x = c)) = (~ (a = c)))
+T c==> c= f0 f1 c= c~ c= f0 f2 c~ c= f1 f2
++ |- ((~ (c = a)) ==> ((b IN (closed_segment ((CONS (a , c)) NIL))) ==> (((closed_segment ((CONS (a , b)) NIL)) UNION (closed_segment ((CONS (b , c)) NIL))) = (closed_segment ((CONS (a , c)) NIL)))))
+T c==> c~ c= f0 f1 c==> cIN f2 * part cclosed_segment cCONS c, f1 f0 cNIL c= * * part cUNION * part cclosed_segment cCONS c, f1 f2 cNIL * part cclosed_segment cCONS c, f2 f0 cNIL * part cclosed_segment cCONS c, f1 f0 cNIL
++ ((~ (x = a)) /\ (~ (x = c))), (((x = b) \/ (x = c)) /\ ((~ (x = b)) /\ (((~ (x = a)) /\ (~ (x = c))) \/ (x = a)))) |- (((~ (x = a)) /\ (~ (x = c))) /\ F)
+T c==> c/\ c~ c= f0 f1 c~ c= f0 f2 c==> c/\ c\/ c= f0 f3 c= f0 f2 c/\ c~ c= f0 f3 c\/ c/\ c~ c= f0 f1 c~ c= f0 f2 c= f0 f1 c/\ c/\ c~ c= f0 f1 c~ c= f0 f2 cF
++ |- (((~ (c = a)) ==> (!x. (((x = b) \/ (x = c)) = ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = a))))))) = ((~ (c = a)) ==> (!x. ((x IN (b INSERT (c INSERT EMPTY))) = (x IN (b INSERT ((a INSERT (c INSERT EMPTY)) DELETE a)))))))
+T c= c==> c~ c= f0 f1 ! c= c\/ c= b0 f2 c= b0 f0 c\/ c= b0 f2 c/\ c\/ c= b0 f1 c= b0 f0 c~ c= b0 f1 c==> c~ c= f0 f1 ! c= cIN b0 * * part cINSERT f2 * * part cINSERT f0 part cEMPTY cIN b0 * * part cINSERT f2 * * part cDELETE * * part cINSERT f1 * * part cINSERT f0 part cEMPTY f1
++ (((~ (x = b)) /\ (~ (x = c))) /\ ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = a))))), ((((x = a) \/ (x = c)) /\ (~ (x = a))) ==> F) |- F
+T c==> c/\ c/\ c~ c= f0 f1 c~ c= f0 f2 c\/ c= f0 f1 c/\ c\/ c= f0 f3 c= f0 f2 c~ c= f0 f3 c==> c==> c/\ c\/ c= f0 f3 c= f0 f2 c~ c= f0 f3 cF cF
+- (x = a), (((~ (x = a)) /\ (~ (x = b))) /\ ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = c))))) |- ((~ F) ==> F)
+T c==> c= f0 f1 c==> c/\ c/\ c~ c= f0 f1 c~ c= f0 f2 c\/ c= f0 f2 c/\ c\/ c= f0 f1 c= f0 f3 c~ c= f0 f3 c==> c~ cF cF
+- |- ((\t1. (!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))))) t1)
+T * / ! ! c= c\/ b0 c\/ b1 b2 c\/ c\/ b0 b1 b2 f0
+- |- ((~ (a = a)) ==> (a = a))
+T c==> c~ c= f0 f0 c= f0 f0
++ |- ((\b. ((closed_segment ((CONS (a , b)) NIL)) = ((hull convex) (a INSERT (b INSERT EMPTY))))) b)
+T * / c= * part cclosed_segment cCONS c, f0 b0 cNIL * * part chull part cconvex * * part cINSERT f0 * * part cINSERT b0 part cEMPTY f1
+- (~ (c = a)), (x = a), (x = c) |- (~ (c = c))
+T c==> c~ c= f0 f1 c==> c= f2 f1 c==> c= f2 f0 c~ c= f0 f0
++ |- (((!y. ((x IN (y INSERT EMPTY)) = (x = y))) ==> ((\y. ((x IN (y INSERT EMPTY)) = (x = y))) y)) = ((\y. ((x IN (y INSERT EMPTY)) = (x = y))) y))
+T c= c==> ! c= cIN f0 * * part cINSERT b0 part cEMPTY c= f0 b0 * / c= cIN f0 * * part cINSERT b0 part cEMPTY c= f0 b0 f1 * / c= cIN f0 * * part cINSERT b0 part cEMPTY c= f0 b0 f1
++ |- (((!s. ((GSPEC (\GEN%PVAR%11. (?x. (((SETSPEC GEN%PVAR%11) (x IN s)) (f x))))) = ((IMAGE f) s))) ==> ((\s. ((GSPEC (\GEN%PVAR%11. (?x. (((SETSPEC GEN%PVAR%11) (x IN s)) (f x))))) = ((IMAGE f) s))) s)) = ((\s. ((GSPEC (\GEN%PVAR%11. (?x. (((SETSPEC GEN%PVAR%11) (x IN s)) (f x))))) = ((IMAGE f) s))) s))
+T c= c==> ! c= * part cGSPEC / c? / cSETSPEC b1 cIN b2 b0 * f0 b2 * * part cIMAGE f0 b0 * / c= * part cGSPEC / c? / cSETSPEC b1 cIN b2 b0 * f0 b2 * * part cIMAGE f0 b0 f1 * / c= * part cGSPEC / c? / cSETSPEC b1 cIN b2 b0 * f0 b2 * * part cIMAGE f0 b0 f1
++ (x = b), (((x = b) \/ (x = c)) /\ ((~ (x = b)) /\ (((~ (x = a)) /\ (~ (x = c))) \/ (x = a)))) |- F
+T c==> c= f0 f1 c==> c/\ c\/ c= f0 f1 c= f0 f2 c/\ c~ c= f0 f1 c\/ c/\ c~ c= f0 f3 c~ c= f0 f2 c= f0 f3 cF
+- ((~ ((~ (c = a)) ==> (!x. (((x = b) \/ (x = c)) = ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = a)))))))) ==> F), (((~ ((~ (c = a)) ==> (!x. (((x = b) \/ (x = c)) = ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = a)))))))) ==> F) ==> ((~ ((~ (c = a)) ==> (!x. (((x = b) \/ (x = c)) = ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = a)))))))) ==> F)) |- (((~ ((~ (c = a)) ==> (!x. (((x = b) \/ (x = c)) = ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = a)))))))) ==> F) /\ ((~ ((~ (c = a)) ==> (!x. (((x = b) \/ (x = c)) = ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = a)))))))) ==> F))
+T c==> c==> c~ c==> c~ c= f0 f1 ! c= c\/ c= b0 f2 c= b0 f0 c\/ c= b0 f2 c/\ c\/ c= b0 f1 c= b0 f0 c~ c= b0 f1 cF c==> c==> c==> c~ c==> c~ c= f0 f1 ! c= c\/ c= b0 f2 c= b0 f0 c\/ c= b0 f2 c/\ c\/ c= b0 f1 c= b0 f0 c~ c= b0 f1 cF c==> c~ c==> c~ c= f0 f1 ! c= c\/ c= b0 f2 c= b0 f0 c\/ c= b0 f2 c/\ c\/ c= b0 f1 c= b0 f0 c~ c= b0 f1 cF c/\ c==> c~ c==> c~ c= f0 f1 ! c= c\/ c= b0 f2 c= b0 f0 c\/ c= b0 f2 c/\ c\/ c= b0 f1 c= b0 f0 c~ c= b0 f1 cF c==> c~ c==> c~ c= f0 f1 ! c= c\/ c= b0 f2 c= b0 f0 c\/ c= b0 f2 c/\ c\/ c= b0 f1 c= b0 f0 c~ c= b0 f1 cF
++ (x = a), (((x = a) \/ (x = c)) /\ (~ (x = a))) |- ((a = a) ==> F)
+T c==> c= f0 f1 c==> c/\ c\/ c= f0 f1 c= f0 f2 c~ c= f0 f1 c==> c= f1 f1 cF
++ (x = c), (((x = a) \/ (x = c)) /\ (~ (x = c))) |- (~ (c = c))
+T c==> c= f0 f1 c==> c/\ c\/ c= f0 f2 c= f0 f1 c~ c= f0 f1 c~ c= f1 f1
++ (((~ (x = b)) /\ (~ (x = c))) /\ ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = a))))) |- (~ (x = b))
+T c==> c/\ c/\ c~ c= f0 f1 c~ c= f0 f2 c\/ c= f0 f1 c/\ c\/ c= f0 f3 c= f0 f2 c~ c= f0 f3 c~ c= f0 f1
++ (x = a), (x = b) |- ((~ (b = b)) = (~ (a = a)))
+T c==> c= f0 f1 c==> c= f0 f2 c= c~ c= f2 f2 c~ c= f1 f1
++ (x = b), (((x = a) \/ (x = b)) /\ ((~ (x = b)) /\ (((~ (x = a)) /\ (~ (x = c))) \/ (x = c)))) |- (~ (b = b))
+T c==> c= f0 f1 c==> c/\ c\/ c= f0 f2 c= f0 f1 c/\ c~ c= f0 f1 c\/ c/\ c~ c= f0 f2 c~ c= f0 f3 c= f0 f3 c~ c= f1 f1
+- |- ((\a. ((open_segment (a , a)) = EMPTY)) a)
+T * / c= * part copen_segment c, b0 b0 part cEMPTY f0
+- (~ F), (x = c), (((~ (x = b)) /\ (~ (x = c))) /\ ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = a))))) |- ((~ F) /\ F)
+T c==> c~ cF c==> c= f0 f1 c==> c/\ c/\ c~ c= f0 f2 c~ c= f0 f1 c\/ c= f0 f2 c/\ c\/ c= f0 f3 c= f0 f1 c~ c= f0 f3 c/\ c~ cF cF
++ ((~ (c = a)) ==> ((b IN (closed_segment ((CONS (a , c)) NIL))) ==> (((closed_segment ((CONS (a , b)) NIL)) UNION (closed_segment ((CONS (b , c)) NIL))) = (closed_segment ((CONS (a , c)) NIL))))), ((c = a) ==> ((b IN (closed_segment ((CONS (a , c)) NIL))) ==> (((closed_segment ((CONS (a , b)) NIL)) UNION (closed_segment ((CONS (b , c)) NIL))) = (closed_segment ((CONS (a , c)) NIL))))) |- ((b IN (closed_segment ((CONS (a , c)) NIL))) ==> (((closed_segment ((CONS (a , b)) NIL)) UNION (closed_segment ((CONS (b , c)) NIL))) = (closed_segment ((CONS (a , c)) NIL))))
+T c==> c==> c~ c= f0 f1 c==> cIN f2 * part cclosed_segment cCONS c, f1 f0 cNIL c= * * part cUNION * part cclosed_segment cCONS c, f1 f2 cNIL * part cclosed_segment cCONS c, f2 f0 cNIL * part cclosed_segment cCONS c, f1 f0 cNIL c==> c==> c= f0 f1 c==> cIN f2 * part cclosed_segment cCONS c, f1 f0 cNIL c= * * part cUNION * part cclosed_segment cCONS c, f1 f2 cNIL * part cclosed_segment cCONS c, f2 f0 cNIL * part cclosed_segment cCONS c, f1 f0 cNIL c==> cIN f2 * part cclosed_segment cCONS c, f1 f0 cNIL c= * * part cUNION * part cclosed_segment cCONS c, f1 f2 cNIL * part cclosed_segment cCONS c, f2 f0 cNIL * part cclosed_segment cCONS c, f1 f0 cNIL
++ |- ((((~ (x = b)) /\ (~ (x = c))) /\ ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = a))))) ==> F)
+T c==> c/\ c/\ c~ c= f0 f1 c~ c= f0 f2 c\/ c= f0 f1 c/\ c\/ c= f0 f3 c= f0 f2 c~ c= f0 f3 cF
+- (x = c), (((~ (x = a)) /\ (~ (x = b))) /\ ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = c))))) |- (~ (c = a))
+T c==> c= f0 f1 c==> c/\ c/\ c~ c= f0 f2 c~ c= f0 f3 c\/ c= f0 f3 c/\ c\/ c= f0 f2 c= f0 f1 c~ c= f0 f1 c~ c= f1 f2
++ |- ((~ (c = a)) ==> (!x. ((x IN (b INSERT (c INSERT EMPTY))) = (x IN (b INSERT ((a INSERT (c INSERT EMPTY)) DELETE a))))))
+T c==> c~ c= f0 f1 ! c= cIN b0 * * part cINSERT f2 * * part cINSERT f0 part cEMPTY cIN b0 * * part cINSERT f2 * * part cDELETE * * part cINSERT f1 * * part cINSERT f0 part cEMPTY f1
++ (~ (c = a)), (x = c), (((x = a) \/ (x = b)) /\ ((~ (x = b)) /\ (((~ (x = a)) /\ (~ (x = c))) \/ (x = c)))) |- ((x = c) /\ F)
+T c==> c~ c= f0 f1 c==> c= f2 f0 c==> c/\ c\/ c= f2 f1 c= f2 f3 c/\ c~ c= f2 f3 c\/ c/\ c~ c= f2 f1 c~ c= f2 f0 c= f2 f0 c/\ c= f2 f0 cF
+- |- ((((~ ((~ (c = a)) ==> (!x. (((x = b) \/ (x = c)) = ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = a)))))))) ==> F) ==> ((~ ((~ (c = a)) ==> (!x. (((x = b) \/ (x = c)) = ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = a)))))))) ==> F)) ==> (((~ ((~ (c = a)) ==> (!x. (((x = b) \/ (x = c)) = ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = a)))))))) ==> F) ==> ((~ ((~ (c = a)) ==> (!x. (((x = b) \/ (x = c)) = ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = a)))))))) ==> F)))
+T c==> c==> c==> c~ c==> c~ c= f0 f1 ! c= c\/ c= b0 f2 c= b0 f0 c\/ c= b0 f2 c/\ c\/ c= b0 f1 c= b0 f0 c~ c= b0 f1 cF c==> c~ c==> c~ c= f0 f1 ! c= c\/ c= b0 f2 c= b0 f0 c\/ c= b0 f2 c/\ c\/ c= b0 f1 c= b0 f0 c~ c= b0 f1 cF c==> c==> c~ c==> c~ c= f0 f1 ! c= c\/ c= b0 f2 c= b0 f0 c\/ c= b0 f2 c/\ c\/ c= b0 f1 c= b0 f0 c~ c= b0 f1 cF c==> c~ c==> c~ c= f0 f1 ! c= c\/ c= b0 f2 c= b0 f0 c\/ c= b0 f2 c/\ c\/ c= b0 f1 c= b0 f0 c~ c= b0 f1 cF
+- |- ((\c. (!b. ((~ ((~ (c = a)) ==> (!x. (((x = b) \/ (x = c)) = ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = a)))))))) ==> F))) c)
+T * / ! c==> c~ c==> c~ c= b0 f0 ! c= c\/ c= b2 b1 c= b2 b0 c\/ c= b2 b1 c/\ c\/ c= b2 f0 c= b2 b0 c~ c= b2 f0 cF f1
++ |- ((t ==> T) = T)
+T c= c==> f0 cT cT
++ (x = b), (x = c), (((x = a) \/ (x = b)) /\ ((~ (x = b)) /\ (((~ (x = a)) /\ (~ (x = c))) \/ (x = c)))) |- ((x = b) /\ F)
+T c==> c= f0 f1 c==> c= f0 f2 c==> c/\ c\/ c= f0 f3 c= f0 f1 c/\ c~ c= f0 f1 c\/ c/\ c~ c= f0 f3 c~ c= f0 f2 c= f0 f2 c/\ c= f0 f1 cF
+- (((~ ((~ (c = a)) ==> (!x. (((x = a) \/ (x = b)) = ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = c)))))))) ==> F) ==> ((~ ((~ (c = a)) ==> (!x. (((x = a) \/ (x = b)) = ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = c)))))))) ==> F)) |- ((((~ ((~ (c = a)) ==> (!x. (((x = a) \/ (x = b)) = ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = c)))))))) ==> F) ==> ((~ ((~ (c = a)) ==> (!x. (((x = a) \/ (x = b)) = ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = c)))))))) ==> F)) /\ (((~ ((~ (c = a)) ==> (!x. (((x = a) \/ (x = b)) = ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = c)))))))) ==> F) ==> ((~ ((~ (c = a)) ==> (!x. (((x = a) \/ (x = b)) = ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = c)))))))) ==> F)))
+T c==> c==> c==> c~ c==> c~ c= f0 f1 ! c= c\/ c= b0 f1 c= b0 f2 c\/ c= b0 f2 c/\ c\/ c= b0 f1 c= b0 f0 c~ c= b0 f0 cF c==> c~ c==> c~ c= f0 f1 ! c= c\/ c= b0 f1 c= b0 f2 c\/ c= b0 f2 c/\ c\/ c= b0 f1 c= b0 f0 c~ c= b0 f0 cF c/\ c==> c==> c~ c==> c~ c= f0 f1 ! c= c\/ c= b0 f1 c= b0 f2 c\/ c= b0 f2 c/\ c\/ c= b0 f1 c= b0 f0 c~ c= b0 f0 cF c==> c~ c==> c~ c= f0 f1 ! c= c\/ c= b0 f1 c= b0 f2 c\/ c= b0 f2 c/\ c\/ c= b0 f1 c= b0 f0 c~ c= b0 f0 cF c==> c==> c~ c==> c~ c= f0 f1 ! c= c\/ c= b0 f1 c= b0 f2 c\/ c= b0 f2 c/\ c\/ c= b0 f1 c= b0 f0 c~ c= b0 f0 cF c==> c~ c==> c~ c= f0 f1 ! c= c\/ c= b0 f1 c= b0 f2 c\/ c= b0 f2 c/\ c\/ c= b0 f1 c= b0 f0 c~ c= b0 f0 cF
++ |- (((~ (c = a)) ==> (!x. ((x IN (a INSERT (b INSERT EMPTY))) = (x IN (b INSERT ((a INSERT (c INSERT EMPTY)) DELETE c)))))) = ((~ (c = a)) ==> ((a INSERT (b INSERT EMPTY)) = (b INSERT ((a INSERT (c INSERT EMPTY)) DELETE c)))))
+T c= c==> c~ c= f0 f1 ! c= cIN b0 * * part cINSERT f1 * * part cINSERT f2 part cEMPTY cIN b0 * * part cINSERT f2 * * part cDELETE * * part cINSERT f1 * * part cINSERT f0 part cEMPTY f0 c==> c~ c= f0 f1 c= * * part cINSERT f1 * * part cINSERT f2 part cEMPTY * * part cINSERT f2 * * part cDELETE * * part cINSERT f1 * * part cINSERT f0 part cEMPTY f0
++ (~ (((x = b) \/ (x = c)) = ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = a)))))), (~ (c = a)), ((((~ (x = b)) /\ (~ (x = c))) /\ ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = a))))) ==> F) |- F
+T c==> c~ c= c\/ c= f0 f1 c= f0 f2 c\/ c= f0 f1 c/\ c\/ c= f0 f3 c= f0 f2 c~ c= f0 f3 c==> c~ c= f2 f3 c==> c==> c/\ c/\ c~ c= f0 f1 c~ c= f0 f2 c\/ c= f0 f1 c/\ c\/ c= f0 f3 c= f0 f2 c~ c= f0 f3 cF cF
+- |- (((!a. (!b. ((~ ((~ (c = a)) ==> (!x. (((x = a) \/ (x = b)) = ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = c)))))))) ==> F))) ==> ((\a. (!b. ((~ ((~ (c = a)) ==> (!x. (((x = a) \/ (x = b)) = ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = c)))))))) ==> F))) a)) = ((\a. (!b. ((~ ((~ (c = a)) ==> (!x. (((x = a) \/ (x = b)) = ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = c)))))))) ==> F))) a))
+T c= c==> ! ! c==> c~ c==> c~ c= f0 b0 ! c= c\/ c= b2 b0 c= b2 b1 c\/ c= b2 b1 c/\ c\/ c= b2 b0 c= b2 f0 c~ c= b2 f0 cF * / ! c==> c~ c==> c~ c= f0 b0 ! c= c\/ c= b2 b0 c= b2 b1 c\/ c= b2 b1 c/\ c\/ c= b2 b0 c= b2 f0 c~ c= b2 f0 cF f1 * / ! c==> c~ c==> c~ c= f0 b0 ! c= c\/ c= b2 b0 c= b2 b1 c\/ c= b2 b1 c/\ c\/ c= b2 b0 c= b2 f0 c~ c= b2 f0 cF f1
+- |- ((t ==> t) = T)
+T c= c==> f0 f0 cT
+- |- (((((~ ((~ (c = a)) ==> (!x. (((x = b) \/ (x = c)) = ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = a)))))))) ==> F) ==> ((~ ((~ (c = a)) ==> (!x. (((x = b) \/ (x = c)) = ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = a)))))))) ==> F)) ==> (((~ ((~ (c = a)) ==> (!x. (((x = b) \/ (x = c)) = ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = a)))))))) ==> F) ==> ((~ ((~ (c = a)) ==> (!x. (((x = b) \/ (x = c)) = ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = a)))))))) ==> F))) = (((~ ((~ (c = a)) ==> (!x. (((x = b) \/ (x = c)) = ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = a)))))))) ==> F) ==> ((~ ((~ (c = a)) ==> (!x. (((x = b) \/ (x = c)) = ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = a)))))))) ==> F)))
+T c= c==> c==> c==> c~ c==> c~ c= f0 f1 ! c= c\/ c= b0 f2 c= b0 f0 c\/ c= b0 f2 c/\ c\/ c= b0 f1 c= b0 f0 c~ c= b0 f1 cF c==> c~ c==> c~ c= f0 f1 ! c= c\/ c= b0 f2 c= b0 f0 c\/ c= b0 f2 c/\ c\/ c= b0 f1 c= b0 f0 c~ c= b0 f1 cF c==> c==> c~ c==> c~ c= f0 f1 ! c= c\/ c= b0 f2 c= b0 f0 c\/ c= b0 f2 c/\ c\/ c= b0 f1 c= b0 f0 c~ c= b0 f1 cF c==> c~ c==> c~ c= f0 f1 ! c= c\/ c= b0 f2 c= b0 f0 c\/ c= b0 f2 c/\ c\/ c= b0 f1 c= b0 f0 c~ c= b0 f1 cF c==> c==> c~ c==> c~ c= f0 f1 ! c= c\/ c= b0 f2 c= b0 f0 c\/ c= b0 f2 c/\ c\/ c= b0 f1 c= b0 f0 c~ c= b0 f1 cF c==> c~ c==> c~ c= f0 f1 ! c= c\/ c= b0 f2 c= b0 f0 c\/ c= b0 f2 c/\ c\/ c= b0 f1 c= b0 f0 c~ c= b0 f1 cF
++ (x = a), (x = c) |- (c = a)
+T c==> c= f0 f1 c==> c= f0 f2 c= f2 f1
++ (((x = b) \/ (x = c)) /\ ((~ (x = b)) /\ (((~ (x = a)) /\ (~ (x = c))) \/ (x = a)))) |- (~ (x = b))
+T c==> c/\ c\/ c= f0 f1 c= f0 f2 c/\ c~ c= f0 f1 c\/ c/\ c~ c= f0 f3 c~ c= f0 f2 c= f0 f3 c~ c= f0 f1
+- |- ((t \/ t) = t)
+T c= c\/ f0 f0 f0
++ |- (((IMAGE f) (x INSERT s)) = ((f x) INSERT ((IMAGE f) s)))
+T c= * * part cIMAGE f0 * * part cINSERT f1 f2 * * part cINSERT * f0 f1 * * part cIMAGE f0 f2
+- |- ((!c. (!b. ((~ (c = a)) ==> (!x. (((x = b) \/ (x = c)) = ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = a))))))))) = T)
+T c= ! ! c==> c~ c= b0 f0 ! c= c\/ c= b2 b1 c= b2 b0 c\/ c= b2 b1 c/\ c\/ c= b2 f0 c= b2 b0 c~ c= b2 f0 cT
+- (x = a), (x = c) |- ((~ (a = b)) = (~ (c = b)))
+T c==> c= f0 f1 c==> c= f0 f2 c= c~ c= f1 f3 c~ c= f2 f3
+- |- ((\a. (!b. ((~ ((~ (c = a)) ==> (!x. (((x = a) \/ (x = b)) = ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = c)))))))) ==> F))) a)
+T * / ! c==> c~ c==> c~ c= f0 b0 ! c= c\/ c= b2 b0 c= b2 b1 c\/ c= b2 b1 c/\ c\/ c= b2 b0 c= b2 f0 c~ c= b2 f0 cF f1
+- |- (((~ ((~ (c = a)) ==> (!x. (((x = b) \/ (x = c)) = ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = a)))))))) ==> F) = ((~ (c = a)) ==> (!x. (((x = b) \/ (x = c)) = ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = a))))))))
+T c= c==> c~ c==> c~ c= f0 f1 ! c= c\/ c= b0 f2 c= b0 f0 c\/ c= b0 f2 c/\ c\/ c= b0 f1 c= b0 f0 c~ c= b0 f1 cF c==> c~ c= f0 f1 ! c= c\/ c= b0 f2 c= b0 f0 c\/ c= b0 f2 c/\ c\/ c= b0 f1 c= b0 f0 c~ c= b0 f1
++ (c = a) |- (T = ((b IN (closed_segment ((CONS (a , c)) NIL))) ==> (((closed_segment ((CONS (a , b)) NIL)) UNION (closed_segment ((CONS (b , c)) NIL))) = (closed_segment ((CONS (a , c)) NIL)))))
+T c==> c= f0 f1 c= cT c==> cIN f2 * part cclosed_segment cCONS c, f1 f0 cNIL c= * * part cUNION * part cclosed_segment cCONS c, f1 f2 cNIL * part cclosed_segment cCONS c, f2 f0 cNIL * part cclosed_segment cCONS c, f1 f0 cNIL
+- |- ((\t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))) t3)
+T * / c= c\/ f0 c\/ f1 b0 c\/ c\/ f0 f1 b0 f2
++ (((~ (x = b)) /\ (~ (x = c))) /\ ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = a))))) |- ((((x = a) \/ (x = c)) /\ (~ (x = a))) ==> F)
+T c==> c/\ c/\ c~ c= f0 f1 c~ c= f0 f2 c\/ c= f0 f1 c/\ c\/ c= f0 f3 c= f0 f2 c~ c= f0 f3 c==> c/\ c\/ c= f0 f3 c= f0 f2 c~ c= f0 f3 cF
+- |- (((~ p) ==> p) = p)
+T c= c==> c~ f0 f0 f0
++ |- ((((~ (x = a)) /\ (~ (x = b))) /\ ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = c))))) ==> F)
+T c==> c/\ c/\ c~ c= f0 f1 c~ c= f0 f2 c\/ c= f0 f2 c/\ c\/ c= f0 f1 c= f0 f3 c~ c= f0 f3 cF
++ (~ (c = a)), (b IN ((hull convex) (a INSERT (c INSERT EMPTY)))) |- ((b IN ((hull convex) (a INSERT (c INSERT EMPTY)))) /\ ((((hull convex) (b INSERT (c INSERT EMPTY))) UNION ((hull convex) (a INSERT (b INSERT EMPTY)))) = ((hull convex) (a INSERT (c INSERT EMPTY)))))
+T c==> c~ c= f0 f1 c==> cIN f2 * * part chull part cconvex * * part cINSERT f1 * * part cINSERT f0 part cEMPTY c/\ cIN f2 * * part chull part cconvex * * part cINSERT f1 * * part cINSERT f0 part cEMPTY c= * * part cUNION * * part chull part cconvex * * part cINSERT f2 * * part cINSERT f0 part cEMPTY * * part chull part cconvex * * part cINSERT f1 * * part cINSERT f2 part cEMPTY * * part chull part cconvex * * part cINSERT f1 * * part cINSERT f0 part cEMPTY
++ |- (((!s. ((s UNION s) = s)) ==> ((\s. ((s UNION s) = s)) s)) = ((\s. ((s UNION s) = s)) s))
+T c= c==> ! c= * * part cUNION b0 b0 b0 * / c= * * part cUNION b0 b0 b0 f0 * / c= * * part cUNION b0 b0 b0 f0
+- |- (((x = x) ==> p) = p)
+T c= c==> c= f0 f0 f1 f1
+- (x = b), (((x = b) \/ (x = c)) /\ ((~ (x = b)) /\ (((~ (x = a)) /\ (~ (x = c))) \/ (x = a)))) |- ((~ F) ==> F)
+T c==> c= f0 f1 c==> c/\ c\/ c= f0 f1 c= f0 f2 c/\ c~ c= f0 f1 c\/ c/\ c~ c= f0 f3 c~ c= f0 f2 c= f0 f3 c==> c~ cF cF
+- |- ((!b. t) = t)
+T c= ! f0 f0
++ (((~ (x = b)) /\ (~ (x = c))) /\ ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = a))))), ((x = b) ==> F), ((((x = a) \/ (x = c)) /\ (~ (x = a))) ==> F) |- F
+T c==> c/\ c/\ c~ c= f0 f1 c~ c= f0 f2 c\/ c= f0 f1 c/\ c\/ c= f0 f3 c= f0 f2 c~ c= f0 f3 c==> c==> c= f0 f1 cF c==> c==> c/\ c\/ c= f0 f3 c= f0 f2 c~ c= f0 f3 cF cF
++ (x = a), (((x = b) \/ (x = c)) /\ ((~ (x = b)) /\ (((~ (x = a)) /\ (~ (x = c))) \/ (x = a)))) |- ((x = b) ==> F)
+T c==> c= f0 f1 c==> c/\ c\/ c= f0 f2 c= f0 f3 c/\ c~ c= f0 f2 c\/ c/\ c~ c= f0 f1 c~ c= f0 f3 c= f0 f1 c==> c= f0 f2 cF
++ (x = c), ((~ (x = a)) /\ (~ (x = c))) |- ((x = c) /\ F)
+T c==> c= f0 f1 c==> c/\ c~ c= f0 f2 c~ c= f0 f1 c/\ c= f0 f1 cF
+- |- ((t ==> F) = (~ t))
+T c= c==> f0 cF c~ f0
++ |- (((!b. ((closed_segment ((CONS (a , b)) NIL)) = ((hull convex) (a INSERT (b INSERT EMPTY))))) ==> ((\b. ((closed_segment ((CONS (a , b)) NIL)) = ((hull convex) (a INSERT (b INSERT EMPTY))))) b)) = ((\b. ((closed_segment ((CONS (a , b)) NIL)) = ((hull convex) (a INSERT (b INSERT EMPTY))))) b))
+T c= c==> ! c= * part cclosed_segment cCONS c, f0 b0 cNIL * * part chull part cconvex * * part cINSERT f0 * * part cINSERT b0 part cEMPTY * / c= * part cclosed_segment cCONS c, f0 b0 cNIL * * part chull part cconvex * * part cINSERT f0 * * part cINSERT b0 part cEMPTY f1 * / c= * part cclosed_segment cCONS c, f0 b0 cNIL * * part chull part cconvex * * part cINSERT f0 * * part cINSERT b0 part cEMPTY f1
+- |- (((~ (c = a)) ==> (!x. (((x = a) \/ (x = b)) = ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = c))))))) = T)
+T c= c==> c~ c= f0 f1 ! c= c\/ c= b0 f1 c= b0 f2 c\/ c= b0 f2 c/\ c\/ c= b0 f1 c= b0 f0 c~ c= b0 f0 cT
++ (((x = a) \/ (x = b)) /\ ((~ (x = b)) /\ (((~ (x = a)) /\ (~ (x = c))) \/ (x = c)))), ((x = c) ==> F), (((~ (x = a)) /\ (~ (x = c))) ==> F) |- F
+T c==> c/\ c\/ c= f0 f1 c= f0 f2 c/\ c~ c= f0 f2 c\/ c/\ c~ c= f0 f1 c~ c= f0 f3 c= f0 f3 c==> c==> c= f0 f3 cF c==> c==> c/\ c~ c= f0 f1 c~ c= f0 f3 cF cF
++ (~ (((x = b) \/ (x = c)) = ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = a)))))), (~ (c = a)) |- F
+T c==> c~ c= c\/ c= f0 f1 c= f0 f2 c\/ c= f0 f1 c/\ c\/ c= f0 f3 c= f0 f2 c~ c= f0 f3 c==> c~ c= f2 f3 cF
++ |- (((!x. (!y. ((x IN (y INSERT EMPTY)) = (x = y)))) ==> ((\x. (!y. ((x IN (y INSERT EMPTY)) = (x = y)))) x)) = ((\x. (!y. ((x IN (y INSERT EMPTY)) = (x = y)))) x))
+T c= c==> ! ! c= cIN b0 * * part cINSERT b1 part cEMPTY c= b0 b1 * / ! c= cIN b0 * * part cINSERT b1 part cEMPTY c= b0 b1 f0 * / ! c= cIN b0 * * part cINSERT b1 part cEMPTY c= b0 b1 f0
++ |- (((!a. ((a IN ((hull convex) s)) ==> (((hull convex) s) = (UNIONS (GSPEC (\GEN%PVAR%1573. (?b. (((SETSPEC GEN%PVAR%1573) (b IN s)) ((hull convex) (a INSERT (s DELETE b))))))))))) ==> ((\a. ((a IN ((hull convex) s)) ==> (((hull convex) s) = (UNIONS (GSPEC (\GEN%PVAR%1573. (?b. (((SETSPEC GEN%PVAR%1573) (b IN s)) ((hull convex) (a INSERT (s DELETE b))))))))))) a)) = ((\a. ((a IN ((hull convex) s)) ==> (((hull convex) s) = (UNIONS (GSPEC (\GEN%PVAR%1573. (?b. (((SETSPEC GEN%PVAR%1573) (b IN s)) ((hull convex) (a INSERT (s DELETE b))))))))))) a))
+T c= c==> ! c==> cIN b0 * * part chull part cconvex f0 c= * * part chull part cconvex f0 * part cUNIONS * part cGSPEC / c? / cSETSPEC b1 cIN b2 f0 * * part chull part cconvex * * part cINSERT b0 * * part cDELETE f0 b2 * / c==> cIN b0 * * part chull part cconvex f0 c= * * part chull part cconvex f0 * part cUNIONS * part cGSPEC / c? / cSETSPEC b1 cIN b2 f0 * * part chull part cconvex * * part cINSERT b0 * * part cDELETE f0 b2 f1 * / c==> cIN b0 * * part chull part cconvex f0 c= * * part chull part cconvex f0 * part cUNIONS * part cGSPEC / c? / cSETSPEC b1 cIN b2 f0 * * part chull part cconvex * * part cINSERT b0 * * part cDELETE f0 b2 f1
++ (b IN ((hull convex) (a INSERT (c INSERT EMPTY)))) |- (((((hull convex) (b INSERT (c INSERT EMPTY))) UNION ((hull convex) (a INSERT (b INSERT EMPTY)))) = (UNIONS (GSPEC (\GEN%PVAR%1573. (?b'. (((SETSPEC GEN%PVAR%1573) (b' IN (a INSERT (c INSERT EMPTY)))) ((hull convex) (b INSERT ((a INSERT (c INSERT EMPTY)) DELETE b'))))))))) = ((((hull convex) (b INSERT (c INSERT EMPTY))) UNION ((hull convex) (a INSERT (b INSERT EMPTY)))) = ((hull convex) (a INSERT (c INSERT EMPTY)))))
+T c==> cIN f0 * * part chull part cconvex * * part cINSERT f1 * * part cINSERT f2 part cEMPTY c= c= * * part cUNION * * part chull part cconvex * * part cINSERT f0 * * part cINSERT f2 part cEMPTY * * part chull part cconvex * * part cINSERT f1 * * part cINSERT f0 part cEMPTY * part cUNIONS * part cGSPEC / c? / cSETSPEC b0 cIN b1 * * part cINSERT f1 * * part cINSERT f2 part cEMPTY * * part chull part cconvex * * part cINSERT f0 * * part cDELETE * * part cINSERT f1 * * part cINSERT f2 part cEMPTY b1 c= * * part cUNION * * part chull part cconvex * * part cINSERT f0 * * part cINSERT f2 part cEMPTY * * part chull part cconvex * * part cINSERT f1 * * part cINSERT f0 part cEMPTY * * part chull part cconvex * * part cINSERT f1 * * part cINSERT f2 part cEMPTY
+- (x = a), (((x = a) \/ (x = c)) /\ (~ (x = a))) |- ((~ F) ==> F)
+T c==> c= f0 f1 c==> c/\ c\/ c= f0 f1 c= f0 f2 c~ c= f0 f1 c==> c~ cF cF
++ |- (p = ((~ p) ==> F))
+T c= f0 c==> c~ f0 cF
+- (x = b) |- ((~ (c = a)) = (~ (c = a)))
+T c==> c= f0 f1 c= c~ c= f2 f3 c~ c= f2 f3
++ (((x = b) \/ (x = c)) /\ ((~ (x = b)) /\ (((~ (x = a)) /\ (~ (x = c))) \/ (x = a)))), ((x = a) ==> F), (((~ (x = a)) /\ (~ (x = c))) ==> F) |- F
+T c==> c/\ c\/ c= f0 f1 c= f0 f2 c/\ c~ c= f0 f1 c\/ c/\ c~ c= f0 f3 c~ c= f0 f2 c= f0 f3 c==> c==> c= f0 f3 cF c==> c==> c/\ c~ c= f0 f3 c~ c= f0 f2 cF cF
++ (~ (c = a)) |- ((b IN (closed_segment ((CONS (a , c)) NIL))) ==> (((closed_segment ((CONS (b , c)) NIL)) UNION (closed_segment ((CONS (a , b)) NIL))) = (closed_segment ((CONS (a , c)) NIL))))
+T c==> c~ c= f0 f1 c==> cIN f2 * part cclosed_segment cCONS c, f1 f0 cNIL c= * * part cUNION * part cclosed_segment cCONS c, f2 f0 cNIL * part cclosed_segment cCONS c, f1 f2 cNIL * part cclosed_segment cCONS c, f1 f0 cNIL
+- (~ ((~ (c = a)) ==> (!x. (((x = a) \/ (x = b)) = ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = c)))))))) |- ((~ ((~ (c = a)) ==> (!x. (((x = a) \/ (x = b)) = ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = c)))))))) /\ F)
+T c==> c~ c==> c~ c= f0 f1 ! c= c\/ c= b0 f1 c= b0 f2 c\/ c= b0 f2 c/\ c\/ c= b0 f1 c= b0 f0 c~ c= b0 f0 c/\ c~ c==> c~ c= f0 f1 ! c= c\/ c= b0 f1 c= b0 f2 c\/ c= b0 f2 c/\ c\/ c= b0 f1 c= b0 f0 c~ c= b0 f0 cF
++ (x = b), (((x = a) \/ (x = b)) /\ ((~ (x = b)) /\ (((~ (x = a)) /\ (~ (x = c))) \/ (x = c)))) |- ((b = b) ==> F)
+T c==> c= f0 f1 c==> c/\ c\/ c= f0 f2 c= f0 f1 c/\ c~ c= f0 f1 c\/ c/\ c~ c= f0 f2 c~ c= f0 f3 c= f0 f3 c==> c= f1 f1 cF
++ (x = b), (((x = b) \/ (x = c)) /\ ((~ (x = b)) /\ (((~ (x = a)) /\ (~ (x = c))) \/ (x = a)))) |- (~ (b = b))
+T c==> c= f0 f1 c==> c/\ c\/ c= f0 f1 c= f0 f2 c/\ c~ c= f0 f1 c\/ c/\ c~ c= f0 f3 c~ c= f0 f2 c= f0 f3 c~ c= f1 f1
++ |- ((\q'. (((b IN (closed_segment ((CONS (a , c)) NIL))) = p') ==> ((p' ==> ((((closed_segment ((CONS (a , b)) NIL)) UNION (closed_segment ((CONS (b , c)) NIL))) = (closed_segment ((CONS (a , c)) NIL))) = q')) ==> (((b IN (closed_segment ((CONS (a , c)) NIL))) ==> (((closed_segment ((CONS (a , b)) NIL)) UNION (closed_segment ((CONS (b , c)) NIL))) = (closed_segment ((CONS (a , c)) NIL)))) = (p' ==> q'))))) q')
+T * / c==> c= cIN f0 * part cclosed_segment cCONS c, f1 f2 cNIL f3 c==> c==> f3 c= c= * * part cUNION * part cclosed_segment cCONS c, f1 f0 cNIL * part cclosed_segment cCONS c, f0 f2 cNIL * part cclosed_segment cCONS c, f1 f2 cNIL b0 c= c==> cIN f0 * part cclosed_segment cCONS c, f1 f2 cNIL c= * * part cUNION * part cclosed_segment cCONS c, f1 f0 cNIL * part cclosed_segment cCONS c, f0 f2 cNIL * part cclosed_segment cCONS c, f1 f2 cNIL c==> f3 b0 f4
++ (x = a), (((~ (x = a)) /\ (~ (x = b))) /\ ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = c))))) |- ((a = a) ==> F)
+T c==> c= f0 f1 c==> c/\ c/\ c~ c= f0 f1 c~ c= f0 f2 c\/ c= f0 f2 c/\ c\/ c= f0 f1 c= f0 f3 c~ c= f0 f3 c==> c= f1 f1 cF
++ (~ (c = a)), (((x = a) \/ (x = b)) /\ ((~ (x = b)) /\ (((~ (x = a)) /\ (~ (x = c))) \/ (x = c)))) |- ((((x = a) \/ (x = b)) /\ ((~ (x = b)) /\ (((~ (x = a)) /\ (~ (x = c))) \/ (x = c)))) /\ F)
+T c==> c~ c= f0 f1 c==> c/\ c\/ c= f2 f1 c= f2 f3 c/\ c~ c= f2 f3 c\/ c/\ c~ c= f2 f1 c~ c= f2 f0 c= f2 f0 c/\ c/\ c\/ c= f2 f1 c= f2 f3 c/\ c~ c= f2 f3 c\/ c/\ c~ c= f2 f1 c~ c= f2 f0 c= f2 f0 cF
++ (~ (c = a)), (x = c) |- ((x = a) ==> F)
+T c==> c~ c= f0 f1 c==> c= f2 f0 c==> c= f2 f1 cF
+- (x = c), ((~ (x = a)) /\ (~ (x = c))) |- ((~ F) ==> F)
+T c==> c= f0 f1 c==> c/\ c~ c= f0 f2 c~ c= f0 f1 c==> c~ cF cF
+- (~ F), (x = b), (((~ (x = b)) /\ (~ (x = c))) /\ ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = a))))) |- ((~ F) /\ F)
+T c==> c~ cF c==> c= f0 f1 c==> c/\ c/\ c~ c= f0 f1 c~ c= f0 f2 c\/ c= f0 f1 c/\ c\/ c= f0 f3 c= f0 f2 c~ c= f0 f3 c/\ c~ cF cF
+- ((~ ((~ (c = a)) ==> (!x. (((x = b) \/ (x = c)) = ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = a)))))))) ==> F) |- (((~ ((~ (c = a)) ==> (!x. (((x = b) \/ (x = c)) = ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = a)))))))) ==> F) /\ ((~ ((~ (c = a)) ==> (!x. (((x = b) \/ (x = c)) = ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = a)))))))) ==> F))
+T c==> c==> c~ c==> c~ c= f0 f1 ! c= c\/ c= b0 f2 c= b0 f0 c\/ c= b0 f2 c/\ c\/ c= b0 f1 c= b0 f0 c~ c= b0 f1 cF c/\ c==> c~ c==> c~ c= f0 f1 ! c= c\/ c= b0 f2 c= b0 f0 c\/ c= b0 f2 c/\ c\/ c= b0 f1 c= b0 f0 c~ c= b0 f1 cF c==> c~ c==> c~ c= f0 f1 ! c= c\/ c= b0 f2 c= b0 f0 c\/ c= b0 f2 c/\ c\/ c= b0 f1 c= b0 f0 c~ c= b0 f1 cF
++ (((~ (x = b)) /\ (~ (x = c))) /\ ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = a))))) |- ((((~ (x = b)) /\ (~ (x = c))) /\ ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = a))))) /\ F)
+T c==> c/\ c/\ c~ c= f0 f1 c~ c= f0 f2 c\/ c= f0 f1 c/\ c\/ c= f0 f3 c= f0 f2 c~ c= f0 f3 c/\ c/\ c/\ c~ c= f0 f1 c~ c= f0 f2 c\/ c= f0 f1 c/\ c\/ c= f0 f3 c= f0 f2 c~ c= f0 f3 cF
++ (b IN ((hull convex) (a INSERT (c INSERT EMPTY)))) |- (((((hull convex) (b INSERT (c INSERT EMPTY))) UNION ((hull convex) (a INSERT (b INSERT EMPTY)))) = ((hull convex) (a INSERT (c INSERT EMPTY)))) = ((((hull convex) (b INSERT (c INSERT EMPTY))) UNION ((hull convex) (a INSERT (b INSERT EMPTY)))) = (UNIONS (GSPEC (\GEN%PVAR%1573. (?b'. (((SETSPEC GEN%PVAR%1573) (b' IN (a INSERT (c INSERT EMPTY)))) ((hull convex) (b INSERT ((a INSERT (c INSERT EMPTY)) DELETE b'))))))))))
+T c==> cIN f0 * * part chull part cconvex * * part cINSERT f1 * * part cINSERT f2 part cEMPTY c= c= * * part cUNION * * part chull part cconvex * * part cINSERT f0 * * part cINSERT f2 part cEMPTY * * part chull part cconvex * * part cINSERT f1 * * part cINSERT f0 part cEMPTY * * part chull part cconvex * * part cINSERT f1 * * part cINSERT f2 part cEMPTY c= * * part cUNION * * part chull part cconvex * * part cINSERT f0 * * part cINSERT f2 part cEMPTY * * part chull part cconvex * * part cINSERT f1 * * part cINSERT f0 part cEMPTY * part cUNIONS * part cGSPEC / c? / cSETSPEC b0 cIN b1 * * part cINSERT f1 * * part cINSERT f2 part cEMPTY * * part chull part cconvex * * part cINSERT f0 * * part cDELETE * * part cINSERT f1 * * part cINSERT f2 part cEMPTY b1
++ |- ((\t. (t \/ (~ t))) (c = a))
+T * / c\/ b0 c~ b0 c= f0 f1
++ (((x = a) \/ (x = c)) /\ (~ (x = c))) |- ((x = c) ==> F)
+T c==> c/\ c\/ c= f0 f1 c= f0 f2 c~ c= f0 f2 c==> c= f0 f2 cF
++ (((x = a) \/ (x = b)) /\ ((~ (x = b)) /\ (((~ (x = a)) /\ (~ (x = c))) \/ (x = c)))), ((x = a) ==> F), ((x = b) ==> F) |- F
+T c==> c/\ c\/ c= f0 f1 c= f0 f2 c/\ c~ c= f0 f2 c\/ c/\ c~ c= f0 f1 c~ c= f0 f3 c= f0 f3 c==> c==> c= f0 f1 cF c==> c==> c= f0 f2 cF cF
++ (((x = a) \/ (x = c)) /\ (~ (x = a))), ((x = a) ==> F), ((x = c) ==> F) |- F
+T c==> c/\ c\/ c= f0 f1 c= f0 f2 c~ c= f0 f1 c==> c==> c= f0 f1 cF c==> c==> c= f0 f2 cF cF
+- ((~ ((~ (c = a)) ==> (!x. (((x = a) \/ (x = b)) = ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = c)))))))) ==> F), (((~ ((~ (c = a)) ==> (!x. (((x = a) \/ (x = b)) = ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = c)))))))) ==> F) ==> ((~ ((~ (c = a)) ==> (!x. (((x = a) \/ (x = b)) = ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = c)))))))) ==> F)) |- ((((~ ((~ (c = a)) ==> (!x. (((x = a) \/ (x = b)) = ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = c)))))))) ==> F) ==> ((~ ((~ (c = a)) ==> (!x. (((x = a) \/ (x = b)) = ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = c)))))))) ==> F)) /\ ((~ ((~ (c = a)) ==> (!x. (((x = a) \/ (x = b)) = ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = c)))))))) ==> F))
+T c==> c==> c~ c==> c~ c= f0 f1 ! c= c\/ c= b0 f1 c= b0 f2 c\/ c= b0 f2 c/\ c\/ c= b0 f1 c= b0 f0 c~ c= b0 f0 cF c==> c==> c==> c~ c==> c~ c= f0 f1 ! c= c\/ c= b0 f1 c= b0 f2 c\/ c= b0 f2 c/\ c\/ c= b0 f1 c= b0 f0 c~ c= b0 f0 cF c==> c~ c==> c~ c= f0 f1 ! c= c\/ c= b0 f1 c= b0 f2 c\/ c= b0 f2 c/\ c\/ c= b0 f1 c= b0 f0 c~ c= b0 f0 cF c/\ c==> c==> c~ c==> c~ c= f0 f1 ! c= c\/ c= b0 f1 c= b0 f2 c\/ c= b0 f2 c/\ c\/ c= b0 f1 c= b0 f0 c~ c= b0 f0 cF c==> c~ c==> c~ c= f0 f1 ! c= c\/ c= b0 f1 c= b0 f2 c\/ c= b0 f2 c/\ c\/ c= b0 f1 c= b0 f0 c~ c= b0 f0 cF c==> c~ c==> c~ c= f0 f1 ! c= c\/ c= b0 f1 c= b0 f2 c\/ c= b0 f2 c/\ c\/ c= b0 f1 c= b0 f0 c~ c= b0 f0 cF
++ (~ (c = a)) |- ((((x = a) \/ (x = b)) /\ ((~ (x = b)) /\ (((~ (x = a)) /\ (~ (x = c))) \/ (x = c)))) ==> F)
+T c==> c~ c= f0 f1 c==> c/\ c\/ c= f2 f1 c= f2 f3 c/\ c~ c= f2 f3 c\/ c/\ c~ c= f2 f1 c~ c= f2 f0 c= f2 f0 cF
+- |- ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))
+T c= c\/ f0 c\/ f1 f2 c\/ c\/ f0 f1 f2
++ (~ (c = a)), (x = a), (x = c) |- (~ (a = a))
+T c==> c~ c= f0 f1 c==> c= f2 f1 c==> c= f2 f0 c~ c= f1 f1
++ (~ (c = a)), (x = a), (((x = b) \/ (x = c)) /\ ((~ (x = b)) /\ (((~ (x = a)) /\ (~ (x = c))) \/ (x = a)))) |- ((x = a) /\ F)
+T c==> c~ c= f0 f1 c==> c= f2 f1 c==> c/\ c\/ c= f2 f3 c= f2 f0 c/\ c~ c= f2 f3 c\/ c/\ c~ c= f2 f1 c~ c= f2 f0 c= f2 f1 c/\ c= f2 f1 cF
+- (x = a), (x = c), (((x = b) \/ (x = c)) /\ ((~ (x = b)) /\ (((~ (x = a)) /\ (~ (x = c))) \/ (x = a)))) |- (~ (a = b))
+T c==> c= f0 f1 c==> c= f0 f2 c==> c/\ c\/ c= f0 f3 c= f0 f2 c/\ c~ c= f0 f3 c\/ c/\ c~ c= f0 f1 c~ c= f0 f2 c= f0 f1 c~ c= f1 f3
+- (x = a) |- ((~ (c = a)) = (~ (c = a)))
+T c==> c= f0 f1 c= c~ c= f2 f1 c~ c= f2 f1
++ (x = a), (x = c) |- ((~ (c = a)) = (~ (a = a)))
+T c==> c= f0 f1 c==> c= f0 f2 c= c~ c= f2 f1 c~ c= f1 f1
++ (x = a), (((x = a) \/ (x = c)) /\ (~ (x = a))) |- ((x = a) /\ F)
+T c==> c= f0 f1 c==> c/\ c\/ c= f0 f1 c= f0 f2 c~ c= f0 f1 c/\ c= f0 f1 cF
++ (~ (((x = a) \/ (x = b)) = ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = c)))))), ((((~ (x = a)) /\ (~ (x = b))) /\ ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = c))))) ==> F), ((((x = a) \/ (x = b)) /\ ((~ (x = b)) /\ (((~ (x = a)) /\ (~ (x = c))) \/ (x = c)))) ==> F) |- F
+T c==> c~ c= c\/ c= f0 f1 c= f0 f2 c\/ c= f0 f2 c/\ c\/ c= f0 f1 c= f0 f3 c~ c= f0 f3 c==> c==> c/\ c/\ c~ c= f0 f1 c~ c= f0 f2 c\/ c= f0 f2 c/\ c\/ c= f0 f1 c= f0 f3 c~ c= f0 f3 cF c==> c==> c/\ c\/ c= f0 f1 c= f0 f2 c/\ c~ c= f0 f2 c\/ c/\ c~ c= f0 f1 c~ c= f0 f3 c= f0 f3 cF cF
+- (x = c), ((~ (x = a)) /\ (~ (x = c))) |- (~ (c = a))
+T c==> c= f0 f1 c==> c/\ c~ c= f0 f2 c~ c= f0 f1 c~ c= f1 f2
++ (((~ (x = b)) /\ (~ (x = c))) /\ ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = a))))) |- ((x = c) ==> F)
+T c==> c/\ c/\ c~ c= f0 f1 c~ c= f0 f2 c\/ c= f0 f1 c/\ c\/ c= f0 f3 c= f0 f2 c~ c= f0 f3 c==> c= f0 f2 cF
++ |- (((!f. (!s. ((GSPEC (\GEN%PVAR%11. (?x. (((SETSPEC GEN%PVAR%11) (x IN s)) (f x))))) = ((IMAGE f) s)))) ==> ((\f. (!s. ((GSPEC (\GEN%PVAR%11. (?x. (((SETSPEC GEN%PVAR%11) (x IN s)) (f x))))) = ((IMAGE f) s)))) f)) = ((\f. (!s. ((GSPEC (\GEN%PVAR%11. (?x. (((SETSPEC GEN%PVAR%11) (x IN s)) (f x))))) = ((IMAGE f) s)))) f))
+T c= c==> ! ! c= * part cGSPEC / c? / cSETSPEC b2 cIN b3 b1 * b0 b3 * * part cIMAGE b0 b1 * / ! c= * part cGSPEC / c? / cSETSPEC b2 cIN b3 b1 * b0 b3 * * part cIMAGE b0 b1 f0 * / ! c= * part cGSPEC / c? / cSETSPEC b2 cIN b3 b1 * b0 b3 * * part cIMAGE b0 b1 f0
++ (x = c), (((x = a) \/ (x = c)) /\ (~ (x = c))) |- F
+T c==> c= f0 f1 c==> c/\ c\/ c= f0 f2 c= f0 f1 c~ c= f0 f1 cF
++ |- ((!q'. ((p = p') ==> ((p' ==> (q = q')) ==> ((p ==> q) = (p' ==> q'))))) = T)
+T c= ! c==> c= f0 f1 c==> c==> f1 c= f2 b0 c= c==> f0 f2 c==> f1 b0 cT
+- (x = c), (((~ (x = b)) /\ (~ (x = c))) /\ ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = a))))) |- ((~ F) ==> F)
+T c==> c= f0 f1 c==> c/\ c/\ c~ c= f0 f2 c~ c= f0 f1 c\/ c= f0 f2 c/\ c\/ c= f0 f3 c= f0 f1 c~ c= f0 f3 c==> c~ cF cF
++ (x = a), ((~ (x = a)) /\ (~ (x = c))) |- F
+T c==> c= f0 f1 c==> c/\ c~ c= f0 f1 c~ c= f0 f2 cF
+- |- (((~ (c = a)) ==> (!x. (((x = b) \/ (x = c)) = ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = a))))))) = T)
+T c= c==> c~ c= f0 f1 ! c= c\/ c= b0 f2 c= b0 f0 c\/ c= b0 f2 c/\ c\/ c= b0 f1 c= b0 f0 c~ c= b0 f1 cT
++ (((x = b) \/ (x = c)) /\ ((~ (x = b)) /\ (((~ (x = a)) /\ (~ (x = c))) \/ (x = a)))) |- (((~ (x = a)) /\ (~ (x = c))) \/ (x = a))
+T c==> c/\ c\/ c= f0 f1 c= f0 f2 c/\ c~ c= f0 f1 c\/ c/\ c~ c= f0 f3 c~ c= f0 f2 c= f0 f3 c\/ c/\ c~ c= f0 f3 c~ c= f0 f2 c= f0 f3
++ |- (((~ (c = a)) ==> (!x. (((x = a) \/ (x = b)) = ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = c))))))) = ((~ (c = a)) ==> (!x. ((x IN (a INSERT (b INSERT EMPTY))) = (x IN (b INSERT ((a INSERT (c INSERT EMPTY)) DELETE c)))))))
+T c= c==> c~ c= f0 f1 ! c= c\/ c= b0 f1 c= b0 f2 c\/ c= b0 f2 c/\ c\/ c= b0 f1 c= b0 f0 c~ c= b0 f0 c==> c~ c= f0 f1 ! c= cIN b0 * * part cINSERT f1 * * part cINSERT f2 part cEMPTY cIN b0 * * part cINSERT f2 * * part cDELETE * * part cINSERT f1 * * part cINSERT f0 part cEMPTY f0
++ |- ((\s. (!t. ((s UNION t) = (t UNION s)))) s)
+T * / ! c= * * part cUNION b0 b1 * * part cUNION b1 b0 f0
++ |- (((!p'. (!q'. (((b IN (closed_segment ((CONS (a , c)) NIL))) = p') ==> ((p' ==> ((((closed_segment ((CONS (a , b)) NIL)) UNION (closed_segment ((CONS (b , c)) NIL))) = (closed_segment ((CONS (a , c)) NIL))) = q')) ==> (((b IN (closed_segment ((CONS (a , c)) NIL))) ==> (((closed_segment ((CONS (a , b)) NIL)) UNION (closed_segment ((CONS (b , c)) NIL))) = (closed_segment ((CONS (a , c)) NIL)))) = (p' ==> q')))))) ==> ((\p'. (!q'. (((b IN (closed_segment ((CONS (a , c)) NIL))) = p') ==> ((p' ==> ((((closed_segment ((CONS (a , b)) NIL)) UNION (closed_segment ((CONS (b , c)) NIL))) = (closed_segment ((CONS (a , c)) NIL))) = q')) ==> (((b IN (closed_segment ((CONS (a , c)) NIL))) ==> (((closed_segment ((CONS (a , b)) NIL)) UNION (closed_segment ((CONS (b , c)) NIL))) = (closed_segment ((CONS (a , c)) NIL)))) = (p' ==> q')))))) p')) = ((\p'. (!q'. (((b IN (closed_segment ((CONS (a , c)) NIL))) = p') ==> ((p' ==> ((((closed_segment ((CONS (a , b)) NIL)) UNION (closed_segment ((CONS (b , c)) NIL))) = (closed_segment ((CONS (a , c)) NIL))) = q')) ==> (((b IN (closed_segment ((CONS (a , c)) NIL))) ==> (((closed_segment ((CONS (a , b)) NIL)) UNION (closed_segment ((CONS (b , c)) NIL))) = (closed_segment ((CONS (a , c)) NIL)))) = (p' ==> q')))))) p'))
+T c= c==> ! ! c==> c= cIN f0 * part cclosed_segment cCONS c, f1 f2 cNIL b0 c==> c==> b0 c= c= * * part cUNION * part cclosed_segment cCONS c, f1 f0 cNIL * part cclosed_segment cCONS c, f0 f2 cNIL * part cclosed_segment cCONS c, f1 f2 cNIL b1 c= c==> cIN f0 * part cclosed_segment cCONS c, f1 f2 cNIL c= * * part cUNION * part cclosed_segment cCONS c, f1 f0 cNIL * part cclosed_segment cCONS c, f0 f2 cNIL * part cclosed_segment cCONS c, f1 f2 cNIL c==> b0 b1 * / ! c==> c= cIN f0 * part cclosed_segment cCONS c, f1 f2 cNIL b0 c==> c==> b0 c= c= * * part cUNION * part cclosed_segment cCONS c, f1 f0 cNIL * part cclosed_segment cCONS c, f0 f2 cNIL * part cclosed_segment cCONS c, f1 f2 cNIL b1 c= c==> cIN f0 * part cclosed_segment cCONS c, f1 f2 cNIL c= * * part cUNION * part cclosed_segment cCONS c, f1 f0 cNIL * part cclosed_segment cCONS c, f0 f2 cNIL * part cclosed_segment cCONS c, f1 f2 cNIL c==> b0 b1 f3 * / ! c==> c= cIN f0 * part cclosed_segment cCONS c, f1 f2 cNIL b0 c==> c==> b0 c= c= * * part cUNION * part cclosed_segment cCONS c, f1 f0 cNIL * part cclosed_segment cCONS c, f0 f2 cNIL * part cclosed_segment cCONS c, f1 f2 cNIL b1 c= c==> cIN f0 * part cclosed_segment cCONS c, f1 f2 cNIL c= * * part cUNION * part cclosed_segment cCONS c, f1 f0 cNIL * part cclosed_segment cCONS c, f0 f2 cNIL * part cclosed_segment cCONS c, f1 f2 cNIL c==> b0 b1 f3
+- |- ((\t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3)))) t2)
+T * / ! c= c\/ f0 c\/ b0 b1 c\/ c\/ f0 b0 b1 f1
+- |- (((!b. ((~ ((~ (c = a)) ==> (!x. (((x = a) \/ (x = b)) = ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = c)))))))) ==> F)) ==> ((\b. ((~ ((~ (c = a)) ==> (!x. (((x = a) \/ (x = b)) = ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = c)))))))) ==> F)) b)) = ((\b. ((~ ((~ (c = a)) ==> (!x. (((x = a) \/ (x = b)) = ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = c)))))))) ==> F)) b))
+T c= c==> ! c==> c~ c==> c~ c= f0 f1 ! c= c\/ c= b1 f1 c= b1 b0 c\/ c= b1 b0 c/\ c\/ c= b1 f1 c= b1 f0 c~ c= b1 f0 cF * / c==> c~ c==> c~ c= f0 f1 ! c= c\/ c= b1 f1 c= b1 b0 c\/ c= b1 b0 c/\ c\/ c= b1 f1 c= b1 f0 c~ c= b1 f0 cF f2 * / c==> c~ c==> c~ c= f0 f1 ! c= c\/ c= b1 f1 c= b1 b0 c\/ c= b1 b0 c/\ c\/ c= b1 f1 c= b1 f0 c~ c= b1 f0 cF f2
+- (x = b), (((x = a) \/ (x = b)) /\ ((~ (x = b)) /\ (((~ (x = a)) /\ (~ (x = c))) \/ (x = c)))) |- ((~ F) ==> F)
+T c==> c= f0 f1 c==> c/\ c\/ c= f0 f2 c= f0 f1 c/\ c~ c= f0 f1 c\/ c/\ c~ c= f0 f2 c~ c= f0 f3 c= f0 f3 c==> c~ cF cF
++ (((x = b) \/ (x = c)) /\ ((~ (x = b)) /\ (((~ (x = a)) /\ (~ (x = c))) \/ (x = a)))) |- ((x = b) ==> F)
+T c==> c/\ c\/ c= f0 f1 c= f0 f2 c/\ c~ c= f0 f1 c\/ c/\ c~ c= f0 f3 c~ c= f0 f2 c= f0 f3 c==> c= f0 f1 cF
+- (x = b), ((~ (x = a)) /\ (~ (x = c))) |- (~ (b = c))
+T c==> c= f0 f1 c==> c/\ c~ c= f0 f2 c~ c= f0 f3 c~ c= f1 f3
++ (~ (c = a)), (((x = b) \/ (x = c)) /\ ((~ (x = b)) /\ (((~ (x = a)) /\ (~ (x = c))) \/ (x = a)))) |- ((((x = b) \/ (x = c)) /\ ((~ (x = b)) /\ (((~ (x = a)) /\ (~ (x = c))) \/ (x = a)))) /\ F)
+T c==> c~ c= f0 f1 c==> c/\ c\/ c= f2 f3 c= f2 f0 c/\ c~ c= f2 f3 c\/ c/\ c~ c= f2 f1 c~ c= f2 f0 c= f2 f1 c/\ c/\ c\/ c= f2 f3 c= f2 f0 c/\ c~ c= f2 f3 c\/ c/\ c~ c= f2 f1 c~ c= f2 f0 c= f2 f1 cF
++ |- (((((hull convex) (b INSERT (c INSERT EMPTY))) UNION ((hull convex) (a INSERT (b INSERT EMPTY)))) = (UNIONS ((IMAGE (\b'. ((hull convex) (b INSERT ((a INSERT (c INSERT EMPTY)) DELETE b'))))) (a INSERT (c INSERT EMPTY))))) = ((((hull convex) (b INSERT (c INSERT EMPTY))) UNION ((hull convex) (a INSERT (b INSERT EMPTY)))) = (UNIONS (GSPEC (\GEN%PVAR%1573. (?b'. (((SETSPEC GEN%PVAR%1573) (b' IN (a INSERT (c INSERT EMPTY)))) ((hull convex) (b INSERT ((a INSERT (c INSERT EMPTY)) DELETE b'))))))))))
+T c= c= * * part cUNION * * part chull part cconvex * * part cINSERT f0 * * part cINSERT f1 part cEMPTY * * part chull part cconvex * * part cINSERT f2 * * part cINSERT f0 part cEMPTY * part cUNIONS * * part cIMAGE / * * part chull part cconvex * * part cINSERT f0 * * part cDELETE * * part cINSERT f2 * * part cINSERT f1 part cEMPTY b0 * * part cINSERT f2 * * part cINSERT f1 part cEMPTY c= * * part cUNION * * part chull part cconvex * * part cINSERT f0 * * part cINSERT f1 part cEMPTY * * part chull part cconvex * * part cINSERT f2 * * part cINSERT f0 part cEMPTY * part cUNIONS * part cGSPEC / c? / cSETSPEC b0 cIN b1 * * part cINSERT f2 * * part cINSERT f1 part cEMPTY * * part chull part cconvex * * part cINSERT f0 * * part cDELETE * * part cINSERT f2 * * part cINSERT f1 part cEMPTY b1
++ (x = c), (((x = a) \/ (x = b)) /\ ((~ (x = b)) /\ (((~ (x = a)) /\ (~ (x = c))) \/ (x = c)))) |- ((x = b) ==> F)
+T c==> c= f0 f1 c==> c/\ c\/ c= f0 f2 c= f0 f3 c/\ c~ c= f0 f3 c\/ c/\ c~ c= f0 f2 c~ c= f0 f1 c= f0 f1 c==> c= f0 f3 cF
++ |- (((b IN (closed_segment ((CONS (a , c)) NIL))) = p') ==> ((p' ==> ((((closed_segment ((CONS (a , b)) NIL)) UNION (closed_segment ((CONS (b , c)) NIL))) = (closed_segment ((CONS (a , c)) NIL))) = q')) ==> (((b IN (closed_segment ((CONS (a , c)) NIL))) ==> (((closed_segment ((CONS (a , b)) NIL)) UNION (closed_segment ((CONS (b , c)) NIL))) = (closed_segment ((CONS (a , c)) NIL)))) = (p' ==> q'))))
+T c==> c= cIN f0 * part cclosed_segment cCONS c, f1 f2 cNIL f3 c==> c==> f3 c= c= * * part cUNION * part cclosed_segment cCONS c, f1 f0 cNIL * part cclosed_segment cCONS c, f0 f2 cNIL * part cclosed_segment cCONS c, f1 f2 cNIL f4 c= c==> cIN f0 * part cclosed_segment cCONS c, f1 f2 cNIL c= * * part cUNION * part cclosed_segment cCONS c, f1 f0 cNIL * part cclosed_segment cCONS c, f0 f2 cNIL * part cclosed_segment cCONS c, f1 f2 cNIL c==> f3 f4
+- (x = a), (x = b) |- ((~ (c = a)) = (~ (c = a)))
+T c==> c= f0 f1 c==> c= f0 f2 c= c~ c= f3 f1 c~ c= f3 f1
++ (x = b), (((~ (x = b)) /\ (~ (x = c))) /\ ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = a))))) |- (~ (b = b))
+T c==> c= f0 f1 c==> c/\ c/\ c~ c= f0 f1 c~ c= f0 f2 c\/ c= f0 f1 c/\ c\/ c= f0 f3 c= f0 f2 c~ c= f0 f3 c~ c= f1 f1
+- (~ F), (x = b), (((x = a) \/ (x = b)) /\ ((~ (x = b)) /\ (((~ (x = a)) /\ (~ (x = c))) \/ (x = c)))) |- ((~ F) /\ F)
+T c==> c~ cF c==> c= f0 f1 c==> c/\ c\/ c= f0 f2 c= f0 f1 c/\ c~ c= f0 f1 c\/ c/\ c~ c= f0 f2 c~ c= f0 f3 c= f0 f3 c/\ c~ cF cF
++ (~ (c = a)), (x = a), (x = c) |- ((a = a) ==> F)
+T c==> c~ c= f0 f1 c==> c= f2 f1 c==> c= f2 f0 c==> c= f1 f1 cF
++ |- ((\s. ((s UNION s) = s)) s)
+T * / c= * * part cUNION b0 b0 b0 f0
++ |- (((a = a) ==> F) = F)
+T c= c==> c= f0 f0 cF cF
++ |- ((closed_segment ((CONS (a , a)) NIL)) = (a INSERT EMPTY))
+T c= * part cclosed_segment cCONS c, f0 f0 cNIL * * part cINSERT f0 part cEMPTY
+- (x = b), ((~ (x = a)) /\ (~ (x = c))) |- (~ (b = a))
+T c==> c= f0 f1 c==> c/\ c~ c= f0 f2 c~ c= f0 f3 c~ c= f1 f2
+- (x = b), (x = c) |- ((~ (c = a)) = (~ (c = a)))
+T c==> c= f0 f1 c==> c= f0 f2 c= c~ c= f2 f3 c~ c= f2 f3
+- ((~ ((~ (c = a)) ==> (!x. (((x = b) \/ (x = c)) = ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = a)))))))) ==> F) |- ((((~ ((~ (c = a)) ==> (!x. (((x = b) \/ (x = c)) = ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = a)))))))) ==> F) ==> ((~ ((~ (c = a)) ==> (!x. (((x = b) \/ (x = c)) = ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = a)))))))) ==> F)) ==> ((~ ((~ (c = a)) ==> (!x. (((x = b) \/ (x = c)) = ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = a)))))))) ==> F))
+T c==> c==> c~ c==> c~ c= f0 f1 ! c= c\/ c= b0 f2 c= b0 f0 c\/ c= b0 f2 c/\ c\/ c= b0 f1 c= b0 f0 c~ c= b0 f1 cF c==> c==> c==> c~ c==> c~ c= f0 f1 ! c= c\/ c= b0 f2 c= b0 f0 c\/ c= b0 f2 c/\ c\/ c= b0 f1 c= b0 f0 c~ c= b0 f1 cF c==> c~ c==> c~ c= f0 f1 ! c= c\/ c= b0 f2 c= b0 f0 c\/ c= b0 f2 c/\ c\/ c= b0 f1 c= b0 f0 c~ c= b0 f1 cF c==> c~ c==> c~ c= f0 f1 ! c= c\/ c= b0 f2 c= b0 f0 c\/ c= b0 f2 c/\ c\/ c= b0 f1 c= b0 f0 c~ c= b0 f1 cF
++ (((x = a) \/ (x = b)) /\ ((~ (x = b)) /\ (((~ (x = a)) /\ (~ (x = c))) \/ (x = c)))) |- (~ (x = b))
+T c==> c/\ c\/ c= f0 f1 c= f0 f2 c/\ c~ c= f0 f2 c\/ c/\ c~ c= f0 f1 c~ c= f0 f3 c= f0 f3 c~ c= f0 f2
+- |- (((!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3)))) ==> ((\t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3)))) t2)) = ((\t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3)))) t2))
+T c= c==> ! ! c= c\/ f0 c\/ b0 b1 c\/ c\/ f0 b0 b1 * / ! c= c\/ f0 c\/ b0 b1 c\/ c\/ f0 b0 b1 f1 * / ! c= c\/ f0 c\/ b0 b1 c\/ c\/ f0 b0 b1 f1
++ |- (((!s. (!a. ((a IN ((hull convex) s)) ==> (((hull convex) s) = (UNIONS (GSPEC (\GEN%PVAR%1573. (?b. (((SETSPEC GEN%PVAR%1573) (b IN s)) ((hull convex) (a INSERT (s DELETE b)))))))))))) ==> ((\s. (!a. ((a IN ((hull convex) s)) ==> (((hull convex) s) = (UNIONS (GSPEC (\GEN%PVAR%1573. (?b. (((SETSPEC GEN%PVAR%1573) (b IN s)) ((hull convex) (a INSERT (s DELETE b)))))))))))) s)) = ((\s. (!a. ((a IN ((hull convex) s)) ==> (((hull convex) s) = (UNIONS (GSPEC (\GEN%PVAR%1573. (?b. (((SETSPEC GEN%PVAR%1573) (b IN s)) ((hull convex) (a INSERT (s DELETE b)))))))))))) s))
+T c= c==> ! ! c==> cIN b1 * * part chull part cconvex b0 c= * * part chull part cconvex b0 * part cUNIONS * part cGSPEC / c? / cSETSPEC b2 cIN b3 b0 * * part chull part cconvex * * part cINSERT b1 * * part cDELETE b0 b3 * / ! c==> cIN b1 * * part chull part cconvex b0 c= * * part chull part cconvex b0 * part cUNIONS * part cGSPEC / c? / cSETSPEC b2 cIN b3 b0 * * part chull part cconvex * * part cINSERT b1 * * part cDELETE b0 b3 f0 * / ! c==> cIN b1 * * part chull part cconvex b0 c= * * part chull part cconvex b0 * part cUNIONS * part cGSPEC / c? / cSETSPEC b2 cIN b3 b0 * * part chull part cconvex * * part cINSERT b1 * * part cDELETE b0 b3 f0
++ (x = a), (((x = b) \/ (x = c)) /\ ((~ (x = b)) /\ (((~ (x = a)) /\ (~ (x = c))) \/ (x = a)))), ((x = c) ==> F) |- F
+T c==> c= f0 f1 c==> c/\ c\/ c= f0 f2 c= f0 f3 c/\ c~ c= f0 f2 c\/ c/\ c~ c= f0 f1 c~ c= f0 f3 c= f0 f1 c==> c==> c= f0 f3 cF cF
++ (~ (c = a)) |- (((x = a) \/ (x = b)) = ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = c)))))
+T c==> c~ c= f0 f1 c= c\/ c= f2 f1 c= f2 f3 c\/ c= f2 f3 c/\ c\/ c= f2 f1 c= f2 f0 c~ c= f2 f0
+- ((~ ((~ (c = a)) ==> (!x. (((x = a) \/ (x = b)) = ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = c)))))))) ==> F), (((~ ((~ (c = a)) ==> (!x. (((x = a) \/ (x = b)) = ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = c)))))))) ==> F) ==> ((~ ((~ (c = a)) ==> (!x. (((x = a) \/ (x = b)) = ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = c)))))))) ==> F)) |- (((~ ((~ (c = a)) ==> (!x. (((x = a) \/ (x = b)) = ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = c)))))))) ==> F) /\ ((~ ((~ (c = a)) ==> (!x. (((x = a) \/ (x = b)) = ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = c)))))))) ==> F))
+T c==> c==> c~ c==> c~ c= f0 f1 ! c= c\/ c= b0 f1 c= b0 f2 c\/ c= b0 f2 c/\ c\/ c= b0 f1 c= b0 f0 c~ c= b0 f0 cF c==> c==> c==> c~ c==> c~ c= f0 f1 ! c= c\/ c= b0 f1 c= b0 f2 c\/ c= b0 f2 c/\ c\/ c= b0 f1 c= b0 f0 c~ c= b0 f0 cF c==> c~ c==> c~ c= f0 f1 ! c= c\/ c= b0 f1 c= b0 f2 c\/ c= b0 f2 c/\ c\/ c= b0 f1 c= b0 f0 c~ c= b0 f0 cF c/\ c==> c~ c==> c~ c= f0 f1 ! c= c\/ c= b0 f1 c= b0 f2 c\/ c= b0 f2 c/\ c\/ c= b0 f1 c= b0 f0 c~ c= b0 f0 cF c==> c~ c==> c~ c= f0 f1 ! c= c\/ c= b0 f1 c= b0 f2 c\/ c= b0 f2 c/\ c\/ c= b0 f1 c= b0 f0 c~ c= b0 f0 cF
++ |- (((b IN (closed_segment ((CONS (a , c)) NIL))) ==> (((closed_segment ((CONS (a , b)) NIL)) UNION (closed_segment ((CONS (b , c)) NIL))) = (closed_segment ((CONS (a , c)) NIL)))) = T)
+T c= c==> cIN f0 * part cclosed_segment cCONS c, f1 f2 cNIL c= * * part cUNION * part cclosed_segment cCONS c, f1 f0 cNIL * part cclosed_segment cCONS c, f0 f2 cNIL * part cclosed_segment cCONS c, f1 f2 cNIL cT
++ (~ (((x = a) \/ (x = b)) = ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = c)))))), (~ (c = a)) |- ((~ (((x = a) \/ (x = b)) = ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = c)))))) /\ F)
+T c==> c~ c= c\/ c= f0 f1 c= f0 f2 c\/ c= f0 f2 c/\ c\/ c= f0 f1 c= f0 f3 c~ c= f0 f3 c==> c~ c= f3 f1 c/\ c~ c= c\/ c= f0 f1 c= f0 f2 c\/ c= f0 f2 c/\ c\/ c= f0 f1 c= f0 f3 c~ c= f0 f3 cF
++ |- ((\t. ((s UNION t) = (t UNION s))) t)
+T * / c= * * part cUNION f0 b0 * * part cUNION b0 f0 f1
+- |- ((((~ ((~ (c = a)) ==> (!x. (((x = a) \/ (x = b)) = ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = c)))))))) ==> F) ==> ((~ ((~ (c = a)) ==> (!x. (((x = a) \/ (x = b)) = ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = c)))))))) ==> F)) = ((~ ((~ (c = a)) ==> (!x. (((x = a) \/ (x = b)) = ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = c)))))))) ==> F))
+T c= c==> c==> c~ c==> c~ c= f0 f1 ! c= c\/ c= b0 f1 c= b0 f2 c\/ c= b0 f2 c/\ c\/ c= b0 f1 c= b0 f0 c~ c= b0 f0 cF c==> c~ c==> c~ c= f0 f1 ! c= c\/ c= b0 f1 c= b0 f2 c\/ c= b0 f2 c/\ c\/ c= b0 f1 c= b0 f0 c~ c= b0 f0 cF c==> c~ c==> c~ c= f0 f1 ! c= c\/ c= b0 f1 c= b0 f2 c\/ c= b0 f2 c/\ c\/ c= b0 f1 c= b0 f0 c~ c= b0 f0 cF
++ (~ (c = a)), (((x = b) \/ (x = c)) /\ ((~ (x = b)) /\ (((~ (x = a)) /\ (~ (x = c))) \/ (x = a)))) |- ((x = a) ==> F)
+T c==> c~ c= f0 f1 c==> c/\ c\/ c= f2 f3 c= f2 f0 c/\ c~ c= f2 f3 c\/ c/\ c~ c= f2 f1 c~ c= f2 f0 c= f2 f1 c==> c= f2 f1 cF
++ (~ (c = a)) |- ((((hull convex) (b INSERT (c INSERT EMPTY))) UNION ((hull convex) (a INSERT (b INSERT EMPTY)))) = (UNIONS ((IMAGE (\b'. ((hull convex) (b INSERT ((a INSERT (c INSERT EMPTY)) DELETE b'))))) (a INSERT (c INSERT EMPTY)))))
+T c==> c~ c= f0 f1 c= * * part cUNION * * part chull part cconvex * * part cINSERT f2 * * part cINSERT f0 part cEMPTY * * part chull part cconvex * * part cINSERT f1 * * part cINSERT f2 part cEMPTY * part cUNIONS * * part cIMAGE / * * part chull part cconvex * * part cINSERT f2 * * part cDELETE * * part cINSERT f1 * * part cINSERT f0 part cEMPTY b0 * * part cINSERT f1 * * part cINSERT f0 part cEMPTY
++ (((~ (x = a)) /\ (~ (x = b))) /\ ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = c))))), (((x = a) \/ (x = c)) /\ (~ (x = c))) |- ((((x = a) \/ (x = c)) /\ (~ (x = c))) /\ F)
+T c==> c/\ c/\ c~ c= f0 f1 c~ c= f0 f2 c\/ c= f0 f2 c/\ c\/ c= f0 f1 c= f0 f3 c~ c= f0 f3 c==> c/\ c\/ c= f0 f1 c= f0 f3 c~ c= f0 f3 c/\ c/\ c\/ c= f0 f1 c= f0 f3 c~ c= f0 f3 cF
++ (((~ (x = b)) /\ (~ (x = c))) /\ ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = a))))), (((x = a) \/ (x = c)) /\ (~ (x = a))) |- ((((x = a) \/ (x = c)) /\ (~ (x = a))) /\ F)
+T c==> c/\ c/\ c~ c= f0 f1 c~ c= f0 f2 c\/ c= f0 f1 c/\ c\/ c= f0 f3 c= f0 f2 c~ c= f0 f3 c==> c/\ c\/ c= f0 f3 c= f0 f2 c~ c= f0 f3 c/\ c/\ c\/ c= f0 f3 c= f0 f2 c~ c= f0 f3 cF
++ |- ((\p'. (!q'. (((b IN (closed_segment ((CONS (a , c)) NIL))) = p') ==> ((p' ==> ((((closed_segment ((CONS (a , b)) NIL)) UNION (closed_segment ((CONS (b , c)) NIL))) = (closed_segment ((CONS (a , c)) NIL))) = q')) ==> (((b IN (closed_segment ((CONS (a , c)) NIL))) ==> (((closed_segment ((CONS (a , b)) NIL)) UNION (closed_segment ((CONS (b , c)) NIL))) = (closed_segment ((CONS (a , c)) NIL)))) = (p' ==> q')))))) p')
+T * / ! c==> c= cIN f0 * part cclosed_segment cCONS c, f1 f2 cNIL b0 c==> c==> b0 c= c= * * part cUNION * part cclosed_segment cCONS c, f1 f0 cNIL * part cclosed_segment cCONS c, f0 f2 cNIL * part cclosed_segment cCONS c, f1 f2 cNIL b1 c= c==> cIN f0 * part cclosed_segment cCONS c, f1 f2 cNIL c= * * part cUNION * part cclosed_segment cCONS c, f1 f0 cNIL * part cclosed_segment cCONS c, f0 f2 cNIL * part cclosed_segment cCONS c, f1 f2 cNIL c==> b0 b1 f3
++ (~ (c = a)), (x = a), (x = c) |- ((x = c) /\ F)
+T c==> c~ c= f0 f1 c==> c= f2 f1 c==> c= f2 f0 c/\ c= f2 f0 cF
+- ((~ ((~ (c = a)) ==> (!x. (((x = a) \/ (x = b)) = ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = c)))))))) ==> F) |- ((((~ ((~ (c = a)) ==> (!x. (((x = a) \/ (x = b)) = ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = c)))))))) ==> F) ==> ((~ ((~ (c = a)) ==> (!x. (((x = a) \/ (x = b)) = ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = c)))))))) ==> F)) ==> ((~ ((~ (c = a)) ==> (!x. (((x = a) \/ (x = b)) = ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = c)))))))) ==> F))
+T c==> c==> c~ c==> c~ c= f0 f1 ! c= c\/ c= b0 f1 c= b0 f2 c\/ c= b0 f2 c/\ c\/ c= b0 f1 c= b0 f0 c~ c= b0 f0 cF c==> c==> c==> c~ c==> c~ c= f0 f1 ! c= c\/ c= b0 f1 c= b0 f2 c\/ c= b0 f2 c/\ c\/ c= b0 f1 c= b0 f0 c~ c= b0 f0 cF c==> c~ c==> c~ c= f0 f1 ! c= c\/ c= b0 f1 c= b0 f2 c\/ c= b0 f2 c/\ c\/ c= b0 f1 c= b0 f0 c~ c= b0 f0 cF c==> c~ c==> c~ c= f0 f1 ! c= c\/ c= b0 f1 c= b0 f2 c\/ c= b0 f2 c/\ c\/ c= b0 f1 c= b0 f0 c~ c= b0 f0 cF
++ (~ (((x = b) \/ (x = c)) = ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = a)))))), ((((~ (x = b)) /\ (~ (x = c))) /\ ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = a))))) ==> F), ((((x = b) \/ (x = c)) /\ ((~ (x = b)) /\ (((~ (x = a)) /\ (~ (x = c))) \/ (x = a)))) ==> F) |- F
+T c==> c~ c= c\/ c= f0 f1 c= f0 f2 c\/ c= f0 f1 c/\ c\/ c= f0 f3 c= f0 f2 c~ c= f0 f3 c==> c==> c/\ c/\ c~ c= f0 f1 c~ c= f0 f2 c\/ c= f0 f1 c/\ c\/ c= f0 f3 c= f0 f2 c~ c= f0 f3 cF c==> c==> c/\ c\/ c= f0 f1 c= f0 f2 c/\ c~ c= f0 f1 c\/ c/\ c~ c= f0 f3 c~ c= f0 f2 c= f0 f3 cF cF
++ |- ((\x. (!y. ((x IN (y INSERT EMPTY)) = (x = y)))) x)
+T * / ! c= cIN b0 * * part cINSERT b1 part cEMPTY c= b0 b1 f0
++ (((x = a) \/ (x = b)) /\ ((~ (x = b)) /\ (((~ (x = a)) /\ (~ (x = c))) \/ (x = c)))) |- (((~ (x = a)) /\ (~ (x = c))) ==> F)
+T c==> c/\ c\/ c= f0 f1 c= f0 f2 c/\ c~ c= f0 f2 c\/ c/\ c~ c= f0 f1 c~ c= f0 f3 c= f0 f3 c==> c/\ c~ c= f0 f1 c~ c= f0 f3 cF
+- |- (((~ ((~ (c = a)) ==> (!x. (((x = b) \/ (x = c)) = ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = a)))))))) ==> F) ==> ((~ ((~ (c = a)) ==> (!x. (((x = b) \/ (x = c)) = ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = a)))))))) ==> F))
+T c==> c==> c~ c==> c~ c= f0 f1 ! c= c\/ c= b0 f2 c= b0 f0 c\/ c= b0 f2 c/\ c\/ c= b0 f1 c= b0 f0 c~ c= b0 f1 cF c==> c~ c==> c~ c= f0 f1 ! c= c\/ c= b0 f2 c= b0 f0 c\/ c= b0 f2 c/\ c\/ c= b0 f1 c= b0 f0 c~ c= b0 f1 cF
++ |- ((x = x) = T)
+T c= c= f0 f0 cT
++ (x = c), ((~ (x = a)) /\ (~ (x = c))) |- F
+T c==> c= f0 f1 c==> c/\ c~ c= f0 f2 c~ c= f0 f1 cF
+- (((~ ((~ (c = a)) ==> (!x. (((x = b) \/ (x = c)) = ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = a)))))))) ==> F) ==> ((~ ((~ (c = a)) ==> (!x. (((x = b) \/ (x = c)) = ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = a)))))))) ==> F)) |- ((((~ ((~ (c = a)) ==> (!x. (((x = b) \/ (x = c)) = ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = a)))))))) ==> F) ==> ((~ ((~ (c = a)) ==> (!x. (((x = b) \/ (x = c)) = ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = a)))))))) ==> F)) /\ (((~ ((~ (c = a)) ==> (!x. (((x = b) \/ (x = c)) = ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = a)))))))) ==> F) ==> ((~ ((~ (c = a)) ==> (!x. (((x = b) \/ (x = c)) = ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = a)))))))) ==> F)))
+T c==> c==> c==> c~ c==> c~ c= f0 f1 ! c= c\/ c= b0 f2 c= b0 f0 c\/ c= b0 f2 c/\ c\/ c= b0 f1 c= b0 f0 c~ c= b0 f1 cF c==> c~ c==> c~ c= f0 f1 ! c= c\/ c= b0 f2 c= b0 f0 c\/ c= b0 f2 c/\ c\/ c= b0 f1 c= b0 f0 c~ c= b0 f1 cF c/\ c==> c==> c~ c==> c~ c= f0 f1 ! c= c\/ c= b0 f2 c= b0 f0 c\/ c= b0 f2 c/\ c\/ c= b0 f1 c= b0 f0 c~ c= b0 f1 cF c==> c~ c==> c~ c= f0 f1 ! c= c\/ c= b0 f2 c= b0 f0 c\/ c= b0 f2 c/\ c\/ c= b0 f1 c= b0 f0 c~ c= b0 f1 cF c==> c==> c~ c==> c~ c= f0 f1 ! c= c\/ c= b0 f2 c= b0 f0 c\/ c= b0 f2 c/\ c\/ c= b0 f1 c= b0 f0 c~ c= b0 f1 cF c==> c~ c==> c~ c= f0 f1 ! c= c\/ c= b0 f2 c= b0 f0 c\/ c= b0 f2 c/\ c\/ c= b0 f1 c= b0 f0 c~ c= b0 f1 cF
++ (~ (((x = b) \/ (x = c)) = ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = a)))))), (~ (c = a)) |- ((~ (((x = b) \/ (x = c)) = ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = a)))))) /\ F)
+T c==> c~ c= c\/ c= f0 f1 c= f0 f2 c\/ c= f0 f1 c/\ c\/ c= f0 f3 c= f0 f2 c~ c= f0 f3 c==> c~ c= f2 f3 c/\ c~ c= c\/ c= f0 f1 c= f0 f2 c\/ c= f0 f1 c/\ c\/ c= f0 f3 c= f0 f2 c~ c= f0 f3 cF
++ (b IN ((hull convex) (a INSERT (c INSERT EMPTY)))) |- (((hull convex) (a INSERT (c INSERT EMPTY))) = (UNIONS (GSPEC (\GEN%PVAR%1573. (?b'. (((SETSPEC GEN%PVAR%1573) (b' IN (a INSERT (c INSERT EMPTY)))) ((hull convex) (b INSERT ((a INSERT (c INSERT EMPTY)) DELETE b')))))))))
+T c==> cIN f0 * * part chull part cconvex * * part cINSERT f1 * * part cINSERT f2 part cEMPTY c= * * part chull part cconvex * * part cINSERT f1 * * part cINSERT f2 part cEMPTY * part cUNIONS * part cGSPEC / c? / cSETSPEC b0 cIN b1 * * part cINSERT f1 * * part cINSERT f2 part cEMPTY * * part chull part cconvex * * part cINSERT f0 * * part cDELETE * * part cINSERT f1 * * part cINSERT f2 part cEMPTY b1
+- (x = a), (((~ (x = a)) /\ (~ (x = b))) /\ ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = c))))) |- (~ (a = b))
+T c==> c= f0 f1 c==> c/\ c/\ c~ c= f0 f1 c~ c= f0 f2 c\/ c= f0 f2 c/\ c\/ c= f0 f1 c= f0 f3 c~ c= f0 f3 c~ c= f1 f2
++ (c = a) |- (((b IN (closed_segment ((CONS (a , c)) NIL))) ==> (((closed_segment ((CONS (a , b)) NIL)) UNION (closed_segment ((CONS (b , c)) NIL))) = (closed_segment ((CONS (a , c)) NIL)))) = ((b = a) ==> T))
+T c==> c= f0 f1 c= c==> cIN f2 * part cclosed_segment cCONS c, f1 f0 cNIL c= * * part cUNION * part cclosed_segment cCONS c, f1 f2 cNIL * part cclosed_segment cCONS c, f2 f0 cNIL * part cclosed_segment cCONS c, f1 f0 cNIL c==> c= f2 f1 cT
++ |- (((!s. (!t. ((s UNION t) = (t UNION s)))) ==> ((\s. (!t. ((s UNION t) = (t UNION s)))) s)) = ((\s. (!t. ((s UNION t) = (t UNION s)))) s))
+T c= c==> ! ! c= * * part cUNION b0 b1 * * part cUNION b1 b0 * / ! c= * * part cUNION b0 b1 * * part cUNION b1 b0 f0 * / ! c= * * part cUNION b0 b1 * * part cUNION b1 b0 f0
++ (x = a), (((x = a) \/ (x = c)) /\ (~ (x = a))) |- (~ (a = a))
+T c==> c= f0 f1 c==> c/\ c\/ c= f0 f1 c= f0 f2 c~ c= f0 f1 c~ c= f1 f1
++ (((x = b) \/ (x = c)) /\ ((~ (x = b)) /\ (((~ (x = a)) /\ (~ (x = c))) \/ (x = a)))) |- (((~ (x = a)) /\ (~ (x = c))) ==> F)
+T c==> c/\ c\/ c= f0 f1 c= f0 f2 c/\ c~ c= f0 f1 c\/ c/\ c~ c= f0 f3 c~ c= f0 f2 c= f0 f3 c==> c/\ c~ c= f0 f3 c~ c= f0 f2 cF
++ (x = a), (((~ (x = a)) /\ (~ (x = b))) /\ ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = c))))) |- (~ (a = a))
+T c==> c= f0 f1 c==> c/\ c/\ c~ c= f0 f1 c~ c= f0 f2 c\/ c= f0 f2 c/\ c\/ c= f0 f1 c= f0 f3 c~ c= f0 f3 c~ c= f1 f1
++ |- (((~ (((x = a) \/ (x = b)) = ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = c)))))) ==> F) = (((x = a) \/ (x = b)) = ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = c))))))
+T c= c==> c~ c= c\/ c= f0 f1 c= f0 f2 c\/ c= f0 f2 c/\ c\/ c= f0 f1 c= f0 f3 c~ c= f0 f3 cF c= c\/ c= f0 f1 c= f0 f2 c\/ c= f0 f2 c/\ c\/ c= f0 f1 c= f0 f3 c~ c= f0 f3
++ (~ (c = a)) |- ((~ (c = a)) /\ (!x. (((x = a) \/ (x = b)) = ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = c)))))))
+T c==> c~ c= f0 f1 c/\ c~ c= f0 f1 ! c= c\/ c= b0 f1 c= b0 f2 c\/ c= b0 f2 c/\ c\/ c= b0 f1 c= b0 f0 c~ c= b0 f0
+- |- (((~ ((~ (c = a)) ==> (!x. (((x = a) \/ (x = b)) = ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = c)))))))) ==> F) ==> ((~ ((~ (c = a)) ==> (!x. (((x = a) \/ (x = b)) = ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = c)))))))) ==> F))
+T c==> c==> c~ c==> c~ c= f0 f1 ! c= c\/ c= b0 f1 c= b0 f2 c\/ c= b0 f2 c/\ c\/ c= b0 f1 c= b0 f0 c~ c= b0 f0 cF c==> c~ c==> c~ c= f0 f1 ! c= c\/ c= b0 f1 c= b0 f2 c\/ c= b0 f2 c/\ c\/ c= b0 f1 c= b0 f0 c~ c= b0 f0 cF
++ |- (((~ (((x = b) \/ (x = c)) = ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = a)))))) ==> F) = (((x = b) \/ (x = c)) = ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = a))))))
+T c= c==> c~ c= c\/ c= f0 f1 c= f0 f2 c\/ c= f0 f1 c/\ c\/ c= f0 f3 c= f0 f2 c~ c= f0 f3 cF c= c\/ c= f0 f1 c= f0 f2 c\/ c= f0 f1 c/\ c\/ c= f0 f3 c= f0 f2 c~ c= f0 f3
++ ((~ (x = a)) /\ (~ (x = c))), (((x = b) \/ (x = c)) /\ ((~ (x = b)) /\ (((~ (x = a)) /\ (~ (x = c))) \/ (x = a)))) |- F
+T c==> c/\ c~ c= f0 f1 c~ c= f0 f2 c==> c/\ c\/ c= f0 f3 c= f0 f2 c/\ c~ c= f0 f3 c\/ c/\ c~ c= f0 f1 c~ c= f0 f2 c= f0 f1 cF
++ (~ (((x = b) \/ (x = c)) = ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = a)))))) |- ((((x = b) \/ (x = c)) /\ ((~ (x = b)) /\ (((~ (x = a)) /\ (~ (x = c))) \/ (x = a)))) \/ (((~ (x = b)) /\ (~ (x = c))) /\ ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = a))))))
+T c==> c~ c= c\/ c= f0 f1 c= f0 f2 c\/ c= f0 f1 c/\ c\/ c= f0 f3 c= f0 f2 c~ c= f0 f3 c\/ c/\ c\/ c= f0 f1 c= f0 f2 c/\ c~ c= f0 f1 c\/ c/\ c~ c= f0 f3 c~ c= f0 f2 c= f0 f3 c/\ c/\ c~ c= f0 f1 c~ c= f0 f2 c\/ c= f0 f1 c/\ c\/ c= f0 f3 c= f0 f2 c~ c= f0 f3
++ (((x = a) \/ (x = c)) /\ (~ (x = c))), ((x = a) ==> F), ((x = c) ==> F) |- F
+T c==> c/\ c\/ c= f0 f1 c= f0 f2 c~ c= f0 f2 c==> c==> c= f0 f1 cF c==> c==> c= f0 f2 cF cF
+- |- ((open_segment (a , a)) = EMPTY)
+T c= * part copen_segment c, f0 f0 part cEMPTY
++ |- ((c = a) ==> ((b IN (closed_segment ((CONS (a , c)) NIL))) ==> (((closed_segment ((CONS (a , b)) NIL)) UNION (closed_segment ((CONS (b , c)) NIL))) = (closed_segment ((CONS (a , c)) NIL)))))
+T c==> c= f0 f1 c==> cIN f2 * part cclosed_segment cCONS c, f1 f0 cNIL c= * * part cUNION * part cclosed_segment cCONS c, f1 f2 cNIL * part cclosed_segment cCONS c, f2 f0 cNIL * part cclosed_segment cCONS c, f1 f0 cNIL
+- (~ (c = a)), (x = a), (x = c) |- ((c = c) ==> F)
+T c==> c~ c= f0 f1 c==> c= f2 f1 c==> c= f2 f0 c==> c= f0 f0 cF
+- |- ((!c. (!a. (!b. ((~ (c = a)) ==> (!x. (((x = a) \/ (x = b)) = ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = c)))))))))) = (!c. (!a. (!b. ((~ ((~ (c = a)) ==> (!x. (((x = a) \/ (x = b)) = ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = c)))))))) ==> F)))))
+T c= ! ! ! c==> c~ c= b0 b1 ! c= c\/ c= b3 b1 c= b3 b2 c\/ c= b3 b2 c/\ c\/ c= b3 b1 c= b3 b0 c~ c= b3 b0 ! ! ! c==> c~ c==> c~ c= b0 b1 ! c= c\/ c= b3 b1 c= b3 b2 c\/ c= b3 b2 c/\ c\/ c= b3 b1 c= b3 b0 c~ c= b3 b0 cF
+- (x = a), (((~ (x = b)) /\ (~ (x = c))) /\ ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = a))))) |- (~ (a = c))
+T c==> c= f0 f1 c==> c/\ c/\ c~ c= f0 f2 c~ c= f0 f3 c\/ c= f0 f2 c/\ c\/ c= f0 f1 c= f0 f3 c~ c= f0 f1 c~ c= f1 f3
+- |- ((((~ ((~ (c = a)) ==> (!x. (((x = a) \/ (x = b)) = ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = c)))))))) ==> F) ==> ((~ ((~ (c = a)) ==> (!x. (((x = a) \/ (x = b)) = ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = c)))))))) ==> F)) ==> (((~ ((~ (c = a)) ==> (!x. (((x = a) \/ (x = b)) = ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = c)))))))) ==> F) ==> ((~ ((~ (c = a)) ==> (!x. (((x = a) \/ (x = b)) = ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = c)))))))) ==> F)))
+T c==> c==> c==> c~ c==> c~ c= f0 f1 ! c= c\/ c= b0 f1 c= b0 f2 c\/ c= b0 f2 c/\ c\/ c= b0 f1 c= b0 f0 c~ c= b0 f0 cF c==> c~ c==> c~ c= f0 f1 ! c= c\/ c= b0 f1 c= b0 f2 c\/ c= b0 f2 c/\ c\/ c= b0 f1 c= b0 f0 c~ c= b0 f0 cF c==> c==> c~ c==> c~ c= f0 f1 ! c= c\/ c= b0 f1 c= b0 f2 c\/ c= b0 f2 c/\ c\/ c= b0 f1 c= b0 f0 c~ c= b0 f0 cF c==> c~ c==> c~ c= f0 f1 ! c= c\/ c= b0 f1 c= b0 f2 c\/ c= b0 f2 c/\ c\/ c= b0 f1 c= b0 f0 c~ c= b0 f0 cF
++ (((x = b) \/ (x = c)) /\ ((~ (x = b)) /\ (((~ (x = a)) /\ (~ (x = c))) \/ (x = a)))), ((x = b) ==> F), ((x = c) ==> F) |- F
+T c==> c/\ c\/ c= f0 f1 c= f0 f2 c/\ c~ c= f0 f1 c\/ c/\ c~ c= f0 f3 c~ c= f0 f2 c= f0 f3 c==> c==> c= f0 f1 cF c==> c==> c= f0 f2 cF cF
+- |- (((~ ((~ (c = a)) ==> (!x. (((x = a) \/ (x = b)) = ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = c)))))))) ==> F) = ((~ (c = a)) ==> (!x. (((x = a) \/ (x = b)) = ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = c))))))))
+T c= c==> c~ c==> c~ c= f0 f1 ! c= c\/ c= b0 f1 c= b0 f2 c\/ c= b0 f2 c/\ c\/ c= b0 f1 c= b0 f0 c~ c= b0 f0 cF c==> c~ c= f0 f1 ! c= c\/ c= b0 f1 c= b0 f2 c\/ c= b0 f2 c/\ c\/ c= b0 f1 c= b0 f0 c~ c= b0 f0
++ (c = a) |- ((c = a) /\ ((b IN (closed_segment ((CONS (a , c)) NIL))) ==> (((closed_segment ((CONS (a , b)) NIL)) UNION (closed_segment ((CONS (b , c)) NIL))) = (closed_segment ((CONS (a , c)) NIL)))))
+T c==> c= f0 f1 c/\ c= f0 f1 c==> cIN f2 * part cclosed_segment cCONS c, f1 f0 cNIL c= * * part cUNION * part cclosed_segment cCONS c, f1 f2 cNIL * part cclosed_segment cCONS c, f2 f0 cNIL * part cclosed_segment cCONS c, f1 f0 cNIL
+- (~ F), (x = a), ((~ (x = a)) /\ (~ (x = c))) |- ((~ F) /\ F)
+T c==> c~ cF c==> c= f0 f1 c==> c/\ c~ c= f0 f1 c~ c= f0 f2 c/\ c~ cF cF
++ (~ (c = a)), (x = c), (((x = a) \/ (x = b)) /\ ((~ (x = b)) /\ (((~ (x = a)) /\ (~ (x = c))) \/ (x = c)))), ((x = b) ==> F) |- F
+T c==> c~ c= f0 f1 c==> c= f2 f0 c==> c/\ c\/ c= f2 f1 c= f2 f3 c/\ c~ c= f2 f3 c\/ c/\ c~ c= f2 f1 c~ c= f2 f0 c= f2 f0 c==> c==> c= f2 f3 cF cF
++ |- (((!a. ((closed_segment ((CONS (a , a)) NIL)) = (a INSERT EMPTY))) ==> ((\a. ((closed_segment ((CONS (a , a)) NIL)) = (a INSERT EMPTY))) a)) = ((\a. ((closed_segment ((CONS (a , a)) NIL)) = (a INSERT EMPTY))) a))
+T c= c==> ! c= * part cclosed_segment cCONS c, b0 b0 cNIL * * part cINSERT b0 part cEMPTY * / c= * part cclosed_segment cCONS c, b0 b0 cNIL * * part cINSERT b0 part cEMPTY f0 * / c= * part cclosed_segment cCONS c, b0 b0 cNIL * * part cINSERT b0 part cEMPTY f0
++ (c = a) |- ((b = a) ==> ((((closed_segment ((CONS (a , b)) NIL)) UNION (closed_segment ((CONS (b , c)) NIL))) = (closed_segment ((CONS (a , c)) NIL))) = T))
+T c==> c= f0 f1 c==> c= f2 f1 c= c= * * part cUNION * part cclosed_segment cCONS c, f1 f2 cNIL * part cclosed_segment cCONS c, f2 f0 cNIL * part cclosed_segment cCONS c, f1 f0 cNIL cT
++ (~ (c = a)) |- ((~ (c = a)) /\ (!x. (((x = b) \/ (x = c)) = ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = a)))))))
+T c==> c~ c= f0 f1 c/\ c~ c= f0 f1 ! c= c\/ c= b0 f2 c= b0 f0 c\/ c= b0 f2 c/\ c\/ c= b0 f1 c= b0 f0 c~ c= b0 f1
+- |- ((!a. (!b. ((~ (c = a)) ==> (!x. (((x = a) \/ (x = b)) = ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = c))))))))) = T)
+T c= ! ! c==> c~ c= f0 b0 ! c= c\/ c= b2 b0 c= b2 b1 c\/ c= b2 b1 c/\ c\/ c= b2 b0 c= b2 f0 c~ c= b2 f0 cT
+- (~ F), (x = b), (x = c), (((x = a) \/ (x = b)) /\ ((~ (x = b)) /\ (((~ (x = a)) /\ (~ (x = c))) \/ (x = c)))) |- ((~ F) /\ F)
+T c==> c~ cF c==> c= f0 f1 c==> c= f0 f2 c==> c/\ c\/ c= f0 f3 c= f0 f1 c/\ c~ c= f0 f1 c\/ c/\ c~ c= f0 f3 c~ c= f0 f2 c= f0 f2 c/\ c~ cF cF
+- (x = a) |- (F = F)
+T c==> c= f0 f1 c= cF cF
+- |- ((((~ ((~ (c = a)) ==> (!x. (((x = b) \/ (x = c)) = ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = a)))))))) ==> F) ==> ((~ ((~ (c = a)) ==> (!x. (((x = b) \/ (x = c)) = ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = a)))))))) ==> F)) = ((~ ((~ (c = a)) ==> (!x. (((x = b) \/ (x = c)) = ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = a)))))))) ==> F))
+T c= c==> c==> c~ c==> c~ c= f0 f1 ! c= c\/ c= b0 f2 c= b0 f0 c\/ c= b0 f2 c/\ c\/ c= b0 f1 c= b0 f0 c~ c= b0 f1 cF c==> c~ c==> c~ c= f0 f1 ! c= c\/ c= b0 f2 c= b0 f0 c\/ c= b0 f2 c/\ c\/ c= b0 f1 c= b0 f0 c~ c= b0 f1 cF c==> c~ c==> c~ c= f0 f1 ! c= c\/ c= b0 f2 c= b0 f0 c\/ c= b0 f2 c/\ c\/ c= b0 f1 c= b0 f0 c~ c= b0 f1 cF
+- |- ((\b. ((~ ((~ (c = a)) ==> (!x. (((x = a) \/ (x = b)) = ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = c)))))))) ==> F)) b)
+T * / c==> c~ c==> c~ c= f0 f1 ! c= c\/ c= b1 f1 c= b1 b0 c\/ c= b1 b0 c/\ c\/ c= b1 f1 c= b1 f0 c~ c= b1 f0 cF f2
+- (x = b), (x = c) |- (F = F)
+T c==> c= f0 f1 c==> c= f0 f2 c= cF cF
+- |- (((t1 \/ t2) \/ t3) = (t1 \/ (t2 \/ t3)))
+T c= c\/ c\/ f0 f1 f2 c\/ f0 c\/ f1 f2
+- (~ F), (~ (c = a)), (x = a), (x = c) |- ((~ F) /\ F)
+T c==> c~ cF c==> c~ c= f0 f1 c==> c= f2 f1 c==> c= f2 f0 c/\ c~ cF cF
+- |- (((!c. (!a. (!b. ((~ ((~ (c = a)) ==> (!x. (((x = a) \/ (x = b)) = ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = c)))))))) ==> F)))) ==> ((\c. (!a. (!b. ((~ ((~ (c = a)) ==> (!x. (((x = a) \/ (x = b)) = ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = c)))))))) ==> F)))) c)) = ((\c. (!a. (!b. ((~ ((~ (c = a)) ==> (!x. (((x = a) \/ (x = b)) = ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = c)))))))) ==> F)))) c))
+T c= c==> ! ! ! c==> c~ c==> c~ c= b0 b1 ! c= c\/ c= b3 b1 c= b3 b2 c\/ c= b3 b2 c/\ c\/ c= b3 b1 c= b3 b0 c~ c= b3 b0 cF * / ! ! c==> c~ c==> c~ c= b0 b1 ! c= c\/ c= b3 b1 c= b3 b2 c\/ c= b3 b2 c/\ c\/ c= b3 b1 c= b3 b0 c~ c= b3 b0 cF f0 * / ! ! c==> c~ c==> c~ c= b0 b1 ! c= c\/ c= b3 b1 c= b3 b2 c\/ c= b3 b2 c/\ c\/ c= b3 b1 c= b3 b0 c~ c= b3 b0 cF f0
+- (x = a), (x = b), (((x = b) \/ (x = c)) /\ ((~ (x = b)) /\ (((~ (x = a)) /\ (~ (x = c))) \/ (x = a)))) |- ((~ F) ==> F)
+T c==> c= f0 f1 c==> c= f0 f2 c==> c/\ c\/ c= f0 f2 c= f0 f3 c/\ c~ c= f0 f2 c\/ c/\ c~ c= f0 f1 c~ c= f0 f3 c= f0 f1 c==> c~ cF cF
+- (~ F), (x = a), (((~ (x = a)) /\ (~ (x = b))) /\ ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = c))))) |- ((~ F) /\ F)
+T c==> c~ cF c==> c= f0 f1 c==> c/\ c/\ c~ c= f0 f1 c~ c= f0 f2 c\/ c= f0 f2 c/\ c\/ c= f0 f1 c= f0 f3 c~ c= f0 f3 c/\ c~ cF cF
+- |- (((!a. (!c. (!b. ((~ ((~ (c = a)) ==> (!x. (((x = b) \/ (x = c)) = ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = a)))))))) ==> F)))) ==> ((\a. (!c. (!b. ((~ ((~ (c = a)) ==> (!x. (((x = b) \/ (x = c)) = ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = a)))))))) ==> F)))) a)) = ((\a. (!c. (!b. ((~ ((~ (c = a)) ==> (!x. (((x = b) \/ (x = c)) = ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = a)))))))) ==> F)))) a))
+T c= c==> ! ! ! c==> c~ c==> c~ c= b1 b0 ! c= c\/ c= b3 b2 c= b3 b1 c\/ c= b3 b2 c/\ c\/ c= b3 b0 c= b3 b1 c~ c= b3 b0 cF * / ! ! c==> c~ c==> c~ c= b1 b0 ! c= c\/ c= b3 b2 c= b3 b1 c\/ c= b3 b2 c/\ c\/ c= b3 b0 c= b3 b1 c~ c= b3 b0 cF f0 * / ! ! c==> c~ c==> c~ c= b1 b0 ! c= c\/ c= b3 b2 c= b3 b1 c\/ c= b3 b2 c/\ c\/ c= b3 b0 c= b3 b1 c~ c= b3 b0 cF f0
+- (x = b), (((~ (x = b)) /\ (~ (x = c))) /\ ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = a))))) |- (~ (b = c))
+T c==> c= f0 f1 c==> c/\ c/\ c~ c= f0 f1 c~ c= f0 f2 c\/ c= f0 f1 c/\ c\/ c= f0 f3 c= f0 f2 c~ c= f0 f3 c~ c= f1 f2
+- |- ((!b. ((~ (c = a)) ==> (!x. (((x = a) \/ (x = b)) = ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = c)))))))) = T)
+T c= ! c==> c~ c= f0 f1 ! c= c\/ c= b1 f1 c= b1 b0 c\/ c= b1 b0 c/\ c\/ c= b1 f1 c= b1 f0 c~ c= b1 f0 cT
+- |- (((!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))) ==> ((\t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))) t3)) = ((\t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))) t3))
+T c= c==> ! c= c\/ f0 c\/ f1 b0 c\/ c\/ f0 f1 b0 * / c= c\/ f0 c\/ f1 b0 c\/ c\/ f0 f1 b0 f2 * / c= c\/ f0 c\/ f1 b0 c\/ c\/ f0 f1 b0 f2
+- (~ F), (x = b), (((~ (x = a)) /\ (~ (x = b))) /\ ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = c))))) |- ((~ F) /\ F)
+T c==> c~ cF c==> c= f0 f1 c==> c/\ c/\ c~ c= f0 f2 c~ c= f0 f1 c\/ c= f0 f1 c/\ c\/ c= f0 f2 c= f0 f3 c~ c= f0 f3 c/\ c~ cF cF
+- |- ((t /\ t) = t)
+T c= c/\ f0 f0 f0
+- ((~ ((~ (c = a)) ==> (!x. (((x = a) \/ (x = b)) = ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = c)))))))) ==> F) |- (((~ ((~ (c = a)) ==> (!x. (((x = a) \/ (x = b)) = ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = c)))))))) ==> F) /\ ((~ ((~ (c = a)) ==> (!x. (((x = a) \/ (x = b)) = ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = c)))))))) ==> F))
+T c==> c==> c~ c==> c~ c= f0 f1 ! c= c\/ c= b0 f1 c= b0 f2 c\/ c= b0 f2 c/\ c\/ c= b0 f1 c= b0 f0 c~ c= b0 f0 cF c/\ c==> c~ c==> c~ c= f0 f1 ! c= c\/ c= b0 f1 c= b0 f2 c\/ c= b0 f2 c/\ c\/ c= b0 f1 c= b0 f0 c~ c= b0 f0 cF c==> c~ c==> c~ c= f0 f1 ! c= c\/ c= b0 f1 c= b0 f2 c\/ c= b0 f2 c/\ c\/ c= b0 f1 c= b0 f0 c~ c= b0 f0 cF
+- (x = c), (((x = a) \/ (x = c)) /\ (~ (x = c))) |- ((~ F) ==> F)
+T c==> c= f0 f1 c==> c/\ c\/ c= f0 f2 c= f0 f1 c~ c= f0 f1 c==> c~ cF cF
+- (~ F), (x = b), (((x = b) \/ (x = c)) /\ ((~ (x = b)) /\ (((~ (x = a)) /\ (~ (x = c))) \/ (x = a)))) |- ((~ F) /\ F)
+T c==> c~ cF c==> c= f0 f1 c==> c/\ c\/ c= f0 f1 c= f0 f2 c/\ c~ c= f0 f1 c\/ c/\ c~ c= f0 f3 c~ c= f0 f2 c= f0 f3 c/\ c~ cF cF
+- |- (((!b. ((~ ((~ (c = a)) ==> (!x. (((x = b) \/ (x = c)) = ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = a)))))))) ==> F)) ==> ((\b. ((~ ((~ (c = a)) ==> (!x. (((x = b) \/ (x = c)) = ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = a)))))))) ==> F)) b)) = ((\b. ((~ ((~ (c = a)) ==> (!x. (((x = b) \/ (x = c)) = ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = a)))))))) ==> F)) b))
+T c= c==> ! c==> c~ c==> c~ c= f0 f1 ! c= c\/ c= b1 b0 c= b1 f0 c\/ c= b1 b0 c/\ c\/ c= b1 f1 c= b1 f0 c~ c= b1 f1 cF * / c==> c~ c==> c~ c= f0 f1 ! c= c\/ c= b1 b0 c= b1 f0 c\/ c= b1 b0 c/\ c\/ c= b1 f1 c= b1 f0 c~ c= b1 f1 cF f2 * / c==> c~ c==> c~ c= f0 f1 ! c= c\/ c= b1 b0 c= b1 f0 c\/ c= b1 b0 c/\ c\/ c= b1 f1 c= b1 f0 c~ c= b1 f1 cF f2
+- (x = b), (((~ (x = a)) /\ (~ (x = b))) /\ ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = c))))) |- (~ (b = a))
+T c==> c= f0 f1 c==> c/\ c/\ c~ c= f0 f2 c~ c= f0 f1 c\/ c= f0 f1 c/\ c\/ c= f0 f2 c= f0 f3 c~ c= f0 f3 c~ c= f1 f2
+- (~ ((~ (c = a)) ==> (!x. (((x = b) \/ (x = c)) = ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = a)))))))) |- F
+T c==> c~ c==> c~ c= f0 f1 ! c= c\/ c= b0 f2 c= b0 f0 c\/ c= b0 f2 c/\ c\/ c= b0 f1 c= b0 f0 c~ c= b0 f1 cF
+- (x = c), (((x = a) \/ (x = c)) /\ (~ (x = a))) |- (~ (c = a))
+T c==> c= f0 f1 c==> c/\ c\/ c= f0 f2 c= f0 f1 c~ c= f0 f2 c~ c= f1 f2
+- |- (((!c. (!b. ((~ ((~ (c = a)) ==> (!x. (((x = b) \/ (x = c)) = ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = a)))))))) ==> F))) ==> ((\c. (!b. ((~ ((~ (c = a)) ==> (!x. (((x = b) \/ (x = c)) = ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = a)))))))) ==> F))) c)) = ((\c. (!b. ((~ ((~ (c = a)) ==> (!x. (((x = b) \/ (x = c)) = ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = a)))))))) ==> F))) c))
+T c= c==> ! ! c==> c~ c==> c~ c= b0 f0 ! c= c\/ c= b2 b1 c= b2 b0 c\/ c= b2 b1 c/\ c\/ c= b2 f0 c= b2 b0 c~ c= b2 f0 cF * / ! c==> c~ c==> c~ c= b0 f0 ! c= c\/ c= b2 b1 c= b2 b0 c\/ c= b2 b1 c/\ c\/ c= b2 f0 c= b2 b0 c~ c= b2 f0 cF f1 * / ! c==> c~ c==> c~ c= b0 f0 ! c= c\/ c= b2 b1 c= b2 b0 c\/ c= b2 b1 c/\ c\/ c= b2 f0 c= b2 b0 c~ c= b2 f0 cF f1
+- (~ F), (x = a), (x = b), (((x = b) \/ (x = c)) /\ ((~ (x = b)) /\ (((~ (x = a)) /\ (~ (x = c))) \/ (x = a)))) |- ((~ F) /\ F)
+T c==> c~ cF c==> c= f0 f1 c==> c= f0 f2 c==> c/\ c\/ c= f0 f2 c= f0 f3 c/\ c~ c= f0 f2 c\/ c/\ c~ c= f0 f1 c~ c= f0 f3 c= f0 f1 c/\ c~ cF cF
+- (x = a), (x = c), (((x = a) \/ (x = b)) /\ ((~ (x = b)) /\ (((~ (x = a)) /\ (~ (x = c))) \/ (x = c)))) |- (~ (c = b))
+T c==> c= f0 f1 c==> c= f0 f2 c==> c/\ c\/ c= f0 f1 c= f0 f3 c/\ c~ c= f0 f3 c\/ c/\ c~ c= f0 f1 c~ c= f0 f2 c= f0 f2 c~ c= f2 f3
+- (~ F), (x = c), (((x = a) \/ (x = c)) /\ (~ (x = c))) |- ((~ F) /\ F)
+T c==> c~ cF c==> c= f0 f1 c==> c/\ c\/ c= f0 f2 c= f0 f1 c~ c= f0 f1 c/\ c~ cF cF
+- (x = a), (((~ (x = b)) /\ (~ (x = c))) /\ ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = a))))) |- (~ (a = b))
+T c==> c= f0 f1 c==> c/\ c/\ c~ c= f0 f2 c~ c= f0 f3 c\/ c= f0 f2 c/\ c\/ c= f0 f1 c= f0 f3 c~ c= f0 f1 c~ c= f1 f2
+- (x = a), ((~ (x = a)) /\ (~ (x = c))) |- ((~ F) ==> F)
+T c==> c= f0 f1 c==> c/\ c~ c= f0 f1 c~ c= f0 f2 c==> c~ cF cF
+- (x = a), (((x = a) \/ (x = c)) /\ (~ (x = c))) |- (~ (a = c))
+T c==> c= f0 f1 c==> c/\ c\/ c= f0 f1 c= f0 f2 c~ c= f0 f2 c~ c= f1 f2
+- (x = b), (((~ (x = b)) /\ (~ (x = c))) /\ ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = a))))) |- ((~ F) ==> F)
+T c==> c= f0 f1 c==> c/\ c/\ c~ c= f0 f1 c~ c= f0 f2 c\/ c= f0 f1 c/\ c\/ c= f0 f3 c= f0 f2 c~ c= f0 f3 c==> c~ cF cF
+- |- ((!x. (P x)) = ((P T) /\ (P F)))
+T c= ! * f0 b0 c/\ * f0 cT * f0 cF
+- (x = b), (x = c), (((x = a) \/ (x = b)) /\ ((~ (x = b)) /\ (((~ (x = a)) /\ (~ (x = c))) \/ (x = c)))) |- ((~ F) ==> F)
+T c==> c= f0 f1 c==> c= f0 f2 c==> c/\ c\/ c= f0 f3 c= f0 f1 c/\ c~ c= f0 f1 c\/ c/\ c~ c= f0 f3 c~ c= f0 f2 c= f0 f2 c==> c~ cF cF
+- |- (((!t1. (!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))))) ==> ((\t1. (!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))))) t1)) = ((\t1. (!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))))) t1))
+T c= c==> ! ! ! c= c\/ b0 c\/ b1 b2 c\/ c\/ b0 b1 b2 * / ! ! c= c\/ b0 c\/ b1 b2 c\/ c\/ b0 b1 b2 f0 * / ! ! c= c\/ b0 c\/ b1 b2 c\/ c\/ b0 b1 b2 f0
+- (x = a), (x = c) |- ((~ (c = a)) = (~ (c = c)))
+T c==> c= f0 f1 c==> c= f0 f2 c= c~ c= f2 f1 c~ c= f2 f2
+- |- ((~ (~ t)) = t)
+T c= c~ c~ f0 f0
+- (~ F), (x = a), (((x = a) \/ (x = c)) /\ (~ (x = a))) |- ((~ F) /\ F)
+T c==> c~ cF c==> c= f0 f1 c==> c/\ c\/ c= f0 f1 c= f0 f2 c~ c= f0 f1 c/\ c~ cF cF
+- |- ((!a. (!c. (!b. ((~ (c = a)) ==> (!x. (((x = b) \/ (x = c)) = ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = a)))))))))) = (!a. (!c. (!b. ((~ ((~ (c = a)) ==> (!x. (((x = b) \/ (x = c)) = ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = a)))))))) ==> F)))))
+T c= ! ! ! c==> c~ c= b1 b0 ! c= c\/ c= b3 b2 c= b3 b1 c\/ c= b3 b2 c/\ c\/ c= b3 b0 c= b3 b1 c~ c= b3 b0 ! ! ! c==> c~ c==> c~ c= b1 b0 ! c= c\/ c= b3 b2 c= b3 b1 c\/ c= b3 b2 c/\ c\/ c= b3 b0 c= b3 b1 c~ c= b3 b0 cF
+- (x = a), (((x = a) \/ (x = b)) /\ ((~ (x = b)) /\ (((~ (x = a)) /\ (~ (x = c))) \/ (x = c)))) |- (~ (a = b))
+T c==> c= f0 f1 c==> c/\ c\/ c= f0 f1 c= f0 f2 c/\ c~ c= f0 f2 c\/ c/\ c~ c= f0 f1 c~ c= f0 f3 c= f0 f3 c~ c= f1 f2
+- (~ (c = a)), (x = a), (x = c) |- ((~ F) ==> F)
+T c==> c~ c= f0 f1 c==> c= f2 f1 c==> c= f2 f0 c==> c~ cF cF
+- |- (((\b'. (f b')) y) = (f y))
+T c= * / * f0 b0 f1 * f0 f1
+- (~ ((~ (c = a)) ==> (!x. (((x = a) \/ (x = b)) = ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = c)))))))) |- F
+T c==> c~ c==> c~ c= f0 f1 ! c= c\/ c= b0 f1 c= b0 f2 c\/ c= b0 f2 c/\ c\/ c= b0 f1 c= b0 f0 c~ c= b0 f0 cF
+- (x = a), ((~ (x = a)) /\ (~ (x = c))) |- (~ (a = c))
+T c==> c= f0 f1 c==> c/\ c~ c= f0 f1 c~ c= f0 f2 c~ c= f1 f2
+- (x = c), (((~ (x = b)) /\ (~ (x = c))) /\ ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = a))))) |- (~ (c = b))
+T c==> c= f0 f1 c==> c/\ c/\ c~ c= f0 f2 c~ c= f0 f1 c\/ c= f0 f2 c/\ c\/ c= f0 f3 c= f0 f1 c~ c= f0 f3 c~ c= f1 f2
+- (~ (a = a)) |- ((~ (a = a)) /\ (a = a))
+T c==> c~ c= f0 f0 c/\ c~ c= f0 f0 c= f0 f0
+- (~ F), (x = c), ((~ (x = a)) /\ (~ (x = c))) |- ((~ F) /\ F)
+T c==> c~ cF c==> c= f0 f1 c==> c/\ c~ c= f0 f2 c~ c= f0 f1 c/\ c~ cF cF
+- (~ ((~ (c = a)) ==> (!x. (((x = b) \/ (x = c)) = ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = a)))))))) |- ((~ ((~ (c = a)) ==> (!x. (((x = b) \/ (x = c)) = ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = a)))))))) /\ F)
+T c==> c~ c==> c~ c= f0 f1 ! c= c\/ c= b0 f2 c= b0 f0 c\/ c= b0 f2 c/\ c\/ c= b0 f1 c= b0 f0 c~ c= b0 f1 c/\ c~ c==> c~ c= f0 f1 ! c= c\/ c= b0 f2 c= b0 f0 c\/ c= b0 f2 c/\ c\/ c= b0 f1 c= b0 f0 c~ c= b0 f1 cF
+- (x = b), (((~ (x = a)) /\ (~ (x = b))) /\ ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = c))))) |- ((~ F) ==> F)
+T c==> c= f0 f1 c==> c/\ c/\ c~ c= f0 f2 c~ c= f0 f1 c\/ c= f0 f1 c/\ c\/ c= f0 f2 c= f0 f3 c~ c= f0 f3 c==> c~ cF cF
+- |- (((((~ ((~ (c = a)) ==> (!x. (((x = a) \/ (x = b)) = ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = c)))))))) ==> F) ==> ((~ ((~ (c = a)) ==> (!x. (((x = a) \/ (x = b)) = ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = c)))))))) ==> F)) ==> (((~ ((~ (c = a)) ==> (!x. (((x = a) \/ (x = b)) = ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = c)))))))) ==> F) ==> ((~ ((~ (c = a)) ==> (!x. (((x = a) \/ (x = b)) = ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = c)))))))) ==> F))) = (((~ ((~ (c = a)) ==> (!x. (((x = a) \/ (x = b)) = ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = c)))))))) ==> F) ==> ((~ ((~ (c = a)) ==> (!x. (((x = a) \/ (x = b)) = ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = c)))))))) ==> F)))
+T c= c==> c==> c==> c~ c==> c~ c= f0 f1 ! c= c\/ c= b0 f1 c= b0 f2 c\/ c= b0 f2 c/\ c\/ c= b0 f1 c= b0 f0 c~ c= b0 f0 cF c==> c~ c==> c~ c= f0 f1 ! c= c\/ c= b0 f1 c= b0 f2 c\/ c= b0 f2 c/\ c\/ c= b0 f1 c= b0 f0 c~ c= b0 f0 cF c==> c==> c~ c==> c~ c= f0 f1 ! c= c\/ c= b0 f1 c= b0 f2 c\/ c= b0 f2 c/\ c\/ c= b0 f1 c= b0 f0 c~ c= b0 f0 cF c==> c~ c==> c~ c= f0 f1 ! c= c\/ c= b0 f1 c= b0 f2 c\/ c= b0 f2 c/\ c\/ c= b0 f1 c= b0 f0 c~ c= b0 f0 cF c==> c==> c~ c==> c~ c= f0 f1 ! c= c\/ c= b0 f1 c= b0 f2 c\/ c= b0 f2 c/\ c\/ c= b0 f1 c= b0 f0 c~ c= b0 f0 cF c==> c~ c==> c~ c= f0 f1 ! c= c\/ c= b0 f1 c= b0 f2 c\/ c= b0 f2 c/\ c\/ c= b0 f1 c= b0 f0 c~ c= b0 f0 cF
+- (x = c), (((~ (x = a)) /\ (~ (x = b))) /\ ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = c))))) |- (~ (c = b))
+T c==> c= f0 f1 c==> c/\ c/\ c~ c= f0 f2 c~ c= f0 f3 c\/ c= f0 f3 c/\ c\/ c= f0 f2 c= f0 f1 c~ c= f0 f1 c~ c= f1 f3
+- |- ((\c. (!a. (!b. ((~ ((~ (c = a)) ==> (!x. (((x = a) \/ (x = b)) = ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = c)))))))) ==> F)))) c)
+T * / ! ! c==> c~ c==> c~ c= b0 b1 ! c= c\/ c= b3 b1 c= b3 b2 c\/ c= b3 b2 c/\ c\/ c= b3 b1 c= b3 b0 c~ c= b3 b0 cF f0
+- (x = c) |- ((~ (c = a)) = (~ (c = a)))
+T c==> c= f0 f1 c= c~ c= f1 f2 c~ c= f1 f2
+- |- ((\a. (!c. (!b. ((~ ((~ (c = a)) ==> (!x. (((x = b) \/ (x = c)) = ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = a)))))))) ==> F)))) a)
+T * / ! ! c==> c~ c==> c~ c= b1 b0 ! c= c\/ c= b3 b2 c= b3 b1 c\/ c= b3 b2 c/\ c\/ c= b3 b0 c= b3 b1 c~ c= b3 b0 cF f0
+- |- (((!a. ((open_segment (a , a)) = EMPTY)) ==> ((\a. ((open_segment (a , a)) = EMPTY)) a)) = ((\a. ((open_segment (a , a)) = EMPTY)) a))
+T c= c==> ! c= * part copen_segment c, b0 b0 part cEMPTY * / c= * part copen_segment c, b0 b0 part cEMPTY f0 * / c= * part copen_segment c, b0 b0 part cEMPTY f0
+- ((~ ((~ (c = a)) ==> (!x. (((x = b) \/ (x = c)) = ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = a)))))))) ==> F), (((~ ((~ (c = a)) ==> (!x. (((x = b) \/ (x = c)) = ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = a)))))))) ==> F) ==> ((~ ((~ (c = a)) ==> (!x. (((x = b) \/ (x = c)) = ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = a)))))))) ==> F)) |- ((((~ ((~ (c = a)) ==> (!x. (((x = b) \/ (x = c)) = ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = a)))))))) ==> F) ==> ((~ ((~ (c = a)) ==> (!x. (((x = b) \/ (x = c)) = ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = a)))))))) ==> F)) /\ ((~ ((~ (c = a)) ==> (!x. (((x = b) \/ (x = c)) = ((x = b) \/ (((x = a) \/ (x = c)) /\ (~ (x = a)))))))) ==> F))
+T c==> c==> c~ c==> c~ c= f0 f1 ! c= c\/ c= b0 f2 c= b0 f0 c\/ c= b0 f2 c/\ c\/ c= b0 f1 c= b0 f0 c~ c= b0 f1 cF c==> c==> c==> c~ c==> c~ c= f0 f1 ! c= c\/ c= b0 f2 c= b0 f0 c\/ c= b0 f2 c/\ c\/ c= b0 f1 c= b0 f0 c~ c= b0 f1 cF c==> c~ c==> c~ c= f0 f1 ! c= c\/ c= b0 f2 c= b0 f0 c\/ c= b0 f2 c/\ c\/ c= b0 f1 c= b0 f0 c~ c= b0 f1 cF c/\ c==> c==> c~ c==> c~ c= f0 f1 ! c= c\/ c= b0 f2 c= b0 f0 c\/ c= b0 f2 c/\ c\/ c= b0 f1 c= b0 f0 c~ c= b0 f1 cF c==> c~ c==> c~ c= f0 f1 ! c= c\/ c= b0 f2 c= b0 f0 c\/ c= b0 f2 c/\ c\/ c= b0 f1 c= b0 f0 c~ c= b0 f1 cF c==> c~ c==> c~ c= f0 f1 ! c= c\/ c= b0 f2 c= b0 f0 c\/ c= b0 f2 c/\ c\/ c= b0 f1 c= b0 f0 c~ c= b0 f1 cF

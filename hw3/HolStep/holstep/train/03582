@@ -1,0 +1,178 @@
+N Seq.map_MAP
+C |- (map = MAP)
+T c= part cmap part cMAP
+D TRUTH
+A |- T
+T cT
+D EQ_EXT
+A |- (!f. (!g. ((!x. ((f x) = (g x))) ==> (f = g))))
+T c==> ! c= * f0 b0 * f1 b0 c= f0 f1
+D list_INDUCT
+A |- (!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x))))
+T c==> c/\ * f0 cNIL ! ! c==> * f0 b1 * f0 cCONS b0 b1 ! * f0 b0
+D MAP
+A |- ((!f. (((MAP f) NIL) = NIL)) /\ (!f. (!h. (!t. (((MAP f) ((CONS h) t)) = ((CONS (f h)) ((MAP f) t)))))))
+T c/\ ! c= cMAP b0 cNIL cNIL ! ! ! c= cMAP b0 cCONS b1 b2 cCONS * b0 b1 cMAP b0 b2
+D Seq.map
+A |- ((((map f) ((CONS x) s)) = ((CONS (f x)) ((map f) s))) /\ (((map f) NIL) = NIL))
+T c/\ c= cmap f0 cCONS f1 f2 cCONS * f0 f1 cmap f0 f2 c= cmap f0 cNIL cNIL
+- ((!x. (P ==> (Q x))) = (P ==> (!x. (Q x)))) |- ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))
+T c==> c= ! c==> f0 * f1 b0 c==> f0 ! * f1 b0 c= c==> f0 ! * f1 b0 ! c==> f0 * f1 b0
++ |- (((!f. (!h. (!t. (((MAP f) ((CONS h) t)) = ((CONS (f h)) ((MAP f) t)))))) ==> ((\f. (!h. (!t. (((MAP f) ((CONS h) t)) = ((CONS (f h)) ((MAP f) t)))))) f)) = ((\f. (!h. (!t. (((MAP f) ((CONS h) t)) = ((CONS (f h)) ((MAP f) t)))))) f))
+T c= c==> ! ! ! c= cMAP b0 cCONS b1 b2 cCONS * b0 b1 cMAP b0 b2 * / ! ! c= cMAP b0 cCONS b1 b2 cCONS * b0 b1 cMAP b0 b2 f0 * / ! ! c= cMAP b0 cCONS b1 b2 cCONS * b0 b1 cMAP b0 b2 f0
++ |- (((((map f) NIL) = ((MAP f) NIL)) /\ (!a0. (!a1. ((((map f) a1) = ((MAP f) a1)) ==> (((map f) ((CONS a0) a1)) = ((MAP f) ((CONS a0) a1))))))) ==> (!s. (((map f) s) = ((MAP f) s))))
+T c==> c/\ c= cmap f0 cNIL cMAP f0 cNIL ! ! c==> c= cmap f0 b1 cMAP f0 b1 c= cmap f0 cCONS b0 b1 cMAP f0 cCONS b0 b1 ! c= cmap f0 b0 cMAP f0 b0
+- (s = s1) |- ((((map f) s1) = ((MAP f) s)) = (((map f) s) = ((MAP f) s)))
+T c==> c= f0 f1 c= c= cmap f2 f1 cMAP f2 f0 c= cmap f2 f0 cMAP f2 f0
+- |- ((\P. (!Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x)))))) P)
+T * / ! c= c==> b0 ! * b1 b2 ! c==> b0 * b1 b2 f0
+- (s = s1) |- (((map f) s1) = ((MAP f) s1))
+T c==> c= f0 f1 c= cmap f2 f1 cMAP f2 f1
++ |- (((map f) ((CONS x) s)) = ((CONS (f x)) ((map f) s)))
+T c= cmap f0 cCONS f1 f2 cCONS * f0 f1 cmap f0 f2
++ |- ((\P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))) P)
+T * / c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 f0
+- (!x. ((f x) = (g x))) |- ((!f. (!g. ((!x. ((f x) = (g x))) ==> (f = g)))) ==> (f = g))
+T c==> ! c= * f0 b0 * f1 b0 c==> ! ! c==> ! c= * b0 b2 * b1 b2 c= b0 b1 c= f0 f1
++ |- ((((CONS (f x)) ((map f) s)) = ((CONS (f x)) ((MAP f) s))) = (((CONS (f x)) ((map f) s)) = ((MAP f) ((CONS x) s))))
+T c= c= cCONS * f0 f1 cmap f0 f2 cCONS * f0 f1 cMAP f0 f2 c= cCONS * f0 f1 cmap f0 f2 cMAP f0 cCONS f1 f2
+- |- ((((\s1. (s = s1)) s1) ==> (((map f) s) = ((MAP f) s))) = T)
+T c= c==> * / c= f0 b0 f1 c= cmap f2 f0 cMAP f2 f0 cT
+- (s = s1) |- ((((map f) s1) = ((MAP f) s1)) = (((map f) s1) = ((MAP f) s)))
+T c==> c= f0 f1 c= c= cmap f2 f1 cMAP f2 f1 c= cmap f2 f1 cMAP f2 f0
++ |- (((!g. ((!x. ((f x) = (g x))) ==> (f = g))) ==> ((\g. ((!x. ((f x) = (g x))) ==> (f = g))) g)) = ((\g. ((!x. ((f x) = (g x))) ==> (f = g))) g))
+T c= c==> ! c==> ! c= * f0 b1 * b0 b1 c= f0 b0 * / c==> ! c= * f0 b1 * b0 b1 c= f0 b0 f1 * / c==> ! c= * f0 b1 * b0 b1 c= f0 b0 f1
+- |- (!s1. (((\s1. (s = s1)) s1) ==> (?s1. (s = s1))))
+T c==> * / c= f0 b0 f1 c? / c= f0 b0
++ |- (((!x. ((map x) = (MAP x))) ==> (map = MAP)) = (map = MAP))
+T c= c==> ! c= * part cmap b0 * part cMAP b0 c= part cmap part cMAP c= part cmap part cMAP
+- |- ((\s1. (s = s1)) s)
+T * / c= f0 b0 f0
++ |- ((((((map f) NIL) = ((MAP f) NIL)) /\ (!a0. (!a1. ((((map f) a1) = ((MAP f) a1)) ==> (((map f) ((CONS a0) a1)) = ((MAP f) ((CONS a0) a1))))))) ==> (!s. (((map f) s) = ((MAP f) s)))) = (!s. (((map f) s) = ((MAP f) s))))
+T c= c==> c/\ c= cmap f0 cNIL cMAP f0 cNIL ! ! c==> c= cmap f0 b1 cMAP f0 b1 c= cmap f0 cCONS b0 b1 cMAP f0 cCONS b0 b1 ! c= cmap f0 b0 cMAP f0 b0 ! c= cmap f0 b0 cMAP f0 b0
+- (!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))), ((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) |- ((!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))) /\ (!x. (P x)))
+T c==> ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 c==> c/\ * f0 cNIL ! ! c==> * f0 b1 * f0 cCONS b0 b1 c/\ ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 ! * f0 b0
+- (!f. (!g. ((!x. ((f x) = (g x))) ==> (f = g)))) |- ((\f. (!g. ((!x. ((f x) = (g x))) ==> (f = g)))) f)
+T c==> ! ! c==> ! c= * b0 b2 * b1 b2 c= b0 b1 * / ! c==> ! c= * b0 b2 * b1 b2 c= b0 b1 f0
++ |- (((!h. (!t. (((MAP f) ((CONS h) t)) = ((CONS (f h)) ((MAP f) t))))) ==> ((\h. (!t. (((MAP f) ((CONS h) t)) = ((CONS (f h)) ((MAP f) t))))) h)) = ((\h. (!t. (((MAP f) ((CONS h) t)) = ((CONS (f h)) ((MAP f) t))))) h))
+T c= c==> ! ! c= cMAP f0 cCONS b0 b1 cCONS * f0 b0 cMAP f0 b1 * / ! c= cMAP f0 cCONS b0 b1 cCONS * f0 b0 cMAP f0 b1 f1 * / ! c= cMAP f0 cCONS b0 b1 cCONS * f0 b0 cMAP f0 b1 f1
++ |- (((!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))) ==> ((\P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))) P)) = ((\P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))) P))
+T c= c==> ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 * / c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 f0 * / c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 f0
+- (!f. (!g. ((!x. ((f x) = (g x))) ==> (f = g)))) |- ((!g. ((!x. ((f x) = (g x))) ==> (f = g))) = T)
+T c==> ! ! c==> ! c= * b0 b2 * b1 b2 c= b0 b1 c= ! c==> ! c= * f0 b1 * b0 b1 c= f0 b0 cT
+- (!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))), ((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) |- (!x. (P x))
+T c==> ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 c==> c/\ * f0 cNIL ! ! c==> * f0 b1 * f0 cCONS b0 b1 ! * f0 b0
++ |- (!x. ((map x) = (MAP x)))
+T c= * part cmap f0 * part cMAP f0
+- (!f. (!g. ((!x. ((f x) = (g x))) ==> (f = g)))) |- (((!x. ((f x) = (g x))) ==> (f = g)) = T)
+T c==> ! ! c==> ! c= * b0 b2 * b1 b2 c= b0 b1 c= c==> ! c= * f0 b0 * f1 b0 c= f0 f1 cT
++ |- (NIL = ((MAP f) NIL))
+T c= cNIL cMAP f0 cNIL
++ |- (((!f. (!g. ((!x. ((f x) = (g x))) ==> (f = g)))) ==> ((\f. (!g. ((!x. ((f x) = (g x))) ==> (f = g)))) f)) = ((\f. (!g. ((!x. ((f x) = (g x))) ==> (f = g)))) f))
+T c= c==> ! ! c==> ! c= * b0 b2 * b1 b2 c= b0 b1 * / ! c==> ! c= * b0 b2 * b1 b2 c= b0 b1 f0 * / ! c==> ! c= * b0 b2 * b1 b2 c= b0 b1 f0
++ |- (!a0. (!a1. ((((map f) a1) = ((MAP f) a1)) ==> (((map f) ((CONS a0) a1)) = ((MAP f) ((CONS a0) a1))))))
+T c==> c= cmap f0 f1 cMAP f0 f1 c= cmap f0 cCONS f2 f1 cMAP f0 cCONS f2 f1
+- (!x. ((f x) = (g x))), (!f. (!g. ((!x. ((f x) = (g x))) ==> (f = g)))) |- ((!x. ((f x) = (g x))) /\ (f = g))
+T c==> ! c= * f0 b0 * f1 b0 c==> ! ! c==> ! c= * b0 b2 * b1 b2 c= b0 b1 c/\ ! c= * f0 b0 * f1 b0 c= f0 f1
+- |- ((s = s1) = ((\s1. (s = s1)) s1))
+T c= c= f0 f1 * / c= f0 b0 f1
+- |- (((!s. (((map f) s) = ((MAP f) s))) ==> ((\s. (((map f) s) = ((MAP f) s))) s1)) = ((\s. (((map f) s) = ((MAP f) s))) s1))
+T c= c==> ! c= cmap f0 b0 cMAP f0 b0 * / c= cmap f0 b0 cMAP f0 b0 f1 * / c= cmap f0 b0 cMAP f0 b0 f1
+- (!f. (!g. ((!x. ((f x) = (g x))) ==> (f = g)))) |- (((!g. ((!x. ((f x) = (g x))) ==> (f = g))) ==> ((\g. ((!x. ((f x) = (g x))) ==> (f = g))) g)) = ((\g. ((!x. ((f x) = (g x))) ==> (f = g))) g))
+T c==> ! ! c==> ! c= * b0 b2 * b1 b2 c= b0 b1 c= c==> ! c==> ! c= * f0 b1 * b0 b1 c= f0 b0 * / c==> ! c= * f0 b1 * b0 b1 c= f0 b0 f1 * / c==> ! c= * f0 b1 * b0 b1 c= f0 b0 f1
++ |- (((((map f) s) = ((MAP f) s)) ==> (((map f) ((CONS x) s)) = ((MAP f) ((CONS x) s)))) = T)
+T c= c==> c= cmap f0 f1 cMAP f0 f1 c= cmap f0 cCONS f2 f1 cMAP f0 cCONS f2 f1 cT
+- |- (((!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))) ==> (!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x))))) = (!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))))
+T c= c==> ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1
+- (!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))), ((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) |- (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) /\ (!x. (P x)))
+T c==> ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 c==> c/\ * f0 cNIL ! ! c==> * f0 b1 * f0 cCONS b0 b1 c/\ c/\ * f0 cNIL ! ! c==> * f0 b1 * f0 cCONS b0 b1 ! * f0 b0
+- ((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) |- ((!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))) ==> (!x. (P x)))
+T c==> c/\ * f0 cNIL ! ! c==> * f0 b1 * f0 cCONS b0 b1 c==> ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 ! * f0 b0
++ |- ((\f. (!g. ((!x. ((f x) = (g x))) ==> (f = g)))) f)
+T * / ! c==> ! c= * b0 b2 * b1 b2 c= b0 b1 f0
++ |- ((\g. ((!x. ((f x) = (g x))) ==> (f = g))) g)
+T * / c==> ! c= * f0 b1 * b0 b1 c= f0 b0 f1
+- |- ((?s1. (s = s1)) ==> (?s1. (s = s1)))
+T c==> c? / c= f0 b0 c? / c= f0 b0
++ |- ((x = x) = T)
+T c= c= f0 f0 cT
+- |- ((\Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))) Q)
+T * / c= c==> f0 ! * b0 b1 ! c==> f0 * b0 b1 f1
++ |- ((\h. (!t. (((MAP f) ((CONS h) t)) = ((CONS (f h)) ((MAP f) t))))) h)
+T * / ! c= cMAP f0 cCONS b0 b1 cCONS * f0 b0 cMAP f0 b1 f1
+- (!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))) |- ((\P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))) P)
+T c==> ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 * / c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 f0
+- (s = s1) |- (s1 = s)
+T c==> c= f0 f1 c= f1 f0
+- ((\s1. (s = s1)) s1) |- (((s = s1) ==> (?s1. (s = s1))) = (?s1. (s = s1)))
+T c==> * / c= f0 b0 f1 c= c==> c= f0 f1 c? / c= f0 b0 c? / c= f0 b0
+- |- ((!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))) ==> (!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))))
+T c==> ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1
+- |- ((s = s) = ((\s1. (s = s1)) s))
+T c= c= f0 f0 * / c= f0 b0 f0
++ |- ((NIL = NIL) = (NIL = ((MAP f) NIL)))
+T c= c= cNIL cNIL c= cNIL cMAP f0 cNIL
++ |- (((MAP f) NIL) = NIL)
+T c= cMAP f0 cNIL cNIL
++ |- ((!a1. ((((map f) a1) = ((MAP f) a1)) ==> (((map f) ((CONS x) a1)) = ((MAP f) ((CONS x) a1))))) = T)
+T c= ! c==> c= cmap f0 b0 cMAP f0 b0 c= cmap f0 cCONS f1 b0 cMAP f0 cCONS f1 b0 cT
+- |- (((!P. (!Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x)))))) ==> ((\P. (!Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x)))))) P)) = ((\P. (!Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x)))))) P))
+T c= c==> ! ! c= c==> b0 ! * b1 b2 ! c==> b0 * b1 b2 * / ! c= c==> b0 ! * b1 b2 ! c==> b0 * b1 b2 f0 * / ! c= c==> b0 ! * b1 b2 ! c==> b0 * b1 b2 f0
++ |- ((NIL = ((MAP f) NIL)) = (((map f) NIL) = ((MAP f) NIL)))
+T c= c= cNIL cMAP f0 cNIL c= cmap f0 cNIL cMAP f0 cNIL
+- (!f. (!g. ((!x. ((f x) = (g x))) ==> (f = g)))) |- ((\g. ((!x. ((f x) = (g x))) ==> (f = g))) g)
+T c==> ! ! c==> ! c= * b0 b2 * b1 b2 c= b0 b1 * / c==> ! c= * f0 b1 * b0 b1 c= f0 b0 f1
+- (s = s1) |- ((((map f) s1) = ((MAP f) s1)) = (((map f) s) = ((MAP f) s)))
+T c==> c= f0 f1 c= c= cmap f2 f1 cMAP f2 f1 c= cmap f2 f0 cMAP f2 f0
++ |- (((map f) = (MAP f)) = T)
+T c= c= * part cmap f0 * part cMAP f0 cT
+- ((\s1. (s = s1)) s1) |- (s = s1)
+T c==> * / c= f0 b0 f1 c= f0 f1
+- (s = s1) |- ((s = s1) /\ (?s1. (s = s1)))
+T c==> c= f0 f1 c/\ c= f0 f1 c? / c= f0 b0
++ |- (((MAP f) ((CONS h) t)) = ((CONS (f h)) ((MAP f) t)))
+T c= cMAP f0 cCONS f1 f2 cCONS * f0 f1 cMAP f0 f2
+- (s = s1) |- (((map f) s1) = ((MAP f) s))
+T c==> c= f0 f1 c= cmap f2 f1 cMAP f2 f0
++ (((map f) s) = ((MAP f) s)) |- (((CONS (f x)) ((map f) s)) = ((MAP f) ((CONS x) s)))
+T c==> c= cmap f0 f1 cMAP f0 f1 c= cCONS * f0 f2 cmap f0 f1 cMAP f0 cCONS f2 f1
+- ((\s1. (s = s1)) s1) |- (((\s1. (s = s1)) s1) /\ (?s1. (s = s1)))
+T c==> * / c= f0 b0 f1 c/\ * / c= f0 b0 f1 c? / c= f0 b0
+- |- ((\s. (((map f) s) = ((MAP f) s))) s1)
+T * / c= cmap f0 b0 cMAP f0 b0 f1
+- ((\s1. (s = s1)) s1) |- (((s = s1) ==> (((map f) s) = ((MAP f) s))) = (((map f) s) = ((MAP f) s)))
+T c==> * / c= f0 b0 f1 c= c==> c= f0 f1 c= cmap f2 f0 cMAP f2 f0 c= cmap f2 f0 cMAP f2 f0
++ |- ((((map f) NIL) = ((MAP f) NIL)) /\ (!a0. (!a1. ((((map f) a1) = ((MAP f) a1)) ==> (((map f) ((CONS a0) a1)) = ((MAP f) ((CONS a0) a1)))))))
+T c/\ c= cmap f0 cNIL cMAP f0 cNIL ! ! c==> c= cmap f0 b1 cMAP f0 b1 c= cmap f0 cCONS b0 b1 cMAP f0 cCONS b0 b1
+- |- (((!f. (!g. ((!x. ((f x) = (g x))) ==> (f = g)))) ==> (!f. (!g. ((!x. ((f x) = (g x))) ==> (f = g))))) = (!f. (!g. ((!x. ((f x) = (g x))) ==> (f = g)))))
+T c= c==> ! ! c==> ! c= * b0 b2 * b1 b2 c= b0 b1 ! ! c==> ! c= * b0 b2 * b1 b2 c= b0 b1 ! ! c==> ! c= * b0 b2 * b1 b2 c= b0 b1
+- (s = s1) |- ((s = s1) /\ (((map f) s) = ((MAP f) s)))
+T c==> c= f0 f1 c/\ c= f0 f1 c= cmap f2 f0 cMAP f2 f0
+- |- (!s1. (((\s1. (s = s1)) s1) ==> (((map f) s) = ((MAP f) s))))
+T c==> * / c= f0 b0 f1 c= cmap f2 f0 cMAP f2 f0
++ |- (T = (NIL = NIL))
+T c= cT c= cNIL cNIL
++ |- (NIL = NIL)
+T c= cNIL cNIL
++ |- ((!a0. (!a1. ((((map f) a1) = ((MAP f) a1)) ==> (((map f) ((CONS a0) a1)) = ((MAP f) ((CONS a0) a1)))))) = ((((map f) NIL) = ((MAP f) NIL)) /\ (!a0. (!a1. ((((map f) a1) = ((MAP f) a1)) ==> (((map f) ((CONS a0) a1)) = ((MAP f) ((CONS a0) a1))))))))
+T c= ! ! c==> c= cmap f0 b1 cMAP f0 b1 c= cmap f0 cCONS b0 b1 cMAP f0 cCONS b0 b1 c/\ c= cmap f0 cNIL cMAP f0 cNIL ! ! c==> c= cmap f0 b1 cMAP f0 b1 c= cmap f0 cCONS b0 b1 cMAP f0 cCONS b0 b1
++ |- (((!f. (((MAP f) NIL) = NIL)) ==> ((\f. (((MAP f) NIL) = NIL)) f)) = ((\f. (((MAP f) NIL) = NIL)) f))
+T c= c==> ! c= cMAP b0 cNIL cNIL * / c= cMAP b0 cNIL cNIL f0 * / c= cMAP b0 cNIL cNIL f0
++ |- (((!t. (((MAP f) ((CONS h) t)) = ((CONS (f h)) ((MAP f) t)))) ==> ((\t. (((MAP f) ((CONS h) t)) = ((CONS (f h)) ((MAP f) t)))) t)) = ((\t. (((MAP f) ((CONS h) t)) = ((CONS (f h)) ((MAP f) t)))) t))
+T c= c==> ! c= cMAP f0 cCONS f1 b0 cCONS * f0 f1 cMAP f0 b0 * / c= cMAP f0 cCONS f1 b0 cCONS * f0 f1 cMAP f0 b0 f2 * / c= cMAP f0 cCONS f1 b0 cCONS * f0 f1 cMAP f0 b0 f2
++ |- ((\t. (((MAP f) ((CONS h) t)) = ((CONS (f h)) ((MAP f) t)))) t)
+T * / c= cMAP f0 cCONS f1 b0 cCONS * f0 f1 cMAP f0 b0 f2
++ |- ((\f. (((MAP f) NIL) = NIL)) f)
+T * / c= cMAP b0 cNIL cNIL f0
++ (((map f) s) = ((MAP f) s)) |- ((((map f) s) = ((MAP f) s)) /\ (((map f) ((CONS x) s)) = ((MAP f) ((CONS x) s))))
+T c==> c= cmap f0 f1 cMAP f0 f1 c/\ c= cmap f0 f1 cMAP f0 f1 c= cmap f0 cCONS f2 f1 cMAP f0 cCONS f2 f1
++ |- (((map f) NIL) = NIL)
+T c= cmap f0 cNIL cNIL
++ |- (((map f) NIL) = ((MAP f) NIL))
+T c= cmap f0 cNIL cMAP f0 cNIL
++ |- ((((CONS (f x)) ((map f) s)) = ((MAP f) ((CONS x) s))) = (((map f) ((CONS x) s)) = ((MAP f) ((CONS x) s))))
+T c= c= cCONS * f0 f1 cmap f0 f2 cMAP f0 cCONS f1 f2 c= cmap f0 cCONS f1 f2 cMAP f0 cCONS f1 f2
++ |- (((!x. (((map f) x) = ((MAP f) x))) ==> ((map f) = (MAP f))) = ((map f) = (MAP f)))
+T c= c==> ! c= cmap f0 b0 cMAP f0 b0 c= * part cmap f0 * part cMAP f0 c= * part cmap f0 * part cMAP f0
++ |- ((\f. (!h. (!t. (((MAP f) ((CONS h) t)) = ((CONS (f h)) ((MAP f) t)))))) f)
+T * / ! ! c= cMAP b0 cCONS b1 b2 cCONS * b0 b1 cMAP b0 b2 f0

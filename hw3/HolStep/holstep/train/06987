@@ -1,0 +1,41 @@
+N HD_APPEND
+C |- (!l. (!m. ((HD ((APPEND l) m)) = (((COND (l = NIL)) (HD m)) (HD l)))))
+T c= cHD cAPPEND f0 f1 cCOND c= f0 cNIL cHD f1 cHD f0
+D TRUTH
+A |- T
+T cT
+D COND_CLAUSES
+A |- (!t1. (!t2. (((((COND T) t1) t2) = t1) /\ ((((COND F) t1) t2) = t2))))
+T c/\ c= cCOND cT f0 f1 f0 c= cCOND cF f0 f1 f1
+D list_INDUCT
+A |- (!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x))))
+T c==> c/\ * f0 cNIL ! ! c==> * f0 b1 * f0 cCONS b0 b1 ! * f0 b0
+D HD
+A |- ((HD ((CONS h) t)) = h)
+T c= cHD cCONS f0 f1 f0
+D APPEND
+A |- ((!l. (((APPEND NIL) l) = l)) /\ (!h. (!t. (!l. (((APPEND ((CONS h) t)) l) = ((CONS h) ((APPEND t) l)))))))
+T c/\ ! c= cAPPEND cNIL b0 b0 ! ! ! c= cAPPEND cCONS b0 b1 b2 cCONS b0 cAPPEND b1 b2
+D NOT_CONS_NIL
+A |- (!h. (!t. (~ (((CONS h) t) = NIL))))
+T c~ c= cCONS f0 f1 cNIL
+- |- (~ (NIL = ((CONS h) t)))
+T c~ c= cNIL cCONS f0 f1
++ |- ((((!m. ((HD ((APPEND NIL) m)) = (((COND (NIL = NIL)) (HD m)) (HD NIL)))) /\ (!h. (!t. ((!m. ((HD ((APPEND t) m)) = (((COND (t = NIL)) (HD m)) (HD t)))) ==> (!m. ((HD ((APPEND ((CONS h) t)) m)) = (((COND (((CONS h) t) = NIL)) (HD m)) (HD ((CONS h) t))))))))) ==> (!l. (!m. ((HD ((APPEND l) m)) = (((COND (l = NIL)) (HD m)) (HD l)))))) = (!l. (!m. ((HD ((APPEND l) m)) = (((COND (l = NIL)) (HD m)) (HD l))))))
+T c= c==> c/\ ! c= cHD cAPPEND cNIL b0 cCOND c= cNIL cNIL cHD b0 cHD cNIL ! ! c==> ! c= cHD cAPPEND b1 b2 cCOND c= b1 cNIL cHD b2 cHD b1 ! c= cHD cAPPEND cCONS b0 b1 b2 cCOND c= cCONS b0 b1 cNIL cHD b2 cHD cCONS b0 b1 ! ! c= cHD cAPPEND b0 b1 cCOND c= b0 cNIL cHD b1 cHD b0 ! ! c= cHD cAPPEND b0 b1 cCOND c= b0 cNIL cHD b1 cHD b0
++ |- (((!m. ((HD ((APPEND t) m)) = (((COND (t = NIL)) (HD m)) (HD t)))) ==> (!m. ((HD ((APPEND ((CONS h) t)) m)) = (((COND (((CONS h) t) = NIL)) (HD m)) (HD ((CONS h) t)))))) = T)
+T c= c==> ! c= cHD cAPPEND f0 b0 cCOND c= f0 cNIL cHD b0 cHD f0 ! c= cHD cAPPEND cCONS f1 f0 b0 cCOND c= cCONS f1 f0 cNIL cHD b0 cHD cCONS f1 f0 cT
++ |- (((!m. ((HD ((APPEND NIL) m)) = (((COND (NIL = NIL)) (HD m)) (HD NIL)))) /\ (!h. (!t. ((!m. ((HD ((APPEND t) m)) = (((COND (t = NIL)) (HD m)) (HD t)))) ==> (!m. ((HD ((APPEND ((CONS h) t)) m)) = (((COND (((CONS h) t) = NIL)) (HD m)) (HD ((CONS h) t))))))))) ==> (!l. (!m. ((HD ((APPEND l) m)) = (((COND (l = NIL)) (HD m)) (HD l))))))
+T c==> c/\ ! c= cHD cAPPEND cNIL b0 cCOND c= cNIL cNIL cHD b0 cHD cNIL ! ! c==> ! c= cHD cAPPEND b1 b2 cCOND c= b1 cNIL cHD b2 cHD b1 ! c= cHD cAPPEND cCONS b0 b1 b2 cCOND c= cCONS b0 b1 cNIL cHD b2 cHD cCONS b0 b1 ! ! c= cHD cAPPEND b0 b1 cCOND c= b0 cNIL cHD b1 cHD b0
++ |- ((((CONS h) t) = NIL) = F)
+T c= c= cCONS f0 f1 cNIL cF
++ |- ((!m. t) = t)
+T c= ! f0 f0
+- |- (((~ (NIL = ((CONS h) t))) ==> ((NIL = ((CONS h) t)) = F)) = ((NIL = ((CONS h) t)) = F))
+T c= c==> c~ c= cNIL cCONS f0 f1 c= c= cNIL cCONS f0 f1 cF c= c= cNIL cCONS f0 f1 cF
+- (NIL = ((CONS h) t)) |- (((CONS h) t) = NIL)
+T c==> c= cNIL cCONS f0 f1 c= cCONS f0 f1 cNIL
+- (((CONS h) t) = NIL) |- (NIL = ((CONS h) t))
+T c==> c= cCONS f0 f1 cNIL c= cNIL cCONS f0 f1
+- |- ((NIL = ((CONS h) t)) = F)
+T c= c= cNIL cCONS f0 f1 cF

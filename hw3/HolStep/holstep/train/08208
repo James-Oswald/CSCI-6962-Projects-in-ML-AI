@@ -1,0 +1,23 @@
+N Seq.foldr_cat
+C |- (!f. (!z0. (!s1. (!s2. ((((foldr f) z0) ((cat s1) s2)) = (((foldr f) (((foldr f) z0) s2)) s1))))))
+T c= cfoldr f0 f1 ccat f2 f3 cfoldr f0 cfoldr f0 f1 f3 f2
+D TRUTH
+A |- T
+T cT
+D list_INDUCT
+A |- (!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x))))
+T c==> c/\ * f0 cNIL ! ! c==> * f0 b1 * f0 cCONS b0 b1 ! * f0 b0
+D Seq.cat
+A |- (!x. (!t. (!s2. ((((cat NIL) s2) = s2) /\ (((cat ((CONS x) t)) s2) = ((CONS x) ((cat t) s2)))))))
+T c/\ c= ccat cNIL f0 f0 c= ccat cCONS f1 f2 f0 cCONS f1 ccat f2 f0
+D Seq.foldr
+A |- (((((foldr f) z0) ((CONS x) s)) = ((f x) (((foldr f) z0) s))) /\ ((((foldr f) z0) NIL) = z0))
+T c/\ c= cfoldr f0 f1 cCONS f2 f3 * * f0 f2 cfoldr f0 f1 f3 c= cfoldr f0 f1 cNIL f1
+- (s = s1) |- ((((foldr f) z0) ((map h) s1)) = (((foldr (\x. (\z. ((f (h x)) z)))) z0) s))
+T c==> c= f0 f1 c= cfoldr f2 f3 cmap f4 f1 cfoldr / / * * f2 * f4 b0 b1 f3 f0
+- |- ((?s1. (s = s1)) ==> ((((foldr f) z0) ((map h) s)) = (((foldr (\x. (\z. ((f (h x)) z)))) z0) s)))
+T c==> c? / c= f0 b0 c= cfoldr f1 f2 cmap f3 f0 cfoldr / / * * f1 * f3 b0 b1 f2 f0
++ |- ((!z0. (!s1. (!s2. ((((foldr f) z0) ((cat s1) s2)) = (((foldr f) (((foldr f) z0) s2)) s1))))) = T)
+T c= ! ! ! c= cfoldr f0 b0 ccat b1 b2 cfoldr f0 cfoldr f0 b0 b2 b1 cT
++ |- ((!s1. (!s2. ((((foldr f) z0) ((cat s1) s2)) = (((foldr f) (((foldr f) z0) s2)) s1)))) = T)
+T c= ! ! c= cfoldr f0 f1 ccat b0 b1 cfoldr f0 cfoldr f0 f1 b1 b0 cT

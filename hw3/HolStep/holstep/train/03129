@@ -1,0 +1,59 @@
+N Seq.rev_cons
+C |- (!x. (!s. ((rev ((CONS x) s)) = ((rcons (rev s)) x))))
+T c= crev cCONS f0 f1 crcons crev f1 f0
+D Seq.cats1
+A |- (!s. (!z. (((cat s) ((CONS z) NIL)) = ((rcons s) z))))
+T c= ccat f0 cCONS f1 cNIL crcons f0 f1
+D Seq.catrev
+A |- ((((catrev ((CONS x) s1)) s2) = ((catrev s1) ((CONS x) s2))) /\ (((catrev NIL) s2) = s2))
+T c/\ c= ccatrev cCONS f0 f1 f2 ccatrev f1 cCONS f0 f2 c= ccatrev cNIL f2 f2
+D Seq.rev
+A |- (!s. ((rev s) = ((catrev s) NIL)))
+T c= crev f0 ccatrev f0 cNIL
+D Seq.catrevE
+A |- (!s. (!t. (((catrev s) t) = ((cat (rev s)) t))))
+T c= ccatrev f0 f1 ccat crev f0 f1
++ |- (((catrev ((CONS x) s1)) s2) = ((catrev s1) ((CONS x) s2)))
+T c= ccatrev cCONS f0 f1 f2 ccatrev f1 cCONS f0 f2
+- ((!x. (P ==> (Q x))) = (P ==> (!x. (Q x)))) |- ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))
+T c==> c= ! c==> f0 * f1 b0 c==> f0 ! * f1 b0 c= c==> f0 ! * f1 b0 ! c==> f0 * f1 b0
++ |- (((rev ((CONS x) s)) = ((catrev s) ((CONS x) NIL))) = ((rev ((CONS x) s)) = ((cat (rev s)) ((CONS x) NIL))))
+T c= c= crev cCONS f0 f1 ccatrev f1 cCONS f0 cNIL c= crev cCONS f0 f1 ccat crev f1 cCONS f0 cNIL
+- |- ((\P. (!Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x)))))) P)
+T * / ! c= c==> b0 ! * b1 b2 ! c==> b0 * b1 b2 f0
++ |- (((!t. (((cat (rev s)) t) = ((catrev s) t))) ==> ((\t. (((cat (rev s)) t) = ((catrev s) t))) t)) = ((\t. (((cat (rev s)) t) = ((catrev s) t))) t))
+T c= c==> ! c= ccat crev f0 b0 ccatrev f0 b0 * / c= ccat crev f0 b0 ccatrev f0 b0 f1 * / c= ccat crev f0 b0 ccatrev f0 b0 f1
++ |- ((\s. (!t. (((cat (rev s)) t) = ((catrev s) t)))) s)
+T * / ! c= ccat crev b0 b1 ccatrev b0 b1 f0
++ |- ((rev ((CONS x) s)) = ((cat (rev s)) ((CONS x) NIL)))
+T c= crev cCONS f0 f1 ccat crev f1 cCONS f0 cNIL
++ |- ((!s. ((rev ((CONS x) s)) = ((rcons (rev s)) x))) = T)
+T c= ! c= crev cCONS f0 b0 crcons crev b0 f0 cT
++ |- ((rev ((CONS x) s)) = ((catrev s) ((CONS x) NIL)))
+T c= crev cCONS f0 f1 ccatrev f1 cCONS f0 cNIL
++ |- (((rev ((CONS x) s)) = ((rcons (rev s)) x)) = T)
+T c= c= crev cCONS f0 f1 crcons crev f1 f0 cT
++ |- (((rev ((CONS x) s)) = ((cat (rev s)) ((CONS x) NIL))) = ((rev ((CONS x) s)) = ((rcons (rev s)) x)))
+T c= c= crev cCONS f0 f1 ccat crev f1 cCONS f0 cNIL c= crev cCONS f0 f1 crcons crev f1 f0
+- |- ((((catrev s) ((CONS x) NIL)) = ((catrev s) ((CONS x) NIL))) = (((catrev ((CONS x) s)) NIL) = ((catrev s) ((CONS x) NIL))))
+T c= c= ccatrev f0 cCONS f1 cNIL ccatrev f0 cCONS f1 cNIL c= ccatrev cCONS f1 f0 cNIL ccatrev f0 cCONS f1 cNIL
++ (((cat (rev s)) t) = ((catrev s) t)) |- (((catrev s) t) = ((cat (rev s)) t))
+T c==> c= ccat crev f0 f1 ccatrev f0 f1 c= ccatrev f0 f1 ccat crev f0 f1
++ |- ((\s. (!z. (((rcons s) z) = ((cat s) ((CONS z) NIL))))) s)
+T * / ! c= crcons b0 b1 ccat b0 cCONS b1 cNIL f0
+- |- (((catrev NIL) s2) = s2)
+T c= ccatrev cNIL f0 f0
+- |- ((x = x) = T)
+T c= c= f0 f0 cT
+- |- ((\Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))) Q)
+T * / c= c==> f0 ! * b0 b1 ! c==> f0 * b0 b1 f1
+- |- (T = (((catrev s) ((CONS x) NIL)) = ((catrev s) ((CONS x) NIL))))
+T c= cT c= ccatrev f0 cCONS f1 cNIL ccatrev f0 cCONS f1 cNIL
+- |- (((!P. (!Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x)))))) ==> ((\P. (!Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x)))))) P)) = ((\P. (!Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x)))))) P))
+T c= c==> ! ! c= c==> b0 ! * b1 b2 ! c==> b0 * b1 b2 * / ! c= c==> b0 ! * b1 b2 ! c==> b0 * b1 b2 f0 * / ! c= c==> b0 ! * b1 b2 ! c==> b0 * b1 b2 f0
+- ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x)))) |- ((!x. (P ==> (Q x))) = (P ==> (!x. (Q x))))
+T c==> c= c==> f0 ! * f1 b0 ! c==> f0 * f1 b0 c= ! c==> f0 * f1 b0 c==> f0 ! * f1 b0
+- |- ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))
+T c= c==> f0 ! * f1 b0 ! c==> f0 * f1 b0
+- |- (((!Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))) ==> ((\Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))) Q)) = ((\Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))) Q))
+T c= c==> ! c= c==> f0 ! * b0 b1 ! c==> f0 * b0 b1 * / c= c==> f0 ! * b0 b1 ! c==> f0 * b0 b1 f1 * / c= c==> f0 ! * b0 b1 ! c==> f0 * b0 b1 f1

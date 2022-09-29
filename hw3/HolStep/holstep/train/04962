@@ -1,0 +1,74 @@
+N FRONTIER_INTER_SUBSET
+C |- (!s. (!t. ((frontier (s INTER t)) SUBSET ((frontier s) UNION (frontier t)))))
+T cSUBSET * part cfrontier * * part cINTER f0 f1 * * part cUNION * part cfrontier f0 * part cfrontier f1
+D IN
+A |- (!P. (!x. ((x IN P) = (P x))))
+T c= cIN f0 f1 * f1 f0
+D SUBSET
+A |- (!s. (!t. ((s SUBSET t) = (!x. ((x IN s) ==> (x IN t))))))
+T c= cSUBSET f0 f1 ! c==> cIN b0 f0 cIN b0 f1
+D IN_UNION
+A |- (!s. (!t. (!x. ((x IN (s UNION t)) = ((x IN s) \/ (x IN t))))))
+T c= cIN f0 * * part cUNION f1 f2 c\/ cIN f0 f1 cIN f0 f2
+D IN_INTER
+A |- (!s. (!t. (!x. ((x IN (s INTER t)) = ((x IN s) /\ (x IN t))))))
+T c= cIN f0 * * part cINTER f1 f2 c/\ cIN f0 f1 cIN f0 f2
+D FRONTIER_INTER
+A |- (!s. (!t. ((frontier (s INTER t)) = ((closure (s INTER t)) INTER ((frontier s) UNION (frontier t))))))
+T c= * part cfrontier * * part cINTER f0 f1 * * part cINTER * part cclosure * * part cINTER f0 f1 * * part cUNION * part cfrontier f0 * part cfrontier f1
+- (~ F), (~ (((frontier s) x) \/ ((frontier t) x))), ((frontier s) x) |- ((~ F) /\ F)
+T c==> c~ cF c==> c~ c\/ cfrontier f0 f1 cfrontier f2 f1 c==> cfrontier f0 f1 c/\ c~ cF cF
+- |- ((\t1. (!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))))) t1)
+T * / ! ! c= c\/ b0 c\/ b1 b2 c\/ c\/ b0 b1 b2 f0
+- (~ F), (~ (((frontier s) x) \/ ((frontier t) x))), ((frontier t) x) |- ((~ F) /\ F)
+T c==> c~ cF c==> c~ c\/ cfrontier f0 f1 cfrontier f2 f1 c==> cfrontier f2 f1 c/\ c~ cF cF
+- |- ((t ==> t) = T)
+T c= c==> f0 f0 cT
+- (~ (((frontier s) x) \/ ((frontier t) x))), ((frontier t) x) |- (((frontier t) x) /\ F)
+T c==> c~ c\/ cfrontier f0 f1 cfrontier f2 f1 c==> cfrontier f2 f1 c/\ cfrontier f2 f1 cF
+- |- ((t \/ t) = t)
+T c= c\/ f0 f0 f0
+- |- ((\t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))) t3)
+T * / c= c\/ f0 c\/ f1 b0 c\/ c\/ f0 f1 b0 f2
+- ((~ (!s. (!t. (!x. ((((closure (s INTER t)) x) /\ (((frontier s) x) \/ ((frontier t) x))) ==> (((frontier s) x) \/ ((frontier t) x))))))) ==> F), (((~ (!s. (!t. (!x. ((((closure (s INTER t)) x) /\ (((frontier s) x) \/ ((frontier t) x))) ==> (((frontier s) x) \/ ((frontier t) x))))))) ==> F) ==> ((~ (!s. (!t. (!x. ((((closure (s INTER t)) x) /\ (((frontier s) x) \/ ((frontier t) x))) ==> (((frontier s) x) \/ ((frontier t) x))))))) ==> F)) |- (((~ (!s. (!t. (!x. ((((closure (s INTER t)) x) /\ (((frontier s) x) \/ ((frontier t) x))) ==> (((frontier s) x) \/ ((frontier t) x))))))) ==> F) /\ ((~ (!s. (!t. (!x. ((((closure (s INTER t)) x) /\ (((frontier s) x) \/ ((frontier t) x))) ==> (((frontier s) x) \/ ((frontier t) x))))))) ==> F))
+T c==> c==> c~ ! ! ! c==> c/\ cclosure * * part cINTER b0 b1 b2 c\/ cfrontier b0 b2 cfrontier b1 b2 c\/ cfrontier b0 b2 cfrontier b1 b2 cF c==> c==> c==> c~ ! ! ! c==> c/\ cclosure * * part cINTER b0 b1 b2 c\/ cfrontier b0 b2 cfrontier b1 b2 c\/ cfrontier b0 b2 cfrontier b1 b2 cF c==> c~ ! ! ! c==> c/\ cclosure * * part cINTER b0 b1 b2 c\/ cfrontier b0 b2 cfrontier b1 b2 c\/ cfrontier b0 b2 cfrontier b1 b2 cF c/\ c==> c~ ! ! ! c==> c/\ cclosure * * part cINTER b0 b1 b2 c\/ cfrontier b0 b2 cfrontier b1 b2 c\/ cfrontier b0 b2 cfrontier b1 b2 cF c==> c~ ! ! ! c==> c/\ cclosure * * part cINTER b0 b1 b2 c\/ cfrontier b0 b2 cfrontier b1 b2 c\/ cfrontier b0 b2 cfrontier b1 b2 cF
+- |- (((~ p) ==> p) = p)
+T c= c==> c~ f0 f0 f0
+- |- ((!x. t) = t)
+T c= ! f0 f0
++ |- ((!s. (!t. (!x. ((x IN ((closure (s INTER t)) INTER ((frontier s) UNION (frontier t)))) ==> (x IN ((frontier s) UNION (frontier t))))))) = (!s. (!t. (((closure (s INTER t)) INTER ((frontier s) UNION (frontier t))) SUBSET ((frontier s) UNION (frontier t))))))
+T c= ! ! ! c==> cIN b2 * * part cINTER * part cclosure * * part cINTER b0 b1 * * part cUNION * part cfrontier b0 * part cfrontier b1 cIN b2 * * part cUNION * part cfrontier b0 * part cfrontier b1 ! ! cSUBSET * * part cINTER * part cclosure * * part cINTER b0 b1 * * part cUNION * part cfrontier b0 * part cfrontier b1 * * part cUNION * part cfrontier b0 * part cfrontier b1
+- |- ((t ==> F) = (~ t))
+T c= c==> f0 cF c~ f0
+- (~ ((frontier t) x)), ((frontier t) x) |- ((~ ((frontier t) x)) /\ ((frontier t) x))
+T c==> c~ cfrontier f0 f1 c==> cfrontier f0 f1 c/\ c~ cfrontier f0 f1 cfrontier f0 f1
+- |- (p = ((~ p) ==> F))
+T c= f0 c==> c~ f0 cF
++ |- ((!s. (!t. (((closure (s INTER t)) INTER ((frontier s) UNION (frontier t))) SUBSET ((frontier s) UNION (frontier t))))) = (!s. (!t. ((frontier (s INTER t)) SUBSET ((frontier s) UNION (frontier t))))))
+T c= ! ! cSUBSET * * part cINTER * part cclosure * * part cINTER b0 b1 * * part cUNION * part cfrontier b0 * part cfrontier b1 * * part cUNION * part cfrontier b0 * part cfrontier b1 ! ! cSUBSET * part cfrontier * * part cINTER b0 b1 * * part cUNION * part cfrontier b0 * part cfrontier b1
++ |- ((!x. ((((closure (s INTER t)) x) /\ (((frontier s) x) \/ ((frontier t) x))) ==> (((frontier s) x) \/ ((frontier t) x)))) = T)
+T c= ! c==> c/\ cclosure * * part cINTER f0 f1 b0 c\/ cfrontier f0 b0 cfrontier f1 b0 c\/ cfrontier f0 b0 cfrontier f1 b0 cT
+- (~ (((frontier s) x) \/ ((frontier t) x))) |- (~ ((frontier t) x))
+T c==> c~ c\/ cfrontier f0 f1 cfrontier f2 f1 c~ cfrontier f2 f1
++ |- (!s. (!t. (!x. ((x IN ((closure (s INTER t)) INTER ((frontier s) UNION (frontier t)))) ==> (x IN ((frontier s) UNION (frontier t)))))))
+T c==> cIN f0 * * part cINTER * part cclosure * * part cINTER f1 f2 * * part cUNION * part cfrontier f1 * part cfrontier f2 cIN f0 * * part cUNION * part cfrontier f1 * part cfrontier f2
++ |- ((\t. ((frontier (s INTER t)) = ((closure (s INTER t)) INTER ((frontier s) UNION (frontier t))))) t)
+T * / c= * part cfrontier * * part cINTER f0 b0 * * part cINTER * part cclosure * * part cINTER f0 b0 * * part cUNION * part cfrontier f0 * part cfrontier b0 f1
++ |- (((!t. ((frontier (s INTER t)) = ((closure (s INTER t)) INTER ((frontier s) UNION (frontier t))))) ==> ((\t. ((frontier (s INTER t)) = ((closure (s INTER t)) INTER ((frontier s) UNION (frontier t))))) t)) = ((\t. ((frontier (s INTER t)) = ((closure (s INTER t)) INTER ((frontier s) UNION (frontier t))))) t))
+T c= c==> ! c= * part cfrontier * * part cINTER f0 b0 * * part cINTER * part cclosure * * part cINTER f0 b0 * * part cUNION * part cfrontier f0 * part cfrontier b0 * / c= * part cfrontier * * part cINTER f0 b0 * * part cINTER * part cclosure * * part cINTER f0 b0 * * part cUNION * part cfrontier f0 * part cfrontier b0 f1 * / c= * part cfrontier * * part cINTER f0 b0 * * part cINTER * part cclosure * * part cINTER f0 b0 * * part cUNION * part cfrontier f0 * part cfrontier b0 f1
++ |- ((\s. (!t. ((frontier (s INTER t)) = ((closure (s INTER t)) INTER ((frontier s) UNION (frontier t)))))) s)
+T * / ! c= * part cfrontier * * part cINTER b0 b1 * * part cINTER * part cclosure * * part cINTER b0 b1 * * part cUNION * part cfrontier b0 * part cfrontier b1 f0
++ |- ((!s. (!t. (!x. ((((closure (s INTER t)) x) /\ (((frontier s) x) \/ ((frontier t) x))) ==> (((frontier s) x) \/ ((frontier t) x)))))) = (!s. (!t. (!x. ((x IN ((closure (s INTER t)) INTER ((frontier s) UNION (frontier t)))) ==> (x IN ((frontier s) UNION (frontier t))))))))
+T c= ! ! ! c==> c/\ cclosure * * part cINTER b0 b1 b2 c\/ cfrontier b0 b2 cfrontier b1 b2 c\/ cfrontier b0 b2 cfrontier b1 b2 ! ! ! c==> cIN b2 * * part cINTER * part cclosure * * part cINTER b0 b1 * * part cUNION * part cfrontier b0 * part cfrontier b1 cIN b2 * * part cUNION * part cfrontier b0 * part cfrontier b1
++ |- (((!s. (!t. ((frontier (s INTER t)) = ((closure (s INTER t)) INTER ((frontier s) UNION (frontier t)))))) ==> ((\s. (!t. ((frontier (s INTER t)) = ((closure (s INTER t)) INTER ((frontier s) UNION (frontier t)))))) s)) = ((\s. (!t. ((frontier (s INTER t)) = ((closure (s INTER t)) INTER ((frontier s) UNION (frontier t)))))) s))
+T c= c==> ! ! c= * part cfrontier * * part cINTER b0 b1 * * part cINTER * part cclosure * * part cINTER b0 b1 * * part cUNION * part cfrontier b0 * part cfrontier b1 * / ! c= * part cfrontier * * part cINTER b0 b1 * * part cINTER * part cclosure * * part cINTER b0 b1 * * part cUNION * part cfrontier b0 * part cfrontier b1 f0 * / ! c= * part cfrontier * * part cINTER b0 b1 * * part cINTER * part cclosure * * part cINTER b0 b1 * * part cUNION * part cfrontier b0 * part cfrontier b1 f0
++ |- (!s. (!t. (((closure (s INTER t)) INTER ((frontier s) UNION (frontier t))) SUBSET ((frontier s) UNION (frontier t)))))
+T cSUBSET * * part cINTER * part cclosure * * part cINTER f0 f1 * * part cUNION * part cfrontier f0 * part cfrontier f1 * * part cUNION * part cfrontier f0 * part cfrontier f1
++ |- (!s. (!t. (!x. ((((closure (s INTER t)) x) /\ (((frontier s) x) \/ ((frontier t) x))) ==> (((frontier s) x) \/ ((frontier t) x))))))
+T c==> c/\ cclosure * * part cINTER f0 f1 f2 c\/ cfrontier f0 f2 cfrontier f1 f2 c\/ cfrontier f0 f2 cfrontier f1 f2
++ |- ((!t. (!x. ((((closure (s INTER t)) x) /\ (((frontier s) x) \/ ((frontier t) x))) ==> (((frontier s) x) \/ ((frontier t) x))))) = T)
+T c= ! ! c==> c/\ cclosure * * part cINTER f0 b0 b1 c\/ cfrontier f0 b1 cfrontier b0 b1 c\/ cfrontier f0 b1 cfrontier b0 b1 cT
++ (((closure (s INTER t)) x) /\ (((frontier s) x) \/ ((frontier t) x))) |- ((((closure (s INTER t)) x) /\ (((frontier s) x) \/ ((frontier t) x))) /\ (((frontier s) x) \/ ((frontier t) x)))
+T c==> c/\ cclosure * * part cINTER f0 f1 f2 c\/ cfrontier f0 f2 cfrontier f1 f2 c/\ c/\ cclosure * * part cINTER f0 f1 f2 c\/ cfrontier f0 f2 cfrontier f1 f2 c\/ cfrontier f0 f2 cfrontier f1 f2
++ |- (((((closure (s INTER t)) x) /\ (((frontier s) x) \/ ((frontier t) x))) ==> (((frontier s) x) \/ ((frontier t) x))) = T)
+T c= c==> c/\ cclosure * * part cINTER f0 f1 f2 c\/ cfrontier f0 f2 cfrontier f1 f2 c\/ cfrontier f0 f2 cfrontier f1 f2 cT

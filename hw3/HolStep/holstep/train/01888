@@ -1,0 +1,31 @@
+N MEM_APPEND
+C |- (!x. (!l1. (!l2. (((MEM x) ((APPEND l1) l2)) = (((MEM x) l1) \/ ((MEM x) l2))))))
+T c= cMEM f0 cAPPEND f1 f2 c\/ cMEM f0 f1 cMEM f0 f2
+D TRUTH
+A |- T
+T cT
+D list_INDUCT
+A |- (!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x))))
+T c==> c/\ * f0 cNIL ! ! c==> * f0 b1 * f0 cCONS b0 b1 ! * f0 b0
+D APPEND
+A |- ((!l. (((APPEND NIL) l) = l)) /\ (!h. (!t. (!l. (((APPEND ((CONS h) t)) l) = ((CONS h) ((APPEND t) l)))))))
+T c/\ ! c= cAPPEND cNIL b0 b0 ! ! ! c= cAPPEND cCONS b0 b1 b2 cCONS b0 cAPPEND b1 b2
+D MEM
+A |- ((((MEM x) NIL) = F) /\ (((MEM x) ((CONS h) t)) = ((x = h) \/ ((MEM x) t))))
+T c/\ c= cMEM f0 cNIL cF c= cMEM f0 cCONS f1 f2 c\/ c= f0 f1 cMEM f0 f2
++ |- ((t \/ F) = t)
+T c= c\/ f0 cF f0
++ (!l2. (((MEM x) ((APPEND t) l2)) = (((MEM x) t) \/ ((MEM x) l2)))) |- (((MEM x) ((APPEND t) l2)) = (((MEM x) t) \/ ((MEM x) l2)))
+T c==> ! c= cMEM f0 cAPPEND f1 b0 c\/ cMEM f0 f1 cMEM f0 b0 c= cMEM f0 cAPPEND f1 f2 c\/ cMEM f0 f1 cMEM f0 f2
++ (!l2. (((MEM x) ((APPEND t) l2)) = (((MEM x) t) \/ ((MEM x) l2)))) |- ((!l2. (((MEM x) ((APPEND t) l2)) = (((MEM x) t) \/ ((MEM x) l2)))) /\ (!l2. (((MEM x) ((APPEND ((CONS h) t)) l2)) = (((MEM x) ((CONS h) t)) \/ ((MEM x) l2)))))
+T c==> ! c= cMEM f0 cAPPEND f1 b0 c\/ cMEM f0 f1 cMEM f0 b0 c/\ ! c= cMEM f0 cAPPEND f1 b0 c\/ cMEM f0 f1 cMEM f0 b0 ! c= cMEM f0 cAPPEND cCONS f2 f1 b0 c\/ cMEM f0 cCONS f2 f1 cMEM f0 b0
++ (!l2. (((MEM x) ((APPEND t) l2)) = (((MEM x) t) \/ ((MEM x) l2)))) |- ((\l2. (((MEM x) ((APPEND t) l2)) = (((MEM x) t) \/ ((MEM x) l2)))) l2)
+T c==> ! c= cMEM f0 cAPPEND f1 b0 c\/ cMEM f0 f1 cMEM f0 b0 * / c= cMEM f0 cAPPEND f1 b0 c\/ cMEM f0 f1 cMEM f0 b0 f2
+- |- ((t \/ t) = t)
+T c= c\/ f0 f0 f0
+- |- ((p \/ (p \/ q)) = (p \/ q))
+T c= c\/ f0 c\/ f0 f1 c\/ f0 f1
+- |- (((p \/ q) \/ r) = (p \/ (q \/ r)))
+T c= c\/ c\/ f0 f1 f2 c\/ f0 c\/ f1 f2
+- |- (((p \/ p) = p) /\ ((p \/ (p \/ q)) = (p \/ q)))
+T c/\ c= c\/ f0 f0 f0 c= c\/ f0 c\/ f0 f1 c\/ f0 f1

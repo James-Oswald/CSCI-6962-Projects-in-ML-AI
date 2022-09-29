@@ -1,0 +1,100 @@
+N REAL_OF_NUM_SUM
+C |- (!f. (!s. ((FINITE s) ==> ((real_of_num ((nsum s) f)) = ((sum s) (\x. (real_of_num (f x))))))))
+T c==> cFINITE f0 c= creal_of_num cnsum f0 f1 csum f0 / creal_of_num * f1 b0
+D TRUTH
+A |- T
+T cT
+D BOOL_CASES_AX
+A |- (!t. ((t = T) \/ (t = F)))
+T c\/ c= f0 cT c= f0 cF
+D COND_CLAUSES
+A |- (!t1. (!t2. (((((COND T) t1) t2) = t1) /\ ((((COND F) t1) t2) = t2))))
+T c/\ c= cCOND cT f0 f1 f0 c= cCOND cF f0 f1 f1
+D Misc_defs_and_lemmas.REAL_ADD
+A |- (!m. (!n. (((real_add (real_of_num m)) (real_of_num n)) = (real_of_num (m + n)))))
+T c= creal_add creal_of_num f0 creal_of_num f1 creal_of_num c+ f0 f1
+D FINITE_INDUCT_STRONG
+A |- (!P. (((P EMPTY) /\ (!x. (!s. (((P s) /\ ((~ (x IN s)) /\ (FINITE s))) ==> (P (x INSERT s)))))) ==> (!s. ((FINITE s) ==> (P s)))))
+T c==> c/\ * f0 part cEMPTY ! ! c==> c/\ * f0 b1 c/\ c~ cIN b0 b1 cFINITE b1 * f0 * * part cINSERT b0 b1 ! c==> cFINITE b0 * f0 b0
+D NSUM_CLAUSES
+A |- ((!f. (((nsum EMPTY) f) = (NUMERAL _0))) /\ (!x. (!f. (!s. ((FINITE s) ==> (((nsum (x INSERT s)) f) = (((COND (x IN s)) ((nsum s) f)) ((f x) + ((nsum s) f)))))))))
+T c/\ ! c= cnsum part cEMPTY b0 cNUMERAL c_0 ! ! ! c==> cFINITE b2 c= cnsum * * part cINSERT b0 b2 b1 cCOND cIN b0 b2 cnsum b2 b1 c+ * b1 b0 cnsum b2 b1
+D SUM_CLAUSES
+A |- ((!f. (((sum EMPTY) f) = (real_of_num (NUMERAL _0)))) /\ (!x. (!f. (!s. ((FINITE s) ==> (((sum (x INSERT s)) f) = (((COND (x IN s)) ((sum s) f)) ((real_add (f x)) ((sum s) f)))))))))
+T c/\ ! c= csum part cEMPTY b0 creal_of_num cNUMERAL c_0 ! ! ! c==> cFINITE b2 c= csum * * part cINSERT b0 b2 b1 cCOND cIN b0 b2 csum b2 b1 creal_add * b1 b0 csum b2 b1
++ |- (((x IN s) = g') ==> ((g' ==> (((sum s) (\x. (real_of_num (f x)))) = t')) ==> (((~ g') ==> (((real_add ((\x. (real_of_num (f x))) x)) ((sum s) (\x. (real_of_num (f x))))) = e')) ==> ((((COND (x IN s)) ((sum s) (\x. (real_of_num (f x))))) ((real_add ((\x. (real_of_num (f x))) x)) ((sum s) (\x. (real_of_num (f x)))))) = (((COND g') t') e')))))
+T c==> c= cIN f0 f1 f2 c==> c==> f2 c= csum f1 / creal_of_num * f3 b0 f4 c==> c==> c~ f2 c= creal_add * / creal_of_num * f3 b0 f0 csum f1 / creal_of_num * f3 b0 f5 c= cCOND cIN f0 f1 csum f1 / creal_of_num * f3 b0 creal_add * / creal_of_num * f3 b0 f0 csum f1 / creal_of_num * f3 b0 cCOND f2 f4 f5
++ |- ((\g'. (!t'. (!e'. (((x IN s) = g') ==> ((g' ==> (((nsum s) f) = t')) ==> (((~ g') ==> (((f x) + ((nsum s) f)) = e')) ==> ((((COND (x IN s)) ((nsum s) f)) ((f x) + ((nsum s) f))) = (((COND g') t') e')))))))) g')
+T * / ! ! c==> c= cIN f0 f1 b0 c==> c==> b0 c= cnsum f1 f2 b1 c==> c==> c~ b0 c= c+ * f2 f0 cnsum f1 f2 b2 c= cCOND cIN f0 f1 cnsum f1 f2 c+ * f2 f0 cnsum f1 f2 cCOND b0 b1 b2 f3
++ (((real_of_num ((nsum s) f)) = ((sum s) (\x. (real_of_num (f x))))) /\ ((~ (x IN s)) /\ (FINITE s))) |- ((F ==> (((nsum s) f) = t')) ==> (((~ F) ==> (((f x) + ((nsum s) f)) = e')) ==> ((((COND (x IN s)) ((nsum s) f)) ((f x) + ((nsum s) f))) = (((COND F) t') e'))))
+T c==> c/\ c= creal_of_num cnsum f0 f1 csum f0 / creal_of_num * f1 b0 c/\ c~ cIN f2 f0 cFINITE f0 c==> c==> cF c= cnsum f0 f1 f3 c==> c==> c~ cF c= c+ * f1 f2 cnsum f0 f1 f4 c= cCOND cIN f2 f0 cnsum f0 f1 c+ * f1 f2 cnsum f0 f1 cCOND cF f3 f4
++ |- (((!m. (!n. ((real_of_num (m + n)) = ((real_add (real_of_num m)) (real_of_num n))))) ==> ((\m. (!n. ((real_of_num (m + n)) = ((real_add (real_of_num m)) (real_of_num n))))) m)) = ((\m. (!n. ((real_of_num (m + n)) = ((real_add (real_of_num m)) (real_of_num n))))) m))
+T c= c==> ! ! c= creal_of_num c+ b0 b1 creal_add creal_of_num b0 creal_of_num b1 * / ! c= creal_of_num c+ b0 b1 creal_add creal_of_num b0 creal_of_num b1 f0 * / ! c= creal_of_num c+ b0 b1 creal_add creal_of_num b0 creal_of_num b1 f0
+- (!P. (((P EMPTY) /\ (!x. (!s. (((P s) /\ ((~ (x IN s)) /\ (FINITE s))) ==> (P (x INSERT s)))))) ==> (!s. ((FINITE s) ==> (P s))))), ((P EMPTY) /\ (!x. (!s. (((P s) /\ ((~ (x IN s)) /\ (FINITE s))) ==> (P (x INSERT s)))))) |- (!s. ((FINITE s) ==> (P s)))
+T c==> ! c==> c/\ * b0 part cEMPTY ! ! c==> c/\ * b0 b2 c/\ c~ cIN b1 b2 cFINITE b2 * b0 * * part cINSERT b1 b2 ! c==> cFINITE b1 * b0 b1 c==> c/\ * f0 part cEMPTY ! ! c==> c/\ * f0 b1 c/\ c~ cIN b0 b1 cFINITE b1 * f0 * * part cINSERT b0 b1 ! c==> cFINITE b0 * f0 b0
++ (((real_of_num ((nsum s) f)) = ((sum s) (\x. (real_of_num (f x))))) /\ ((~ (x IN s)) /\ (FINITE s))) |- ((((real_of_num ((nsum s) f)) = ((sum s) (\x. (real_of_num (f x))))) /\ ((~ (x IN s)) /\ (FINITE s))) /\ (((real_of_num ((nsum (x INSERT s)) f)) = ((sum (x INSERT s)) (\x. (real_of_num (f x))))) = T))
+T c==> c/\ c= creal_of_num cnsum f0 f1 csum f0 / creal_of_num * f1 b0 c/\ c~ cIN f2 f0 cFINITE f0 c/\ c/\ c= creal_of_num cnsum f0 f1 csum f0 / creal_of_num * f1 b0 c/\ c~ cIN f2 f0 cFINITE f0 c= c= creal_of_num cnsum * * part cINSERT f2 f0 f1 csum * * part cINSERT f2 f0 / creal_of_num * f1 b0 cT
++ |- ((\p'. (!q'. (((((real_of_num ((nsum s) f)) = ((sum s) (\x. (real_of_num (f x))))) /\ ((~ (x IN s)) /\ (FINITE s))) = p') ==> ((p' ==> (((real_of_num ((nsum (x INSERT s)) f)) = ((sum (x INSERT s)) (\x. (real_of_num (f x))))) = q')) ==> (((((real_of_num ((nsum s) f)) = ((sum s) (\x. (real_of_num (f x))))) /\ ((~ (x IN s)) /\ (FINITE s))) ==> ((real_of_num ((nsum (x INSERT s)) f)) = ((sum (x INSERT s)) (\x. (real_of_num (f x)))))) = (p' ==> q')))))) p')
+T * / ! c==> c= c/\ c= creal_of_num cnsum f0 f1 csum f0 / creal_of_num * f1 b2 c/\ c~ cIN f2 f0 cFINITE f0 b0 c==> c==> b0 c= c= creal_of_num cnsum * * part cINSERT f2 f0 f1 csum * * part cINSERT f2 f0 / creal_of_num * f1 b2 b1 c= c==> c/\ c= creal_of_num cnsum f0 f1 csum f0 / creal_of_num * f1 b2 c/\ c~ cIN f2 f0 cFINITE f0 c= creal_of_num cnsum * * part cINSERT f2 f0 f1 csum * * part cINSERT f2 f0 / creal_of_num * f1 b2 c==> b0 b1 f3
++ |- (((!n. ((real_of_num (m + n)) = ((real_add (real_of_num m)) (real_of_num n)))) ==> ((\n. ((real_of_num (m + n)) = ((real_add (real_of_num m)) (real_of_num n)))) n)) = ((\n. ((real_of_num (m + n)) = ((real_add (real_of_num m)) (real_of_num n)))) n))
+T c= c==> ! c= creal_of_num c+ f0 b0 creal_add creal_of_num f0 creal_of_num b0 * / c= creal_of_num c+ f0 b0 creal_add creal_of_num f0 creal_of_num b0 f1 * / c= creal_of_num c+ f0 b0 creal_add creal_of_num f0 creal_of_num b0 f1
++ |- ((\f. (!s. ((FINITE s) ==> (((nsum (x INSERT s)) f) = (((COND (x IN s)) ((nsum s) f)) ((f x) + ((nsum s) f))))))) f)
+T * / ! c==> cFINITE b1 c= cnsum * * part cINSERT f0 b1 b0 cCOND cIN f0 b1 cnsum b1 b0 c+ * b0 f0 cnsum b1 b0 f1
++ (((real_of_num ((nsum s) f)) = ((sum s) (\x. (real_of_num (f x))))) /\ ((~ (x IN s)) /\ (FINITE s))) |- (((nsum (x INSERT s)) f) = (((COND (x IN s)) ((nsum s) f)) ((f x) + ((nsum s) f))))
+T c==> c/\ c= creal_of_num cnsum f0 f1 csum f0 / creal_of_num * f1 b0 c/\ c~ cIN f2 f0 cFINITE f0 c= cnsum * * part cINSERT f2 f0 f1 cCOND cIN f2 f0 cnsum f0 f1 c+ * f1 f2 cnsum f0 f1
++ (((real_of_num ((nsum s) f)) = ((sum s) (\x. (real_of_num (f x))))) /\ ((~ (x IN s)) /\ (FINITE s))) |- (((~ F) ==> (((f x) + ((nsum s) f)) = e')) ==> ((((COND (x IN s)) ((nsum s) f)) ((f x) + ((nsum s) f))) = (((COND F) ((nsum s) f)) e')))
+T c==> c/\ c= creal_of_num cnsum f0 f1 csum f0 / creal_of_num * f1 b0 c/\ c~ cIN f2 f0 cFINITE f0 c==> c==> c~ cF c= c+ * f1 f2 cnsum f0 f1 f3 c= cCOND cIN f2 f0 cnsum f0 f1 c+ * f1 f2 cnsum f0 f1 cCOND cF cnsum f0 f1 f3
++ (((real_of_num ((nsum s) f)) = ((sum s) (\x. (real_of_num (f x))))) /\ ((~ (x IN s)) /\ (FINITE s))) |- ((((COND (x IN s)) ((nsum s) f)) ((f x) + ((nsum s) f))) = (((COND F) ((nsum s) f)) ((f x) + ((nsum s) f))))
+T c==> c/\ c= creal_of_num cnsum f0 f1 csum f0 / creal_of_num * f1 b0 c/\ c~ cIN f2 f0 cFINITE f0 c= cCOND cIN f2 f0 cnsum f0 f1 c+ * f1 f2 cnsum f0 f1 cCOND cF cnsum f0 f1 c+ * f1 f2 cnsum f0 f1
++ |- ((t ==> T) = T)
+T c= c==> f0 cT cT
++ |- (((!g'. (!t'. (!e'. (((x IN s) = g') ==> ((g' ==> (((nsum s) f) = t')) ==> (((~ g') ==> (((f x) + ((nsum s) f)) = e')) ==> ((((COND (x IN s)) ((nsum s) f)) ((f x) + ((nsum s) f))) = (((COND g') t') e')))))))) ==> ((\g'. (!t'. (!e'. (((x IN s) = g') ==> ((g' ==> (((nsum s) f) = t')) ==> (((~ g') ==> (((f x) + ((nsum s) f)) = e')) ==> ((((COND (x IN s)) ((nsum s) f)) ((f x) + ((nsum s) f))) = (((COND g') t') e')))))))) g')) = ((\g'. (!t'. (!e'. (((x IN s) = g') ==> ((g' ==> (((nsum s) f) = t')) ==> (((~ g') ==> (((f x) + ((nsum s) f)) = e')) ==> ((((COND (x IN s)) ((nsum s) f)) ((f x) + ((nsum s) f))) = (((COND g') t') e')))))))) g'))
+T c= c==> ! ! ! c==> c= cIN f0 f1 b0 c==> c==> b0 c= cnsum f1 f2 b1 c==> c==> c~ b0 c= c+ * f2 f0 cnsum f1 f2 b2 c= cCOND cIN f0 f1 cnsum f1 f2 c+ * f2 f0 cnsum f1 f2 cCOND b0 b1 b2 * / ! ! c==> c= cIN f0 f1 b0 c==> c==> b0 c= cnsum f1 f2 b1 c==> c==> c~ b0 c= c+ * f2 f0 cnsum f1 f2 b2 c= cCOND cIN f0 f1 cnsum f1 f2 c+ * f2 f0 cnsum f1 f2 cCOND b0 b1 b2 f3 * / ! ! c==> c= cIN f0 f1 b0 c==> c==> b0 c= cnsum f1 f2 b1 c==> c==> c~ b0 c= c+ * f2 f0 cnsum f1 f2 b2 c= cCOND cIN f0 f1 cnsum f1 f2 c+ * f2 f0 cnsum f1 f2 cCOND b0 b1 b2 f3
++ |- ((\g'. (!t'. (!e'. (((x IN s) = g') ==> ((g' ==> (((sum s) (\x. (real_of_num (f x)))) = t')) ==> (((~ g') ==> (((real_add ((\x. (real_of_num (f x))) x)) ((sum s) (\x. (real_of_num (f x))))) = e')) ==> ((((COND (x IN s)) ((sum s) (\x. (real_of_num (f x))))) ((real_add ((\x. (real_of_num (f x))) x)) ((sum s) (\x. (real_of_num (f x)))))) = (((COND g') t') e')))))))) g')
+T * / ! ! c==> c= cIN f0 f1 b0 c==> c==> b0 c= csum f1 / creal_of_num * f2 b3 b1 c==> c==> c~ b0 c= creal_add * / creal_of_num * f2 b3 f0 csum f1 / creal_of_num * f2 b3 b2 c= cCOND cIN f0 f1 csum f1 / creal_of_num * f2 b3 creal_add * / creal_of_num * f2 b3 f0 csum f1 / creal_of_num * f2 b3 cCOND b0 b1 b2 f3
++ (((real_of_num ((nsum s) f)) = ((sum s) (\x. (real_of_num (f x))))) /\ ((~ (x IN s)) /\ (FINITE s))) |- (~ (x IN s))
+T c==> c/\ c= creal_of_num cnsum f0 f1 csum f0 / creal_of_num * f1 b0 c/\ c~ cIN f2 f0 cFINITE f0 c~ cIN f2 f0
+- |- ((t ==> t) = T)
+T c= c==> f0 f0 cT
++ |- (T = (((real_of_num ((nsum EMPTY) f)) = ((sum EMPTY) (\x. (real_of_num (f x))))) /\ (!x. (!s. ((((real_of_num ((nsum s) f)) = ((sum s) (\x. (real_of_num (f x))))) /\ ((~ (x IN s)) /\ (FINITE s))) ==> ((real_of_num ((nsum (x INSERT s)) f)) = ((sum (x INSERT s)) (\x. (real_of_num (f x))))))))))
+T c= cT c/\ c= creal_of_num cnsum part cEMPTY f0 csum part cEMPTY / creal_of_num * f0 b0 ! ! c==> c/\ c= creal_of_num cnsum b1 f0 csum b1 / creal_of_num * f0 b2 c/\ c~ cIN b0 b1 cFINITE b1 c= creal_of_num cnsum * * part cINSERT b0 b1 f0 csum * * part cINSERT b0 b1 / creal_of_num * f0 b2
++ (((real_of_num ((nsum s) f)) = ((sum s) (\x. (real_of_num (f x))))) /\ ((~ (x IN s)) /\ (FINITE s))) |- (((FINITE s) ==> (((nsum (x INSERT s)) f) = (((COND (x IN s)) ((nsum s) f)) ((f x) + ((nsum s) f))))) = (((nsum (x INSERT s)) f) = (((COND (x IN s)) ((nsum s) f)) ((f x) + ((nsum s) f)))))
+T c==> c/\ c= creal_of_num cnsum f0 f1 csum f0 / creal_of_num * f1 b0 c/\ c~ cIN f2 f0 cFINITE f0 c= c==> cFINITE f0 c= cnsum * * part cINSERT f2 f0 f1 cCOND cIN f2 f0 cnsum f0 f1 c+ * f1 f2 cnsum f0 f1 c= cnsum * * part cINSERT f2 f0 f1 cCOND cIN f2 f0 cnsum f0 f1 c+ * f1 f2 cnsum f0 f1
++ (((real_of_num ((nsum s) f)) = ((sum s) (\x. (real_of_num (f x))))) /\ ((~ (x IN s)) /\ (FINITE s))) |- (((~ F) ==> (((real_add ((\x. (real_of_num (f x))) x)) ((sum s) (\x. (real_of_num (f x))))) = e')) ==> ((((COND (x IN s)) ((sum s) (\x. (real_of_num (f x))))) ((real_add ((\x. (real_of_num (f x))) x)) ((sum s) (\x. (real_of_num (f x)))))) = (((COND F) ((sum s) (\x. (real_of_num (f x))))) e')))
+T c==> c/\ c= creal_of_num cnsum f0 f1 csum f0 / creal_of_num * f1 b0 c/\ c~ cIN f2 f0 cFINITE f0 c==> c==> c~ cF c= creal_add * / creal_of_num * f1 b0 f2 csum f0 / creal_of_num * f1 b0 f3 c= cCOND cIN f2 f0 csum f0 / creal_of_num * f1 b0 creal_add * / creal_of_num * f1 b0 f2 csum f0 / creal_of_num * f1 b0 cCOND cF csum f0 / creal_of_num * f1 b0 f3
++ |- (((!f. (!s. ((FINITE s) ==> (((nsum (x INSERT s)) f) = (((COND (x IN s)) ((nsum s) f)) ((f x) + ((nsum s) f))))))) ==> ((\f. (!s. ((FINITE s) ==> (((nsum (x INSERT s)) f) = (((COND (x IN s)) ((nsum s) f)) ((f x) + ((nsum s) f))))))) f)) = ((\f. (!s. ((FINITE s) ==> (((nsum (x INSERT s)) f) = (((COND (x IN s)) ((nsum s) f)) ((f x) + ((nsum s) f))))))) f))
+T c= c==> ! ! c==> cFINITE b1 c= cnsum * * part cINSERT f0 b1 b0 cCOND cIN f0 b1 cnsum b1 b0 c+ * b0 f0 cnsum b1 b0 * / ! c==> cFINITE b1 c= cnsum * * part cINSERT f0 b1 b0 cCOND cIN f0 b1 cnsum b1 b0 c+ * b0 f0 cnsum b1 b0 f1 * / ! c==> cFINITE b1 c= cnsum * * part cINSERT f0 b1 b0 cCOND cIN f0 b1 cnsum b1 b0 c+ * b0 f0 cnsum b1 b0 f1
+- (((real_of_num ((nsum s) f)) = ((sum s) (\x. (real_of_num (f x))))) /\ ((~ (x IN s)) /\ (FINITE s))) |- ((FINITE s) = T)
+T c==> c/\ c= creal_of_num cnsum f0 f1 csum f0 / creal_of_num * f1 b0 c/\ c~ cIN f2 f0 cFINITE f0 c= cFINITE f0 cT
+- (!P. (((P EMPTY) /\ (!x. (!s. (((P s) /\ ((~ (x IN s)) /\ (FINITE s))) ==> (P (x INSERT s)))))) ==> (!s. ((FINITE s) ==> (P s))))) |- ((\P. (((P EMPTY) /\ (!x. (!s. (((P s) /\ ((~ (x IN s)) /\ (FINITE s))) ==> (P (x INSERT s)))))) ==> (!s. ((FINITE s) ==> (P s))))) P)
+T c==> ! c==> c/\ * b0 part cEMPTY ! ! c==> c/\ * b0 b2 c/\ c~ cIN b1 b2 cFINITE b2 * b0 * * part cINSERT b1 b2 ! c==> cFINITE b1 * b0 b1 * / c==> c/\ * b0 part cEMPTY ! ! c==> c/\ * b0 b2 c/\ c~ cIN b1 b2 cFINITE b2 * b0 * * part cINSERT b1 b2 ! c==> cFINITE b1 * b0 b1 f0
+- (~ F) |- ((F = F) = T)
+T c==> c~ cF c= c= cF cF cT
+- |- (((!P. (((P EMPTY) /\ (!x. (!s. (((P s) /\ ((~ (x IN s)) /\ (FINITE s))) ==> (P (x INSERT s)))))) ==> (!s. ((FINITE s) ==> (P s))))) ==> (!P. (((P EMPTY) /\ (!x. (!s. (((P s) /\ ((~ (x IN s)) /\ (FINITE s))) ==> (P (x INSERT s)))))) ==> (!s. ((FINITE s) ==> (P s)))))) = (!P. (((P EMPTY) /\ (!x. (!s. (((P s) /\ ((~ (x IN s)) /\ (FINITE s))) ==> (P (x INSERT s)))))) ==> (!s. ((FINITE s) ==> (P s))))))
+T c= c==> ! c==> c/\ * b0 part cEMPTY ! ! c==> c/\ * b0 b2 c/\ c~ cIN b1 b2 cFINITE b2 * b0 * * part cINSERT b1 b2 ! c==> cFINITE b1 * b0 b1 ! c==> c/\ * b0 part cEMPTY ! ! c==> c/\ * b0 b2 c/\ c~ cIN b1 b2 cFINITE b2 * b0 * * part cINSERT b1 b2 ! c==> cFINITE b1 * b0 b1 ! c==> c/\ * b0 part cEMPTY ! ! c==> c/\ * b0 b2 c/\ c~ cIN b1 b2 cFINITE b2 * b0 * * part cINSERT b1 b2 ! c==> cFINITE b1 * b0 b1
+- F |- (F = T)
+T c==> cF c= cF cT
+- (FINITE s) |- ((FINITE s) /\ (((nsum (x INSERT s)) f) = (((COND (x IN s)) ((nsum s) f)) ((f x) + ((nsum s) f)))))
+T c==> cFINITE f0 c/\ cFINITE f0 c= cnsum * * part cINSERT f1 f0 f2 cCOND cIN f1 f0 cnsum f0 f2 c+ * f2 f1 cnsum f0 f2
+- ((P EMPTY) /\ (!x. (!s. (((P s) /\ ((~ (x IN s)) /\ (FINITE s))) ==> (P (x INSERT s)))))) |- ((!P. (((P EMPTY) /\ (!x. (!s. (((P s) /\ ((~ (x IN s)) /\ (FINITE s))) ==> (P (x INSERT s)))))) ==> (!s. ((FINITE s) ==> (P s))))) ==> (!s. ((FINITE s) ==> (P s))))
+T c==> c/\ * f0 part cEMPTY ! ! c==> c/\ * f0 b1 c/\ c~ cIN b0 b1 cFINITE b1 * f0 * * part cINSERT b0 b1 c==> ! c==> c/\ * b0 part cEMPTY ! ! c==> c/\ * b0 b2 c/\ c~ cIN b1 b2 cFINITE b2 * b0 * * part cINSERT b1 b2 ! c==> cFINITE b1 * b0 b1 ! c==> cFINITE b0 * f0 b0
+- (!P. (((P EMPTY) /\ (!x. (!s. (((P s) /\ ((~ (x IN s)) /\ (FINITE s))) ==> (P (x INSERT s)))))) ==> (!s. ((FINITE s) ==> (P s))))) |- ((((P EMPTY) /\ (!x. (!s. (((P s) /\ ((~ (x IN s)) /\ (FINITE s))) ==> (P (x INSERT s)))))) ==> (!s. ((FINITE s) ==> (P s)))) = T)
+T c==> ! c==> c/\ * b0 part cEMPTY ! ! c==> c/\ * b0 b2 c/\ c~ cIN b1 b2 cFINITE b2 * b0 * * part cINSERT b1 b2 ! c==> cFINITE b1 * b0 b1 c= c==> c/\ * f0 part cEMPTY ! ! c==> c/\ * f0 b1 c/\ c~ cIN b0 b1 cFINITE b1 * f0 * * part cINSERT b0 b1 ! c==> cFINITE b0 * f0 b0 cT
+- |- ((t /\ t) = t)
+T c= c/\ f0 f0 f0
+- (!P. (((P EMPTY) /\ (!x. (!s. (((P s) /\ ((~ (x IN s)) /\ (FINITE s))) ==> (P (x INSERT s)))))) ==> (!s. ((FINITE s) ==> (P s))))) |- ((!P. (((P EMPTY) /\ (!x. (!s. (((P s) /\ ((~ (x IN s)) /\ (FINITE s))) ==> (P (x INSERT s)))))) ==> (!s. ((FINITE s) ==> (P s))))) /\ (!P. (((P EMPTY) /\ (!x. (!s. (((P s) /\ ((~ (x IN s)) /\ (FINITE s))) ==> (P (x INSERT s)))))) ==> (!s. ((FINITE s) ==> (P s))))))
+T c==> ! c==> c/\ * b0 part cEMPTY ! ! c==> c/\ * b0 b2 c/\ c~ cIN b1 b2 cFINITE b2 * b0 * * part cINSERT b1 b2 ! c==> cFINITE b1 * b0 b1 c/\ ! c==> c/\ * b0 part cEMPTY ! ! c==> c/\ * b0 b2 c/\ c~ cIN b1 b2 cFINITE b2 * b0 * * part cINSERT b1 b2 ! c==> cFINITE b1 * b0 b1 ! c==> c/\ * b0 part cEMPTY ! ! c==> c/\ * b0 b2 c/\ c~ cIN b1 b2 cFINITE b2 * b0 * * part cINSERT b1 b2 ! c==> cFINITE b1 * b0 b1
+- |- ((!P. (((P EMPTY) /\ (!x. (!s. (((P s) /\ ((~ (x IN s)) /\ (FINITE s))) ==> (P (x INSERT s)))))) ==> (!s. ((FINITE s) ==> (P s))))) ==> (!P. (((P EMPTY) /\ (!x. (!s. (((P s) /\ ((~ (x IN s)) /\ (FINITE s))) ==> (P (x INSERT s)))))) ==> (!s. ((FINITE s) ==> (P s))))))
+T c==> ! c==> c/\ * b0 part cEMPTY ! ! c==> c/\ * b0 b2 c/\ c~ cIN b1 b2 cFINITE b2 * b0 * * part cINSERT b1 b2 ! c==> cFINITE b1 * b0 b1 ! c==> c/\ * b0 part cEMPTY ! ! c==> c/\ * b0 b2 c/\ c~ cIN b1 b2 cFINITE b2 * b0 * * part cINSERT b1 b2 ! c==> cFINITE b1 * b0 b1
+- (~ F) |- (F = F)
+T c==> c~ cF c= cF cF
+- (!P. (((P EMPTY) /\ (!x. (!s. (((P s) /\ ((~ (x IN s)) /\ (FINITE s))) ==> (P (x INSERT s)))))) ==> (!s. ((FINITE s) ==> (P s))))), ((P EMPTY) /\ (!x. (!s. (((P s) /\ ((~ (x IN s)) /\ (FINITE s))) ==> (P (x INSERT s)))))) |- ((!P. (((P EMPTY) /\ (!x. (!s. (((P s) /\ ((~ (x IN s)) /\ (FINITE s))) ==> (P (x INSERT s)))))) ==> (!s. ((FINITE s) ==> (P s))))) /\ (!s. ((FINITE s) ==> (P s))))
+T c==> ! c==> c/\ * b0 part cEMPTY ! ! c==> c/\ * b0 b2 c/\ c~ cIN b1 b2 cFINITE b2 * b0 * * part cINSERT b1 b2 ! c==> cFINITE b1 * b0 b1 c==> c/\ * f0 part cEMPTY ! ! c==> c/\ * f0 b1 c/\ c~ cIN b0 b1 cFINITE b1 * f0 * * part cINSERT b0 b1 c/\ ! c==> c/\ * b0 part cEMPTY ! ! c==> c/\ * b0 b2 c/\ c~ cIN b1 b2 cFINITE b2 * b0 * * part cINSERT b1 b2 ! c==> cFINITE b1 * b0 b1 ! c==> cFINITE b0 * f0 b0
+- |- (((\x. (f x)) y) = (f y))
+T c= * / * f0 b0 f1 * f0 f1
+- (!P. (((P EMPTY) /\ (!x. (!s. (((P s) /\ ((~ (x IN s)) /\ (FINITE s))) ==> (P (x INSERT s)))))) ==> (!s. ((FINITE s) ==> (P s))))), ((P EMPTY) /\ (!x. (!s. (((P s) /\ ((~ (x IN s)) /\ (FINITE s))) ==> (P (x INSERT s)))))) |- (((P EMPTY) /\ (!x. (!s. (((P s) /\ ((~ (x IN s)) /\ (FINITE s))) ==> (P (x INSERT s)))))) /\ (!s. ((FINITE s) ==> (P s))))
+T c==> ! c==> c/\ * b0 part cEMPTY ! ! c==> c/\ * b0 b2 c/\ c~ cIN b1 b2 cFINITE b2 * b0 * * part cINSERT b1 b2 ! c==> cFINITE b1 * b0 b1 c==> c/\ * f0 part cEMPTY ! ! c==> c/\ * f0 b1 c/\ c~ cIN b0 b1 cFINITE b1 * f0 * * part cINSERT b0 b1 c/\ c/\ * f0 part cEMPTY ! ! c==> c/\ * f0 b1 c/\ c~ cIN b0 b1 cFINITE b1 * f0 * * part cINSERT b0 b1 ! c==> cFINITE b0 * f0 b0
+- (((real_of_num ((nsum s) f)) = ((sum s) (\x. (real_of_num (f x))))) /\ ((~ (x IN s)) /\ (FINITE s))) |- (T = (FINITE s))
+T c==> c/\ c= creal_of_num cnsum f0 f1 csum f0 / creal_of_num * f1 b0 c/\ c~ cIN f2 f0 cFINITE f0 c= cT cFINITE f0
+- (FINITE s) |- ((FINITE s) /\ (((sum (x INSERT s)) f) = (((COND (x IN s)) ((sum s) f)) ((real_add (f x)) ((sum s) f)))))
+T c==> cFINITE f0 c/\ cFINITE f0 c= csum * * part cINSERT f1 f0 f2 cCOND cIN f1 f0 csum f0 f2 creal_add * f2 f1 csum f0 f2

@@ -1,0 +1,75 @@
+N Seq.size_subseq
+C |- (!s1. (!s2. (((subseq s1) s2) ==> ((sizel s1) <= (sizel s2)))))
+T c==> csubseq f0 f1 c<= csizel f0 csizel f1
+D TRUTH
+A |- T
+T cT
+D Seq.count_size
+A |- (!a. (!s. (((count a) s) <= (sizel s))))
+T c<= ccount f0 f1 csizel f1
+D Seq.size_mask
+A |- (!m. (!s. (((sizel m) = (sizel s)) ==> ((sizel ((mask m) s)) = ((count I) m)))))
+T c==> c= csizel f0 csizel f1 c= csizel cmask f0 f1 ccount part cI f0
+D Seq.subseqP
+A |- (!s1. (!s2. (((subseq s1) s2) = (?m. (((sizel m) = (sizel s2)) /\ (s1 = ((mask m) s2)))))))
+T c= csubseq f0 f1 c? / c/\ c= csizel b0 csizel f1 c= f0 cmask b0 f1
++ ((sizel m) = (sizel s2)) |- ((((sizel m) = (sizel s2)) ==> ((sizel ((mask m) s2)) = ((count I) m))) ==> ((sizel ((mask m) s2)) <= (sizel s2)))
+T c==> c= csizel f0 csizel f1 c==> c==> c= csizel f0 csizel f1 c= csizel cmask f0 f1 ccount part cI f0 c<= csizel cmask f0 f1 csizel f1
+- ((!x. (P ==> (Q x))) = (P ==> (!x. (Q x)))) |- ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))
+T c==> c= ! c==> f0 * f1 b0 c==> f0 ! * f1 b0 c= c==> f0 ! * f1 b0 ! c==> f0 * f1 b0
+- ((sizel m) = (sizel s)) |- (((sizel m) = (sizel s)) /\ ((sizel ((mask m) s)) = ((count I) m)))
+T c==> c= csizel f0 csizel f1 c/\ c= csizel f0 csizel f1 c= csizel cmask f0 f1 ccount part cI f0
++ ((sizel m) = (sizel s2)) |- ((sizel ((mask m) s2)) <= (sizel s2))
+T c==> c= csizel f0 csizel f1 c<= csizel cmask f0 f1 csizel f1
+- |- ((\P. (!Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x)))))) P)
+T * / ! c= c==> b0 ! * b1 b2 ! c==> b0 * b1 b2 f0
++ (s1 = ((mask m) s2)) |- (((sizel ((mask m) s2)) <= (sizel s2)) = ((sizel s1) <= (sizel s2)))
+T c==> c= f0 cmask f1 f2 c= c<= csizel cmask f1 f2 csizel f2 c<= csizel f0 csizel f2
+- |- (T = ((sizel m) = (sizel m)))
+T c= cT c= csizel f0 csizel f0
++ |- (((?m. (P m)) ==> Q) = (!m. ((P m) ==> Q)))
+T c= c==> c? / * f0 b0 f1 ! c==> * f0 b0 f1
++ ((sizel m) = (sizel s2)) |- (((count I) m) <= (sizel s2))
+T c==> c= csizel f0 csizel f1 c<= ccount part cI f0 csizel f1
++ (((sizel m) = (sizel s2)) /\ (s1 = ((mask m) s2))) |- ((((sizel m) = (sizel s2)) /\ (s1 = ((mask m) s2))) /\ ((sizel s1) <= (sizel s2)))
+T c==> c/\ c= csizel f0 csizel f1 c= f2 cmask f0 f1 c/\ c/\ c= csizel f0 csizel f1 c= f2 cmask f0 f1 c<= csizel f2 csizel f1
++ ((sizel m) = (sizel s2)) |- (((sizel ((mask m) s2)) = ((count I) m)) ==> ((sizel ((mask m) s2)) <= (sizel s2)))
+T c==> c= csizel f0 csizel f1 c==> c= csizel cmask f0 f1 ccount part cI f0 c<= csizel cmask f0 f1 csizel f1
+- ((sizel m) = (sizel s2)) |- (((sizel m) = (sizel m)) = ((sizel m) = (sizel s2)))
+T c==> c= csizel f0 csizel f1 c= c= csizel f0 csizel f0 c= csizel f0 csizel f1
++ |- ((\Q. (((?x. (P x)) ==> Q) = (!x. ((P x) ==> Q)))) Q)
+T * / c= c==> c? / * f0 b1 b0 ! c==> * f0 b1 b0 f1
++ |- (((!P. (!Q. (((?x. (P x)) ==> Q) = (!x. ((P x) ==> Q))))) ==> ((\P. (!Q. (((?x. (P x)) ==> Q) = (!x. ((P x) ==> Q))))) P)) = ((\P. (!Q. (((?x. (P x)) ==> Q) = (!x. ((P x) ==> Q))))) P))
+T c= c==> ! ! c= c==> c? / * b0 b2 b1 ! c==> * b0 b2 b1 * / ! c= c==> c? / * b0 b2 b1 ! c==> * b0 b2 b1 f0 * / ! c= c==> c? / * b0 b2 b1 ! c==> * b0 b2 b1 f0
++ |- (((!s2. (((subseq s1) s2) = (?m. (((sizel m) = (sizel s2)) /\ (s1 = ((mask m) s2)))))) ==> ((\s2. (((subseq s1) s2) = (?m. (((sizel m) = (sizel s2)) /\ (s1 = ((mask m) s2)))))) s2)) = ((\s2. (((subseq s1) s2) = (?m. (((sizel m) = (sizel s2)) /\ (s1 = ((mask m) s2)))))) s2))
+T c= c==> ! c= csubseq f0 b0 c? / c/\ c= csizel b1 csizel b0 c= f0 cmask b1 b0 * / c= csubseq f0 b0 c? / c/\ c= csizel b1 csizel b0 c= f0 cmask b1 b0 f1 * / c= csubseq f0 b0 c? / c/\ c= csizel b1 csizel b0 c= f0 cmask b1 b0 f1
++ |- ((\s. (((count a) s) <= (sizel s))) s)
+T * / c<= ccount f0 b0 csizel b0 f1
++ ((sizel ((mask m) s2)) = ((count I) m)), ((sizel m) = (sizel s2)) |- (((sizel ((mask m) s2)) = ((count I) m)) /\ ((sizel ((mask m) s2)) <= (sizel s2)))
+T c==> c= csizel cmask f0 f1 ccount part cI f0 c==> c= csizel f0 csizel f1 c/\ c= csizel cmask f0 f1 ccount part cI f0 c<= csizel cmask f0 f1 csizel f1
++ |- (((!s. (((count a) s) <= (sizel s))) ==> ((\s. (((count a) s) <= (sizel s))) s)) = ((\s. (((count a) s) <= (sizel s))) s))
+T c= c==> ! c<= ccount f0 b0 csizel b0 * / c<= ccount f0 b0 csizel b0 f1 * / c<= ccount f0 b0 csizel b0 f1
+- ((sizel m) = (sizel s2)) |- (((sizel m) = (sizel s2)) /\ ((s1 = ((mask m) s2)) ==> ((sizel s1) <= (sizel s2))))
+T c==> c= csizel f0 csizel f1 c/\ c= csizel f0 csizel f1 c==> c= f2 cmask f0 f1 c<= csizel f2 csizel f1
++ |- ((((subseq s1) s2) ==> ((sizel s1) <= (sizel s2))) = T)
+T c= c==> csubseq f0 f1 c<= csizel f0 csizel f1 cT
++ |- ((\s2. (((subseq s1) s2) = (?m. (((sizel m) = (sizel s2)) /\ (s1 = ((mask m) s2)))))) s2)
+T * / c= csubseq f0 b0 c? / c/\ c= csizel b1 csizel b0 c= f0 cmask b1 b0 f1
+- |- ((x = x) = T)
+T c= c= f0 f0 cT
+- |- ((\Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))) Q)
+T * / c= c==> f0 ! * b0 b1 ! c==> f0 * b0 b1 f1
+- |- (((!P. (!Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x)))))) ==> ((\P. (!Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x)))))) P)) = ((\P. (!Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x)))))) P))
+T c= c==> ! ! c= c==> b0 ! * b1 b2 ! c==> b0 * b1 b2 * / ! c= c==> b0 ! * b1 b2 ! c==> b0 * b1 b2 f0 * / ! c= c==> b0 ! * b1 b2 ! c==> b0 * b1 b2 f0
+- (((?x. (P x)) ==> Q) = (!x. ((P x) ==> Q))) |- ((!x. ((P x) ==> Q)) = ((?x. (P x)) ==> Q))
+T c==> c= c==> c? / * f0 b0 f1 ! c==> * f0 b0 f1 c= ! c==> * f0 b0 f1 c==> c? / * f0 b0 f1
+- ((!x. ((P x) ==> Q)) = ((?x. (P x)) ==> Q)) |- (((?x. (P x)) ==> Q) = (!x. ((P x) ==> Q)))
+T c==> c= ! c==> * f0 b0 f1 c==> c? / * f0 b0 f1 c= c==> c? / * f0 b0 f1 ! c==> * f0 b0 f1
+- ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x)))) |- ((!x. (P ==> (Q x))) = (P ==> (!x. (Q x))))
+T c==> c= c==> f0 ! * f1 b0 ! c==> f0 * f1 b0 c= ! c==> f0 * f1 b0 c==> f0 ! * f1 b0
+- |- ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))
+T c= c==> f0 ! * f1 b0 ! c==> f0 * f1 b0
+- |- (((!Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))) ==> ((\Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))) Q)) = ((\Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))) Q))
+T c= c==> ! c= c==> f0 ! * b0 b1 ! c==> f0 * b0 b1 * / c= c==> f0 ! * b0 b1 ! c==> f0 * b0 b1 f1 * / c= c==> f0 ! * b0 b1 ! c==> f0 * b0 b1 f1
+- ((sizel m) = (sizel s2)), (s1 = ((mask m) s2)) |- ((s1 = ((mask m) s2)) /\ ((sizel s1) <= (sizel s2)))
+T c==> c= csizel f0 csizel f1 c==> c= f2 cmask f0 f1 c/\ c= f2 cmask f0 f1 c<= csizel f2 csizel f1

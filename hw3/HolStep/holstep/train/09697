@@ -1,0 +1,206 @@
+N OPEN_SCALING
+C |- (!s. (!c. (((~ (c = (real_of_num (NUMERAL _0)))) /\ (open s)) ==> (open ((IMAGE (\x. ((% c) x))) s)))))
+T c==> c/\ c~ c= f0 creal_of_num cNUMERAL c_0 copen f1 copen * * part cIMAGE / c% f0 b0 f1
+D TRUTH
+A |- T
+T cT
+D REAL_MUL_SYM
+A |- (!x. (!y. (((real_mul x) y) = ((real_mul y) x))))
+T c= creal_mul f0 f1 creal_mul f1 f0
+D REAL_MUL_LINV
+A |- (!x. ((~ (x = (real_of_num (NUMERAL _0)))) ==> (((real_mul (real_inv x)) x) = (real_of_num (NUMERAL (BIT1 _0))))))
+T c==> c~ c= f0 creal_of_num cNUMERAL c_0 c= creal_mul creal_inv f0 f0 creal_of_num cNUMERAL cBIT1 c_0
+D real_div
+A |- (!x. (!y. (((real_div x) y) = ((real_mul x) (real_inv y)))))
+T c= creal_div f0 f1 creal_mul f0 creal_inv f1
+D Real_ext.REAL_PROP_POS_MUL2
+A |- (!x. (!y. ((((real_lt (real_of_num (NUMERAL _0))) x) /\ ((real_lt (real_of_num (NUMERAL _0))) y)) ==> ((real_lt (real_of_num (NUMERAL _0))) ((real_mul x) y)))))
+T c==> c/\ creal_lt creal_of_num cNUMERAL c_0 f0 creal_lt creal_of_num cNUMERAL c_0 f1 creal_lt creal_of_num cNUMERAL c_0 creal_mul f0 f1
+D REAL_ABS_NZ
+A |- (!x. ((~ (x = (real_of_num (NUMERAL _0)))) = ((real_lt (real_of_num (NUMERAL _0))) (real_abs x))))
+T c= c~ c= f0 creal_of_num cNUMERAL c_0 creal_lt creal_of_num cNUMERAL c_0 creal_abs f0
+D REAL_MUL_RINV
+A |- (!x. ((~ (x = (real_of_num (NUMERAL _0)))) ==> (((real_mul x) (real_inv x)) = (real_of_num (NUMERAL (BIT1 _0))))))
+T c==> c~ c= f0 creal_of_num cNUMERAL c_0 c= creal_mul f0 creal_inv f0 creal_of_num cNUMERAL cBIT1 c_0
+D REAL_ABS_INV
+A |- (!x. ((real_abs (real_inv x)) = (real_inv (real_abs x))))
+T c= creal_abs creal_inv f0 creal_inv creal_abs f0
+D REAL_LT_LDIV_EQ
+A |- (!x. (!y. (!z. (((real_lt (real_of_num (NUMERAL _0))) z) ==> (((real_lt ((real_div x) z)) y) = ((real_lt x) ((real_mul y) z)))))))
+T c==> creal_lt creal_of_num cNUMERAL c_0 f0 c= creal_lt creal_div f1 f0 f2 creal_lt f1 creal_mul f2 f0
+D IN_IMAGE
+A |- (!y. (!s. (!f. ((y IN ((IMAGE f) s)) = (?x. ((y = (f x)) /\ (x IN s)))))))
+T c= cIN f0 * * part cIMAGE f1 f2 c? / c/\ c= f0 * f1 b0 cIN b0 f2
+D FORALL_IN_IMAGE
+A |- (!f. (!s. ((!y. ((y IN ((IMAGE f) s)) ==> (P y))) = (!x. ((x IN s) ==> (P (f x)))))))
+T c= ! c==> cIN b0 * * part cIMAGE f0 f1 * f2 b0 ! c==> cIN b0 f1 * f2 * f0 b0
+D VECTOR_MUL_ASSOC
+A |- (!a. (!b. (!x. (((% a) ((% b) x)) = ((% ((real_mul a) b)) x)))))
+T c= c% f0 c% f1 f2 c% creal_mul f0 f1 f2
+D VECTOR_MUL_LID
+A |- (!x. (((% (real_of_num (NUMERAL (BIT1 _0)))) x) = x))
+T c= c% creal_of_num cNUMERAL cBIT1 c_0 f0 f0
+D VECTOR_SUB_LDISTRIB
+A |- (((% c) ((vector_sub x) y)) = ((vector_sub ((% c) x)) ((% c) y)))
+T c= c% f0 cvector_sub f1 f2 cvector_sub c% f0 f1 c% f0 f2
+D dist
+A |- (!x. (!y. ((distance (x , y)) = (vector_norm ((vector_sub x) y)))))
+T c= cdistance c, f0 f1 cvector_norm cvector_sub f0 f1
+D NORM_MUL
+A |- (!a. (!x. ((vector_norm ((% a) x)) = ((real_mul (real_abs a)) (vector_norm x)))))
+T c= cvector_norm c% f0 f1 creal_mul creal_abs f0 cvector_norm f1
+D open_def
+A |- (!s. ((open s) = (!x. ((x IN s) ==> (?e. (((real_lt (real_of_num (NUMERAL _0))) e) /\ (!x'. (((real_lt (distance (x' , x))) e) ==> (x' IN s)))))))))
+T c= copen f0 ! c==> cIN b0 f0 c? / c/\ creal_lt creal_of_num cNUMERAL c_0 b1 ! c==> creal_lt cdistance c, b2 b0 b1 cIN b2 f0
++ |- ((\x. (!y. ((vector_norm ((vector_sub x) y)) = (distance (x , y))))) x)
+T * / ! c= cvector_norm cvector_sub b0 b1 cdistance c, b0 b1 f0
+- (!x'. (((real_lt (distance (x' , x))) e) ==> (x' IN s))) |- ((!x'. (((real_lt (distance (x' , x))) e) ==> (x' IN s))) /\ (!x'. (((real_lt (distance (x' , x))) e) ==> (x' IN s))))
+T c==> ! c==> creal_lt cdistance c, b0 f0 f1 cIN b0 f2 c/\ ! c==> creal_lt cdistance c, b0 f0 f1 cIN b0 f2 ! c==> creal_lt cdistance c, b0 f0 f1 cIN b0 f2
++ |- ((((real_lt (real_of_num (NUMERAL _0))) x) /\ ((real_lt (real_of_num (NUMERAL _0))) y)) ==> (((real_lt (real_of_num (NUMERAL _0))) ((real_mul x) y)) = T))
+T c==> c/\ creal_lt creal_of_num cNUMERAL c_0 f0 creal_lt creal_of_num cNUMERAL c_0 f1 c= creal_lt creal_of_num cNUMERAL c_0 creal_mul f0 f1 cT
++ |- (((!x. ((vector_norm ((% a) x)) = ((real_mul (real_abs a)) (vector_norm x)))) ==> ((\x. ((vector_norm ((% a) x)) = ((real_mul (real_abs a)) (vector_norm x)))) x)) = ((\x. ((vector_norm ((% a) x)) = ((real_mul (real_abs a)) (vector_norm x)))) x))
+T c= c==> ! c= cvector_norm c% f0 b0 creal_mul creal_abs f0 cvector_norm b0 * / c= cvector_norm c% f0 b0 creal_mul creal_abs f0 cvector_norm b0 f1 * / c= cvector_norm c% f0 b0 creal_mul creal_abs f0 cvector_norm b0 f1
++ (~ (c = (real_of_num (NUMERAL _0)))), ((real_lt (distance (y , ((% c) x)))) ((real_mul e) (real_abs c))) |- ((real_lt ((real_mul (real_abs (real_inv c))) (vector_norm ((vector_sub y) ((% c) x))))) e)
+T c==> c~ c= f0 creal_of_num cNUMERAL c_0 c==> creal_lt cdistance c, f1 c% f0 f2 creal_mul f3 creal_abs f0 creal_lt creal_mul creal_abs creal_inv f0 cvector_norm cvector_sub f1 c% f0 f2 f3
++ (!x'. (((real_lt (distance (x' , x))) e) ==> (x' IN s))), (~ (c = (real_of_num (NUMERAL _0)))), ((real_lt (distance (y , ((% c) x)))) ((real_mul e) (real_abs c))) |- (((% (real_inv c)) y) IN s)
+T c==> ! c==> creal_lt cdistance c, b0 f0 f1 cIN b0 f2 c==> c~ c= f3 creal_of_num cNUMERAL c_0 c==> creal_lt cdistance c, f4 c% f3 f0 creal_mul f1 creal_abs f3 cIN c% creal_inv f3 f4 f2
++ (~ (c = (real_of_num (NUMERAL _0)))) |- ((real_lt (real_of_num (NUMERAL _0))) (real_abs c))
+T c==> c~ c= f0 creal_of_num cNUMERAL c_0 creal_lt creal_of_num cNUMERAL c_0 creal_abs f0
++ |- (((y = ((% c) ((% (real_inv c)) y))) /\ (((% (real_inv c)) y) IN s)) = ((\x. ((y = ((% c) x)) /\ (x IN s))) ((% (real_inv c)) y)))
+T c= c/\ c= f0 c% f1 c% creal_inv f1 f0 cIN c% creal_inv f1 f0 f2 * / c/\ c= f0 c% f1 b0 cIN b0 f2 c% creal_inv f1 f0
+- |- (((((real_lt (distance (x' , ((% c) x)))) ((real_mul e) (real_abs c))) ==> ((x' IN ((IMAGE (\x. ((% c) x))) s)) = (x' IN ((IMAGE (\x. ((% c) x))) s)))) ==> ((((real_lt (distance (x' , ((% c) x)))) ((real_mul e) (real_abs c))) ==> (x' IN ((IMAGE (\x. ((% c) x))) s))) = (((real_lt (distance (x' , ((% c) x)))) ((real_mul e) (real_abs c))) ==> (x' IN ((IMAGE (\x. ((% c) x))) s))))) = ((((real_lt (distance (x' , ((% c) x)))) ((real_mul e) (real_abs c))) ==> (x' IN ((IMAGE (\x. ((% c) x))) s))) = (((real_lt (distance (x' , ((% c) x)))) ((real_mul e) (real_abs c))) ==> (x' IN ((IMAGE (\x. ((% c) x))) s)))))
+T c= c==> c==> creal_lt cdistance c, f0 c% f1 f2 creal_mul f3 creal_abs f1 c= cIN f0 * * part cIMAGE / c% f1 b0 f4 cIN f0 * * part cIMAGE / c% f1 b0 f4 c= c==> creal_lt cdistance c, f0 c% f1 f2 creal_mul f3 creal_abs f1 cIN f0 * * part cIMAGE / c% f1 b0 f4 c==> creal_lt cdistance c, f0 c% f1 f2 creal_mul f3 creal_abs f1 cIN f0 * * part cIMAGE / c% f1 b0 f4 c= c==> creal_lt cdistance c, f0 c% f1 f2 creal_mul f3 creal_abs f1 cIN f0 * * part cIMAGE / c% f1 b0 f4 c==> creal_lt cdistance c, f0 c% f1 f2 creal_mul f3 creal_abs f1 cIN f0 * * part cIMAGE / c% f1 b0 f4
++ |- ((\x. (!y. ((((real_lt (real_of_num (NUMERAL _0))) x) /\ ((real_lt (real_of_num (NUMERAL _0))) y)) ==> ((real_lt (real_of_num (NUMERAL _0))) ((real_mul x) y))))) x)
+T * / ! c==> c/\ creal_lt creal_of_num cNUMERAL c_0 b0 creal_lt creal_of_num cNUMERAL c_0 b1 creal_lt creal_of_num cNUMERAL c_0 creal_mul b0 b1 f0
+- |- ((\p'. (!q'. ((((real_lt (distance (x' , ((% c) x)))) ((real_mul e) (real_abs c))) = p') ==> ((p' ==> ((x' IN ((IMAGE (\x. ((% c) x))) s)) = q')) ==> ((((real_lt (distance (x' , ((% c) x)))) ((real_mul e) (real_abs c))) ==> (x' IN ((IMAGE (\x. ((% c) x))) s))) = (p' ==> q')))))) p')
+T * / ! c==> c= creal_lt cdistance c, f0 c% f1 f2 creal_mul f3 creal_abs f1 b0 c==> c==> b0 c= cIN f0 * * part cIMAGE / c% f1 b2 f4 b1 c= c==> creal_lt cdistance c, f0 c% f1 f2 creal_mul f3 creal_abs f1 cIN f0 * * part cIMAGE / c% f1 b2 f4 c==> b0 b1 f5
++ |- ((\s. ((open s) = (!x. ((x IN s) ==> (?e. (((real_lt (real_of_num (NUMERAL _0))) e) /\ (!x'. (((real_lt (distance (x' , x))) e) ==> (x' IN s))))))))) s)
+T * / c= copen b0 ! c==> cIN b1 b0 c? / c/\ creal_lt creal_of_num cNUMERAL c_0 b2 ! c==> creal_lt cdistance c, b3 b1 b2 cIN b3 b0 f0
++ (!x'. (((real_lt (distance (x' , x))) e) ==> (x' IN s))), (~ (c = (real_of_num (NUMERAL _0)))), ((real_lt (real_of_num (NUMERAL _0))) e) |- (?e. (((real_lt (real_of_num (NUMERAL _0))) e) /\ (!x'. (((real_lt (distance (x' , ((% c) x)))) e) ==> (x' IN ((IMAGE (\x. ((% c) x))) s))))))
+T c==> ! c==> creal_lt cdistance c, b0 f0 f1 cIN b0 f2 c==> c~ c= f3 creal_of_num cNUMERAL c_0 c==> creal_lt creal_of_num cNUMERAL c_0 f1 c? / c/\ creal_lt creal_of_num cNUMERAL c_0 b0 ! c==> creal_lt cdistance c, b1 c% f3 f0 b0 cIN b1 * * part cIMAGE / c% f3 b2 f2
++ (~ (c = (real_of_num (NUMERAL _0)))) |- (((!x. (((\e. (((real_lt (real_of_num (NUMERAL _0))) e) /\ (!x'. (((real_lt (distance (x' , x))) e) ==> (x' IN s))))) x) ==> (?e. (((real_lt (real_of_num (NUMERAL _0))) e) /\ (!x'. (((real_lt (distance (x' , ((% c) x)))) e) ==> (x' IN ((IMAGE (\x. ((% c) x))) s)))))))) ==> ((?e. (((real_lt (real_of_num (NUMERAL _0))) e) /\ (!x'. (((real_lt (distance (x' , x))) e) ==> (x' IN s))))) ==> (?e. (((real_lt (real_of_num (NUMERAL _0))) e) /\ (!x'. (((real_lt (distance (x' , ((% c) x)))) e) ==> (x' IN ((IMAGE (\x. ((% c) x))) s)))))))) = ((?e. (((real_lt (real_of_num (NUMERAL _0))) e) /\ (!x'. (((real_lt (distance (x' , x))) e) ==> (x' IN s))))) ==> (?e. (((real_lt (real_of_num (NUMERAL _0))) e) /\ (!x'. (((real_lt (distance (x' , ((% c) x)))) e) ==> (x' IN ((IMAGE (\x. ((% c) x))) s))))))))
+T c==> c~ c= f0 creal_of_num cNUMERAL c_0 c= c==> ! c==> * / c/\ creal_lt creal_of_num cNUMERAL c_0 b1 ! c==> creal_lt cdistance c, b2 f1 b1 cIN b2 f2 b0 c? / c/\ creal_lt creal_of_num cNUMERAL c_0 b1 ! c==> creal_lt cdistance c, b2 c% f0 f1 b1 cIN b2 * * part cIMAGE / c% f0 b3 f2 c==> c? / c/\ creal_lt creal_of_num cNUMERAL c_0 b0 ! c==> creal_lt cdistance c, b1 f1 b0 cIN b1 f2 c? / c/\ creal_lt creal_of_num cNUMERAL c_0 b0 ! c==> creal_lt cdistance c, b1 c% f0 f1 b0 cIN b1 * * part cIMAGE / c% f0 b2 f2 c==> c? / c/\ creal_lt creal_of_num cNUMERAL c_0 b0 ! c==> creal_lt cdistance c, b1 f1 b0 cIN b1 f2 c? / c/\ creal_lt creal_of_num cNUMERAL c_0 b0 ! c==> creal_lt cdistance c, b1 c% f0 f1 b0 cIN b1 * * part cIMAGE / c% f0 b2 f2
++ ((\e. (((real_lt (real_of_num (NUMERAL _0))) e) /\ (!x'. (((real_lt (distance (x' , x))) e) ==> (x' IN s))))) e) |- (((((real_lt (real_of_num (NUMERAL _0))) e) /\ (!x'. (((real_lt (distance (x' , x))) e) ==> (x' IN s)))) ==> (?e. (((real_lt (real_of_num (NUMERAL _0))) e) /\ (!x'. (((real_lt (distance (x' , ((% c) x)))) e) ==> (x' IN ((IMAGE (\x. ((% c) x))) s))))))) = (?e. (((real_lt (real_of_num (NUMERAL _0))) e) /\ (!x'. (((real_lt (distance (x' , ((% c) x)))) e) ==> (x' IN ((IMAGE (\x. ((% c) x))) s)))))))
+T c==> * / c/\ creal_lt creal_of_num cNUMERAL c_0 b0 ! c==> creal_lt cdistance c, b1 f0 b0 cIN b1 f1 f2 c= c==> c/\ creal_lt creal_of_num cNUMERAL c_0 f2 ! c==> creal_lt cdistance c, b0 f0 f2 cIN b0 f1 c? / c/\ creal_lt creal_of_num cNUMERAL c_0 b0 ! c==> creal_lt cdistance c, b1 c% f3 f0 b0 cIN b1 * * part cIMAGE / c% f3 b2 f1 c? / c/\ creal_lt creal_of_num cNUMERAL c_0 b0 ! c==> creal_lt cdistance c, b1 c% f3 f0 b0 cIN b1 * * part cIMAGE / c% f3 b2 f1
++ |- (((real_lt ((real_mul (vector_norm ((vector_sub y) ((% c) x)))) (real_abs (real_inv c)))) e) = ((real_lt ((real_mul (real_abs (real_inv c))) (vector_norm ((vector_sub y) ((% c) x))))) e))
+T c= creal_lt creal_mul cvector_norm cvector_sub f0 c% f1 f2 creal_abs creal_inv f1 f3 creal_lt creal_mul creal_abs creal_inv f1 cvector_norm cvector_sub f0 c% f1 f2 f3
++ |- ((\x. ((~ (x = (real_of_num (NUMERAL _0)))) ==> (((real_mul x) (real_inv x)) = (real_of_num (NUMERAL (BIT1 _0)))))) x)
+T * / c==> c~ c= b0 creal_of_num cNUMERAL c_0 c= creal_mul b0 creal_inv b0 creal_of_num cNUMERAL cBIT1 c_0 f0
++ (!x'. (((real_lt (distance (x' , x))) e) ==> (x' IN s))), (~ (c = (real_of_num (NUMERAL _0)))), ((real_lt (distance (y , ((% c) x)))) ((real_mul e) (real_abs c))) |- ((\x. ((y = ((% c) x)) /\ (x IN s))) ((% (real_inv c)) y))
+T c==> ! c==> creal_lt cdistance c, b0 f0 f1 cIN b0 f2 c==> c~ c= f3 creal_of_num cNUMERAL c_0 c==> creal_lt cdistance c, f4 c% f3 f0 creal_mul f1 creal_abs f3 * / c/\ c= f4 c% f3 b0 cIN b0 f2 c% creal_inv f3 f4
+- (?e. (((real_lt (real_of_num (NUMERAL _0))) e) /\ (!x'. (((real_lt (distance (x' , x))) e) ==> (x' IN s))))), (~ (c = (real_of_num (NUMERAL _0)))) |- ((?e. (((real_lt (real_of_num (NUMERAL _0))) e) /\ (!x'. (((real_lt (distance (x' , x))) e) ==> (x' IN s))))) /\ (?e. (((real_lt (real_of_num (NUMERAL _0))) e) /\ (!x'. (((real_lt (distance (x' , ((% c) x)))) e) ==> (x' IN ((IMAGE (\x. ((% c) x))) s)))))))
+T c==> c? / c/\ creal_lt creal_of_num cNUMERAL c_0 b0 ! c==> creal_lt cdistance c, b1 f0 b0 cIN b1 f1 c==> c~ c= f2 creal_of_num cNUMERAL c_0 c/\ c? / c/\ creal_lt creal_of_num cNUMERAL c_0 b0 ! c==> creal_lt cdistance c, b1 f0 b0 cIN b1 f1 c? / c/\ creal_lt creal_of_num cNUMERAL c_0 b0 ! c==> creal_lt cdistance c, b1 c% f2 f0 b0 cIN b1 * * part cIMAGE / c% f2 b2 f1
++ |- (((real_lt (real_of_num (NUMERAL _0))) (real_abs x)) = (~ (x = (real_of_num (NUMERAL _0)))))
+T c= creal_lt creal_of_num cNUMERAL c_0 creal_abs f0 c~ c= f0 creal_of_num cNUMERAL c_0
++ |- ((\x. (!y. (!z. (((real_lt (real_of_num (NUMERAL _0))) z) ==> (((real_lt ((real_div x) z)) y) = ((real_lt x) ((real_mul y) z))))))) x)
+T * / ! ! c==> creal_lt creal_of_num cNUMERAL c_0 b2 c= creal_lt creal_div b0 b2 b1 creal_lt b0 creal_mul b1 b2 f0
+- (~ (c = (real_of_num (NUMERAL _0)))) |- (~ ((real_of_num (NUMERAL _0)) = c))
+T c==> c~ c= f0 creal_of_num cNUMERAL c_0 c~ c= creal_of_num cNUMERAL c_0 f0
++ (~ (c = (real_of_num (NUMERAL _0)))) |- (T = (x = ((% (real_inv c)) ((% c) x))))
+T c==> c~ c= f0 creal_of_num cNUMERAL c_0 c= cT c= f1 c% creal_inv f0 c% f0 f1
++ (!x. ((x IN s) ==> (?e. (((real_lt (real_of_num (NUMERAL _0))) e) /\ (!x'. (((real_lt (distance (x' , x))) e) ==> (x' IN s))))))), (~ (c = (real_of_num (NUMERAL _0)))) |- (!x. ((x IN s) ==> (?e. (((real_lt (real_of_num (NUMERAL _0))) e) /\ (!x'. (((real_lt (distance (x' , ((% c) x)))) e) ==> (x' IN ((IMAGE (\x. ((% c) x))) s))))))))
+T c==> ! c==> cIN b0 f0 c? / c/\ creal_lt creal_of_num cNUMERAL c_0 b1 ! c==> creal_lt cdistance c, b2 b0 b1 cIN b2 f0 c==> c~ c= f1 creal_of_num cNUMERAL c_0 ! c==> cIN b0 f0 c? / c/\ creal_lt creal_of_num cNUMERAL c_0 b1 ! c==> creal_lt cdistance c, b2 c% f1 b0 b1 cIN b2 * * part cIMAGE / c% f1 b3 f0
+- (!x'. (((real_lt (distance (x' , x))) e) ==> (x' IN s))), ((real_lt (distance (x' , x))) e) |- (((real_lt (distance (x' , x))) e) /\ ((x' IN s) = T))
+T c==> ! c==> creal_lt cdistance c, b0 f0 f1 cIN b0 f2 c==> creal_lt cdistance c, f3 f0 f1 c/\ creal_lt cdistance c, f3 f0 f1 c= cIN f3 f2 cT
++ (((vector_sub ((% c) x)) ((% c) y)) = ((% c) ((vector_sub x) y))) |- (((% c) ((vector_sub x) y)) = ((vector_sub ((% c) x)) ((% c) y)))
+T c==> c= cvector_sub c% f0 f1 c% f0 f2 c% f0 cvector_sub f1 f2 c= c% f0 cvector_sub f1 f2 cvector_sub c% f0 f1 c% f0 f2
+- (?e. (((real_lt (real_of_num (NUMERAL _0))) e) /\ (!x'. (((real_lt (distance (x' , x))) e) ==> (x' IN s))))), (~ (c = (real_of_num (NUMERAL _0)))) |- (?e. (((real_lt (real_of_num (NUMERAL _0))) e) /\ (!x'. (((real_lt (distance (x' , ((% c) x)))) e) ==> (x' IN ((IMAGE (\x. ((% c) x))) s))))))
+T c==> c? / c/\ creal_lt creal_of_num cNUMERAL c_0 b0 ! c==> creal_lt cdistance c, b1 f0 b0 cIN b1 f1 c==> c~ c= f2 creal_of_num cNUMERAL c_0 c? / c/\ creal_lt creal_of_num cNUMERAL c_0 b0 ! c==> creal_lt cdistance c, b1 c% f2 f0 b0 cIN b1 * * part cIMAGE / c% f2 b2 f1
++ (~ (c = (real_of_num (NUMERAL _0)))) |- (((\e. (((real_lt (real_of_num (NUMERAL _0))) e) /\ (!x'. (((real_lt (distance (x' , x))) e) ==> (x' IN s))))) e) ==> (?e. (((real_lt (real_of_num (NUMERAL _0))) e) /\ (!x'. (((real_lt (distance (x' , ((% c) x)))) e) ==> (x' IN ((IMAGE (\x. ((% c) x))) s)))))))
+T c==> c~ c= f0 creal_of_num cNUMERAL c_0 c==> * / c/\ creal_lt creal_of_num cNUMERAL c_0 b0 ! c==> creal_lt cdistance c, b1 f1 b0 cIN b1 f2 f3 c? / c/\ creal_lt creal_of_num cNUMERAL c_0 b0 ! c==> creal_lt cdistance c, b1 c% f0 f1 b0 cIN b1 * * part cIMAGE / c% f0 b2 f2
+- (~ (x = (real_of_num (NUMERAL _0)))) |- ((~ (x = (real_of_num (NUMERAL _0)))) /\ (((real_mul x) (real_inv x)) = (real_of_num (NUMERAL (BIT1 _0)))))
+T c==> c~ c= f0 creal_of_num cNUMERAL c_0 c/\ c~ c= f0 creal_of_num cNUMERAL c_0 c= creal_mul f0 creal_inv f0 creal_of_num cNUMERAL cBIT1 c_0
+- (c = (real_of_num (NUMERAL _0))) |- ((real_of_num (NUMERAL _0)) = c)
+T c==> c= f0 creal_of_num cNUMERAL c_0 c= creal_of_num cNUMERAL c_0 f0
+- |- ((((real_lt (distance (x' , ((% c) x)))) ((real_mul e) (real_abs c))) = p') ==> ((p' ==> ((x' IN ((IMAGE (\x. ((% c) x))) s)) = q')) ==> ((((real_lt (distance (x' , ((% c) x)))) ((real_mul e) (real_abs c))) ==> (x' IN ((IMAGE (\x. ((% c) x))) s))) = (p' ==> q'))))
+T c==> c= creal_lt cdistance c, f0 c% f1 f2 creal_mul f3 creal_abs f1 f4 c==> c==> f4 c= cIN f0 * * part cIMAGE / c% f1 b0 f5 f6 c= c==> creal_lt cdistance c, f0 c% f1 f2 creal_mul f3 creal_abs f1 cIN f0 * * part cIMAGE / c% f1 b0 f5 c==> f4 f6
++ (~ (c = (real_of_num (NUMERAL _0)))) |- ((c = (real_of_num (NUMERAL _0))) = F)
+T c==> c~ c= f0 creal_of_num cNUMERAL c_0 c= c= f0 creal_of_num cNUMERAL c_0 cF
+- |- ((t ==> t) = T)
+T c= c==> f0 f0 cT
++ |- ((\y. ((vector_norm ((vector_sub x) y)) = (distance (x , y)))) y)
+T * / c= cvector_norm cvector_sub f0 b0 cdistance c, f0 b0 f1
++ (!x. ((x IN s) ==> (?e. (((real_lt (real_of_num (NUMERAL _0))) e) /\ (!x'. (((real_lt (distance (x' , x))) e) ==> (x' IN s))))))) |- ((((x IN s) ==> (?e. (((real_lt (real_of_num (NUMERAL _0))) e) /\ (!x'. (((real_lt (distance (x' , x))) e) ==> (x' IN s)))))) ==> (?e. (((real_lt (real_of_num (NUMERAL _0))) e) /\ (!x'. (((real_lt (distance (x' , ((% c) x)))) e) ==> (x' IN ((IMAGE (\x. ((% c) x))) s))))))) = (?e. (((real_lt (real_of_num (NUMERAL _0))) e) /\ (!x'. (((real_lt (distance (x' , ((% c) x)))) e) ==> (x' IN ((IMAGE (\x. ((% c) x))) s)))))))
+T c==> ! c==> cIN b0 f0 c? / c/\ creal_lt creal_of_num cNUMERAL c_0 b1 ! c==> creal_lt cdistance c, b2 b0 b1 cIN b2 f0 c= c==> c==> cIN f1 f0 c? / c/\ creal_lt creal_of_num cNUMERAL c_0 b0 ! c==> creal_lt cdistance c, b1 f1 b0 cIN b1 f0 c? / c/\ creal_lt creal_of_num cNUMERAL c_0 b0 ! c==> creal_lt cdistance c, b1 c% f2 f1 b0 cIN b1 * * part cIMAGE / c% f2 b2 f0 c? / c/\ creal_lt creal_of_num cNUMERAL c_0 b0 ! c==> creal_lt cdistance c, b1 c% f2 f1 b0 cIN b1 * * part cIMAGE / c% f2 b2 f0
++ (~ (c = (real_of_num (NUMERAL _0)))), (((real_lt (real_of_num (NUMERAL _0))) e) /\ (!x'. (((real_lt (distance (x' , x))) e) ==> (x' IN s)))) |- ((((real_lt (real_of_num (NUMERAL _0))) e) /\ (!x'. (((real_lt (distance (x' , x))) e) ==> (x' IN s)))) /\ (?e. (((real_lt (real_of_num (NUMERAL _0))) e) /\ (!x'. (((real_lt (distance (x' , ((% c) x)))) e) ==> (x' IN ((IMAGE (\x. ((% c) x))) s)))))))
+T c==> c~ c= f0 creal_of_num cNUMERAL c_0 c==> c/\ creal_lt creal_of_num cNUMERAL c_0 f1 ! c==> creal_lt cdistance c, b0 f2 f1 cIN b0 f3 c/\ c/\ creal_lt creal_of_num cNUMERAL c_0 f1 ! c==> creal_lt cdistance c, b0 f2 f1 cIN b0 f3 c? / c/\ creal_lt creal_of_num cNUMERAL c_0 b0 ! c==> creal_lt cdistance c, b1 c% f0 f2 b0 cIN b1 * * part cIMAGE / c% f0 b2 f3
++ (x IN s) |- (((?e. (((real_lt (real_of_num (NUMERAL _0))) e) /\ (!x'. (((real_lt (distance (x' , x))) e) ==> (x' IN s))))) ==> (?e. (((real_lt (real_of_num (NUMERAL _0))) e) /\ (!x'. (((real_lt (distance (x' , ((% c) x)))) e) ==> (x' IN ((IMAGE (\x. ((% c) x))) s))))))) = (((x IN s) ==> (?e. (((real_lt (real_of_num (NUMERAL _0))) e) /\ (!x'. (((real_lt (distance (x' , x))) e) ==> (x' IN s)))))) ==> (?e. (((real_lt (real_of_num (NUMERAL _0))) e) /\ (!x'. (((real_lt (distance (x' , ((% c) x)))) e) ==> (x' IN ((IMAGE (\x. ((% c) x))) s))))))))
+T c==> cIN f0 f1 c= c==> c? / c/\ creal_lt creal_of_num cNUMERAL c_0 b0 ! c==> creal_lt cdistance c, b1 f0 b0 cIN b1 f1 c? / c/\ creal_lt creal_of_num cNUMERAL c_0 b0 ! c==> creal_lt cdistance c, b1 c% f2 f0 b0 cIN b1 * * part cIMAGE / c% f2 b2 f1 c==> c==> cIN f0 f1 c? / c/\ creal_lt creal_of_num cNUMERAL c_0 b0 ! c==> creal_lt cdistance c, b1 f0 b0 cIN b1 f1 c? / c/\ creal_lt creal_of_num cNUMERAL c_0 b0 ! c==> creal_lt cdistance c, b1 c% f2 f0 b0 cIN b1 * * part cIMAGE / c% f2 b2 f1
++ (((real_lt (real_of_num (NUMERAL _0))) (real_abs x)) = (~ (x = (real_of_num (NUMERAL _0))))) |- ((~ (x = (real_of_num (NUMERAL _0)))) = ((real_lt (real_of_num (NUMERAL _0))) (real_abs x)))
+T c==> c= creal_lt creal_of_num cNUMERAL c_0 creal_abs f0 c~ c= f0 creal_of_num cNUMERAL c_0 c= c~ c= f0 creal_of_num cNUMERAL c_0 creal_lt creal_of_num cNUMERAL c_0 creal_abs f0
+- |- ((!x'. t) = t)
+T c= ! f0 f0
++ |- (((!x. (((% (real_of_num (NUMERAL (BIT1 _0)))) x) = x)) ==> ((\x. (((% (real_of_num (NUMERAL (BIT1 _0)))) x) = x)) x)) = ((\x. (((% (real_of_num (NUMERAL (BIT1 _0)))) x) = x)) x))
+T c= c==> ! c= c% creal_of_num cNUMERAL cBIT1 c_0 b0 b0 * / c= c% creal_of_num cNUMERAL cBIT1 c_0 b0 b0 f0 * / c= c% creal_of_num cNUMERAL cBIT1 c_0 b0 b0 f0
++ |- ((\a. (!b. (!x. (((% a) ((% b) x)) = ((% ((real_mul a) b)) x))))) a)
+T * / ! ! c= c% b0 c% b1 b2 c% creal_mul b0 b1 b2 f0
++ |- ((!x. ((x IN ((IMAGE (\x. ((% c) x))) s)) ==> (?e. (((real_lt (real_of_num (NUMERAL _0))) e) /\ (!x'. (((real_lt (distance (x' , x))) e) ==> (x' IN ((IMAGE (\x. ((% c) x))) s)))))))) = (!x. ((x IN s) ==> (?e. (((real_lt (real_of_num (NUMERAL _0))) e) /\ (!x'. (((real_lt (distance (x' , ((\x. ((% c) x)) x)))) e) ==> (x' IN ((IMAGE (\x. ((% c) x))) s)))))))))
+T c= ! c==> cIN b0 * * part cIMAGE / c% f0 b1 f1 c? / c/\ creal_lt creal_of_num cNUMERAL c_0 b1 ! c==> creal_lt cdistance c, b2 b0 b1 cIN b2 * * part cIMAGE / c% f0 b3 f1 ! c==> cIN b0 f1 c? / c/\ creal_lt creal_of_num cNUMERAL c_0 b1 ! c==> creal_lt cdistance c, b2 * / c% f0 b3 b0 b1 cIN b2 * * part cIMAGE / c% f0 b3 f1
++ |- ((\y. (!s. (!f. ((y IN ((IMAGE f) s)) = (?x. ((y = (f x)) /\ (x IN s))))))) y)
+T * / ! ! c= cIN b0 * * part cIMAGE b2 b1 c? / c/\ c= b0 * b2 b3 cIN b3 b1 f0
+- |- ((?x. t) = t)
+T c= c? / f0 f0
++ |- (((!x. (!y. (((real_mul x) (real_inv y)) = ((real_div x) y)))) ==> ((\x. (!y. (((real_mul x) (real_inv y)) = ((real_div x) y)))) x)) = ((\x. (!y. (((real_mul x) (real_inv y)) = ((real_div x) y)))) x))
+T c= c==> ! ! c= creal_mul b0 creal_inv b1 creal_div b0 b1 * / ! c= creal_mul b0 creal_inv b1 creal_div b0 b1 f0 * / ! c= creal_mul b0 creal_inv b1 creal_div b0 b1 f0
++ (x IN s) |- ((x IN s) = T)
+T c==> cIN f0 f1 c= cIN f0 f1 cT
++ |- (((!x. (!y. ((distance (x , y)) = (vector_norm ((vector_sub x) y))))) ==> ((\x. (!y. ((distance (x , y)) = (vector_norm ((vector_sub x) y))))) x)) = ((\x. (!y. ((distance (x , y)) = (vector_norm ((vector_sub x) y))))) x))
+T c= c==> ! ! c= cdistance c, b0 b1 cvector_norm cvector_sub b0 b1 * / ! c= cdistance c, b0 b1 cvector_norm cvector_sub b0 b1 f0 * / ! c= cdistance c, b0 b1 cvector_norm cvector_sub b0 b1 f0
++ (~ (c = (real_of_num (NUMERAL _0)))), ((real_lt (real_of_num (NUMERAL _0))) e) |- (((real_lt (real_of_num (NUMERAL _0))) ((real_mul e) (real_abs c))) = T)
+T c==> c~ c= f0 creal_of_num cNUMERAL c_0 c==> creal_lt creal_of_num cNUMERAL c_0 f1 c= creal_lt creal_of_num cNUMERAL c_0 creal_mul f1 creal_abs f0 cT
++ (~ (c = (real_of_num (NUMERAL _0)))), ((~ (c = (real_of_num (NUMERAL _0)))) /\ (!x. ((x IN s) ==> (?e. (((real_lt (real_of_num (NUMERAL _0))) e) /\ (!x'. (((real_lt (distance (x' , x))) e) ==> (x' IN s)))))))) |- (!x. ((x IN s) ==> (?e. (((real_lt (real_of_num (NUMERAL _0))) e) /\ (!x'. (((real_lt (distance (x' , ((% c) x)))) e) ==> (x' IN ((IMAGE (\x. ((% c) x))) s))))))))
+T c==> c~ c= f0 creal_of_num cNUMERAL c_0 c==> c/\ c~ c= f0 creal_of_num cNUMERAL c_0 ! c==> cIN b0 f1 c? / c/\ creal_lt creal_of_num cNUMERAL c_0 b1 ! c==> creal_lt cdistance c, b2 b0 b1 cIN b2 f1 ! c==> cIN b0 f1 c? / c/\ creal_lt creal_of_num cNUMERAL c_0 b1 ! c==> creal_lt cdistance c, b2 c% f0 b0 b1 cIN b2 * * part cIMAGE / c% f0 b3 f1
+- |- (((!p'. (!q'. ((((real_lt (distance (x' , ((% c) x)))) ((real_mul e) (real_abs c))) = p') ==> ((p' ==> ((x' IN ((IMAGE (\x. ((% c) x))) s)) = q')) ==> ((((real_lt (distance (x' , ((% c) x)))) ((real_mul e) (real_abs c))) ==> (x' IN ((IMAGE (\x. ((% c) x))) s))) = (p' ==> q')))))) ==> ((\p'. (!q'. ((((real_lt (distance (x' , ((% c) x)))) ((real_mul e) (real_abs c))) = p') ==> ((p' ==> ((x' IN ((IMAGE (\x. ((% c) x))) s)) = q')) ==> ((((real_lt (distance (x' , ((% c) x)))) ((real_mul e) (real_abs c))) ==> (x' IN ((IMAGE (\x. ((% c) x))) s))) = (p' ==> q')))))) p')) = ((\p'. (!q'. ((((real_lt (distance (x' , ((% c) x)))) ((real_mul e) (real_abs c))) = p') ==> ((p' ==> ((x' IN ((IMAGE (\x. ((% c) x))) s)) = q')) ==> ((((real_lt (distance (x' , ((% c) x)))) ((real_mul e) (real_abs c))) ==> (x' IN ((IMAGE (\x. ((% c) x))) s))) = (p' ==> q')))))) p'))
+T c= c==> ! ! c==> c= creal_lt cdistance c, f0 c% f1 f2 creal_mul f3 creal_abs f1 b0 c==> c==> b0 c= cIN f0 * * part cIMAGE / c% f1 b2 f4 b1 c= c==> creal_lt cdistance c, f0 c% f1 f2 creal_mul f3 creal_abs f1 cIN f0 * * part cIMAGE / c% f1 b2 f4 c==> b0 b1 * / ! c==> c= creal_lt cdistance c, f0 c% f1 f2 creal_mul f3 creal_abs f1 b0 c==> c==> b0 c= cIN f0 * * part cIMAGE / c% f1 b2 f4 b1 c= c==> creal_lt cdistance c, f0 c% f1 f2 creal_mul f3 creal_abs f1 cIN f0 * * part cIMAGE / c% f1 b2 f4 c==> b0 b1 f5 * / ! c==> c= creal_lt cdistance c, f0 c% f1 f2 creal_mul f3 creal_abs f1 b0 c==> c==> b0 c= cIN f0 * * part cIMAGE / c% f1 b2 f4 b1 c= c==> creal_lt cdistance c, f0 c% f1 f2 creal_mul f3 creal_abs f1 cIN f0 * * part cIMAGE / c% f1 b2 f4 c==> b0 b1 f5
++ (~ (c = (real_of_num (NUMERAL _0)))), ((\e. (((real_lt (real_of_num (NUMERAL _0))) e) /\ (!x'. (((real_lt (distance (x' , x))) e) ==> (x' IN s))))) e) |- (((\e. (((real_lt (real_of_num (NUMERAL _0))) e) /\ (!x'. (((real_lt (distance (x' , x))) e) ==> (x' IN s))))) e) /\ (?e. (((real_lt (real_of_num (NUMERAL _0))) e) /\ (!x'. (((real_lt (distance (x' , ((% c) x)))) e) ==> (x' IN ((IMAGE (\x. ((% c) x))) s)))))))
+T c==> c~ c= f0 creal_of_num cNUMERAL c_0 c==> * / c/\ creal_lt creal_of_num cNUMERAL c_0 b0 ! c==> creal_lt cdistance c, b1 f1 b0 cIN b1 f2 f3 c/\ * / c/\ creal_lt creal_of_num cNUMERAL c_0 b0 ! c==> creal_lt cdistance c, b1 f1 b0 cIN b1 f2 f3 c? / c/\ creal_lt creal_of_num cNUMERAL c_0 b0 ! c==> creal_lt cdistance c, b1 c% f0 f1 b0 cIN b1 * * part cIMAGE / c% f0 b2 f2
+- |- (((real_lt (distance (x' , ((% c) x)))) ((real_mul e) (real_abs c))) ==> ((x' IN ((IMAGE (\x. ((% c) x))) s)) = (x' IN ((IMAGE (\x. ((% c) x))) s))))
+T c==> creal_lt cdistance c, f0 c% f1 f2 creal_mul f3 creal_abs f1 c= cIN f0 * * part cIMAGE / c% f1 b0 f4 cIN f0 * * part cIMAGE / c% f1 b0 f4
+- (!x'. (((real_lt (distance (x' , x))) e) ==> (x' IN s))), ((real_lt (distance (x' , x))) e) |- (((real_lt (distance (x' , x))) e) /\ (x' IN s))
+T c==> ! c==> creal_lt cdistance c, b0 f0 f1 cIN b0 f2 c==> creal_lt cdistance c, f3 f0 f1 c/\ creal_lt cdistance c, f3 f0 f1 cIN f3 f2
++ |- ((T ==> t) = t)
+T c= c==> cT f0 f0
+- |- ((!q'. ((p = p') ==> ((p' ==> (q = q')) ==> ((p ==> q) = (p' ==> q'))))) = T)
+T c= ! c==> c= f0 f1 c==> c==> f1 c= f2 b0 c= c==> f0 f2 c==> f1 b0 cT
+- (!x'. (((real_lt (distance (x' , x))) e) ==> (x' IN s))) |- (((real_lt (distance (x' , x))) e) ==> ((x' IN s) = T))
+T c==> ! c==> creal_lt cdistance c, b0 f0 f1 cIN b0 f2 c==> creal_lt cdistance c, f3 f0 f1 c= cIN f3 f2 cT
+- (~ (c = (real_of_num (NUMERAL _0)))) |- (((~ ((real_of_num (NUMERAL _0)) = c)) ==> (((real_of_num (NUMERAL _0)) = c) = F)) = (((real_of_num (NUMERAL _0)) = c) = F))
+T c==> c~ c= f0 creal_of_num cNUMERAL c_0 c= c==> c~ c= creal_of_num cNUMERAL c_0 f0 c= c= creal_of_num cNUMERAL c_0 f0 cF c= c= creal_of_num cNUMERAL c_0 f0 cF
+- |- (((!q'. ((((real_lt (distance (x' , ((% c) x)))) ((real_mul e) (real_abs c))) = p') ==> ((p' ==> ((x' IN ((IMAGE (\x. ((% c) x))) s)) = q')) ==> ((((real_lt (distance (x' , ((% c) x)))) ((real_mul e) (real_abs c))) ==> (x' IN ((IMAGE (\x. ((% c) x))) s))) = (p' ==> q'))))) ==> ((\q'. ((((real_lt (distance (x' , ((% c) x)))) ((real_mul e) (real_abs c))) = p') ==> ((p' ==> ((x' IN ((IMAGE (\x. ((% c) x))) s)) = q')) ==> ((((real_lt (distance (x' , ((% c) x)))) ((real_mul e) (real_abs c))) ==> (x' IN ((IMAGE (\x. ((% c) x))) s))) = (p' ==> q'))))) q')) = ((\q'. ((((real_lt (distance (x' , ((% c) x)))) ((real_mul e) (real_abs c))) = p') ==> ((p' ==> ((x' IN ((IMAGE (\x. ((% c) x))) s)) = q')) ==> ((((real_lt (distance (x' , ((% c) x)))) ((real_mul e) (real_abs c))) ==> (x' IN ((IMAGE (\x. ((% c) x))) s))) = (p' ==> q'))))) q'))
+T c= c==> ! c==> c= creal_lt cdistance c, f0 c% f1 f2 creal_mul f3 creal_abs f1 f4 c==> c==> f4 c= cIN f0 * * part cIMAGE / c% f1 b1 f5 b0 c= c==> creal_lt cdistance c, f0 c% f1 f2 creal_mul f3 creal_abs f1 cIN f0 * * part cIMAGE / c% f1 b1 f5 c==> f4 b0 * / c==> c= creal_lt cdistance c, f0 c% f1 f2 creal_mul f3 creal_abs f1 f4 c==> c==> f4 c= cIN f0 * * part cIMAGE / c% f1 b1 f5 b0 c= c==> creal_lt cdistance c, f0 c% f1 f2 creal_mul f3 creal_abs f1 cIN f0 * * part cIMAGE / c% f1 b1 f5 c==> f4 b0 f6 * / c==> c= creal_lt cdistance c, f0 c% f1 f2 creal_mul f3 creal_abs f1 f4 c==> c==> f4 c= cIN f0 * * part cIMAGE / c% f1 b1 f5 b0 c= c==> creal_lt cdistance c, f0 c% f1 f2 creal_mul f3 creal_abs f1 cIN f0 * * part cIMAGE / c% f1 b1 f5 c==> f4 b0 f6
+- ((real_lt (distance (x' , ((% c) x)))) ((real_mul e) (real_abs c))) |- (((real_lt (distance (x' , ((% c) x)))) ((real_mul e) (real_abs c))) /\ ((x' IN ((IMAGE (\x. ((% c) x))) s)) = (x' IN ((IMAGE (\x. ((% c) x))) s))))
+T c==> creal_lt cdistance c, f0 c% f1 f2 creal_mul f3 creal_abs f1 c/\ creal_lt cdistance c, f0 c% f1 f2 creal_mul f3 creal_abs f1 c= cIN f0 * * part cIMAGE / c% f1 b0 f4 cIN f0 * * part cIMAGE / c% f1 b0 f4
+- |- ((((real_lt (distance (x' , ((% c) x)))) ((real_mul e) (real_abs c))) ==> ((x' IN ((IMAGE (\x. ((% c) x))) s)) = q')) ==> ((((real_lt (distance (x' , ((% c) x)))) ((real_mul e) (real_abs c))) ==> (x' IN ((IMAGE (\x. ((% c) x))) s))) = (((real_lt (distance (x' , ((% c) x)))) ((real_mul e) (real_abs c))) ==> q')))
+T c==> c==> creal_lt cdistance c, f0 c% f1 f2 creal_mul f3 creal_abs f1 c= cIN f0 * * part cIMAGE / c% f1 b0 f4 f5 c= c==> creal_lt cdistance c, f0 c% f1 f2 creal_mul f3 creal_abs f1 cIN f0 * * part cIMAGE / c% f1 b0 f4 c==> creal_lt cdistance c, f0 c% f1 f2 creal_mul f3 creal_abs f1 f5
+- |- ((t /\ t) = t)
+T c= c/\ f0 f0 f0
+- (~ (c = (real_of_num (NUMERAL _0)))) |- (((real_of_num (NUMERAL _0)) = c) = F)
+T c==> c~ c= f0 creal_of_num cNUMERAL c_0 c= c= creal_of_num cNUMERAL c_0 f0 cF
+- |- ((((real_lt (distance (x' , ((% c) x)))) ((real_mul e) (real_abs c))) ==> (x' IN ((IMAGE (\x. ((% c) x))) s))) = (((real_lt (distance (x' , ((% c) x)))) ((real_mul e) (real_abs c))) ==> (x' IN ((IMAGE (\x. ((% c) x))) s))))
+T c= c==> creal_lt cdistance c, f0 c% f1 f2 creal_mul f3 creal_abs f1 cIN f0 * * part cIMAGE / c% f1 b0 f4 c==> creal_lt cdistance c, f0 c% f1 f2 creal_mul f3 creal_abs f1 cIN f0 * * part cIMAGE / c% f1 b0 f4
+- (!x'. (((real_lt (distance (x' , x))) e) ==> (x' IN s))) |- ((((real_lt (distance (x' , x))) e) ==> (x' IN s)) = T)
+T c==> ! c==> creal_lt cdistance c, b0 f0 f1 cIN b0 f2 c= c==> creal_lt cdistance c, f3 f0 f1 cIN f3 f2 cT
+- ((real_lt (real_of_num (NUMERAL _0))) z) |- (((real_lt (real_of_num (NUMERAL _0))) z) /\ (((real_lt ((real_div x) z)) y) = ((real_lt x) ((real_mul y) z))))
+T c==> creal_lt creal_of_num cNUMERAL c_0 f0 c/\ creal_lt creal_of_num cNUMERAL c_0 f0 c= creal_lt creal_div f1 f0 f2 creal_lt f1 creal_mul f2 f0
+- ((real_of_num (NUMERAL _0)) = c) |- (c = (real_of_num (NUMERAL _0)))
+T c==> c= creal_of_num cNUMERAL c_0 f0 c= f0 creal_of_num cNUMERAL c_0
+- ((real_lt (distance (x' , x))) e) |- ((!x'. (((real_lt (distance (x' , x))) e) ==> (x' IN s))) ==> (x' IN s))
+T c==> creal_lt cdistance c, f0 f1 f2 c==> ! c==> creal_lt cdistance c, b0 f1 f2 cIN b0 f3 cIN f0 f3
+- |- (((((real_lt (distance (x' , ((% c) x)))) ((real_mul e) (real_abs c))) = ((real_lt (distance (x' , ((% c) x)))) ((real_mul e) (real_abs c)))) ==> ((((real_lt (distance (x' , ((% c) x)))) ((real_mul e) (real_abs c))) ==> ((x' IN ((IMAGE (\x. ((% c) x))) s)) = q')) ==> ((((real_lt (distance (x' , ((% c) x)))) ((real_mul e) (real_abs c))) ==> (x' IN ((IMAGE (\x. ((% c) x))) s))) = (((real_lt (distance (x' , ((% c) x)))) ((real_mul e) (real_abs c))) ==> q')))) = ((((real_lt (distance (x' , ((% c) x)))) ((real_mul e) (real_abs c))) ==> ((x' IN ((IMAGE (\x. ((% c) x))) s)) = q')) ==> ((((real_lt (distance (x' , ((% c) x)))) ((real_mul e) (real_abs c))) ==> (x' IN ((IMAGE (\x. ((% c) x))) s))) = (((real_lt (distance (x' , ((% c) x)))) ((real_mul e) (real_abs c))) ==> q'))))
+T c= c==> c= creal_lt cdistance c, f0 c% f1 f2 creal_mul f3 creal_abs f1 creal_lt cdistance c, f0 c% f1 f2 creal_mul f3 creal_abs f1 c==> c==> creal_lt cdistance c, f0 c% f1 f2 creal_mul f3 creal_abs f1 c= cIN f0 * * part cIMAGE / c% f1 b0 f4 f5 c= c==> creal_lt cdistance c, f0 c% f1 f2 creal_mul f3 creal_abs f1 cIN f0 * * part cIMAGE / c% f1 b0 f4 c==> creal_lt cdistance c, f0 c% f1 f2 creal_mul f3 creal_abs f1 f5 c==> c==> creal_lt cdistance c, f0 c% f1 f2 creal_mul f3 creal_abs f1 c= cIN f0 * * part cIMAGE / c% f1 b0 f4 f5 c= c==> creal_lt cdistance c, f0 c% f1 f2 creal_mul f3 creal_abs f1 cIN f0 * * part cIMAGE / c% f1 b0 f4 c==> creal_lt cdistance c, f0 c% f1 f2 creal_mul f3 creal_abs f1 f5
+- (~ (c = (real_of_num (NUMERAL _0)))) |- (T = (~ (c = (real_of_num (NUMERAL _0)))))
+T c==> c~ c= f0 creal_of_num cNUMERAL c_0 c= cT c~ c= f0 creal_of_num cNUMERAL c_0
+- |- (((\x. (f x)) y) = (f y))
+T c= * / * f0 b0 f1 * f0 f1
+- |- (!p'. (!q'. ((p = p') ==> ((p' ==> (q = q')) ==> ((p ==> q) = (p' ==> q'))))))
+T c==> c= f0 f1 c==> c==> f1 c= f2 f3 c= c==> f0 f2 c==> f1 f3
+- |- ((!x'. (((real_lt (distance (x' , x))) e) ==> (x' IN s))) ==> (!x'. (((real_lt (distance (x' , x))) e) ==> (x' IN s))))
+T c==> ! c==> creal_lt cdistance c, b0 f0 f1 cIN b0 f2 ! c==> creal_lt cdistance c, b0 f0 f1 cIN b0 f2
+- |- (((p = p') ==> ((p' ==> (q = q')) ==> ((p ==> q) = (p' ==> q')))) = T)
+T c= c==> c= f0 f1 c==> c==> f1 c= f2 f3 c= c==> f0 f2 c==> f1 f3 cT
+- |- ((\q'. ((((real_lt (distance (x' , ((% c) x)))) ((real_mul e) (real_abs c))) = p') ==> ((p' ==> ((x' IN ((IMAGE (\x. ((% c) x))) s)) = q')) ==> ((((real_lt (distance (x' , ((% c) x)))) ((real_mul e) (real_abs c))) ==> (x' IN ((IMAGE (\x. ((% c) x))) s))) = (p' ==> q'))))) q')
+T * / c==> c= creal_lt cdistance c, f0 c% f1 f2 creal_mul f3 creal_abs f1 f4 c==> c==> f4 c= cIN f0 * * part cIMAGE / c% f1 b1 f5 b0 c= c==> creal_lt cdistance c, f0 c% f1 f2 creal_mul f3 creal_abs f1 cIN f0 * * part cIMAGE / c% f1 b1 f5 c==> f4 b0 f6
+- (~ (x = (real_of_num (NUMERAL _0)))) |- ((~ (x = (real_of_num (NUMERAL _0)))) /\ (((real_mul (real_inv x)) x) = (real_of_num (NUMERAL (BIT1 _0)))))
+T c==> c~ c= f0 creal_of_num cNUMERAL c_0 c/\ c~ c= f0 creal_of_num cNUMERAL c_0 c= creal_mul creal_inv f0 f0 creal_of_num cNUMERAL cBIT1 c_0
+- (!x'. (((real_lt (distance (x' , x))) e) ==> (x' IN s))), ((real_lt (distance (x' , x))) e) |- ((!x'. (((real_lt (distance (x' , x))) e) ==> (x' IN s))) /\ (x' IN s))
+T c==> ! c==> creal_lt cdistance c, b0 f0 f1 cIN b0 f2 c==> creal_lt cdistance c, f3 f0 f1 c/\ ! c==> creal_lt cdistance c, b0 f0 f1 cIN b0 f2 cIN f3 f2

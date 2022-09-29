@@ -1,0 +1,164 @@
+N ARITH_EXP
+C |- ((!m. (!n. (((NUMERAL m) EXP (NUMERAL n)) = (NUMERAL (m EXP n))))) /\ (((_0 EXP _0) = (BIT1 _0)) /\ ((!m. (((BIT0 m) EXP _0) = (BIT1 _0))) /\ ((!m. (((BIT1 m) EXP _0) = (BIT1 _0))) /\ ((!n. ((_0 EXP (BIT0 n)) = ((_0 EXP n) * (_0 EXP n)))) /\ ((!m. (!n. (((BIT0 m) EXP (BIT0 n)) = (((BIT0 m) EXP n) * ((BIT0 m) EXP n))))) /\ ((!m. (!n. (((BIT1 m) EXP (BIT0 n)) = (((BIT1 m) EXP n) * ((BIT1 m) EXP n))))) /\ ((!n. ((_0 EXP (BIT1 n)) = _0)) /\ ((!m. (!n. (((BIT0 m) EXP (BIT1 n)) = ((BIT0 m) * (((BIT0 m) EXP n) * ((BIT0 m) EXP n)))))) /\ (!m. (!n. (((BIT1 m) EXP (BIT1 n)) = ((BIT1 m) * (((BIT1 m) EXP n) * ((BIT1 m) EXP n)))))))))))))))
+T c/\ ! ! c= cEXP cNUMERAL b0 cNUMERAL b1 cNUMERAL cEXP b0 b1 c/\ c= cEXP c_0 c_0 cBIT1 c_0 c/\ ! c= cEXP cBIT0 b0 c_0 cBIT1 c_0 c/\ ! c= cEXP cBIT1 b0 c_0 cBIT1 c_0 c/\ ! c= cEXP c_0 cBIT0 b0 c* cEXP c_0 b0 cEXP c_0 b0 c/\ ! ! c= cEXP cBIT0 b0 cBIT0 b1 c* cEXP cBIT0 b0 b1 cEXP cBIT0 b0 b1 c/\ ! ! c= cEXP cBIT1 b0 cBIT0 b1 c* cEXP cBIT1 b0 b1 cEXP cBIT1 b0 b1 c/\ ! c= cEXP c_0 cBIT1 b0 c_0 c/\ ! ! c= cEXP cBIT0 b0 cBIT1 b1 c* cBIT0 b0 c* cEXP cBIT0 b0 b1 cEXP cBIT0 b0 b1 ! ! c= cEXP cBIT1 b0 cBIT1 b1 c* cBIT1 b0 c* cEXP cBIT1 b0 b1 cEXP cBIT1 b0 b1
+D NUMERAL
+A |- (!n. ((NUMERAL n) = n))
+T c= cNUMERAL f0 f0
+D BIT0
+A |- (!n. ((BIT0 n) = (n + n)))
+T c= cBIT0 f0 c+ f0 f0
+D BIT1
+A |- (!n. ((BIT1 n) = (SUC (n + n))))
+T c= cBIT1 f0 cSUC c+ f0 f0
+D MULT_CLAUSES
+A |- ((!n. (((NUMERAL _0) * n) = (NUMERAL _0))) /\ ((!m. ((m * (NUMERAL _0)) = (NUMERAL _0))) /\ ((!n. (((NUMERAL (BIT1 _0)) * n) = n)) /\ ((!m. ((m * (NUMERAL (BIT1 _0))) = m)) /\ ((!m. (!n. (((SUC m) * n) = ((m * n) + n)))) /\ (!m. (!n. ((m * (SUC n)) = (m + (m * n))))))))))
+T c/\ ! c= c* cNUMERAL c_0 b0 cNUMERAL c_0 c/\ ! c= c* b0 cNUMERAL c_0 cNUMERAL c_0 c/\ ! c= c* cNUMERAL cBIT1 c_0 b0 b0 c/\ ! c= c* b0 cNUMERAL cBIT1 c_0 b0 c/\ ! ! c= c* cSUC b0 b1 c+ c* b0 b1 b1 ! ! c= c* b0 cSUC b1 c+ b0 c* b0 b1
+D EXP
+A |- ((!m. ((m EXP (NUMERAL _0)) = (NUMERAL (BIT1 _0)))) /\ (!m. (!n. ((m EXP (SUC n)) = (m * (m EXP n))))))
+T c/\ ! c= cEXP b0 cNUMERAL c_0 cNUMERAL cBIT1 c_0 ! ! c= cEXP b0 cSUC b1 c* b0 cEXP b0 b1
+D Ssrnat.expnS
+A |- (!m. (!n. ((m EXP (SUC n)) = (m * (m EXP n)))))
+T c= cEXP f0 cSUC f1 c* f0 cEXP f0 f1
+D EXP_ADD
+A |- (!m. (!n. (!p. ((m EXP (n + p)) = ((m EXP n) * (m EXP p))))))
+T c= cEXP f0 c+ f1 f2 c* cEXP f0 f1 cEXP f0 f2
++ |- (!m. (!n. (((BIT0 m) EXP (BIT0 n)) = (((BIT0 m) EXP n) * ((BIT0 m) EXP n)))))
+T c= cEXP cBIT0 f0 cBIT0 f1 c* cEXP cBIT0 f0 f1 cEXP cBIT0 f0 f1
++ |- ((!m. (!n. (((BIT1 m) EXP (BIT1 n)) = ((BIT1 m) * (((BIT1 m) EXP n) * ((BIT1 m) EXP n)))))) = ((!m. (!n. (((BIT0 m) EXP (BIT1 n)) = ((BIT0 m) * (((BIT0 m) EXP n) * ((BIT0 m) EXP n)))))) /\ (!m. (!n. (((BIT1 m) EXP (BIT1 n)) = ((BIT1 m) * (((BIT1 m) EXP n) * ((BIT1 m) EXP n))))))))
+T c= ! ! c= cEXP cBIT1 b0 cBIT1 b1 c* cBIT1 b0 c* cEXP cBIT1 b0 b1 cEXP cBIT1 b0 b1 c/\ ! ! c= cEXP cBIT0 b0 cBIT1 b1 c* cBIT0 b0 c* cEXP cBIT0 b0 b1 cEXP cBIT0 b0 b1 ! ! c= cEXP cBIT1 b0 cBIT1 b1 c* cBIT1 b0 c* cEXP cBIT1 b0 b1 cEXP cBIT1 b0 b1
+- |- (((!n. (((BIT1 _0) * n) = n)) ==> ((\n. (((BIT1 _0) * n) = n)) n)) = ((\n. (((BIT1 _0) * n) = n)) n))
+T c= c==> ! c= c* cBIT1 c_0 b0 b0 * / c= c* cBIT1 c_0 b0 b0 f0 * / c= c* cBIT1 c_0 b0 b0 f0
+- |- ((!m. ((m * (BIT1 _0)) = m)) /\ ((!m. (!n. (((SUC m) * n) = ((m * n) + n)))) /\ (!m. (!n. ((m * (SUC n)) = (m + (m * n)))))))
+T c/\ ! c= c* b0 cBIT1 c_0 b0 c/\ ! ! c= c* cSUC b0 b1 c+ c* b0 b1 b1 ! ! c= c* b0 cSUC b1 c+ b0 c* b0 b1
+- |- (T = ((_0 EXP (SUC (n + n))) = _0))
+T c= cT c= cEXP c_0 cSUC c+ f0 f0 c_0
++ |- (((!m. (!n. (!p. ((m EXP (n + p)) = ((m EXP n) * (m EXP p)))))) ==> ((\m. (!n. (!p. ((m EXP (n + p)) = ((m EXP n) * (m EXP p)))))) m)) = ((\m. (!n. (!p. ((m EXP (n + p)) = ((m EXP n) * (m EXP p)))))) m))
+T c= c==> ! ! ! c= cEXP b0 c+ b1 b2 c* cEXP b0 b1 cEXP b0 b2 * / ! ! c= cEXP b0 c+ b1 b2 c* cEXP b0 b1 cEXP b0 b2 f0 * / ! ! c= cEXP b0 c+ b1 b2 c* cEXP b0 b1 cEXP b0 b2 f0
++ |- (!n. ((_0 EXP (BIT0 n)) = ((_0 EXP n) * (_0 EXP n))))
+T c= cEXP c_0 cBIT0 f0 c* cEXP c_0 f0 cEXP c_0 f0
++ |- (((_0 EXP (BIT1 n)) = _0) = T)
+T c= c= cEXP c_0 cBIT1 f0 c_0 cT
+- |- (((!m. ((m * (BIT1 _0)) = m)) ==> ((\m. ((m * (BIT1 _0)) = m)) m)) = ((\m. ((m * (BIT1 _0)) = m)) m))
+T c= c==> ! c= c* b0 cBIT1 c_0 b0 * / c= c* b0 cBIT1 c_0 b0 f0 * / c= c* b0 cBIT1 c_0 b0 f0
++ |- ((!n. (((BIT0 m) EXP (BIT1 n)) = ((BIT0 m) * (((BIT0 m) EXP n) * ((BIT0 m) EXP n))))) = T)
+T c= ! c= cEXP cBIT0 f0 cBIT1 b0 c* cBIT0 f0 c* cEXP cBIT0 f0 b0 cEXP cBIT0 f0 b0 cT
+- |- (T = (((BIT1 m) EXP (SUC (n + n))) = ((BIT1 m) * (((BIT1 m) EXP n) * ((BIT1 m) EXP n)))))
+T c= cT c= cEXP cBIT1 f0 cSUC c+ f1 f1 c* cBIT1 f0 c* cEXP cBIT1 f0 f1 cEXP cBIT1 f0 f1
++ |- ((!n. ((_0 EXP (BIT0 n)) = ((_0 EXP n) * (_0 EXP n)))) /\ ((!m. (!n. (((BIT0 m) EXP (BIT0 n)) = (((BIT0 m) EXP n) * ((BIT0 m) EXP n))))) /\ ((!m. (!n. (((BIT1 m) EXP (BIT0 n)) = (((BIT1 m) EXP n) * ((BIT1 m) EXP n))))) /\ ((!n. ((_0 EXP (BIT1 n)) = _0)) /\ ((!m. (!n. (((BIT0 m) EXP (BIT1 n)) = ((BIT0 m) * (((BIT0 m) EXP n) * ((BIT0 m) EXP n)))))) /\ (!m. (!n. (((BIT1 m) EXP (BIT1 n)) = ((BIT1 m) * (((BIT1 m) EXP n) * ((BIT1 m) EXP n)))))))))))
+T c/\ ! c= cEXP c_0 cBIT0 b0 c* cEXP c_0 b0 cEXP c_0 b0 c/\ ! ! c= cEXP cBIT0 b0 cBIT0 b1 c* cEXP cBIT0 b0 b1 cEXP cBIT0 b0 b1 c/\ ! ! c= cEXP cBIT1 b0 cBIT0 b1 c* cEXP cBIT1 b0 b1 cEXP cBIT1 b0 b1 c/\ ! c= cEXP c_0 cBIT1 b0 c_0 c/\ ! ! c= cEXP cBIT0 b0 cBIT1 b1 c* cBIT0 b0 c* cEXP cBIT0 b0 b1 cEXP cBIT0 b0 b1 ! ! c= cEXP cBIT1 b0 cBIT1 b1 c* cBIT1 b0 c* cEXP cBIT1 b0 b1 cEXP cBIT1 b0 b1
+- |- ((m * _0) = _0)
+T c= c* f0 c_0 c_0
++ |- ((\m. (!n. ((m EXP (SUC n)) = (m * (m EXP n))))) m)
+T * / ! c= cEXP b0 cSUC b1 c* b0 cEXP b0 b1 f0
+- |- ((\m. (!n. ((m * (SUC n)) = (m + (m * n))))) m)
+T * / ! c= c* b0 cSUC b1 c+ b0 c* b0 b1 f0
++ |- ((!m. (!n. (((BIT0 m) EXP (BIT1 n)) = ((BIT0 m) * (((BIT0 m) EXP n) * ((BIT0 m) EXP n)))))) /\ (!m. (!n. (((BIT1 m) EXP (BIT1 n)) = ((BIT1 m) * (((BIT1 m) EXP n) * ((BIT1 m) EXP n)))))))
+T c/\ ! ! c= cEXP cBIT0 b0 cBIT1 b1 c* cBIT0 b0 c* cEXP cBIT0 b0 b1 cEXP cBIT0 b0 b1 ! ! c= cEXP cBIT1 b0 cBIT1 b1 c* cBIT1 b0 c* cEXP cBIT1 b0 b1 cEXP cBIT1 b0 b1
+- |- ((\n. (((BIT1 _0) * n) = n)) n)
+T * / c= c* cBIT1 c_0 b0 b0 f0
++ |- ((\n. ((BIT0 n) = (n + n))) n)
+T * / c= cBIT0 b0 c+ b0 b0 f0
+- |- (T = ((_0 EXP _0) = (BIT1 _0)))
+T c= cT c= cEXP c_0 c_0 cBIT1 c_0
++ |- (((!n. ((_0 EXP (BIT0 n)) = ((_0 EXP n) * (_0 EXP n)))) /\ ((!m. (!n. (((BIT0 m) EXP (BIT0 n)) = (((BIT0 m) EXP n) * ((BIT0 m) EXP n))))) /\ ((!m. (!n. (((BIT1 m) EXP (BIT0 n)) = (((BIT1 m) EXP n) * ((BIT1 m) EXP n))))) /\ ((!n. ((_0 EXP (BIT1 n)) = _0)) /\ ((!m. (!n. (((BIT0 m) EXP (BIT1 n)) = ((BIT0 m) * (((BIT0 m) EXP n) * ((BIT0 m) EXP n)))))) /\ (!m. (!n. (((BIT1 m) EXP (BIT1 n)) = ((BIT1 m) * (((BIT1 m) EXP n) * ((BIT1 m) EXP n))))))))))) = ((!m. (((BIT1 m) EXP _0) = (BIT1 _0))) /\ ((!n. ((_0 EXP (BIT0 n)) = ((_0 EXP n) * (_0 EXP n)))) /\ ((!m. (!n. (((BIT0 m) EXP (BIT0 n)) = (((BIT0 m) EXP n) * ((BIT0 m) EXP n))))) /\ ((!m. (!n. (((BIT1 m) EXP (BIT0 n)) = (((BIT1 m) EXP n) * ((BIT1 m) EXP n))))) /\ ((!n. ((_0 EXP (BIT1 n)) = _0)) /\ ((!m. (!n. (((BIT0 m) EXP (BIT1 n)) = ((BIT0 m) * (((BIT0 m) EXP n) * ((BIT0 m) EXP n)))))) /\ (!m. (!n. (((BIT1 m) EXP (BIT1 n)) = ((BIT1 m) * (((BIT1 m) EXP n) * ((BIT1 m) EXP n)))))))))))))
+T c= c/\ ! c= cEXP c_0 cBIT0 b0 c* cEXP c_0 b0 cEXP c_0 b0 c/\ ! ! c= cEXP cBIT0 b0 cBIT0 b1 c* cEXP cBIT0 b0 b1 cEXP cBIT0 b0 b1 c/\ ! ! c= cEXP cBIT1 b0 cBIT0 b1 c* cEXP cBIT1 b0 b1 cEXP cBIT1 b0 b1 c/\ ! c= cEXP c_0 cBIT1 b0 c_0 c/\ ! ! c= cEXP cBIT0 b0 cBIT1 b1 c* cBIT0 b0 c* cEXP cBIT0 b0 b1 cEXP cBIT0 b0 b1 ! ! c= cEXP cBIT1 b0 cBIT1 b1 c* cBIT1 b0 c* cEXP cBIT1 b0 b1 cEXP cBIT1 b0 b1 c/\ ! c= cEXP cBIT1 b0 c_0 cBIT1 c_0 c/\ ! c= cEXP c_0 cBIT0 b0 c* cEXP c_0 b0 cEXP c_0 b0 c/\ ! ! c= cEXP cBIT0 b0 cBIT0 b1 c* cEXP cBIT0 b0 b1 cEXP cBIT0 b0 b1 c/\ ! ! c= cEXP cBIT1 b0 cBIT0 b1 c* cEXP cBIT1 b0 b1 cEXP cBIT1 b0 b1 c/\ ! c= cEXP c_0 cBIT1 b0 c_0 c/\ ! ! c= cEXP cBIT0 b0 cBIT1 b1 c* cBIT0 b0 c* cEXP cBIT0 b0 b1 cEXP cBIT0 b0 b1 ! ! c= cEXP cBIT1 b0 cBIT1 b1 c* cBIT1 b0 c* cEXP cBIT1 b0 b1 cEXP cBIT1 b0 b1
++ |- ((!m. ((m EXP _0) = (BIT1 _0))) /\ (!m. (!n. ((m EXP (SUC n)) = (m * (m EXP n))))))
+T c/\ ! c= cEXP b0 c_0 cBIT1 c_0 ! ! c= cEXP b0 cSUC b1 c* b0 cEXP b0 b1
++ |- (((!n. ((_0 EXP (BIT1 n)) = _0)) /\ ((!m. (!n. (((BIT0 m) EXP (BIT1 n)) = ((BIT0 m) * (((BIT0 m) EXP n) * ((BIT0 m) EXP n)))))) /\ (!m. (!n. (((BIT1 m) EXP (BIT1 n)) = ((BIT1 m) * (((BIT1 m) EXP n) * ((BIT1 m) EXP n)))))))) = ((!m. (!n. (((BIT1 m) EXP (BIT0 n)) = (((BIT1 m) EXP n) * ((BIT1 m) EXP n))))) /\ ((!n. ((_0 EXP (BIT1 n)) = _0)) /\ ((!m. (!n. (((BIT0 m) EXP (BIT1 n)) = ((BIT0 m) * (((BIT0 m) EXP n) * ((BIT0 m) EXP n)))))) /\ (!m. (!n. (((BIT1 m) EXP (BIT1 n)) = ((BIT1 m) * (((BIT1 m) EXP n) * ((BIT1 m) EXP n))))))))))
+T c= c/\ ! c= cEXP c_0 cBIT1 b0 c_0 c/\ ! ! c= cEXP cBIT0 b0 cBIT1 b1 c* cBIT0 b0 c* cEXP cBIT0 b0 b1 cEXP cBIT0 b0 b1 ! ! c= cEXP cBIT1 b0 cBIT1 b1 c* cBIT1 b0 c* cEXP cBIT1 b0 b1 cEXP cBIT1 b0 b1 c/\ ! ! c= cEXP cBIT1 b0 cBIT0 b1 c* cEXP cBIT1 b0 b1 cEXP cBIT1 b0 b1 c/\ ! c= cEXP c_0 cBIT1 b0 c_0 c/\ ! ! c= cEXP cBIT0 b0 cBIT1 b1 c* cBIT0 b0 c* cEXP cBIT0 b0 b1 cEXP cBIT0 b0 b1 ! ! c= cEXP cBIT1 b0 cBIT1 b1 c* cBIT1 b0 c* cEXP cBIT1 b0 b1 cEXP cBIT1 b0 b1
++ |- ((((BIT1 m) EXP (n + n)) = (((BIT1 m) EXP n) * ((BIT1 m) EXP n))) = (((BIT1 m) EXP (BIT0 n)) = (((BIT1 m) EXP n) * ((BIT1 m) EXP n))))
+T c= c= cEXP cBIT1 f0 c+ f1 f1 c* cEXP cBIT1 f0 f1 cEXP cBIT1 f0 f1 c= cEXP cBIT1 f0 cBIT0 f1 c* cEXP cBIT1 f0 f1 cEXP cBIT1 f0 f1
++ |- ((!n. t) = t)
+T c= ! f0 f0
++ |- (((_0 EXP (BIT0 n)) = ((_0 EXP n) * (_0 EXP n))) = T)
+T c= c= cEXP c_0 cBIT0 f0 c* cEXP c_0 f0 cEXP c_0 f0 cT
++ |- ((((BIT0 m) EXP (BIT0 n)) = (((BIT0 m) EXP n) * ((BIT0 m) EXP n))) = T)
+T c= c= cEXP cBIT0 f0 cBIT0 f1 c* cEXP cBIT0 f0 f1 cEXP cBIT0 f0 f1 cT
++ |- ((((BIT1 m) EXP (BIT0 n)) = (((BIT1 m) EXP n) * ((BIT1 m) EXP n))) = T)
+T c= c= cEXP cBIT1 f0 cBIT0 f1 c* cEXP cBIT1 f0 f1 cEXP cBIT1 f0 f1 cT
++ |- ((\n. ((m EXP (SUC n)) = (m * (m EXP n)))) n)
+T * / c= cEXP f0 cSUC b0 c* f0 cEXP f0 b0 f1
++ |- ((!n. ((_0 EXP (BIT1 n)) = _0)) /\ ((!m. (!n. (((BIT0 m) EXP (BIT1 n)) = ((BIT0 m) * (((BIT0 m) EXP n) * ((BIT0 m) EXP n)))))) /\ (!m. (!n. (((BIT1 m) EXP (BIT1 n)) = ((BIT1 m) * (((BIT1 m) EXP n) * ((BIT1 m) EXP n))))))))
+T c/\ ! c= cEXP c_0 cBIT1 b0 c_0 c/\ ! ! c= cEXP cBIT0 b0 cBIT1 b1 c* cBIT0 b0 c* cEXP cBIT0 b0 b1 cEXP cBIT0 b0 b1 ! ! c= cEXP cBIT1 b0 cBIT1 b1 c* cBIT1 b0 c* cEXP cBIT1 b0 b1 cEXP cBIT1 b0 b1
+- |- (((!n. (((SUC m) * n) = ((m * n) + n))) ==> ((\n. (((SUC m) * n) = ((m * n) + n))) n)) = ((\n. (((SUC m) * n) = ((m * n) + n))) n))
+T c= c==> ! c= c* cSUC f0 b0 c+ c* f0 b0 b0 * / c= c* cSUC f0 b0 c+ c* f0 b0 b0 f1 * / c= c* cSUC f0 b0 c+ c* f0 b0 b0 f1
+- |- (T = (((BIT1 m) EXP _0) = (BIT1 _0)))
+T c= cT c= cEXP cBIT1 f0 c_0 cBIT1 c_0
++ |- ((((_0 EXP _0) = (BIT1 _0)) /\ ((!m. (((BIT0 m) EXP _0) = (BIT1 _0))) /\ ((!m. (((BIT1 m) EXP _0) = (BIT1 _0))) /\ ((!n. ((_0 EXP (BIT0 n)) = ((_0 EXP n) * (_0 EXP n)))) /\ ((!m. (!n. (((BIT0 m) EXP (BIT0 n)) = (((BIT0 m) EXP n) * ((BIT0 m) EXP n))))) /\ ((!m. (!n. (((BIT1 m) EXP (BIT0 n)) = (((BIT1 m) EXP n) * ((BIT1 m) EXP n))))) /\ ((!n. ((_0 EXP (BIT1 n)) = _0)) /\ ((!m. (!n. (((BIT0 m) EXP (BIT1 n)) = ((BIT0 m) * (((BIT0 m) EXP n) * ((BIT0 m) EXP n)))))) /\ (!m. (!n. (((BIT1 m) EXP (BIT1 n)) = ((BIT1 m) * (((BIT1 m) EXP n) * ((BIT1 m) EXP n)))))))))))))) = ((!m. (!n. (((NUMERAL m) EXP (NUMERAL n)) = (NUMERAL (m EXP n))))) /\ (((_0 EXP _0) = (BIT1 _0)) /\ ((!m. (((BIT0 m) EXP _0) = (BIT1 _0))) /\ ((!m. (((BIT1 m) EXP _0) = (BIT1 _0))) /\ ((!n. ((_0 EXP (BIT0 n)) = ((_0 EXP n) * (_0 EXP n)))) /\ ((!m. (!n. (((BIT0 m) EXP (BIT0 n)) = (((BIT0 m) EXP n) * ((BIT0 m) EXP n))))) /\ ((!m. (!n. (((BIT1 m) EXP (BIT0 n)) = (((BIT1 m) EXP n) * ((BIT1 m) EXP n))))) /\ ((!n. ((_0 EXP (BIT1 n)) = _0)) /\ ((!m. (!n. (((BIT0 m) EXP (BIT1 n)) = ((BIT0 m) * (((BIT0 m) EXP n) * ((BIT0 m) EXP n)))))) /\ (!m. (!n. (((BIT1 m) EXP (BIT1 n)) = ((BIT1 m) * (((BIT1 m) EXP n) * ((BIT1 m) EXP n))))))))))))))))
+T c= c/\ c= cEXP c_0 c_0 cBIT1 c_0 c/\ ! c= cEXP cBIT0 b0 c_0 cBIT1 c_0 c/\ ! c= cEXP cBIT1 b0 c_0 cBIT1 c_0 c/\ ! c= cEXP c_0 cBIT0 b0 c* cEXP c_0 b0 cEXP c_0 b0 c/\ ! ! c= cEXP cBIT0 b0 cBIT0 b1 c* cEXP cBIT0 b0 b1 cEXP cBIT0 b0 b1 c/\ ! ! c= cEXP cBIT1 b0 cBIT0 b1 c* cEXP cBIT1 b0 b1 cEXP cBIT1 b0 b1 c/\ ! c= cEXP c_0 cBIT1 b0 c_0 c/\ ! ! c= cEXP cBIT0 b0 cBIT1 b1 c* cBIT0 b0 c* cEXP cBIT0 b0 b1 cEXP cBIT0 b0 b1 ! ! c= cEXP cBIT1 b0 cBIT1 b1 c* cBIT1 b0 c* cEXP cBIT1 b0 b1 cEXP cBIT1 b0 b1 c/\ ! ! c= cEXP cNUMERAL b0 cNUMERAL b1 cNUMERAL cEXP b0 b1 c/\ c= cEXP c_0 c_0 cBIT1 c_0 c/\ ! c= cEXP cBIT0 b0 c_0 cBIT1 c_0 c/\ ! c= cEXP cBIT1 b0 c_0 cBIT1 c_0 c/\ ! c= cEXP c_0 cBIT0 b0 c* cEXP c_0 b0 cEXP c_0 b0 c/\ ! ! c= cEXP cBIT0 b0 cBIT0 b1 c* cEXP cBIT0 b0 b1 cEXP cBIT0 b0 b1 c/\ ! ! c= cEXP cBIT1 b0 cBIT0 b1 c* cEXP cBIT1 b0 b1 cEXP cBIT1 b0 b1 c/\ ! c= cEXP c_0 cBIT1 b0 c_0 c/\ ! ! c= cEXP cBIT0 b0 cBIT1 b1 c* cBIT0 b0 c* cEXP cBIT0 b0 b1 cEXP cBIT0 b0 b1 ! ! c= cEXP cBIT1 b0 cBIT1 b1 c* cBIT1 b0 c* cEXP cBIT1 b0 b1 cEXP cBIT1 b0 b1
++ |- (((!m. (!n. ((m EXP (SUC n)) = (m * (m EXP n))))) ==> ((\m. (!n. ((m EXP (SUC n)) = (m * (m EXP n))))) m)) = ((\m. (!n. ((m EXP (SUC n)) = (m * (m EXP n))))) m))
+T c= c==> ! ! c= cEXP b0 cSUC b1 c* b0 cEXP b0 b1 * / ! c= cEXP b0 cSUC b1 c* b0 cEXP b0 b1 f0 * / ! c= cEXP b0 cSUC b1 c* b0 cEXP b0 b1 f0
++ |- ((\p. ((m EXP (n + p)) = ((m EXP n) * (m EXP p)))) p)
+T * / c= cEXP f0 c+ f1 b0 c* cEXP f0 f1 cEXP f0 b0 f2
+- |- (T = ((_0 EXP (n + n)) = ((_0 EXP n) * (_0 EXP n))))
+T c= cT c= cEXP c_0 c+ f0 f0 c* cEXP c_0 f0 cEXP c_0 f0
+- |- ((\m. (!n. (((SUC m) * n) = ((m * n) + n)))) m)
+T * / ! c= c* cSUC b0 b1 c+ c* b0 b1 b1 f0
++ |- (((_0 EXP _0) = (BIT1 _0)) /\ ((!m. (((BIT0 m) EXP _0) = (BIT1 _0))) /\ ((!m. (((BIT1 m) EXP _0) = (BIT1 _0))) /\ ((!n. ((_0 EXP (BIT0 n)) = ((_0 EXP n) * (_0 EXP n)))) /\ ((!m. (!n. (((BIT0 m) EXP (BIT0 n)) = (((BIT0 m) EXP n) * ((BIT0 m) EXP n))))) /\ ((!m. (!n. (((BIT1 m) EXP (BIT0 n)) = (((BIT1 m) EXP n) * ((BIT1 m) EXP n))))) /\ ((!n. ((_0 EXP (BIT1 n)) = _0)) /\ ((!m. (!n. (((BIT0 m) EXP (BIT1 n)) = ((BIT0 m) * (((BIT0 m) EXP n) * ((BIT0 m) EXP n)))))) /\ (!m. (!n. (((BIT1 m) EXP (BIT1 n)) = ((BIT1 m) * (((BIT1 m) EXP n) * ((BIT1 m) EXP n))))))))))))))
+T c/\ c= cEXP c_0 c_0 cBIT1 c_0 c/\ ! c= cEXP cBIT0 b0 c_0 cBIT1 c_0 c/\ ! c= cEXP cBIT1 b0 c_0 cBIT1 c_0 c/\ ! c= cEXP c_0 cBIT0 b0 c* cEXP c_0 b0 cEXP c_0 b0 c/\ ! ! c= cEXP cBIT0 b0 cBIT0 b1 c* cEXP cBIT0 b0 b1 cEXP cBIT0 b0 b1 c/\ ! ! c= cEXP cBIT1 b0 cBIT0 b1 c* cEXP cBIT1 b0 b1 cEXP cBIT1 b0 b1 c/\ ! c= cEXP c_0 cBIT1 b0 c_0 c/\ ! ! c= cEXP cBIT0 b0 cBIT1 b1 c* cBIT0 b0 c* cEXP cBIT0 b0 b1 cEXP cBIT0 b0 b1 ! ! c= cEXP cBIT1 b0 cBIT1 b1 c* cBIT1 b0 c* cEXP cBIT1 b0 b1 cEXP cBIT1 b0 b1
++ |- ((((BIT1 m) EXP (BIT1 n)) = ((BIT1 m) * (((BIT1 m) EXP n) * ((BIT1 m) EXP n)))) = T)
+T c= c= cEXP cBIT1 f0 cBIT1 f1 c* cBIT1 f0 c* cEXP cBIT1 f0 f1 cEXP cBIT1 f0 f1 cT
++ |- (((_0 EXP (n + n)) = ((_0 EXP n) * (_0 EXP n))) = ((_0 EXP (BIT0 n)) = ((_0 EXP n) * (_0 EXP n))))
+T c= c= cEXP c_0 c+ f0 f0 c* cEXP c_0 f0 cEXP c_0 f0 c= cEXP c_0 cBIT0 f0 c* cEXP c_0 f0 cEXP c_0 f0
++ |- (!n. ((_0 EXP (BIT1 n)) = _0))
+T c= cEXP c_0 cBIT1 f0 c_0
+- |- (((!m. (!n. ((m * (SUC n)) = (m + (m * n))))) ==> ((\m. (!n. ((m * (SUC n)) = (m + (m * n))))) m)) = ((\m. (!n. ((m * (SUC n)) = (m + (m * n))))) m))
+T c= c==> ! ! c= c* b0 cSUC b1 c+ b0 c* b0 b1 * / ! c= c* b0 cSUC b1 c+ b0 c* b0 b1 f0 * / ! c= c* b0 cSUC b1 c+ b0 c* b0 b1 f0
+- |- ((\m. ((m * _0) = _0)) m)
+T * / c= c* b0 c_0 c_0 f0
++ |- (((!m. (!n. (((BIT0 m) EXP (BIT0 n)) = (((BIT0 m) EXP n) * ((BIT0 m) EXP n))))) /\ ((!m. (!n. (((BIT1 m) EXP (BIT0 n)) = (((BIT1 m) EXP n) * ((BIT1 m) EXP n))))) /\ ((!n. ((_0 EXP (BIT1 n)) = _0)) /\ ((!m. (!n. (((BIT0 m) EXP (BIT1 n)) = ((BIT0 m) * (((BIT0 m) EXP n) * ((BIT0 m) EXP n)))))) /\ (!m. (!n. (((BIT1 m) EXP (BIT1 n)) = ((BIT1 m) * (((BIT1 m) EXP n) * ((BIT1 m) EXP n)))))))))) = ((!n. ((_0 EXP (BIT0 n)) = ((_0 EXP n) * (_0 EXP n)))) /\ ((!m. (!n. (((BIT0 m) EXP (BIT0 n)) = (((BIT0 m) EXP n) * ((BIT0 m) EXP n))))) /\ ((!m. (!n. (((BIT1 m) EXP (BIT0 n)) = (((BIT1 m) EXP n) * ((BIT1 m) EXP n))))) /\ ((!n. ((_0 EXP (BIT1 n)) = _0)) /\ ((!m. (!n. (((BIT0 m) EXP (BIT1 n)) = ((BIT0 m) * (((BIT0 m) EXP n) * ((BIT0 m) EXP n)))))) /\ (!m. (!n. (((BIT1 m) EXP (BIT1 n)) = ((BIT1 m) * (((BIT1 m) EXP n) * ((BIT1 m) EXP n))))))))))))
+T c= c/\ ! ! c= cEXP cBIT0 b0 cBIT0 b1 c* cEXP cBIT0 b0 b1 cEXP cBIT0 b0 b1 c/\ ! ! c= cEXP cBIT1 b0 cBIT0 b1 c* cEXP cBIT1 b0 b1 cEXP cBIT1 b0 b1 c/\ ! c= cEXP c_0 cBIT1 b0 c_0 c/\ ! ! c= cEXP cBIT0 b0 cBIT1 b1 c* cBIT0 b0 c* cEXP cBIT0 b0 b1 cEXP cBIT0 b0 b1 ! ! c= cEXP cBIT1 b0 cBIT1 b1 c* cBIT1 b0 c* cEXP cBIT1 b0 b1 cEXP cBIT1 b0 b1 c/\ ! c= cEXP c_0 cBIT0 b0 c* cEXP c_0 b0 cEXP c_0 b0 c/\ ! ! c= cEXP cBIT0 b0 cBIT0 b1 c* cEXP cBIT0 b0 b1 cEXP cBIT0 b0 b1 c/\ ! ! c= cEXP cBIT1 b0 cBIT0 b1 c* cEXP cBIT1 b0 b1 cEXP cBIT1 b0 b1 c/\ ! c= cEXP c_0 cBIT1 b0 c_0 c/\ ! ! c= cEXP cBIT0 b0 cBIT1 b1 c* cBIT0 b0 c* cEXP cBIT0 b0 b1 cEXP cBIT0 b0 b1 ! ! c= cEXP cBIT1 b0 cBIT1 b1 c* cBIT1 b0 c* cEXP cBIT1 b0 b1 cEXP cBIT1 b0 b1
++ |- ((\n. (!p. ((m EXP (n + p)) = ((m EXP n) * (m EXP p))))) n)
+T * / ! c= cEXP f0 c+ b0 b1 c* cEXP f0 b0 cEXP f0 b1 f1
++ |- (((!p. ((m EXP (n + p)) = ((m EXP n) * (m EXP p)))) ==> ((\p. ((m EXP (n + p)) = ((m EXP n) * (m EXP p)))) p)) = ((\p. ((m EXP (n + p)) = ((m EXP n) * (m EXP p)))) p))
+T c= c==> ! c= cEXP f0 c+ f1 b0 c* cEXP f0 f1 cEXP f0 b0 * / c= cEXP f0 c+ f1 b0 c* cEXP f0 f1 cEXP f0 b0 f2 * / c= cEXP f0 c+ f1 b0 c* cEXP f0 f1 cEXP f0 b0 f2
++ |- (((!n. ((BIT1 n) = (SUC (n + n)))) ==> ((\n. ((BIT1 n) = (SUC (n + n)))) n)) = ((\n. ((BIT1 n) = (SUC (n + n)))) n))
+T c= c==> ! c= cBIT1 b0 cSUC c+ b0 b0 * / c= cBIT1 b0 cSUC c+ b0 b0 f0 * / c= cBIT1 b0 cSUC c+ b0 b0 f0
++ |- (((!n. ((_0 * n) = _0)) ==> ((\n. ((_0 * n) = _0)) n)) = ((\n. ((_0 * n) = _0)) n))
+T c= c==> ! c= c* c_0 b0 c_0 * / c= c* c_0 b0 c_0 f0 * / c= c* c_0 b0 c_0 f0
++ |- ((x = x) = T)
+T c= c= f0 f0 cT
+- |- (T = (((BIT1 m) EXP (n + n)) = (((BIT1 m) EXP n) * ((BIT1 m) EXP n))))
+T c= cT c= cEXP cBIT1 f0 c+ f1 f1 c* cEXP cBIT1 f0 f1 cEXP cBIT1 f0 f1
++ |- (((!m. (!n. (((BIT0 m) EXP (BIT1 n)) = ((BIT0 m) * (((BIT0 m) EXP n) * ((BIT0 m) EXP n)))))) /\ (!m. (!n. (((BIT1 m) EXP (BIT1 n)) = ((BIT1 m) * (((BIT1 m) EXP n) * ((BIT1 m) EXP n))))))) = ((!n. ((_0 EXP (BIT1 n)) = _0)) /\ ((!m. (!n. (((BIT0 m) EXP (BIT1 n)) = ((BIT0 m) * (((BIT0 m) EXP n) * ((BIT0 m) EXP n)))))) /\ (!m. (!n. (((BIT1 m) EXP (BIT1 n)) = ((BIT1 m) * (((BIT1 m) EXP n) * ((BIT1 m) EXP n)))))))))
+T c= c/\ ! ! c= cEXP cBIT0 b0 cBIT1 b1 c* cBIT0 b0 c* cEXP cBIT0 b0 b1 cEXP cBIT0 b0 b1 ! ! c= cEXP cBIT1 b0 cBIT1 b1 c* cBIT1 b0 c* cEXP cBIT1 b0 b1 cEXP cBIT1 b0 b1 c/\ ! c= cEXP c_0 cBIT1 b0 c_0 c/\ ! ! c= cEXP cBIT0 b0 cBIT1 b1 c* cBIT0 b0 c* cEXP cBIT0 b0 b1 cEXP cBIT0 b0 b1 ! ! c= cEXP cBIT1 b0 cBIT1 b1 c* cBIT1 b0 c* cEXP cBIT1 b0 b1 cEXP cBIT1 b0 b1
++ |- (!m. (!n. (((BIT0 m) EXP (BIT1 n)) = ((BIT0 m) * (((BIT0 m) EXP n) * ((BIT0 m) EXP n))))))
+T c= cEXP cBIT0 f0 cBIT1 f1 c* cBIT0 f0 c* cEXP cBIT0 f0 f1 cEXP cBIT0 f0 f1
+- |- ((\n. ((NUMERAL n) = n)) n)
+T * / c= cNUMERAL b0 b0 f0
+- |- ((\n. ((m * (SUC n)) = (m + (m * n)))) n)
+T * / c= c* f0 cSUC b0 c+ f0 c* f0 b0 f1
+- |- ((!n. (((BIT1 _0) * n) = n)) /\ ((!m. ((m * (BIT1 _0)) = m)) /\ ((!m. (!n. (((SUC m) * n) = ((m * n) + n)))) /\ (!m. (!n. ((m * (SUC n)) = (m + (m * n))))))))
+T c/\ ! c= c* cBIT1 c_0 b0 b0 c/\ ! c= c* b0 cBIT1 c_0 b0 c/\ ! ! c= c* cSUC b0 b1 c+ c* b0 b1 b1 ! ! c= c* b0 cSUC b1 c+ b0 c* b0 b1
+- |- (((!m. (!n. (((SUC m) * n) = ((m * n) + n)))) ==> ((\m. (!n. (((SUC m) * n) = ((m * n) + n)))) m)) = ((\m. (!n. (((SUC m) * n) = ((m * n) + n)))) m))
+T c= c==> ! ! c= c* cSUC b0 b1 c+ c* b0 b1 b1 * / ! c= c* cSUC b0 b1 c+ c* b0 b1 b1 f0 * / ! c= c* cSUC b0 b1 c+ c* b0 b1 b1 f0
+- |- (((!m. ((m * _0) = _0)) ==> ((\m. ((m * _0) = _0)) m)) = ((\m. ((m * _0) = _0)) m))
+T c= c==> ! c= c* b0 c_0 c_0 * / c= c* b0 c_0 c_0 f0 * / c= c* b0 c_0 c_0 f0
+- |- ((t /\ t) = t)
+T c= c/\ f0 f0 f0
+- |- (T = (((BIT0 m) EXP (SUC (n + n))) = ((BIT0 m) * (((BIT0 m) EXP n) * ((BIT0 m) EXP n)))))
+T c= cT c= cEXP cBIT0 f0 cSUC c+ f1 f1 c* cBIT0 f0 c* cEXP cBIT0 f0 f1 cEXP cBIT0 f0 f1
+- |- (((SUC m) * n) = ((m * n) + n))
+T c= c* cSUC f0 f1 c+ c* f0 f1 f1
+- |- ((!m. (!n. (((SUC m) * n) = ((m * n) + n)))) /\ (!m. (!n. ((m * (SUC n)) = (m + (m * n))))))
+T c/\ ! ! c= c* cSUC b0 b1 c+ c* b0 b1 b1 ! ! c= c* b0 cSUC b1 c+ b0 c* b0 b1
+- |- ((\m. ((m * (BIT1 _0)) = m)) m)
+T * / c= c* b0 cBIT1 c_0 b0 f0
+- |- ((!m. ((m * _0) = _0)) /\ ((!n. (((BIT1 _0) * n) = n)) /\ ((!m. ((m * (BIT1 _0)) = m)) /\ ((!m. (!n. (((SUC m) * n) = ((m * n) + n)))) /\ (!m. (!n. ((m * (SUC n)) = (m + (m * n)))))))))
+T c/\ ! c= c* b0 c_0 c_0 c/\ ! c= c* cBIT1 c_0 b0 b0 c/\ ! c= c* b0 cBIT1 c_0 b0 c/\ ! ! c= c* cSUC b0 b1 c+ c* b0 b1 b1 ! ! c= c* b0 cSUC b1 c+ b0 c* b0 b1
+- |- (T = (((BIT0 m) EXP _0) = (BIT1 _0)))
+T c= cT c= cEXP cBIT0 f0 c_0 cBIT1 c_0
+- |- ((m * (SUC n)) = (m + (m * n)))
+T c= c* f0 cSUC f1 c+ f0 c* f0 f1
+- |- ((\n. (((SUC m) * n) = ((m * n) + n))) n)
+T * / c= c* cSUC f0 b0 c+ c* f0 b0 b0 f1
+- |- (T = (((BIT0 m) EXP (n + n)) = (((BIT0 m) EXP n) * ((BIT0 m) EXP n))))
+T c= cT c= cEXP cBIT0 f0 c+ f1 f1 c* cEXP cBIT0 f0 f1 cEXP cBIT0 f0 f1
+- |- (((!n. ((m * (SUC n)) = (m + (m * n)))) ==> ((\n. ((m * (SUC n)) = (m + (m * n)))) n)) = ((\n. ((m * (SUC n)) = (m + (m * n)))) n))
+T c= c==> ! c= c* f0 cSUC b0 c+ f0 c* f0 b0 * / c= c* f0 cSUC b0 c+ f0 c* f0 b0 f1 * / c= c* f0 cSUC b0 c+ f0 c* f0 b0 f1
+- |- (((BIT1 _0) * n) = n)
+T c= c* cBIT1 c_0 f0 f0
+- |- ((m * (BIT1 _0)) = m)
+T c= c* f0 cBIT1 c_0 f0
+- |- (((!n. ((NUMERAL n) = n)) ==> ((\n. ((NUMERAL n) = n)) n)) = ((\n. ((NUMERAL n) = n)) n))
+T c= c==> ! c= cNUMERAL b0 b0 * / c= cNUMERAL b0 b0 f0 * / c= cNUMERAL b0 b0 f0

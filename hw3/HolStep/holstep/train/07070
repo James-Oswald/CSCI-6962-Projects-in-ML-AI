@@ -1,0 +1,171 @@
+N COMPONENT_LE_NORM
+C |- (!x. (!i. ((real_le (real_abs (x $ i))) (vector_norm x))))
+T creal_le creal_abs c$ f0 f1 cvector_norm f0
+D TRUTH
+A |- T
+T cT
+D COND_CLAUSES
+A |- (!t1. (!t2. (((((COND T) t1) t2) = t1) /\ ((((COND F) t1) t2) = t2))))
+T c/\ c= cCOND cT f0 f1 f0 c= cCOND cF f0 f1 f1
+D COND_ELIM_THM
+A |- ((P (((COND c) x) y)) = ((c ==> (P x)) /\ ((~ c) ==> (P y))))
+T c= * f0 cCOND f1 f2 f3 c/\ c==> f1 * f0 f2 c==> c~ f1 * f0 f3
+D REAL_LE_REFL
+A |- (!x. ((real_le x) x))
+T creal_le f0 f0
+D real_abs
+A |- (!x. ((real_abs x) = (((COND ((real_le (real_of_num (NUMERAL _0))) x)) x) (real_neg x))))
+T c= creal_abs f0 cCOND creal_le creal_of_num cNUMERAL c_0 f0 f0 creal_neg f0
+D REAL_LE_SQUARE
+A |- (!x. ((real_le (real_of_num (NUMERAL _0))) ((real_mul x) x)))
+T creal_le creal_of_num cNUMERAL c_0 creal_mul f0 f0
+D Float.POW_2
+A |- (!x. (((real_pow x) (NUMERAL (BIT0 (BIT1 _0)))) = ((real_mul x) x)))
+T c= creal_pow f0 cNUMERAL cBIT0 cBIT1 c_0 creal_mul f0 f0
+D REAL_ABS_POW
+A |- (!x. (!n. ((real_abs ((real_pow x) n)) = ((real_pow (real_abs x)) n))))
+T c= creal_abs creal_pow f0 f1 creal_pow creal_abs f0 f1
+D FINITE_NUMSEG
+A |- (!m. (!n. (FINITE (m .. n))))
+T cFINITE * * part c.. f0 f1
+D IN_NUMSEG
+A |- (!m. (!n. (!p. ((p IN (m .. n)) = ((m <= p) /\ (p <= n))))))
+T c= cIN f0 * * part c.. f1 f2 c/\ c<= f1 f0 c<= f0 f2
+D SUM_LE
+A |- (!f. (!g. (!s. (((FINITE s) /\ (!x. ((x IN s) ==> ((real_le (f x)) (g x))))) ==> ((real_le ((sum s) f)) ((sum s) g))))))
+T c==> c/\ cFINITE f0 ! c==> cIN b0 f0 creal_le * f1 b0 * f2 b0 creal_le csum f0 f1 csum f0 f2
+D SUM_DELTA
+A |- (!s. (!a. (((sum s) (\x. (((COND (x = a)) b) (real_of_num (NUMERAL _0))))) = (((COND (a IN s)) b) (real_of_num (NUMERAL _0))))))
+T c= csum f0 / cCOND c= b0 f1 f2 creal_of_num cNUMERAL c_0 cCOND cIN f1 f0 f2 creal_of_num cNUMERAL c_0
+D FINITE_INDEX_INRANGE
+A |- (!i. (?k. (((NUMERAL (BIT1 _0)) <= k) /\ ((k <= (dimindex UNIV)) /\ (!x. ((x $ i) = (x $ k)))))))
+T c? / c/\ c<= cNUMERAL cBIT1 c_0 b0 c/\ c<= b0 cdimindex part cUNIV ! c= c$ b1 f0 c$ b1 b0
+D dot
+A |- (!x. (!y. (((dot x) y) = ((sum ((NUMERAL (BIT1 _0)) .. (dimindex UNIV))) (\i. ((real_mul (x $ i)) (y $ i)))))))
+T c= cdot f0 f1 csum * * part c.. cNUMERAL cBIT1 c_0 cdimindex part cUNIV / creal_mul c$ f0 b0 c$ f1 b0
+D Trigonometry.XHVXJVB
+A |- (!x. ((vector_norm x) = (sqrt ((dot x) x))))
+T c= cvector_norm f0 csqrt cdot f0 f0
+D REAL_LE_RSQRT
+A |- (!x. (!y. (((real_le ((real_pow x) (NUMERAL (BIT0 (BIT1 _0))))) y) ==> ((real_le x) (sqrt y)))))
+T c==> creal_le creal_pow f0 cNUMERAL cBIT0 cBIT1 c_0 f1 creal_le f0 csqrt f1
+- (!x. (!y. (((real_le ((real_pow x) (NUMERAL (BIT0 (BIT1 _0))))) y) ==> ((real_le x) (sqrt y))))) |- (!y. (((real_le ((real_pow x) (NUMERAL (BIT0 (BIT1 _0))))) y) ==> ((real_le x) (sqrt y))))
+T c==> ! ! c==> creal_le creal_pow b0 cNUMERAL cBIT0 cBIT1 c_0 b1 creal_le b0 csqrt b1 ! c==> creal_le creal_pow f0 cNUMERAL cBIT0 cBIT1 c_0 b0 creal_le f0 csqrt b0
+- (!x. (!y. (((real_le ((real_pow x) (NUMERAL (BIT0 (BIT1 _0))))) y) ==> ((real_le x) (sqrt y))))) |- ((!x. (!y. (((real_le ((real_pow x) (NUMERAL (BIT0 (BIT1 _0))))) y) ==> ((real_le x) (sqrt y))))) /\ (!x. (!y. (((real_le ((real_pow x) (NUMERAL (BIT0 (BIT1 _0))))) y) ==> ((real_le x) (sqrt y))))))
+T c==> ! ! c==> creal_le creal_pow b0 cNUMERAL cBIT0 cBIT1 c_0 b1 creal_le b0 csqrt b1 c/\ ! ! c==> creal_le creal_pow b0 cNUMERAL cBIT0 cBIT1 c_0 b1 creal_le b0 csqrt b1 ! ! c==> creal_le creal_pow b0 cNUMERAL cBIT0 cBIT1 c_0 b1 creal_le b0 csqrt b1
++ |- (((!x. (!y. (((real_le ((real_pow x) (NUMERAL (BIT0 (BIT1 _0))))) y) ==> ((real_le x) (sqrt y))))) ==> ((\x. (!y. (((real_le ((real_pow x) (NUMERAL (BIT0 (BIT1 _0))))) y) ==> ((real_le x) (sqrt y))))) x)) = ((\x. (!y. (((real_le ((real_pow x) (NUMERAL (BIT0 (BIT1 _0))))) y) ==> ((real_le x) (sqrt y))))) x))
+T c= c==> ! ! c==> creal_le creal_pow b0 cNUMERAL cBIT0 cBIT1 c_0 b1 creal_le b0 csqrt b1 * / ! c==> creal_le creal_pow b0 cNUMERAL cBIT0 cBIT1 c_0 b1 creal_le b0 csqrt b1 f0 * / ! c==> creal_le creal_pow b0 cNUMERAL cBIT0 cBIT1 c_0 b1 creal_le b0 csqrt b1 f0
++ ((NUMERAL (BIT1 _0)) <= k) |- (((NUMERAL (BIT1 _0)) <= k) = T)
+T c==> c<= cNUMERAL cBIT1 c_0 f0 c= c<= cNUMERAL cBIT1 c_0 f0 cT
++ (k <= (dimindex UNIV)), ((NUMERAL (BIT1 _0)) <= k) |- ((real_le (real_abs ((real_pow (x $ k)) (NUMERAL (BIT0 (BIT1 _0)))))) ((dot x) x))
+T c==> c<= f0 cdimindex part cUNIV c==> c<= cNUMERAL cBIT1 c_0 f0 creal_le creal_abs creal_pow c$ f1 f0 cNUMERAL cBIT0 cBIT1 c_0 cdot f1 f1
++ (k <= (dimindex UNIV)), ((NUMERAL (BIT1 _0)) <= k) |- ((real_le (real_abs (x $ k))) (vector_norm x))
+T c==> c<= f0 cdimindex part cUNIV c==> c<= cNUMERAL cBIT1 c_0 f0 creal_le creal_abs c$ f1 f0 cvector_norm f1
++ (((real_pow (real_abs x)) n) = (real_abs ((real_pow x) n))) |- ((real_abs ((real_pow x) n)) = ((real_pow (real_abs x)) n))
+T c==> c= creal_pow creal_abs f0 f1 creal_abs creal_pow f0 f1 c= creal_abs creal_pow f0 f1 creal_pow creal_abs f0 f1
++ |- ((\x. ((real_abs x) = (((COND ((real_le (real_of_num (NUMERAL _0))) x)) x) (real_neg x)))) x)
+T * / c= creal_abs b0 cCOND creal_le creal_of_num cNUMERAL c_0 b0 b0 creal_neg b0 f0
++ |- (((!s. (!g. (((FINITE s) /\ (!x. ((x IN s) ==> ((real_le (f x)) (g x))))) ==> ((real_le ((sum s) f)) ((sum s) g))))) ==> ((\s. (!g. (((FINITE s) /\ (!x. ((x IN s) ==> ((real_le (f x)) (g x))))) ==> ((real_le ((sum s) f)) ((sum s) g))))) s)) = ((\s. (!g. (((FINITE s) /\ (!x. ((x IN s) ==> ((real_le (f x)) (g x))))) ==> ((real_le ((sum s) f)) ((sum s) g))))) s))
+T c= c==> ! ! c==> c/\ cFINITE b0 ! c==> cIN b2 b0 creal_le * f0 b2 * b1 b2 creal_le csum b0 f0 csum b0 b1 * / ! c==> c/\ cFINITE b0 ! c==> cIN b2 b0 creal_le * f0 b2 * b1 b2 creal_le csum b0 f0 csum b0 b1 f1 * / ! c==> c/\ cFINITE b0 ! c==> cIN b2 b0 creal_le * f0 b2 * b1 b2 creal_le csum b0 f0 csum b0 b1 f1
++ |- (((!s. (!a. (((sum s) (\x. (((COND (x = a)) b) (real_of_num (NUMERAL _0))))) = (((COND (a IN s)) b) (real_of_num (NUMERAL _0)))))) ==> ((\s. (!a. (((sum s) (\x. (((COND (x = a)) b) (real_of_num (NUMERAL _0))))) = (((COND (a IN s)) b) (real_of_num (NUMERAL _0)))))) s)) = ((\s. (!a. (((sum s) (\x. (((COND (x = a)) b) (real_of_num (NUMERAL _0))))) = (((COND (a IN s)) b) (real_of_num (NUMERAL _0)))))) s))
+T c= c==> ! ! c= csum b0 / cCOND c= b2 b1 f0 creal_of_num cNUMERAL c_0 cCOND cIN b1 b0 f0 creal_of_num cNUMERAL c_0 * / ! c= csum b0 / cCOND c= b2 b1 f0 creal_of_num cNUMERAL c_0 cCOND cIN b1 b0 f0 creal_of_num cNUMERAL c_0 f1 * / ! c= csum b0 / cCOND c= b2 b1 f0 creal_of_num cNUMERAL c_0 cCOND cIN b1 b0 f0 creal_of_num cNUMERAL c_0 f1
++ |- (((!p. ((p IN (m .. n)) = ((m <= p) /\ (p <= n)))) ==> ((\p. ((p IN (m .. n)) = ((m <= p) /\ (p <= n)))) p)) = ((\p. ((p IN (m .. n)) = ((m <= p) /\ (p <= n)))) p))
+T c= c==> ! c= cIN b0 * * part c.. f0 f1 c/\ c<= f0 b0 c<= b0 f1 * / c= cIN b0 * * part c.. f0 f1 c/\ c<= f0 b0 c<= b0 f1 f2 * / c= cIN b0 * * part c.. f0 f1 c/\ c<= f0 b0 c<= b0 f1 f2
++ |- ((FINITE ((NUMERAL (BIT1 _0)) .. (dimindex UNIV))) /\ (!x. ((x IN ((NUMERAL (BIT1 _0)) .. (dimindex UNIV))) ==> ((real_le ((\i. (((COND (i = k)) ((real_mul (x $ k)) (x $ k))) (real_of_num (NUMERAL _0)))) x)) ((\i. ((real_mul (x $ i)) (x $ i))) x)))))
+T c/\ cFINITE * * part c.. cNUMERAL cBIT1 c_0 cdimindex part cUNIV ! c==> cIN b0 * * part c.. cNUMERAL cBIT1 c_0 cdimindex part cUNIV creal_le * / cCOND c= b1 f0 creal_mul c$ f1 f0 c$ f1 f0 creal_of_num cNUMERAL c_0 b0 * / creal_mul c$ f1 b1 c$ f1 b1 b0
++ (!f. (!g. (!s. (((FINITE s) /\ (!x. ((x IN s) ==> ((real_le (f x)) (g x))))) ==> ((real_le ((sum s) f)) ((sum s) g)))))) |- ((!f. (!g. (!s. (((FINITE s) /\ (!x. ((x IN s) ==> ((real_le (f x)) (g x))))) ==> ((real_le ((sum s) f)) ((sum s) g)))))) /\ (!f. (!s. (!g. (((FINITE s) /\ (!x. ((x IN s) ==> ((real_le (f x)) (g x))))) ==> ((real_le ((sum s) f)) ((sum s) g)))))))
+T c==> ! ! ! c==> c/\ cFINITE b2 ! c==> cIN b3 b2 creal_le * b0 b3 * b1 b3 creal_le csum b2 b0 csum b2 b1 c/\ ! ! ! c==> c/\ cFINITE b2 ! c==> cIN b3 b2 creal_le * b0 b3 * b1 b3 creal_le csum b2 b0 csum b2 b1 ! ! ! c==> c/\ cFINITE b1 ! c==> cIN b3 b1 creal_le * b0 b3 * b2 b3 creal_le csum b1 b0 csum b1 b2
++ |- ((\i. (?k. (((NUMERAL (BIT1 _0)) <= k) /\ ((k <= (dimindex UNIV)) /\ (!x. ((x $ i) = (x $ k))))))) i)
+T * / c? / c/\ c<= cNUMERAL cBIT1 c_0 b1 c/\ c<= b1 cdimindex part cUNIV ! c= c$ b2 b0 c$ b2 b1 f0
++ |- (((!f. (!s. (!g. (((FINITE s) /\ (!x. ((x IN s) ==> ((real_le (f x)) (g x))))) ==> ((real_le ((sum s) f)) ((sum s) g)))))) ==> ((\f. (!s. (!g. (((FINITE s) /\ (!x. ((x IN s) ==> ((real_le (f x)) (g x))))) ==> ((real_le ((sum s) f)) ((sum s) g)))))) f)) = ((\f. (!s. (!g. (((FINITE s) /\ (!x. ((x IN s) ==> ((real_le (f x)) (g x))))) ==> ((real_le ((sum s) f)) ((sum s) g)))))) f))
+T c= c==> ! ! ! c==> c/\ cFINITE b1 ! c==> cIN b3 b1 creal_le * b0 b3 * b2 b3 creal_le csum b1 b0 csum b1 b2 * / ! ! c==> c/\ cFINITE b1 ! c==> cIN b3 b1 creal_le * b0 b3 * b2 b3 creal_le csum b1 b0 csum b1 b2 f0 * / ! ! c==> c/\ cFINITE b1 ! c==> cIN b3 b1 creal_le * b0 b3 * b2 b3 creal_le csum b1 b0 csum b1 b2 f0
++ |- (((real_le (real_abs ((real_pow (x $ k)) (NUMERAL (BIT0 (BIT1 _0)))))) ((dot x) x)) = ((real_le ((real_pow (real_abs (x $ k))) (NUMERAL (BIT0 (BIT1 _0))))) ((dot x) x)))
+T c= creal_le creal_abs creal_pow c$ f0 f1 cNUMERAL cBIT0 cBIT1 c_0 cdot f0 f0 creal_le creal_pow creal_abs c$ f0 f1 cNUMERAL cBIT0 cBIT1 c_0 cdot f0 f0
++ |- (((real_le ((real_mul (x $ k)) (x $ k))) ((dot x) x)) = ((real_le (real_abs ((real_pow (x $ k)) (NUMERAL (BIT0 (BIT1 _0)))))) ((dot x) x)))
+T c= creal_le creal_mul c$ f0 f1 c$ f0 f1 cdot f0 f0 creal_le creal_abs creal_pow c$ f0 f1 cNUMERAL cBIT0 cBIT1 c_0 cdot f0 f0
+- |- ((t ==> t) = T)
+T c= c==> f0 f0 cT
++ ((k <= (dimindex UNIV)) /\ (!x. ((x $ i) = (x $ k)))), ((NUMERAL (BIT1 _0)) <= k) |- ((real_le (real_abs (x $ i))) (vector_norm x))
+T c==> c/\ c<= f0 cdimindex part cUNIV ! c= c$ b0 f1 c$ b0 f0 c==> c<= cNUMERAL cBIT1 c_0 f0 creal_le creal_abs c$ f2 f1 cvector_norm f2
++ |- ((x' = k) ==> ((real_le ((real_mul (x $ k)) (x $ k))) ((real_mul (x $ x')) (x $ x'))))
+T c==> c= f0 f1 creal_le creal_mul c$ f2 f1 c$ f2 f1 creal_mul c$ f2 f0 c$ f2 f0
++ |- ((((NUMERAL (BIT1 _0)) <= k) /\ ((k <= (dimindex UNIV)) /\ (!x. ((x $ i) = (x $ k))))) ==> ((real_le (real_abs (x $ i))) (vector_norm x)))
+T c==> c/\ c<= cNUMERAL cBIT1 c_0 f0 c/\ c<= f0 cdimindex part cUNIV ! c= c$ b0 f1 c$ b0 f0 creal_le creal_abs c$ f2 f1 cvector_norm f2
++ (!f. (!g. (!s. (((FINITE s) /\ (!x. ((x IN s) ==> ((real_le (f x)) (g x))))) ==> ((real_le ((sum s) f)) ((sum s) g)))))) |- ((((FINITE s) /\ (!x. ((x IN s) ==> ((real_le (f x)) (g x))))) ==> ((real_le ((sum s) f)) ((sum s) g))) = T)
+T c==> ! ! ! c==> c/\ cFINITE b2 ! c==> cIN b3 b2 creal_le * b0 b3 * b1 b3 creal_le csum b2 b0 csum b2 b1 c= c==> c/\ cFINITE f0 ! c==> cIN b0 f0 creal_le * f1 b0 * f2 b0 creal_le csum f0 f1 csum f0 f2 cT
++ |- (((!x. (!n. (((real_pow (real_abs x)) n) = (real_abs ((real_pow x) n))))) ==> ((\x. (!n. (((real_pow (real_abs x)) n) = (real_abs ((real_pow x) n))))) x)) = ((\x. (!n. (((real_pow (real_abs x)) n) = (real_abs ((real_pow x) n))))) x))
+T c= c==> ! ! c= creal_pow creal_abs b0 b1 creal_abs creal_pow b0 b1 * / ! c= creal_pow creal_abs b0 b1 creal_abs creal_pow b0 b1 f0 * / ! c= creal_pow creal_abs b0 b1 creal_abs creal_pow b0 b1 f0
++ |- ((((FINITE ((NUMERAL (BIT1 _0)) .. (dimindex UNIV))) /\ (!x. ((x IN ((NUMERAL (BIT1 _0)) .. (dimindex UNIV))) ==> ((real_le ((\i. (((COND (i = k)) ((real_mul (x $ k)) (x $ k))) (real_of_num (NUMERAL _0)))) x)) ((\i. ((real_mul (x $ i)) (x $ i))) x))))) ==> ((real_le ((sum ((NUMERAL (BIT1 _0)) .. (dimindex UNIV))) (\i. (((COND (i = k)) ((real_mul (x $ k)) (x $ k))) (real_of_num (NUMERAL _0)))))) ((sum ((NUMERAL (BIT1 _0)) .. (dimindex UNIV))) (\i. ((real_mul (x $ i)) (x $ i)))))) = ((real_le ((sum ((NUMERAL (BIT1 _0)) .. (dimindex UNIV))) (\i. (((COND (i = k)) ((real_mul (x $ k)) (x $ k))) (real_of_num (NUMERAL _0)))))) ((sum ((NUMERAL (BIT1 _0)) .. (dimindex UNIV))) (\i. ((real_mul (x $ i)) (x $ i))))))
+T c= c==> c/\ cFINITE * * part c.. cNUMERAL cBIT1 c_0 cdimindex part cUNIV ! c==> cIN b0 * * part c.. cNUMERAL cBIT1 c_0 cdimindex part cUNIV creal_le * / cCOND c= b1 f0 creal_mul c$ f1 f0 c$ f1 f0 creal_of_num cNUMERAL c_0 b0 * / creal_mul c$ f1 b1 c$ f1 b1 b0 creal_le csum * * part c.. cNUMERAL cBIT1 c_0 cdimindex part cUNIV / cCOND c= b0 f0 creal_mul c$ f1 f0 c$ f1 f0 creal_of_num cNUMERAL c_0 csum * * part c.. cNUMERAL cBIT1 c_0 cdimindex part cUNIV / creal_mul c$ f1 b0 c$ f1 b0 creal_le csum * * part c.. cNUMERAL cBIT1 c_0 cdimindex part cUNIV / cCOND c= b0 f0 creal_mul c$ f1 f0 c$ f1 f0 creal_of_num cNUMERAL c_0 csum * * part c.. cNUMERAL cBIT1 c_0 cdimindex part cUNIV / creal_mul c$ f1 b0 c$ f1 b0
++ (k <= (dimindex UNIV)) |- ((k <= (dimindex UNIV)) = T)
+T c==> c<= f0 cdimindex part cUNIV c= c<= f0 cdimindex part cUNIV cT
++ |- ((\f. (!s. (!g. (((FINITE s) /\ (!x. ((x IN s) ==> ((real_le (f x)) (g x))))) ==> ((real_le ((sum s) f)) ((sum s) g)))))) f)
+T * / ! ! c==> c/\ cFINITE b1 ! c==> cIN b3 b1 creal_le * b0 b3 * b2 b3 creal_le csum b1 b0 csum b1 b2 f0
+- (x' IN ((NUMERAL (BIT1 _0)) .. (dimindex UNIV))) |- ((x' IN ((NUMERAL (BIT1 _0)) .. (dimindex UNIV))) = T)
+T c==> cIN f0 * * part c.. cNUMERAL cBIT1 c_0 cdimindex part cUNIV c= cIN f0 * * part c.. cNUMERAL cBIT1 c_0 cdimindex part cUNIV cT
+- |- ((!x. t) = t)
+T c= ! f0 f0
++ |- (((!n. (FINITE (m .. n))) ==> ((\n. (FINITE (m .. n))) n)) = ((\n. (FINITE (m .. n))) n))
+T c= c==> ! cFINITE * * part c.. f0 b0 * / cFINITE * * part c.. f0 b0 f1 * / cFINITE * * part c.. f0 b0 f1
++ |- (((real_le (real_of_num (NUMERAL _0))) ((real_mul x) x)) = T)
+T c= creal_le creal_of_num cNUMERAL c_0 creal_mul f0 f0 cT
+- |- ((!x. (!y. (((real_le ((real_pow x) (NUMERAL (BIT0 (BIT1 _0))))) y) ==> ((real_le x) (sqrt y))))) ==> (!x. (!y. (((real_le ((real_pow x) (NUMERAL (BIT0 (BIT1 _0))))) y) ==> ((real_le x) (sqrt y))))))
+T c==> ! ! c==> creal_le creal_pow b0 cNUMERAL cBIT0 cBIT1 c_0 b1 creal_le b0 csqrt b1 ! ! c==> creal_le creal_pow b0 cNUMERAL cBIT0 cBIT1 c_0 b1 creal_le b0 csqrt b1
++ (((real_mul (x $ k)) (x $ k)) = ((sum ((NUMERAL (BIT1 _0)) .. (dimindex UNIV))) (\i. (((COND (i = k)) ((real_mul (x $ k)) (x $ k))) (real_of_num (NUMERAL _0)))))) |- ((real_le ((real_mul (x $ k)) (x $ k))) ((dot x) x))
+T c==> c= creal_mul c$ f0 f1 c$ f0 f1 csum * * part c.. cNUMERAL cBIT1 c_0 cdimindex part cUNIV / cCOND c= b0 f1 creal_mul c$ f0 f1 c$ f0 f1 creal_of_num cNUMERAL c_0 creal_le creal_mul c$ f0 f1 c$ f0 f1 cdot f0 f0
++ (!f. (!g. (!s. (((FINITE s) /\ (!x. ((x IN s) ==> ((real_le (f x)) (g x))))) ==> ((real_le ((sum s) f)) ((sum s) g)))))) |- ((!g. (((FINITE s) /\ (!x. ((x IN s) ==> ((real_le (f x)) (g x))))) ==> ((real_le ((sum s) f)) ((sum s) g)))) = T)
+T c==> ! ! ! c==> c/\ cFINITE b2 ! c==> cIN b3 b2 creal_le * b0 b3 * b1 b3 creal_le csum b2 b0 csum b2 b1 c= ! c==> c/\ cFINITE f0 ! c==> cIN b1 f0 creal_le * f1 b1 * b0 b1 creal_le csum f0 f1 csum f0 b0 cT
++ |- ((\n. (!p. ((p IN (m .. n)) = ((m <= p) /\ (p <= n))))) n)
+T * / ! c= cIN b1 * * part c.. f0 b0 c/\ c<= f0 b1 c<= b1 b0 f1
++ (!f. (!g. (!s. (((FINITE s) /\ (!x. ((x IN s) ==> ((real_le (f x)) (g x))))) ==> ((real_le ((sum s) f)) ((sum s) g)))))) |- (!g. (!s. (((FINITE s) /\ (!x. ((x IN s) ==> ((real_le (f x)) (g x))))) ==> ((real_le ((sum s) f)) ((sum s) g)))))
+T c==> ! ! ! c==> c/\ cFINITE b2 ! c==> cIN b3 b2 creal_le * b0 b3 * b1 b3 creal_le csum b2 b0 csum b2 b1 ! ! c==> c/\ cFINITE b1 ! c==> cIN b2 b1 creal_le * f0 b2 * b0 b2 creal_le csum b1 f0 csum b1 b0
++ |- ((!f. (!g. (!s. (((FINITE s) /\ (!x. ((x IN s) ==> ((real_le (f x)) (g x))))) ==> ((real_le ((sum s) f)) ((sum s) g)))))) ==> (!f. (!s. (!g. (((FINITE s) /\ (!x. ((x IN s) ==> ((real_le (f x)) (g x))))) ==> ((real_le ((sum s) f)) ((sum s) g)))))))
+T c==> ! ! ! c==> c/\ cFINITE b2 ! c==> cIN b3 b2 creal_le * b0 b3 * b1 b3 creal_le csum b2 b0 csum b2 b1 ! ! ! c==> c/\ cFINITE b1 ! c==> cIN b3 b1 creal_le * b0 b3 * b2 b3 creal_le csum b1 b0 csum b1 b2
+- (!x. (!y. (((real_le ((real_pow x) (NUMERAL (BIT0 (BIT1 _0))))) y) ==> ((real_le x) (sqrt y))))) |- (((!y. (((real_le ((real_pow x) (NUMERAL (BIT0 (BIT1 _0))))) y) ==> ((real_le x) (sqrt y)))) ==> ((\y. (((real_le ((real_pow x) (NUMERAL (BIT0 (BIT1 _0))))) y) ==> ((real_le x) (sqrt y)))) y)) = ((\y. (((real_le ((real_pow x) (NUMERAL (BIT0 (BIT1 _0))))) y) ==> ((real_le x) (sqrt y)))) y))
+T c==> ! ! c==> creal_le creal_pow b0 cNUMERAL cBIT0 cBIT1 c_0 b1 creal_le b0 csqrt b1 c= c==> ! c==> creal_le creal_pow f0 cNUMERAL cBIT0 cBIT1 c_0 b0 creal_le f0 csqrt b0 * / c==> creal_le creal_pow f0 cNUMERAL cBIT0 cBIT1 c_0 b0 creal_le f0 csqrt b0 f1 * / c==> creal_le creal_pow f0 cNUMERAL cBIT0 cBIT1 c_0 b0 creal_le f0 csqrt b0 f1
+- (x' = k) |- (((real_le ((real_mul (x $ k)) (x $ k))) ((real_mul (x $ x')) (x $ x'))) = ((real_le ((real_mul (x $ k)) (x $ k))) ((real_mul (x $ x')) (x $ x'))))
+T c==> c= f0 f1 c= creal_le creal_mul c$ f2 f1 c$ f2 f1 creal_mul c$ f2 f0 c$ f2 f0 creal_le creal_mul c$ f2 f1 c$ f2 f1 creal_mul c$ f2 f0 c$ f2 f0
+- (x' = k) |- ((x' = k) = T)
+T c==> c= f0 f1 c= c= f0 f1 cT
+- (~ (x' = k)) |- (((~ (k = x')) ==> ((k = x') = F)) = ((k = x') = F))
+T c==> c~ c= f0 f1 c= c==> c~ c= f1 f0 c= c= f1 f0 cF c= c= f1 f0 cF
+- (~ (x' = k)) |- ((x' = k) = F)
+T c==> c~ c= f0 f1 c= c= f0 f1 cF
+- (!x. (!y. (((real_le ((real_pow x) (NUMERAL (BIT0 (BIT1 _0))))) y) ==> ((real_le x) (sqrt y))))), ((real_le ((real_pow x) (NUMERAL (BIT0 (BIT1 _0))))) y) |- ((!x. (!y. (((real_le ((real_pow x) (NUMERAL (BIT0 (BIT1 _0))))) y) ==> ((real_le x) (sqrt y))))) /\ ((real_le x) (sqrt y)))
+T c==> ! ! c==> creal_le creal_pow b0 cNUMERAL cBIT0 cBIT1 c_0 b1 creal_le b0 csqrt b1 c==> creal_le creal_pow f0 cNUMERAL cBIT0 cBIT1 c_0 f1 c/\ ! ! c==> creal_le creal_pow b0 cNUMERAL cBIT0 cBIT1 c_0 b1 creal_le b0 csqrt b1 creal_le f0 csqrt f1
+- ((real_le ((real_pow x) (NUMERAL (BIT0 (BIT1 _0))))) y) |- ((!x. (!y. (((real_le ((real_pow x) (NUMERAL (BIT0 (BIT1 _0))))) y) ==> ((real_le x) (sqrt y))))) ==> ((real_le x) (sqrt y)))
+T c==> creal_le creal_pow f0 cNUMERAL cBIT0 cBIT1 c_0 f1 c==> ! ! c==> creal_le creal_pow b0 cNUMERAL cBIT0 cBIT1 c_0 b1 creal_le b0 csqrt b1 creal_le f0 csqrt f1
+- |- ((((COND (x = x)) y) z) = y)
+T c= cCOND c= f0 f0 f1 f2 f1
+- (!f. (!g. (!s. (((FINITE s) /\ (!x. ((x IN s) ==> ((real_le (f x)) (g x))))) ==> ((real_le ((sum s) f)) ((sum s) g)))))), ((FINITE s) /\ (!x. ((x IN s) ==> ((real_le (f x)) (g x))))) |- ((!f. (!g. (!s. (((FINITE s) /\ (!x. ((x IN s) ==> ((real_le (f x)) (g x))))) ==> ((real_le ((sum s) f)) ((sum s) g)))))) /\ ((real_le ((sum s) f)) ((sum s) g)))
+T c==> ! ! ! c==> c/\ cFINITE b2 ! c==> cIN b3 b2 creal_le * b0 b3 * b1 b3 creal_le csum b2 b0 csum b2 b1 c==> c/\ cFINITE f0 ! c==> cIN b0 f0 creal_le * f1 b0 * f2 b0 c/\ ! ! ! c==> c/\ cFINITE b2 ! c==> cIN b3 b2 creal_le * b0 b3 * b1 b3 creal_le csum b2 b0 csum b2 b1 creal_le csum f0 f1 csum f0 f2
+- (k = x') |- (x' = k)
+T c==> c= f0 f1 c= f1 f0
+- |- (((!x. (!y. (((real_le ((real_pow x) (NUMERAL (BIT0 (BIT1 _0))))) y) ==> ((real_le x) (sqrt y))))) ==> (!x. (!y. (((real_le ((real_pow x) (NUMERAL (BIT0 (BIT1 _0))))) y) ==> ((real_le x) (sqrt y)))))) = (!x. (!y. (((real_le ((real_pow x) (NUMERAL (BIT0 (BIT1 _0))))) y) ==> ((real_le x) (sqrt y))))))
+T c= c==> ! ! c==> creal_le creal_pow b0 cNUMERAL cBIT0 cBIT1 c_0 b1 creal_le b0 csqrt b1 ! ! c==> creal_le creal_pow b0 cNUMERAL cBIT0 cBIT1 c_0 b1 creal_le b0 csqrt b1 ! ! c==> creal_le creal_pow b0 cNUMERAL cBIT0 cBIT1 c_0 b1 creal_le b0 csqrt b1
+- ((FINITE s) /\ (!x. ((x IN s) ==> ((real_le (f x)) (g x))))) |- ((!f. (!g. (!s. (((FINITE s) /\ (!x. ((x IN s) ==> ((real_le (f x)) (g x))))) ==> ((real_le ((sum s) f)) ((sum s) g)))))) ==> ((real_le ((sum s) f)) ((sum s) g)))
+T c==> c/\ cFINITE f0 ! c==> cIN b0 f0 creal_le * f1 b0 * f2 b0 c==> ! ! ! c==> c/\ cFINITE b2 ! c==> cIN b3 b2 creal_le * b0 b3 * b1 b3 creal_le csum b2 b0 csum b2 b1 creal_le csum f0 f1 csum f0 f2
+- (!x. (!y. (((real_le ((real_pow x) (NUMERAL (BIT0 (BIT1 _0))))) y) ==> ((real_le x) (sqrt y))))) |- ((((real_le ((real_pow x) (NUMERAL (BIT0 (BIT1 _0))))) y) ==> ((real_le x) (sqrt y))) = T)
+T c==> ! ! c==> creal_le creal_pow b0 cNUMERAL cBIT0 cBIT1 c_0 b1 creal_le b0 csqrt b1 c= c==> creal_le creal_pow f0 cNUMERAL cBIT0 cBIT1 c_0 f1 creal_le f0 csqrt f1 cT
+- |- ((t /\ t) = t)
+T c= c/\ f0 f0 f0
+- (~ (x' = k)) |- (~ (k = x'))
+T c==> c~ c= f0 f1 c~ c= f1 f0
+- (~ (x' = k)) |- ((k = x') = F)
+T c==> c~ c= f0 f1 c= c= f1 f0 cF
+- (!x. (!y. (((real_le ((real_pow x) (NUMERAL (BIT0 (BIT1 _0))))) y) ==> ((real_le x) (sqrt y))))), ((real_le ((real_pow x) (NUMERAL (BIT0 (BIT1 _0))))) y) |- (((real_le ((real_pow x) (NUMERAL (BIT0 (BIT1 _0))))) y) /\ ((real_le x) (sqrt y)))
+T c==> ! ! c==> creal_le creal_pow b0 cNUMERAL cBIT0 cBIT1 c_0 b1 creal_le b0 csqrt b1 c==> creal_le creal_pow f0 cNUMERAL cBIT0 cBIT1 c_0 f1 c/\ creal_le creal_pow f0 cNUMERAL cBIT0 cBIT1 c_0 f1 creal_le f0 csqrt f1
+- (!x. (!y. (((real_le ((real_pow x) (NUMERAL (BIT0 (BIT1 _0))))) y) ==> ((real_le x) (sqrt y))))) |- ((\x. (!y. (((real_le ((real_pow x) (NUMERAL (BIT0 (BIT1 _0))))) y) ==> ((real_le x) (sqrt y))))) x)
+T c==> ! ! c==> creal_le creal_pow b0 cNUMERAL cBIT0 cBIT1 c_0 b1 creal_le b0 csqrt b1 * / ! c==> creal_le creal_pow b0 cNUMERAL cBIT0 cBIT1 c_0 b1 creal_le b0 csqrt b1 f0
+- (!f. (!g. (!s. (((FINITE s) /\ (!x. ((x IN s) ==> ((real_le (f x)) (g x))))) ==> ((real_le ((sum s) f)) ((sum s) g)))))), ((FINITE s) /\ (!x. ((x IN s) ==> ((real_le (f x)) (g x))))) |- (((FINITE s) /\ (!x. ((x IN s) ==> ((real_le (f x)) (g x))))) /\ ((real_le ((sum s) f)) ((sum s) g)))
+T c==> ! ! ! c==> c/\ cFINITE b2 ! c==> cIN b3 b2 creal_le * b0 b3 * b1 b3 creal_le csum b2 b0 csum b2 b1 c==> c/\ cFINITE f0 ! c==> cIN b0 f0 creal_le * f1 b0 * f2 b0 c/\ c/\ cFINITE f0 ! c==> cIN b0 f0 creal_le * f1 b0 * f2 b0 creal_le csum f0 f1 csum f0 f2
+- |- (((\i. (f i)) y) = (f y))
+T c= * / * f0 b0 f1 * f0 f1
+- (!x. (!y. (((real_le ((real_pow x) (NUMERAL (BIT0 (BIT1 _0))))) y) ==> ((real_le x) (sqrt y))))), ((real_le ((real_pow x) (NUMERAL (BIT0 (BIT1 _0))))) y) |- ((real_le x) (sqrt y))
+T c==> ! ! c==> creal_le creal_pow b0 cNUMERAL cBIT0 cBIT1 c_0 b1 creal_le b0 csqrt b1 c==> creal_le creal_pow f0 cNUMERAL cBIT0 cBIT1 c_0 f1 creal_le f0 csqrt f1
+- (!x. (!y. (((real_le ((real_pow x) (NUMERAL (BIT0 (BIT1 _0))))) y) ==> ((real_le x) (sqrt y))))) |- ((!y. (((real_le ((real_pow x) (NUMERAL (BIT0 (BIT1 _0))))) y) ==> ((real_le x) (sqrt y)))) = T)
+T c==> ! ! c==> creal_le creal_pow b0 cNUMERAL cBIT0 cBIT1 c_0 b1 creal_le b0 csqrt b1 c= ! c==> creal_le creal_pow f0 cNUMERAL cBIT0 cBIT1 c_0 b0 creal_le f0 csqrt b0 cT
+- (~ (x' = k)) |- (((real_le (real_of_num (NUMERAL _0))) ((real_mul (x $ x')) (x $ x'))) = ((real_le (real_of_num (NUMERAL _0))) ((real_mul (x $ x')) (x $ x'))))
+T c==> c~ c= f0 f1 c= creal_le creal_of_num cNUMERAL c_0 creal_mul c$ f2 f0 c$ f2 f0 creal_le creal_of_num cNUMERAL c_0 creal_mul c$ f2 f0 c$ f2 f0
+- (!x. (!y. (((real_le ((real_pow x) (NUMERAL (BIT0 (BIT1 _0))))) y) ==> ((real_le x) (sqrt y))))) |- ((\y. (((real_le ((real_pow x) (NUMERAL (BIT0 (BIT1 _0))))) y) ==> ((real_le x) (sqrt y)))) y)
+T c==> ! ! c==> creal_le creal_pow b0 cNUMERAL cBIT0 cBIT1 c_0 b1 creal_le b0 csqrt b1 * / c==> creal_le creal_pow f0 cNUMERAL cBIT0 cBIT1 c_0 b0 creal_le f0 csqrt b0 f1

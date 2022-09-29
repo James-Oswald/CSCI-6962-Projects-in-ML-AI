@@ -1,0 +1,72 @@
+N Seq.count_mem_uniq
+C |- (!s. ((!x. (((count (pred1 x)) s) = (((COND ((MEM x) s)) (NUMERAL (BIT1 _0))) (NUMERAL _0)))) ==> (uniq s)))
+T c==> ! c= ccount * part cpred1 b0 f0 cCOND cMEM b0 f0 cNUMERAL cBIT1 c_0 cNUMERAL c_0 cuniq f0
+D Seq.allP
+A |- (!a. (!s. ((!x. (((MEM x) s) ==> (a x))) = ((all a) s))))
+T c= ! c==> cMEM b0 f0 * f1 b0 call f1 f0
+D Seq.count_uniq_mem
+A |- (!s. (!x. ((uniq s) ==> (((count (pred1 x)) s) = (((COND ((MEM x) s)) (NUMERAL (BIT1 _0))) (NUMERAL _0))))))
+T c==> cuniq f0 c= ccount * part cpred1 f1 f0 cCOND cMEM f1 f0 cNUMERAL cBIT1 c_0 cNUMERAL c_0
+D Seq.mem_undup
+A |- (!s. (!x. (((MEM x) (undup s)) = ((MEM x) s))))
+T c= cMEM f0 cundup f1 cMEM f0 f1
+D Seq.undup_uniq
+A |- (!s. (uniq (undup s)))
+T cuniq cundup f0
+D Seq.same_count1
+A |- (!s1. (!x. (!s2. ((((same_count1 s1) s2) x) = (((count (pred1 x)) s1) = ((count (pred1 x)) s2))))))
+T c= csame_count1 f0 f1 f2 c= ccount * part cpred1 f2 f0 ccount * part cpred1 f2 f1
+D Seq.perm_eq
+A |- (!s1. (!s2. (((perm_eq s1) s2) = ((all ((same_count1 s1) s2)) ((cat s1) s2)))))
+T c= cperm_eq f0 f1 call * * part csame_count1 f0 f1 ccat f0 f1
+D Seq.perm_eq_uniq
+A |- (!s1. (!s2. (((perm_eq s1) s2) ==> ((uniq s1) = (uniq s2)))))
+T c==> cperm_eq f0 f1 c= cuniq f0 cuniq f1
++ |- (((all ((same_count1 s) (undup s))) ((cat s) (undup s))) = ((perm_eq s) (undup s)))
+T c= call * * part csame_count1 f0 cundup f0 ccat f0 cundup f0 cperm_eq f0 cundup f0
++ |- (((all a) s) = (!x. (((MEM x) s) ==> (a x))))
+T c= call f0 f1 ! c==> cMEM b0 f1 * f0 b0
++ (!x. (((count (pred1 x)) s) = (((COND ((MEM x) s)) (NUMERAL (BIT1 _0))) (NUMERAL _0)))), (uniq (undup s)) |- ((uniq (undup s)) /\ (uniq s))
+T c==> ! c= ccount * part cpred1 b0 f0 cCOND cMEM b0 f0 cNUMERAL cBIT1 c_0 cNUMERAL c_0 c==> cuniq cundup f0 c/\ cuniq cundup f0 cuniq f0
++ |- ((\s1. (!x. (!s2. ((((same_count1 s1) s2) x) = (((count (pred1 x)) s1) = ((count (pred1 x)) s2)))))) s1)
+T * / ! ! c= csame_count1 b0 b2 b1 c= ccount * part cpred1 b1 b0 ccount * part cpred1 b1 b2 f0
+- ((!x. (P ==> (Q x))) = (P ==> (!x. (Q x)))) |- ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))
+T c==> c= ! c==> f0 * f1 b0 c==> f0 ! * f1 b0 c= c==> f0 ! * f1 b0 ! c==> f0 * f1 b0
++ (((all a) s) = (!x. (((MEM x) s) ==> (a x)))) |- ((!x. (((MEM x) s) ==> (a x))) = ((all a) s))
+T c==> c= call f0 f1 ! c==> cMEM b0 f1 * f0 b0 c= ! c==> cMEM b0 f1 * f0 b0 call f0 f1
++ (uniq (undup s)) |- ((((count (pred1 x)) s) = (((COND ((MEM x) (undup s))) (NUMERAL (BIT1 _0))) (NUMERAL _0))) = (((count (pred1 x)) s) = ((count (pred1 x)) (undup s))))
+T c==> cuniq cundup f0 c= c= ccount * part cpred1 f1 f0 cCOND cMEM f1 cundup f0 cNUMERAL cBIT1 c_0 cNUMERAL c_0 c= ccount * part cpred1 f1 f0 ccount * part cpred1 f1 cundup f0
+- (!x. (((count (pred1 x)) s) = (((COND ((MEM x) s)) (NUMERAL (BIT1 _0))) (NUMERAL _0)))) |- (T = (((count (pred1 x)) s) = (((COND ((MEM x) s)) (NUMERAL (BIT1 _0))) (NUMERAL _0))))
+T c==> ! c= ccount * part cpred1 b0 f0 cCOND cMEM b0 f0 cNUMERAL cBIT1 c_0 cNUMERAL c_0 c= cT c= ccount * part cpred1 f1 f0 cCOND cMEM f1 f0 cNUMERAL cBIT1 c_0 cNUMERAL c_0
+- |- ((\P. (!Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x)))))) P)
+T * / ! c= c==> b0 ! * b1 b2 ! c==> b0 * b1 b2 f0
++ |- (((!s. (uniq (undup s))) ==> ((\s. (uniq (undup s))) s)) = ((\s. (uniq (undup s))) s))
+T c= c==> ! cuniq cundup b0 * / cuniq cundup b0 f0 * / cuniq cundup b0 f0
++ |- ((\x. (!s2. ((((same_count1 s1) s2) x) = (((count (pred1 x)) s1) = ((count (pred1 x)) s2))))) x)
+T * / ! c= csame_count1 f0 b1 b0 c= ccount * part cpred1 b0 f0 ccount * part cpred1 b0 b1 f1
++ |- ((\x. ((uniq s) ==> (((count (pred1 x)) s) = (((COND ((MEM x) s)) (NUMERAL (BIT1 _0))) (NUMERAL _0))))) x)
+T * / c==> cuniq f0 c= ccount * part cpred1 b0 f0 cCOND cMEM b0 f0 cNUMERAL cBIT1 c_0 cNUMERAL c_0 f1
++ |- (((!s. (((all a) s) = (!x. (((MEM x) s) ==> (a x))))) ==> ((\s. (((all a) s) = (!x. (((MEM x) s) ==> (a x))))) s)) = ((\s. (((all a) s) = (!x. (((MEM x) s) ==> (a x))))) s))
+T c= c==> ! c= call f0 b0 ! c==> cMEM b1 b0 * f0 b1 * / c= call f0 b0 ! c==> cMEM b1 b0 * f0 b1 f1 * / c= call f0 b0 ! c==> cMEM b1 b0 * f0 b1 f1
++ (!x. (((count (pred1 x)) s) = (((COND ((MEM x) s)) (NUMERAL (BIT1 _0))) (NUMERAL _0)))), (uniq (undup s)) |- ((all ((same_count1 s) (undup s))) ((cat s) (undup s)))
+T c==> ! c= ccount * part cpred1 b0 f0 cCOND cMEM b0 f0 cNUMERAL cBIT1 c_0 cNUMERAL c_0 c==> cuniq cundup f0 call * * part csame_count1 f0 cundup f0 ccat f0 cundup f0
++ |- ((\s1. (!s2. (((perm_eq s1) s2) ==> ((uniq s1) = (uniq s2))))) s1)
+T * / ! c==> cperm_eq b0 b1 c= cuniq b0 cuniq b1 f0
+- (uniq (undup s)) |- ((uniq (undup s)) = T)
+T c==> cuniq cundup f0 c= cuniq cundup f0 cT
+- |- ((x = x) = T)
+T c= c= f0 f0 cT
+- |- ((\Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))) Q)
+T * / c= c==> f0 ! * b0 b1 ! c==> f0 * b0 b1 f1
+- |- (((!P. (!Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x)))))) ==> ((\P. (!Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x)))))) P)) = ((\P. (!Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x)))))) P))
+T c= c==> ! ! c= c==> b0 ! * b1 b2 ! c==> b0 * b1 b2 * / ! c= c==> b0 ! * b1 b2 ! c==> b0 * b1 b2 f0 * / ! c= c==> b0 ! * b1 b2 ! c==> b0 * b1 b2 f0
+- (uniq (undup s)), ((perm_eq s) (undup s)) |- (((perm_eq s) (undup s)) /\ (uniq s))
+T c==> cuniq cundup f0 c==> cperm_eq f0 cundup f0 c/\ cperm_eq f0 cundup f0 cuniq f0
+- (uniq (undup s)) |- (T = (uniq (undup s)))
+T c==> cuniq cundup f0 c= cT cuniq cundup f0
+- ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x)))) |- ((!x. (P ==> (Q x))) = (P ==> (!x. (Q x))))
+T c==> c= c==> f0 ! * f1 b0 ! c==> f0 * f1 b0 c= ! c==> f0 * f1 b0 c==> f0 ! * f1 b0
+- |- ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))
+T c= c==> f0 ! * f1 b0 ! c==> f0 * f1 b0
+- |- (((!Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))) ==> ((\Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))) Q)) = ((\Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))) Q))
+T c= c==> ! c= c==> f0 ! * b0 b1 ! c==> f0 * b0 b1 * / c= c==> f0 ! * b0 b1 ! c==> f0 * b0 b1 f1 * / c= c==> f0 ! * b0 b1 ! c==> f0 * b0 b1 f1

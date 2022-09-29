@@ -1,0 +1,69 @@
+N MEM_EL
+C |- (!l. (!n. ((n < (LENGTH l)) ==> ((MEM ((EL n) l)) l))))
+T c==> c< f0 cLENGTH f1 cMEM cEL f0 f1 f1
+D TRUTH
+A |- T
+T cT
+D num_INDUCTION
+A |- (!P. (((P (NUMERAL _0)) /\ (!n. ((P n) ==> (P (SUC n))))) ==> (!n. (P n))))
+T c==> c/\ * f0 cNUMERAL c_0 ! c==> * f0 b0 * f0 cSUC b0 ! * f0 b0
+D LT
+A |- ((!m. ((m < (NUMERAL _0)) = F)) /\ (!m. (!n. ((m < (SUC n)) = ((m = n) \/ (m < n))))))
+T c/\ ! c= c< b0 cNUMERAL c_0 cF ! ! c= c< b0 cSUC b1 c\/ c= b0 b1 c< b0 b1
+D LT_SUC
+A |- (!m. (!n. (((SUC m) < (SUC n)) = (m < n))))
+T c= c< cSUC f0 cSUC f1 c< f0 f1
+D list_INDUCT
+A |- (!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x))))
+T c==> c/\ * f0 cNIL ! ! c==> * f0 b1 * f0 cCONS b0 b1 ! * f0 b0
+D HD
+A |- ((HD ((CONS h) t)) = h)
+T c= cHD cCONS f0 f1 f0
+D TL
+A |- ((TL ((CONS h) t)) = t)
+T c= cTL cCONS f0 f1 f1
+D LENGTH
+A |- (((LENGTH NIL) = (NUMERAL _0)) /\ (!h. (!t. ((LENGTH ((CONS h) t)) = (SUC (LENGTH t))))))
+T c/\ c= cLENGTH cNIL cNUMERAL c_0 ! ! c= cLENGTH cCONS b0 b1 cSUC cLENGTH b1
+D MEM
+A |- ((((MEM x) NIL) = F) /\ (((MEM x) ((CONS h) t)) = ((x = h) \/ ((MEM x) t))))
+T c/\ c= cMEM f0 cNIL cF c= cMEM f0 cCONS f1 f2 c\/ c= f0 f1 cMEM f0 f2
+D EL
+A |- ((((EL (NUMERAL _0)) l) = (HD l)) /\ (((EL (SUC n)) l) = ((EL n) (TL l))))
+T c/\ c= cEL cNUMERAL c_0 f0 cHD f0 c= cEL cSUC f1 f0 cEL f1 cTL f0
++ |- (((NUMERAL _0) < (SUC (LENGTH t))) ==> (((((EL (NUMERAL _0)) ((CONS h) t)) = h) \/ ((MEM ((EL (NUMERAL _0)) ((CONS h) t))) t)) = T))
+T c==> c< cNUMERAL c_0 cSUC cLENGTH f0 c= c\/ c= cEL cNUMERAL c_0 cCONS f1 f0 f1 cMEM cEL cNUMERAL c_0 cCONS f1 f0 f0 cT
++ (!n. ((n < (LENGTH t)) ==> ((MEM ((EL n) t)) t))) |- (!n. (((n < (SUC (LENGTH t))) ==> ((((EL n) ((CONS h) t)) = h) \/ ((MEM ((EL n) ((CONS h) t))) t))) ==> (((SUC n) < (SUC (LENGTH t))) ==> ((((EL (SUC n)) ((CONS h) t)) = h) \/ ((MEM ((EL (SUC n)) ((CONS h) t))) t)))))
+T c==> ! c==> c< b0 cLENGTH f0 cMEM cEL b0 f0 f0 ! c==> c==> c< b0 cSUC cLENGTH f0 c\/ c= cEL b0 cCONS f1 f0 f1 cMEM cEL b0 cCONS f1 f0 f0 c==> c< cSUC b0 cSUC cLENGTH f0 c\/ c= cEL cSUC b0 cCONS f1 f0 f1 cMEM cEL cSUC b0 cCONS f1 f0 f0
++ |- (((((NUMERAL _0) < (SUC (LENGTH t))) ==> (((((EL (NUMERAL _0)) ((CONS h) t)) = h) \/ ((MEM ((EL (NUMERAL _0)) ((CONS h) t))) t)) = T)) ==> ((((NUMERAL _0) < (SUC (LENGTH t))) ==> ((((EL (NUMERAL _0)) ((CONS h) t)) = h) \/ ((MEM ((EL (NUMERAL _0)) ((CONS h) t))) t))) = (((NUMERAL _0) < (SUC (LENGTH t))) ==> T))) = ((((NUMERAL _0) < (SUC (LENGTH t))) ==> ((((EL (NUMERAL _0)) ((CONS h) t)) = h) \/ ((MEM ((EL (NUMERAL _0)) ((CONS h) t))) t))) = (((NUMERAL _0) < (SUC (LENGTH t))) ==> T)))
+T c= c==> c==> c< cNUMERAL c_0 cSUC cLENGTH f0 c= c\/ c= cEL cNUMERAL c_0 cCONS f1 f0 f1 cMEM cEL cNUMERAL c_0 cCONS f1 f0 f0 cT c= c==> c< cNUMERAL c_0 cSUC cLENGTH f0 c\/ c= cEL cNUMERAL c_0 cCONS f1 f0 f1 cMEM cEL cNUMERAL c_0 cCONS f1 f0 f0 c==> c< cNUMERAL c_0 cSUC cLENGTH f0 cT c= c==> c< cNUMERAL c_0 cSUC cLENGTH f0 c\/ c= cEL cNUMERAL c_0 cCONS f1 f0 f1 cMEM cEL cNUMERAL c_0 cCONS f1 f0 f0 c==> c< cNUMERAL c_0 cSUC cLENGTH f0 cT
++ |- (((NUMERAL _0) < (SUC (LENGTH t))) ==> ((((EL (NUMERAL _0)) ((CONS h) t)) = h) \/ ((MEM ((EL (NUMERAL _0)) ((CONS h) t))) t)))
+T c==> c< cNUMERAL c_0 cSUC cLENGTH f0 c\/ c= cEL cNUMERAL c_0 cCONS f1 f0 f1 cMEM cEL cNUMERAL c_0 cCONS f1 f0 f0
++ |- ((((NUMERAL _0) < (SUC (LENGTH t))) ==> ((((EL (NUMERAL _0)) ((CONS h) t)) = h) \/ ((MEM ((EL (NUMERAL _0)) ((CONS h) t))) t))) = (((NUMERAL _0) < (SUC (LENGTH t))) ==> T))
+T c= c==> c< cNUMERAL c_0 cSUC cLENGTH f0 c\/ c= cEL cNUMERAL c_0 cCONS f1 f0 f1 cMEM cEL cNUMERAL c_0 cCONS f1 f0 f0 c==> c< cNUMERAL c_0 cSUC cLENGTH f0 cT
++ |- ((t \/ T) = T)
+T c= c\/ f0 cT cT
+- ((n < (SUC (LENGTH t))) ==> ((((EL n) ((CONS h) t)) = h) \/ ((MEM ((EL n) ((CONS h) t))) t))) |- ((n < (SUC (LENGTH t))) ==> (((((EL n) ((CONS h) t)) = h) \/ ((MEM ((EL n) ((CONS h) t))) t)) = T))
+T c==> c==> c< f0 cSUC cLENGTH f1 c\/ c= cEL f0 cCONS f2 f1 f2 cMEM cEL f0 cCONS f2 f1 f1 c==> c< f0 cSUC cLENGTH f1 c= c\/ c= cEL f0 cCONS f2 f1 f2 cMEM cEL f0 cCONS f2 f1 f1 cT
++ |- ((t ==> T) = T)
+T c= c==> f0 cT cT
+- |- ((t ==> t) = T)
+T c= c==> f0 f0 cT
++ (!n. ((n < (LENGTH t)) ==> ((MEM ((EL n) t)) t))) |- (((n < (SUC (LENGTH t))) ==> ((((EL n) ((CONS h) t)) = h) \/ ((MEM ((EL n) ((CONS h) t))) t))) ==> (((SUC n) < (SUC (LENGTH t))) ==> ((((EL (SUC n)) ((CONS h) t)) = h) \/ ((MEM ((EL (SUC n)) ((CONS h) t))) t))))
+T c==> ! c==> c< b0 cLENGTH f0 cMEM cEL b0 f0 f0 c==> c==> c< f1 cSUC cLENGTH f0 c\/ c= cEL f1 cCONS f2 f0 f2 cMEM cEL f1 cCONS f2 f0 f0 c==> c< cSUC f1 cSUC cLENGTH f0 c\/ c= cEL cSUC f1 cCONS f2 f0 f2 cMEM cEL cSUC f1 cCONS f2 f0 f0
+- |- ((t \/ t) = t)
+T c= c\/ f0 f0 f0
++ |- ((!n. t) = t)
+T c= ! f0 f0
+- (n < (LENGTH t)) |- (T = (n < (LENGTH t)))
+T c==> c< f0 cLENGTH f1 c= cT c< f0 cLENGTH f1
+- (!n. ((n < (LENGTH t)) ==> ((MEM ((EL n) t)) t))), (n < (LENGTH t)) |- ((n < (LENGTH t)) /\ (((MEM ((EL n) t)) t) = T))
+T c==> ! c==> c< b0 cLENGTH f0 cMEM cEL b0 f0 f0 c==> c< f1 cLENGTH f0 c/\ c< f1 cLENGTH f0 c= cMEM cEL f1 f0 f0 cT
+- ((NUMERAL _0) < (SUC (LENGTH t))) |- (((NUMERAL _0) < (SUC (LENGTH t))) = T)
+T c==> c< cNUMERAL c_0 cSUC cLENGTH f0 c= c< cNUMERAL c_0 cSUC cLENGTH f0 cT
+- (n < (LENGTH t)) |- ((n < (LENGTH t)) = T)
+T c==> c< f0 cLENGTH f1 c= c< f0 cLENGTH f1 cT
+- ((n < (SUC (LENGTH t))) ==> ((((EL n) ((CONS h) t)) = h) \/ ((MEM ((EL n) ((CONS h) t))) t))), (n < (SUC (LENGTH t))) |- ((n < (SUC (LENGTH t))) /\ (((((EL n) ((CONS h) t)) = h) \/ ((MEM ((EL n) ((CONS h) t))) t)) = T))
+T c==> c==> c< f0 cSUC cLENGTH f1 c\/ c= cEL f0 cCONS f2 f1 f2 cMEM cEL f0 cCONS f2 f1 f1 c==> c< f0 cSUC cLENGTH f1 c/\ c< f0 cSUC cLENGTH f1 c= c\/ c= cEL f0 cCONS f2 f1 f2 cMEM cEL f0 cCONS f2 f1 f1 cT
+- ((n < (SUC (LENGTH t))) ==> ((((EL n) ((CONS h) t)) = h) \/ ((MEM ((EL n) ((CONS h) t))) t))), (n < (SUC (LENGTH t))) |- ((((EL n) ((CONS h) t)) = h) \/ ((MEM ((EL n) ((CONS h) t))) t))
+T c==> c==> c< f0 cSUC cLENGTH f1 c\/ c= cEL f0 cCONS f2 f1 f2 cMEM cEL f0 cCONS f2 f1 f1 c==> c< f0 cSUC cLENGTH f1 c\/ c= cEL f0 cCONS f2 f1 f2 cMEM cEL f0 cCONS f2 f1 f1

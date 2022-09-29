@@ -1,0 +1,93 @@
+N Reduction3.size_mapAt
+C |- (!ns. (!xs. (!f. ((sizel (((mapAt ns) f) xs)) = (sizel xs)))))
+T c= csizel cmapAt f0 f1 f2 csizel f2
+D TRUTH
+A |- T
+T cT
+D COND_ELIM_THM
+A |- ((P (((COND c) x) y)) = ((c ==> (P x)) /\ ((~ c) ==> (P y))))
+T c= * f0 cCOND f1 f2 f3 c/\ c==> f1 * f0 f2 c==> c~ f1 * f0 f3
+D list_INDUCT
+A |- (!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x))))
+T c==> c/\ * f0 cNIL ! ! c==> * f0 b1 * f0 cCONS b0 b1 ! * f0 b0
+D Tame_defs2.mapAt
+A |- (((((mapAt NIL) f) xs) = xs) /\ ((((mapAt ((CONS n) ns)) f) xs) = (((COND (n < (LENGTH xs))) (((mapAt ns) f) (((list_update xs) n) (f ((EL n) xs))))) (((mapAt ns) f) xs))))
+T c/\ c= cmapAt cNIL f0 f1 f1 c= cmapAt cCONS f2 f3 f0 f1 cCOND c< f2 cLENGTH f1 cmapAt f3 f0 clist_update f1 f2 * f0 cEL f2 f1 cmapAt f3 f0 f1
+D Tame_list.lower_case
+A |- ((MAP = map) /\ ((LENGTH = sizel) /\ ((FILTER = filter) /\ ((REVERSE = rev) /\ ((!s. (!x0. ((~ (NIL = s)) ==> ((LAST s) = ((last x0) s))))) /\ ((APPEND = cat) /\ (ALL = all)))))))
+T c/\ c= part cMAP part cmap c/\ c= part cLENGTH part csizel c/\ c= part cFILTER part cfilter c/\ c= part cREVERSE part crev c/\ ! ! c==> c~ c= cNIL b0 c= cLAST b0 clast b1 b0 c/\ c= part cAPPEND part ccat c= part cALL part call
+D Tame_list.size_list_update
+A |- (!xs. (!i. (!v. ((sizel (((list_update xs) i) v)) = (sizel xs)))))
+T c= csizel clist_update f0 f1 f2 csizel f0
+- |- ((REVERSE = rev) /\ ((!s. (!x0. ((~ (NIL = s)) ==> ((LAST s) = ((last x0) s))))) /\ ((APPEND = cat) /\ (ALL = all))))
+T c/\ c= part cREVERSE part crev c/\ ! ! c==> c~ c= cNIL b0 c= cLAST b0 clast b1 b0 c/\ c= part cAPPEND part ccat c= part cALL part call
++ (!xs. (!f. ((sizel (((mapAt t) f) xs)) = (sizel xs)))), (~ (h < (sizel xs))) |- ((~ (h < (sizel xs))) /\ ((sizel (((mapAt t) f) xs)) = (sizel xs)))
+T c==> ! ! c= csizel cmapAt f0 b1 b0 csizel b0 c==> c~ c< f1 csizel f2 c/\ c~ c< f1 csizel f2 c= csizel cmapAt f0 f3 f2 csizel f2
++ (!xs. (!f. ((sizel (((mapAt t) f) xs)) = (sizel xs)))) |- (!f. ((sizel (((COND (h < (sizel xs))) (((mapAt t) f) (((list_update xs) h) (f ((EL h) xs))))) (((mapAt t) f) xs))) = (sizel xs)))
+T c==> ! ! c= csizel cmapAt f0 b1 b0 csizel b0 ! c= csizel cCOND c< f1 csizel f2 cmapAt f0 b0 clist_update f2 f1 * b0 cEL f1 f2 cmapAt f0 b0 f2 csizel f2
+- |- ((FILTER = filter) /\ ((REVERSE = rev) /\ ((!s. (!x0. ((~ (NIL = s)) ==> ((LAST s) = ((last x0) s))))) /\ ((APPEND = cat) /\ (ALL = all)))))
+T c/\ c= part cFILTER part cfilter c/\ c= part cREVERSE part crev c/\ ! ! c==> c~ c= cNIL b0 c= cLAST b0 clast b1 b0 c/\ c= part cAPPEND part ccat c= part cALL part call
+- |- ((!s. (!x0. ((~ (NIL = s)) ==> ((LAST s) = ((last x0) s))))) /\ ((APPEND = cat) /\ (ALL = all)))
+T c/\ ! ! c==> c~ c= cNIL b0 c= cLAST b0 clast b1 b0 c/\ c= part cAPPEND part ccat c= part cALL part call
++ (!xs. (!f. ((sizel (((mapAt t) f) xs)) = (sizel xs)))) |- (!f. ((sizel (((mapAt t) f) xs)) = (sizel xs)))
+T c==> ! ! c= csizel cmapAt f0 b1 b0 csizel b0 ! c= csizel cmapAt f0 b0 f1 csizel f1
+- |- (MAP = map)
+T c= part cMAP part cmap
++ |- (LENGTH = sizel)
+T c= part cLENGTH part csizel
++ (!xs. (!f. ((sizel (((mapAt t) f) xs)) = (sizel xs)))) |- ((!xs. (!f. ((sizel (((mapAt t) f) xs)) = (sizel xs)))) /\ (!xs. (!f. ((sizel (((mapAt ((CONS h) t)) f) xs)) = (sizel xs)))))
+T c==> ! ! c= csizel cmapAt f0 b1 b0 csizel b0 c/\ ! ! c= csizel cmapAt f0 b1 b0 csizel b0 ! ! c= csizel cmapAt cCONS f1 f0 b1 b0 csizel b0
++ (!xs. (!f. ((sizel (((mapAt t) f) xs)) = (sizel xs)))) |- ((h < (sizel xs)) ==> ((sizel (((mapAt t) f) (((list_update xs) h) (f ((EL h) xs))))) = (sizel xs)))
+T c==> ! ! c= csizel cmapAt f0 b1 b0 csizel b0 c==> c< f1 csizel f2 c= csizel cmapAt f0 f3 clist_update f2 f1 * f3 cEL f1 f2 csizel f2
++ |- (T = (!xs. (!f. ((sizel (((mapAt NIL) f) xs)) = (sizel xs)))))
+T c= cT ! ! c= csizel cmapAt cNIL b1 b0 csizel b0
+- |- ((\x0. ((~ (NIL = s)) ==> ((LAST s) = ((last x0) s)))) x0)
+T * / c==> c~ c= cNIL f0 c= cLAST f0 clast b0 f0 f1
+- |- ((~ (NIL = s)) ==> ((LAST s) = ((last x0) s)))
+T c==> c~ c= cNIL f0 c= cLAST f0 clast f1 f0
++ |- ((!f. t) = t)
+T c= ! f0 f0
++ (!xs. (!f. ((sizel (((mapAt t) f) xs)) = (sizel xs)))) |- ((\xs. (!f. ((sizel (((mapAt t) f) xs)) = (sizel xs)))) xs)
+T c==> ! ! c= csizel cmapAt f0 b1 b0 csizel b0 * / ! c= csizel cmapAt f0 b1 b0 csizel b0 f1
++ |- ((((!xs. (!f. ((sizel (((mapAt NIL) f) xs)) = (sizel xs)))) /\ (!h. (!t. ((!xs. (!f. ((sizel (((mapAt t) f) xs)) = (sizel xs)))) ==> (!xs. (!f. ((sizel (((mapAt ((CONS h) t)) f) xs)) = (sizel xs)))))))) ==> (!ns. (!xs. (!f. ((sizel (((mapAt ns) f) xs)) = (sizel xs)))))) = (!ns. (!xs. (!f. ((sizel (((mapAt ns) f) xs)) = (sizel xs))))))
+T c= c==> c/\ ! ! c= csizel cmapAt cNIL b1 b0 csizel b0 ! ! c==> ! ! c= csizel cmapAt b1 b3 b2 csizel b2 ! ! c= csizel cmapAt cCONS b0 b1 b3 b2 csizel b2 ! ! ! c= csizel cmapAt b0 b2 b1 csizel b1 ! ! ! c= csizel cmapAt b0 b2 b1 csizel b1
++ (!xs. (!f. ((sizel (((mapAt t) f) xs)) = (sizel xs)))) |- (((sizel (((COND (h < (sizel xs))) (((mapAt t) f) (((list_update xs) h) (f ((EL h) xs))))) (((mapAt t) f) xs))) = (sizel xs)) = T)
+T c==> ! ! c= csizel cmapAt f0 b1 b0 csizel b0 c= c= csizel cCOND c< f1 csizel f2 cmapAt f0 f3 clist_update f2 f1 * f3 cEL f1 f2 cmapAt f0 f3 f2 csizel f2 cT
++ |- (!h. (!t. ((!xs. (!f. ((sizel (((mapAt t) f) xs)) = (sizel xs)))) ==> (!xs. (!f. ((sizel (((mapAt ((CONS h) t)) f) xs)) = (sizel xs)))))))
+T c==> ! ! c= csizel cmapAt f0 b1 b0 csizel b0 ! ! c= csizel cmapAt cCONS f1 f0 b1 b0 csizel b0
++ |- ((((h < (sizel xs)) ==> ((sizel (((mapAt t) f) (((list_update xs) h) (f ((EL h) xs))))) = (sizel xs))) /\ ((~ (h < (sizel xs))) ==> ((sizel (((mapAt t) f) xs)) = (sizel xs)))) = ((sizel (((COND (h < (sizel xs))) (((mapAt t) f) (((list_update xs) h) (f ((EL h) xs))))) (((mapAt t) f) xs))) = (sizel xs)))
+T c= c/\ c==> c< f0 csizel f1 c= csizel cmapAt f2 f3 clist_update f1 f0 * f3 cEL f0 f1 csizel f1 c==> c~ c< f0 csizel f1 c= csizel cmapAt f2 f3 f1 csizel f1 c= csizel cCOND c< f0 csizel f1 cmapAt f2 f3 clist_update f1 f0 * f3 cEL f0 f1 cmapAt f2 f3 f1 csizel f1
+- (!xs. (!f. ((sizel (((mapAt t) f) xs)) = (sizel xs)))) |- (T = ((sizel (((mapAt t) f) (((list_update xs) h) (f ((EL h) xs))))) = (sizel xs)))
+T c==> ! ! c= csizel cmapAt f0 b1 b0 csizel b0 c= cT c= csizel cmapAt f0 f1 clist_update f2 f3 * f1 cEL f3 f2 csizel f2
++ |- ((!xs. (!f. ((sizel (((COND (h < (sizel xs))) (((mapAt t) f) (((list_update xs) h) (f ((EL h) xs))))) (((mapAt t) f) xs))) = (sizel xs)))) = (!xs. (!f. ((sizel (((mapAt ((CONS h) t)) f) xs)) = (sizel xs)))))
+T c= ! ! c= csizel cCOND c< f0 csizel b0 cmapAt f1 b1 clist_update b0 f0 * b1 cEL f0 b0 cmapAt f1 b1 b0 csizel b0 ! ! c= csizel cmapAt cCONS f0 f1 b1 b0 csizel b0
++ (!xs. (!f. ((sizel (((mapAt t) f) xs)) = (sizel xs)))) |- ((!f. ((sizel (((COND (h < (sizel xs))) (((mapAt t) f) (((list_update xs) h) (f ((EL h) xs))))) (((mapAt t) f) xs))) = (sizel xs))) = T)
+T c==> ! ! c= csizel cmapAt f0 b1 b0 csizel b0 c= ! c= csizel cCOND c< f1 csizel f2 cmapAt f0 b0 clist_update f2 f1 * b0 cEL f1 f2 cmapAt f0 b0 f2 csizel f2 cT
++ |- ((((mapAt ((CONS n) ns)) f) xs) = (((COND (n < (LENGTH xs))) (((mapAt ns) f) (((list_update xs) n) (f ((EL n) xs))))) (((mapAt ns) f) xs)))
+T c= cmapAt cCONS f0 f1 f2 f3 cCOND c< f0 cLENGTH f3 cmapAt f1 f2 clist_update f3 f0 * f2 cEL f0 f3 cmapAt f1 f2 f3
++ |- ((\xs. (!i. (!v. ((sizel (((list_update xs) i) v)) = (sizel xs))))) xs)
+T * / ! ! c= csizel clist_update b0 b1 b2 csizel b0 f0
++ (!xs. (!f. ((sizel (((mapAt t) f) xs)) = (sizel xs)))) |- (((!f. ((sizel (((mapAt t) f) xs)) = (sizel xs))) ==> ((\f. ((sizel (((mapAt t) f) xs)) = (sizel xs))) f)) = ((\f. ((sizel (((mapAt t) f) xs)) = (sizel xs))) f))
+T c==> ! ! c= csizel cmapAt f0 b1 b0 csizel b0 c= c==> ! c= csizel cmapAt f0 b0 f1 csizel f1 * / c= csizel cmapAt f0 b0 f1 csizel f1 f2 * / c= csizel cmapAt f0 b0 f1 csizel f1 f2
+- |- (((!x0. ((~ (NIL = s)) ==> ((LAST s) = ((last x0) s)))) ==> ((\x0. ((~ (NIL = s)) ==> ((LAST s) = ((last x0) s)))) x0)) = ((\x0. ((~ (NIL = s)) ==> ((LAST s) = ((last x0) s)))) x0))
+T c= c==> ! c==> c~ c= cNIL f0 c= cLAST f0 clast b0 f0 * / c==> c~ c= cNIL f0 c= cLAST f0 clast b0 f0 f1 * / c==> c~ c= cNIL f0 c= cLAST f0 clast b0 f0 f1
+- (~ (h < (sizel xs))) |- (((sizel (((mapAt t) f) xs)) = (sizel xs)) = ((sizel (((mapAt t) f) xs)) = (sizel xs)))
+T c==> c~ c< f0 csizel f1 c= c= csizel cmapAt f2 f3 f1 csizel f1 c= csizel cmapAt f2 f3 f1 csizel f1
+- (!xs. (!f. ((sizel (((mapAt t) f) xs)) = (sizel xs)))) |- (T = ((sizel (((mapAt t) f) xs)) = (sizel xs)))
+T c==> ! ! c= csizel cmapAt f0 b1 b0 csizel b0 c= cT c= csizel cmapAt f0 f1 f2 csizel f2
+- |- (((!s. (!x0. ((~ (NIL = s)) ==> ((LAST s) = ((last x0) s))))) ==> ((\s. (!x0. ((~ (NIL = s)) ==> ((LAST s) = ((last x0) s))))) s)) = ((\s. (!x0. ((~ (NIL = s)) ==> ((LAST s) = ((last x0) s))))) s))
+T c= c==> ! ! c==> c~ c= cNIL b0 c= cLAST b0 clast b1 b0 * / ! c==> c~ c= cNIL b0 c= cLAST b0 clast b1 b0 f0 * / ! c==> c~ c= cNIL b0 c= cLAST b0 clast b1 b0 f0
+- |- (((~ (NIL = s)) ==> ((LAST s) = ((last x0) s))) = T)
+T c= c==> c~ c= cNIL f0 c= cLAST f0 clast f1 f0 cT
+- (~ (h < (sizel xs))) |- ((h < (sizel xs)) = F)
+T c==> c~ c< f0 csizel f1 c= c< f0 csizel f1 cF
+- |- ((APPEND = cat) /\ (ALL = all))
+T c/\ c= part cAPPEND part ccat c= part cALL part call
+- |- (FILTER = filter)
+T c= part cFILTER part cfilter
+- (h < (sizel xs)) |- (((sizel (((mapAt t) f) (((list_update xs) h) (f ((EL h) xs))))) = (sizel xs)) = ((sizel (((mapAt t) f) (((list_update xs) h) (f ((EL h) xs))))) = (sizel xs)))
+T c==> c< f0 csizel f1 c= c= csizel cmapAt f2 f3 clist_update f1 f0 * f3 cEL f0 f1 csizel f1 c= csizel cmapAt f2 f3 clist_update f1 f0 * f3 cEL f0 f1 csizel f1
+- (h < (sizel xs)) |- ((h < (sizel xs)) = T)
+T c==> c< f0 csizel f1 c= c< f0 csizel f1 cT
+- |- ((\s. (!x0. ((~ (NIL = s)) ==> ((LAST s) = ((last x0) s))))) s)
+T * / ! c==> c~ c= cNIL b0 c= cLAST b0 clast b1 b0 f0

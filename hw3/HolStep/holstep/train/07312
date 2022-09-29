@@ -1,0 +1,244 @@
+N INTEGER_SIGN
+C |- (!p. (integer (sign p)))
+T cinteger csign f0
+D TRUTH
+A |- T
+T cT
+D BOOL_CASES_AX
+A |- (!t. ((t = T) \/ (t = F)))
+T c\/ c= f0 cT c= f0 cF
+D COND_CLAUSES
+A |- (!t1. (!t2. (((((COND T) t1) t2) = t1) /\ ((((COND F) t1) t2) = t2))))
+T c/\ c= cCOND cT f0 f1 f0 c= cCOND cF f0 f1 f1
+D COND_ID
+A |- (!b. (!t. ((((COND b) t) t) = t)))
+T c= cCOND f0 f1 f1 f1
+D COND_RAND
+A |- (!b. (!f. (!x. (!y. ((f (((COND b) x) y)) = (((COND b) (f x)) (f y)))))))
+T c= * f0 cCOND f1 f2 f3 cCOND f1 * f0 f2 * f0 f3
+D INTEGER_CLOSED
+A |- ((!n. (integer (real_of_num n))) /\ ((!x. (!y. (((integer x) /\ (integer y)) ==> (integer ((real_add x) y))))) /\ ((!x. (!y. (((integer x) /\ (integer y)) ==> (integer ((real_sub x) y))))) /\ ((!x. (!y. (((integer x) /\ (integer y)) ==> (integer ((real_mul x) y))))) /\ ((!x. (!r. ((integer x) ==> (integer ((real_pow x) r))))) /\ ((!x. ((integer x) ==> (integer (real_neg x)))) /\ ((!x. ((integer x) ==> (integer (real_abs x)))) /\ ((!x. (!y. (((integer x) /\ (integer y)) ==> (integer ((real_max x) y))))) /\ (!x. (!y. (((integer x) /\ (integer y)) ==> (integer ((real_min x) y)))))))))))))
+T c/\ ! cinteger creal_of_num b0 c/\ ! ! c==> c/\ cinteger b0 cinteger b1 cinteger creal_add b0 b1 c/\ ! ! c==> c/\ cinteger b0 cinteger b1 cinteger creal_sub b0 b1 c/\ ! ! c==> c/\ cinteger b0 cinteger b1 cinteger creal_mul b0 b1 c/\ ! ! c==> cinteger b0 cinteger creal_pow b0 b1 c/\ ! c==> cinteger b0 cinteger creal_neg b0 c/\ ! c==> cinteger b0 cinteger creal_abs b0 c/\ ! ! c==> c/\ cinteger b0 cinteger b1 cinteger creal_max b0 b1 ! ! c==> c/\ cinteger b0 cinteger b1 cinteger creal_min b0 b1
+D sign
+A |- (!p. ((sign p) = (((COND (evenperm p)) (real_of_num (NUMERAL (BIT1 _0)))) (real_neg (real_of_num (NUMERAL (BIT1 _0)))))))
+T c= csign f0 cCOND cevenperm f0 creal_of_num cNUMERAL cBIT1 c_0 creal_neg creal_of_num cNUMERAL cBIT1 c_0
++ |- (((~ (evenperm p)) ==> ((integer (real_neg (real_of_num (NUMERAL (BIT1 _0))))) = e')) ==> ((((COND (evenperm p)) (integer (real_of_num (NUMERAL (BIT1 _0))))) (integer (real_neg (real_of_num (NUMERAL (BIT1 _0)))))) = (((COND (evenperm p)) T) e')))
+T c==> c==> c~ cevenperm f0 c= cinteger creal_neg creal_of_num cNUMERAL cBIT1 c_0 f1 c= cCOND cevenperm f0 cinteger creal_of_num cNUMERAL cBIT1 c_0 cinteger creal_neg creal_of_num cNUMERAL cBIT1 c_0 cCOND cevenperm f0 cT f1
+- |- ((integer x) ==> ((integer ((real_pow x) r)) = T))
+T c==> cinteger f0 c= cinteger creal_pow f0 f1 cT
+- ((integer x) /\ (integer y)) |- (integer ((real_sub x) y))
+T c==> c/\ cinteger f0 cinteger f1 cinteger creal_sub f0 f1
++ |- ((((COND (evenperm p)) (integer (real_of_num (NUMERAL (BIT1 _0))))) (integer (real_neg (real_of_num (NUMERAL (BIT1 _0)))))) = (((COND (evenperm p)) T) T))
+T c= cCOND cevenperm f0 cinteger creal_of_num cNUMERAL cBIT1 c_0 cinteger creal_neg creal_of_num cNUMERAL cBIT1 c_0 cCOND cevenperm f0 cT cT
++ |- (((!b. (!f. (!x. (!y. ((f (((COND b) x) y)) = (((COND b) (f x)) (f y))))))) ==> ((\b. (!f. (!x. (!y. ((f (((COND b) x) y)) = (((COND b) (f x)) (f y))))))) b)) = ((\b. (!f. (!x. (!y. ((f (((COND b) x) y)) = (((COND b) (f x)) (f y))))))) b))
+T c= c==> ! ! ! ! c= * b1 cCOND b0 b2 b3 cCOND b0 * b1 b2 * b1 b3 * / ! ! ! c= * b1 cCOND b0 b2 b3 cCOND b0 * b1 b2 * b1 b3 f0 * / ! ! ! c= * b1 cCOND b0 b2 b3 cCOND b0 * b1 b2 * b1 b3 f0
+- (~ (evenperm p)) |- ((evenperm p) = F)
+T c==> c~ cevenperm f0 c= cevenperm f0 cF
+- ((integer x) /\ (integer y)) |- (integer ((real_add x) y))
+T c==> c/\ cinteger f0 cinteger f1 cinteger creal_add f0 f1
+- |- ((\x. (!y. (((integer x) /\ (integer y)) ==> (integer ((real_sub x) y))))) x)
+T * / ! c==> c/\ cinteger b0 cinteger b1 cinteger creal_sub b0 b1 f0
+- ((integer x) /\ (integer y)) |- (((integer x) /\ (integer y)) /\ ((integer ((real_max x) y)) = T))
+T c==> c/\ cinteger f0 cinteger f1 c/\ c/\ cinteger f0 cinteger f1 c= cinteger creal_max f0 f1 cT
+- ((integer x) /\ (integer y)) |- (integer ((real_min x) y))
+T c==> c/\ cinteger f0 cinteger f1 cinteger creal_min f0 f1
++ |- (integer (real_of_num n))
+T cinteger creal_of_num f0
++ |- ((!x. (!y. (((integer x) /\ (integer y)) ==> (integer ((real_mul x) y))))) /\ ((!x. (!r. ((integer x) ==> (integer ((real_pow x) r))))) /\ ((!x. ((integer x) ==> (integer (real_neg x)))) /\ ((!x. ((integer x) ==> (integer (real_abs x)))) /\ ((!x. (!y. (((integer x) /\ (integer y)) ==> (integer ((real_max x) y))))) /\ (!x. (!y. (((integer x) /\ (integer y)) ==> (integer ((real_min x) y))))))))))
+T c/\ ! ! c==> c/\ cinteger b0 cinteger b1 cinteger creal_mul b0 b1 c/\ ! ! c==> cinteger b0 cinteger creal_pow b0 b1 c/\ ! c==> cinteger b0 cinteger creal_neg b0 c/\ ! c==> cinteger b0 cinteger creal_abs b0 c/\ ! ! c==> c/\ cinteger b0 cinteger b1 cinteger creal_max b0 b1 ! ! c==> c/\ cinteger b0 cinteger b1 cinteger creal_min b0 b1
++ |- (((evenperm p) ==> ((integer (real_of_num (NUMERAL (BIT1 _0)))) = t')) ==> (((~ (evenperm p)) ==> ((integer (real_neg (real_of_num (NUMERAL (BIT1 _0))))) = e')) ==> ((((COND (evenperm p)) (integer (real_of_num (NUMERAL (BIT1 _0))))) (integer (real_neg (real_of_num (NUMERAL (BIT1 _0)))))) = (((COND (evenperm p)) t') e'))))
+T c==> c==> cevenperm f0 c= cinteger creal_of_num cNUMERAL cBIT1 c_0 f1 c==> c==> c~ cevenperm f0 c= cinteger creal_neg creal_of_num cNUMERAL cBIT1 c_0 f2 c= cCOND cevenperm f0 cinteger creal_of_num cNUMERAL cBIT1 c_0 cinteger creal_neg creal_of_num cNUMERAL cBIT1 c_0 cCOND cevenperm f0 f1 f2
++ (integer x) |- (integer (real_neg x))
+T c==> cinteger f0 cinteger creal_neg f0
+- |- (((!t'. (!e'. (((evenperm p) = g') ==> ((g' ==> ((real_of_num (NUMERAL (BIT1 _0))) = t')) ==> (((~ g') ==> ((real_neg (real_of_num (NUMERAL (BIT1 _0)))) = e')) ==> ((((COND (evenperm p)) (real_of_num (NUMERAL (BIT1 _0)))) (real_neg (real_of_num (NUMERAL (BIT1 _0))))) = (((COND g') t') e'))))))) ==> ((\t'. (!e'. (((evenperm p) = g') ==> ((g' ==> ((real_of_num (NUMERAL (BIT1 _0))) = t')) ==> (((~ g') ==> ((real_neg (real_of_num (NUMERAL (BIT1 _0)))) = e')) ==> ((((COND (evenperm p)) (real_of_num (NUMERAL (BIT1 _0)))) (real_neg (real_of_num (NUMERAL (BIT1 _0))))) = (((COND g') t') e'))))))) t')) = ((\t'. (!e'. (((evenperm p) = g') ==> ((g' ==> ((real_of_num (NUMERAL (BIT1 _0))) = t')) ==> (((~ g') ==> ((real_neg (real_of_num (NUMERAL (BIT1 _0)))) = e')) ==> ((((COND (evenperm p)) (real_of_num (NUMERAL (BIT1 _0)))) (real_neg (real_of_num (NUMERAL (BIT1 _0))))) = (((COND g') t') e'))))))) t'))
+T c= c==> ! ! c==> c= cevenperm f0 f1 c==> c==> f1 c= creal_of_num cNUMERAL cBIT1 c_0 b0 c==> c==> c~ f1 c= creal_neg creal_of_num cNUMERAL cBIT1 c_0 b1 c= cCOND cevenperm f0 creal_of_num cNUMERAL cBIT1 c_0 creal_neg creal_of_num cNUMERAL cBIT1 c_0 cCOND f1 b0 b1 * / ! c==> c= cevenperm f0 f1 c==> c==> f1 c= creal_of_num cNUMERAL cBIT1 c_0 b0 c==> c==> c~ f1 c= creal_neg creal_of_num cNUMERAL cBIT1 c_0 b1 c= cCOND cevenperm f0 creal_of_num cNUMERAL cBIT1 c_0 creal_neg creal_of_num cNUMERAL cBIT1 c_0 cCOND f1 b0 b1 f2 * / ! c==> c= cevenperm f0 f1 c==> c==> f1 c= creal_of_num cNUMERAL cBIT1 c_0 b0 c==> c==> c~ f1 c= creal_neg creal_of_num cNUMERAL cBIT1 c_0 b1 c= cCOND cevenperm f0 creal_of_num cNUMERAL cBIT1 c_0 creal_neg creal_of_num cNUMERAL cBIT1 c_0 cCOND f1 b0 b1 f2
+- |- ((\y. (((integer x) /\ (integer y)) ==> (integer ((real_max x) y)))) y)
+T * / c==> c/\ cinteger f0 cinteger b0 cinteger creal_max f0 b0 f1
++ |- (((!t'. (!e'. (((evenperm p) = g') ==> ((g' ==> ((integer (real_of_num (NUMERAL (BIT1 _0)))) = t')) ==> (((~ g') ==> ((integer (real_neg (real_of_num (NUMERAL (BIT1 _0))))) = e')) ==> ((((COND (evenperm p)) (integer (real_of_num (NUMERAL (BIT1 _0))))) (integer (real_neg (real_of_num (NUMERAL (BIT1 _0)))))) = (((COND g') t') e'))))))) ==> ((\t'. (!e'. (((evenperm p) = g') ==> ((g' ==> ((integer (real_of_num (NUMERAL (BIT1 _0)))) = t')) ==> (((~ g') ==> ((integer (real_neg (real_of_num (NUMERAL (BIT1 _0))))) = e')) ==> ((((COND (evenperm p)) (integer (real_of_num (NUMERAL (BIT1 _0))))) (integer (real_neg (real_of_num (NUMERAL (BIT1 _0)))))) = (((COND g') t') e'))))))) t')) = ((\t'. (!e'. (((evenperm p) = g') ==> ((g' ==> ((integer (real_of_num (NUMERAL (BIT1 _0)))) = t')) ==> (((~ g') ==> ((integer (real_neg (real_of_num (NUMERAL (BIT1 _0))))) = e')) ==> ((((COND (evenperm p)) (integer (real_of_num (NUMERAL (BIT1 _0))))) (integer (real_neg (real_of_num (NUMERAL (BIT1 _0)))))) = (((COND g') t') e'))))))) t'))
+T c= c==> ! ! c==> c= cevenperm f0 f1 c==> c==> f1 c= cinteger creal_of_num cNUMERAL cBIT1 c_0 b0 c==> c==> c~ f1 c= cinteger creal_neg creal_of_num cNUMERAL cBIT1 c_0 b1 c= cCOND cevenperm f0 cinteger creal_of_num cNUMERAL cBIT1 c_0 cinteger creal_neg creal_of_num cNUMERAL cBIT1 c_0 cCOND f1 b0 b1 * / ! c==> c= cevenperm f0 f1 c==> c==> f1 c= cinteger creal_of_num cNUMERAL cBIT1 c_0 b0 c==> c==> c~ f1 c= cinteger creal_neg creal_of_num cNUMERAL cBIT1 c_0 b1 c= cCOND cevenperm f0 cinteger creal_of_num cNUMERAL cBIT1 c_0 cinteger creal_neg creal_of_num cNUMERAL cBIT1 c_0 cCOND f1 b0 b1 f2 * / ! c==> c= cevenperm f0 f1 c==> c==> f1 c= cinteger creal_of_num cNUMERAL cBIT1 c_0 b0 c==> c==> c~ f1 c= cinteger creal_neg creal_of_num cNUMERAL cBIT1 c_0 b1 c= cCOND cevenperm f0 cinteger creal_of_num cNUMERAL cBIT1 c_0 cinteger creal_neg creal_of_num cNUMERAL cBIT1 c_0 cCOND f1 b0 b1 f2
+- |- ((\y. (((integer x) /\ (integer y)) ==> (integer ((real_mul x) y)))) y)
+T * / c==> c/\ cinteger f0 cinteger b0 cinteger creal_mul f0 b0 f1
++ |- ((\x. ((integer x) ==> (integer (real_neg x)))) x)
+T * / c==> cinteger b0 cinteger creal_neg b0 f0
++ |- (((!x. (!y. ((f (((COND b) x) y)) = (((COND b) (f x)) (f y))))) ==> ((\x. (!y. ((f (((COND b) x) y)) = (((COND b) (f x)) (f y))))) x)) = ((\x. (!y. ((f (((COND b) x) y)) = (((COND b) (f x)) (f y))))) x))
+T c= c==> ! ! c= * f0 cCOND f1 b0 b1 cCOND f1 * f0 b0 * f0 b1 * / ! c= * f0 cCOND f1 b0 b1 cCOND f1 * f0 b0 * f0 b1 f2 * / ! c= * f0 cCOND f1 b0 b1 cCOND f1 * f0 b0 * f0 b1 f2
++ |- ((!p. t) = t)
+T c= ! f0 f0
++ |- ((\b. (!f. (!x. (!y. ((f (((COND b) x) y)) = (((COND b) (f x)) (f y))))))) b)
+T * / ! ! ! c= * b1 cCOND b0 b2 b3 cCOND b0 * b1 b2 * b1 b3 f0
+- |- ((\e'. (((evenperm p) = g') ==> ((g' ==> ((real_of_num (NUMERAL (BIT1 _0))) = t')) ==> (((~ g') ==> ((real_neg (real_of_num (NUMERAL (BIT1 _0)))) = e')) ==> ((((COND (evenperm p)) (real_of_num (NUMERAL (BIT1 _0)))) (real_neg (real_of_num (NUMERAL (BIT1 _0))))) = (((COND g') t') e')))))) e')
+T * / c==> c= cevenperm f0 f1 c==> c==> f1 c= creal_of_num cNUMERAL cBIT1 c_0 f2 c==> c==> c~ f1 c= creal_neg creal_of_num cNUMERAL cBIT1 c_0 b0 c= cCOND cevenperm f0 creal_of_num cNUMERAL cBIT1 c_0 creal_neg creal_of_num cNUMERAL cBIT1 c_0 cCOND f1 f2 b0 f3
++ |- ((((~ (evenperm p)) ==> ((integer (real_neg (real_of_num (NUMERAL (BIT1 _0))))) = T)) ==> ((((COND (evenperm p)) (integer (real_of_num (NUMERAL (BIT1 _0))))) (integer (real_neg (real_of_num (NUMERAL (BIT1 _0)))))) = (((COND (evenperm p)) T) T))) = ((((COND (evenperm p)) (integer (real_of_num (NUMERAL (BIT1 _0))))) (integer (real_neg (real_of_num (NUMERAL (BIT1 _0)))))) = (((COND (evenperm p)) T) T)))
+T c= c==> c==> c~ cevenperm f0 c= cinteger creal_neg creal_of_num cNUMERAL cBIT1 c_0 cT c= cCOND cevenperm f0 cinteger creal_of_num cNUMERAL cBIT1 c_0 cinteger creal_neg creal_of_num cNUMERAL cBIT1 c_0 cCOND cevenperm f0 cT cT c= cCOND cevenperm f0 cinteger creal_of_num cNUMERAL cBIT1 c_0 cinteger creal_neg creal_of_num cNUMERAL cBIT1 c_0 cCOND cevenperm f0 cT cT
+- ((integer x) /\ (integer y)) |- (((integer x) /\ (integer y)) /\ ((integer ((real_sub x) y)) = T))
+T c==> c/\ cinteger f0 cinteger f1 c/\ c/\ cinteger f0 cinteger f1 c= cinteger creal_sub f0 f1 cT
++ |- (T = (!p. (integer (sign p))))
+T c= cT ! cinteger csign b0
+- |- (((!x. (!y. (((integer x) /\ (integer y)) ==> (integer ((real_max x) y))))) ==> ((\x. (!y. (((integer x) /\ (integer y)) ==> (integer ((real_max x) y))))) x)) = ((\x. (!y. (((integer x) /\ (integer y)) ==> (integer ((real_max x) y))))) x))
+T c= c==> ! ! c==> c/\ cinteger b0 cinteger b1 cinteger creal_max b0 b1 * / ! c==> c/\ cinteger b0 cinteger b1 cinteger creal_max b0 b1 f0 * / ! c==> c/\ cinteger b0 cinteger b1 cinteger creal_max b0 b1 f0
+- |- ((\x. (!y. (((integer x) /\ (integer y)) ==> (integer ((real_min x) y))))) x)
+T * / ! c==> c/\ cinteger b0 cinteger b1 cinteger creal_min b0 b1 f0
+- |- ((\g'. (!t'. (!e'. (((evenperm p) = g') ==> ((g' ==> ((real_of_num (NUMERAL (BIT1 _0))) = t')) ==> (((~ g') ==> ((real_neg (real_of_num (NUMERAL (BIT1 _0)))) = e')) ==> ((((COND (evenperm p)) (real_of_num (NUMERAL (BIT1 _0)))) (real_neg (real_of_num (NUMERAL (BIT1 _0))))) = (((COND g') t') e')))))))) g')
+T * / ! ! c==> c= cevenperm f0 b0 c==> c==> b0 c= creal_of_num cNUMERAL cBIT1 c_0 b1 c==> c==> c~ b0 c= creal_neg creal_of_num cNUMERAL cBIT1 c_0 b2 c= cCOND cevenperm f0 creal_of_num cNUMERAL cBIT1 c_0 creal_neg creal_of_num cNUMERAL cBIT1 c_0 cCOND b0 b1 b2 f1
++ |- ((\e'. (((evenperm p) = g') ==> ((g' ==> ((integer (real_of_num (NUMERAL (BIT1 _0)))) = t')) ==> (((~ g') ==> ((integer (real_neg (real_of_num (NUMERAL (BIT1 _0))))) = e')) ==> ((((COND (evenperm p)) (integer (real_of_num (NUMERAL (BIT1 _0))))) (integer (real_neg (real_of_num (NUMERAL (BIT1 _0)))))) = (((COND g') t') e')))))) e')
+T * / c==> c= cevenperm f0 f1 c==> c==> f1 c= cinteger creal_of_num cNUMERAL cBIT1 c_0 f2 c==> c==> c~ f1 c= cinteger creal_neg creal_of_num cNUMERAL cBIT1 c_0 b0 c= cCOND cevenperm f0 cinteger creal_of_num cNUMERAL cBIT1 c_0 cinteger creal_neg creal_of_num cNUMERAL cBIT1 c_0 cCOND f1 f2 b0 f3
+- |- (((!x. (!y. (((integer x) /\ (integer y)) ==> (integer ((real_sub x) y))))) ==> ((\x. (!y. (((integer x) /\ (integer y)) ==> (integer ((real_sub x) y))))) x)) = ((\x. (!y. (((integer x) /\ (integer y)) ==> (integer ((real_sub x) y))))) x))
+T c= c==> ! ! c==> c/\ cinteger b0 cinteger b1 cinteger creal_sub b0 b1 * / ! c==> c/\ cinteger b0 cinteger b1 cinteger creal_sub b0 b1 f0 * / ! c==> c/\ cinteger b0 cinteger b1 cinteger creal_sub b0 b1 f0
++ |- ((\b. (!t. ((((COND b) t) t) = t))) b)
+T * / ! c= cCOND b0 b1 b1 b1 f0
++ |- ((\x. (!y. ((f (((COND b) x) y)) = (((COND b) (f x)) (f y))))) x)
+T * / ! c= * f0 cCOND f1 b0 b1 cCOND f1 * f0 b0 * f0 b1 f2
++ |- ((~ (evenperm p)) ==> ((integer (real_neg (real_of_num (NUMERAL (BIT1 _0))))) = T))
+T c==> c~ cevenperm f0 c= cinteger creal_neg creal_of_num cNUMERAL cBIT1 c_0 cT
+- |- (((!r. ((integer x) ==> (integer ((real_pow x) r)))) ==> ((\r. ((integer x) ==> (integer ((real_pow x) r)))) r)) = ((\r. ((integer x) ==> (integer ((real_pow x) r)))) r))
+T c= c==> ! c==> cinteger f0 cinteger creal_pow f0 b0 * / c==> cinteger f0 cinteger creal_pow f0 b0 f1 * / c==> cinteger f0 cinteger creal_pow f0 b0 f1
+- |- (((~ (evenperm p)) ==> ((real_neg (real_of_num (NUMERAL (BIT1 _0)))) = e')) ==> ((((COND (evenperm p)) (real_of_num (NUMERAL (BIT1 _0)))) (real_neg (real_of_num (NUMERAL (BIT1 _0))))) = (((COND (evenperm p)) (real_of_num (NUMERAL (BIT1 _0)))) e')))
+T c==> c==> c~ cevenperm f0 c= creal_neg creal_of_num cNUMERAL cBIT1 c_0 f1 c= cCOND cevenperm f0 creal_of_num cNUMERAL cBIT1 c_0 creal_neg creal_of_num cNUMERAL cBIT1 c_0 cCOND cevenperm f0 creal_of_num cNUMERAL cBIT1 c_0 f1
+- (evenperm p) |- ((evenperm p) /\ ((real_of_num (NUMERAL (BIT1 _0))) = (real_of_num (NUMERAL (BIT1 _0)))))
+T c==> cevenperm f0 c/\ cevenperm f0 c= creal_of_num cNUMERAL cBIT1 c_0 creal_of_num cNUMERAL cBIT1 c_0
+- |- ((\x. (!y. (((integer x) /\ (integer y)) ==> (integer ((real_mul x) y))))) x)
+T * / ! c==> c/\ cinteger b0 cinteger b1 cinteger creal_mul b0 b1 f0
+- |- (((!x. (!r. ((integer x) ==> (integer ((real_pow x) r))))) ==> ((\x. (!r. ((integer x) ==> (integer ((real_pow x) r))))) x)) = ((\x. (!r. ((integer x) ==> (integer ((real_pow x) r))))) x))
+T c= c==> ! ! c==> cinteger b0 cinteger creal_pow b0 b1 * / ! c==> cinteger b0 cinteger creal_pow b0 b1 f0 * / ! c==> cinteger b0 cinteger creal_pow b0 b1 f0
+- |- (((!g'. (!t'. (!e'. (((evenperm p) = g') ==> ((g' ==> ((real_of_num (NUMERAL (BIT1 _0))) = t')) ==> (((~ g') ==> ((real_neg (real_of_num (NUMERAL (BIT1 _0)))) = e')) ==> ((((COND (evenperm p)) (real_of_num (NUMERAL (BIT1 _0)))) (real_neg (real_of_num (NUMERAL (BIT1 _0))))) = (((COND g') t') e')))))))) ==> ((\g'. (!t'. (!e'. (((evenperm p) = g') ==> ((g' ==> ((real_of_num (NUMERAL (BIT1 _0))) = t')) ==> (((~ g') ==> ((real_neg (real_of_num (NUMERAL (BIT1 _0)))) = e')) ==> ((((COND (evenperm p)) (real_of_num (NUMERAL (BIT1 _0)))) (real_neg (real_of_num (NUMERAL (BIT1 _0))))) = (((COND g') t') e')))))))) g')) = ((\g'. (!t'. (!e'. (((evenperm p) = g') ==> ((g' ==> ((real_of_num (NUMERAL (BIT1 _0))) = t')) ==> (((~ g') ==> ((real_neg (real_of_num (NUMERAL (BIT1 _0)))) = e')) ==> ((((COND (evenperm p)) (real_of_num (NUMERAL (BIT1 _0)))) (real_neg (real_of_num (NUMERAL (BIT1 _0))))) = (((COND g') t') e')))))))) g'))
+T c= c==> ! ! ! c==> c= cevenperm f0 b0 c==> c==> b0 c= creal_of_num cNUMERAL cBIT1 c_0 b1 c==> c==> c~ b0 c= creal_neg creal_of_num cNUMERAL cBIT1 c_0 b2 c= cCOND cevenperm f0 creal_of_num cNUMERAL cBIT1 c_0 creal_neg creal_of_num cNUMERAL cBIT1 c_0 cCOND b0 b1 b2 * / ! ! c==> c= cevenperm f0 b0 c==> c==> b0 c= creal_of_num cNUMERAL cBIT1 c_0 b1 c==> c==> c~ b0 c= creal_neg creal_of_num cNUMERAL cBIT1 c_0 b2 c= cCOND cevenperm f0 creal_of_num cNUMERAL cBIT1 c_0 creal_neg creal_of_num cNUMERAL cBIT1 c_0 cCOND b0 b1 b2 f1 * / ! ! c==> c= cevenperm f0 b0 c==> c==> b0 c= creal_of_num cNUMERAL cBIT1 c_0 b1 c==> c==> c~ b0 c= creal_neg creal_of_num cNUMERAL cBIT1 c_0 b2 c= cCOND cevenperm f0 creal_of_num cNUMERAL cBIT1 c_0 creal_neg creal_of_num cNUMERAL cBIT1 c_0 cCOND b0 b1 b2 f1
+- |- ((((COND (evenperm p)) (real_of_num (NUMERAL (BIT1 _0)))) (real_neg (real_of_num (NUMERAL (BIT1 _0))))) = (((COND (evenperm p)) (real_of_num (NUMERAL (BIT1 _0)))) (real_neg (real_of_num (NUMERAL (BIT1 _0))))))
+T c= cCOND cevenperm f0 creal_of_num cNUMERAL cBIT1 c_0 creal_neg creal_of_num cNUMERAL cBIT1 c_0 cCOND cevenperm f0 creal_of_num cNUMERAL cBIT1 c_0 creal_neg creal_of_num cNUMERAL cBIT1 c_0
+- |- (((!x. (!y. (((integer x) /\ (integer y)) ==> (integer ((real_add x) y))))) ==> ((\x. (!y. (((integer x) /\ (integer y)) ==> (integer ((real_add x) y))))) x)) = ((\x. (!y. (((integer x) /\ (integer y)) ==> (integer ((real_add x) y))))) x))
+T c= c==> ! ! c==> c/\ cinteger b0 cinteger b1 cinteger creal_add b0 b1 * / ! c==> c/\ cinteger b0 cinteger b1 cinteger creal_add b0 b1 f0 * / ! c==> c/\ cinteger b0 cinteger b1 cinteger creal_add b0 b1 f0
++ |- (((g = g') ==> ((g' ==> (t = t')) ==> (((~ g') ==> (e = e')) ==> ((((COND g) t) e) = (((COND g') t') e'))))) = T)
+T c= c==> c= f0 f1 c==> c==> f1 c= f2 f3 c==> c==> c~ f1 c= f4 f5 c= cCOND f0 f2 f4 cCOND f1 f3 f5 cT
+- |- (((!x. ((integer x) ==> (integer (real_abs x)))) ==> ((\x. ((integer x) ==> (integer (real_abs x)))) x)) = ((\x. ((integer x) ==> (integer (real_abs x)))) x))
+T c= c==> ! c==> cinteger b0 cinteger creal_abs b0 * / c==> cinteger b0 cinteger creal_abs b0 f0 * / c==> cinteger b0 cinteger creal_abs b0 f0
+- |- (((!e'. (((evenperm p) = g') ==> ((g' ==> ((real_of_num (NUMERAL (BIT1 _0))) = t')) ==> (((~ g') ==> ((real_neg (real_of_num (NUMERAL (BIT1 _0)))) = e')) ==> ((((COND (evenperm p)) (real_of_num (NUMERAL (BIT1 _0)))) (real_neg (real_of_num (NUMERAL (BIT1 _0))))) = (((COND g') t') e')))))) ==> ((\e'. (((evenperm p) = g') ==> ((g' ==> ((real_of_num (NUMERAL (BIT1 _0))) = t')) ==> (((~ g') ==> ((real_neg (real_of_num (NUMERAL (BIT1 _0)))) = e')) ==> ((((COND (evenperm p)) (real_of_num (NUMERAL (BIT1 _0)))) (real_neg (real_of_num (NUMERAL (BIT1 _0))))) = (((COND g') t') e')))))) e')) = ((\e'. (((evenperm p) = g') ==> ((g' ==> ((real_of_num (NUMERAL (BIT1 _0))) = t')) ==> (((~ g') ==> ((real_neg (real_of_num (NUMERAL (BIT1 _0)))) = e')) ==> ((((COND (evenperm p)) (real_of_num (NUMERAL (BIT1 _0)))) (real_neg (real_of_num (NUMERAL (BIT1 _0))))) = (((COND g') t') e')))))) e'))
+T c= c==> ! c==> c= cevenperm f0 f1 c==> c==> f1 c= creal_of_num cNUMERAL cBIT1 c_0 f2 c==> c==> c~ f1 c= creal_neg creal_of_num cNUMERAL cBIT1 c_0 b0 c= cCOND cevenperm f0 creal_of_num cNUMERAL cBIT1 c_0 creal_neg creal_of_num cNUMERAL cBIT1 c_0 cCOND f1 f2 b0 * / c==> c= cevenperm f0 f1 c==> c==> f1 c= creal_of_num cNUMERAL cBIT1 c_0 f2 c==> c==> c~ f1 c= creal_neg creal_of_num cNUMERAL cBIT1 c_0 b0 c= cCOND cevenperm f0 creal_of_num cNUMERAL cBIT1 c_0 creal_neg creal_of_num cNUMERAL cBIT1 c_0 cCOND f1 f2 b0 f3 * / c==> c= cevenperm f0 f1 c==> c==> f1 c= creal_of_num cNUMERAL cBIT1 c_0 f2 c==> c==> c~ f1 c= creal_neg creal_of_num cNUMERAL cBIT1 c_0 b0 c= cCOND cevenperm f0 creal_of_num cNUMERAL cBIT1 c_0 creal_neg creal_of_num cNUMERAL cBIT1 c_0 cCOND f1 f2 b0 f3
+- |- ((\r. ((integer x) ==> (integer ((real_pow x) r)))) r)
+T * / c==> cinteger f0 cinteger creal_pow f0 b0 f1
+- |- ((evenperm p) ==> ((real_of_num (NUMERAL (BIT1 _0))) = (real_of_num (NUMERAL (BIT1 _0)))))
+T c==> cevenperm f0 c= creal_of_num cNUMERAL cBIT1 c_0 creal_of_num cNUMERAL cBIT1 c_0
+- |- (((integer x) /\ (integer y)) ==> ((integer ((real_min x) y)) = T))
+T c==> c/\ cinteger f0 cinteger f1 c= cinteger creal_min f0 f1 cT
+- (evenperm p) |- ((evenperm p) = T)
+T c==> cevenperm f0 c= cevenperm f0 cT
++ |- ((\f. (!x. (!y. ((f (((COND b) x) y)) = (((COND b) (f x)) (f y)))))) f)
+T * / ! ! c= * b0 cCOND f0 b1 b2 cCOND f0 * b0 b1 * b0 b2 f1
+- (integer x) |- (integer ((real_pow x) r))
+T c==> cinteger f0 cinteger creal_pow f0 f1
+- |- (((integer x) /\ (integer y)) ==> ((integer ((real_mul x) y)) = T))
+T c==> c/\ cinteger f0 cinteger f1 c= cinteger creal_mul f0 f1 cT
+- |- ((((~ (evenperm p)) ==> ((real_neg (real_of_num (NUMERAL (BIT1 _0)))) = (real_neg (real_of_num (NUMERAL (BIT1 _0)))))) ==> ((((COND (evenperm p)) (real_of_num (NUMERAL (BIT1 _0)))) (real_neg (real_of_num (NUMERAL (BIT1 _0))))) = (((COND (evenperm p)) (real_of_num (NUMERAL (BIT1 _0)))) (real_neg (real_of_num (NUMERAL (BIT1 _0))))))) = ((((COND (evenperm p)) (real_of_num (NUMERAL (BIT1 _0)))) (real_neg (real_of_num (NUMERAL (BIT1 _0))))) = (((COND (evenperm p)) (real_of_num (NUMERAL (BIT1 _0)))) (real_neg (real_of_num (NUMERAL (BIT1 _0)))))))
+T c= c==> c==> c~ cevenperm f0 c= creal_neg creal_of_num cNUMERAL cBIT1 c_0 creal_neg creal_of_num cNUMERAL cBIT1 c_0 c= cCOND cevenperm f0 creal_of_num cNUMERAL cBIT1 c_0 creal_neg creal_of_num cNUMERAL cBIT1 c_0 cCOND cevenperm f0 creal_of_num cNUMERAL cBIT1 c_0 creal_neg creal_of_num cNUMERAL cBIT1 c_0 c= cCOND cevenperm f0 creal_of_num cNUMERAL cBIT1 c_0 creal_neg creal_of_num cNUMERAL cBIT1 c_0 cCOND cevenperm f0 creal_of_num cNUMERAL cBIT1 c_0 creal_neg creal_of_num cNUMERAL cBIT1 c_0
++ |- ((!x. (!y. (((integer x) /\ (integer y)) ==> (integer ((real_add x) y))))) /\ ((!x. (!y. (((integer x) /\ (integer y)) ==> (integer ((real_sub x) y))))) /\ ((!x. (!y. (((integer x) /\ (integer y)) ==> (integer ((real_mul x) y))))) /\ ((!x. (!r. ((integer x) ==> (integer ((real_pow x) r))))) /\ ((!x. ((integer x) ==> (integer (real_neg x)))) /\ ((!x. ((integer x) ==> (integer (real_abs x)))) /\ ((!x. (!y. (((integer x) /\ (integer y)) ==> (integer ((real_max x) y))))) /\ (!x. (!y. (((integer x) /\ (integer y)) ==> (integer ((real_min x) y))))))))))))
+T c/\ ! ! c==> c/\ cinteger b0 cinteger b1 cinteger creal_add b0 b1 c/\ ! ! c==> c/\ cinteger b0 cinteger b1 cinteger creal_sub b0 b1 c/\ ! ! c==> c/\ cinteger b0 cinteger b1 cinteger creal_mul b0 b1 c/\ ! ! c==> cinteger b0 cinteger creal_pow b0 b1 c/\ ! c==> cinteger b0 cinteger creal_neg b0 c/\ ! c==> cinteger b0 cinteger creal_abs b0 c/\ ! ! c==> c/\ cinteger b0 cinteger b1 cinteger creal_max b0 b1 ! ! c==> c/\ cinteger b0 cinteger b1 cinteger creal_min b0 b1
+- |- ((!x. (!y. (((integer x) /\ (integer y)) ==> (integer ((real_max x) y))))) /\ (!x. (!y. (((integer x) /\ (integer y)) ==> (integer ((real_min x) y))))))
+T c/\ ! ! c==> c/\ cinteger b0 cinteger b1 cinteger creal_max b0 b1 ! ! c==> c/\ cinteger b0 cinteger b1 cinteger creal_min b0 b1
+- |- ((((evenperm p) ==> ((real_of_num (NUMERAL (BIT1 _0))) = (real_of_num (NUMERAL (BIT1 _0))))) ==> (((~ (evenperm p)) ==> ((real_neg (real_of_num (NUMERAL (BIT1 _0)))) = e')) ==> ((((COND (evenperm p)) (real_of_num (NUMERAL (BIT1 _0)))) (real_neg (real_of_num (NUMERAL (BIT1 _0))))) = (((COND (evenperm p)) (real_of_num (NUMERAL (BIT1 _0)))) e')))) = (((~ (evenperm p)) ==> ((real_neg (real_of_num (NUMERAL (BIT1 _0)))) = e')) ==> ((((COND (evenperm p)) (real_of_num (NUMERAL (BIT1 _0)))) (real_neg (real_of_num (NUMERAL (BIT1 _0))))) = (((COND (evenperm p)) (real_of_num (NUMERAL (BIT1 _0)))) e'))))
+T c= c==> c==> cevenperm f0 c= creal_of_num cNUMERAL cBIT1 c_0 creal_of_num cNUMERAL cBIT1 c_0 c==> c==> c~ cevenperm f0 c= creal_neg creal_of_num cNUMERAL cBIT1 c_0 f1 c= cCOND cevenperm f0 creal_of_num cNUMERAL cBIT1 c_0 creal_neg creal_of_num cNUMERAL cBIT1 c_0 cCOND cevenperm f0 creal_of_num cNUMERAL cBIT1 c_0 f1 c==> c==> c~ cevenperm f0 c= creal_neg creal_of_num cNUMERAL cBIT1 c_0 f1 c= cCOND cevenperm f0 creal_of_num cNUMERAL cBIT1 c_0 creal_neg creal_of_num cNUMERAL cBIT1 c_0 cCOND cevenperm f0 creal_of_num cNUMERAL cBIT1 c_0 f1
+- |- (((!x. (!y. (((integer x) /\ (integer y)) ==> (integer ((real_min x) y))))) ==> ((\x. (!y. (((integer x) /\ (integer y)) ==> (integer ((real_min x) y))))) x)) = ((\x. (!y. (((integer x) /\ (integer y)) ==> (integer ((real_min x) y))))) x))
+T c= c==> ! ! c==> c/\ cinteger b0 cinteger b1 cinteger creal_min b0 b1 * / ! c==> c/\ cinteger b0 cinteger b1 cinteger creal_min b0 b1 f0 * / ! c==> c/\ cinteger b0 cinteger b1 cinteger creal_min b0 b1 f0
+- |- (((integer x) /\ (integer y)) ==> ((integer ((real_max x) y)) = T))
+T c==> c/\ cinteger f0 cinteger f1 c= cinteger creal_max f0 f1 cT
+- |- ((\y. (((integer x) /\ (integer y)) ==> (integer ((real_add x) y)))) y)
+T * / c==> c/\ cinteger f0 cinteger b0 cinteger creal_add f0 b0 f1
+- |- (((!y. (((integer x) /\ (integer y)) ==> (integer ((real_min x) y)))) ==> ((\y. (((integer x) /\ (integer y)) ==> (integer ((real_min x) y)))) y)) = ((\y. (((integer x) /\ (integer y)) ==> (integer ((real_min x) y)))) y))
+T c= c==> ! c==> c/\ cinteger f0 cinteger b0 cinteger creal_min f0 b0 * / c==> c/\ cinteger f0 cinteger b0 cinteger creal_min f0 b0 f1 * / c==> c/\ cinteger f0 cinteger b0 cinteger creal_min f0 b0 f1
++ |- ((!x. ((integer x) ==> (integer (real_neg x)))) /\ ((!x. ((integer x) ==> (integer (real_abs x)))) /\ ((!x. (!y. (((integer x) /\ (integer y)) ==> (integer ((real_max x) y))))) /\ (!x. (!y. (((integer x) /\ (integer y)) ==> (integer ((real_min x) y))))))))
+T c/\ ! c==> cinteger b0 cinteger creal_neg b0 c/\ ! c==> cinteger b0 cinteger creal_abs b0 c/\ ! ! c==> c/\ cinteger b0 cinteger b1 cinteger creal_max b0 b1 ! ! c==> c/\ cinteger b0 cinteger b1 cinteger creal_min b0 b1
++ |- (!g'. (!t'. (!e'. ((g = g') ==> ((g' ==> (t = t')) ==> (((~ g') ==> (e = e')) ==> ((((COND g) t) e) = (((COND g') t') e'))))))))
+T c==> c= f0 f1 c==> c==> f1 c= f2 f3 c==> c==> c~ f1 c= f4 f5 c= cCOND f0 f2 f4 cCOND f1 f3 f5
++ |- ((\n. (integer (real_of_num n))) n)
+T * / cinteger creal_of_num b0 f0
+- ((integer x) /\ (integer y)) |- (((integer x) /\ (integer y)) /\ ((integer ((real_add x) y)) = T))
+T c==> c/\ cinteger f0 cinteger f1 c/\ c/\ cinteger f0 cinteger f1 c= cinteger creal_add f0 f1 cT
++ |- ((!x. (!y. (((integer x) /\ (integer y)) ==> (integer ((real_sub x) y))))) /\ ((!x. (!y. (((integer x) /\ (integer y)) ==> (integer ((real_mul x) y))))) /\ ((!x. (!r. ((integer x) ==> (integer ((real_pow x) r))))) /\ ((!x. ((integer x) ==> (integer (real_neg x)))) /\ ((!x. ((integer x) ==> (integer (real_abs x)))) /\ ((!x. (!y. (((integer x) /\ (integer y)) ==> (integer ((real_max x) y))))) /\ (!x. (!y. (((integer x) /\ (integer y)) ==> (integer ((real_min x) y)))))))))))
+T c/\ ! ! c==> c/\ cinteger b0 cinteger b1 cinteger creal_sub b0 b1 c/\ ! ! c==> c/\ cinteger b0 cinteger b1 cinteger creal_mul b0 b1 c/\ ! ! c==> cinteger b0 cinteger creal_pow b0 b1 c/\ ! c==> cinteger b0 cinteger creal_neg b0 c/\ ! c==> cinteger b0 cinteger creal_abs b0 c/\ ! ! c==> c/\ cinteger b0 cinteger b1 cinteger creal_max b0 b1 ! ! c==> c/\ cinteger b0 cinteger b1 cinteger creal_min b0 b1
+- (integer x) |- ((integer x) /\ ((integer ((real_pow x) r)) = T))
+T c==> cinteger f0 c/\ cinteger f0 c= cinteger creal_pow f0 f1 cT
+- |- ((\x. ((integer x) ==> (integer (real_abs x)))) x)
+T * / c==> cinteger b0 cinteger creal_abs b0 f0
+- |- ((\y. (((integer x) /\ (integer y)) ==> (integer ((real_min x) y)))) y)
+T * / c==> c/\ cinteger f0 cinteger b0 cinteger creal_min f0 b0 f1
++ |- ((evenperm p) ==> ((integer (real_of_num (NUMERAL (BIT1 _0)))) = T))
+T c==> cevenperm f0 c= cinteger creal_of_num cNUMERAL cBIT1 c_0 cT
++ |- ((\t'. (!e'. (((evenperm p) = g') ==> ((g' ==> ((integer (real_of_num (NUMERAL (BIT1 _0)))) = t')) ==> (((~ g') ==> ((integer (real_neg (real_of_num (NUMERAL (BIT1 _0))))) = e')) ==> ((((COND (evenperm p)) (integer (real_of_num (NUMERAL (BIT1 _0))))) (integer (real_neg (real_of_num (NUMERAL (BIT1 _0)))))) = (((COND g') t') e'))))))) t')
+T * / ! c==> c= cevenperm f0 f1 c==> c==> f1 c= cinteger creal_of_num cNUMERAL cBIT1 c_0 b0 c==> c==> c~ f1 c= cinteger creal_neg creal_of_num cNUMERAL cBIT1 c_0 b1 c= cCOND cevenperm f0 cinteger creal_of_num cNUMERAL cBIT1 c_0 cinteger creal_neg creal_of_num cNUMERAL cBIT1 c_0 cCOND f1 b0 b1 f2
+- |- ((~ (evenperm p)) ==> ((real_neg (real_of_num (NUMERAL (BIT1 _0)))) = (real_neg (real_of_num (NUMERAL (BIT1 _0))))))
+T c==> c~ cevenperm f0 c= creal_neg creal_of_num cNUMERAL cBIT1 c_0 creal_neg creal_of_num cNUMERAL cBIT1 c_0
+- |- (((!x. (!y. (((integer x) /\ (integer y)) ==> (integer ((real_mul x) y))))) ==> ((\x. (!y. (((integer x) /\ (integer y)) ==> (integer ((real_mul x) y))))) x)) = ((\x. (!y. (((integer x) /\ (integer y)) ==> (integer ((real_mul x) y))))) x))
+T c= c==> ! ! c==> c/\ cinteger b0 cinteger b1 cinteger creal_mul b0 b1 * / ! c==> c/\ cinteger b0 cinteger b1 cinteger creal_mul b0 b1 f0 * / ! c==> c/\ cinteger b0 cinteger b1 cinteger creal_mul b0 b1 f0
+- |- ((\x. (!r. ((integer x) ==> (integer ((real_pow x) r))))) x)
+T * / ! c==> cinteger b0 cinteger creal_pow b0 b1 f0
+- ((integer x) /\ (integer y)) |- (((integer x) /\ (integer y)) /\ ((integer ((real_min x) y)) = T))
+T c==> c/\ cinteger f0 cinteger f1 c/\ c/\ cinteger f0 cinteger f1 c= cinteger creal_min f0 f1 cT
+- |- (((!y. (((integer x) /\ (integer y)) ==> (integer ((real_max x) y)))) ==> ((\y. (((integer x) /\ (integer y)) ==> (integer ((real_max x) y)))) y)) = ((\y. (((integer x) /\ (integer y)) ==> (integer ((real_max x) y)))) y))
+T c= c==> ! c==> c/\ cinteger f0 cinteger b0 cinteger creal_max f0 b0 * / c==> c/\ cinteger f0 cinteger b0 cinteger creal_max f0 b0 f1 * / c==> c/\ cinteger f0 cinteger b0 cinteger creal_max f0 b0 f1
+- ((integer x) /\ (integer y)) |- (integer ((real_max x) y))
+T c==> c/\ cinteger f0 cinteger f1 cinteger creal_max f0 f1
+- |- ((\x. (!y. (((integer x) /\ (integer y)) ==> (integer ((real_max x) y))))) x)
+T * / ! c==> c/\ cinteger b0 cinteger b1 cinteger creal_max b0 b1 f0
+- (~ (evenperm p)) |- ((~ (evenperm p)) /\ ((real_neg (real_of_num (NUMERAL (BIT1 _0)))) = (real_neg (real_of_num (NUMERAL (BIT1 _0))))))
+T c==> c~ cevenperm f0 c/\ c~ cevenperm f0 c= creal_neg creal_of_num cNUMERAL cBIT1 c_0 creal_neg creal_of_num cNUMERAL cBIT1 c_0
+- ((integer x) /\ (integer y)) |- (integer ((real_mul x) y))
+T c==> c/\ cinteger f0 cinteger f1 cinteger creal_mul f0 f1
++ |- ((!x. (!r. ((integer x) ==> (integer ((real_pow x) r))))) /\ ((!x. ((integer x) ==> (integer (real_neg x)))) /\ ((!x. ((integer x) ==> (integer (real_abs x)))) /\ ((!x. (!y. (((integer x) /\ (integer y)) ==> (integer ((real_max x) y))))) /\ (!x. (!y. (((integer x) /\ (integer y)) ==> (integer ((real_min x) y)))))))))
+T c/\ ! ! c==> cinteger b0 cinteger creal_pow b0 b1 c/\ ! c==> cinteger b0 cinteger creal_neg b0 c/\ ! c==> cinteger b0 cinteger creal_abs b0 c/\ ! ! c==> c/\ cinteger b0 cinteger b1 cinteger creal_max b0 b1 ! ! c==> c/\ cinteger b0 cinteger b1 cinteger creal_min b0 b1
++ |- (integer (real_of_num (NUMERAL (BIT1 _0))))
+T cinteger creal_of_num cNUMERAL cBIT1 c_0
++ |- ((!e'. ((g = g') ==> ((g' ==> (t = t')) ==> (((~ g') ==> (e = e')) ==> ((((COND g) t) e) = (((COND g') t') e')))))) = T)
+T c= ! c==> c= f0 f1 c==> c==> f1 c= f2 f3 c==> c==> c~ f1 c= f4 b0 c= cCOND f0 f2 f4 cCOND f1 f3 b0 cT
++ |- ((integer (real_neg (real_of_num (NUMERAL (BIT1 _0))))) = T)
+T c= cinteger creal_neg creal_of_num cNUMERAL cBIT1 c_0 cT
++ |- ((((evenperm p) ==> ((integer (real_of_num (NUMERAL (BIT1 _0)))) = T)) ==> (((~ (evenperm p)) ==> ((integer (real_neg (real_of_num (NUMERAL (BIT1 _0))))) = e')) ==> ((((COND (evenperm p)) (integer (real_of_num (NUMERAL (BIT1 _0))))) (integer (real_neg (real_of_num (NUMERAL (BIT1 _0)))))) = (((COND (evenperm p)) T) e')))) = (((~ (evenperm p)) ==> ((integer (real_neg (real_of_num (NUMERAL (BIT1 _0))))) = e')) ==> ((((COND (evenperm p)) (integer (real_of_num (NUMERAL (BIT1 _0))))) (integer (real_neg (real_of_num (NUMERAL (BIT1 _0)))))) = (((COND (evenperm p)) T) e'))))
+T c= c==> c==> cevenperm f0 c= cinteger creal_of_num cNUMERAL cBIT1 c_0 cT c==> c==> c~ cevenperm f0 c= cinteger creal_neg creal_of_num cNUMERAL cBIT1 c_0 f1 c= cCOND cevenperm f0 cinteger creal_of_num cNUMERAL cBIT1 c_0 cinteger creal_neg creal_of_num cNUMERAL cBIT1 c_0 cCOND cevenperm f0 cT f1 c==> c==> c~ cevenperm f0 c= cinteger creal_neg creal_of_num cNUMERAL cBIT1 c_0 f1 c= cCOND cevenperm f0 cinteger creal_of_num cNUMERAL cBIT1 c_0 cinteger creal_neg creal_of_num cNUMERAL cBIT1 c_0 cCOND cevenperm f0 cT f1
+- ((integer x) /\ (integer y)) |- (((integer x) /\ (integer y)) /\ ((integer ((real_mul x) y)) = T))
+T c==> c/\ cinteger f0 cinteger f1 c/\ c/\ cinteger f0 cinteger f1 c= cinteger creal_mul f0 f1 cT
+- |- (((evenperm p) ==> ((real_of_num (NUMERAL (BIT1 _0))) = t')) ==> (((~ (evenperm p)) ==> ((real_neg (real_of_num (NUMERAL (BIT1 _0)))) = e')) ==> ((((COND (evenperm p)) (real_of_num (NUMERAL (BIT1 _0)))) (real_neg (real_of_num (NUMERAL (BIT1 _0))))) = (((COND (evenperm p)) t') e'))))
+T c==> c==> cevenperm f0 c= creal_of_num cNUMERAL cBIT1 c_0 f1 c==> c==> c~ cevenperm f0 c= creal_neg creal_of_num cNUMERAL cBIT1 c_0 f2 c= cCOND cevenperm f0 creal_of_num cNUMERAL cBIT1 c_0 creal_neg creal_of_num cNUMERAL cBIT1 c_0 cCOND cevenperm f0 f1 f2
++ |- ((\y. ((f (((COND b) x) y)) = (((COND b) (f x)) (f y)))) y)
+T * / c= * f0 cCOND f1 f2 b0 cCOND f1 * f0 f2 * f0 b0 f3
++ |- (((!b. (!t. ((((COND b) t) t) = t))) ==> ((\b. (!t. ((((COND b) t) t) = t))) b)) = ((\b. (!t. ((((COND b) t) t) = t))) b))
+T c= c==> ! ! c= cCOND b0 b1 b1 b1 * / ! c= cCOND b0 b1 b1 b1 f0 * / ! c= cCOND b0 b1 b1 b1 f0
+- |- (((evenperm p) = g') ==> ((g' ==> ((real_of_num (NUMERAL (BIT1 _0))) = t')) ==> (((~ g') ==> ((real_neg (real_of_num (NUMERAL (BIT1 _0)))) = e')) ==> ((((COND (evenperm p)) (real_of_num (NUMERAL (BIT1 _0)))) (real_neg (real_of_num (NUMERAL (BIT1 _0))))) = (((COND g') t') e')))))
+T c==> c= cevenperm f0 f1 c==> c==> f1 c= creal_of_num cNUMERAL cBIT1 c_0 f2 c==> c==> c~ f1 c= creal_neg creal_of_num cNUMERAL cBIT1 c_0 f3 c= cCOND cevenperm f0 creal_of_num cNUMERAL cBIT1 c_0 creal_neg creal_of_num cNUMERAL cBIT1 c_0 cCOND f1 f2 f3
++ |- ((integer (real_of_num n)) = T)
+T c= cinteger creal_of_num f0 cT
++ |- (((integer (real_of_num (NUMERAL (BIT1 _0)))) ==> ((integer (real_neg (real_of_num (NUMERAL (BIT1 _0))))) = T)) = ((integer (real_neg (real_of_num (NUMERAL (BIT1 _0))))) = T))
+T c= c==> cinteger creal_of_num cNUMERAL cBIT1 c_0 c= cinteger creal_neg creal_of_num cNUMERAL cBIT1 c_0 cT c= cinteger creal_neg creal_of_num cNUMERAL cBIT1 c_0 cT
++ (~ (evenperm p)) |- ((~ (evenperm p)) /\ ((integer (real_neg (real_of_num (NUMERAL (BIT1 _0))))) = T))
+T c==> c~ cevenperm f0 c/\ c~ cevenperm f0 c= cinteger creal_neg creal_of_num cNUMERAL cBIT1 c_0 cT
++ |- (((!g'. (!t'. (!e'. (((evenperm p) = g') ==> ((g' ==> ((integer (real_of_num (NUMERAL (BIT1 _0)))) = t')) ==> (((~ g') ==> ((integer (real_neg (real_of_num (NUMERAL (BIT1 _0))))) = e')) ==> ((((COND (evenperm p)) (integer (real_of_num (NUMERAL (BIT1 _0))))) (integer (real_neg (real_of_num (NUMERAL (BIT1 _0)))))) = (((COND g') t') e')))))))) ==> ((\g'. (!t'. (!e'. (((evenperm p) = g') ==> ((g' ==> ((integer (real_of_num (NUMERAL (BIT1 _0)))) = t')) ==> (((~ g') ==> ((integer (real_neg (real_of_num (NUMERAL (BIT1 _0))))) = e')) ==> ((((COND (evenperm p)) (integer (real_of_num (NUMERAL (BIT1 _0))))) (integer (real_neg (real_of_num (NUMERAL (BIT1 _0)))))) = (((COND g') t') e')))))))) g')) = ((\g'. (!t'. (!e'. (((evenperm p) = g') ==> ((g' ==> ((integer (real_of_num (NUMERAL (BIT1 _0)))) = t')) ==> (((~ g') ==> ((integer (real_neg (real_of_num (NUMERAL (BIT1 _0))))) = e')) ==> ((((COND (evenperm p)) (integer (real_of_num (NUMERAL (BIT1 _0))))) (integer (real_neg (real_of_num (NUMERAL (BIT1 _0)))))) = (((COND g') t') e')))))))) g'))
+T c= c==> ! ! ! c==> c= cevenperm f0 b0 c==> c==> b0 c= cinteger creal_of_num cNUMERAL cBIT1 c_0 b1 c==> c==> c~ b0 c= cinteger creal_neg creal_of_num cNUMERAL cBIT1 c_0 b2 c= cCOND cevenperm f0 cinteger creal_of_num cNUMERAL cBIT1 c_0 cinteger creal_neg creal_of_num cNUMERAL cBIT1 c_0 cCOND b0 b1 b2 * / ! ! c==> c= cevenperm f0 b0 c==> c==> b0 c= cinteger creal_of_num cNUMERAL cBIT1 c_0 b1 c==> c==> c~ b0 c= cinteger creal_neg creal_of_num cNUMERAL cBIT1 c_0 b2 c= cCOND cevenperm f0 cinteger creal_of_num cNUMERAL cBIT1 c_0 cinteger creal_neg creal_of_num cNUMERAL cBIT1 c_0 cCOND b0 b1 b2 f1 * / ! ! c==> c= cevenperm f0 b0 c==> c==> b0 c= cinteger creal_of_num cNUMERAL cBIT1 c_0 b1 c==> c==> c~ b0 c= cinteger creal_neg creal_of_num cNUMERAL cBIT1 c_0 b2 c= cCOND cevenperm f0 cinteger creal_of_num cNUMERAL cBIT1 c_0 cinteger creal_neg creal_of_num cNUMERAL cBIT1 c_0 cCOND b0 b1 b2 f1
++ |- (((!f. (!x. (!y. ((f (((COND b) x) y)) = (((COND b) (f x)) (f y)))))) ==> ((\f. (!x. (!y. ((f (((COND b) x) y)) = (((COND b) (f x)) (f y)))))) f)) = ((\f. (!x. (!y. ((f (((COND b) x) y)) = (((COND b) (f x)) (f y)))))) f))
+T c= c==> ! ! ! c= * b0 cCOND f0 b1 b2 cCOND f0 * b0 b1 * b0 b2 * / ! ! c= * b0 cCOND f0 b1 b2 cCOND f0 * b0 b1 * b0 b2 f1 * / ! ! c= * b0 cCOND f0 b1 b2 cCOND f0 * b0 b1 * b0 b2 f1
++ |- (((!y. ((f (((COND b) x) y)) = (((COND b) (f x)) (f y)))) ==> ((\y. ((f (((COND b) x) y)) = (((COND b) (f x)) (f y)))) y)) = ((\y. ((f (((COND b) x) y)) = (((COND b) (f x)) (f y)))) y))
+T c= c==> ! c= * f0 cCOND f1 f2 b0 cCOND f1 * f0 f2 * f0 b0 * / c= * f0 cCOND f1 f2 b0 cCOND f1 * f0 f2 * f0 b0 f3 * / c= * f0 cCOND f1 f2 b0 cCOND f1 * f0 f2 * f0 b0 f3
++ (evenperm p) |- ((evenperm p) /\ ((integer (real_of_num (NUMERAL (BIT1 _0)))) = T))
+T c==> cevenperm f0 c/\ cevenperm f0 c= cinteger creal_of_num cNUMERAL cBIT1 c_0 cT
++ |- (((!p. ((sign p) = (((COND (evenperm p)) (real_of_num (NUMERAL (BIT1 _0)))) (real_neg (real_of_num (NUMERAL (BIT1 _0))))))) ==> ((\p. ((sign p) = (((COND (evenperm p)) (real_of_num (NUMERAL (BIT1 _0)))) (real_neg (real_of_num (NUMERAL (BIT1 _0))))))) p)) = ((\p. ((sign p) = (((COND (evenperm p)) (real_of_num (NUMERAL (BIT1 _0)))) (real_neg (real_of_num (NUMERAL (BIT1 _0))))))) p))
+T c= c==> ! c= csign b0 cCOND cevenperm b0 creal_of_num cNUMERAL cBIT1 c_0 creal_neg creal_of_num cNUMERAL cBIT1 c_0 * / c= csign b0 cCOND cevenperm b0 creal_of_num cNUMERAL cBIT1 c_0 creal_neg creal_of_num cNUMERAL cBIT1 c_0 f0 * / c= csign b0 cCOND cevenperm b0 creal_of_num cNUMERAL cBIT1 c_0 creal_neg creal_of_num cNUMERAL cBIT1 c_0 f0
++ |- (((evenperm p) = g') ==> ((g' ==> ((integer (real_of_num (NUMERAL (BIT1 _0)))) = t')) ==> (((~ g') ==> ((integer (real_neg (real_of_num (NUMERAL (BIT1 _0))))) = e')) ==> ((((COND (evenperm p)) (integer (real_of_num (NUMERAL (BIT1 _0))))) (integer (real_neg (real_of_num (NUMERAL (BIT1 _0)))))) = (((COND g') t') e')))))
+T c==> c= cevenperm f0 f1 c==> c==> f1 c= cinteger creal_of_num cNUMERAL cBIT1 c_0 f2 c==> c==> c~ f1 c= cinteger creal_neg creal_of_num cNUMERAL cBIT1 c_0 f3 c= cCOND cevenperm f0 cinteger creal_of_num cNUMERAL cBIT1 c_0 cinteger creal_neg creal_of_num cNUMERAL cBIT1 c_0 cCOND f1 f2 f3
++ |- ((((evenperm p) = (evenperm p)) ==> (((evenperm p) ==> ((integer (real_of_num (NUMERAL (BIT1 _0)))) = t')) ==> (((~ (evenperm p)) ==> ((integer (real_neg (real_of_num (NUMERAL (BIT1 _0))))) = e')) ==> ((((COND (evenperm p)) (integer (real_of_num (NUMERAL (BIT1 _0))))) (integer (real_neg (real_of_num (NUMERAL (BIT1 _0)))))) = (((COND (evenperm p)) t') e'))))) = (((evenperm p) ==> ((integer (real_of_num (NUMERAL (BIT1 _0)))) = t')) ==> (((~ (evenperm p)) ==> ((integer (real_neg (real_of_num (NUMERAL (BIT1 _0))))) = e')) ==> ((((COND (evenperm p)) (integer (real_of_num (NUMERAL (BIT1 _0))))) (integer (real_neg (real_of_num (NUMERAL (BIT1 _0)))))) = (((COND (evenperm p)) t') e')))))
+T c= c==> c= cevenperm f0 cevenperm f0 c==> c==> cevenperm f0 c= cinteger creal_of_num cNUMERAL cBIT1 c_0 f1 c==> c==> c~ cevenperm f0 c= cinteger creal_neg creal_of_num cNUMERAL cBIT1 c_0 f2 c= cCOND cevenperm f0 cinteger creal_of_num cNUMERAL cBIT1 c_0 cinteger creal_neg creal_of_num cNUMERAL cBIT1 c_0 cCOND cevenperm f0 f1 f2 c==> c==> cevenperm f0 c= cinteger creal_of_num cNUMERAL cBIT1 c_0 f1 c==> c==> c~ cevenperm f0 c= cinteger creal_neg creal_of_num cNUMERAL cBIT1 c_0 f2 c= cCOND cevenperm f0 cinteger creal_of_num cNUMERAL cBIT1 c_0 cinteger creal_neg creal_of_num cNUMERAL cBIT1 c_0 cCOND cevenperm f0 f1 f2
++ |- ((\p. ((sign p) = (((COND (evenperm p)) (real_of_num (NUMERAL (BIT1 _0)))) (real_neg (real_of_num (NUMERAL (BIT1 _0))))))) p)
+T * / c= csign b0 cCOND cevenperm b0 creal_of_num cNUMERAL cBIT1 c_0 creal_neg creal_of_num cNUMERAL cBIT1 c_0 f0
++ (integer x) |- ((integer x) /\ ((integer (real_neg x)) = T))
+T c==> cinteger f0 c/\ cinteger f0 c= cinteger creal_neg f0 cT
++ |- (T = (integer (real_of_num (NUMERAL (BIT1 _0)))))
+T c= cT cinteger creal_of_num cNUMERAL cBIT1 c_0
++ |- ((\g'. (!t'. (!e'. (((evenperm p) = g') ==> ((g' ==> ((integer (real_of_num (NUMERAL (BIT1 _0)))) = t')) ==> (((~ g') ==> ((integer (real_neg (real_of_num (NUMERAL (BIT1 _0))))) = e')) ==> ((((COND (evenperm p)) (integer (real_of_num (NUMERAL (BIT1 _0))))) (integer (real_neg (real_of_num (NUMERAL (BIT1 _0)))))) = (((COND g') t') e')))))))) g')
+T * / ! ! c==> c= cevenperm f0 b0 c==> c==> b0 c= cinteger creal_of_num cNUMERAL cBIT1 c_0 b1 c==> c==> c~ b0 c= cinteger creal_neg creal_of_num cNUMERAL cBIT1 c_0 b2 c= cCOND cevenperm f0 cinteger creal_of_num cNUMERAL cBIT1 c_0 cinteger creal_neg creal_of_num cNUMERAL cBIT1 c_0 cCOND b0 b1 b2 f1
++ |- ((integer x) ==> ((integer (real_neg x)) = T))
+T c==> cinteger f0 c= cinteger creal_neg f0 cT
++ |- (((!x. ((integer x) ==> (integer (real_neg x)))) ==> ((\x. ((integer x) ==> (integer (real_neg x)))) x)) = ((\x. ((integer x) ==> (integer (real_neg x)))) x))
+T c= c==> ! c==> cinteger b0 cinteger creal_neg b0 * / c==> cinteger b0 cinteger creal_neg b0 f0 * / c==> cinteger b0 cinteger creal_neg b0 f0
++ |- ((\t. ((((COND b) t) t) = t)) t)
+T * / c= cCOND f0 b0 b0 b0 f1
++ |- (((!e'. (((evenperm p) = g') ==> ((g' ==> ((integer (real_of_num (NUMERAL (BIT1 _0)))) = t')) ==> (((~ g') ==> ((integer (real_neg (real_of_num (NUMERAL (BIT1 _0))))) = e')) ==> ((((COND (evenperm p)) (integer (real_of_num (NUMERAL (BIT1 _0))))) (integer (real_neg (real_of_num (NUMERAL (BIT1 _0)))))) = (((COND g') t') e')))))) ==> ((\e'. (((evenperm p) = g') ==> ((g' ==> ((integer (real_of_num (NUMERAL (BIT1 _0)))) = t')) ==> (((~ g') ==> ((integer (real_neg (real_of_num (NUMERAL (BIT1 _0))))) = e')) ==> ((((COND (evenperm p)) (integer (real_of_num (NUMERAL (BIT1 _0))))) (integer (real_neg (real_of_num (NUMERAL (BIT1 _0)))))) = (((COND g') t') e')))))) e')) = ((\e'. (((evenperm p) = g') ==> ((g' ==> ((integer (real_of_num (NUMERAL (BIT1 _0)))) = t')) ==> (((~ g') ==> ((integer (real_neg (real_of_num (NUMERAL (BIT1 _0))))) = e')) ==> ((((COND (evenperm p)) (integer (real_of_num (NUMERAL (BIT1 _0))))) (integer (real_neg (real_of_num (NUMERAL (BIT1 _0)))))) = (((COND g') t') e')))))) e'))
+T c= c==> ! c==> c= cevenperm f0 f1 c==> c==> f1 c= cinteger creal_of_num cNUMERAL cBIT1 c_0 f2 c==> c==> c~ f1 c= cinteger creal_neg creal_of_num cNUMERAL cBIT1 c_0 b0 c= cCOND cevenperm f0 cinteger creal_of_num cNUMERAL cBIT1 c_0 cinteger creal_neg creal_of_num cNUMERAL cBIT1 c_0 cCOND f1 f2 b0 * / c==> c= cevenperm f0 f1 c==> c==> f1 c= cinteger creal_of_num cNUMERAL cBIT1 c_0 f2 c==> c==> c~ f1 c= cinteger creal_neg creal_of_num cNUMERAL cBIT1 c_0 b0 c= cCOND cevenperm f0 cinteger creal_of_num cNUMERAL cBIT1 c_0 cinteger creal_neg creal_of_num cNUMERAL cBIT1 c_0 cCOND f1 f2 b0 f3 * / c==> c= cevenperm f0 f1 c==> c==> f1 c= cinteger creal_of_num cNUMERAL cBIT1 c_0 f2 c==> c==> c~ f1 c= cinteger creal_neg creal_of_num cNUMERAL cBIT1 c_0 b0 c= cCOND cevenperm f0 cinteger creal_of_num cNUMERAL cBIT1 c_0 cinteger creal_neg creal_of_num cNUMERAL cBIT1 c_0 cCOND f1 f2 b0 f3
++ |- (((!t. ((((COND b) t) t) = t)) ==> ((\t. ((((COND b) t) t) = t)) t)) = ((\t. ((((COND b) t) t) = t)) t))
+T c= c==> ! c= cCOND f0 b0 b0 b0 * / c= cCOND f0 b0 b0 b0 f1 * / c= cCOND f0 b0 b0 b0 f1
++ |- ((!t'. (!e'. ((g = g') ==> ((g' ==> (t = t')) ==> (((~ g') ==> (e = e')) ==> ((((COND g) t) e) = (((COND g') t') e'))))))) = T)
+T c= ! ! c==> c= f0 f1 c==> c==> f1 c= f2 b0 c==> c==> c~ f1 c= f3 b1 c= cCOND f0 f2 f3 cCOND f1 b0 b1 cT
++ |- (((!n. (integer (real_of_num n))) ==> ((\n. (integer (real_of_num n))) n)) = ((\n. (integer (real_of_num n))) n))
+T c= c==> ! cinteger creal_of_num b0 * / cinteger creal_of_num b0 f0 * / cinteger creal_of_num b0 f0

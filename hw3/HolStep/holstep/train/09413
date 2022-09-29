@@ -1,0 +1,68 @@
+N Seq2.nth_delete1
+C |- (!x0. (!x. (!s. (!i. ((((nth x0) ((delete1 x) s)) i) = (((nth x0) s) (((COND (i < ((indexl x) s))) i) (SUC i))))))))
+T c= cnth f0 cdelete1 f1 f2 f3 cnth f0 f2 cCOND c< f3 cindexl f1 f2 f3 cSUC f3
+D TRUTH
+A |- T
+T cT
+D COND_CLAUSES
+A |- (!t1. (!t2. (((((COND T) t1) t2) = t1) /\ ((((COND F) t1) t2) = t2))))
+T c/\ c= cCOND cT f0 f1 f0 c= cCOND cF f0 f1 f1
+D LT_SUC
+A |- (!m. (!n. (((SUC m) < (SUC n)) = (m < n))))
+T c= c< cSUC f0 cSUC f1 c< f0 f1
+D Seq.gtS0
+A |- (!n. ((NUMERAL _0) < (SUC n)))
+T c< cNUMERAL c_0 cSUC f0
+D list_INDUCT
+A |- (!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x))))
+T c==> c/\ * f0 cNIL ! ! c==> * f0 b1 * f0 cCONS b0 b1 ! * f0 b0
+D num_cases
+A |- (!P. (((P (NUMERAL _0)) /\ (!n. (P (SUC n)))) ==> (!m. (P m))))
+T c==> c/\ * f0 cNUMERAL c_0 ! * f0 cSUC b0 ! * f0 b0
+D Ssrbool.fun_if
+A |- (!b. (!vT. (!f. (!vF. ((f (((COND b) vT) vF)) = (((COND b) (f vT)) (f vF)))))))
+T c= * f0 cCOND f1 f2 f3 cCOND f1 * f0 f2 * f0 f3
+D Ssrnat.ltn0
+A |- (!n. ((n < (NUMERAL _0)) = F))
+T c= c< f0 cNUMERAL c_0 cF
+D Seq.nth
+A |- (!x0. (!h. (!t. (!n. (((((nth x0) NIL) n) = x0) /\ (((((nth x0) ((CONS h) t)) (NUMERAL _0)) = h) /\ ((((nth x0) ((CONS h) t)) (SUC n)) = (((nth x0) t) n))))))))
+T c/\ c= cnth f0 cNIL f1 f0 c/\ c= cnth f0 cCONS f2 f3 cNUMERAL c_0 f2 c= cnth f0 cCONS f2 f3 cSUC f1 cnth f0 f3 f1
+D Seq2.delete_at
+A |- (!h. (!i. (!t. ((((delete_at i) NIL) = NIL) /\ ((((delete_at (NUMERAL _0)) ((CONS h) t)) = t) /\ (((delete_at (SUC i)) ((CONS h) t)) = ((CONS h) ((delete_at i) t))))))))
+T c/\ c= cdelete_at f0 cNIL cNIL c/\ c= cdelete_at cNUMERAL c_0 cCONS f1 f2 f2 c= cdelete_at cSUC f0 cCONS f1 f2 cCONS f1 cdelete_at f0 f2
+D Seq2.delete1_eq_at
+A |- (!x. (!s. (((delete1 x) s) = ((delete_at ((indexl x) s)) s))))
+T c= cdelete1 f0 f1 cdelete_at cindexl f0 f1 f1
+- |- ((\k. ((((nth x0) ((delete_at k) s)) i) = (((nth x0) s) (((COND (i < k)) i) (SUC i))))) k)
+T * / c= cnth f0 cdelete_at b0 f1 f2 cnth f0 f1 cCOND c< f2 b0 f2 cSUC f2 f3
+- |- (((!s. (!k. ((((nth x0) ((delete_at k) s)) i) = (((nth x0) s) (((COND (i < k)) i) (SUC i)))))) ==> ((\s. (!k. ((((nth x0) ((delete_at k) s)) i) = (((nth x0) s) (((COND (i < k)) i) (SUC i)))))) s)) = ((\s. (!k. ((((nth x0) ((delete_at k) s)) i) = (((nth x0) s) (((COND (i < k)) i) (SUC i)))))) s))
+T c= c==> ! ! c= cnth f0 cdelete_at b1 b0 f1 cnth f0 b0 cCOND c< f1 b1 f1 cSUC f1 * / ! c= cnth f0 cdelete_at b1 b0 f1 cnth f0 b0 cCOND c< f1 b1 f1 cSUC f1 f2 * / ! c= cnth f0 cdelete_at b1 b0 f1 cnth f0 b0 cCOND c< f1 b1 f1 cSUC f1 f2
+- |- ((\s. (!k. ((((nth x0) ((delete_at k) s)) i) = (((nth x0) s) (((COND (i < k)) i) (SUC i)))))) s)
+T * / ! c= cnth f0 cdelete_at b1 b0 f1 cnth f0 b0 cCOND c< f1 b1 f1 cSUC f1 f2
++ |- ((\s. (((delete1 x) s) = ((delete_at ((indexl x) s)) s))) s)
+T * / c= cdelete1 f0 b0 cdelete_at cindexl f0 b0 b0 f1
+- |- (T = ((((nth x0) s) (((COND (i < ((indexl x) s))) i) (SUC i))) = (((nth x0) s) (((COND (i < ((indexl x) s))) i) (SUC i)))))
+T c= cT c= cnth f0 f1 cCOND c< f2 cindexl f3 f1 f2 cSUC f2 cnth f0 f1 cCOND c< f2 cindexl f3 f1 f2 cSUC f2
+- |- (((!k. ((((nth x0) ((delete_at k) s)) i) = (((nth x0) s) (((COND (i < k)) i) (SUC i))))) ==> ((\k. ((((nth x0) ((delete_at k) s)) i) = (((nth x0) s) (((COND (i < k)) i) (SUC i))))) k)) = ((\k. ((((nth x0) ((delete_at k) s)) i) = (((nth x0) s) (((COND (i < k)) i) (SUC i))))) k))
+T c= c==> ! c= cnth f0 cdelete_at b0 f1 f2 cnth f0 f1 cCOND c< f2 b0 f2 cSUC f2 * / c= cnth f0 cdelete_at b0 f1 f2 cnth f0 f1 cCOND c< f2 b0 f2 cSUC f2 f3 * / c= cnth f0 cdelete_at b0 f1 f2 cnth f0 f1 cCOND c< f2 b0 f2 cSUC f2 f3
+- |- (((!i. (!s. (!k. ((((nth x0) ((delete_at k) s)) i) = (((nth x0) s) (((COND (i < k)) i) (SUC i))))))) ==> ((\i. (!s. (!k. ((((nth x0) ((delete_at k) s)) i) = (((nth x0) s) (((COND (i < k)) i) (SUC i))))))) i)) = ((\i. (!s. (!k. ((((nth x0) ((delete_at k) s)) i) = (((nth x0) s) (((COND (i < k)) i) (SUC i))))))) i))
+T c= c==> ! ! ! c= cnth f0 cdelete_at b2 b1 b0 cnth f0 b1 cCOND c< b0 b2 b0 cSUC b0 * / ! ! c= cnth f0 cdelete_at b2 b1 b0 cnth f0 b1 cCOND c< b0 b2 b0 cSUC b0 f1 * / ! ! c= cnth f0 cdelete_at b2 b1 b0 cnth f0 b1 cCOND c< b0 b2 b0 cSUC b0 f1
++ |- ((\x. (!s. (((delete1 x) s) = ((delete_at ((indexl x) s)) s)))) x)
+T * / ! c= cdelete1 b0 b1 cdelete_at cindexl b0 b1 b1 f0
++ |- (((!x. (!s. (((delete1 x) s) = ((delete_at ((indexl x) s)) s)))) ==> ((\x. (!s. (((delete1 x) s) = ((delete_at ((indexl x) s)) s)))) x)) = ((\x. (!s. (((delete1 x) s) = ((delete_at ((indexl x) s)) s)))) x))
+T c= c==> ! ! c= cdelete1 b0 b1 cdelete_at cindexl b0 b1 b1 * / ! c= cdelete1 b0 b1 cdelete_at cindexl b0 b1 b1 f0 * / ! c= cdelete1 b0 b1 cdelete_at cindexl b0 b1 b1 f0
+- |- (((((nth x0) s) (((COND (i < ((indexl x) s))) i) (SUC i))) = (((nth x0) s) (((COND (i < ((indexl x) s))) i) (SUC i)))) = ((((nth x0) ((delete_at ((indexl x) s)) s)) i) = (((nth x0) s) (((COND (i < ((indexl x) s))) i) (SUC i)))))
+T c= c= cnth f0 f1 cCOND c< f2 cindexl f3 f1 f2 cSUC f2 cnth f0 f1 cCOND c< f2 cindexl f3 f1 f2 cSUC f2 c= cnth f0 cdelete_at cindexl f3 f1 f1 f2 cnth f0 f1 cCOND c< f2 cindexl f3 f1 f2 cSUC f2
++ |- ((!i. ((((nth x0) ((delete1 x) s)) i) = (((nth x0) s) (((COND (i < ((indexl x) s))) i) (SUC i))))) = T)
+T c= ! c= cnth f0 cdelete1 f1 f2 b0 cnth f0 f2 cCOND c< b0 cindexl f1 f2 b0 cSUC b0 cT
++ |- ((!s. (!i. ((((nth x0) ((delete1 x) s)) i) = (((nth x0) s) (((COND (i < ((indexl x) s))) i) (SUC i)))))) = T)
+T c= ! ! c= cnth f0 cdelete1 f1 b0 b1 cnth f0 b0 cCOND c< b1 cindexl f1 b0 b1 cSUC b1 cT
++ |- ((!x. (!s. (!i. ((((nth x0) ((delete1 x) s)) i) = (((nth x0) s) (((COND (i < ((indexl x) s))) i) (SUC i))))))) = T)
+T c= ! ! ! c= cnth f0 cdelete1 b0 b1 b2 cnth f0 b1 cCOND c< b2 cindexl b0 b1 b2 cSUC b2 cT
+- |- ((\i. (!s. (!k. ((((nth x0) ((delete_at k) s)) i) = (((nth x0) s) (((COND (i < k)) i) (SUC i))))))) i)
+T * / ! ! c= cnth f0 cdelete_at b2 b1 b0 cnth f0 b1 cCOND c< b0 b2 b0 cSUC b0 f1
++ |- (((((nth x0) ((delete1 x) s)) i) = (((nth x0) s) (((COND (i < ((indexl x) s))) i) (SUC i)))) = T)
+T c= c= cnth f0 cdelete1 f1 f2 f3 cnth f0 f2 cCOND c< f3 cindexl f1 f2 f3 cSUC f3 cT
++ |- (((!s. (((delete1 x) s) = ((delete_at ((indexl x) s)) s))) ==> ((\s. (((delete1 x) s) = ((delete_at ((indexl x) s)) s))) s)) = ((\s. (((delete1 x) s) = ((delete_at ((indexl x) s)) s))) s))
+T c= c==> ! c= cdelete1 f0 b0 cdelete_at cindexl f0 b0 b0 * / c= cdelete1 f0 b0 cdelete_at cindexl f0 b0 b0 f1 * / c= cdelete1 f0 b0 cdelete_at cindexl f0 b0 b0 f1

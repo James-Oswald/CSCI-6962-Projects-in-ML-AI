@@ -1,0 +1,38 @@
+N NADD_LE_RADD
+C |- (!x. (!y. (!z. (((nadd_le ((nadd_add x) z)) ((nadd_add y) z)) = ((nadd_le x) y)))))
+T c= cnadd_le cnadd_add f0 f1 cnadd_add f2 f1 cnadd_le f0 f2
+D Ssrnat.addnC
+A |- (!m. (!n. ((m + n) = (n + m))))
+T c= c+ f0 f1 c+ f1 f0
+D ADD_ASSOC
+A |- (!m. (!n. (!p. ((m + (n + p)) = ((m + n) + p)))))
+T c= c+ f0 c+ f1 f2 c+ c+ f0 f1 f2
+D LE_ADD_RCANCEL
+A |- (!m. (!n. (!p. (((m + p) <= (n + p)) = (m <= n)))))
+T c= c<= c+ f0 f1 c+ f2 f1 c<= f0 f2
+D nadd_le
+A |- (!x. (!y. (((nadd_le x) y) = (?B. (!n. (((dest_nadd x) n) <= (((dest_nadd y) n) + B)))))))
+T c= cnadd_le f0 f1 c? / ! c<= cdest_nadd f0 b1 c+ cdest_nadd f1 b1 b0
+D NADD_ADD
+A |- (!x. (!y. ((dest_nadd ((nadd_add x) y)) = (\n. (((dest_nadd x) n) + ((dest_nadd y) n))))))
+T c= * part cdest_nadd cnadd_add f0 f1 / c+ cdest_nadd f0 b0 cdest_nadd f1 b0
++ |- (((!x. (!y. (((nadd_le x) y) = (?B. (!n. (((dest_nadd x) n) <= (((dest_nadd y) n) + B))))))) ==> ((\x. (!y. (((nadd_le x) y) = (?B. (!n. (((dest_nadd x) n) <= (((dest_nadd y) n) + B))))))) x)) = ((\x. (!y. (((nadd_le x) y) = (?B. (!n. (((dest_nadd x) n) <= (((dest_nadd y) n) + B))))))) x))
+T c= c==> ! ! c= cnadd_le b0 b1 c? / ! c<= cdest_nadd b0 b3 c+ cdest_nadd b1 b3 b2 * / ! c= cnadd_le b0 b1 c? / ! c<= cdest_nadd b0 b3 c+ cdest_nadd b1 b3 b2 f0 * / ! c= cnadd_le b0 b1 c? / ! c<= cdest_nadd b0 b3 c+ cdest_nadd b1 b3 b2 f0
++ |- ((\y. (((nadd_le x) y) = (?B. (!n. (((dest_nadd x) n) <= (((dest_nadd y) n) + B)))))) y)
+T * / c= cnadd_le f0 b0 c? / ! c<= cdest_nadd f0 b2 c+ cdest_nadd b0 b2 b1 f1
++ |- (((!n. ((m + n) = (n + m))) ==> ((\n. ((m + n) = (n + m))) n)) = ((\n. ((m + n) = (n + m))) n))
+T c= c==> ! c= c+ f0 b0 c+ b0 f0 * / c= c+ f0 b0 c+ b0 f0 f1 * / c= c+ f0 b0 c+ b0 f0 f1
++ |- (((!p. ((m + (n + p)) = ((m + n) + p))) ==> ((\p. ((m + (n + p)) = ((m + n) + p))) p)) = ((\p. ((m + (n + p)) = ((m + n) + p))) p))
+T c= c==> ! c= c+ f0 c+ f1 b0 c+ c+ f0 f1 b0 * / c= c+ f0 c+ f1 b0 c+ c+ f0 f1 b0 f2 * / c= c+ f0 c+ f1 b0 c+ c+ f0 f1 b0 f2
++ |- (((!n. (!p. ((m + (n + p)) = ((m + n) + p)))) ==> ((\n. (!p. ((m + (n + p)) = ((m + n) + p)))) n)) = ((\n. (!p. ((m + (n + p)) = ((m + n) + p)))) n))
+T c= c==> ! ! c= c+ f0 c+ b0 b1 c+ c+ f0 b0 b1 * / ! c= c+ f0 c+ b0 b1 c+ c+ f0 b0 b1 f1 * / ! c= c+ f0 c+ b0 b1 c+ c+ f0 b0 b1 f1
+- |- ((!n. t) = t)
+T c= ! f0 f0
+- |- ((?B. t) = t)
+T c= c? / f0 f0
+- |- ((x = x) = T)
+T c= c= f0 f0 cT
+- |- (((?B. (!n. (((dest_nadd x) n) <= (((dest_nadd y) n) + B)))) = (?B. (!n. (((dest_nadd x) n) <= (((dest_nadd y) n) + B))))) = ((?B. (!n. (((dest_nadd x) n) <= (B + ((dest_nadd y) n))))) = (?B. (!n. (((dest_nadd x) n) <= (((dest_nadd y) n) + B))))))
+T c= c= c? / ! c<= cdest_nadd f0 b1 c+ cdest_nadd f1 b1 b0 c? / ! c<= cdest_nadd f0 b1 c+ cdest_nadd f1 b1 b0 c= c? / ! c<= cdest_nadd f0 b1 c+ b0 cdest_nadd f1 b1 c? / ! c<= cdest_nadd f0 b1 c+ cdest_nadd f1 b1 b0
+- |- (((\n. (f n)) y) = (f y))
+T c= * / * f0 b0 f1 * f0 f1

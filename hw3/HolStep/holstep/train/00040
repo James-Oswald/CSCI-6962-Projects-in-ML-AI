@@ -1,0 +1,484 @@
+N Tame_list.split_at_snd_antirefl
+C |- (!f. (!u. (!b. ((uniq f) ==> (~ ((MEM u) (SND (((split_at_rec u) b) f))))))))
+T c==> cuniq f0 c~ cMEM f1 cSND csplit_at_rec f1 f2 f0
+D TRUTH
+A |- T
+T cT
+D EXCLUDED_MIDDLE
+A |- (!t. (t \/ (~ t)))
+T c\/ f0 c~ f0
+D BOOL_CASES_AX
+A |- (!t. ((t = T) \/ (t = F)))
+T c\/ c= f0 cT c= f0 cF
+D NOT_CLAUSES
+A |- ((!t. ((~ (~ t)) = t)) /\ (((~ T) = F) /\ ((~ F) = T)))
+T c/\ ! c= c~ c~ b0 b0 c/\ c= c~ cT cF c= c~ cF cT
+D RIGHT_FORALL_OR_THM
+A |- (!P. (!Q. ((!x. (P \/ (Q x))) = (P \/ (!x. (Q x))))))
+T c= ! c\/ f0 * f1 b0 c\/ f0 ! * f1 b0
+D COND_CLAUSES
+A |- (!t1. (!t2. (((((COND T) t1) t2) = t1) /\ ((((COND F) t1) t2) = t2))))
+T c/\ c= cCOND cT f0 f1 f0 c= cCOND cF f0 f1 f1
+D SND
+A |- (!x. (!y. ((SND (x , y)) = y)))
+T c= cSND c, f0 f1 f1
+D list_INDUCT
+A |- (!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x))))
+T c==> c/\ * f0 cNIL ! ! c==> * f0 b1 * f0 cCONS b0 b1 ! * f0 b0
+D MEM
+A |- ((((MEM x) NIL) = F) /\ (((MEM x) ((CONS h) t)) = ((x = h) \/ ((MEM x) t))))
+T c/\ c= cMEM f0 cNIL cF c= cMEM f0 cCONS f1 f2 c\/ c= f0 f1 cMEM f0 f2
+D Tame_defs.split_at_rec
+A |- (((((split_at_rec c) bs) NIL) = (bs , NIL)) /\ ((((split_at_rec c) bs) ((CONS a) xs)) = (((COND (a = c)) (bs , xs)) (((split_at_rec c) ((APPEND bs) ((CONS a) NIL))) xs))))
+T c/\ c= csplit_at_rec f0 f1 cNIL c, f1 cNIL c= csplit_at_rec f0 f1 cCONS f2 f3 cCOND c= f2 f0 c, f1 f3 csplit_at_rec f0 cAPPEND f1 cCONS f2 cNIL f3
+D Seq.cons_uniq
+A |- (!x. (!s. ((uniq ((CONS x) s)) = ((~ ((MEM x) s)) /\ (uniq s)))))
+T c= cuniq cCONS f0 f1 c/\ c~ cMEM f0 f1 cuniq f1
++ (~ ((uniq ((CONS h) t)) ==> (~ ((MEM u) (SND (((split_at_rec u) ((APPEND b) ((CONS h) NIL))) t)))))) |- ((MEM u) (SND (((split_at_rec u) ((APPEND b) ((CONS h) NIL))) t)))
+T c==> c~ c==> cuniq cCONS f0 f1 c~ cMEM f2 cSND csplit_at_rec f2 cAPPEND f3 cCONS f0 cNIL f1 cMEM f2 cSND csplit_at_rec f2 cAPPEND f3 cCONS f0 cNIL f1
+- |- ((\t1. (!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))))) t1)
+T * / ! ! c= c\/ b0 c\/ b1 b2 c\/ c\/ b0 b1 b2 f0
++ (h = u) |- (((uniq ((CONS u) t)) ==> (~ ((MEM u) t))) = ((uniq ((CONS h) t)) ==> (~ ((MEM u) (SND (((COND (h = u)) (b , t)) (((split_at_rec u) ((APPEND b) ((CONS h) NIL))) t)))))))
+T c==> c= f0 f1 c= c==> cuniq cCONS f1 f2 c~ cMEM f1 f2 c==> cuniq cCONS f0 f2 c~ cMEM f1 cSND cCOND c= f0 f1 c, f3 f2 csplit_at_rec f1 cAPPEND f3 cCONS f0 cNIL f2
++ (h = u) |- ((h = u) /\ ((uniq ((CONS h) t)) ==> (~ ((MEM u) (SND (((COND (h = u)) (b , t)) (((split_at_rec u) ((APPEND b) ((CONS h) NIL))) t)))))))
+T c==> c= f0 f1 c/\ c= f0 f1 c==> cuniq cCONS f0 f2 c~ cMEM f1 cSND cCOND c= f0 f1 c, f3 f2 csplit_at_rec f1 cAPPEND f3 cCONS f0 cNIL f2
+- |- (((~ ((uniq ((CONS u) t)) ==> (~ ((MEM u) t)))) ==> ((!x. (!s. ((uniq ((CONS x) s)) = ((~ ((MEM x) s)) /\ (uniq s))))) ==> F)) ==> ((~ ((uniq ((CONS u) t)) ==> (~ ((MEM u) t)))) ==> ((!x. (!s. ((uniq ((CONS x) s)) = ((~ ((MEM x) s)) /\ (uniq s))))) ==> F)))
+T c==> c==> c~ c==> cuniq cCONS f0 f1 c~ cMEM f0 f1 c==> ! ! c= cuniq cCONS b0 b1 c/\ c~ cMEM b0 b1 cuniq b1 cF c==> c~ c==> cuniq cCONS f0 f1 c~ cMEM f0 f1 c==> ! ! c= cuniq cCONS b0 b1 c/\ c~ cMEM b0 b1 cuniq b1 cF
++ |- ((!b. ((~ (uniq t)) \/ (~ ((MEM u) (SND (((split_at_rec u) b) t)))))) = ((~ (uniq t)) \/ (!b. (~ ((MEM u) (SND (((split_at_rec u) b) t)))))))
+T c= ! c\/ c~ cuniq f0 c~ cMEM f1 cSND csplit_at_rec f1 b0 f0 c\/ c~ cuniq f0 ! c~ cMEM f1 cSND csplit_at_rec f1 b0 f0
++ |- ((a \/ b) = ((~ b) ==> a))
+T c= c\/ f0 f1 c==> c~ f1 f0
+- |- ((~ (_10079333 = _10079335)) \/ ((~ (_10079334 = _10079336)) \/ (((APPEND _10079333) _10079334) = ((APPEND _10079335) _10079336))))
+T c\/ c~ c= f0 f1 c\/ c~ c= f2 f3 c= cAPPEND f0 f2 cAPPEND f1 f3
++ (!x. (!s. ((uniq ((CONS x) s)) = ((~ ((MEM x) s)) /\ (uniq s))))) |- ((!x. (!s. ((uniq ((CONS x) s)) \/ (((MEM x) s) \/ (~ (uniq s)))))) /\ (!x. (!s. ((~ (uniq ((CONS x) s))) \/ ((~ ((MEM x) s)) /\ (uniq s))))))
+T c==> ! ! c= cuniq cCONS b0 b1 c/\ c~ cMEM b0 b1 cuniq b1 c/\ ! ! c\/ cuniq cCONS b0 b1 c\/ cMEM b0 b1 c~ cuniq b1 ! ! c\/ c~ cuniq cCONS b0 b1 c/\ c~ cMEM b0 b1 cuniq b1
++ (~ ((uniq ((CONS h) t)) ==> (~ ((MEM u) (SND (((split_at_rec u) ((APPEND b) ((CONS h) NIL))) t)))))) |- (((uniq ((CONS h) t)) ==> (uniq t)) = (uniq t))
+T c==> c~ c==> cuniq cCONS f0 f1 c~ cMEM f2 cSND csplit_at_rec f2 cAPPEND f3 cCONS f0 cNIL f1 c= c==> cuniq cCONS f0 f1 cuniq f1 cuniq f1
++ |- (((!u. (!b. ((uniq t) ==> (~ ((MEM u) (SND (((split_at_rec u) b) t))))))) ==> ((~ (h = u)) ==> ((~ ((uniq ((CONS h) t)) ==> (~ ((MEM u) (SND (((split_at_rec u) ((APPEND b) ((CONS h) NIL))) t)))))) ==> (~ (!x. (!s. ((uniq ((CONS x) s)) = ((~ ((MEM x) s)) /\ (uniq s))))))))) = T)
+T c= c==> ! ! c==> cuniq f0 c~ cMEM b0 cSND csplit_at_rec b0 b1 f0 c==> c~ c= f1 f2 c==> c~ c==> cuniq cCONS f1 f0 c~ cMEM f2 cSND csplit_at_rec f2 cAPPEND f3 cCONS f1 cNIL f0 c~ ! ! c= cuniq cCONS b0 b1 c/\ c~ cMEM b0 b1 cuniq b1 cT
++ (!x. (!s. ((uniq ((CONS x) s)) = ((~ ((MEM x) s)) /\ (uniq s))))), (~ ((uniq ((CONS h) t)) ==> (~ ((MEM u) (SND (((split_at_rec u) ((APPEND b) ((CONS h) NIL))) t)))))) |- ((~ (uniq t)) ==> F)
+T c==> ! ! c= cuniq cCONS b0 b1 c/\ c~ cMEM b0 b1 cuniq b1 c==> c~ c==> cuniq cCONS f0 f1 c~ cMEM f2 cSND csplit_at_rec f2 cAPPEND f3 cCONS f0 cNIL f1 c==> c~ cuniq f1 cF
++ (~ ((uniq ((CONS h) t)) ==> (~ ((MEM u) (SND (((split_at_rec u) ((APPEND b) ((CONS h) NIL))) t)))))) |- (uniq ((CONS h) t))
+T c==> c~ c==> cuniq cCONS f0 f1 c~ cMEM f2 cSND csplit_at_rec f2 cAPPEND f3 cCONS f0 cNIL f1 cuniq cCONS f0 f1
++ (!u. (!b. ((uniq t) ==> (~ ((MEM u) (SND (((split_at_rec u) b) t))))))) |- ((~ (h = u)) ==> ((uniq ((CONS h) t)) ==> (~ ((MEM u) (SND (((COND (h = u)) (b , t)) (((split_at_rec u) ((APPEND b) ((CONS h) NIL))) t)))))))
+T c==> ! ! c==> cuniq f0 c~ cMEM b0 cSND csplit_at_rec b0 b1 f0 c==> c~ c= f1 f2 c==> cuniq cCONS f1 f0 c~ cMEM f2 cSND cCOND c= f1 f2 c, f3 f0 csplit_at_rec f2 cAPPEND f3 cCONS f1 cNIL f0
+- (!x. (!s. ((uniq ((CONS x) s)) = ((~ ((MEM x) s)) /\ (uniq s))))) |- ((uniq ((CONS _10079299) _10079300)) \/ (((MEM _10079299) _10079300) \/ (~ (uniq _10079300))))
+T c==> ! ! c= cuniq cCONS b0 b1 c/\ c~ cMEM b0 b1 cuniq b1 c\/ cuniq cCONS f0 f1 c\/ cMEM f0 f1 c~ cuniq f1
++ |- ((!h. (!b. (!u. ((!u. (!b. ((uniq t) ==> (~ ((MEM u) (SND (((split_at_rec u) b) t))))))) ==> ((~ (h = u)) ==> ((~ ((uniq ((CONS h) t)) ==> (~ ((MEM u) (SND (((split_at_rec u) ((APPEND b) ((CONS h) NIL))) t)))))) ==> (~ (!x. (!s. ((uniq ((CONS x) s)) = ((~ ((MEM x) s)) /\ (uniq s)))))))))))) = T)
+T c= ! ! ! c==> ! ! c==> cuniq f0 c~ cMEM b3 cSND csplit_at_rec b3 b3 f0 c==> c~ c= b0 b2 c==> c~ c==> cuniq cCONS b0 f0 c~ cMEM b2 cSND csplit_at_rec b2 cAPPEND b1 cCONS b0 cNIL f0 c~ ! ! c= cuniq cCONS b3 b4 c/\ c~ cMEM b3 b4 cuniq b4 cT
+- (~ ((uniq ((CONS u) t)) ==> (~ ((MEM u) t)))), (~ ((MEM u) t)) |- ((~ ((MEM u) t)) /\ ((MEM u) t))
+T c==> c~ c==> cuniq cCONS f0 f1 c~ cMEM f0 f1 c==> c~ cMEM f0 f1 c/\ c~ cMEM f0 f1 cMEM f0 f1
+- (!x. (!s. ((uniq ((CONS x) s)) = ((~ ((MEM x) s)) /\ (uniq s))))) |- ((\s. ((uniq ((CONS _10079299) s)) \/ (((MEM _10079299) s) \/ (~ (uniq s))))) _10079300)
+T c==> ! ! c= cuniq cCONS b0 b1 c/\ c~ cMEM b0 b1 cuniq b1 * / c\/ cuniq cCONS f0 b0 c\/ cMEM f0 b0 c~ cuniq b0 f1
++ |- (!h. (!t. ((!u. (!b. ((uniq t) ==> (~ ((MEM u) (SND (((split_at_rec u) b) t))))))) ==> (!u. (!b. ((uniq ((CONS h) t)) ==> (~ ((MEM u) (SND (((split_at_rec u) b) ((CONS h) t)))))))))))
+T c==> ! ! c==> cuniq f0 c~ cMEM b0 cSND csplit_at_rec b0 b1 f0 ! ! c==> cuniq cCONS f1 f0 c~ cMEM b0 cSND csplit_at_rec b0 b1 cCONS f1 f0
+- (!x. (!s. ((uniq ((CONS x) s)) = ((~ ((MEM x) s)) /\ (uniq s))))) |- (((!s. ((uniq ((CONS _10079299) s)) \/ (((MEM _10079299) s) \/ (~ (uniq s))))) ==> ((\s. ((uniq ((CONS _10079299) s)) \/ (((MEM _10079299) s) \/ (~ (uniq s))))) _10079300)) = ((\s. ((uniq ((CONS _10079299) s)) \/ (((MEM _10079299) s) \/ (~ (uniq s))))) _10079300))
+T c==> ! ! c= cuniq cCONS b0 b1 c/\ c~ cMEM b0 b1 cuniq b1 c= c==> ! c\/ cuniq cCONS f0 b0 c\/ cMEM f0 b0 c~ cuniq b0 * / c\/ cuniq cCONS f0 b0 c\/ cMEM f0 b0 c~ cuniq b0 f1 * / c\/ cuniq cCONS f0 b0 c\/ cMEM f0 b0 c~ cuniq b0 f1
+- |- ((((!u. (!b. ((uniq t) ==> (~ ((MEM u) (SND (((split_at_rec u) b) t))))))) ==> ((~ (h = u)) ==> ((~ ((uniq ((CONS h) t)) ==> (~ ((MEM u) (SND (((split_at_rec u) ((APPEND b) ((CONS h) NIL))) t)))))) ==> ((!x. (!s. ((uniq ((CONS x) s)) = ((~ ((MEM x) s)) /\ (uniq s))))) ==> F)))) ==> ((!u. (!b. ((uniq t) ==> (~ ((MEM u) (SND (((split_at_rec u) b) t))))))) ==> ((~ (h = u)) ==> ((~ ((uniq ((CONS h) t)) ==> (~ ((MEM u) (SND (((split_at_rec u) ((APPEND b) ((CONS h) NIL))) t)))))) ==> ((!x. (!s. ((uniq ((CONS x) s)) = ((~ ((MEM x) s)) /\ (uniq s))))) ==> F))))) ==> (((!u. (!b. ((uniq t) ==> (~ ((MEM u) (SND (((split_at_rec u) b) t))))))) ==> ((~ (h = u)) ==> ((~ ((uniq ((CONS h) t)) ==> (~ ((MEM u) (SND (((split_at_rec u) ((APPEND b) ((CONS h) NIL))) t)))))) ==> ((!x. (!s. ((uniq ((CONS x) s)) = ((~ ((MEM x) s)) /\ (uniq s))))) ==> F)))) ==> ((!u. (!b. ((uniq t) ==> (~ ((MEM u) (SND (((split_at_rec u) b) t))))))) ==> ((~ (h = u)) ==> ((~ ((uniq ((CONS h) t)) ==> (~ ((MEM u) (SND (((split_at_rec u) ((APPEND b) ((CONS h) NIL))) t)))))) ==> ((!x. (!s. ((uniq ((CONS x) s)) = ((~ ((MEM x) s)) /\ (uniq s))))) ==> F))))))
+T c==> c==> c==> ! ! c==> cuniq f0 c~ cMEM b0 cSND csplit_at_rec b0 b1 f0 c==> c~ c= f1 f2 c==> c~ c==> cuniq cCONS f1 f0 c~ cMEM f2 cSND csplit_at_rec f2 cAPPEND f3 cCONS f1 cNIL f0 c==> ! ! c= cuniq cCONS b0 b1 c/\ c~ cMEM b0 b1 cuniq b1 cF c==> ! ! c==> cuniq f0 c~ cMEM b0 cSND csplit_at_rec b0 b1 f0 c==> c~ c= f1 f2 c==> c~ c==> cuniq cCONS f1 f0 c~ cMEM f2 cSND csplit_at_rec f2 cAPPEND f3 cCONS f1 cNIL f0 c==> ! ! c= cuniq cCONS b0 b1 c/\ c~ cMEM b0 b1 cuniq b1 cF c==> c==> ! ! c==> cuniq f0 c~ cMEM b0 cSND csplit_at_rec b0 b1 f0 c==> c~ c= f1 f2 c==> c~ c==> cuniq cCONS f1 f0 c~ cMEM f2 cSND csplit_at_rec f2 cAPPEND f3 cCONS f1 cNIL f0 c==> ! ! c= cuniq cCONS b0 b1 c/\ c~ cMEM b0 b1 cuniq b1 cF c==> ! ! c==> cuniq f0 c~ cMEM b0 cSND csplit_at_rec b0 b1 f0 c==> c~ c= f1 f2 c==> c~ c==> cuniq cCONS f1 f0 c~ cMEM f2 cSND csplit_at_rec f2 cAPPEND f3 cCONS f1 cNIL f0 c==> ! ! c= cuniq cCONS b0 b1 c/\ c~ cMEM b0 b1 cuniq b1 cF
++ |- ((t ==> T) = T)
+T c= c==> f0 cT cT
+- (_10079333 = _10079335) |- ((_10079334 = _10079336) ==> (((APPEND _10079333) _10079334) = ((APPEND _10079335) _10079336)))
+T c==> c= f0 f1 c==> c= f2 f3 c= cAPPEND f0 f2 cAPPEND f1 f3
+- (~ (uniq ((CONS u) t))), (~ ((uniq ((CONS u) t)) ==> (~ ((MEM u) t)))) |- ((~ (uniq ((CONS u) t))) /\ (uniq ((CONS u) t)))
+T c==> c~ cuniq cCONS f0 f1 c==> c~ c==> cuniq cCONS f0 f1 c~ cMEM f0 f1 c/\ c~ cuniq cCONS f0 f1 cuniq cCONS f0 f1
+- |- ((t ==> t) = T)
+T c= c==> f0 f0 cT
+- |- ((p \/ p) = p)
+T c= c\/ f0 f0 f0
++ (!u. (!b. ((uniq t) ==> (~ ((MEM u) (SND (((split_at_rec u) b) t))))))) |- (!b. ((uniq ((CONS h) t)) ==> (~ ((MEM u) (SND (((COND (h = u)) (b , t)) (((split_at_rec u) ((APPEND b) ((CONS h) NIL))) t)))))))
+T c==> ! ! c==> cuniq f0 c~ cMEM b0 cSND csplit_at_rec b0 b1 f0 ! c==> cuniq cCONS f1 f0 c~ cMEM f2 cSND cCOND c= f1 f2 c, b0 f0 csplit_at_rec f2 cAPPEND b0 cCONS f1 cNIL f0
+- (~ ((uniq ((CONS h) t)) ==> (~ ((MEM u) (SND (((split_at_rec u) ((APPEND b) ((CONS h) NIL))) t)))))) |- ((~ (uniq ((CONS h) t))) ==> (uniq ((CONS h) t)))
+T c==> c~ c==> cuniq cCONS f0 f1 c~ cMEM f2 cSND csplit_at_rec f2 cAPPEND f3 cCONS f0 cNIL f1 c==> c~ cuniq cCONS f0 f1 cuniq cCONS f0 f1
+- |- ((\t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))) t3)
+T * / c= c\/ f0 c\/ f1 b0 c\/ c\/ f0 f1 b0 f2
+- |- (((~ p) ==> p) = p)
+T c= c==> c~ f0 f0 f0
++ (!u. (!b. ((uniq t) ==> (~ ((MEM u) (SND (((split_at_rec u) b) t))))))) |- (!u. (!b. ((uniq ((CONS h) t)) ==> (~ ((MEM u) (SND (((COND (h = u)) (b , t)) (((split_at_rec u) ((APPEND b) ((CONS h) NIL))) t))))))))
+T c==> ! ! c==> cuniq f0 c~ cMEM b0 cSND csplit_at_rec b0 b1 f0 ! ! c==> cuniq cCONS f1 f0 c~ cMEM b0 cSND cCOND c= f1 b0 c, b1 f0 csplit_at_rec b0 cAPPEND b1 cCONS f1 cNIL f0
++ ((~ (h = u)) ==> ((uniq ((CONS h) t)) ==> (~ ((MEM u) (SND (((COND (h = u)) (b , t)) (((split_at_rec u) ((APPEND b) ((CONS h) NIL))) t))))))) |- ((uniq ((CONS h) t)) ==> (~ ((MEM u) (SND (((COND (h = u)) (b , t)) (((split_at_rec u) ((APPEND b) ((CONS h) NIL))) t))))))
+T c==> c==> c~ c= f0 f1 c==> cuniq cCONS f0 f2 c~ cMEM f1 cSND cCOND c= f0 f1 c, f3 f2 csplit_at_rec f1 cAPPEND f3 cCONS f0 cNIL f2 c==> cuniq cCONS f0 f2 c~ cMEM f1 cSND cCOND c= f0 f1 c, f3 f2 csplit_at_rec f1 cAPPEND f3 cCONS f0 cNIL f2
++ |- ((t ==> F) = (~ t))
+T c= c==> f0 cF c~ f0
++ (!u. (!b. ((uniq t) ==> (~ ((MEM u) (SND (((split_at_rec u) b) t))))))), (~ (h = u)) |- ((~ ((uniq ((CONS h) t)) ==> (~ ((MEM u) (SND (((split_at_rec u) ((APPEND b) ((CONS h) NIL))) t)))))) ==> F)
+T c==> ! ! c==> cuniq f0 c~ cMEM b0 cSND csplit_at_rec b0 b1 f0 c==> c~ c= f1 f2 c==> c~ c==> cuniq cCONS f1 f0 c~ cMEM f2 cSND csplit_at_rec f2 cAPPEND f3 cCONS f1 cNIL f0 cF
+- ((!u. (!b. ((uniq t) ==> (~ ((MEM u) (SND (((split_at_rec u) b) t))))))) ==> ((~ (h = u)) ==> ((~ ((uniq ((CONS h) t)) ==> (~ ((MEM u) (SND (((split_at_rec u) ((APPEND b) ((CONS h) NIL))) t)))))) ==> ((!x. (!s. ((uniq ((CONS x) s)) = ((~ ((MEM x) s)) /\ (uniq s))))) ==> F)))), (((!u. (!b. ((uniq t) ==> (~ ((MEM u) (SND (((split_at_rec u) b) t))))))) ==> ((~ (h = u)) ==> ((~ ((uniq ((CONS h) t)) ==> (~ ((MEM u) (SND (((split_at_rec u) ((APPEND b) ((CONS h) NIL))) t)))))) ==> ((!x. (!s. ((uniq ((CONS x) s)) = ((~ ((MEM x) s)) /\ (uniq s))))) ==> F)))) ==> ((!u. (!b. ((uniq t) ==> (~ ((MEM u) (SND (((split_at_rec u) b) t))))))) ==> ((~ (h = u)) ==> ((~ ((uniq ((CONS h) t)) ==> (~ ((MEM u) (SND (((split_at_rec u) ((APPEND b) ((CONS h) NIL))) t)))))) ==> ((!x. (!s. ((uniq ((CONS x) s)) = ((~ ((MEM x) s)) /\ (uniq s))))) ==> F))))) |- (((!u. (!b. ((uniq t) ==> (~ ((MEM u) (SND (((split_at_rec u) b) t))))))) ==> ((~ (h = u)) ==> ((~ ((uniq ((CONS h) t)) ==> (~ ((MEM u) (SND (((split_at_rec u) ((APPEND b) ((CONS h) NIL))) t)))))) ==> ((!x. (!s. ((uniq ((CONS x) s)) = ((~ ((MEM x) s)) /\ (uniq s))))) ==> F)))) /\ ((!u. (!b. ((uniq t) ==> (~ ((MEM u) (SND (((split_at_rec u) b) t))))))) ==> ((~ (h = u)) ==> ((~ ((uniq ((CONS h) t)) ==> (~ ((MEM u) (SND (((split_at_rec u) ((APPEND b) ((CONS h) NIL))) t)))))) ==> ((!x. (!s. ((uniq ((CONS x) s)) = ((~ ((MEM x) s)) /\ (uniq s))))) ==> F)))))
+T c==> c==> ! ! c==> cuniq f0 c~ cMEM b0 cSND csplit_at_rec b0 b1 f0 c==> c~ c= f1 f2 c==> c~ c==> cuniq cCONS f1 f0 c~ cMEM f2 cSND csplit_at_rec f2 cAPPEND f3 cCONS f1 cNIL f0 c==> ! ! c= cuniq cCONS b0 b1 c/\ c~ cMEM b0 b1 cuniq b1 cF c==> c==> c==> ! ! c==> cuniq f0 c~ cMEM b0 cSND csplit_at_rec b0 b1 f0 c==> c~ c= f1 f2 c==> c~ c==> cuniq cCONS f1 f0 c~ cMEM f2 cSND csplit_at_rec f2 cAPPEND f3 cCONS f1 cNIL f0 c==> ! ! c= cuniq cCONS b0 b1 c/\ c~ cMEM b0 b1 cuniq b1 cF c==> ! ! c==> cuniq f0 c~ cMEM b0 cSND csplit_at_rec b0 b1 f0 c==> c~ c= f1 f2 c==> c~ c==> cuniq cCONS f1 f0 c~ cMEM f2 cSND csplit_at_rec f2 cAPPEND f3 cCONS f1 cNIL f0 c==> ! ! c= cuniq cCONS b0 b1 c/\ c~ cMEM b0 b1 cuniq b1 cF c/\ c==> ! ! c==> cuniq f0 c~ cMEM b0 cSND csplit_at_rec b0 b1 f0 c==> c~ c= f1 f2 c==> c~ c==> cuniq cCONS f1 f0 c~ cMEM f2 cSND csplit_at_rec f2 cAPPEND f3 cCONS f1 cNIL f0 c==> ! ! c= cuniq cCONS b0 b1 c/\ c~ cMEM b0 b1 cuniq b1 cF c==> ! ! c==> cuniq f0 c~ cMEM b0 cSND csplit_at_rec b0 b1 f0 c==> c~ c= f1 f2 c==> c~ c==> cuniq cCONS f1 f0 c~ cMEM f2 cSND csplit_at_rec f2 cAPPEND f3 cCONS f1 cNIL f0 c==> ! ! c= cuniq cCONS b0 b1 c/\ c~ cMEM b0 b1 cuniq b1 cF
+- ((~ ((uniq ((CONS u) t)) ==> (~ ((MEM u) t)))) ==> ((!x. (!s. ((uniq ((CONS x) s)) = ((~ ((MEM x) s)) /\ (uniq s))))) ==> F)), (((~ ((uniq ((CONS u) t)) ==> (~ ((MEM u) t)))) ==> ((!x. (!s. ((uniq ((CONS x) s)) = ((~ ((MEM x) s)) /\ (uniq s))))) ==> F)) ==> ((~ ((uniq ((CONS u) t)) ==> (~ ((MEM u) t)))) ==> ((!x. (!s. ((uniq ((CONS x) s)) = ((~ ((MEM x) s)) /\ (uniq s))))) ==> F))) |- ((((~ ((uniq ((CONS u) t)) ==> (~ ((MEM u) t)))) ==> ((!x. (!s. ((uniq ((CONS x) s)) = ((~ ((MEM x) s)) /\ (uniq s))))) ==> F)) ==> ((~ ((uniq ((CONS u) t)) ==> (~ ((MEM u) t)))) ==> ((!x. (!s. ((uniq ((CONS x) s)) = ((~ ((MEM x) s)) /\ (uniq s))))) ==> F))) /\ ((~ ((uniq ((CONS u) t)) ==> (~ ((MEM u) t)))) ==> ((!x. (!s. ((uniq ((CONS x) s)) = ((~ ((MEM x) s)) /\ (uniq s))))) ==> F)))
+T c==> c==> c~ c==> cuniq cCONS f0 f1 c~ cMEM f0 f1 c==> ! ! c= cuniq cCONS b0 b1 c/\ c~ cMEM b0 b1 cuniq b1 cF c==> c==> c==> c~ c==> cuniq cCONS f0 f1 c~ cMEM f0 f1 c==> ! ! c= cuniq cCONS b0 b1 c/\ c~ cMEM b0 b1 cuniq b1 cF c==> c~ c==> cuniq cCONS f0 f1 c~ cMEM f0 f1 c==> ! ! c= cuniq cCONS b0 b1 c/\ c~ cMEM b0 b1 cuniq b1 cF c/\ c==> c==> c~ c==> cuniq cCONS f0 f1 c~ cMEM f0 f1 c==> ! ! c= cuniq cCONS b0 b1 c/\ c~ cMEM b0 b1 cuniq b1 cF c==> c~ c==> cuniq cCONS f0 f1 c~ cMEM f0 f1 c==> ! ! c= cuniq cCONS b0 b1 c/\ c~ cMEM b0 b1 cuniq b1 cF c==> c~ c==> cuniq cCONS f0 f1 c~ cMEM f0 f1 c==> ! ! c= cuniq cCONS b0 b1 c/\ c~ cMEM b0 b1 cuniq b1 cF
+- (~ ((uniq ((CONS h) t)) ==> (~ ((MEM u) (SND (((split_at_rec u) ((APPEND b) ((CONS h) NIL))) t)))))) |- ((~ ((MEM u) (SND (((split_at_rec u) ((APPEND b) ((CONS h) NIL))) t)))) ==> ((MEM u) (SND (((split_at_rec u) ((APPEND b) ((CONS h) NIL))) t))))
+T c==> c~ c==> cuniq cCONS f0 f1 c~ cMEM f2 cSND csplit_at_rec f2 cAPPEND f3 cCONS f0 cNIL f1 c==> c~ cMEM f2 cSND csplit_at_rec f2 cAPPEND f3 cCONS f0 cNIL f1 cMEM f2 cSND csplit_at_rec f2 cAPPEND f3 cCONS f0 cNIL f1
++ |- (p = ((~ p) ==> F))
+T c= f0 c==> c~ f0 cF
++ (~ ((uniq ((CONS u) t)) ==> (~ ((MEM u) t)))) |- ((~ ((uniq ((CONS u) t)) ==> (~ ((MEM u) t)))) /\ F)
+T c==> c~ c==> cuniq cCONS f0 f1 c~ cMEM f0 f1 c/\ c~ c==> cuniq cCONS f0 f1 c~ cMEM f0 f1 cF
+- |- ((!s'. ((~ (uniq ((CONS x) s'))) \/ ((~ ((MEM x) s)) /\ (uniq s)))) = ((!s. (~ (uniq ((CONS x) s)))) \/ ((~ ((MEM x) s)) /\ (uniq s))))
+T c= ! c\/ c~ cuniq cCONS f0 b0 c/\ c~ cMEM f0 f1 cuniq f1 c\/ ! c~ cuniq cCONS f0 b0 c/\ c~ cMEM f0 f1 cuniq f1
+- (_10079327 = _10079329), (_10079328 = _10079330) |- ((_10079328 = _10079330) /\ (((MEM _10079329) _10079330) \/ (~ ((MEM _10079327) _10079328))))
+T c==> c= f0 f1 c==> c= f2 f3 c/\ c= f2 f3 c\/ cMEM f1 f3 c~ cMEM f0 f2
++ (!u. (!b. ((uniq t) ==> (~ ((MEM u) (SND (((split_at_rec u) b) t))))))) |- ((~ (uniq t)) \/ (!u. (!b. (~ ((MEM u) (SND (((split_at_rec u) b) t)))))))
+T c==> ! ! c==> cuniq f0 c~ cMEM b0 cSND csplit_at_rec b0 b1 f0 c\/ c~ cuniq f0 ! ! c~ cMEM b0 cSND csplit_at_rec b0 b1 f0
+- |- ((\l. (((APPEND ((CONS h) t)) l) = ((CONS h) ((APPEND t) l)))) l)
+T * / c= cAPPEND cCONS f0 f1 b0 cCONS f0 cAPPEND f1 b0 f2
++ (!x. (!s. ((uniq ((CONS x) s)) = ((~ ((MEM x) s)) /\ (uniq s))))) |- (!x. (!s. (((~ (uniq ((CONS x) s))) \/ (~ ((MEM x) s))) /\ ((~ (uniq ((CONS x) s))) \/ (uniq s)))))
+T c==> ! ! c= cuniq cCONS b0 b1 c/\ c~ cMEM b0 b1 cuniq b1 ! ! c/\ c\/ c~ cuniq cCONS b0 b1 c~ cMEM b0 b1 c\/ c~ cuniq cCONS b0 b1 cuniq b1
+- (~ ((uniq ((CONS h) t)) ==> (~ ((MEM u) (SND (((split_at_rec u) ((APPEND b) ((CONS h) NIL))) t)))))), (~ ((MEM u) (SND (((split_at_rec u) ((APPEND b) ((CONS h) NIL))) t)))) |- ((~ ((MEM u) (SND (((split_at_rec u) ((APPEND b) ((CONS h) NIL))) t)))) /\ ((MEM u) (SND (((split_at_rec u) ((APPEND b) ((CONS h) NIL))) t))))
+T c==> c~ c==> cuniq cCONS f0 f1 c~ cMEM f2 cSND csplit_at_rec f2 cAPPEND f3 cCONS f0 cNIL f1 c==> c~ cMEM f2 cSND csplit_at_rec f2 cAPPEND f3 cCONS f0 cNIL f1 c/\ c~ cMEM f2 cSND csplit_at_rec f2 cAPPEND f3 cCONS f0 cNIL f1 cMEM f2 cSND csplit_at_rec f2 cAPPEND f3 cCONS f0 cNIL f1
+- |- (((!h. (!t. (!l. (((APPEND ((CONS h) t)) l) = ((CONS h) ((APPEND t) l)))))) ==> ((\h. (!t. (!l. (((APPEND ((CONS h) t)) l) = ((CONS h) ((APPEND t) l)))))) h)) = ((\h. (!t. (!l. (((APPEND ((CONS h) t)) l) = ((CONS h) ((APPEND t) l)))))) h))
+T c= c==> ! ! ! c= cAPPEND cCONS b0 b1 b2 cCONS b0 cAPPEND b1 b2 * / ! ! c= cAPPEND cCONS b0 b1 b2 cCONS b0 cAPPEND b1 b2 f0 * / ! ! c= cAPPEND cCONS b0 b1 b2 cCONS b0 cAPPEND b1 b2 f0
+- ((~ ((uniq ((CONS u) t)) ==> (~ ((MEM u) t)))) ==> ((!x. (!s. ((uniq ((CONS x) s)) = ((~ ((MEM x) s)) /\ (uniq s))))) ==> F)) |- (((~ ((uniq ((CONS u) t)) ==> (~ ((MEM u) t)))) ==> ((!x. (!s. ((uniq ((CONS x) s)) = ((~ ((MEM x) s)) /\ (uniq s))))) ==> F)) /\ ((~ ((uniq ((CONS u) t)) ==> (~ ((MEM u) t)))) ==> ((!x. (!s. ((uniq ((CONS x) s)) = ((~ ((MEM x) s)) /\ (uniq s))))) ==> F)))
+T c==> c==> c~ c==> cuniq cCONS f0 f1 c~ cMEM f0 f1 c==> ! ! c= cuniq cCONS b0 b1 c/\ c~ cMEM b0 b1 cuniq b1 cF c/\ c==> c~ c==> cuniq cCONS f0 f1 c~ cMEM f0 f1 c==> ! ! c= cuniq cCONS b0 b1 c/\ c~ cMEM b0 b1 cuniq b1 cF c==> c~ c==> cuniq cCONS f0 f1 c~ cMEM f0 f1 c==> ! ! c= cuniq cCONS b0 b1 c/\ c~ cMEM b0 b1 cuniq b1 cF
++ |- ((\t. (t \/ (~ t))) (h = u))
+T * / c\/ b0 c~ b0 c= f0 f1
+- |- ((\l. (((APPEND NIL) l) = l)) l)
+T * / c= cAPPEND cNIL b0 b0 f0
+- |- (((MEM x) ((CONS h) t)) = ((x = h) \/ ((MEM x) t)))
+T c= cMEM f0 cCONS f1 f2 c\/ c= f0 f1 cMEM f0 f2
+- |- ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))
+T c= c\/ f0 c\/ f1 f2 c\/ c\/ f0 f1 f2
++ |- ((\b. (!u. ((!u. (!b. ((uniq t) ==> (~ ((MEM u) (SND (((split_at_rec u) b) t))))))) ==> ((~ (h = u)) ==> ((~ ((uniq ((CONS h) t)) ==> (~ ((MEM u) (SND (((split_at_rec u) ((APPEND b) ((CONS h) NIL))) t)))))) ==> ((!x. (!s. ((uniq ((CONS x) s)) = ((~ ((MEM x) s)) /\ (uniq s))))) ==> F)))))) b)
+T * / ! c==> ! ! c==> cuniq f0 c~ cMEM b2 cSND csplit_at_rec b2 b2 f0 c==> c~ c= f1 b1 c==> c~ c==> cuniq cCONS f1 f0 c~ cMEM b1 cSND csplit_at_rec b1 cAPPEND b0 cCONS f1 cNIL f0 c==> ! ! c= cuniq cCONS b2 b3 c/\ c~ cMEM b2 b3 cuniq b3 cF f2
+- |- ((~ (_10079345 = _10079347)) \/ ((~ (_10079346 = _10079348)) \/ (((CONS _10079345) _10079346) = ((CONS _10079347) _10079348))))
+T c\/ c~ c= f0 f1 c\/ c~ c= f2 f3 c= cCONS f0 f2 cCONS f1 f3
+- (_10079327 = _10079329) |- ((_10079327 = _10079329) /\ ((~ (_10079328 = _10079330)) \/ (((MEM _10079329) _10079330) \/ (~ ((MEM _10079327) _10079328)))))
+T c==> c= f0 f1 c/\ c= f0 f1 c\/ c~ c= f2 f3 c\/ cMEM f1 f3 c~ cMEM f0 f2
++ (!x. (!s. ((uniq ((CONS x) s)) = ((~ ((MEM x) s)) /\ (uniq s))))), (~ ((uniq ((CONS h) t)) ==> (~ ((MEM u) (SND (((split_at_rec u) ((APPEND b) ((CONS h) NIL))) t)))))) |- (uniq t)
+T c==> ! ! c= cuniq cCONS b0 b1 c/\ c~ cMEM b0 b1 cuniq b1 c==> c~ c==> cuniq cCONS f0 f1 c~ cMEM f2 cSND csplit_at_rec f2 cAPPEND f3 cCONS f0 cNIL f1 cuniq f1
++ |- ((!t. ((!u. (!b. ((uniq t) ==> (~ ((MEM u) (SND (((split_at_rec u) b) t))))))) ==> (!u. (!b. ((uniq ((CONS h) t)) ==> (~ ((MEM u) (SND (((split_at_rec u) b) ((CONS h) t)))))))))) = T)
+T c= ! c==> ! ! c==> cuniq b0 c~ cMEM b1 cSND csplit_at_rec b1 b2 b0 ! ! c==> cuniq cCONS f0 b0 c~ cMEM b1 cSND csplit_at_rec b1 b2 cCONS f0 b0 cT
+- |- ((_10079327 = _10079329) ==> ((~ (_10079328 = _10079330)) \/ (((MEM _10079329) _10079330) \/ (~ ((MEM _10079327) _10079328)))))
+T c==> c= f0 f1 c\/ c~ c= f2 f3 c\/ cMEM f1 f3 c~ cMEM f0 f2
+- (_10079333 = _10079335) |- ((_10079333 = _10079335) /\ ((~ (_10079334 = _10079336)) \/ (((APPEND _10079333) _10079334) = ((APPEND _10079335) _10079336))))
+T c==> c= f0 f1 c/\ c= f0 f1 c\/ c~ c= f2 f3 c= cAPPEND f0 f2 cAPPEND f1 f3
++ (!x. (!s. ((uniq ((CONS x) s)) = ((~ ((MEM x) s)) /\ (uniq s))))), (!u. (!b. ((uniq t) ==> (~ ((MEM u) (SND (((split_at_rec u) b) t))))))), (~ ((uniq ((CONS h) t)) ==> (~ ((MEM u) (SND (((split_at_rec u) ((APPEND b) ((CONS h) NIL))) t)))))) |- F
+T c==> ! ! c= cuniq cCONS b0 b1 c/\ c~ cMEM b0 b1 cuniq b1 c==> ! ! c==> cuniq f0 c~ cMEM b0 cSND csplit_at_rec b0 b1 f0 c==> c~ c==> cuniq cCONS f1 f0 c~ cMEM f2 cSND csplit_at_rec f2 cAPPEND f3 cCONS f1 cNIL f0 cF
+- (_10079337 = _10079340) |- ((_10079338 = _10079341) ==> ((~ (_10079339 = _10079342)) \/ ((((split_at_rec _10079337) _10079338) _10079339) = (((split_at_rec _10079340) _10079341) _10079342))))
+T c==> c= f0 f1 c==> c= f2 f3 c\/ c~ c= f4 f5 c= csplit_at_rec f0 f2 f4 csplit_at_rec f1 f3 f5
+- (!x. (!s. ((uniq ((CONS x) s)) = ((~ ((MEM x) s)) /\ (uniq s))))) |- (((!x. (!s. ((uniq ((CONS x) s)) \/ (((MEM x) s) \/ (~ (uniq s)))))) ==> ((\x. (!s. ((uniq ((CONS x) s)) \/ (((MEM x) s) \/ (~ (uniq s)))))) _10079299)) = ((\x. (!s. ((uniq ((CONS x) s)) \/ (((MEM x) s) \/ (~ (uniq s)))))) _10079299))
+T c==> ! ! c= cuniq cCONS b0 b1 c/\ c~ cMEM b0 b1 cuniq b1 c= c==> ! ! c\/ cuniq cCONS b0 b1 c\/ cMEM b0 b1 c~ cuniq b1 * / ! c\/ cuniq cCONS b0 b1 c\/ cMEM b0 b1 c~ cuniq b1 f0 * / ! c\/ cuniq cCONS b0 b1 c\/ cMEM b0 b1 c~ cuniq b1 f0
++ (!u. (!b. ((uniq t) ==> (~ ((MEM u) (SND (((split_at_rec u) b) t))))))), (~ (h = u)), (~ ((uniq ((CONS h) t)) ==> (~ ((MEM u) (SND (((split_at_rec u) ((APPEND b) ((CONS h) NIL))) t)))))) |- ((~ ((uniq ((CONS h) t)) ==> (~ ((MEM u) (SND (((split_at_rec u) ((APPEND b) ((CONS h) NIL))) t)))))) /\ F)
+T c==> ! ! c==> cuniq f0 c~ cMEM b0 cSND csplit_at_rec b0 b1 f0 c==> c~ c= f1 f2 c==> c~ c==> cuniq cCONS f1 f0 c~ cMEM f2 cSND csplit_at_rec f2 cAPPEND f3 cCONS f1 cNIL f0 c/\ c~ c==> cuniq cCONS f1 f0 c~ cMEM f2 cSND csplit_at_rec f2 cAPPEND f3 cCONS f1 cNIL f0 cF
+- |- ((~ (_10079331 = _10079332)) \/ ((uniq _10079332) \/ (~ (uniq _10079331))))
+T c\/ c~ c= f0 f1 c\/ cuniq f1 c~ cuniq f0
++ (~ (h = u)) |- (((uniq ((CONS h) t)) ==> (~ ((MEM u) (SND (((split_at_rec u) ((APPEND b) ((CONS h) NIL))) t))))) = ((uniq ((CONS h) t)) ==> (~ ((MEM u) (SND (((COND (h = u)) (b , t)) (((split_at_rec u) ((APPEND b) ((CONS h) NIL))) t)))))))
+T c==> c~ c= f0 f1 c= c==> cuniq cCONS f0 f2 c~ cMEM f1 cSND csplit_at_rec f1 cAPPEND f3 cCONS f0 cNIL f2 c==> cuniq cCONS f0 f2 c~ cMEM f1 cSND cCOND c= f0 f1 c, f3 f2 csplit_at_rec f1 cAPPEND f3 cCONS f0 cNIL f2
+- (~ (h = u)) |- (((~ (u = h)) ==> ((u = h) = F)) = ((u = h) = F))
+T c==> c~ c= f0 f1 c= c==> c~ c= f1 f0 c= c= f1 f0 cF c= c= f1 f0 cF
++ |- ((!u. (!b. ((uniq ((CONS h) t)) ==> (~ ((MEM u) (SND (((COND (h = u)) (b , t)) (((split_at_rec u) ((APPEND b) ((CONS h) NIL))) t)))))))) = (!u. (!b. ((uniq ((CONS h) t)) ==> (~ ((MEM u) (SND (((split_at_rec u) b) ((CONS h) t)))))))))
+T c= ! ! c==> cuniq cCONS f0 f1 c~ cMEM b0 cSND cCOND c= f0 b0 c, b1 f1 csplit_at_rec b0 cAPPEND b1 cCONS f0 cNIL f1 ! ! c==> cuniq cCONS f0 f1 c~ cMEM b0 cSND csplit_at_rec b0 b1 cCONS f0 f1
++ (!u. (!b. ((uniq t) ==> (~ ((MEM u) (SND (((split_at_rec u) b) t))))))), (~ ((uniq ((CONS h) t)) ==> (~ ((MEM u) (SND (((split_at_rec u) ((APPEND b) ((CONS h) NIL))) t)))))) |- ((~ ((uniq ((CONS h) t)) ==> (~ ((MEM u) (SND (((split_at_rec u) ((APPEND b) ((CONS h) NIL))) t)))))) /\ (~ (!x. (!s. ((uniq ((CONS x) s)) = ((~ ((MEM x) s)) /\ (uniq s)))))))
+T c==> ! ! c==> cuniq f0 c~ cMEM b0 cSND csplit_at_rec b0 b1 f0 c==> c~ c==> cuniq cCONS f1 f0 c~ cMEM f2 cSND csplit_at_rec f2 cAPPEND f3 cCONS f1 cNIL f0 c/\ c~ c==> cuniq cCONS f1 f0 c~ cMEM f2 cSND csplit_at_rec f2 cAPPEND f3 cCONS f1 cNIL f0 c~ ! ! c= cuniq cCONS b0 b1 c/\ c~ cMEM b0 b1 cuniq b1
+- (~ ((uniq ((CONS u) t)) ==> (~ ((MEM u) t)))) |- ((~ (uniq ((CONS u) t))) ==> (uniq ((CONS u) t)))
+T c==> c~ c==> cuniq cCONS f0 f1 c~ cMEM f0 f1 c==> c~ cuniq cCONS f0 f1 cuniq cCONS f0 f1
++ (~ (h = u)) |- ((h = u) = F)
+T c==> c~ c= f0 f1 c= c= f0 f1 cF
++ (!u. (!b. ((uniq t) ==> (~ ((MEM u) (SND (((split_at_rec u) b) t))))))) |- (((uniq ((CONS h) t)) ==> (~ ((MEM u) (SND (((COND (h = u)) (b , t)) (((split_at_rec u) ((APPEND b) ((CONS h) NIL))) t)))))) = T)
+T c==> ! ! c==> cuniq f0 c~ cMEM b0 cSND csplit_at_rec b0 b1 f0 c= c==> cuniq cCONS f1 f0 c~ cMEM f2 cSND cCOND c= f1 f2 c, f3 f0 csplit_at_rec f2 cAPPEND f3 cCONS f1 cNIL f0 cT
+- |- ((\t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3)))) t2)
+T * / ! c= c\/ f0 c\/ b0 b1 c\/ c\/ f0 b0 b1 f1
+- |- ((!s. ((P s) \/ Q)) = ((!s. (P s)) \/ Q))
+T c= ! c\/ * f0 b0 f1 c\/ ! * f0 b0 f1
++ |- ((!u. ((~ (uniq t)) \/ (!b. (~ ((MEM u) (SND (((split_at_rec u) b) t))))))) = ((~ (uniq t)) \/ (!u. (!b. (~ ((MEM u) (SND (((split_at_rec u) b) t))))))))
+T c= ! c\/ c~ cuniq f0 ! c~ cMEM b0 cSND csplit_at_rec b0 b1 f0 c\/ c~ cuniq f0 ! ! c~ cMEM b0 cSND csplit_at_rec b0 b1 f0
+- |- (((!t. (!l. (((APPEND ((CONS h) t)) l) = ((CONS h) ((APPEND t) l))))) ==> ((\t. (!l. (((APPEND ((CONS h) t)) l) = ((CONS h) ((APPEND t) l))))) t)) = ((\t. (!l. (((APPEND ((CONS h) t)) l) = ((CONS h) ((APPEND t) l))))) t))
+T c= c==> ! ! c= cAPPEND cCONS f0 b0 b1 cCONS f0 cAPPEND b0 b1 * / ! c= cAPPEND cCONS f0 b0 b1 cCONS f0 cAPPEND b0 b1 f1 * / ! c= cAPPEND cCONS f0 b0 b1 cCONS f0 cAPPEND b0 b1 f1
+- (!u. (!b. ((uniq t) ==> (~ ((MEM u) (SND (((split_at_rec u) b) t))))))) |- ((\u. (!b. ((uniq t) ==> (~ ((MEM u) (SND (((split_at_rec u) b) t))))))) u)
+T c==> ! ! c==> cuniq f0 c~ cMEM b0 cSND csplit_at_rec b0 b1 f0 * / ! c==> cuniq f0 c~ cMEM b0 cSND csplit_at_rec b0 b1 f0 f1
+- (_10079343 = _10079344) |- ((_10079343 = _10079344) /\ ((SND _10079343) = (SND _10079344)))
+T c==> c= f0 f1 c/\ c= f0 f1 c= cSND f0 cSND f1
++ (!x. (!s. ((uniq ((CONS x) s)) = ((~ ((MEM x) s)) /\ (uniq s))))) |- ((uniq ((CONS _10079297) _10079298)) ==> (uniq _10079298))
+T c==> ! ! c= cuniq cCONS b0 b1 c/\ c~ cMEM b0 b1 cuniq b1 c==> cuniq cCONS f0 f1 cuniq f1
+- ((!u. (!b. ((uniq t) ==> (~ ((MEM u) (SND (((split_at_rec u) b) t))))))) ==> ((~ (h = u)) ==> ((~ ((uniq ((CONS h) t)) ==> (~ ((MEM u) (SND (((split_at_rec u) ((APPEND b) ((CONS h) NIL))) t)))))) ==> ((!x. (!s. ((uniq ((CONS x) s)) = ((~ ((MEM x) s)) /\ (uniq s))))) ==> F)))) |- ((((!u. (!b. ((uniq t) ==> (~ ((MEM u) (SND (((split_at_rec u) b) t))))))) ==> ((~ (h = u)) ==> ((~ ((uniq ((CONS h) t)) ==> (~ ((MEM u) (SND (((split_at_rec u) ((APPEND b) ((CONS h) NIL))) t)))))) ==> ((!x. (!s. ((uniq ((CONS x) s)) = ((~ ((MEM x) s)) /\ (uniq s))))) ==> F)))) ==> ((!u. (!b. ((uniq t) ==> (~ ((MEM u) (SND (((split_at_rec u) b) t))))))) ==> ((~ (h = u)) ==> ((~ ((uniq ((CONS h) t)) ==> (~ ((MEM u) (SND (((split_at_rec u) ((APPEND b) ((CONS h) NIL))) t)))))) ==> ((!x. (!s. ((uniq ((CONS x) s)) = ((~ ((MEM x) s)) /\ (uniq s))))) ==> F))))) ==> ((!u. (!b. ((uniq t) ==> (~ ((MEM u) (SND (((split_at_rec u) b) t))))))) ==> ((~ (h = u)) ==> ((~ ((uniq ((CONS h) t)) ==> (~ ((MEM u) (SND (((split_at_rec u) ((APPEND b) ((CONS h) NIL))) t)))))) ==> ((!x. (!s. ((uniq ((CONS x) s)) = ((~ ((MEM x) s)) /\ (uniq s))))) ==> F)))))
+T c==> c==> ! ! c==> cuniq f0 c~ cMEM b0 cSND csplit_at_rec b0 b1 f0 c==> c~ c= f1 f2 c==> c~ c==> cuniq cCONS f1 f0 c~ cMEM f2 cSND csplit_at_rec f2 cAPPEND f3 cCONS f1 cNIL f0 c==> ! ! c= cuniq cCONS b0 b1 c/\ c~ cMEM b0 b1 cuniq b1 cF c==> c==> c==> ! ! c==> cuniq f0 c~ cMEM b0 cSND csplit_at_rec b0 b1 f0 c==> c~ c= f1 f2 c==> c~ c==> cuniq cCONS f1 f0 c~ cMEM f2 cSND csplit_at_rec f2 cAPPEND f3 cCONS f1 cNIL f0 c==> ! ! c= cuniq cCONS b0 b1 c/\ c~ cMEM b0 b1 cuniq b1 cF c==> ! ! c==> cuniq f0 c~ cMEM b0 cSND csplit_at_rec b0 b1 f0 c==> c~ c= f1 f2 c==> c~ c==> cuniq cCONS f1 f0 c~ cMEM f2 cSND csplit_at_rec f2 cAPPEND f3 cCONS f1 cNIL f0 c==> ! ! c= cuniq cCONS b0 b1 c/\ c~ cMEM b0 b1 cuniq b1 cF c==> ! ! c==> cuniq f0 c~ cMEM b0 cSND csplit_at_rec b0 b1 f0 c==> c~ c= f1 f2 c==> c~ c==> cuniq cCONS f1 f0 c~ cMEM f2 cSND csplit_at_rec f2 cAPPEND f3 cCONS f1 cNIL f0 c==> ! ! c= cuniq cCONS b0 b1 c/\ c~ cMEM b0 b1 cuniq b1 cF
+- |- ((((~ ((uniq ((CONS u) t)) ==> (~ ((MEM u) t)))) ==> ((!x. (!s. ((uniq ((CONS x) s)) = ((~ ((MEM x) s)) /\ (uniq s))))) ==> F)) ==> ((~ ((uniq ((CONS u) t)) ==> (~ ((MEM u) t)))) ==> ((!x. (!s. ((uniq ((CONS x) s)) = ((~ ((MEM x) s)) /\ (uniq s))))) ==> F))) ==> (((~ ((uniq ((CONS u) t)) ==> (~ ((MEM u) t)))) ==> ((!x. (!s. ((uniq ((CONS x) s)) = ((~ ((MEM x) s)) /\ (uniq s))))) ==> F)) ==> ((~ ((uniq ((CONS u) t)) ==> (~ ((MEM u) t)))) ==> ((!x. (!s. ((uniq ((CONS x) s)) = ((~ ((MEM x) s)) /\ (uniq s))))) ==> F))))
+T c==> c==> c==> c~ c==> cuniq cCONS f0 f1 c~ cMEM f0 f1 c==> ! ! c= cuniq cCONS b0 b1 c/\ c~ cMEM b0 b1 cuniq b1 cF c==> c~ c==> cuniq cCONS f0 f1 c~ cMEM f0 f1 c==> ! ! c= cuniq cCONS b0 b1 c/\ c~ cMEM b0 b1 cuniq b1 cF c==> c==> c~ c==> cuniq cCONS f0 f1 c~ cMEM f0 f1 c==> ! ! c= cuniq cCONS b0 b1 c/\ c~ cMEM b0 b1 cuniq b1 cF c==> c~ c==> cuniq cCONS f0 f1 c~ cMEM f0 f1 c==> ! ! c= cuniq cCONS b0 b1 c/\ c~ cMEM b0 b1 cuniq b1 cF
++ (!u. (!b. (~ ((MEM u) (SND (((split_at_rec u) b) t)))))) |- ((\u. (!b. (~ ((MEM u) (SND (((split_at_rec u) b) t)))))) _10079303)
+T c==> ! ! c~ cMEM b0 cSND csplit_at_rec b0 b1 f0 * / ! c~ cMEM b0 cSND csplit_at_rec b0 b1 f0 f1
+- |- ((!t. (!u. ((~ ((uniq ((CONS u) t)) ==> (~ ((MEM u) t)))) ==> (~ (!x. (!s. ((uniq ((CONS x) s)) = ((~ ((MEM x) s)) /\ (uniq s))))))))) = (!t. (!u. ((~ ((uniq ((CONS u) t)) ==> (~ ((MEM u) t)))) ==> ((!x. (!s. ((uniq ((CONS x) s)) = ((~ ((MEM x) s)) /\ (uniq s))))) ==> F)))))
+T c= ! ! c==> c~ c==> cuniq cCONS b1 b0 c~ cMEM b1 b0 c~ ! ! c= cuniq cCONS b2 b3 c/\ c~ cMEM b2 b3 cuniq b3 ! ! c==> c~ c==> cuniq cCONS b1 b0 c~ cMEM b1 b0 c==> ! ! c= cuniq cCONS b2 b3 c/\ c~ cMEM b2 b3 cuniq b3 cF
+- (_10079333 = _10079335), (_10079334 = _10079336) |- ((_10079334 = _10079336) /\ (((APPEND _10079333) _10079334) = ((APPEND _10079335) _10079336)))
+T c==> c= f0 f1 c==> c= f2 f3 c/\ c= f2 f3 c= cAPPEND f0 f2 cAPPEND f1 f3
+- |- (((!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3)))) ==> ((\t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3)))) t2)) = ((\t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3)))) t2))
+T c= c==> ! ! c= c\/ f0 c\/ b0 b1 c\/ c\/ f0 b0 b1 * / ! c= c\/ f0 c\/ b0 b1 c\/ c\/ f0 b0 b1 f1 * / ! c= c\/ f0 c\/ b0 b1 c\/ c\/ f0 b0 b1 f1
+- ((~ ((uniq ((CONS u) t)) ==> (~ ((MEM u) t)))) ==> ((!x. (!s. ((uniq ((CONS x) s)) = ((~ ((MEM x) s)) /\ (uniq s))))) ==> F)) |- ((((~ ((uniq ((CONS u) t)) ==> (~ ((MEM u) t)))) ==> ((!x. (!s. ((uniq ((CONS x) s)) = ((~ ((MEM x) s)) /\ (uniq s))))) ==> F)) ==> ((~ ((uniq ((CONS u) t)) ==> (~ ((MEM u) t)))) ==> ((!x. (!s. ((uniq ((CONS x) s)) = ((~ ((MEM x) s)) /\ (uniq s))))) ==> F))) ==> ((~ ((uniq ((CONS u) t)) ==> (~ ((MEM u) t)))) ==> ((!x. (!s. ((uniq ((CONS x) s)) = ((~ ((MEM x) s)) /\ (uniq s))))) ==> F)))
+T c==> c==> c~ c==> cuniq cCONS f0 f1 c~ cMEM f0 f1 c==> ! ! c= cuniq cCONS b0 b1 c/\ c~ cMEM b0 b1 cuniq b1 cF c==> c==> c==> c~ c==> cuniq cCONS f0 f1 c~ cMEM f0 f1 c==> ! ! c= cuniq cCONS b0 b1 c/\ c~ cMEM b0 b1 cuniq b1 cF c==> c~ c==> cuniq cCONS f0 f1 c~ cMEM f0 f1 c==> ! ! c= cuniq cCONS b0 b1 c/\ c~ cMEM b0 b1 cuniq b1 cF c==> c~ c==> cuniq cCONS f0 f1 c~ cMEM f0 f1 c==> ! ! c= cuniq cCONS b0 b1 c/\ c~ cMEM b0 b1 cuniq b1 cF
++ |- ((~ ((uniq ((CONS u) t)) ==> (~ ((MEM u) t)))) ==> F)
+T c==> c~ c==> cuniq cCONS f0 f1 c~ cMEM f0 f1 cF
++ |- (((!b. (!u. ((!u. (!b. ((uniq t) ==> (~ ((MEM u) (SND (((split_at_rec u) b) t))))))) ==> ((~ (h = u)) ==> ((~ ((uniq ((CONS h) t)) ==> (~ ((MEM u) (SND (((split_at_rec u) ((APPEND b) ((CONS h) NIL))) t)))))) ==> ((!x. (!s. ((uniq ((CONS x) s)) = ((~ ((MEM x) s)) /\ (uniq s))))) ==> F)))))) ==> ((\b. (!u. ((!u. (!b. ((uniq t) ==> (~ ((MEM u) (SND (((split_at_rec u) b) t))))))) ==> ((~ (h = u)) ==> ((~ ((uniq ((CONS h) t)) ==> (~ ((MEM u) (SND (((split_at_rec u) ((APPEND b) ((CONS h) NIL))) t)))))) ==> ((!x. (!s. ((uniq ((CONS x) s)) = ((~ ((MEM x) s)) /\ (uniq s))))) ==> F)))))) b)) = ((\b. (!u. ((!u. (!b. ((uniq t) ==> (~ ((MEM u) (SND (((split_at_rec u) b) t))))))) ==> ((~ (h = u)) ==> ((~ ((uniq ((CONS h) t)) ==> (~ ((MEM u) (SND (((split_at_rec u) ((APPEND b) ((CONS h) NIL))) t)))))) ==> ((!x. (!s. ((uniq ((CONS x) s)) = ((~ ((MEM x) s)) /\ (uniq s))))) ==> F)))))) b))
+T c= c==> ! ! c==> ! ! c==> cuniq f0 c~ cMEM b2 cSND csplit_at_rec b2 b2 f0 c==> c~ c= f1 b1 c==> c~ c==> cuniq cCONS f1 f0 c~ cMEM b1 cSND csplit_at_rec b1 cAPPEND b0 cCONS f1 cNIL f0 c==> ! ! c= cuniq cCONS b2 b3 c/\ c~ cMEM b2 b3 cuniq b3 cF * / ! c==> ! ! c==> cuniq f0 c~ cMEM b2 cSND csplit_at_rec b2 b2 f0 c==> c~ c= f1 b1 c==> c~ c==> cuniq cCONS f1 f0 c~ cMEM b1 cSND csplit_at_rec b1 cAPPEND b0 cCONS f1 cNIL f0 c==> ! ! c= cuniq cCONS b2 b3 c/\ c~ cMEM b2 b3 cuniq b3 cF f2 * / ! c==> ! ! c==> cuniq f0 c~ cMEM b2 cSND csplit_at_rec b2 b2 f0 c==> c~ c= f1 b1 c==> c~ c==> cuniq cCONS f1 f0 c~ cMEM b1 cSND csplit_at_rec b1 cAPPEND b0 cCONS f1 cNIL f0 c==> ! ! c= cuniq cCONS b2 b3 c/\ c~ cMEM b2 b3 cuniq b3 cF f2
++ (!x. (!s. ((uniq ((CONS x) s)) = ((~ ((MEM x) s)) /\ (uniq s))))), (~ (uniq t)), (~ ((uniq ((CONS h) t)) ==> (~ ((MEM u) (SND (((split_at_rec u) ((APPEND b) ((CONS h) NIL))) t)))))) |- F
+T c==> ! ! c= cuniq cCONS b0 b1 c/\ c~ cMEM b0 b1 cuniq b1 c==> c~ cuniq f0 c==> c~ c==> cuniq cCONS f1 f0 c~ cMEM f2 cSND csplit_at_rec f2 cAPPEND f3 cCONS f1 cNIL f0 cF
+- |- ((((COND (x = x)) y) z) = y)
+T c= cCOND c= f0 f0 f1 f2 f1
+- (_10079337 = _10079340) |- ((_10079337 = _10079340) /\ ((~ (_10079338 = _10079341)) \/ ((~ (_10079339 = _10079342)) \/ ((((split_at_rec _10079337) _10079338) _10079339) = (((split_at_rec _10079340) _10079341) _10079342)))))
+T c==> c= f0 f1 c/\ c= f0 f1 c\/ c~ c= f2 f3 c\/ c~ c= f4 f5 c= csplit_at_rec f0 f2 f4 csplit_at_rec f1 f3 f5
++ |- ((!u. (!b. ((uniq NIL) ==> (~ ((MEM u) (SND (((split_at_rec u) b) NIL))))))) /\ (!h. (!t. ((!u. (!b. ((uniq t) ==> (~ ((MEM u) (SND (((split_at_rec u) b) t))))))) ==> (!u. (!b. ((uniq ((CONS h) t)) ==> (~ ((MEM u) (SND (((split_at_rec u) b) ((CONS h) t))))))))))))
+T c/\ ! ! c==> cuniq cNIL c~ cMEM b0 cSND csplit_at_rec b0 b1 cNIL ! ! c==> ! ! c==> cuniq b1 c~ cMEM b2 cSND csplit_at_rec b2 b3 b1 ! ! c==> cuniq cCONS b0 b1 c~ cMEM b2 cSND csplit_at_rec b2 b3 cCONS b0 b1
+- (~ ((uniq ((CONS u) t)) ==> (~ ((MEM u) t)))) |- ((~ ((uniq ((CONS u) t)) ==> (~ ((MEM u) t)))) /\ (~ (!x. (!s. ((uniq ((CONS x) s)) = ((~ ((MEM x) s)) /\ (uniq s)))))))
+T c==> c~ c==> cuniq cCONS f0 f1 c~ cMEM f0 f1 c/\ c~ c==> cuniq cCONS f0 f1 c~ cMEM f0 f1 c~ ! ! c= cuniq cCONS b0 b1 c/\ c~ cMEM b0 b1 cuniq b1
+- |- (T = (((~ (uniq ((CONS _10079297) _10079298))) \/ (uniq _10079298)) = ((uniq _10079298) \/ (~ (uniq ((CONS _10079297) _10079298))))))
+T c= cT c= c\/ c~ cuniq cCONS f0 f1 cuniq f1 c\/ cuniq f1 c~ cuniq cCONS f0 f1
++ |- ((\u. ((!u. (!b. ((uniq t) ==> (~ ((MEM u) (SND (((split_at_rec u) b) t))))))) ==> ((~ (h = u)) ==> ((~ ((uniq ((CONS h) t)) ==> (~ ((MEM u) (SND (((split_at_rec u) ((APPEND b) ((CONS h) NIL))) t)))))) ==> ((!x. (!s. ((uniq ((CONS x) s)) = ((~ ((MEM x) s)) /\ (uniq s))))) ==> F))))) u)
+T * / c==> ! ! c==> cuniq f0 c~ cMEM b1 cSND csplit_at_rec b1 b1 f0 c==> c~ c= f1 b0 c==> c~ c==> cuniq cCONS f1 f0 c~ cMEM b0 cSND csplit_at_rec b0 cAPPEND f2 cCONS f1 cNIL f0 c==> ! ! c= cuniq cCONS b1 b2 c/\ c~ cMEM b1 b2 cuniq b2 cF f3
++ (!u. (!b. (~ ((MEM u) (SND (((split_at_rec u) b) t)))))), (~ ((uniq ((CONS h) t)) ==> (~ ((MEM u) (SND (((split_at_rec u) ((APPEND b) ((CONS h) NIL))) t)))))) |- F
+T c==> ! ! c~ cMEM b0 cSND csplit_at_rec b0 b1 f0 c==> c~ c==> cuniq cCONS f1 f0 c~ cMEM f2 cSND csplit_at_rec f2 cAPPEND f3 cCONS f1 cNIL f0 cF
++ |- ((x = x) = T)
+T c= c= f0 f0 cT
+- |- ((!s'. ((~ (uniq ((CONS x) s))) \/ ((~ ((MEM x) s')) /\ (uniq s')))) = ((~ (uniq ((CONS x) s))) \/ (!s. ((~ ((MEM x) s)) /\ (uniq s)))))
+T c= ! c\/ c~ cuniq cCONS f0 f1 c/\ c~ cMEM f0 b0 cuniq b0 c\/ c~ cuniq cCONS f0 f1 ! c/\ c~ cMEM f0 b0 cuniq b0
+- (!x. (!s. ((uniq ((CONS x) s)) = ((~ ((MEM x) s)) /\ (uniq s))))) |- (!s. ((uniq ((CONS _10079299) s)) \/ (((MEM _10079299) s) \/ (~ (uniq s)))))
+T c==> ! ! c= cuniq cCONS b0 b1 c/\ c~ cMEM b0 b1 cuniq b1 ! c\/ cuniq cCONS f0 b0 c\/ cMEM f0 b0 c~ cuniq b0
+- |- ((~ (_10079337 = _10079340)) \/ ((~ (_10079338 = _10079341)) \/ ((~ (_10079339 = _10079342)) \/ ((((split_at_rec _10079337) _10079338) _10079339) = (((split_at_rec _10079340) _10079341) _10079342)))))
+T c\/ c~ c= f0 f1 c\/ c~ c= f2 f3 c\/ c~ c= f4 f5 c= csplit_at_rec f0 f2 f4 csplit_at_rec f1 f3 f5
+- (u = h) |- (h = u)
+T c==> c= f0 f1 c= f1 f0
+- (_10079345 = _10079347) |- ((_10079346 = _10079348) ==> (((CONS _10079345) _10079346) = ((CONS _10079347) _10079348)))
+T c==> c= f0 f1 c==> c= f2 f3 c= cCONS f0 f2 cCONS f1 f3
+- |- ((a ==> b) = ((~ a) \/ b))
+T c= c==> f0 f1 c\/ c~ f0 f1
++ |- (((!t. (!h. (!b. (!u. ((!u. (!b. ((uniq t) ==> (~ ((MEM u) (SND (((split_at_rec u) b) t))))))) ==> ((~ (h = u)) ==> ((~ ((uniq ((CONS h) t)) ==> (~ ((MEM u) (SND (((split_at_rec u) ((APPEND b) ((CONS h) NIL))) t)))))) ==> ((!x. (!s. ((uniq ((CONS x) s)) = ((~ ((MEM x) s)) /\ (uniq s))))) ==> F)))))))) ==> ((\t. (!h. (!b. (!u. ((!u. (!b. ((uniq t) ==> (~ ((MEM u) (SND (((split_at_rec u) b) t))))))) ==> ((~ (h = u)) ==> ((~ ((uniq ((CONS h) t)) ==> (~ ((MEM u) (SND (((split_at_rec u) ((APPEND b) ((CONS h) NIL))) t)))))) ==> ((!x. (!s. ((uniq ((CONS x) s)) = ((~ ((MEM x) s)) /\ (uniq s))))) ==> F)))))))) t)) = ((\t. (!h. (!b. (!u. ((!u. (!b. ((uniq t) ==> (~ ((MEM u) (SND (((split_at_rec u) b) t))))))) ==> ((~ (h = u)) ==> ((~ ((uniq ((CONS h) t)) ==> (~ ((MEM u) (SND (((split_at_rec u) ((APPEND b) ((CONS h) NIL))) t)))))) ==> ((!x. (!s. ((uniq ((CONS x) s)) = ((~ ((MEM x) s)) /\ (uniq s))))) ==> F)))))))) t))
+T c= c==> ! ! ! ! c==> ! ! c==> cuniq b0 c~ cMEM b4 cSND csplit_at_rec b4 b4 b0 c==> c~ c= b1 b3 c==> c~ c==> cuniq cCONS b1 b0 c~ cMEM b3 cSND csplit_at_rec b3 cAPPEND b2 cCONS b1 cNIL b0 c==> ! ! c= cuniq cCONS b4 b5 c/\ c~ cMEM b4 b5 cuniq b5 cF * / ! ! ! c==> ! ! c==> cuniq b0 c~ cMEM b4 cSND csplit_at_rec b4 b4 b0 c==> c~ c= b1 b3 c==> c~ c==> cuniq cCONS b1 b0 c~ cMEM b3 cSND csplit_at_rec b3 cAPPEND b2 cCONS b1 cNIL b0 c==> ! ! c= cuniq cCONS b4 b5 c/\ c~ cMEM b4 b5 cuniq b5 cF f0 * / ! ! ! c==> ! ! c==> cuniq b0 c~ cMEM b4 cSND csplit_at_rec b4 b4 b0 c==> c~ c= b1 b3 c==> c~ c==> cuniq cCONS b1 b0 c~ cMEM b3 cSND csplit_at_rec b3 cAPPEND b2 cCONS b1 cNIL b0 c==> ! ! c= cuniq cCONS b4 b5 c/\ c~ cMEM b4 b5 cuniq b5 cF f0
+- |- ((_10079331 = _10079332) ==> ((uniq _10079332) \/ (~ (uniq _10079331))))
+T c==> c= f0 f1 c\/ cuniq f1 c~ cuniq f0
++ |- ((!h. (!t. ((!u. (!b. ((uniq t) ==> (~ ((MEM u) (SND (((split_at_rec u) b) t))))))) ==> (!u. (!b. ((uniq ((CONS h) t)) ==> (~ ((MEM u) (SND (((split_at_rec u) b) ((CONS h) t))))))))))) = ((!u. (!b. ((uniq NIL) ==> (~ ((MEM u) (SND (((split_at_rec u) b) NIL))))))) /\ (!h. (!t. ((!u. (!b. ((uniq t) ==> (~ ((MEM u) (SND (((split_at_rec u) b) t))))))) ==> (!u. (!b. ((uniq ((CONS h) t)) ==> (~ ((MEM u) (SND (((split_at_rec u) b) ((CONS h) t)))))))))))))
+T c= ! ! c==> ! ! c==> cuniq b1 c~ cMEM b2 cSND csplit_at_rec b2 b3 b1 ! ! c==> cuniq cCONS b0 b1 c~ cMEM b2 cSND csplit_at_rec b2 b3 cCONS b0 b1 c/\ ! ! c==> cuniq cNIL c~ cMEM b0 cSND csplit_at_rec b0 b1 cNIL ! ! c==> ! ! c==> cuniq b1 c~ cMEM b2 cSND csplit_at_rec b2 b3 b1 ! ! c==> cuniq cCONS b0 b1 c~ cMEM b2 cSND csplit_at_rec b2 b3 cCONS b0 b1
+- |- (((!l. (((APPEND NIL) l) = l)) ==> ((\l. (((APPEND NIL) l) = l)) l)) = ((\l. (((APPEND NIL) l) = l)) l))
+T c= c==> ! c= cAPPEND cNIL b0 b0 * / c= cAPPEND cNIL b0 b0 f0 * / c= cAPPEND cNIL b0 b0 f0
++ (!u. (!b. ((uniq t) ==> (~ ((MEM u) (SND (((split_at_rec u) b) t))))))), (~ (h = u)) |- ((~ (h = u)) /\ ((~ ((uniq ((CONS h) t)) ==> (~ ((MEM u) (SND (((split_at_rec u) ((APPEND b) ((CONS h) NIL))) t)))))) ==> (~ (!x. (!s. ((uniq ((CONS x) s)) = ((~ ((MEM x) s)) /\ (uniq s))))))))
+T c==> ! ! c==> cuniq f0 c~ cMEM b0 cSND csplit_at_rec b0 b1 f0 c==> c~ c= f1 f2 c/\ c~ c= f1 f2 c==> c~ c==> cuniq cCONS f1 f0 c~ cMEM f2 cSND csplit_at_rec f2 cAPPEND f3 cCONS f1 cNIL f0 c~ ! ! c= cuniq cCONS b0 b1 c/\ c~ cMEM b0 b1 cuniq b1
++ |- (((~ a) \/ (~ b)) = (~ (a /\ b)))
+T c= c\/ c~ f0 c~ f1 c~ c/\ f0 f1
++ |- ((!b. (!u. ((!u. (!b. ((uniq t) ==> (~ ((MEM u) (SND (((split_at_rec u) b) t))))))) ==> ((~ (h = u)) ==> ((~ ((uniq ((CONS h) t)) ==> (~ ((MEM u) (SND (((split_at_rec u) ((APPEND b) ((CONS h) NIL))) t)))))) ==> (~ (!x. (!s. ((uniq ((CONS x) s)) = ((~ ((MEM x) s)) /\ (uniq s))))))))))) = T)
+T c= ! ! c==> ! ! c==> cuniq f0 c~ cMEM b2 cSND csplit_at_rec b2 b2 f0 c==> c~ c= f1 b1 c==> c~ c==> cuniq cCONS f1 f0 c~ cMEM b1 cSND csplit_at_rec b1 cAPPEND b0 cCONS f1 cNIL f0 c~ ! ! c= cuniq cCONS b2 b3 c/\ c~ cMEM b2 b3 cuniq b3 cT
++ (!u. (!b. ((uniq t) ==> (~ ((MEM u) (SND (((split_at_rec u) b) t))))))) |- ((!u. (!b. ((uniq t) ==> (~ ((MEM u) (SND (((split_at_rec u) b) t))))))) /\ ((~ (h = u)) ==> ((~ ((uniq ((CONS h) t)) ==> (~ ((MEM u) (SND (((split_at_rec u) ((APPEND b) ((CONS h) NIL))) t)))))) ==> (~ (!x. (!s. ((uniq ((CONS x) s)) = ((~ ((MEM x) s)) /\ (uniq s)))))))))
+T c==> ! ! c==> cuniq f0 c~ cMEM b0 cSND csplit_at_rec b0 b1 f0 c/\ ! ! c==> cuniq f0 c~ cMEM b0 cSND csplit_at_rec b0 b1 f0 c==> c~ c= f1 f2 c==> c~ c==> cuniq cCONS f1 f0 c~ cMEM f2 cSND csplit_at_rec f2 cAPPEND f3 cCONS f1 cNIL f0 c~ ! ! c= cuniq cCONS b0 b1 c/\ c~ cMEM b0 b1 cuniq b1
+- |- (!t. (!u. ((~ ((uniq ((CONS u) t)) ==> (~ ((MEM u) t)))) ==> (~ (!x. (!s. ((uniq ((CONS x) s)) = ((~ ((MEM x) s)) /\ (uniq s)))))))))
+T c==> c~ c==> cuniq cCONS f0 f1 c~ cMEM f0 f1 c~ ! ! c= cuniq cCONS b0 b1 c/\ c~ cMEM b0 b1 cuniq b1
++ (!x. (!s. ((uniq ((CONS x) s)) = ((~ ((MEM x) s)) /\ (uniq s))))) |- (!x. (!s. ((~ (uniq ((CONS x) s))) \/ ((~ ((MEM x) s)) /\ (uniq s)))))
+T c==> ! ! c= cuniq cCONS b0 b1 c/\ c~ cMEM b0 b1 cuniq b1 ! ! c\/ c~ cuniq cCONS b0 b1 c/\ c~ cMEM b0 b1 cuniq b1
++ |- ((p \/ q) = (q \/ p))
+T c= c\/ f0 f1 c\/ f1 f0
+- (~ ((uniq ((CONS u) t)) ==> (~ ((MEM u) t)))) |- (((MEM u) t) = ((uniq ((CONS u) t)) /\ ((MEM u) t)))
+T c==> c~ c==> cuniq cCONS f0 f1 c~ cMEM f0 f1 c= cMEM f0 f1 c/\ cuniq cCONS f0 f1 cMEM f0 f1
+- (~ ((uniq ((CONS u) t)) ==> (~ ((MEM u) t)))) |- (uniq ((CONS u) t))
+T c==> c~ c==> cuniq cCONS f0 f1 c~ cMEM f0 f1 cuniq cCONS f0 f1
+- |- ((\u. ((~ ((uniq ((CONS u) t)) ==> (~ ((MEM u) t)))) ==> ((!x. (!s. ((uniq ((CONS x) s)) = ((~ ((MEM x) s)) /\ (uniq s))))) ==> F))) u)
+T * / c==> c~ c==> cuniq cCONS b0 f0 c~ cMEM b0 f0 c==> ! ! c= cuniq cCONS b1 b2 c/\ c~ cMEM b1 b2 cuniq b2 cF f1
++ |- ((\t. (!h. (!b. (!u. ((!u. (!b. ((uniq t) ==> (~ ((MEM u) (SND (((split_at_rec u) b) t))))))) ==> ((~ (h = u)) ==> ((~ ((uniq ((CONS h) t)) ==> (~ ((MEM u) (SND (((split_at_rec u) ((APPEND b) ((CONS h) NIL))) t)))))) ==> ((!x. (!s. ((uniq ((CONS x) s)) = ((~ ((MEM x) s)) /\ (uniq s))))) ==> F)))))))) t)
+T * / ! ! ! c==> ! ! c==> cuniq b0 c~ cMEM b4 cSND csplit_at_rec b4 b4 b0 c==> c~ c= b1 b3 c==> c~ c==> cuniq cCONS b1 b0 c~ cMEM b3 cSND csplit_at_rec b3 cAPPEND b2 cCONS b1 cNIL b0 c==> ! ! c= cuniq cCONS b4 b5 c/\ c~ cMEM b4 b5 cuniq b5 cF f0
+- (((~ ((uniq ((CONS u) t)) ==> (~ ((MEM u) t)))) ==> ((!x. (!s. ((uniq ((CONS x) s)) = ((~ ((MEM x) s)) /\ (uniq s))))) ==> F)) ==> ((~ ((uniq ((CONS u) t)) ==> (~ ((MEM u) t)))) ==> ((!x. (!s. ((uniq ((CONS x) s)) = ((~ ((MEM x) s)) /\ (uniq s))))) ==> F))) |- ((((~ ((uniq ((CONS u) t)) ==> (~ ((MEM u) t)))) ==> ((!x. (!s. ((uniq ((CONS x) s)) = ((~ ((MEM x) s)) /\ (uniq s))))) ==> F)) ==> ((~ ((uniq ((CONS u) t)) ==> (~ ((MEM u) t)))) ==> ((!x. (!s. ((uniq ((CONS x) s)) = ((~ ((MEM x) s)) /\ (uniq s))))) ==> F))) /\ (((~ ((uniq ((CONS u) t)) ==> (~ ((MEM u) t)))) ==> ((!x. (!s. ((uniq ((CONS x) s)) = ((~ ((MEM x) s)) /\ (uniq s))))) ==> F)) ==> ((~ ((uniq ((CONS u) t)) ==> (~ ((MEM u) t)))) ==> ((!x. (!s. ((uniq ((CONS x) s)) = ((~ ((MEM x) s)) /\ (uniq s))))) ==> F))))
+T c==> c==> c==> c~ c==> cuniq cCONS f0 f1 c~ cMEM f0 f1 c==> ! ! c= cuniq cCONS b0 b1 c/\ c~ cMEM b0 b1 cuniq b1 cF c==> c~ c==> cuniq cCONS f0 f1 c~ cMEM f0 f1 c==> ! ! c= cuniq cCONS b0 b1 c/\ c~ cMEM b0 b1 cuniq b1 cF c/\ c==> c==> c~ c==> cuniq cCONS f0 f1 c~ cMEM f0 f1 c==> ! ! c= cuniq cCONS b0 b1 c/\ c~ cMEM b0 b1 cuniq b1 cF c==> c~ c==> cuniq cCONS f0 f1 c~ cMEM f0 f1 c==> ! ! c= cuniq cCONS b0 b1 c/\ c~ cMEM b0 b1 cuniq b1 cF c==> c==> c~ c==> cuniq cCONS f0 f1 c~ cMEM f0 f1 c==> ! ! c= cuniq cCONS b0 b1 c/\ c~ cMEM b0 b1 cuniq b1 cF c==> c~ c==> cuniq cCONS f0 f1 c~ cMEM f0 f1 c==> ! ! c= cuniq cCONS b0 b1 c/\ c~ cMEM b0 b1 cuniq b1 cF
++ (!u. (!b. (~ ((MEM u) (SND (((split_at_rec u) b) t)))))), (~ ((uniq ((CONS h) t)) ==> (~ ((MEM u) (SND (((split_at_rec u) ((APPEND b) ((CONS h) NIL))) t)))))) |- ((!u. (!b. (~ ((MEM u) (SND (((split_at_rec u) b) t)))))) /\ F)
+T c==> ! ! c~ cMEM b0 cSND csplit_at_rec b0 b1 f0 c==> c~ c==> cuniq cCONS f1 f0 c~ cMEM f2 cSND csplit_at_rec f2 cAPPEND f3 cCONS f1 cNIL f0 c/\ ! ! c~ cMEM b0 cSND csplit_at_rec b0 b1 f0 cF
++ (!u. (!b. ((uniq t) ==> (~ ((MEM u) (SND (((split_at_rec u) b) t))))))) |- ((~ ((uniq ((CONS h) t)) ==> (~ ((MEM u) (SND (((split_at_rec u) ((APPEND b) ((CONS h) NIL))) t)))))) ==> (~ (!x. (!s. ((uniq ((CONS x) s)) = ((~ ((MEM x) s)) /\ (uniq s)))))))
+T c==> ! ! c==> cuniq f0 c~ cMEM b0 cSND csplit_at_rec b0 b1 f0 c==> c~ c==> cuniq cCONS f1 f0 c~ cMEM f2 cSND csplit_at_rec f2 cAPPEND f3 cCONS f1 cNIL f0 c~ ! ! c= cuniq cCONS b0 b1 c/\ c~ cMEM b0 b1 cuniq b1
++ |- ((h = u) ==> ((uniq ((CONS h) t)) ==> (~ ((MEM u) (SND (((COND (h = u)) (b , t)) (((split_at_rec u) ((APPEND b) ((CONS h) NIL))) t)))))))
+T c==> c= f0 f1 c==> cuniq cCONS f0 f2 c~ cMEM f1 cSND cCOND c= f0 f1 c, f3 f2 csplit_at_rec f1 cAPPEND f3 cCONS f0 cNIL f2
+- |- ((_10079343 = _10079344) ==> ((SND _10079343) = (SND _10079344)))
+T c==> c= f0 f1 c= cSND f0 cSND f1
++ (!x. (!s. ((uniq ((CONS x) s)) = ((~ ((MEM x) s)) /\ (uniq s))))) |- ((uniq _10079298) \/ (~ (uniq ((CONS _10079297) _10079298))))
+T c==> ! ! c= cuniq cCONS b0 b1 c/\ c~ cMEM b0 b1 cuniq b1 c\/ cuniq f0 c~ cuniq cCONS f1 f0
++ |- (((!t. (t \/ (~ t))) ==> ((\t. (t \/ (~ t))) (h = u))) = ((\t. (t \/ (~ t))) (h = u)))
+T c= c==> ! c\/ b0 c~ b0 * / c\/ b0 c~ b0 c= f0 f1 * / c\/ b0 c~ b0 c= f0 f1
+- ((!u. (!b. ((uniq t) ==> (~ ((MEM u) (SND (((split_at_rec u) b) t))))))) ==> ((~ (h = u)) ==> ((~ ((uniq ((CONS h) t)) ==> (~ ((MEM u) (SND (((split_at_rec u) ((APPEND b) ((CONS h) NIL))) t)))))) ==> ((!x. (!s. ((uniq ((CONS x) s)) = ((~ ((MEM x) s)) /\ (uniq s))))) ==> F)))) |- (((!u. (!b. ((uniq t) ==> (~ ((MEM u) (SND (((split_at_rec u) b) t))))))) ==> ((~ (h = u)) ==> ((~ ((uniq ((CONS h) t)) ==> (~ ((MEM u) (SND (((split_at_rec u) ((APPEND b) ((CONS h) NIL))) t)))))) ==> ((!x. (!s. ((uniq ((CONS x) s)) = ((~ ((MEM x) s)) /\ (uniq s))))) ==> F)))) /\ ((!u. (!b. ((uniq t) ==> (~ ((MEM u) (SND (((split_at_rec u) b) t))))))) ==> ((~ (h = u)) ==> ((~ ((uniq ((CONS h) t)) ==> (~ ((MEM u) (SND (((split_at_rec u) ((APPEND b) ((CONS h) NIL))) t)))))) ==> ((!x. (!s. ((uniq ((CONS x) s)) = ((~ ((MEM x) s)) /\ (uniq s))))) ==> F)))))
+T c==> c==> ! ! c==> cuniq f0 c~ cMEM b0 cSND csplit_at_rec b0 b1 f0 c==> c~ c= f1 f2 c==> c~ c==> cuniq cCONS f1 f0 c~ cMEM f2 cSND csplit_at_rec f2 cAPPEND f3 cCONS f1 cNIL f0 c==> ! ! c= cuniq cCONS b0 b1 c/\ c~ cMEM b0 b1 cuniq b1 cF c/\ c==> ! ! c==> cuniq f0 c~ cMEM b0 cSND csplit_at_rec b0 b1 f0 c==> c~ c= f1 f2 c==> c~ c==> cuniq cCONS f1 f0 c~ cMEM f2 cSND csplit_at_rec f2 cAPPEND f3 cCONS f1 cNIL f0 c==> ! ! c= cuniq cCONS b0 b1 c/\ c~ cMEM b0 b1 cuniq b1 cF c==> ! ! c==> cuniq f0 c~ cMEM b0 cSND csplit_at_rec b0 b1 f0 c==> c~ c= f1 f2 c==> c~ c==> cuniq cCONS f1 f0 c~ cMEM f2 cSND csplit_at_rec f2 cAPPEND f3 cCONS f1 cNIL f0 c==> ! ! c= cuniq cCONS b0 b1 c/\ c~ cMEM b0 b1 cuniq b1 cF
++ (~ ((uniq ((CONS h) t)) ==> (~ ((MEM u) (SND (((split_at_rec u) ((APPEND b) ((CONS h) NIL))) t)))))) |- ((!u. (!b. (~ ((MEM u) (SND (((split_at_rec u) b) t)))))) ==> F)
+T c==> c~ c==> cuniq cCONS f0 f1 c~ cMEM f2 cSND csplit_at_rec f2 cAPPEND f3 cCONS f0 cNIL f1 c==> ! ! c~ cMEM b0 cSND csplit_at_rec b0 b1 f1 cF
+- |- (((t1 \/ t2) \/ t3) = (t1 \/ (t2 \/ t3)))
+T c= c\/ c\/ f0 f1 f2 c\/ f0 c\/ f1 f2
++ (!x. (!s. ((uniq ((CONS x) s)) = ((~ ((MEM x) s)) /\ (uniq s))))), (!u. (!b. ((uniq t) ==> (~ ((MEM u) (SND (((split_at_rec u) b) t))))))), (~ ((uniq ((CONS h) t)) ==> (~ ((MEM u) (SND (((split_at_rec u) ((APPEND b) ((CONS h) NIL))) t)))))), ((!u. (!b. (~ ((MEM u) (SND (((split_at_rec u) b) t)))))) ==> F) |- F
+T c==> ! ! c= cuniq cCONS b0 b1 c/\ c~ cMEM b0 b1 cuniq b1 c==> ! ! c==> cuniq f0 c~ cMEM b0 cSND csplit_at_rec b0 b1 f0 c==> c~ c==> cuniq cCONS f1 f0 c~ cMEM f2 cSND csplit_at_rec f2 cAPPEND f3 cCONS f1 cNIL f0 c==> c==> ! ! c~ cMEM b0 cSND csplit_at_rec b0 b1 f0 cF cF
++ (!x. (!s. ((uniq ((CONS x) s)) = ((~ ((MEM x) s)) /\ (uniq s))))), (~ ((uniq ((CONS u) t)) ==> (~ ((MEM u) t)))) |- ((!x. (!s. ((uniq ((CONS x) s)) = ((~ ((MEM x) s)) /\ (uniq s))))) /\ F)
+T c==> ! ! c= cuniq cCONS b0 b1 c/\ c~ cMEM b0 b1 cuniq b1 c==> c~ c==> cuniq cCONS f0 f1 c~ cMEM f0 f1 c/\ ! ! c= cuniq cCONS b0 b1 c/\ c~ cMEM b0 b1 cuniq b1 cF
+- (!u. (!b. ((uniq t) ==> (~ ((MEM u) (SND (((split_at_rec u) b) t))))))) |- ((\b. ((uniq t) ==> (~ ((MEM u) (SND (((split_at_rec u) b) t)))))) b)
+T c==> ! ! c==> cuniq f0 c~ cMEM b0 cSND csplit_at_rec b0 b1 f0 * / c==> cuniq f0 c~ cMEM f1 cSND csplit_at_rec f1 b0 f0 f2
++ (~ ((uniq ((CONS h) t)) ==> (~ ((MEM u) (SND (((split_at_rec u) ((APPEND b) ((CONS h) NIL))) t)))))) |- ((((MEM u) (SND (((split_at_rec u) ((APPEND b) ((CONS h) NIL))) t))) ==> F) = F)
+T c==> c~ c==> cuniq cCONS f0 f1 c~ cMEM f2 cSND csplit_at_rec f2 cAPPEND f3 cCONS f0 cNIL f1 c= c==> cMEM f2 cSND csplit_at_rec f2 cAPPEND f3 cCONS f0 cNIL f1 cF cF
++ (~ ((uniq ((CONS u) t)) ==> (~ ((MEM u) t)))) |- ((uniq ((CONS u) t)) /\ ((MEM u) t))
+T c==> c~ c==> cuniq cCONS f0 f1 c~ cMEM f0 f1 c/\ cuniq cCONS f0 f1 cMEM f0 f1
++ (!u. (!b. ((uniq t) ==> (~ ((MEM u) (SND (((split_at_rec u) b) t))))))), (~ (h = u)), (~ ((uniq ((CONS h) t)) ==> (~ ((MEM u) (SND (((split_at_rec u) ((APPEND b) ((CONS h) NIL))) t)))))) |- ((!x. (!s. ((uniq ((CONS x) s)) = ((~ ((MEM x) s)) /\ (uniq s))))) ==> F)
+T c==> ! ! c==> cuniq f0 c~ cMEM b0 cSND csplit_at_rec b0 b1 f0 c==> c~ c= f1 f2 c==> c~ c==> cuniq cCONS f1 f0 c~ cMEM f2 cSND csplit_at_rec f2 cAPPEND f3 cCONS f1 cNIL f0 c==> ! ! c= cuniq cCONS b0 b1 c/\ c~ cMEM b0 b1 cuniq b1 cF
+- (_10079337 = _10079340), (_10079338 = _10079341), (_10079339 = _10079342) |- ((_10079339 = _10079342) /\ ((((split_at_rec _10079337) _10079338) _10079339) = (((split_at_rec _10079340) _10079341) _10079342)))
+T c==> c= f0 f1 c==> c= f2 f3 c==> c= f4 f5 c/\ c= f4 f5 c= csplit_at_rec f0 f2 f4 csplit_at_rec f1 f3 f5
+- |- ((\h. (!t. (!l. (((APPEND ((CONS h) t)) l) = ((CONS h) ((APPEND t) l)))))) h)
+T * / ! ! c= cAPPEND cCONS b0 b1 b2 cCONS b0 cAPPEND b1 b2 f0
+- |- (((!u. ((~ ((uniq ((CONS u) t)) ==> (~ ((MEM u) t)))) ==> ((!x. (!s. ((uniq ((CONS x) s)) = ((~ ((MEM x) s)) /\ (uniq s))))) ==> F))) ==> ((\u. ((~ ((uniq ((CONS u) t)) ==> (~ ((MEM u) t)))) ==> ((!x. (!s. ((uniq ((CONS x) s)) = ((~ ((MEM x) s)) /\ (uniq s))))) ==> F))) u)) = ((\u. ((~ ((uniq ((CONS u) t)) ==> (~ ((MEM u) t)))) ==> ((!x. (!s. ((uniq ((CONS x) s)) = ((~ ((MEM x) s)) /\ (uniq s))))) ==> F))) u))
+T c= c==> ! c==> c~ c==> cuniq cCONS b0 f0 c~ cMEM b0 f0 c==> ! ! c= cuniq cCONS b1 b2 c/\ c~ cMEM b1 b2 cuniq b2 cF * / c==> c~ c==> cuniq cCONS b0 f0 c~ cMEM b0 f0 c==> ! ! c= cuniq cCONS b1 b2 c/\ c~ cMEM b1 b2 cuniq b2 cF f1 * / c==> c~ c==> cuniq cCONS b0 f0 c~ cMEM b0 f0 c==> ! ! c= cuniq cCONS b1 b2 c/\ c~ cMEM b1 b2 cuniq b2 cF f1
+- |- (((!u. (!b. ((uniq t) ==> (~ ((MEM u) (SND (((split_at_rec u) b) t))))))) ==> ((~ (h = u)) ==> ((~ ((uniq ((CONS h) t)) ==> (~ ((MEM u) (SND (((split_at_rec u) ((APPEND b) ((CONS h) NIL))) t)))))) ==> ((!x. (!s. ((uniq ((CONS x) s)) = ((~ ((MEM x) s)) /\ (uniq s))))) ==> F)))) ==> ((!u. (!b. ((uniq t) ==> (~ ((MEM u) (SND (((split_at_rec u) b) t))))))) ==> ((~ (h = u)) ==> ((~ ((uniq ((CONS h) t)) ==> (~ ((MEM u) (SND (((split_at_rec u) ((APPEND b) ((CONS h) NIL))) t)))))) ==> ((!x. (!s. ((uniq ((CONS x) s)) = ((~ ((MEM x) s)) /\ (uniq s))))) ==> F)))))
+T c==> c==> ! ! c==> cuniq f0 c~ cMEM b0 cSND csplit_at_rec b0 b1 f0 c==> c~ c= f1 f2 c==> c~ c==> cuniq cCONS f1 f0 c~ cMEM f2 cSND csplit_at_rec f2 cAPPEND f3 cCONS f1 cNIL f0 c==> ! ! c= cuniq cCONS b0 b1 c/\ c~ cMEM b0 b1 cuniq b1 cF c==> ! ! c==> cuniq f0 c~ cMEM b0 cSND csplit_at_rec b0 b1 f0 c==> c~ c= f1 f2 c==> c~ c==> cuniq cCONS f1 f0 c~ cMEM f2 cSND csplit_at_rec f2 cAPPEND f3 cCONS f1 cNIL f0 c==> ! ! c= cuniq cCONS b0 b1 c/\ c~ cMEM b0 b1 cuniq b1 cF
++ |- ((uniq ((CONS u) t)) ==> (~ ((MEM u) t)))
+T c==> cuniq cCONS f0 f1 c~ cMEM f0 f1
+- |- (((!l. (((APPEND ((CONS h) t)) l) = ((CONS h) ((APPEND t) l)))) ==> ((\l. (((APPEND ((CONS h) t)) l) = ((CONS h) ((APPEND t) l)))) l)) = ((\l. (((APPEND ((CONS h) t)) l) = ((CONS h) ((APPEND t) l)))) l))
+T c= c==> ! c= cAPPEND cCONS f0 f1 b0 cCONS f0 cAPPEND f1 b0 * / c= cAPPEND cCONS f0 f1 b0 cCONS f0 cAPPEND f1 b0 f2 * / c= cAPPEND cCONS f0 f1 b0 cCONS f0 cAPPEND f1 b0 f2
++ |- (((!u. (!b. ((uniq t) ==> (~ ((MEM u) (SND (((split_at_rec u) b) t))))))) ==> (!u. (!b. ((uniq ((CONS h) t)) ==> (~ ((MEM u) (SND (((split_at_rec u) b) ((CONS h) t))))))))) = T)
+T c= c==> ! ! c==> cuniq f0 c~ cMEM b0 cSND csplit_at_rec b0 b1 f0 ! ! c==> cuniq cCONS f1 f0 c~ cMEM b0 cSND csplit_at_rec b0 b1 cCONS f1 f0 cT
+- (!x. (!s. ((uniq ((CONS x) s)) = ((~ ((MEM x) s)) /\ (uniq s))))), (~ F), (~ ((uniq ((CONS u) t)) ==> (~ ((MEM u) t)))) |- ((~ F) /\ F)
+T c==> ! ! c= cuniq cCONS b0 b1 c/\ c~ cMEM b0 b1 cuniq b1 c==> c~ cF c==> c~ c==> cuniq cCONS f0 f1 c~ cMEM f0 f1 c/\ c~ cF cF
++ (~ ((uniq ((CONS h) t)) ==> (~ ((MEM u) (SND (((split_at_rec u) ((APPEND b) ((CONS h) NIL))) t)))))) |- ((uniq ((CONS h) t)) /\ ((MEM u) (SND (((split_at_rec u) ((APPEND b) ((CONS h) NIL))) t))))
+T c==> c~ c==> cuniq cCONS f0 f1 c~ cMEM f2 cSND csplit_at_rec f2 cAPPEND f3 cCONS f0 cNIL f1 c/\ cuniq cCONS f0 f1 cMEM f2 cSND csplit_at_rec f2 cAPPEND f3 cCONS f0 cNIL f1
++ |- ((((COND F) t1) t2) = t2)
+T c= cCOND cF f0 f1 f1
+- (_10079331 = _10079332) |- ((_10079331 = _10079332) /\ ((uniq _10079332) \/ (~ (uniq _10079331))))
+T c==> c= f0 f1 c/\ c= f0 f1 c\/ cuniq f1 c~ cuniq f0
++ (!u. (!b. (~ ((MEM u) (SND (((split_at_rec u) b) t)))))) |- ((\b. (~ ((MEM _10079303) (SND (((split_at_rec _10079303) b) t))))) _10079304)
+T c==> ! ! c~ cMEM b0 cSND csplit_at_rec b0 b1 f0 * / c~ cMEM f1 cSND csplit_at_rec f1 b0 f0 f2
++ ((~ (h = u)) ==> ((uniq ((CONS h) t)) ==> (~ ((MEM u) (SND (((COND (h = u)) (b , t)) (((split_at_rec u) ((APPEND b) ((CONS h) NIL))) t))))))), ((h = u) ==> ((uniq ((CONS h) t)) ==> (~ ((MEM u) (SND (((COND (h = u)) (b , t)) (((split_at_rec u) ((APPEND b) ((CONS h) NIL))) t))))))) |- ((uniq ((CONS h) t)) ==> (~ ((MEM u) (SND (((COND (h = u)) (b , t)) (((split_at_rec u) ((APPEND b) ((CONS h) NIL))) t))))))
+T c==> c==> c~ c= f0 f1 c==> cuniq cCONS f0 f2 c~ cMEM f1 cSND cCOND c= f0 f1 c, f3 f2 csplit_at_rec f1 cAPPEND f3 cCONS f0 cNIL f2 c==> c==> c= f0 f1 c==> cuniq cCONS f0 f2 c~ cMEM f1 cSND cCOND c= f0 f1 c, f3 f2 csplit_at_rec f1 cAPPEND f3 cCONS f0 cNIL f2 c==> cuniq cCONS f0 f2 c~ cMEM f1 cSND cCOND c= f0 f1 c, f3 f2 csplit_at_rec f1 cAPPEND f3 cCONS f0 cNIL f2
++ |- (((~ ((uniq ((CONS h) t)) ==> (~ ((MEM u) (SND (((split_at_rec u) ((APPEND b) ((CONS h) NIL))) t)))))) ==> F) = ((uniq ((CONS h) t)) ==> (~ ((MEM u) (SND (((split_at_rec u) ((APPEND b) ((CONS h) NIL))) t))))))
+T c= c==> c~ c==> cuniq cCONS f0 f1 c~ cMEM f2 cSND csplit_at_rec f2 cAPPEND f3 cCONS f0 cNIL f1 cF c==> cuniq cCONS f0 f1 c~ cMEM f2 cSND csplit_at_rec f2 cAPPEND f3 cCONS f0 cNIL f1
++ |- ((!s. (((uniq ((CONS x) s)) \/ (((MEM x) s) \/ (~ (uniq s)))) /\ ((~ (uniq ((CONS x) s))) \/ ((~ ((MEM x) s)) /\ (uniq s))))) = ((!s. ((uniq ((CONS x) s)) \/ (((MEM x) s) \/ (~ (uniq s))))) /\ (!s. ((~ (uniq ((CONS x) s))) \/ ((~ ((MEM x) s)) /\ (uniq s))))))
+T c= ! c/\ c\/ cuniq cCONS f0 b0 c\/ cMEM f0 b0 c~ cuniq b0 c\/ c~ cuniq cCONS f0 b0 c/\ c~ cMEM f0 b0 cuniq b0 c/\ ! c\/ cuniq cCONS f0 b0 c\/ cMEM f0 b0 c~ cuniq b0 ! c\/ c~ cuniq cCONS f0 b0 c/\ c~ cMEM f0 b0 cuniq b0
+- (!x. (!s. ((uniq ((CONS x) s)) = ((~ ((MEM x) s)) /\ (uniq s))))), (~ F), (~ (uniq t)), (~ ((uniq ((CONS h) t)) ==> (~ ((MEM u) (SND (((split_at_rec u) ((APPEND b) ((CONS h) NIL))) t)))))) |- ((~ F) /\ F)
+T c==> ! ! c= cuniq cCONS b0 b1 c/\ c~ cMEM b0 b1 cuniq b1 c==> c~ cF c==> c~ cuniq f0 c==> c~ c==> cuniq cCONS f1 f0 c~ cMEM f2 cSND csplit_at_rec f2 cAPPEND f3 cCONS f1 cNIL f0 c/\ c~ cF cF
+- (_10079337 = _10079340), (_10079338 = _10079341) |- ((_10079339 = _10079342) ==> ((((split_at_rec _10079337) _10079338) _10079339) = (((split_at_rec _10079340) _10079341) _10079342)))
+T c==> c= f0 f1 c==> c= f2 f3 c==> c= f4 f5 c= csplit_at_rec f0 f2 f4 csplit_at_rec f1 f3 f5
+- (_10079331 = _10079332) |- ((((uniq _10079331) = (uniq _10079332)) ==> ((uniq _10079332) \/ (~ (uniq _10079331)))) = ((uniq _10079332) \/ (~ (uniq _10079331))))
+T c==> c= f0 f1 c= c==> c= cuniq f0 cuniq f1 c\/ cuniq f1 c~ cuniq f0 c\/ cuniq f1 c~ cuniq f0
++ |- ((\h. (!b. (!u. ((!u. (!b. ((uniq t) ==> (~ ((MEM u) (SND (((split_at_rec u) b) t))))))) ==> ((~ (h = u)) ==> ((~ ((uniq ((CONS h) t)) ==> (~ ((MEM u) (SND (((split_at_rec u) ((APPEND b) ((CONS h) NIL))) t)))))) ==> ((!x. (!s. ((uniq ((CONS x) s)) = ((~ ((MEM x) s)) /\ (uniq s))))) ==> F))))))) h)
+T * / ! ! c==> ! ! c==> cuniq f0 c~ cMEM b3 cSND csplit_at_rec b3 b3 f0 c==> c~ c= b0 b2 c==> c~ c==> cuniq cCONS b0 f0 c~ cMEM b2 cSND csplit_at_rec b2 cAPPEND b1 cCONS b0 cNIL f0 c==> ! ! c= cuniq cCONS b3 b4 c/\ c~ cMEM b3 b4 cuniq b4 cF f1
+- |- (((!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))) ==> ((\t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))) t3)) = ((\t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))) t3))
+T c= c==> ! c= c\/ f0 c\/ f1 b0 c\/ c\/ f0 f1 b0 * / c= c\/ f0 c\/ f1 b0 c\/ c\/ f0 f1 b0 f2 * / c= c\/ f0 c\/ f1 b0 c\/ c\/ f0 f1 b0 f2
+- |- (((((~ ((uniq ((CONS u) t)) ==> (~ ((MEM u) t)))) ==> ((!x. (!s. ((uniq ((CONS x) s)) = ((~ ((MEM x) s)) /\ (uniq s))))) ==> F)) ==> ((~ ((uniq ((CONS u) t)) ==> (~ ((MEM u) t)))) ==> ((!x. (!s. ((uniq ((CONS x) s)) = ((~ ((MEM x) s)) /\ (uniq s))))) ==> F))) ==> (((~ ((uniq ((CONS u) t)) ==> (~ ((MEM u) t)))) ==> ((!x. (!s. ((uniq ((CONS x) s)) = ((~ ((MEM x) s)) /\ (uniq s))))) ==> F)) ==> ((~ ((uniq ((CONS u) t)) ==> (~ ((MEM u) t)))) ==> ((!x. (!s. ((uniq ((CONS x) s)) = ((~ ((MEM x) s)) /\ (uniq s))))) ==> F)))) = (((~ ((uniq ((CONS u) t)) ==> (~ ((MEM u) t)))) ==> ((!x. (!s. ((uniq ((CONS x) s)) = ((~ ((MEM x) s)) /\ (uniq s))))) ==> F)) ==> ((~ ((uniq ((CONS u) t)) ==> (~ ((MEM u) t)))) ==> ((!x. (!s. ((uniq ((CONS x) s)) = ((~ ((MEM x) s)) /\ (uniq s))))) ==> F))))
+T c= c==> c==> c==> c~ c==> cuniq cCONS f0 f1 c~ cMEM f0 f1 c==> ! ! c= cuniq cCONS b0 b1 c/\ c~ cMEM b0 b1 cuniq b1 cF c==> c~ c==> cuniq cCONS f0 f1 c~ cMEM f0 f1 c==> ! ! c= cuniq cCONS b0 b1 c/\ c~ cMEM b0 b1 cuniq b1 cF c==> c==> c~ c==> cuniq cCONS f0 f1 c~ cMEM f0 f1 c==> ! ! c= cuniq cCONS b0 b1 c/\ c~ cMEM b0 b1 cuniq b1 cF c==> c~ c==> cuniq cCONS f0 f1 c~ cMEM f0 f1 c==> ! ! c= cuniq cCONS b0 b1 c/\ c~ cMEM b0 b1 cuniq b1 cF c==> c==> c~ c==> cuniq cCONS f0 f1 c~ cMEM f0 f1 c==> ! ! c= cuniq cCONS b0 b1 c/\ c~ cMEM b0 b1 cuniq b1 cF c==> c~ c==> cuniq cCONS f0 f1 c~ cMEM f0 f1 c==> ! ! c= cuniq cCONS b0 b1 c/\ c~ cMEM b0 b1 cuniq b1 cF
++ (!u. (!b. ((uniq t) ==> (~ ((MEM u) (SND (((split_at_rec u) b) t))))))) |- ((!b. ((uniq ((CONS h) t)) ==> (~ ((MEM u) (SND (((COND (h = u)) (b , t)) (((split_at_rec u) ((APPEND b) ((CONS h) NIL))) t))))))) = T)
+T c==> ! ! c==> cuniq f0 c~ cMEM b0 cSND csplit_at_rec b0 b1 f0 c= ! c==> cuniq cCONS f1 f0 c~ cMEM f2 cSND cCOND c= f1 f2 c, b0 f0 csplit_at_rec f2 cAPPEND b0 cCONS f1 cNIL f0 cT
+- (!u. (!b. ((uniq t) ==> (~ ((MEM u) (SND (((split_at_rec u) b) t))))))) |- (((uniq t) ==> (~ ((MEM u) (SND (((split_at_rec u) b) t))))) = T)
+T c==> ! ! c==> cuniq f0 c~ cMEM b0 cSND csplit_at_rec b0 b1 f0 c= c==> cuniq f0 c~ cMEM f1 cSND csplit_at_rec f1 f2 f0 cT
+- |- ((t /\ t) = t)
+T c= c/\ f0 f0 f0
+- |- ((!s'. ((uniq ((CONS x) s')) \/ (((MEM x) s) \/ (~ (uniq s))))) = ((!s. (uniq ((CONS x) s))) \/ (((MEM x) s) \/ (~ (uniq s)))))
+T c= ! c\/ cuniq cCONS f0 b0 c\/ cMEM f0 f1 c~ cuniq f1 c\/ ! cuniq cCONS f0 b0 c\/ cMEM f0 f1 c~ cuniq f1
+- |- ((a = b) ==> (b \/ (~ a)))
+T c==> c= f0 f1 c\/ f1 c~ f0
++ (!u. (!b. (~ ((MEM u) (SND (((split_at_rec u) b) t)))))) |- (!b. (~ ((MEM _10079303) (SND (((split_at_rec _10079303) b) t)))))
+T c==> ! ! c~ cMEM b0 cSND csplit_at_rec b0 b1 f0 ! c~ cMEM f1 cSND csplit_at_rec f1 b0 f0
+- |- (((APPEND ((CONS h) t)) l) = ((CONS h) ((APPEND t) l)))
+T c= cAPPEND cCONS f0 f1 f2 cCONS f0 cAPPEND f1 f2
++ |- (!u. (!b. ((uniq NIL) ==> (~ ((MEM u) (SND (((split_at_rec u) b) NIL)))))))
+T c==> cuniq cNIL c~ cMEM f0 cSND csplit_at_rec f0 f1 cNIL
+- (_10079345 = _10079347) |- ((_10079345 = _10079347) /\ ((~ (_10079346 = _10079348)) \/ (((CONS _10079345) _10079346) = ((CONS _10079347) _10079348))))
+T c==> c= f0 f1 c/\ c= f0 f1 c\/ c~ c= f2 f3 c= cCONS f0 f2 cCONS f1 f3
+- (_10079327 = _10079329), (_10079328 = _10079330) |- (((((MEM _10079327) _10079328) = ((MEM _10079329) _10079330)) ==> (((MEM _10079329) _10079330) \/ (~ ((MEM _10079327) _10079328)))) = (((MEM _10079329) _10079330) \/ (~ ((MEM _10079327) _10079328))))
+T c==> c= f0 f1 c==> c= f2 f3 c= c==> c= cMEM f0 f2 cMEM f1 f3 c\/ cMEM f1 f3 c~ cMEM f0 f2 c\/ cMEM f1 f3 c~ cMEM f0 f2
++ |- ((h = u) \/ (~ (h = u)))
+T c\/ c= f0 f1 c~ c= f0 f1
++ |- (((!u. ((!u. (!b. ((uniq t) ==> (~ ((MEM u) (SND (((split_at_rec u) b) t))))))) ==> ((~ (h = u)) ==> ((~ ((uniq ((CONS h) t)) ==> (~ ((MEM u) (SND (((split_at_rec u) ((APPEND b) ((CONS h) NIL))) t)))))) ==> ((!x. (!s. ((uniq ((CONS x) s)) = ((~ ((MEM x) s)) /\ (uniq s))))) ==> F))))) ==> ((\u. ((!u. (!b. ((uniq t) ==> (~ ((MEM u) (SND (((split_at_rec u) b) t))))))) ==> ((~ (h = u)) ==> ((~ ((uniq ((CONS h) t)) ==> (~ ((MEM u) (SND (((split_at_rec u) ((APPEND b) ((CONS h) NIL))) t)))))) ==> ((!x. (!s. ((uniq ((CONS x) s)) = ((~ ((MEM x) s)) /\ (uniq s))))) ==> F))))) u)) = ((\u. ((!u. (!b. ((uniq t) ==> (~ ((MEM u) (SND (((split_at_rec u) b) t))))))) ==> ((~ (h = u)) ==> ((~ ((uniq ((CONS h) t)) ==> (~ ((MEM u) (SND (((split_at_rec u) ((APPEND b) ((CONS h) NIL))) t)))))) ==> ((!x. (!s. ((uniq ((CONS x) s)) = ((~ ((MEM x) s)) /\ (uniq s))))) ==> F))))) u))
+T c= c==> ! c==> ! ! c==> cuniq f0 c~ cMEM b1 cSND csplit_at_rec b1 b1 f0 c==> c~ c= f1 b0 c==> c~ c==> cuniq cCONS f1 f0 c~ cMEM b0 cSND csplit_at_rec b0 cAPPEND f2 cCONS f1 cNIL f0 c==> ! ! c= cuniq cCONS b1 b2 c/\ c~ cMEM b1 b2 cuniq b2 cF * / c==> ! ! c==> cuniq f0 c~ cMEM b1 cSND csplit_at_rec b1 b1 f0 c==> c~ c= f1 b0 c==> c~ c==> cuniq cCONS f1 f0 c~ cMEM b0 cSND csplit_at_rec b0 cAPPEND f2 cCONS f1 cNIL f0 c==> ! ! c= cuniq cCONS b1 b2 c/\ c~ cMEM b1 b2 cuniq b2 cF f3 * / c==> ! ! c==> cuniq f0 c~ cMEM b1 cSND csplit_at_rec b1 b1 f0 c==> c~ c= f1 b0 c==> c~ c==> cuniq cCONS f1 f0 c~ cMEM b0 cSND csplit_at_rec b0 cAPPEND f2 cCONS f1 cNIL f0 c==> ! ! c= cuniq cCONS b1 b2 c/\ c~ cMEM b1 b2 cuniq b2 cF f3
+- (!u. (!b. ((uniq t) ==> (~ ((MEM u) (SND (((split_at_rec u) b) t))))))) |- ((uniq t) ==> (~ ((MEM u) (SND (((split_at_rec u) b) t)))))
+T c==> ! ! c==> cuniq f0 c~ cMEM b0 cSND csplit_at_rec b0 b1 f0 c==> cuniq f0 c~ cMEM f1 cSND csplit_at_rec f1 f2 f0
++ (!x. (!s. ((uniq ((CONS x) s)) = ((~ ((MEM x) s)) /\ (uniq s))))), (~ ((uniq ((CONS h) t)) ==> (~ ((MEM u) (SND (((split_at_rec u) ((APPEND b) ((CONS h) NIL))) t)))))) |- (((uniq t) ==> F) = F)
+T c==> ! ! c= cuniq cCONS b0 b1 c/\ c~ cMEM b0 b1 cuniq b1 c==> c~ c==> cuniq cCONS f0 f1 c~ cMEM f2 cSND csplit_at_rec f2 cAPPEND f3 cCONS f0 cNIL f1 c= c==> cuniq f1 cF cF
+- |- ((~ (_10079327 = _10079329)) \/ ((~ (_10079328 = _10079330)) \/ (((MEM _10079329) _10079330) \/ (~ ((MEM _10079327) _10079328)))))
+T c\/ c~ c= f0 f1 c\/ c~ c= f2 f3 c\/ cMEM f1 f3 c~ cMEM f0 f2
+- (~ (h = u)) |- (~ (u = h))
+T c==> c~ c= f0 f1 c~ c= f1 f0
++ (~ (uniq t)) |- ((uniq t) ==> F)
+T c==> c~ cuniq f0 c==> cuniq f0 cF
+- |- ((!s'. ((uniq ((CONS x) s)) \/ (((MEM x) s') \/ (~ (uniq s'))))) = ((uniq ((CONS x) s)) \/ (!s. (((MEM x) s) \/ (~ (uniq s))))))
+T c= ! c\/ cuniq cCONS f0 f1 c\/ cMEM f0 b0 c~ cuniq b0 c\/ cuniq cCONS f0 f1 ! c\/ cMEM f0 b0 c~ cuniq b0
+- (_10079327 = _10079329) |- ((_10079328 = _10079330) ==> (((MEM _10079329) _10079330) \/ (~ ((MEM _10079327) _10079328))))
+T c==> c= f0 f1 c==> c= f2 f3 c\/ cMEM f1 f3 c~ cMEM f0 f2
++ |- (((!x. (!s. ((uniq ((CONS x) s)) = ((~ ((MEM x) s)) /\ (uniq s))))) ==> F) = F)
+T c= c==> ! ! c= cuniq cCONS b0 b1 c/\ c~ cMEM b0 b1 cuniq b1 cF cF
+- |- (((((!u. (!b. ((uniq t) ==> (~ ((MEM u) (SND (((split_at_rec u) b) t))))))) ==> ((~ (h = u)) ==> ((~ ((uniq ((CONS h) t)) ==> (~ ((MEM u) (SND (((split_at_rec u) ((APPEND b) ((CONS h) NIL))) t)))))) ==> ((!x. (!s. ((uniq ((CONS x) s)) = ((~ ((MEM x) s)) /\ (uniq s))))) ==> F)))) ==> ((!u. (!b. ((uniq t) ==> (~ ((MEM u) (SND (((split_at_rec u) b) t))))))) ==> ((~ (h = u)) ==> ((~ ((uniq ((CONS h) t)) ==> (~ ((MEM u) (SND (((split_at_rec u) ((APPEND b) ((CONS h) NIL))) t)))))) ==> ((!x. (!s. ((uniq ((CONS x) s)) = ((~ ((MEM x) s)) /\ (uniq s))))) ==> F))))) ==> (((!u. (!b. ((uniq t) ==> (~ ((MEM u) (SND (((split_at_rec u) b) t))))))) ==> ((~ (h = u)) ==> ((~ ((uniq ((CONS h) t)) ==> (~ ((MEM u) (SND (((split_at_rec u) ((APPEND b) ((CONS h) NIL))) t)))))) ==> ((!x. (!s. ((uniq ((CONS x) s)) = ((~ ((MEM x) s)) /\ (uniq s))))) ==> F)))) ==> ((!u. (!b. ((uniq t) ==> (~ ((MEM u) (SND (((split_at_rec u) b) t))))))) ==> ((~ (h = u)) ==> ((~ ((uniq ((CONS h) t)) ==> (~ ((MEM u) (SND (((split_at_rec u) ((APPEND b) ((CONS h) NIL))) t)))))) ==> ((!x. (!s. ((uniq ((CONS x) s)) = ((~ ((MEM x) s)) /\ (uniq s))))) ==> F)))))) = (((!u. (!b. ((uniq t) ==> (~ ((MEM u) (SND (((split_at_rec u) b) t))))))) ==> ((~ (h = u)) ==> ((~ ((uniq ((CONS h) t)) ==> (~ ((MEM u) (SND (((split_at_rec u) ((APPEND b) ((CONS h) NIL))) t)))))) ==> ((!x. (!s. ((uniq ((CONS x) s)) = ((~ ((MEM x) s)) /\ (uniq s))))) ==> F)))) ==> ((!u. (!b. ((uniq t) ==> (~ ((MEM u) (SND (((split_at_rec u) b) t))))))) ==> ((~ (h = u)) ==> ((~ ((uniq ((CONS h) t)) ==> (~ ((MEM u) (SND (((split_at_rec u) ((APPEND b) ((CONS h) NIL))) t)))))) ==> ((!x. (!s. ((uniq ((CONS x) s)) = ((~ ((MEM x) s)) /\ (uniq s))))) ==> F))))))
+T c= c==> c==> c==> ! ! c==> cuniq f0 c~ cMEM b0 cSND csplit_at_rec b0 b1 f0 c==> c~ c= f1 f2 c==> c~ c==> cuniq cCONS f1 f0 c~ cMEM f2 cSND csplit_at_rec f2 cAPPEND f3 cCONS f1 cNIL f0 c==> ! ! c= cuniq cCONS b0 b1 c/\ c~ cMEM b0 b1 cuniq b1 cF c==> ! ! c==> cuniq f0 c~ cMEM b0 cSND csplit_at_rec b0 b1 f0 c==> c~ c= f1 f2 c==> c~ c==> cuniq cCONS f1 f0 c~ cMEM f2 cSND csplit_at_rec f2 cAPPEND f3 cCONS f1 cNIL f0 c==> ! ! c= cuniq cCONS b0 b1 c/\ c~ cMEM b0 b1 cuniq b1 cF c==> c==> ! ! c==> cuniq f0 c~ cMEM b0 cSND csplit_at_rec b0 b1 f0 c==> c~ c= f1 f2 c==> c~ c==> cuniq cCONS f1 f0 c~ cMEM f2 cSND csplit_at_rec f2 cAPPEND f3 cCONS f1 cNIL f0 c==> ! ! c= cuniq cCONS b0 b1 c/\ c~ cMEM b0 b1 cuniq b1 cF c==> ! ! c==> cuniq f0 c~ cMEM b0 cSND csplit_at_rec b0 b1 f0 c==> c~ c= f1 f2 c==> c~ c==> cuniq cCONS f1 f0 c~ cMEM f2 cSND csplit_at_rec f2 cAPPEND f3 cCONS f1 cNIL f0 c==> ! ! c= cuniq cCONS b0 b1 c/\ c~ cMEM b0 b1 cuniq b1 cF c==> c==> ! ! c==> cuniq f0 c~ cMEM b0 cSND csplit_at_rec b0 b1 f0 c==> c~ c= f1 f2 c==> c~ c==> cuniq cCONS f1 f0 c~ cMEM f2 cSND csplit_at_rec f2 cAPPEND f3 cCONS f1 cNIL f0 c==> ! ! c= cuniq cCONS b0 b1 c/\ c~ cMEM b0 b1 cuniq b1 cF c==> ! ! c==> cuniq f0 c~ cMEM b0 cSND csplit_at_rec b0 b1 f0 c==> c~ c= f1 f2 c==> c~ c==> cuniq cCONS f1 f0 c~ cMEM f2 cSND csplit_at_rec f2 cAPPEND f3 cCONS f1 cNIL f0 c==> ! ! c= cuniq cCONS b0 b1 c/\ c~ cMEM b0 b1 cuniq b1 cF
+- |- ((\t. (!l. (((APPEND ((CONS h) t)) l) = ((CONS h) ((APPEND t) l))))) t)
+T * / ! c= cAPPEND cCONS f0 b0 b1 cCONS f0 cAPPEND b0 b1 f1
+- (_10079345 = _10079347), (_10079346 = _10079348) |- ((_10079346 = _10079348) /\ (((CONS _10079345) _10079346) = ((CONS _10079347) _10079348)))
+T c==> c= f0 f1 c==> c= f2 f3 c/\ c= f2 f3 c= cCONS f0 f2 cCONS f1 f3
+- (!x. (!s. ((uniq ((CONS x) s)) = ((~ ((MEM x) s)) /\ (uniq s))))), (~ ((uniq ((CONS h) t)) ==> (~ ((MEM u) (SND (((split_at_rec u) ((APPEND b) ((CONS h) NIL))) t)))))) |- ((~ (uniq t)) ==> (uniq t))
+T c==> ! ! c= cuniq cCONS b0 b1 c/\ c~ cMEM b0 b1 cuniq b1 c==> c~ c==> cuniq cCONS f0 f1 c~ cMEM f2 cSND csplit_at_rec f2 cAPPEND f3 cCONS f0 cNIL f1 c==> c~ cuniq f1 cuniq f1
++ (!x. (!s. ((uniq ((CONS x) s)) = ((~ ((MEM x) s)) /\ (uniq s))))), (!u. (!b. ((uniq t) ==> (~ ((MEM u) (SND (((split_at_rec u) b) t))))))), (~ ((uniq ((CONS h) t)) ==> (~ ((MEM u) (SND (((split_at_rec u) ((APPEND b) ((CONS h) NIL))) t)))))) |- ((!x. (!s. ((uniq ((CONS x) s)) = ((~ ((MEM x) s)) /\ (uniq s))))) /\ F)
+T c==> ! ! c= cuniq cCONS b0 b1 c/\ c~ cMEM b0 b1 cuniq b1 c==> ! ! c==> cuniq f0 c~ cMEM b0 cSND csplit_at_rec b0 b1 f0 c==> c~ c==> cuniq cCONS f1 f0 c~ cMEM f2 cSND csplit_at_rec f2 cAPPEND f3 cCONS f1 cNIL f0 c/\ ! ! c= cuniq cCONS b0 b1 c/\ c~ cMEM b0 b1 cuniq b1 cF
+- (!x. (!s. ((uniq ((CONS x) s)) = ((~ ((MEM x) s)) /\ (uniq s))))), (~ (uniq t)), (~ ((uniq ((CONS h) t)) ==> (~ ((MEM u) (SND (((split_at_rec u) ((APPEND b) ((CONS h) NIL))) t)))))) |- ((~ F) ==> F)
+T c==> ! ! c= cuniq cCONS b0 b1 c/\ c~ cMEM b0 b1 cuniq b1 c==> c~ cuniq f0 c==> c~ c==> cuniq cCONS f1 f0 c~ cMEM f2 cSND csplit_at_rec f2 cAPPEND f3 cCONS f1 cNIL f0 c==> c~ cF cF
+- (~ (h = u)) |- ((u = h) = F)
+T c==> c~ c= f0 f1 c= c= f1 f0 cF
++ |- (((!u. (!b. ((uniq NIL) ==> (~ ((MEM u) (SND (((split_at_rec u) b) NIL))))))) /\ (!h. (!t. ((!u. (!b. ((uniq t) ==> (~ ((MEM u) (SND (((split_at_rec u) b) t))))))) ==> (!u. (!b. ((uniq ((CONS h) t)) ==> (~ ((MEM u) (SND (((split_at_rec u) b) ((CONS h) t)))))))))))) ==> (!f. (!u. (!b. ((uniq f) ==> (~ ((MEM u) (SND (((split_at_rec u) b) f)))))))))
+T c==> c/\ ! ! c==> cuniq cNIL c~ cMEM b0 cSND csplit_at_rec b0 b1 cNIL ! ! c==> ! ! c==> cuniq b1 c~ cMEM b2 cSND csplit_at_rec b2 b3 b1 ! ! c==> cuniq cCONS b0 b1 c~ cMEM b2 cSND csplit_at_rec b2 b3 cCONS b0 b1 ! ! ! c==> cuniq b0 c~ cMEM b1 cSND csplit_at_rec b1 b2 b0
+- (_10079337 = _10079340), (_10079338 = _10079341) |- ((_10079338 = _10079341) /\ ((~ (_10079339 = _10079342)) \/ ((((split_at_rec _10079337) _10079338) _10079339) = (((split_at_rec _10079340) _10079341) _10079342))))
+T c==> c= f0 f1 c==> c= f2 f3 c/\ c= f2 f3 c\/ c~ c= f4 f5 c= csplit_at_rec f0 f2 f4 csplit_at_rec f1 f3 f5
+- (~ ((uniq ((CONS u) t)) ==> (~ ((MEM u) t)))) |- ((MEM u) t)
+T c==> c~ c==> cuniq cCONS f0 f1 c~ cMEM f0 f1 cMEM f0 f1
++ (!u. (!b. ((uniq t) ==> (~ ((MEM u) (SND (((split_at_rec u) b) t))))))) |- ((uniq ((CONS h) t)) ==> (~ ((MEM u) (SND (((COND (h = u)) (b , t)) (((split_at_rec u) ((APPEND b) ((CONS h) NIL))) t))))))
+T c==> ! ! c==> cuniq f0 c~ cMEM b0 cSND csplit_at_rec b0 b1 f0 c==> cuniq cCONS f1 f0 c~ cMEM f2 cSND cCOND c= f1 f2 c, f3 f0 csplit_at_rec f2 cAPPEND f3 cCONS f1 cNIL f0
+- (!u. (!b. ((uniq t) ==> (~ ((MEM u) (SND (((split_at_rec u) b) t))))))) |- (((!b. ((uniq t) ==> (~ ((MEM u) (SND (((split_at_rec u) b) t)))))) ==> ((\b. ((uniq t) ==> (~ ((MEM u) (SND (((split_at_rec u) b) t)))))) b)) = ((\b. ((uniq t) ==> (~ ((MEM u) (SND (((split_at_rec u) b) t)))))) b))
+T c==> ! ! c==> cuniq f0 c~ cMEM b0 cSND csplit_at_rec b0 b1 f0 c= c==> ! c==> cuniq f0 c~ cMEM f1 cSND csplit_at_rec f1 b0 f0 * / c==> cuniq f0 c~ cMEM f1 cSND csplit_at_rec f1 b0 f0 f2 * / c==> cuniq f0 c~ cMEM f1 cSND csplit_at_rec f1 b0 f0 f2
++ (!u. (!b. ((uniq t) ==> (~ ((MEM u) (SND (((split_at_rec u) b) t))))))), ((!u. (!b. (~ ((MEM u) (SND (((split_at_rec u) b) t)))))) ==> F), ((~ (uniq t)) ==> F) |- F
+T c==> ! ! c==> cuniq f0 c~ cMEM b0 cSND csplit_at_rec b0 b1 f0 c==> c==> ! ! c~ cMEM b0 cSND csplit_at_rec b0 b1 f0 cF c==> c==> c~ cuniq f0 cF cF
+- (((!u. (!b. ((uniq t) ==> (~ ((MEM u) (SND (((split_at_rec u) b) t))))))) ==> ((~ (h = u)) ==> ((~ ((uniq ((CONS h) t)) ==> (~ ((MEM u) (SND (((split_at_rec u) ((APPEND b) ((CONS h) NIL))) t)))))) ==> ((!x. (!s. ((uniq ((CONS x) s)) = ((~ ((MEM x) s)) /\ (uniq s))))) ==> F)))) ==> ((!u. (!b. ((uniq t) ==> (~ ((MEM u) (SND (((split_at_rec u) b) t))))))) ==> ((~ (h = u)) ==> ((~ ((uniq ((CONS h) t)) ==> (~ ((MEM u) (SND (((split_at_rec u) ((APPEND b) ((CONS h) NIL))) t)))))) ==> ((!x. (!s. ((uniq ((CONS x) s)) = ((~ ((MEM x) s)) /\ (uniq s))))) ==> F))))) |- ((((!u. (!b. ((uniq t) ==> (~ ((MEM u) (SND (((split_at_rec u) b) t))))))) ==> ((~ (h = u)) ==> ((~ ((uniq ((CONS h) t)) ==> (~ ((MEM u) (SND (((split_at_rec u) ((APPEND b) ((CONS h) NIL))) t)))))) ==> ((!x. (!s. ((uniq ((CONS x) s)) = ((~ ((MEM x) s)) /\ (uniq s))))) ==> F)))) ==> ((!u. (!b. ((uniq t) ==> (~ ((MEM u) (SND (((split_at_rec u) b) t))))))) ==> ((~ (h = u)) ==> ((~ ((uniq ((CONS h) t)) ==> (~ ((MEM u) (SND (((split_at_rec u) ((APPEND b) ((CONS h) NIL))) t)))))) ==> ((!x. (!s. ((uniq ((CONS x) s)) = ((~ ((MEM x) s)) /\ (uniq s))))) ==> F))))) /\ (((!u. (!b. ((uniq t) ==> (~ ((MEM u) (SND (((split_at_rec u) b) t))))))) ==> ((~ (h = u)) ==> ((~ ((uniq ((CONS h) t)) ==> (~ ((MEM u) (SND (((split_at_rec u) ((APPEND b) ((CONS h) NIL))) t)))))) ==> ((!x. (!s. ((uniq ((CONS x) s)) = ((~ ((MEM x) s)) /\ (uniq s))))) ==> F)))) ==> ((!u. (!b. ((uniq t) ==> (~ ((MEM u) (SND (((split_at_rec u) b) t))))))) ==> ((~ (h = u)) ==> ((~ ((uniq ((CONS h) t)) ==> (~ ((MEM u) (SND (((split_at_rec u) ((APPEND b) ((CONS h) NIL))) t)))))) ==> ((!x. (!s. ((uniq ((CONS x) s)) = ((~ ((MEM x) s)) /\ (uniq s))))) ==> F))))))
+T c==> c==> c==> ! ! c==> cuniq f0 c~ cMEM b0 cSND csplit_at_rec b0 b1 f0 c==> c~ c= f1 f2 c==> c~ c==> cuniq cCONS f1 f0 c~ cMEM f2 cSND csplit_at_rec f2 cAPPEND f3 cCONS f1 cNIL f0 c==> ! ! c= cuniq cCONS b0 b1 c/\ c~ cMEM b0 b1 cuniq b1 cF c==> ! ! c==> cuniq f0 c~ cMEM b0 cSND csplit_at_rec b0 b1 f0 c==> c~ c= f1 f2 c==> c~ c==> cuniq cCONS f1 f0 c~ cMEM f2 cSND csplit_at_rec f2 cAPPEND f3 cCONS f1 cNIL f0 c==> ! ! c= cuniq cCONS b0 b1 c/\ c~ cMEM b0 b1 cuniq b1 cF c/\ c==> c==> ! ! c==> cuniq f0 c~ cMEM b0 cSND csplit_at_rec b0 b1 f0 c==> c~ c= f1 f2 c==> c~ c==> cuniq cCONS f1 f0 c~ cMEM f2 cSND csplit_at_rec f2 cAPPEND f3 cCONS f1 cNIL f0 c==> ! ! c= cuniq cCONS b0 b1 c/\ c~ cMEM b0 b1 cuniq b1 cF c==> ! ! c==> cuniq f0 c~ cMEM b0 cSND csplit_at_rec b0 b1 f0 c==> c~ c= f1 f2 c==> c~ c==> cuniq cCONS f1 f0 c~ cMEM f2 cSND csplit_at_rec f2 cAPPEND f3 cCONS f1 cNIL f0 c==> ! ! c= cuniq cCONS b0 b1 c/\ c~ cMEM b0 b1 cuniq b1 cF c==> c==> ! ! c==> cuniq f0 c~ cMEM b0 cSND csplit_at_rec b0 b1 f0 c==> c~ c= f1 f2 c==> c~ c==> cuniq cCONS f1 f0 c~ cMEM f2 cSND csplit_at_rec f2 cAPPEND f3 cCONS f1 cNIL f0 c==> ! ! c= cuniq cCONS b0 b1 c/\ c~ cMEM b0 b1 cuniq b1 cF c==> ! ! c==> cuniq f0 c~ cMEM b0 cSND csplit_at_rec b0 b1 f0 c==> c~ c= f1 f2 c==> c~ c==> cuniq cCONS f1 f0 c~ cMEM f2 cSND csplit_at_rec f2 cAPPEND f3 cCONS f1 cNIL f0 c==> ! ! c= cuniq cCONS b0 b1 c/\ c~ cMEM b0 b1 cuniq b1 cF
++ |- ((~ F) = T)
+T c= c~ cF cT
+- ((!u. (!b. ((uniq t) ==> (~ ((MEM u) (SND (((split_at_rec u) b) t))))))) ==> ((~ (h = u)) ==> ((~ ((uniq ((CONS h) t)) ==> (~ ((MEM u) (SND (((split_at_rec u) ((APPEND b) ((CONS h) NIL))) t)))))) ==> ((!x. (!s. ((uniq ((CONS x) s)) = ((~ ((MEM x) s)) /\ (uniq s))))) ==> F)))), (((!u. (!b. ((uniq t) ==> (~ ((MEM u) (SND (((split_at_rec u) b) t))))))) ==> ((~ (h = u)) ==> ((~ ((uniq ((CONS h) t)) ==> (~ ((MEM u) (SND (((split_at_rec u) ((APPEND b) ((CONS h) NIL))) t)))))) ==> ((!x. (!s. ((uniq ((CONS x) s)) = ((~ ((MEM x) s)) /\ (uniq s))))) ==> F)))) ==> ((!u. (!b. ((uniq t) ==> (~ ((MEM u) (SND (((split_at_rec u) b) t))))))) ==> ((~ (h = u)) ==> ((~ ((uniq ((CONS h) t)) ==> (~ ((MEM u) (SND (((split_at_rec u) ((APPEND b) ((CONS h) NIL))) t)))))) ==> ((!x. (!s. ((uniq ((CONS x) s)) = ((~ ((MEM x) s)) /\ (uniq s))))) ==> F))))) |- ((((!u. (!b. ((uniq t) ==> (~ ((MEM u) (SND (((split_at_rec u) b) t))))))) ==> ((~ (h = u)) ==> ((~ ((uniq ((CONS h) t)) ==> (~ ((MEM u) (SND (((split_at_rec u) ((APPEND b) ((CONS h) NIL))) t)))))) ==> ((!x. (!s. ((uniq ((CONS x) s)) = ((~ ((MEM x) s)) /\ (uniq s))))) ==> F)))) ==> ((!u. (!b. ((uniq t) ==> (~ ((MEM u) (SND (((split_at_rec u) b) t))))))) ==> ((~ (h = u)) ==> ((~ ((uniq ((CONS h) t)) ==> (~ ((MEM u) (SND (((split_at_rec u) ((APPEND b) ((CONS h) NIL))) t)))))) ==> ((!x. (!s. ((uniq ((CONS x) s)) = ((~ ((MEM x) s)) /\ (uniq s))))) ==> F))))) /\ ((!u. (!b. ((uniq t) ==> (~ ((MEM u) (SND (((split_at_rec u) b) t))))))) ==> ((~ (h = u)) ==> ((~ ((uniq ((CONS h) t)) ==> (~ ((MEM u) (SND (((split_at_rec u) ((APPEND b) ((CONS h) NIL))) t)))))) ==> ((!x. (!s. ((uniq ((CONS x) s)) = ((~ ((MEM x) s)) /\ (uniq s))))) ==> F)))))
+T c==> c==> ! ! c==> cuniq f0 c~ cMEM b0 cSND csplit_at_rec b0 b1 f0 c==> c~ c= f1 f2 c==> c~ c==> cuniq cCONS f1 f0 c~ cMEM f2 cSND csplit_at_rec f2 cAPPEND f3 cCONS f1 cNIL f0 c==> ! ! c= cuniq cCONS b0 b1 c/\ c~ cMEM b0 b1 cuniq b1 cF c==> c==> c==> ! ! c==> cuniq f0 c~ cMEM b0 cSND csplit_at_rec b0 b1 f0 c==> c~ c= f1 f2 c==> c~ c==> cuniq cCONS f1 f0 c~ cMEM f2 cSND csplit_at_rec f2 cAPPEND f3 cCONS f1 cNIL f0 c==> ! ! c= cuniq cCONS b0 b1 c/\ c~ cMEM b0 b1 cuniq b1 cF c==> ! ! c==> cuniq f0 c~ cMEM b0 cSND csplit_at_rec b0 b1 f0 c==> c~ c= f1 f2 c==> c~ c==> cuniq cCONS f1 f0 c~ cMEM f2 cSND csplit_at_rec f2 cAPPEND f3 cCONS f1 cNIL f0 c==> ! ! c= cuniq cCONS b0 b1 c/\ c~ cMEM b0 b1 cuniq b1 cF c/\ c==> c==> ! ! c==> cuniq f0 c~ cMEM b0 cSND csplit_at_rec b0 b1 f0 c==> c~ c= f1 f2 c==> c~ c==> cuniq cCONS f1 f0 c~ cMEM f2 cSND csplit_at_rec f2 cAPPEND f3 cCONS f1 cNIL f0 c==> ! ! c= cuniq cCONS b0 b1 c/\ c~ cMEM b0 b1 cuniq b1 cF c==> ! ! c==> cuniq f0 c~ cMEM b0 cSND csplit_at_rec b0 b1 f0 c==> c~ c= f1 f2 c==> c~ c==> cuniq cCONS f1 f0 c~ cMEM f2 cSND csplit_at_rec f2 cAPPEND f3 cCONS f1 cNIL f0 c==> ! ! c= cuniq cCONS b0 b1 c/\ c~ cMEM b0 b1 cuniq b1 cF c==> ! ! c==> cuniq f0 c~ cMEM b0 cSND csplit_at_rec b0 b1 f0 c==> c~ c= f1 f2 c==> c~ c==> cuniq cCONS f1 f0 c~ cMEM f2 cSND csplit_at_rec f2 cAPPEND f3 cCONS f1 cNIL f0 c==> ! ! c= cuniq cCONS b0 b1 c/\ c~ cMEM b0 b1 cuniq b1 cF
+- |- ((!u. ((~ ((uniq ((CONS u) t)) ==> (~ ((MEM u) t)))) ==> (~ (!x. (!s. ((uniq ((CONS x) s)) = ((~ ((MEM x) s)) /\ (uniq s)))))))) = T)
+T c= ! c==> c~ c==> cuniq cCONS b0 f0 c~ cMEM b0 f0 c~ ! ! c= cuniq cCONS b1 b2 c/\ c~ cMEM b1 b2 cuniq b2 cT
+- |- (((APPEND NIL) l) = l)
+T c= cAPPEND cNIL f0 f0
++ |- (((!h. (!b. (!u. ((!u. (!b. ((uniq t) ==> (~ ((MEM u) (SND (((split_at_rec u) b) t))))))) ==> ((~ (h = u)) ==> ((~ ((uniq ((CONS h) t)) ==> (~ ((MEM u) (SND (((split_at_rec u) ((APPEND b) ((CONS h) NIL))) t)))))) ==> ((!x. (!s. ((uniq ((CONS x) s)) = ((~ ((MEM x) s)) /\ (uniq s))))) ==> F))))))) ==> ((\h. (!b. (!u. ((!u. (!b. ((uniq t) ==> (~ ((MEM u) (SND (((split_at_rec u) b) t))))))) ==> ((~ (h = u)) ==> ((~ ((uniq ((CONS h) t)) ==> (~ ((MEM u) (SND (((split_at_rec u) ((APPEND b) ((CONS h) NIL))) t)))))) ==> ((!x. (!s. ((uniq ((CONS x) s)) = ((~ ((MEM x) s)) /\ (uniq s))))) ==> F))))))) h)) = ((\h. (!b. (!u. ((!u. (!b. ((uniq t) ==> (~ ((MEM u) (SND (((split_at_rec u) b) t))))))) ==> ((~ (h = u)) ==> ((~ ((uniq ((CONS h) t)) ==> (~ ((MEM u) (SND (((split_at_rec u) ((APPEND b) ((CONS h) NIL))) t)))))) ==> ((!x. (!s. ((uniq ((CONS x) s)) = ((~ ((MEM x) s)) /\ (uniq s))))) ==> F))))))) h))
+T c= c==> ! ! ! c==> ! ! c==> cuniq f0 c~ cMEM b3 cSND csplit_at_rec b3 b3 f0 c==> c~ c= b0 b2 c==> c~ c==> cuniq cCONS b0 f0 c~ cMEM b2 cSND csplit_at_rec b2 cAPPEND b1 cCONS b0 cNIL f0 c==> ! ! c= cuniq cCONS b3 b4 c/\ c~ cMEM b3 b4 cuniq b4 cF * / ! ! c==> ! ! c==> cuniq f0 c~ cMEM b3 cSND csplit_at_rec b3 b3 f0 c==> c~ c= b0 b2 c==> c~ c==> cuniq cCONS b0 f0 c~ cMEM b2 cSND csplit_at_rec b2 cAPPEND b1 cCONS b0 cNIL f0 c==> ! ! c= cuniq cCONS b3 b4 c/\ c~ cMEM b3 b4 cuniq b4 cF f1 * / ! ! c==> ! ! c==> cuniq f0 c~ cMEM b3 cSND csplit_at_rec b3 b3 f0 c==> c~ c= b0 b2 c==> c~ c==> cuniq cCONS b0 f0 c~ cMEM b2 cSND csplit_at_rec b2 cAPPEND b1 cCONS b0 cNIL f0 c==> ! ! c= cuniq cCONS b3 b4 c/\ c~ cMEM b3 b4 cuniq b4 cF f1
+- (!x. (!s. ((uniq ((CONS x) s)) = ((~ ((MEM x) s)) /\ (uniq s))))), (~ ((uniq ((CONS u) t)) ==> (~ ((MEM u) t)))) |- ((~ F) ==> F)
+T c==> ! ! c= cuniq cCONS b0 b1 c/\ c~ cMEM b0 b1 cuniq b1 c==> c~ c==> cuniq cCONS f0 f1 c~ cMEM f0 f1 c==> c~ cF cF
++ (!u. (!b. (~ ((MEM u) (SND (((split_at_rec u) b) t)))))) |- (((MEM _10079303) (SND (((split_at_rec _10079303) _10079304) t))) ==> F)
+T c==> ! ! c~ cMEM b0 cSND csplit_at_rec b0 b1 f0 c==> cMEM f1 cSND csplit_at_rec f1 f2 f0 cF
+- |- ((!h. (P h)) = ((P T) /\ (P F)))
+T c= ! * f0 b0 c/\ * f0 cT * f0 cF
+- (!x. (!s. ((uniq ((CONS x) s)) = ((~ ((MEM x) s)) /\ (uniq s))))) |- (!x. (!s. ((uniq ((CONS x) s)) \/ (((MEM x) s) \/ (~ (uniq s))))))
+T c==> ! ! c= cuniq cCONS b0 b1 c/\ c~ cMEM b0 b1 cuniq b1 ! ! c\/ cuniq cCONS b0 b1 c\/ cMEM b0 b1 c~ cuniq b1
+- |- (((!t1. (!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))))) ==> ((\t1. (!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))))) t1)) = ((\t1. (!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))))) t1))
+T c= c==> ! ! ! c= c\/ b0 c\/ b1 b2 c\/ c\/ b0 b1 b2 * / ! ! c= c\/ b0 c\/ b1 b2 c\/ c\/ b0 b1 b2 f0 * / ! ! c= c\/ b0 c\/ b1 b2 c\/ c\/ b0 b1 b2 f0
+- |- ((~ (_10079343 = _10079344)) \/ ((SND _10079343) = (SND _10079344)))
+T c\/ c~ c= f0 f1 c= cSND f0 cSND f1
++ |- ((~ (~ a)) = a)
+T c= c~ c~ f0 f0
++ |- ((!x. ((P x) /\ (Q x))) = ((!x. (P x)) /\ (!x. (Q x))))
+T c= ! c/\ * f0 b0 * f1 b0 c/\ ! * f0 b0 ! * f1 b0
++ |- (T = (!u. (!b. ((uniq NIL) ==> (~ ((MEM u) (SND (((split_at_rec u) b) NIL))))))))
+T c= cT ! ! c==> cuniq cNIL c~ cMEM b0 cSND csplit_at_rec b0 b1 cNIL
+- ((~ ((uniq ((CONS u) t)) ==> (~ ((MEM u) t)))) ==> ((!x. (!s. ((uniq ((CONS x) s)) = ((~ ((MEM x) s)) /\ (uniq s))))) ==> F)), (((~ ((uniq ((CONS u) t)) ==> (~ ((MEM u) t)))) ==> ((!x. (!s. ((uniq ((CONS x) s)) = ((~ ((MEM x) s)) /\ (uniq s))))) ==> F)) ==> ((~ ((uniq ((CONS u) t)) ==> (~ ((MEM u) t)))) ==> ((!x. (!s. ((uniq ((CONS x) s)) = ((~ ((MEM x) s)) /\ (uniq s))))) ==> F))) |- (((~ ((uniq ((CONS u) t)) ==> (~ ((MEM u) t)))) ==> ((!x. (!s. ((uniq ((CONS x) s)) = ((~ ((MEM x) s)) /\ (uniq s))))) ==> F)) /\ ((~ ((uniq ((CONS u) t)) ==> (~ ((MEM u) t)))) ==> ((!x. (!s. ((uniq ((CONS x) s)) = ((~ ((MEM x) s)) /\ (uniq s))))) ==> F)))
+T c==> c==> c~ c==> cuniq cCONS f0 f1 c~ cMEM f0 f1 c==> ! ! c= cuniq cCONS b0 b1 c/\ c~ cMEM b0 b1 cuniq b1 cF c==> c==> c==> c~ c==> cuniq cCONS f0 f1 c~ cMEM f0 f1 c==> ! ! c= cuniq cCONS b0 b1 c/\ c~ cMEM b0 b1 cuniq b1 cF c==> c~ c==> cuniq cCONS f0 f1 c~ cMEM f0 f1 c==> ! ! c= cuniq cCONS b0 b1 c/\ c~ cMEM b0 b1 cuniq b1 cF c/\ c==> c~ c==> cuniq cCONS f0 f1 c~ cMEM f0 f1 c==> ! ! c= cuniq cCONS b0 b1 c/\ c~ cMEM b0 b1 cuniq b1 cF c==> c~ c==> cuniq cCONS f0 f1 c~ cMEM f0 f1 c==> ! ! c= cuniq cCONS b0 b1 c/\ c~ cMEM b0 b1 cuniq b1 cF
+- |- (((~ ((uniq ((CONS u) t)) ==> (~ ((MEM u) t)))) ==> (~ (!x. (!s. ((uniq ((CONS x) s)) = ((~ ((MEM x) s)) /\ (uniq s))))))) = T)
+T c= c==> c~ c==> cuniq cCONS f0 f1 c~ cMEM f0 f1 c~ ! ! c= cuniq cCONS b0 b1 c/\ c~ cMEM b0 b1 cuniq b1 cT
++ (!u. (!b. ((uniq t) ==> (~ ((MEM u) (SND (((split_at_rec u) b) t))))))) |- ((!u. (!b. ((uniq t) ==> (~ ((MEM u) (SND (((split_at_rec u) b) t))))))) /\ (!u. (!b. ((uniq ((CONS h) t)) ==> (~ ((MEM u) (SND (((split_at_rec u) b) ((CONS h) t)))))))))
+T c==> ! ! c==> cuniq f0 c~ cMEM b0 cSND csplit_at_rec b0 b1 f0 c/\ ! ! c==> cuniq f0 c~ cMEM b0 cSND csplit_at_rec b0 b1 f0 ! ! c==> cuniq cCONS f1 f0 c~ cMEM b0 cSND csplit_at_rec b0 b1 cCONS f1 f0
++ (!u. (!b. (~ ((MEM u) (SND (((split_at_rec u) b) t)))))) |- (~ ((MEM _10079303) (SND (((split_at_rec _10079303) _10079304) t))))
+T c==> ! ! c~ cMEM b0 cSND csplit_at_rec b0 b1 f0 c~ cMEM f1 cSND csplit_at_rec f1 f2 f0
++ (!x. (!s. ((uniq ((CONS x) s)) = ((~ ((MEM x) s)) /\ (uniq s))))), (~ (uniq t)), (~ ((uniq ((CONS h) t)) ==> (~ ((MEM u) (SND (((split_at_rec u) ((APPEND b) ((CONS h) NIL))) t)))))) |- ((~ (uniq t)) /\ F)
+T c==> ! ! c= cuniq cCONS b0 b1 c/\ c~ cMEM b0 b1 cuniq b1 c==> c~ cuniq f0 c==> c~ c==> cuniq cCONS f1 f0 c~ cMEM f2 cSND csplit_at_rec f2 cAPPEND f3 cCONS f1 cNIL f0 c/\ c~ cuniq f0 cF
++ (!u. (!b. ((uniq t) ==> (~ ((MEM u) (SND (((split_at_rec u) b) t))))))), (~ (h = u)) |- ((~ (h = u)) /\ ((uniq ((CONS h) t)) ==> (~ ((MEM u) (SND (((COND (h = u)) (b , t)) (((split_at_rec u) ((APPEND b) ((CONS h) NIL))) t)))))))
+T c==> ! ! c==> cuniq f0 c~ cMEM b0 cSND csplit_at_rec b0 b1 f0 c==> c~ c= f1 f2 c/\ c~ c= f1 f2 c==> cuniq cCONS f1 f0 c~ cMEM f2 cSND cCOND c= f1 f2 c, f3 f0 csplit_at_rec f2 cAPPEND f3 cCONS f1 cNIL f0
++ (!x. (!s. ((uniq ((CONS x) s)) = ((~ ((MEM x) s)) /\ (uniq s))))), (~ ((uniq ((CONS u) t)) ==> (~ ((MEM u) t)))) |- F
+T c==> ! ! c= cuniq cCONS b0 b1 c/\ c~ cMEM b0 b1 cuniq b1 c==> c~ c==> cuniq cCONS f0 f1 c~ cMEM f0 f1 cF
++ (!u. (!b. (~ ((MEM u) (SND (((split_at_rec u) b) t)))))) |- (((!b. (~ ((MEM _10079303) (SND (((split_at_rec _10079303) b) t))))) ==> ((\b. (~ ((MEM _10079303) (SND (((split_at_rec _10079303) b) t))))) _10079304)) = ((\b. (~ ((MEM _10079303) (SND (((split_at_rec _10079303) b) t))))) _10079304))
+T c==> ! ! c~ cMEM b0 cSND csplit_at_rec b0 b1 f0 c= c==> ! c~ cMEM f1 cSND csplit_at_rec f1 b0 f0 * / c~ cMEM f1 cSND csplit_at_rec f1 b0 f0 f2 * / c~ cMEM f1 cSND csplit_at_rec f1 b0 f0 f2
++ |- ((!u. ((!u. (!b. ((uniq t) ==> (~ ((MEM u) (SND (((split_at_rec u) b) t))))))) ==> ((~ (h = u)) ==> ((~ ((uniq ((CONS h) t)) ==> (~ ((MEM u) (SND (((split_at_rec u) ((APPEND b) ((CONS h) NIL))) t)))))) ==> (~ (!x. (!s. ((uniq ((CONS x) s)) = ((~ ((MEM x) s)) /\ (uniq s)))))))))) = T)
+T c= ! c==> ! ! c==> cuniq f0 c~ cMEM b1 cSND csplit_at_rec b1 b1 f0 c==> c~ c= f1 b0 c==> c~ c==> cuniq cCONS f1 f0 c~ cMEM b0 cSND csplit_at_rec b0 cAPPEND f2 cCONS f1 cNIL f0 c~ ! ! c= cuniq cCONS b1 b2 c/\ c~ cMEM b1 b2 cuniq b2 cT
++ (!u. (!b. ((uniq t) ==> (~ ((MEM u) (SND (((split_at_rec u) b) t))))))), (~ ((uniq ((CONS h) t)) ==> (~ ((MEM u) (SND (((split_at_rec u) ((APPEND b) ((CONS h) NIL))) t)))))) |- ((!x. (!s. ((uniq ((CONS x) s)) = ((~ ((MEM x) s)) /\ (uniq s))))) ==> F)
+T c==> ! ! c==> cuniq f0 c~ cMEM b0 cSND csplit_at_rec b0 b1 f0 c==> c~ c==> cuniq cCONS f1 f0 c~ cMEM f2 cSND csplit_at_rec f2 cAPPEND f3 cCONS f1 cNIL f0 c==> ! ! c= cuniq cCONS b0 b1 c/\ c~ cMEM b0 b1 cuniq b1 cF
++ (~ ((uniq ((CONS u) t)) ==> (~ ((MEM u) t)))) |- ((((uniq ((CONS u) t)) /\ ((MEM u) t)) ==> F) = F)
+T c==> c~ c==> cuniq cCONS f0 f1 c~ cMEM f0 f1 c= c==> c/\ cuniq cCONS f0 f1 cMEM f0 f1 cF cF
++ |- ((~ p) = (p ==> F))
+T c= c~ f0 c==> f0 cF
++ |- (((MEM x) NIL) = F)
+T c= cMEM f0 cNIL cF
++ |- ((!t. (!h. (!b. (!u. ((!u. (!b. ((uniq t) ==> (~ ((MEM u) (SND (((split_at_rec u) b) t))))))) ==> ((~ (h = u)) ==> ((~ ((uniq ((CONS h) t)) ==> (~ ((MEM u) (SND (((split_at_rec u) ((APPEND b) ((CONS h) NIL))) t)))))) ==> (~ (!x. (!s. ((uniq ((CONS x) s)) = ((~ ((MEM x) s)) /\ (uniq s))))))))))))) = (!t. (!h. (!b. (!u. ((!u. (!b. ((uniq t) ==> (~ ((MEM u) (SND (((split_at_rec u) b) t))))))) ==> ((~ (h = u)) ==> ((~ ((uniq ((CONS h) t)) ==> (~ ((MEM u) (SND (((split_at_rec u) ((APPEND b) ((CONS h) NIL))) t)))))) ==> ((!x. (!s. ((uniq ((CONS x) s)) = ((~ ((MEM x) s)) /\ (uniq s))))) ==> F)))))))))
+T c= ! ! ! ! c==> ! ! c==> cuniq b0 c~ cMEM b4 cSND csplit_at_rec b4 b4 b0 c==> c~ c= b1 b3 c==> c~ c==> cuniq cCONS b1 b0 c~ cMEM b3 cSND csplit_at_rec b3 cAPPEND b2 cCONS b1 cNIL b0 c~ ! ! c= cuniq cCONS b4 b5 c/\ c~ cMEM b4 b5 cuniq b5 ! ! ! ! c==> ! ! c==> cuniq b0 c~ cMEM b4 cSND csplit_at_rec b4 b4 b0 c==> c~ c= b1 b3 c==> c~ c==> cuniq cCONS b1 b0 c~ cMEM b3 cSND csplit_at_rec b3 cAPPEND b2 cCONS b1 cNIL b0 c==> ! ! c= cuniq cCONS b4 b5 c/\ c~ cMEM b4 b5 cuniq b5 cF
++ |- (((~ ((uniq ((CONS u) t)) ==> (~ ((MEM u) t)))) ==> F) = ((uniq ((CONS u) t)) ==> (~ ((MEM u) t))))
+T c= c==> c~ c==> cuniq cCONS f0 f1 c~ cMEM f0 f1 cF c==> cuniq cCONS f0 f1 c~ cMEM f0 f1
++ |- ((((!u. (!b. ((uniq NIL) ==> (~ ((MEM u) (SND (((split_at_rec u) b) NIL))))))) /\ (!h. (!t. ((!u. (!b. ((uniq t) ==> (~ ((MEM u) (SND (((split_at_rec u) b) t))))))) ==> (!u. (!b. ((uniq ((CONS h) t)) ==> (~ ((MEM u) (SND (((split_at_rec u) b) ((CONS h) t)))))))))))) ==> (!f. (!u. (!b. ((uniq f) ==> (~ ((MEM u) (SND (((split_at_rec u) b) f))))))))) = (!f. (!u. (!b. ((uniq f) ==> (~ ((MEM u) (SND (((split_at_rec u) b) f)))))))))
+T c= c==> c/\ ! ! c==> cuniq cNIL c~ cMEM b0 cSND csplit_at_rec b0 b1 cNIL ! ! c==> ! ! c==> cuniq b1 c~ cMEM b2 cSND csplit_at_rec b2 b3 b1 ! ! c==> cuniq cCONS b0 b1 c~ cMEM b2 cSND csplit_at_rec b2 b3 cCONS b0 b1 ! ! ! c==> cuniq b0 c~ cMEM b1 cSND csplit_at_rec b1 b2 b0 ! ! ! c==> cuniq b0 c~ cMEM b1 cSND csplit_at_rec b1 b2 b0
++ |- ((((split_at_rec c) bs) NIL) = (bs , NIL))
+T c= csplit_at_rec f0 f1 cNIL c, f1 cNIL
++ (!u. (!b. ((uniq t) ==> (~ ((MEM u) (SND (((split_at_rec u) b) t))))))), (~ (h = u)) |- ((uniq ((CONS h) t)) ==> (~ ((MEM u) (SND (((split_at_rec u) ((APPEND b) ((CONS h) NIL))) t)))))
+T c==> ! ! c==> cuniq f0 c~ cMEM b0 cSND csplit_at_rec b0 b1 f0 c==> c~ c= f1 f2 c==> cuniq cCONS f1 f0 c~ cMEM f2 cSND csplit_at_rec f2 cAPPEND f3 cCONS f1 cNIL f0
++ |- (!t. (!h. (!b. (!u. ((!u. (!b. ((uniq t) ==> (~ ((MEM u) (SND (((split_at_rec u) b) t))))))) ==> ((~ (h = u)) ==> ((~ ((uniq ((CONS h) t)) ==> (~ ((MEM u) (SND (((split_at_rec u) ((APPEND b) ((CONS h) NIL))) t)))))) ==> (~ (!x. (!s. ((uniq ((CONS x) s)) = ((~ ((MEM x) s)) /\ (uniq s)))))))))))))
+T c==> ! ! c==> cuniq f0 c~ cMEM b0 cSND csplit_at_rec b0 b1 f0 c==> c~ c= f1 f2 c==> c~ c==> cuniq cCONS f1 f0 c~ cMEM f2 cSND csplit_at_rec f2 cAPPEND f3 cCONS f1 cNIL f0 c~ ! ! c= cuniq cCONS b0 b1 c/\ c~ cMEM b0 b1 cuniq b1
++ |- ((((split_at_rec c) bs) ((CONS a) xs)) = (((COND (a = c)) (bs , xs)) (((split_at_rec c) ((APPEND bs) ((CONS a) NIL))) xs)))
+T c= csplit_at_rec f0 f1 cCONS f2 f3 cCOND c= f2 f0 c, f1 f3 csplit_at_rec f0 cAPPEND f1 cCONS f2 cNIL f3
++ |- ((!x. ((!s. ((uniq ((CONS x) s)) \/ (((MEM x) s) \/ (~ (uniq s))))) /\ (!s. ((~ (uniq ((CONS x) s))) \/ ((~ ((MEM x) s)) /\ (uniq s)))))) = ((!x. (!s. ((uniq ((CONS x) s)) \/ (((MEM x) s) \/ (~ (uniq s)))))) /\ (!x. (!s. ((~ (uniq ((CONS x) s))) \/ ((~ ((MEM x) s)) /\ (uniq s)))))))
+T c= ! c/\ ! c\/ cuniq cCONS b0 b1 c\/ cMEM b0 b1 c~ cuniq b1 ! c\/ c~ cuniq cCONS b0 b1 c/\ c~ cMEM b0 b1 cuniq b1 c/\ ! ! c\/ cuniq cCONS b0 b1 c\/ cMEM b0 b1 c~ cuniq b1 ! ! c\/ c~ cuniq cCONS b0 b1 c/\ c~ cMEM b0 b1 cuniq b1
++ |- ((((COND T) t1) t2) = t1)
+T c= cCOND cT f0 f1 f0
++ (!x. (!s. ((uniq ((CONS x) s)) = ((~ ((MEM x) s)) /\ (uniq s))))) |- (((uniq ((CONS _10079293) _10079294)) /\ ((MEM _10079293) _10079294)) ==> F)
+T c==> ! ! c= cuniq cCONS b0 b1 c/\ c~ cMEM b0 b1 cuniq b1 c==> c/\ cuniq cCONS f0 f1 cMEM f0 f1 cF

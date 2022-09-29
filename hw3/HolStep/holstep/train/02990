@@ -1,0 +1,63 @@
+N Sort.mem_min_k
+C |- (!k. (!list. ((k < (LENGTH list)) ==> ((MEM ((min_k k) list)) list))))
+T c==> c< f0 cLENGTH f1 cMEM cmin_k f0 f1 f1
+D TRUTH
+A |- T
+T cT
+D MEM_EL
+A |- (!l. (!n. ((n < (LENGTH l)) ==> ((MEM ((EL n) l)) l))))
+T c==> c< f0 cLENGTH f1 cMEM cEL f0 f1 f1
+D Seq.size
+A |- (sizel = LENGTH)
+T c= part csizel part cLENGTH
+D Seq.perm_eq_mem
+A |- (!s1. (!s2. (((perm_eq s1) s2) ==> (!x. (((MEM x) s1) = ((MEM x) s2))))))
+T c==> cperm_eq f0 f1 ! c= cMEM b0 f0 cMEM b0 f1
+D Sort.sorted
+A |- (!R. (!s. (!s0. ((((sorted R) s) s0) = (((ordered R) s) /\ ((perm_eq s) s0))))))
+T c= csorted f0 f1 f2 c/\ cordered f0 f1 cperm_eq f1 f2
+D Sort.min_k
+A |- (!k. (!l. (((min_k k) l) = ((EL k) ((merge_sort real_le) l)))))
+T c= cmin_k f0 f1 cEL f0 cmerge_sort part creal_le f1
+D Sort.size_merge_sort
+A |- (!R. (!l. ((sizel ((merge_sort R) l)) = (sizel l))))
+T c= csizel cmerge_sort f0 f1 csizel f1
+D Sort.real_merge_sort
+A |- (!s. (((sorted real_le) ((merge_sort real_le) s)) s))
+T csorted part creal_le cmerge_sort part creal_le f0 f0
++ (k < (sizel list)) |- ((k < (LENGTH ((merge_sort real_le) list))) /\ ((((MEM ((EL k) ((merge_sort real_le) list))) ((merge_sort real_le) list)) = T) ==> ((MEM ((EL k) ((merge_sort real_le) list))) ((merge_sort real_le) list))))
+T c==> c< f0 csizel f1 c/\ c< f0 cLENGTH cmerge_sort part creal_le f1 c==> c= cMEM cEL f0 cmerge_sort part creal_le f1 cmerge_sort part creal_le f1 cT cMEM cEL f0 cmerge_sort part creal_le f1 cmerge_sort part creal_le f1
++ |- ((\k. (!l. (((min_k k) l) = ((EL k) ((merge_sort real_le) l))))) k)
+T * / ! c= cmin_k b0 b1 cEL b0 cmerge_sort part creal_le b1 f0
++ (sizel = LENGTH) |- (LENGTH = sizel)
+T c==> c= part csizel part cLENGTH c= part cLENGTH part csizel
+- ((!x. (P ==> (Q x))) = (P ==> (!x. (Q x)))) |- ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))
+T c==> c= ! c==> f0 * f1 b0 c==> f0 ! * f1 b0 c= c==> f0 ! * f1 b0 ! c==> f0 * f1 b0
+- (k < (sizel list)) |- (T = (k < (sizel list)))
+T c==> c< f0 csizel f1 c= cT c< f0 csizel f1
++ |- (((!s0. ((((sorted R) s) s0) = (((ordered R) s) /\ ((perm_eq s) s0)))) ==> ((\s0. ((((sorted R) s) s0) = (((ordered R) s) /\ ((perm_eq s) s0)))) s0)) = ((\s0. ((((sorted R) s) s0) = (((ordered R) s) /\ ((perm_eq s) s0)))) s0))
+T c= c==> ! c= csorted f0 f1 b0 c/\ cordered f0 f1 cperm_eq f1 b0 * / c= csorted f0 f1 b0 c/\ cordered f0 f1 cperm_eq f1 b0 f2 * / c= csorted f0 f1 b0 c/\ cordered f0 f1 cperm_eq f1 b0 f2
++ (!x. (((MEM x) ((merge_sort real_le) list)) = ((MEM x) list))) |- ((\x. (((MEM x) list) = ((MEM x) ((merge_sort real_le) list)))) x)
+T c==> ! c= cMEM b0 cmerge_sort part creal_le f0 cMEM b0 f0 * / c= cMEM b0 f0 cMEM b0 cmerge_sort part creal_le f0 f1
++ (n < (LENGTH l)) |- ((n < (LENGTH l)) /\ (((MEM ((EL n) l)) l) = T))
+T c==> c< f0 cLENGTH f1 c/\ c< f0 cLENGTH f1 c= cMEM cEL f0 f1 f1 cT
++ (k < (sizel list)) |- ((((sorted real_le) ((merge_sort real_le) list)) list) ==> ((MEM ((EL k) ((merge_sort real_le) list))) list))
+T c==> c< f0 csizel f1 c==> csorted part creal_le cmerge_sort part creal_le f1 f1 cMEM cEL f0 cmerge_sort part creal_le f1 f1
+- |- ((\P. (!Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x)))))) P)
+T * / ! c= c==> b0 ! * b1 b2 ! c==> b0 * b1 b2 f0
++ |- (((!R. (!l. ((sizel ((merge_sort R) l)) = (sizel l)))) ==> ((\R. (!l. ((sizel ((merge_sort R) l)) = (sizel l)))) R)) = ((\R. (!l. ((sizel ((merge_sort R) l)) = (sizel l)))) R))
+T c= c==> ! ! c= csizel cmerge_sort b0 b1 csizel b1 * / ! c= csizel cmerge_sort b0 b1 csizel b1 f0 * / ! c= csizel cmerge_sort b0 b1 csizel b1 f0
++ (k < (sizel list)) |- (k < (LENGTH ((merge_sort real_le) list)))
+T c==> c< f0 csizel f1 c< f0 cLENGTH cmerge_sort part creal_le f1
+- |- ((\Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))) Q)
+T * / c= c==> f0 ! * b0 b1 ! c==> f0 * b0 b1 f1
+- |- (((!P. (!Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x)))))) ==> ((\P. (!Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x)))))) P)) = ((\P. (!Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x)))))) P))
+T c= c==> ! ! c= c==> b0 ! * b1 b2 ! c==> b0 * b1 b2 * / ! c= c==> b0 ! * b1 b2 ! c==> b0 * b1 b2 f0 * / ! c= c==> b0 ! * b1 b2 ! c==> b0 * b1 b2 f0
+- ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x)))) |- ((!x. (P ==> (Q x))) = (P ==> (!x. (Q x))))
+T c==> c= c==> f0 ! * f1 b0 ! c==> f0 * f1 b0 c= ! c==> f0 * f1 b0 c==> f0 ! * f1 b0
+- |- ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))
+T c= c==> f0 ! * f1 b0 ! c==> f0 * f1 b0
+- |- (((!Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))) ==> ((\Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))) Q)) = ((\Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))) Q))
+T c= c==> ! c= c==> f0 ! * b0 b1 ! c==> f0 * b0 b1 * / c= c==> f0 ! * b0 b1 ! c==> f0 * b0 b1 f1 * / c= c==> f0 ! * b0 b1 ! c==> f0 * b0 b1 f1
+- (k < (sizel list)) |- ((k < (sizel list)) = T)
+T c==> c< f0 csizel f1 c= c< f0 csizel f1 cT

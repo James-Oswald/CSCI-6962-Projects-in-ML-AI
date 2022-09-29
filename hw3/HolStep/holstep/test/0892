@@ -1,0 +1,64 @@
+N REAL_VARIATION_AFFINITY2
+C |- (!m. (!c. (!f. (!s. (((real_variation ((IMAGE (\x. ((real_add ((real_mul (real_inv m)) x)) (real_neg ((real_mul (real_inv m)) c))))) s)) (\x. (f ((real_add ((real_mul m) x)) c)))) = (((COND (m = (real_of_num (NUMERAL _0)))) (real_of_num (NUMERAL _0))) ((real_variation s) f)))))))
+T c= creal_variation * * part cIMAGE / creal_add creal_mul creal_inv f0 b0 creal_neg creal_mul creal_inv f0 f1 f2 / * f3 creal_add creal_mul f0 b0 f1 cCOND c= f0 creal_of_num cNUMERAL c_0 creal_of_num cNUMERAL c_0 creal_variation f2 f3
+D TRUTH
+A |- T
+T cT
+D o_DEF
+A |- (!f. (!g. ((f o g) = (\x. (f (g x))))))
+T c= * * part co f0 f1 / * f0 * f1 b0
+D IMAGE_o
+A |- (!f. (!g. (!s. (((IMAGE (f o g)) s) = ((IMAGE f) ((IMAGE g) s))))))
+T c= * * part cIMAGE * * part co f0 f1 f2 * * part cIMAGE f0 * * part cIMAGE f1 f2
+D LIFT_DROP
+A |- ((!x. ((lift (drop x)) = x)) /\ (!x. ((drop (lift x)) = x)))
+T c/\ ! c= clift cdrop b0 b0 ! c= cdrop clift b0 b0
+D LIFT_ADD
+A |- (!x. (!y. ((lift ((real_add x) y)) = ((vector_add (lift x)) (lift y)))))
+T c= clift creal_add f0 f1 cvector_add clift f0 clift f1
+D LIFT_CMUL
+A |- (!x. (!c. ((lift ((real_mul c) x)) = ((% c) (lift x)))))
+T c= clift creal_mul f0 f1 c% f0 clift f1
+D LIFT_NEG
+A |- (!x. ((lift (real_neg x)) = (vector_neg (lift x))))
+T c= clift creal_neg f0 cvector_neg clift f0
+D DROP_ADD
+A |- (!x. (!y. ((drop ((vector_add x) y)) = ((real_add (drop x)) (drop y)))))
+T c= cdrop cvector_add f0 f1 creal_add cdrop f0 cdrop f1
+D DROP_CMUL
+A |- (!x. (!c. ((drop ((% c) x)) = ((real_mul c) (drop x)))))
+T c= cdrop c% f0 f1 creal_mul f0 cdrop f1
+D VECTOR_VARIATION_AFFINITY2
+A |- (!m. (!c. (!f. (!s. (((vector_variation ((IMAGE (\x. ((vector_add ((% (real_inv m)) x)) (vector_neg ((% (real_inv m)) c))))) s)) (\x. (f ((vector_add ((% m) x)) c)))) = (((COND (m = (real_of_num (NUMERAL _0)))) (real_of_num (NUMERAL _0))) ((vector_variation s) f)))))))
+T c= cvector_variation * * part cIMAGE / cvector_add c% creal_inv f0 b0 cvector_neg c% creal_inv f0 f1 f2 / * f3 cvector_add c% f0 b0 f1 cCOND c= f0 creal_of_num cNUMERAL c_0 creal_of_num cNUMERAL c_0 cvector_variation f2 f3
+D real_variation
+A |- (!s. (!f. (((real_variation s) f) = ((vector_variation ((IMAGE lift) s)) (lift o (f o drop))))))
+T c= creal_variation f0 f1 cvector_variation * * part cIMAGE part clift f0 * * part co part clift * * part co f1 part cdrop
++ |- (!f. (!s. (((vector_variation ((IMAGE (\x. ((vector_add ((% (real_inv m)) x)) (vector_neg ((% (real_inv m)) (lift c)))))) s)) (\x. (f ((vector_add ((% m) x)) (lift c))))) = (((COND (m = (real_of_num (NUMERAL _0)))) (real_of_num (NUMERAL _0))) ((vector_variation s) f)))))
+T c= cvector_variation * * part cIMAGE / cvector_add c% creal_inv f0 b0 cvector_neg c% creal_inv f0 clift f1 f2 / * f3 cvector_add c% f0 b0 clift f1 cCOND c= f0 creal_of_num cNUMERAL c_0 creal_of_num cNUMERAL c_0 cvector_variation f2 f3
++ |- ((((real_variation ((IMAGE (\x. ((real_add ((real_mul (real_inv m)) x)) (real_neg ((real_mul (real_inv m)) c))))) s)) (\x. (f ((real_add ((real_mul m) x)) c)))) = (((COND (m = (real_of_num (NUMERAL _0)))) (real_of_num (NUMERAL _0))) ((real_variation s) f))) = T)
+T c= c= creal_variation * * part cIMAGE / creal_add creal_mul creal_inv f0 b0 creal_neg creal_mul creal_inv f0 f1 f2 / * f3 creal_add creal_mul f0 b0 f1 cCOND c= f0 creal_of_num cNUMERAL c_0 creal_of_num cNUMERAL c_0 creal_variation f2 f3 cT
+- |- (((!x. ((lift (drop x)) = x)) ==> ((\x. ((lift (drop x)) = x)) x)) = ((\x. ((lift (drop x)) = x)) x))
+T c= c==> ! c= clift cdrop b0 b0 * / c= clift cdrop b0 b0 f0 * / c= clift cdrop b0 b0 f0
++ |- (((!y. ((lift ((real_add x) y)) = ((vector_add (lift x)) (lift y)))) ==> ((\y. ((lift ((real_add x) y)) = ((vector_add (lift x)) (lift y)))) y)) = ((\y. ((lift ((real_add x) y)) = ((vector_add (lift x)) (lift y)))) y))
+T c= c==> ! c= clift creal_add f0 b0 cvector_add clift f0 clift b0 * / c= clift creal_add f0 b0 cvector_add clift f0 clift b0 f1 * / c= clift creal_add f0 b0 cvector_add clift f0 clift b0 f1
++ |- (((!x. ((drop (lift x)) = x)) ==> ((\x. ((drop (lift x)) = x)) x)) = ((\x. ((drop (lift x)) = x)) x))
+T c= c==> ! c= cdrop clift b0 b0 * / c= cdrop clift b0 b0 f0 * / c= cdrop clift b0 b0 f0
++ |- (((!s. (((vector_variation ((IMAGE (\x. ((vector_add ((% (real_inv m)) x)) (vector_neg ((% (real_inv m)) (lift c)))))) s)) (\x. ((lift o (f o drop)) ((vector_add ((% m) x)) (lift c))))) = (((COND (m = (real_of_num (NUMERAL _0)))) (real_of_num (NUMERAL _0))) ((vector_variation s) (lift o (f o drop)))))) ==> ((\s. (((vector_variation ((IMAGE (\x. ((vector_add ((% (real_inv m)) x)) (vector_neg ((% (real_inv m)) (lift c)))))) s)) (\x. ((lift o (f o drop)) ((vector_add ((% m) x)) (lift c))))) = (((COND (m = (real_of_num (NUMERAL _0)))) (real_of_num (NUMERAL _0))) ((vector_variation s) (lift o (f o drop)))))) ((IMAGE lift) s))) = ((\s. (((vector_variation ((IMAGE (\x. ((vector_add ((% (real_inv m)) x)) (vector_neg ((% (real_inv m)) (lift c)))))) s)) (\x. ((lift o (f o drop)) ((vector_add ((% m) x)) (lift c))))) = (((COND (m = (real_of_num (NUMERAL _0)))) (real_of_num (NUMERAL _0))) ((vector_variation s) (lift o (f o drop)))))) ((IMAGE lift) s)))
+T c= c==> ! c= cvector_variation * * part cIMAGE / cvector_add c% creal_inv f0 b1 cvector_neg c% creal_inv f0 clift f1 b0 / co part clift * * part co f2 part cdrop cvector_add c% f0 b1 clift f1 cCOND c= f0 creal_of_num cNUMERAL c_0 creal_of_num cNUMERAL c_0 cvector_variation b0 * * part co part clift * * part co f2 part cdrop * / c= cvector_variation * * part cIMAGE / cvector_add c% creal_inv f0 b1 cvector_neg c% creal_inv f0 clift f1 b0 / co part clift * * part co f2 part cdrop cvector_add c% f0 b1 clift f1 cCOND c= f0 creal_of_num cNUMERAL c_0 creal_of_num cNUMERAL c_0 cvector_variation b0 * * part co part clift * * part co f2 part cdrop * * part cIMAGE part clift f3 * / c= cvector_variation * * part cIMAGE / cvector_add c% creal_inv f0 b1 cvector_neg c% creal_inv f0 clift f1 b0 / co part clift * * part co f2 part cdrop cvector_add c% f0 b1 clift f1 cCOND c= f0 creal_of_num cNUMERAL c_0 creal_of_num cNUMERAL c_0 cvector_variation b0 * * part co part clift * * part co f2 part cdrop * * part cIMAGE part clift f3
++ |- (((!y. ((drop ((vector_add x) y)) = ((real_add (drop x)) (drop y)))) ==> ((\y. ((drop ((vector_add x) y)) = ((real_add (drop x)) (drop y)))) y)) = ((\y. ((drop ((vector_add x) y)) = ((real_add (drop x)) (drop y)))) y))
+T c= c==> ! c= cdrop cvector_add f0 b0 creal_add cdrop f0 cdrop b0 * / c= cdrop cvector_add f0 b0 creal_add cdrop f0 cdrop b0 f1 * / c= cdrop cvector_add f0 b0 creal_add cdrop f0 cdrop b0 f1
++ |- ((t ==> t) = T)
+T c= c==> f0 f0 cT
+- |- (((x = x) ==> p) = p)
+T c= c==> c= f0 f0 f1 f1
+- |- ((((COND (x = x)) y) z) = y)
+T c= cCOND c= f0 f0 f1 f2 f1
+- |- ((x = x) = T)
+T c= c= f0 f0 cT
+- |- ((\x. ((lift (drop x)) = x)) x)
+T * / c= clift cdrop b0 b0 f0
+- |- (((\x. (f x)) y) = (f y))
+T c= * / * f0 b0 f1 * f0 f1
+- |- ((lift (drop x)) = x)
+T c= clift cdrop f0 f0

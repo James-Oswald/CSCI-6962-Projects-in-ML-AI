@@ -1,0 +1,37 @@
+N CNJ_MUL
+C |- (!w. (!z. ((cnj ((complex_mul w) z)) = ((complex_mul (cnj w)) (cnj z)))))
+T c= ccnj ccomplex_mul f0 f1 ccomplex_mul ccnj f0 ccnj f1
+D TRUTH
+A |- T
+T cT
+D REAL_NEGNEG
+A |- (!x. ((real_neg (real_neg x)) = x))
+T c= creal_neg creal_neg f0 f0
+D REAL_MUL_RNEG
+A |- (!x. (!y. (((real_mul x) (real_neg y)) = (real_neg ((real_mul x) y)))))
+T c= creal_mul f0 creal_neg f1 creal_neg creal_mul f0 f1
+D REAL_MUL_LNEG
+A |- (!x. (!y. (((real_mul (real_neg x)) y) = (real_neg ((real_mul x) y)))))
+T c= creal_mul creal_neg f0 f1 creal_neg creal_mul f0 f1
+D REAL_NEG_ADD
+A |- (!x. (!y. ((real_neg ((real_add x) y)) = ((real_add (real_neg x)) (real_neg y)))))
+T c= creal_neg creal_add f0 f1 creal_add creal_neg f0 creal_neg f1
+D complex_mul
+A |- (!w. (!z. (((complex_mul w) z) = (complex (((real_sub ((real_mul (Re w)) (Re z))) ((real_mul (Im w)) (Im z))) , ((real_add ((real_mul (Re w)) (Im z))) ((real_mul (Im w)) (Re z))))))))
+T c= ccomplex_mul f0 f1 ccomplex c, creal_sub creal_mul cRe f0 cRe f1 creal_mul cIm f0 cIm f1 creal_add creal_mul cRe f0 cIm f1 creal_mul cIm f0 cRe f1
+D RE
+A |- ((Re (complex (x , y))) = x)
+T c= cRe ccomplex c, f0 f1 f0
+D IM
+A |- ((Im (complex (x , y))) = y)
+T c= cIm ccomplex c, f0 f1 f1
+D COMPLEX_EQ
+A |- (!w. (!z. ((w = z) = (((Re w) = (Re z)) /\ ((Im w) = (Im z))))))
+T c= c= f0 f1 c/\ c= cRe f0 cRe f1 c= cIm f0 cIm f1
+D cnj
+A |- (!z. ((cnj z) = (complex ((Re z) , (real_neg (Im z))))))
+T c= ccnj f0 ccomplex c, cRe f0 creal_neg cIm f0
++ |- ((\x. (!y. (((real_mul x) (real_neg y)) = (real_neg ((real_mul x) y))))) x)
+T * / ! c= creal_mul b0 creal_neg b1 creal_neg creal_mul b0 b1 f0
+- |- ((t /\ t) = t)
+T c= c/\ f0 f0 f0

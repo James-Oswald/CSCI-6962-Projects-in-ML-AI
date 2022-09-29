@@ -1,0 +1,108 @@
+N REAL_SUMS
+C |- (((real_sums f) l) = ((sums (lift o f)) (lift l)))
+T c= * * part creal_sums f0 f1 * * part csums * * part co part clift f0 clift f1
+D TRUTH
+A |- T
+T cT
+D FUN_EQ_THM
+A |- (!f. (!g. ((f = g) = (!x. ((f x) = (g x))))))
+T c= c= f0 f1 ! c= * f0 b0 * f1 b0
+D o_DEF
+A |- (!f. (!g. ((f o g) = (\x. (f (g x))))))
+T c= * * part co f0 f1 / * f0 * f1 b0
+D LIFT_SUM
+A |- (!k. (!x. ((lift ((sum k) x)) = ((vsum k) (lift o x)))))
+T c= clift csum f0 f1 cvsum f0 * * part co part clift f1
+D sums
+A |- (!s. (!f. (!l. ((((sums f) l) s) = (((--> (\n. ((vsum (s INTER ((NUMERAL _0) .. n))) f))) l) sequentially)))))
+T c= csums f0 f1 f2 c--> / cvsum * * part cINTER f2 * * part c.. cNUMERAL c_0 b0 f0 f1 csequentially
+D TENDSTO_REAL
+A |- (((---> s) l) = ((--> (lift o s)) (lift l)))
+T c= * * part c---> f0 f1 * * part c--> * * part co part clift f0 clift f1
+D real_sums
+A |- (!s. (!f. (!l. ((((real_sums f) l) s) = (((---> (\n. ((sum (s INTER ((NUMERAL _0) .. n))) f))) l) sequentially)))))
+T c= creal_sums f0 f1 f2 c---> / csum * * part cINTER f2 * * part c.. cNUMERAL c_0 b0 f0 f1 csequentially
++ |- (((!x. ((lift ((sum k) x)) = ((vsum k) (lift o x)))) ==> ((\x. ((lift ((sum k) x)) = ((vsum k) (lift o x)))) x)) = ((\x. ((lift ((sum k) x)) = ((vsum k) (lift o x)))) x))
+T c= c==> ! c= clift csum f0 b0 cvsum f0 * * part co part clift b0 * / c= clift csum f0 b0 cvsum f0 * * part co part clift b0 f1 * / c= clift csum f0 b0 cvsum f0 * * part co part clift b0 f1
+- |- (((x IN (x INTER ((NUMERAL _0) .. n))) ==> ((lift (f x)) = (lift (f x)))) = T)
+T c= c==> cIN f0 * * part cINTER f1 * * part c.. cNUMERAL c_0 f2 c= clift * f3 f0 clift * f3 f0 cT
+- |- ((\g. ((!x. ((x IN (x INTER ((NUMERAL _0) .. n))) ==> ((lift (f x)) = (g x)))) ==> (((vsum (x INTER ((NUMERAL _0) .. n))) (\x. (lift (f x)))) = ((vsum (x INTER ((NUMERAL _0) .. n))) g)))) g)
+T * / c==> ! c==> cIN b1 * * part cINTER f0 * * part c.. cNUMERAL c_0 f1 c= clift * f2 b1 * b0 b1 c= cvsum * * part cINTER f0 * * part c.. cNUMERAL c_0 f1 / clift * f2 b1 cvsum * * part cINTER f0 * * part c.. cNUMERAL c_0 f1 b0 f3
++ |- ((!x. ((((--> (lift o (\n. ((sum (x INTER ((NUMERAL _0) .. n))) f)))) (lift l)) sequentially) = (((--> (\n. ((vsum (x INTER ((NUMERAL _0) .. n))) (lift o f)))) (lift l)) sequentially))) = (((real_sums f) l) = ((sums (lift o f)) (lift l))))
+T c= ! c= c--> * * part co part clift / csum * * part cINTER b0 * * part c.. cNUMERAL c_0 b1 f0 clift f1 csequentially c--> / cvsum * * part cINTER b0 * * part c.. cNUMERAL c_0 b1 * * part co part clift f0 clift f1 csequentially c= * * part creal_sums f0 f1 * * part csums * * part co part clift f0 clift f1
+- (x IN (x INTER ((NUMERAL _0) .. n))) |- ((x IN (x INTER ((NUMERAL _0) .. n))) /\ ((lift (f x)) = (lift (f x))))
+T c==> cIN f0 * * part cINTER f1 * * part c.. cNUMERAL c_0 f2 c/\ cIN f0 * * part cINTER f1 * * part c.. cNUMERAL c_0 f2 c= clift * f3 f0 clift * f3 f0
++ |- (((!f. (!g. ((f o g) = (\x. (f (g x)))))) ==> ((\f. (!g. ((f o g) = (\x. (f (g x)))))) f)) = ((\f. (!g. ((f o g) = (\x. (f (g x)))))) f))
+T c= c==> ! ! c= * * part co b0 b1 / * b0 * b1 b2 * / ! c= * * part co b0 b1 / * b0 * b1 b2 f0 * / ! c= * * part co b0 b1 / * b0 * b1 b2 f0
+- |- ((\s. (!m. (!n. (FINITE (s INTER (m .. n)))))) s)
+T * / ! ! cFINITE * * part cINTER b0 * * part c.. b1 b2 f0
++ |- ((!x. t) = t)
+T c= ! f0 f0
++ |- ((\f. (!l. ((((real_sums f) l) s) = (((---> (\n. ((sum (s INTER ((NUMERAL _0) .. n))) f))) l) sequentially)))) f)
+T * / ! c= creal_sums b0 b1 f0 c---> / csum * * part cINTER f0 * * part c.. cNUMERAL c_0 b2 b0 b1 csequentially f1
+- |- (((!x. ((x IN s) ==> ((f x) = (g x)))) ==> (((vsum s) (\x. (f x))) = ((vsum s) g))) = T)
+T c= c==> ! c==> cIN b0 f0 c= * f1 b0 * f2 b0 c= cvsum f0 / * f1 b0 cvsum f0 f2 cT
+- |- ((!x. ((x IN (x INTER ((NUMERAL _0) .. n))) ==> ((lift (f x)) = (lift (f x))))) ==> (((vsum (x INTER ((NUMERAL _0) .. n))) (\x. (lift (f x)))) = ((vsum (x INTER ((NUMERAL _0) .. n))) (\x. (lift (f x))))))
+T c==> ! c==> cIN b0 * * part cINTER f0 * * part c.. cNUMERAL c_0 f1 c= clift * f2 b0 clift * f2 b0 c= cvsum * * part cINTER f0 * * part c.. cNUMERAL c_0 f1 / clift * f2 b0 cvsum * * part cINTER f0 * * part c.. cNUMERAL c_0 f1 / clift * f2 b0
+- |- (!x. ((x IN (x INTER ((NUMERAL _0) .. n))) ==> ((lift (f x)) = (lift (f x)))))
+T c==> cIN f0 * * part cINTER f1 * * part c.. cNUMERAL c_0 f2 c= clift * f3 f0 clift * f3 f0
+- (x IN (x INTER ((NUMERAL _0) .. n))) |- ((x IN (x INTER ((NUMERAL _0) .. n))) = T)
+T c==> cIN f0 * * part cINTER f1 * * part c.. cNUMERAL c_0 f2 c= cIN f0 * * part cINTER f1 * * part c.. cNUMERAL c_0 f2 cT
++ |- ((\f. (!g. ((f o g) = (\x. (f (g x)))))) f)
+T * / ! c= * * part co b0 b1 / * b0 * b1 b2 f0
++ |- (((!l. ((((real_sums f) l) s) = (((---> (\n. ((sum (s INTER ((NUMERAL _0) .. n))) f))) l) sequentially))) ==> ((\l. ((((real_sums f) l) s) = (((---> (\n. ((sum (s INTER ((NUMERAL _0) .. n))) f))) l) sequentially))) l)) = ((\l. ((((real_sums f) l) s) = (((---> (\n. ((sum (s INTER ((NUMERAL _0) .. n))) f))) l) sequentially))) l))
+T c= c==> ! c= creal_sums f0 b0 f1 c---> / csum * * part cINTER f1 * * part c.. cNUMERAL c_0 b1 f0 b0 csequentially * / c= creal_sums f0 b0 f1 c---> / csum * * part cINTER f1 * * part c.. cNUMERAL c_0 b1 f0 b0 csequentially f2 * / c= creal_sums f0 b0 f1 c---> / csum * * part cINTER f1 * * part c.. cNUMERAL c_0 b1 f0 b0 csequentially f2
+- |- ((FINITE (s INTER (m .. n))) = T)
+T c= cFINITE * * part cINTER f0 * * part c.. f1 f2 cT
++ |- (T = (!x. ((((--> (lift o (\n. ((sum (x INTER ((NUMERAL _0) .. n))) f)))) (lift l)) sequentially) = (((--> (\n. ((vsum (x INTER ((NUMERAL _0) .. n))) (lift o f)))) (lift l)) sequentially))))
+T c= cT ! c= c--> * * part co part clift / csum * * part cINTER b0 * * part c.. cNUMERAL c_0 b1 f0 clift f1 csequentially c--> / cvsum * * part cINTER b0 * * part c.. cNUMERAL c_0 b1 * * part co part clift f0 clift f1 csequentially
++ |- (((!g. ((f = g) = (!x. ((f x) = (g x))))) ==> ((\g. ((f = g) = (!x. ((f x) = (g x))))) g)) = ((\g. ((f = g) = (!x. ((f x) = (g x))))) g))
+T c= c==> ! c= c= f0 b0 ! c= * f0 b1 * b0 b1 * / c= c= f0 b0 ! c= * f0 b1 * b0 b1 f1 * / c= c= f0 b0 ! c= * f0 b1 * b0 b1 f1
++ |- (((!k. (!x. ((lift ((sum k) x)) = ((vsum k) (lift o x))))) ==> ((\k. (!x. ((lift ((sum k) x)) = ((vsum k) (lift o x))))) k)) = ((\k. (!x. ((lift ((sum k) x)) = ((vsum k) (lift o x))))) k))
+T c= c==> ! ! c= clift csum b0 b1 cvsum b0 * * part co part clift b1 * / ! c= clift csum b0 b1 cvsum b0 * * part co part clift b1 f0 * / ! c= clift csum b0 b1 cvsum b0 * * part co part clift b1 f0
+- |- ((\n. (FINITE (s INTER (m .. n)))) n)
+T * / cFINITE * * part cINTER f0 * * part c.. f1 b0 f2
++ |- (((((--> (\x. ((vsum (x INTER ((NUMERAL _0) .. x))) (\x. (lift (f x)))))) (lift l)) sequentially) = (((--> (\n. ((vsum (x INTER ((NUMERAL _0) .. n))) (\x. (lift (f x)))))) (lift l)) sequentially)) = T)
+T c= c= c--> / cvsum * * part cINTER f0 * * part c.. cNUMERAL c_0 b0 / clift * f1 b1 clift f2 csequentially c--> / cvsum * * part cINTER f0 * * part c.. cNUMERAL c_0 b0 / clift * f1 b1 clift f2 csequentially cT
++ |- ((\x. ((lift ((sum k) x)) = ((vsum k) (lift o x)))) x)
+T * / c= clift csum f0 b0 cvsum f0 * * part co part clift b0 f1
+- |- (((!m. (!n. (FINITE (s INTER (m .. n))))) ==> ((\m. (!n. (FINITE (s INTER (m .. n))))) m)) = ((\m. (!n. (FINITE (s INTER (m .. n))))) m))
+T c= c==> ! ! cFINITE * * part cINTER f0 * * part c.. b0 b1 * / ! cFINITE * * part cINTER f0 * * part c.. b0 b1 f1 * / ! cFINITE * * part cINTER f0 * * part c.. b0 b1 f1
++ |- ((\k. (!x. ((lift ((sum k) x)) = ((vsum k) (lift o x))))) k)
+T * / ! c= clift csum b0 b1 cvsum b0 * * part co part clift b1 f0
++ |- ((\l. ((((real_sums f) l) s) = (((---> (\n. ((sum (s INTER ((NUMERAL _0) .. n))) f))) l) sequentially))) l)
+T * / c= creal_sums f0 b0 f1 c---> / csum * * part cINTER f1 * * part c.. cNUMERAL c_0 b1 f0 b0 csequentially f2
+- |- ((\m. (!n. (FINITE (s INTER (m .. n))))) m)
+T * / ! cFINITE * * part cINTER f0 * * part c.. b0 b1 f1
++ |- ((x = x) = T)
+T c= c= f0 f0 cT
++ |- (((!f. (!g. ((f = g) = (!x. ((f x) = (g x)))))) ==> ((\f. (!g. ((f = g) = (!x. ((f x) = (g x)))))) f)) = ((\f. (!g. ((f = g) = (!x. ((f x) = (g x)))))) f))
+T c= c==> ! ! c= c= b0 b1 ! c= * b0 b2 * b1 b2 * / ! c= c= b0 b1 ! c= * b0 b2 * b1 b2 f0 * / ! c= c= b0 b1 ! c= * b0 b2 * b1 b2 f0
++ |- ((\s. (!f. (!l. ((((sums f) l) s) = (((--> (\n. ((vsum (s INTER ((NUMERAL _0) .. n))) f))) l) sequentially))))) s)
+T * / ! ! c= csums b1 b2 b0 c--> / cvsum * * part cINTER b0 * * part c.. cNUMERAL c_0 b3 b1 b2 csequentially f0
++ |- (((!s. (!f. (!l. ((((real_sums f) l) s) = (((---> (\n. ((sum (s INTER ((NUMERAL _0) .. n))) f))) l) sequentially))))) ==> ((\s. (!f. (!l. ((((real_sums f) l) s) = (((---> (\n. ((sum (s INTER ((NUMERAL _0) .. n))) f))) l) sequentially))))) s)) = ((\s. (!f. (!l. ((((real_sums f) l) s) = (((---> (\n. ((sum (s INTER ((NUMERAL _0) .. n))) f))) l) sequentially))))) s))
+T c= c==> ! ! ! c= creal_sums b1 b2 b0 c---> / csum * * part cINTER b0 * * part c.. cNUMERAL c_0 b3 b1 b2 csequentially * / ! ! c= creal_sums b1 b2 b0 c---> / csum * * part cINTER b0 * * part c.. cNUMERAL c_0 b3 b1 b2 csequentially f0 * / ! ! c= creal_sums b1 b2 b0 c---> / csum * * part cINTER b0 * * part c.. cNUMERAL c_0 b3 b1 b2 csequentially f0
++ |- ((\g. ((f = g) = (!x. ((f x) = (g x))))) g)
+T * / c= c= f0 b0 ! c= * f0 b1 * b0 b1 f1
+- |- (((!s. (!m. (!n. (FINITE (s INTER (m .. n)))))) ==> ((\s. (!m. (!n. (FINITE (s INTER (m .. n)))))) s)) = ((\s. (!m. (!n. (FINITE (s INTER (m .. n)))))) s))
+T c= c==> ! ! ! cFINITE * * part cINTER b0 * * part c.. b1 b2 * / ! ! cFINITE * * part cINTER b0 * * part c.. b1 b2 f0 * / ! ! cFINITE * * part cINTER b0 * * part c.. b1 b2 f0
++ |- ((\f. (!g. ((f = g) = (!x. ((f x) = (g x)))))) f)
+T * / ! c= c= b0 b1 ! c= * b0 b2 * b1 b2 f0
++ |- ((\f. (!l. ((((sums f) l) s) = (((--> (\n. ((vsum (s INTER ((NUMERAL _0) .. n))) f))) l) sequentially)))) f)
+T * / ! c= csums b0 b1 f0 c--> / cvsum * * part cINTER f0 * * part c.. cNUMERAL c_0 b2 b0 b1 csequentially f1
+- |- (FINITE (s INTER (m .. n)))
+T cFINITE * * part cINTER f0 * * part c.. f1 f2
+- |- (((vsum (x INTER ((NUMERAL _0) .. n))) (\x. (lift (f x)))) = ((vsum (x INTER ((NUMERAL _0) .. n))) (\x. (lift (f x)))))
+T c= cvsum * * part cINTER f0 * * part c.. cNUMERAL c_0 f1 / clift * f2 b0 cvsum * * part cINTER f0 * * part c.. cNUMERAL c_0 f1 / clift * f2 b0
+- |- (((!x. ((x IN (x INTER ((NUMERAL _0) .. n))) ==> ((lift (f x)) = (lift (f x))))) ==> (((vsum (x INTER ((NUMERAL _0) .. n))) (\x. (lift (f x)))) = ((vsum (x INTER ((NUMERAL _0) .. n))) (\x. (lift (f x)))))) = (((vsum (x INTER ((NUMERAL _0) .. n))) (\x. (lift (f x)))) = ((vsum (x INTER ((NUMERAL _0) .. n))) (\x. (lift (f x))))))
+T c= c==> ! c==> cIN b0 * * part cINTER f0 * * part c.. cNUMERAL c_0 f1 c= clift * f2 b0 clift * f2 b0 c= cvsum * * part cINTER f0 * * part c.. cNUMERAL c_0 f1 / clift * f2 b0 cvsum * * part cINTER f0 * * part c.. cNUMERAL c_0 f1 / clift * f2 b0 c= cvsum * * part cINTER f0 * * part c.. cNUMERAL c_0 f1 / clift * f2 b0 cvsum * * part cINTER f0 * * part c.. cNUMERAL c_0 f1 / clift * f2 b0
+- |- (((!g. ((!x. ((x IN (x INTER ((NUMERAL _0) .. n))) ==> ((lift (f x)) = (g x)))) ==> (((vsum (x INTER ((NUMERAL _0) .. n))) (\x. (lift (f x)))) = ((vsum (x INTER ((NUMERAL _0) .. n))) g)))) ==> ((\g. ((!x. ((x IN (x INTER ((NUMERAL _0) .. n))) ==> ((lift (f x)) = (g x)))) ==> (((vsum (x INTER ((NUMERAL _0) .. n))) (\x. (lift (f x)))) = ((vsum (x INTER ((NUMERAL _0) .. n))) g)))) g)) = ((\g. ((!x. ((x IN (x INTER ((NUMERAL _0) .. n))) ==> ((lift (f x)) = (g x)))) ==> (((vsum (x INTER ((NUMERAL _0) .. n))) (\x. (lift (f x)))) = ((vsum (x INTER ((NUMERAL _0) .. n))) g)))) g))
+T c= c==> ! c==> ! c==> cIN b1 * * part cINTER f0 * * part c.. cNUMERAL c_0 f1 c= clift * f2 b1 * b0 b1 c= cvsum * * part cINTER f0 * * part c.. cNUMERAL c_0 f1 / clift * f2 b1 cvsum * * part cINTER f0 * * part c.. cNUMERAL c_0 f1 b0 * / c==> ! c==> cIN b1 * * part cINTER f0 * * part c.. cNUMERAL c_0 f1 c= clift * f2 b1 * b0 b1 c= cvsum * * part cINTER f0 * * part c.. cNUMERAL c_0 f1 / clift * f2 b1 cvsum * * part cINTER f0 * * part c.. cNUMERAL c_0 f1 b0 f3 * / c==> ! c==> cIN b1 * * part cINTER f0 * * part c.. cNUMERAL c_0 f1 c= clift * f2 b1 * b0 b1 c= cvsum * * part cINTER f0 * * part c.. cNUMERAL c_0 f1 / clift * f2 b1 cvsum * * part cINTER f0 * * part c.. cNUMERAL c_0 f1 b0 f3
+- |- (!g. ((!x. ((x IN s) ==> ((f x) = (g x)))) ==> (((vsum s) (\x. (f x))) = ((vsum s) g))))
+T c==> ! c==> cIN b0 f0 c= * f1 b0 * f2 b0 c= cvsum f0 / * f1 b0 cvsum f0 f2
+- |- (((!n. (FINITE (s INTER (m .. n)))) ==> ((\n. (FINITE (s INTER (m .. n)))) n)) = ((\n. (FINITE (s INTER (m .. n)))) n))
+T c= c==> ! cFINITE * * part cINTER f0 * * part c.. f1 b0 * / cFINITE * * part cINTER f0 * * part c.. f1 b0 f2 * / cFINITE * * part cINTER f0 * * part c.. f1 b0 f2
+- |- (((\n. (f n)) y) = (f y))
+T c= * / * f0 b0 f1 * f0 f1
+- |- ((!x. ((x IN (x INTER ((NUMERAL _0) .. n))) ==> ((lift (f x)) = (g x)))) ==> (((vsum (x INTER ((NUMERAL _0) .. n))) (\x. (lift (f x)))) = ((vsum (x INTER ((NUMERAL _0) .. n))) g)))
+T c==> ! c==> cIN b0 * * part cINTER f0 * * part c.. cNUMERAL c_0 f1 c= clift * f2 b0 * f3 b0 c= cvsum * * part cINTER f0 * * part c.. cNUMERAL c_0 f1 / clift * f2 b0 cvsum * * part cINTER f0 * * part c.. cNUMERAL c_0 f1 f3

@@ -1,0 +1,53 @@
+N Aq8.flatten_rev
+C |- (!r. ((flatten (rev ((map (rev o f)) r))) = (rev (flatten ((map f) r)))))
+T c= cflatten crev cmap * * part co part crev f0 f1 crev cflatten cmap f0 f1
+D TRUTH
+A |- T
+T cT
+D o_DEF
+A |- (!f. (!g. ((f o g) = (\x. (f (g x))))))
+T c= * * part co f0 f1 / * f0 * f1 b0
+D list_INDUCT
+A |- (!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x))))
+T c==> c/\ * f0 cNIL ! ! c==> * f0 b1 * f0 cCONS b0 b1 ! * f0 b0
+D Seq.cats0
+A |- (!s. (((cat s) NIL) = s))
+T c= ccat f0 cNIL f0
+D Seq.cats1
+A |- (!s. (!z. (((cat s) ((CONS z) NIL)) = ((rcons s) z))))
+T c= ccat f0 cCONS f1 cNIL crcons f0 f1
+D Seq.rev_cons
+A |- (!x. (!s. ((rev ((CONS x) s)) = ((rcons (rev s)) x))))
+T c= crev cCONS f0 f1 crcons crev f1 f0
+D Seq.rev_cat
+A |- (!s. (!t. ((rev ((cat s) t)) = ((cat (rev t)) (rev s)))))
+T c= crev ccat f0 f1 ccat crev f1 crev f0
+D Seq.map
+A |- ((((map f) ((CONS x) s)) = ((CONS (f x)) ((map f) s))) /\ (((map f) NIL) = NIL))
+T c/\ c= cmap f0 cCONS f1 f2 cCONS * f0 f1 cmap f0 f2 c= cmap f0 cNIL cNIL
+D Seq.map_cat
+A |- (!f. (!s1. (!s2. (((map f) ((cat s1) s2)) = ((cat ((map f) s1)) ((map f) s2))))))
+T c= cmap f0 ccat f1 f2 ccat cmap f0 f1 cmap f0 f2
+D Seq.map_rev
+A |- (!f. (!s. (((map f) (rev s)) = (rev ((map f) s)))))
+T c= cmap f0 crev f1 crev cmap f0 f1
+D Seq.flatten0
+A |- ((flatten NIL) = NIL)
+T c= cflatten cNIL cNIL
+D Seq.flatten_cons
+A |- (!s. (!ss. ((flatten ((CONS s) ss)) = ((cat s) (flatten ss)))))
+T c= cflatten cCONS f0 f1 ccat f0 cflatten f1
+D Seq.flatten_cat
+A |- (!ss1. (!ss2. ((flatten ((cat ss1) ss2)) = ((cat (flatten ss1)) (flatten ss2)))))
+T c= cflatten ccat f0 f1 ccat cflatten f0 cflatten f1
+D Tame_list.rev0
+A |- ((rev NIL) = NIL)
+T c= crev cNIL cNIL
+- ((flatten (rev ((map (rev o f)) t))) = (rev (flatten ((map f) t)))) |- (((flatten (rev ((map (rev o f)) t))) = (rev (flatten ((map f) t)))) /\ (((cat (flatten ((map (rev o f)) (rev t)))) ((cat ((rev o f) h)) NIL)) = ((cat (rev (flatten ((map f) t)))) (rev (f h)))))
+T c==> c= cflatten crev cmap * * part co part crev f0 f1 crev cflatten cmap f0 f1 c/\ c= cflatten crev cmap * * part co part crev f0 f1 crev cflatten cmap f0 f1 c= ccat cflatten cmap * * part co part crev f0 crev f1 ccat co part crev f0 f2 cNIL ccat crev cflatten cmap f0 f1 crev * f0 f2
++ |- ((((flatten (rev ((map (rev o f)) NIL))) = (rev (flatten ((map f) NIL)))) /\ (!h. (!t. (((flatten (rev ((map (rev o f)) t))) = (rev (flatten ((map f) t)))) ==> ((flatten (rev ((map (rev o f)) ((CONS h) t)))) = (rev (flatten ((map f) ((CONS h) t))))))))) ==> (!r. ((flatten (rev ((map (rev o f)) r))) = (rev (flatten ((map f) r))))))
+T c==> c/\ c= cflatten crev cmap * * part co part crev f0 cNIL crev cflatten cmap f0 cNIL ! ! c==> c= cflatten crev cmap * * part co part crev f0 b1 crev cflatten cmap f0 b1 c= cflatten crev cmap * * part co part crev f0 cCONS b0 b1 crev cflatten cmap f0 cCONS b0 b1 ! c= cflatten crev cmap * * part co part crev f0 b0 crev cflatten cmap f0 b0
++ |- ((((cat (flatten ((map (rev o f)) (rev t)))) ((cat ((rev o f) h)) NIL)) = ((cat (rev (flatten ((map f) t)))) (rev (f h)))) = ((flatten (rev ((map (rev o f)) ((CONS h) t)))) = (rev (flatten ((map f) ((CONS h) t))))))
+T c= c= ccat cflatten cmap * * part co part crev f0 crev f1 ccat co part crev f0 f2 cNIL ccat crev cflatten cmap f0 f1 crev * f0 f2 c= cflatten crev cmap * * part co part crev f0 cCONS f2 f1 crev cflatten cmap f0 cCONS f2 f1
+- |- (((\x. (f x)) y) = (f y))
+T c= * / * f0 b0 f1 * f0 f1

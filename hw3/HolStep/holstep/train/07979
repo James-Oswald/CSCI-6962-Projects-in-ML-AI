@@ -1,0 +1,70 @@
+N Ssrnat.sqrn_add
+C |- (!m. (!n. (((m + n) EXP (NUMERAL (BIT0 (BIT1 _0)))) = (((m EXP (NUMERAL (BIT0 (BIT1 _0)))) + (n EXP (NUMERAL (BIT0 (BIT1 _0))))) + ((NUMERAL (BIT0 (BIT1 _0))) * (m * n))))))
+T c= cEXP c+ f0 f1 cNUMERAL cBIT0 cBIT1 c_0 c+ c+ cEXP f0 cNUMERAL cBIT0 cBIT1 c_0 cEXP f1 cNUMERAL cBIT0 cBIT1 c_0 c* cNUMERAL cBIT0 cBIT1 c_0 c* f0 f1
+D Ssrnat.addnC
+A |- (!m. (!n. ((m + n) = (n + m))))
+T c= c+ f0 f1 c+ f1 f0
+D EQ_ADD_LCANCEL
+A |- (!m. (!n. (!p. (((m + n) = (m + p)) = (n = p)))))
+T c= c= c+ f0 f1 c+ f0 f2 c= f1 f2
+D MULT_SYM
+A |- (!m. (!n. ((m * n) = (n * m))))
+T c= c* f0 f1 c* f1 f0
+D Ssrnat.addnA
+A |- (!n. (!m. (!p. ((n + (m + p)) = ((n + m) + p)))))
+T c= c+ f0 c+ f1 f2 c+ c+ f0 f1 f2
+D Ssrnat.muln_addl
+A |- (!m1. (!m2. (!n. (((m1 + m2) * n) = ((m1 * n) + (m2 * n))))))
+T c= c* c+ f0 f1 f2 c+ c* f0 f2 c* f1 f2
+D Ssrnat.muln_addr
+A |- (!m. (!n1. (!n2. ((m * (n1 + n2)) = ((m * n1) + (m * n2))))))
+T c= c* f0 c+ f1 f2 c+ c* f0 f1 c* f0 f2
+D Ssrnat.addnn
+A |- (!n. ((n + n) = (double n)))
+T c= c+ f0 f0 cdouble f0
+D Ssrnat.mul2n
+A |- (!m. (((NUMERAL (BIT0 (BIT1 _0))) * m) = (double m)))
+T c= c* cNUMERAL cBIT0 cBIT1 c_0 f0 cdouble f0
+D Ssrnat.mulnn
+A |- (!m. ((m * m) = (m EXP (NUMERAL (BIT0 (BIT1 _0))))))
+T c= c* f0 f0 cEXP f0 cNUMERAL cBIT0 cBIT1 c_0
++ |- (((((m + n) * m) + ((m + n) * n)) = (((m * m) + (n * n)) + (double (m * n)))) = (((m + n) * (m + n)) = (((m * m) + (n * n)) + (double (m * n)))))
+T c= c= c+ c* c+ f0 f1 f0 c* c+ f0 f1 f1 c+ c+ c* f0 f0 c* f1 f1 cdouble c* f0 f1 c= c* c+ f0 f1 c+ f0 f1 c+ c+ c* f0 f0 c* f1 f1 cdouble c* f0 f1
++ |- (((((m * m) + (n * m)) + ((m + n) * n)) = (((m * m) + (n * n)) + (double (m * n)))) = ((((m + n) * m) + ((m + n) * n)) = (((m * m) + (n * n)) + (double (m * n)))))
+T c= c= c+ c+ c* f0 f0 c* f1 f0 c* c+ f0 f1 f1 c+ c+ c* f0 f0 c* f1 f1 cdouble c* f0 f1 c= c+ c* c+ f0 f1 f0 c* c+ f0 f1 f1 c+ c+ c* f0 f0 c* f1 f1 cdouble c* f0 f1
++ ((m EXP (NUMERAL (BIT0 (BIT1 _0)))) = (m * m)) |- ((m * m) = (m EXP (NUMERAL (BIT0 (BIT1 _0)))))
+T c==> c= cEXP f0 cNUMERAL cBIT0 cBIT1 c_0 c* f0 f0 c= c* f0 f0 cEXP f0 cNUMERAL cBIT0 cBIT1 c_0
+- ((!x. (P ==> (Q x))) = (P ==> (!x. (Q x)))) |- ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))
+T c==> c= ! c==> f0 * f1 b0 c==> f0 ! * f1 b0 c= c==> f0 ! * f1 b0 ! c==> f0 * f1 b0
++ |- (((!n. ((m + n) = (n + m))) ==> ((\n. ((m + n) = (n + m))) n)) = ((\n. ((m + n) = (n + m))) n))
+T c= c==> ! c= c+ f0 b0 c+ b0 f0 * / c= c+ f0 b0 c+ b0 f0 f1 * / c= c+ f0 b0 c+ b0 f0 f1
++ |- (((!p. ((n + (m + p)) = ((n + m) + p))) ==> ((\p. ((n + (m + p)) = ((n + m) + p))) p)) = ((\p. ((n + (m + p)) = ((n + m) + p))) p))
+T c= c==> ! c= c+ f0 c+ f1 b0 c+ c+ f0 f1 b0 * / c= c+ f0 c+ f1 b0 c+ c+ f0 f1 b0 f2 * / c= c+ f0 c+ f1 b0 c+ c+ f0 f1 b0 f2
++ |- (((!m. (!p. ((n + (m + p)) = ((n + m) + p)))) ==> ((\m. (!p. ((n + (m + p)) = ((n + m) + p)))) m)) = ((\m. (!p. ((n + (m + p)) = ((n + m) + p)))) m))
+T c= c==> ! ! c= c+ f0 c+ b0 b1 c+ c+ f0 b0 b1 * / ! c= c+ f0 c+ b0 b1 c+ c+ f0 b0 b1 f1 * / ! c= c+ f0 c+ b0 b1 c+ c+ f0 b0 b1 f1
++ |- ((((m * n) + ((m * n) + (n * n))) = ((n * n) + (double (m * n)))) = (((m * m) + ((m * n) + ((m * n) + (n * n)))) = ((m * m) + ((n * n) + (double (m * n))))))
+T c= c= c+ c* f0 f1 c+ c* f0 f1 c* f1 f1 c+ c* f1 f1 cdouble c* f0 f1 c= c+ c* f0 f0 c+ c* f0 f1 c+ c* f0 f1 c* f1 f1 c+ c* f0 f0 c+ c* f1 f1 cdouble c* f0 f1
+- |- ((\P. (!Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x)))))) P)
+T * / ! c= c==> b0 ! * b1 b2 ! c==> b0 * b1 b2 f0
++ |- (((!n1. (!n2. ((m * (n1 + n2)) = ((m * n1) + (m * n2))))) ==> ((\n1. (!n2. ((m * (n1 + n2)) = ((m * n1) + (m * n2))))) n1)) = ((\n1. (!n2. ((m * (n1 + n2)) = ((m * n1) + (m * n2))))) n1))
+T c= c==> ! ! c= c* f0 c+ b0 b1 c+ c* f0 b0 c* f0 b1 * / ! c= c* f0 c+ b0 b1 c+ c* f0 b0 c* f0 b1 f1 * / ! c= c* f0 c+ b0 b1 c+ c* f0 b0 c* f0 b1 f1
++ |- (((!n2. ((m * (n1 + n2)) = ((m * n1) + (m * n2)))) ==> ((\n2. ((m * (n1 + n2)) = ((m * n1) + (m * n2)))) n2)) = ((\n2. ((m * (n1 + n2)) = ((m * n1) + (m * n2)))) n2))
+T c= c==> ! c= c* f0 c+ f1 b0 c+ c* f0 f1 c* f0 b0 * / c= c* f0 c+ f1 b0 c+ c* f0 f1 c* f0 b0 f2 * / c= c* f0 c+ f1 b0 c+ c* f0 f1 c* f0 b0 f2
++ |- (((!n. (!m. (!p. (((n + m) + p) = (n + (m + p)))))) ==> ((\n. (!m. (!p. (((n + m) + p) = (n + (m + p)))))) n)) = ((\n. (!m. (!p. (((n + m) + p) = (n + (m + p)))))) n))
+T c= c==> ! ! ! c= c+ c+ b0 b1 b2 c+ b0 c+ b1 b2 * / ! ! c= c+ c+ b0 b1 b2 c+ b0 c+ b1 b2 f0 * / ! ! c= c+ c+ b0 b1 b2 c+ b0 c+ b1 b2 f0
+- |- ((((n * n) + (double (m * n))) = ((n * n) + (double (m * n)))) = (((double (m * n)) + (n * n)) = ((n * n) + (double (m * n)))))
+T c= c= c+ c* f0 f0 cdouble c* f1 f0 c+ c* f0 f0 cdouble c* f1 f0 c= c+ cdouble c* f1 f0 c* f0 f0 c+ c* f0 f0 cdouble c* f1 f0
+- |- ((x = x) = T)
+T c= c= f0 f0 cT
+- |- ((\Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))) Q)
+T * / c= c==> f0 ! * b0 b1 ! c==> f0 * b0 b1 f1
+- |- (((!P. (!Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x)))))) ==> ((\P. (!Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x)))))) P)) = ((\P. (!Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x)))))) P))
+T c= c==> ! ! c= c==> b0 ! * b1 b2 ! c==> b0 * b1 b2 * / ! c= c==> b0 ! * b1 b2 ! c==> b0 * b1 b2 f0 * / ! c= c==> b0 ! * b1 b2 ! c==> b0 * b1 b2 f0
+- ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x)))) |- ((!x. (P ==> (Q x))) = (P ==> (!x. (Q x))))
+T c==> c= c==> f0 ! * f1 b0 ! c==> f0 * f1 b0 c= ! c==> f0 * f1 b0 c==> f0 ! * f1 b0
+- |- ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))
+T c= c==> f0 ! * f1 b0 ! c==> f0 * f1 b0
+- |- (((!Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))) ==> ((\Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))) Q)) = ((\Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))) Q))
+T c= c==> ! c= c==> f0 ! * b0 b1 ! c==> f0 * b0 b1 * / c= c==> f0 ! * b0 b1 ! c==> f0 * b0 b1 f1 * / c= c==> f0 ! * b0 b1 ! c==> f0 * b0 b1 f1
+- |- (T = (((n * n) + (double (m * n))) = ((n * n) + (double (m * n)))))
+T c= cT c= c+ c* f0 f0 cdouble c* f1 f0 c+ c* f0 f0 cdouble c* f1 f0

@@ -1,0 +1,399 @@
+N List_hypermap.mem_find_list
+C |- (!x. (!L. (((MEM x) (flatten L)) ==> ((MEM ((find_list L) x)) L))))
+T c==> cMEM f0 cflatten f1 cMEM cfind_list f1 f0 f1
+D TRUTH
+A |- T
+T cT
+D COND_CLAUSES
+A |- (!t1. (!t2. (((((COND T) t1) t2) = t1) /\ ((((COND F) t1) t2) = t2))))
+T c/\ c= cCOND cT f0 f1 f0 c= cCOND cF f0 f1 f1
+D list_INDUCT
+A |- (!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x))))
+T c==> c/\ * f0 cNIL ! ! c==> * f0 b1 * f0 cCONS b0 b1 ! * f0 b0
+D MEM
+A |- ((((MEM x) NIL) = F) /\ (((MEM x) ((CONS h) t)) = ((x = h) \/ ((MEM x) t))))
+T c/\ c= cMEM f0 cNIL cF c= cMEM f0 cCONS f1 f2 c\/ c= f0 f1 cMEM f0 f2
+D ssreflect_eq_def
+A |- (!v. (!P. (((ssreflect_eq v) P) = P)))
+T c= cssreflect_eq f0 f1 f1
+D bool_elim
+A |- (!P. (((P T) /\ (P F)) ==> (!x. (P x))))
+T c==> c/\ * f0 cT * f0 cF ! * f0 b0
+D Seq2.mem_flatten
+A |- (!x. (!L. (((MEM x) (flatten L)) = (?l. (((MEM l) L) /\ ((MEM x) l))))))
+T c= cMEM f0 cflatten f1 c? / c/\ cMEM b0 f1 cMEM f0 b0
+D List_hypermap.find_list
+A |- (!h. (!t. (!x. ((((find_list NIL) x) = NIL) /\ (((find_list ((CONS h) t)) x) = (((COND ((MEM x) h)) h) ((find_list t) x)))))))
+T c/\ c= cfind_list cNIL f0 cNIL c= cfind_list cCONS f1 f2 f0 cCOND cMEM f0 f1 f1 cfind_list f2 f0
++ |- ((t = F) = (~ t))
+T c= c= f0 cF c~ f0
+- |- ((((\x1. (((MEM x) h) = x1)) x1) ==> (?x1. (((MEM x) h) = x1))) = T)
+T c= c==> * / c= cMEM f0 f1 b0 f2 c? / c= cMEM f0 f1 b0 cT
++ |- ((((ssreflect_eq xh) ((MEM x) h)) ==> (((MEM (((COND T) h) ((find_list t) x))) ((CONS h) t)) = q')) ==> ((((ssreflect_eq xh) (((MEM x) h) = T)) ==> ((MEM (((COND T) h) ((find_list t) x))) ((CONS h) t))) = (((ssreflect_eq xh) ((MEM x) h)) ==> q')))
+T c==> c==> cssreflect_eq f0 cMEM f1 f2 c= cMEM cCOND cT f2 cfind_list f3 f1 cCONS f2 f3 f4 c= c==> cssreflect_eq f0 c= cMEM f1 f2 cT cMEM cCOND cT f2 cfind_list f3 f1 cCONS f2 f3 c==> cssreflect_eq f0 cMEM f1 f2 f4
++ |- ((\L. (((MEM x) (flatten L)) = (?l. (((MEM l) L) /\ ((MEM x) l))))) L)
+T * / c= cMEM f0 cflatten b0 c? / c/\ cMEM b1 b0 cMEM f0 b1 f1
+- ((P T) /\ (P F)) |- ((!P. (((P T) /\ (P F)) ==> (!x. (P x)))) ==> (!x. (P x)))
+T c==> c/\ * f0 cT * f0 cF c==> ! c==> c/\ * b0 cT * b0 cF ! * b0 b1 ! * f0 b0
+- |- (((!t. ((((MEM x) NIL) = F) /\ (((MEM x) ((CONS h) t)) = ((x = h) \/ ((MEM x) t))))) ==> ((\t. ((((MEM x) NIL) = F) /\ (((MEM x) ((CONS h) t)) = ((x = h) \/ ((MEM x) t))))) t)) = ((\t. ((((MEM x) NIL) = F) /\ (((MEM x) ((CONS h) t)) = ((x = h) \/ ((MEM x) t))))) t))
+T c= c==> ! c/\ c= cMEM f0 cNIL cF c= cMEM f0 cCONS f1 b0 c\/ c= f0 f1 cMEM f0 b0 * / c/\ c= cMEM f0 cNIL cF c= cMEM f0 cCONS f1 b0 c\/ c= f0 f1 cMEM f0 b0 f2 * / c/\ c= cMEM f0 cNIL cF c= cMEM f0 cCONS f1 b0 c\/ c= f0 f1 cMEM f0 b0 f2
++ |- ((h = h) \/ ((MEM h) t))
+T c\/ c= f0 f0 cMEM f0 f1
+- ((!x. (P ==> (Q x))) = (P ==> (!x. (Q x)))) |- ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))
+T c==> c= ! c==> f0 * f1 b0 c==> f0 ! * f1 b0 c= c==> f0 ! * f1 b0 ! c==> f0 * f1 b0
++ |- (P = ((ssreflect_eq xh) P))
+T c= f0 cssreflect_eq f1 f0
++ ((((MEM l) t) /\ ((MEM x) l)) ==> ((MEM ((find_list t) x)) t)) |- ((((((MEM l) t) /\ ((MEM x) l)) ==> (((MEM ((find_list t) x)) t) = T)) ==> ((((find_list t) x) = h) \/ ((MEM ((find_list t) x)) t))) = ((((find_list t) x) = h) \/ ((MEM ((find_list t) x)) t)))
+T c==> c==> c/\ cMEM f0 f1 cMEM f2 f0 cMEM cfind_list f1 f2 f1 c= c==> c==> c/\ cMEM f0 f1 cMEM f2 f0 c= cMEM cfind_list f1 f2 f1 cT c\/ c= cfind_list f1 f2 f3 cMEM cfind_list f1 f2 f1 c\/ c= cfind_list f1 f2 f3 cMEM cfind_list f1 f2 f1
+- ((((MEM l) t) /\ ((MEM x) l)) ==> ((MEM ((find_list t) x)) t)) |- (((((MEM l) t) /\ ((MEM x) l)) ==> ((MEM ((find_list t) x)) t)) = T)
+T c==> c==> c/\ cMEM f0 f1 cMEM f2 f0 cMEM cfind_list f1 f2 f1 c= c==> c/\ cMEM f0 f1 cMEM f2 f0 cMEM cfind_list f1 f2 f1 cT
+- |- ((\P. (!Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x)))))) P)
+T * / ! c= c==> b0 ! * b1 b2 ! c==> b0 * b1 b2 f0
++ |- (((!p'. (!q'. ((((ssreflect_eq xh) (((MEM x) h) = T)) = p') ==> ((p' ==> (((MEM (((COND T) h) ((find_list t) x))) ((CONS h) t)) = q')) ==> ((((ssreflect_eq xh) (((MEM x) h) = T)) ==> ((MEM (((COND T) h) ((find_list t) x))) ((CONS h) t))) = (p' ==> q')))))) ==> ((\p'. (!q'. ((((ssreflect_eq xh) (((MEM x) h) = T)) = p') ==> ((p' ==> (((MEM (((COND T) h) ((find_list t) x))) ((CONS h) t)) = q')) ==> ((((ssreflect_eq xh) (((MEM x) h) = T)) ==> ((MEM (((COND T) h) ((find_list t) x))) ((CONS h) t))) = (p' ==> q')))))) p')) = ((\p'. (!q'. ((((ssreflect_eq xh) (((MEM x) h) = T)) = p') ==> ((p' ==> (((MEM (((COND T) h) ((find_list t) x))) ((CONS h) t)) = q')) ==> ((((ssreflect_eq xh) (((MEM x) h) = T)) ==> ((MEM (((COND T) h) ((find_list t) x))) ((CONS h) t))) = (p' ==> q')))))) p'))
+T c= c==> ! ! c==> c= cssreflect_eq f0 c= cMEM f1 f2 cT b0 c==> c==> b0 c= cMEM cCOND cT f2 cfind_list f3 f1 cCONS f2 f3 b1 c= c==> cssreflect_eq f0 c= cMEM f1 f2 cT cMEM cCOND cT f2 cfind_list f3 f1 cCONS f2 f3 c==> b0 b1 * / ! c==> c= cssreflect_eq f0 c= cMEM f1 f2 cT b0 c==> c==> b0 c= cMEM cCOND cT f2 cfind_list f3 f1 cCONS f2 f3 b1 c= c==> cssreflect_eq f0 c= cMEM f1 f2 cT cMEM cCOND cT f2 cfind_list f3 f1 cCONS f2 f3 c==> b0 b1 f4 * / ! c==> c= cssreflect_eq f0 c= cMEM f1 f2 cT b0 c==> c==> b0 c= cMEM cCOND cT f2 cfind_list f3 f1 cCONS f2 f3 b1 c= c==> cssreflect_eq f0 c= cMEM f1 f2 cT cMEM cCOND cT f2 cfind_list f3 f1 cCONS f2 f3 c==> b0 b1 f4
++ (L = L1) |- ((((MEM l) L1) /\ ((MEM x) l)) ==> ((MEM ((find_list L) x)) L))
+T c==> c= f0 f1 c==> c/\ cMEM f2 f1 cMEM f3 f2 cMEM cfind_list f0 f3 f0
+- |- (((ssreflect_eq xh) (~ ((MEM x) h))) ==> (((MEM ((find_list t) x)) ((CONS h) t)) = ((MEM ((find_list t) x)) ((CONS h) t))))
+T c==> cssreflect_eq f0 c~ cMEM f1 f2 c= cMEM cfind_list f3 f1 cCONS f2 f3 cMEM cfind_list f3 f1 cCONS f2 f3
++ |- ((?L1. (L = L1)) ==> ((((MEM l) L) /\ ((MEM x) l)) ==> ((MEM ((find_list L) x)) L)))
+T c==> c? / c= f0 b0 c==> c/\ cMEM f1 f0 cMEM f2 f1 cMEM cfind_list f0 f2 f0
++ ((MEM x) l), ((MEM l) t) |- (((((MEM l) t) /\ ((MEM x) l)) ==> (((MEM ((find_list t) x)) t) = T)) ==> ((((find_list t) x) = h) \/ ((MEM ((find_list t) x)) t)))
+T c==> cMEM f0 f1 c==> cMEM f1 f2 c==> c==> c/\ cMEM f1 f2 cMEM f0 f1 c= cMEM cfind_list f2 f0 f2 cT c\/ c= cfind_list f2 f0 f3 cMEM cfind_list f2 f0 f2
++ |- ((t \/ T) = T)
+T c= c\/ f0 cT cT
++ ((MEM x) l), ((MEM l) t) |- ((((MEM l) t) /\ ((MEM x) l)) /\ ((((MEM ((find_list t) x)) t) = T) ==> ((((find_list t) x) = h) \/ ((MEM ((find_list t) x)) t))))
+T c==> cMEM f0 f1 c==> cMEM f1 f2 c/\ c/\ cMEM f1 f2 cMEM f0 f1 c==> c= cMEM cfind_list f2 f0 f2 cT c\/ c= cfind_list f2 f0 f3 cMEM cfind_list f2 f0 f2
++ |- ((!a0. (!a1. (((((MEM l) a1) /\ ((MEM x) l)) ==> ((MEM ((find_list a1) x)) a1)) ==> ((((MEM l) ((CONS a0) a1)) /\ ((MEM x) l)) ==> ((MEM ((find_list ((CONS a0) a1)) x)) ((CONS a0) a1)))))) = (((((MEM l) NIL) /\ ((MEM x) l)) ==> ((MEM ((find_list NIL) x)) NIL)) /\ (!a0. (!a1. (((((MEM l) a1) /\ ((MEM x) l)) ==> ((MEM ((find_list a1) x)) a1)) ==> ((((MEM l) ((CONS a0) a1)) /\ ((MEM x) l)) ==> ((MEM ((find_list ((CONS a0) a1)) x)) ((CONS a0) a1))))))))
+T c= ! ! c==> c==> c/\ cMEM f0 b1 cMEM f1 f0 cMEM cfind_list b1 f1 b1 c==> c/\ cMEM f0 cCONS b0 b1 cMEM f1 f0 cMEM cfind_list cCONS b0 b1 f1 cCONS b0 b1 c/\ c==> c/\ cMEM f0 cNIL cMEM f1 f0 cMEM cfind_list cNIL f1 cNIL ! ! c==> c==> c/\ cMEM f0 b1 cMEM f1 f0 cMEM cfind_list b1 f1 b1 c==> c/\ cMEM f0 cCONS b0 b1 cMEM f1 f0 cMEM cfind_list cCONS b0 b1 f1 cCONS b0 b1
+- |- ((((ssreflect_eq xh) ((MEM x) h)) ==> ((MEM h) ((CONS h) t))) = (((ssreflect_eq xh) ((MEM x) h)) ==> ((MEM h) ((CONS h) t))))
+T c= c==> cssreflect_eq f0 cMEM f1 f2 cMEM f2 cCONS f2 f3 c==> cssreflect_eq f0 cMEM f1 f2 cMEM f2 cCONS f2 f3
++ |- (((?l. (P l)) ==> Q) = (!l. ((P l) ==> Q)))
+T c= c==> c? / * f0 b0 f1 ! c==> * f0 b0 f1
++ |- (((((l = h) \/ ((MEM l) t)) /\ ((MEM x) l)) ==> ((MEM (((COND ((MEM x) h)) h) ((find_list t) x))) ((CONS h) t))) = ((((l = h) \/ ((MEM l) t)) /\ ((MEM x) l)) ==> ((MEM ((find_list ((CONS h) t)) x)) ((CONS h) t))))
+T c= c==> c/\ c\/ c= f0 f1 cMEM f0 f2 cMEM f3 f0 cMEM cCOND cMEM f3 f1 f1 cfind_list f2 f3 cCONS f1 f2 c==> c/\ c\/ c= f0 f1 cMEM f0 f2 cMEM f3 f0 cMEM cfind_list cCONS f1 f2 f3 cCONS f1 f2
++ (((MEM l) t) ==> (((MEM x) l) ==> ((MEM (((COND ((MEM x) h)) h) ((find_list t) x))) ((CONS h) t)))), ((l = h) \/ ((MEM l) t)) |- (((MEM x) l) ==> ((MEM (((COND ((MEM x) h)) h) ((find_list t) x))) ((CONS h) t)))
+T c==> c==> cMEM f0 f1 c==> cMEM f2 f0 cMEM cCOND cMEM f2 f3 f3 cfind_list f1 f2 cCONS f3 f1 c==> c\/ c= f0 f3 cMEM f0 f1 c==> cMEM f2 f0 cMEM cCOND cMEM f2 f3 f3 cfind_list f1 f2 cCONS f3 f1
+- |- ((?x1. (((MEM x) h) = x1)) ==> (?x1. (((MEM x) h) = x1)))
+T c==> c? / c= cMEM f0 f1 b0 c? / c= cMEM f0 f1 b0
++ |- ((?l. (((MEM l) L) /\ ((MEM x) l))) ==> ((MEM ((find_list L) x)) L))
+T c==> c? / c/\ cMEM b0 f0 cMEM f1 b0 cMEM cfind_list f0 f1 f0
++ |- ((\P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))) P)
+T * / c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 f0
+- |- (((ssreflect_eq xh) ((MEM x) h)) ==> (((MEM h) ((CONS h) t)) = ((MEM h) ((CONS h) t))))
+T c==> cssreflect_eq f0 cMEM f1 f2 c= cMEM f2 cCONS f2 f3 cMEM f2 cCONS f2 f3
++ (((MEM x) h) = x1) |- (((MEM (((COND x1) h) ((find_list t) x))) ((CONS h) t)) = ((MEM (((COND ((MEM x) h)) h) ((find_list t) x))) ((CONS h) t)))
+T c==> c= cMEM f0 f1 f2 c= cMEM cCOND f2 f1 cfind_list f3 f0 cCONS f1 f3 cMEM cCOND cMEM f0 f1 f1 cfind_list f3 f0 cCONS f1 f3
+- |- ((((ssreflect_eq xh) (~ ((MEM x) h))) = p') ==> ((p' ==> (((MEM ((find_list t) x)) ((CONS h) t)) = q')) ==> ((((ssreflect_eq xh) (~ ((MEM x) h))) ==> ((MEM ((find_list t) x)) ((CONS h) t))) = (p' ==> q'))))
+T c==> c= cssreflect_eq f0 c~ cMEM f1 f2 f3 c==> c==> f3 c= cMEM cfind_list f4 f1 cCONS f2 f4 f5 c= c==> cssreflect_eq f0 c~ cMEM f1 f2 cMEM cfind_list f4 f1 cCONS f2 f4 c==> f3 f5
++ (L = L1) |- (((((MEM l) L1) /\ ((MEM x) l)) ==> ((MEM ((find_list L1) x)) L)) = ((((MEM l) L1) /\ ((MEM x) l)) ==> ((MEM ((find_list L) x)) L)))
+T c==> c= f0 f1 c= c==> c/\ cMEM f2 f1 cMEM f3 f2 cMEM cfind_list f1 f3 f0 c==> c/\ cMEM f2 f1 cMEM f3 f2 cMEM cfind_list f0 f3 f0
+- ((ssreflect_eq xh) ((MEM x) h)) |- ((MEM x) h)
+T c==> cssreflect_eq f0 cMEM f1 f2 cMEM f1 f2
++ |- ((((ssreflect_eq xh) (((MEM x) h) = T)) ==> ((MEM (((COND T) h) ((find_list t) x))) ((CONS h) t))) = (((ssreflect_eq xh) ((MEM x) h)) ==> ((MEM h) ((CONS h) t))))
+T c= c==> cssreflect_eq f0 c= cMEM f1 f2 cT cMEM cCOND cT f2 cfind_list f3 f1 cCONS f2 f3 c==> cssreflect_eq f0 cMEM f1 f2 cMEM f2 cCONS f2 f3
+- |- ((t ==> t) = T)
+T c= c==> f0 f0 cT
++ ((((MEM l) t) /\ ((MEM x) l)) ==> ((MEM ((find_list t) x)) t)) |- ((((l = h) \/ ((MEM l) t)) /\ ((MEM x) l)) ==> ((MEM ((find_list ((CONS h) t)) x)) ((CONS h) t)))
+T c==> c==> c/\ cMEM f0 f1 cMEM f2 f0 cMEM cfind_list f1 f2 f1 c==> c/\ c\/ c= f0 f3 cMEM f0 f1 cMEM f2 f0 cMEM cfind_list cCONS f3 f1 f2 cCONS f3 f1
+- |- ((t \/ t) = t)
+T c= c\/ f0 f0 f0
++ |- ((\x. ((((find_list NIL) x) = NIL) /\ (((find_list ((CONS h) t)) x) = (((COND ((MEM x) h)) h) ((find_list t) x))))) x)
+T * / c/\ c= cfind_list cNIL b0 cNIL c= cfind_list cCONS f0 f1 b0 cCOND cMEM b0 f0 f0 cfind_list f1 b0 f2
++ |- (((F /\ ((MEM x) l)) ==> ((MEM ((find_list NIL) x)) NIL)) = ((((MEM l) NIL) /\ ((MEM x) l)) ==> ((MEM ((find_list NIL) x)) NIL)))
+T c= c==> c/\ cF cMEM f0 f1 cMEM cfind_list cNIL f0 cNIL c==> c/\ cMEM f1 cNIL cMEM f0 f1 cMEM cfind_list cNIL f0 cNIL
+- |- ((((MEM x) h) = x1) = ((\x1. (((MEM x) h) = x1)) x1))
+T c= c= cMEM f0 f1 f2 * / c= cMEM f0 f1 b0 f2
+- ((ssreflect_eq xh) ((MEM x) h)) |- (((MEM x) h) = T)
+T c==> cssreflect_eq f0 cMEM f1 f2 c= cMEM f1 f2 cT
+- |- ((\x. (!t. ((((MEM x) NIL) = F) /\ (((MEM x) ((CONS h) t)) = ((x = h) \/ ((MEM x) t)))))) x)
+T * / ! c/\ c= cMEM b0 cNIL cF c= cMEM b0 cCONS f0 b1 c\/ c= b0 f0 cMEM b0 b1 f1
++ |- (((ssreflect_eq xh) ((MEM x) h)) ==> (((MEM (((COND T) h) ((find_list t) x))) ((CONS h) t)) = ((MEM h) ((CONS h) t))))
+T c==> cssreflect_eq f0 cMEM f1 f2 c= cMEM cCOND cT f2 cfind_list f3 f1 cCONS f2 f3 cMEM f2 cCONS f2 f3
+- (!P. (((P T) /\ (P F)) ==> (!x. (P x)))) |- ((\P. (((P T) /\ (P F)) ==> (!x. (P x)))) P)
+T c==> ! c==> c/\ * b0 cT * b0 cF ! * b0 b1 * / c==> c/\ * b0 cT * b0 cF ! * b0 b1 f0
+- |- ((((ssreflect_eq xh) ((MEM x) h)) ==> (((MEM h) ((CONS h) t)) = q')) ==> ((((ssreflect_eq xh) ((MEM x) h)) ==> ((MEM h) ((CONS h) t))) = (((ssreflect_eq xh) ((MEM x) h)) ==> q')))
+T c==> c==> cssreflect_eq f0 cMEM f1 f2 c= cMEM f2 cCONS f2 f3 f4 c= c==> cssreflect_eq f0 cMEM f1 f2 cMEM f2 cCONS f2 f3 c==> cssreflect_eq f0 cMEM f1 f2 f4
+- (((MEM x) h) = x1) |- (x1 = ((MEM x) h))
+T c==> c= cMEM f0 f1 f2 c= f2 cMEM f0 f1
+- |- (((!q'. ((((ssreflect_eq xh) ((MEM x) h)) = p') ==> ((p' ==> (((MEM h) ((CONS h) t)) = q')) ==> ((((ssreflect_eq xh) ((MEM x) h)) ==> ((MEM h) ((CONS h) t))) = (p' ==> q'))))) ==> ((\q'. ((((ssreflect_eq xh) ((MEM x) h)) = p') ==> ((p' ==> (((MEM h) ((CONS h) t)) = q')) ==> ((((ssreflect_eq xh) ((MEM x) h)) ==> ((MEM h) ((CONS h) t))) = (p' ==> q'))))) q')) = ((\q'. ((((ssreflect_eq xh) ((MEM x) h)) = p') ==> ((p' ==> (((MEM h) ((CONS h) t)) = q')) ==> ((((ssreflect_eq xh) ((MEM x) h)) ==> ((MEM h) ((CONS h) t))) = (p' ==> q'))))) q'))
+T c= c==> ! c==> c= cssreflect_eq f0 cMEM f1 f2 f3 c==> c==> f3 c= cMEM f2 cCONS f2 f4 b0 c= c==> cssreflect_eq f0 cMEM f1 f2 cMEM f2 cCONS f2 f4 c==> f3 b0 * / c==> c= cssreflect_eq f0 cMEM f1 f2 f3 c==> c==> f3 c= cMEM f2 cCONS f2 f4 b0 c= c==> cssreflect_eq f0 cMEM f1 f2 cMEM f2 cCONS f2 f4 c==> f3 b0 f5 * / c==> c= cssreflect_eq f0 cMEM f1 f2 f3 c==> c==> f3 c= cMEM f2 cCONS f2 f4 b0 c= c==> cssreflect_eq f0 cMEM f1 f2 cMEM f2 cCONS f2 f4 c==> f3 b0 f5
++ |- ((\P. (P = ((ssreflect_eq xh) P))) P)
+T * / c= b0 cssreflect_eq f0 b0 f1
++ |- ((\Q. (((?x. (P x)) ==> Q) = (!x. ((P x) ==> Q)))) Q)
+T * / c= c==> c? / * f0 b1 b0 ! c==> * f0 b1 b0 f1
+- |- (!L1. (((\L1. (L = L1)) L1) ==> (?L1. (L = L1))))
+T c==> * / c= f0 b0 f1 c? / c= f0 b0
+- |- ((((MEM x) h) = x1) ==> (?x1. (((MEM x) h) = x1)))
+T c==> c= cMEM f0 f1 f2 c? / c= cMEM f0 f1 b0
+- |- ((\q'. ((((ssreflect_eq xh) (~ ((MEM x) h))) = p') ==> ((p' ==> (((MEM ((find_list t) x)) ((CONS h) t)) = q')) ==> ((((ssreflect_eq xh) (~ ((MEM x) h))) ==> ((MEM ((find_list t) x)) ((CONS h) t))) = (p' ==> q'))))) q')
+T * / c==> c= cssreflect_eq f0 c~ cMEM f1 f2 f3 c==> c==> f3 c= cMEM cfind_list f4 f1 cCONS f2 f4 b0 c= c==> cssreflect_eq f0 c~ cMEM f1 f2 cMEM cfind_list f4 f1 cCONS f2 f4 c==> f3 b0 f5
++ |- (((!P. (!Q. (((?x. (P x)) ==> Q) = (!x. ((P x) ==> Q))))) ==> ((\P. (!Q. (((?x. (P x)) ==> Q) = (!x. ((P x) ==> Q))))) P)) = ((\P. (!Q. (((?x. (P x)) ==> Q) = (!x. ((P x) ==> Q))))) P))
+T c= c==> ! ! c= c==> c? / * b0 b2 b1 ! c==> * b0 b2 b1 * / ! c= c==> c? / * b0 b2 b1 ! c==> * b0 b2 b1 f0 * / ! c= c==> c? / * b0 b2 b1 ! c==> * b0 b2 b1 f0
++ |- ((\L1. (L = L1)) L)
+T * / c= f0 b0 f0
++ ((((MEM l) t) /\ ((MEM x) l)) ==> ((MEM ((find_list t) x)) t)), ((MEM x) l), ((MEM l) t) |- (!x1. (((ssreflect_eq xh) (((MEM x) h) = x1)) ==> ((MEM (((COND x1) h) ((find_list t) x))) ((CONS h) t))))
+T c==> c==> c/\ cMEM f0 f1 cMEM f2 f0 cMEM cfind_list f1 f2 f1 c==> cMEM f2 f0 c==> cMEM f0 f1 ! c==> cssreflect_eq f3 c= cMEM f2 f4 b0 cMEM cCOND b0 f4 cfind_list f1 f2 cCONS f4 f1
++ ((\L1. (L = L1)) L1) |- (((L = L1) ==> ((((MEM l) L) /\ ((MEM x) l)) ==> ((MEM ((find_list L) x)) L))) = ((((MEM l) L) /\ ((MEM x) l)) ==> ((MEM ((find_list L) x)) L)))
+T c==> * / c= f0 b0 f1 c= c==> c= f0 f1 c==> c/\ cMEM f2 f0 cMEM f3 f2 cMEM cfind_list f0 f3 f0 c==> c/\ cMEM f2 f0 cMEM f3 f2 cMEM cfind_list f0 f3 f0
++ ((((MEM l) t) /\ ((MEM x) l)) ==> ((MEM ((find_list t) x)) t)), ((MEM x) l), ((MEM l) t) |- (((ssreflect_eq xh) (((MEM x) h) = F)) ==> ((MEM (((COND F) h) ((find_list t) x))) ((CONS h) t)))
+T c==> c==> c/\ cMEM f0 f1 cMEM f2 f0 cMEM cfind_list f1 f2 f1 c==> cMEM f2 f0 c==> cMEM f0 f1 c==> cssreflect_eq f3 c= cMEM f2 f4 cF cMEM cCOND cF f4 cfind_list f1 f2 cCONS f4 f1
+- ((\x1. (((MEM x) h) = x1)) x1) |- (((((MEM x) h) = x1) ==> (?x1. (((MEM x) h) = x1))) = (?x1. (((MEM x) h) = x1)))
+T c==> * / c= cMEM f0 f1 b0 f2 c= c==> c= cMEM f0 f1 f2 c? / c= cMEM f0 f1 b0 c? / c= cMEM f0 f1 b0
++ (l = h) |- ((((MEM x) l) ==> ((MEM (((COND ((MEM x) l)) l) ((find_list t) x))) ((CONS l) t))) = (((MEM x) l) ==> ((MEM (((COND ((MEM x) l)) l) ((find_list t) x))) ((CONS h) t))))
+T c==> c= f0 f1 c= c==> cMEM f2 f0 cMEM cCOND cMEM f2 f0 f0 cfind_list f3 f2 cCONS f0 f3 c==> cMEM f2 f0 cMEM cCOND cMEM f2 f0 f0 cfind_list f3 f2 cCONS f1 f3
++ (L = L1) |- (((((MEM l) L1) /\ ((MEM x) l)) ==> ((MEM ((find_list L1) x)) L1)) = ((((MEM l) L1) /\ ((MEM x) l)) ==> ((MEM ((find_list L1) x)) L)))
+T c==> c= f0 f1 c= c==> c/\ cMEM f2 f1 cMEM f3 f2 cMEM cfind_list f1 f3 f1 c==> c/\ cMEM f2 f1 cMEM f3 f2 cMEM cfind_list f1 f3 f0
+- |- (((!P. (((ssreflect_eq v) P) = P)) ==> ((\P. (((ssreflect_eq v) P) = P)) P)) = ((\P. (((ssreflect_eq v) P) = P)) P))
+T c= c==> ! c= cssreflect_eq f0 b0 b0 * / c= cssreflect_eq f0 b0 b0 f1 * / c= cssreflect_eq f0 b0 b0 f1
++ (l = h) |- ((((MEM x) l) ==> ((MEM (((COND ((MEM x) l)) l) ((find_list t) x))) ((CONS h) t))) = (((MEM x) l) ==> ((MEM (((COND ((MEM x) l)) h) ((find_list t) x))) ((CONS h) t))))
+T c==> c= f0 f1 c= c==> cMEM f2 f0 cMEM cCOND cMEM f2 f0 f0 cfind_list f3 f2 cCONS f1 f3 c==> cMEM f2 f0 cMEM cCOND cMEM f2 f0 f1 cfind_list f3 f2 cCONS f1 f3
+- |- ((\t. ((((MEM x) NIL) = F) /\ (((MEM x) ((CONS h) t)) = ((x = h) \/ ((MEM x) t))))) t)
+T * / c/\ c= cMEM f0 cNIL cF c= cMEM f0 cCONS f1 b0 c\/ c= f0 f1 cMEM f0 b0 f2
+- (!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))), ((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) |- ((!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))) /\ (!x. (P x)))
+T c==> ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 c==> c/\ * f0 cNIL ! ! c==> * f0 b1 * f0 cCONS b0 b1 c/\ ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 ! * f0 b0
++ |- ((\p'. (!q'. ((((ssreflect_eq xh) (((MEM x) h) = F)) = p') ==> ((p' ==> (((MEM (((COND F) h) ((find_list t) x))) ((CONS h) t)) = q')) ==> ((((ssreflect_eq xh) (((MEM x) h) = F)) ==> ((MEM (((COND F) h) ((find_list t) x))) ((CONS h) t))) = (p' ==> q')))))) p')
+T * / ! c==> c= cssreflect_eq f0 c= cMEM f1 f2 cF b0 c==> c==> b0 c= cMEM cCOND cF f2 cfind_list f3 f1 cCONS f2 f3 b1 c= c==> cssreflect_eq f0 c= cMEM f1 f2 cF cMEM cCOND cF f2 cfind_list f3 f1 cCONS f2 f3 c==> b0 b1 f4
+- |- ((\P. (((ssreflect_eq v) P) = P)) P)
+T * / c= cssreflect_eq f0 b0 b0 f1
+- |- (((!x. (((\x1. (((MEM x) h) = x1)) x) ==> (?x1. (((MEM x) h) = x1)))) ==> ((?x1. (((MEM x) h) = x1)) ==> (?x1. (((MEM x) h) = x1)))) = ((?x1. (((MEM x) h) = x1)) ==> (?x1. (((MEM x) h) = x1))))
+T c= c==> ! c==> * / c= cMEM f0 f1 b1 b0 c? / c= cMEM f0 f1 b1 c==> c? / c= cMEM f0 f1 b0 c? / c= cMEM f0 f1 b0 c==> c? / c= cMEM f0 f1 b0 c? / c= cMEM f0 f1 b0
++ |- (((((MEM l) NIL) /\ ((MEM x) l)) ==> ((MEM ((find_list NIL) x)) NIL)) /\ (!a0. (!a1. (((((MEM l) a1) /\ ((MEM x) l)) ==> ((MEM ((find_list a1) x)) a1)) ==> ((((MEM l) ((CONS a0) a1)) /\ ((MEM x) l)) ==> ((MEM ((find_list ((CONS a0) a1)) x)) ((CONS a0) a1)))))))
+T c/\ c==> c/\ cMEM f0 cNIL cMEM f1 f0 cMEM cfind_list cNIL f1 cNIL ! ! c==> c==> c/\ cMEM f0 b1 cMEM f1 f0 cMEM cfind_list b1 f1 b1 c==> c/\ cMEM f0 cCONS b0 b1 cMEM f1 f0 cMEM cfind_list cCONS b0 b1 f1 cCONS b0 b1
++ |- ((((ssreflect_eq xh) (((MEM x) h) = T)) = p') ==> ((p' ==> (((MEM (((COND T) h) ((find_list t) x))) ((CONS h) t)) = q')) ==> ((((ssreflect_eq xh) (((MEM x) h) = T)) ==> ((MEM (((COND T) h) ((find_list t) x))) ((CONS h) t))) = (p' ==> q'))))
+T c==> c= cssreflect_eq f0 c= cMEM f1 f2 cT f3 c==> c==> f3 c= cMEM cCOND cT f2 cfind_list f4 f1 cCONS f2 f4 f5 c= c==> cssreflect_eq f0 c= cMEM f1 f2 cT cMEM cCOND cT f2 cfind_list f4 f1 cCONS f2 f4 c==> f3 f5
++ |- ((\x1. (((MEM x) h) = x1)) ((MEM x) h))
+T * / c= cMEM f0 f1 b0 cMEM f0 f1
++ (((MEM l) t) /\ ((MEM x) l)), ((((MEM l) t) /\ ((MEM x) l)) ==> ((MEM ((find_list t) x)) t)) |- ((((MEM l) t) /\ ((MEM x) l)) /\ (((MEM ((find_list t) x)) t) = T))
+T c==> c/\ cMEM f0 f1 cMEM f2 f0 c==> c==> c/\ cMEM f0 f1 cMEM f2 f0 cMEM cfind_list f1 f2 f1 c/\ c/\ cMEM f0 f1 cMEM f2 f0 c= cMEM cfind_list f1 f2 f1 cT
++ (l = h) |- ((((MEM x) l) ==> ((MEM (((COND ((MEM x) l)) h) ((find_list t) x))) ((CONS h) t))) = (((MEM x) l) ==> ((MEM (((COND ((MEM x) h)) h) ((find_list t) x))) ((CONS h) t))))
+T c==> c= f0 f1 c= c==> cMEM f2 f0 cMEM cCOND cMEM f2 f0 f1 cfind_list f3 f2 cCONS f1 f3 c==> cMEM f2 f0 cMEM cCOND cMEM f2 f1 f1 cfind_list f3 f2 cCONS f1 f3
++ |- (!L1. (((\L1. (L = L1)) L1) ==> ((((MEM l) L) /\ ((MEM x) l)) ==> ((MEM ((find_list L) x)) L))))
+T c==> * / c= f0 b0 f1 c==> c/\ cMEM f2 f0 cMEM f3 f2 cMEM cfind_list f0 f3 f0
++ |- ((((MEM l) NIL) /\ ((MEM x) l)) ==> ((MEM ((find_list NIL) x)) NIL))
+T c==> c/\ cMEM f0 cNIL cMEM f1 f0 cMEM cfind_list cNIL f1 cNIL
++ |- (((find_list ((CONS h) t)) x) = (((COND ((MEM x) h)) h) ((find_list t) x)))
+T c= cfind_list cCONS f0 f1 f2 cCOND cMEM f2 f0 f0 cfind_list f1 f2
++ |- (((MEM x) ((CONS h) t)) = ((x = h) \/ ((MEM x) t)))
+T c= cMEM f0 cCONS f1 f2 c\/ c= f0 f1 cMEM f0 f2
++ |- (((!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))) ==> ((\P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))) P)) = ((\P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))) P))
+T c= c==> ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 * / c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 f0 * / c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 f0
++ (L = L1) |- ((((MEM l) L1) /\ ((MEM x) l)) ==> ((MEM ((find_list L1) x)) L))
+T c==> c= f0 f1 c==> c/\ cMEM f2 f1 cMEM f3 f2 cMEM cfind_list f1 f3 f0
+- (!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))), ((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) |- (!x. (P x))
+T c==> ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 c==> c/\ * f0 cNIL ! ! c==> * f0 b1 * f0 cCONS b0 b1 ! * f0 b0
++ |- (((ssreflect_eq xh) ((MEM x) h)) ==> ((MEM h) ((CONS h) t)))
+T c==> cssreflect_eq f0 cMEM f1 f2 cMEM f2 cCONS f2 f3
+- ((ssreflect_eq xh) ((MEM x) h)) |- (((ssreflect_eq xh) ((MEM x) h)) /\ (((MEM h) ((CONS h) t)) = ((MEM h) ((CONS h) t))))
+T c==> cssreflect_eq f0 cMEM f1 f2 c/\ cssreflect_eq f0 cMEM f1 f2 c= cMEM f2 cCONS f2 f3 cMEM f2 cCONS f2 f3
++ |- (((((find_list t) x) = h) \/ ((MEM ((find_list t) x)) t)) = ((MEM ((find_list t) x)) ((CONS h) t)))
+T c= c\/ c= cfind_list f0 f1 f2 cMEM cfind_list f0 f1 f0 cMEM cfind_list f0 f1 cCONS f2 f0
++ |- ((((MEM ((find_list t) x)) t) = T) ==> ((((find_list t) x) = h) \/ ((MEM ((find_list t) x)) t)))
+T c==> c= cMEM cfind_list f0 f1 f0 cT c\/ c= cfind_list f0 f1 f2 cMEM cfind_list f0 f1 f0
+- |- (((!h. (!x. (!t. ((((MEM x) NIL) = F) /\ (((MEM x) ((CONS h) t)) = ((x = h) \/ ((MEM x) t))))))) ==> ((\h. (!x. (!t. ((((MEM x) NIL) = F) /\ (((MEM x) ((CONS h) t)) = ((x = h) \/ ((MEM x) t))))))) h)) = ((\h. (!x. (!t. ((((MEM x) NIL) = F) /\ (((MEM x) ((CONS h) t)) = ((x = h) \/ ((MEM x) t))))))) h))
+T c= c==> ! ! ! c/\ c= cMEM b1 cNIL cF c= cMEM b1 cCONS b0 b2 c\/ c= b1 b0 cMEM b1 b2 * / ! ! c/\ c= cMEM b1 cNIL cF c= cMEM b1 cCONS b0 b2 c\/ c= b1 b0 cMEM b1 b2 f0 * / ! ! c/\ c= cMEM b1 cNIL cF c= cMEM b1 cCONS b0 b2 c\/ c= b1 b0 cMEM b1 b2 f0
++ ((((MEM l) t) /\ ((MEM x) l)) ==> ((MEM ((find_list t) x)) t)), ((MEM x) l), ((MEM l) t) |- (((MEM x) l) /\ ((MEM (((COND ((MEM x) h)) h) ((find_list t) x))) ((CONS h) t)))
+T c==> c==> c/\ cMEM f0 f1 cMEM f2 f0 cMEM cfind_list f1 f2 f1 c==> cMEM f2 f0 c==> cMEM f0 f1 c/\ cMEM f2 f0 cMEM cCOND cMEM f2 f3 f3 cfind_list f1 f2 cCONS f3 f1
+- ((ssreflect_eq xh) (~ ((MEM x) h))) |- (((ssreflect_eq xh) (~ ((MEM x) h))) = T)
+T c==> cssreflect_eq f0 c~ cMEM f1 f2 c= cssreflect_eq f0 c~ cMEM f1 f2 cT
++ ((((MEM l) t) /\ ((MEM x) l)) ==> ((MEM ((find_list t) x)) t)) |- ((((MEM l) t) /\ ((MEM x) l)) ==> (((MEM ((find_list t) x)) t) = T))
+T c==> c==> c/\ cMEM f0 f1 cMEM f2 f0 cMEM cfind_list f1 f2 f1 c==> c/\ cMEM f0 f1 cMEM f2 f0 c= cMEM cfind_list f1 f2 f1 cT
+- (!P. (((P T) /\ (P F)) ==> (!x. (P x)))), ((P T) /\ (P F)) |- (!x. (P x))
+T c==> ! c==> c/\ * b0 cT * b0 cF ! * b0 b1 c==> c/\ * f0 cT * f0 cF ! * f0 b0
++ (((MEM l) t) /\ ((MEM x) l)), ((((MEM l) t) /\ ((MEM x) l)) ==> ((MEM ((find_list t) x)) t)) |- (((MEM ((find_list t) x)) t) = T)
+T c==> c/\ cMEM f0 f1 cMEM f2 f0 c==> c==> c/\ cMEM f0 f1 cMEM f2 f0 cMEM cfind_list f1 f2 f1 c= cMEM cfind_list f1 f2 f1 cT
++ |- ((!q'. ((p = p') ==> ((p' ==> (q = q')) ==> ((p ==> q) = (p' ==> q'))))) = T)
+T c= ! c==> c= f0 f1 c==> c==> f1 c= f2 b0 c= c==> f0 f2 c==> f1 b0 cT
+- |- (!x1. (((\x1. (((MEM x) h) = x1)) x1) ==> (?x1. (((MEM x) h) = x1))))
+T c==> * / c= cMEM f0 f1 b0 f2 c? / c= cMEM f0 f1 b0
+- |- (((find_list NIL) x) = NIL)
+T c= cfind_list cNIL f0 cNIL
++ ((\L1. (L = L1)) L1) |- (((\L1. (L = L1)) L1) /\ ((((MEM l) L) /\ ((MEM x) l)) ==> ((MEM ((find_list L) x)) L)))
+T c==> * / c= f0 b0 f1 c/\ * / c= f0 b0 f1 c==> c/\ cMEM f2 f0 cMEM f3 f2 cMEM cfind_list f0 f3 f0
++ |- ((\q'. ((((ssreflect_eq xh) (((MEM x) h) = T)) = p') ==> ((p' ==> (((MEM (((COND T) h) ((find_list t) x))) ((CONS h) t)) = q')) ==> ((((ssreflect_eq xh) (((MEM x) h) = T)) ==> ((MEM (((COND T) h) ((find_list t) x))) ((CONS h) t))) = (p' ==> q'))))) q')
+T * / c==> c= cssreflect_eq f0 c= cMEM f1 f2 cT f3 c==> c==> f3 c= cMEM cCOND cT f2 cfind_list f4 f1 cCONS f2 f4 b0 c= c==> cssreflect_eq f0 c= cMEM f1 f2 cT cMEM cCOND cT f2 cfind_list f4 f1 cCONS f2 f4 c==> f3 b0 f5
++ |- (((ssreflect_eq xh) (((MEM x) h) = T)) ==> ((MEM (((COND T) h) ((find_list t) x))) ((CONS h) t)))
+T c==> cssreflect_eq f0 c= cMEM f1 f2 cT cMEM cCOND cT f2 cfind_list f3 f1 cCONS f2 f3
++ |- ((\x. (!L. (((MEM x) (flatten L)) = (?l. (((MEM l) L) /\ ((MEM x) l)))))) x)
+T * / ! c= cMEM b0 cflatten b1 c? / c/\ cMEM b2 b1 cMEM b0 b2 f0
+- |- ((L = L1) = ((\L1. (L = L1)) L1))
+T c= c= f0 f1 * / c= f0 b0 f1
++ |- ((MEM h) ((CONS h) t))
+T cMEM f0 cCONS f0 f1
++ ((((MEM l) t) /\ ((MEM x) l)) ==> ((MEM ((find_list t) x)) t)), ((MEM x) l), ((MEM l) t) |- (((ssreflect_eq xh) (~ ((MEM x) h))) ==> ((MEM ((find_list t) x)) ((CONS h) t)))
+T c==> c==> c/\ cMEM f0 f1 cMEM f2 f0 cMEM cfind_list f1 f2 f1 c==> cMEM f2 f0 c==> cMEM f0 f1 c==> cssreflect_eq f3 c~ cMEM f2 f4 cMEM cfind_list f1 f2 cCONS f4 f1
+- |- (((!q'. ((((ssreflect_eq xh) (~ ((MEM x) h))) = p') ==> ((p' ==> (((MEM ((find_list t) x)) ((CONS h) t)) = q')) ==> ((((ssreflect_eq xh) (~ ((MEM x) h))) ==> ((MEM ((find_list t) x)) ((CONS h) t))) = (p' ==> q'))))) ==> ((\q'. ((((ssreflect_eq xh) (~ ((MEM x) h))) = p') ==> ((p' ==> (((MEM ((find_list t) x)) ((CONS h) t)) = q')) ==> ((((ssreflect_eq xh) (~ ((MEM x) h))) ==> ((MEM ((find_list t) x)) ((CONS h) t))) = (p' ==> q'))))) q')) = ((\q'. ((((ssreflect_eq xh) (~ ((MEM x) h))) = p') ==> ((p' ==> (((MEM ((find_list t) x)) ((CONS h) t)) = q')) ==> ((((ssreflect_eq xh) (~ ((MEM x) h))) ==> ((MEM ((find_list t) x)) ((CONS h) t))) = (p' ==> q'))))) q'))
+T c= c==> ! c==> c= cssreflect_eq f0 c~ cMEM f1 f2 f3 c==> c==> f3 c= cMEM cfind_list f4 f1 cCONS f2 f4 b0 c= c==> cssreflect_eq f0 c~ cMEM f1 f2 cMEM cfind_list f4 f1 cCONS f2 f4 c==> f3 b0 * / c==> c= cssreflect_eq f0 c~ cMEM f1 f2 f3 c==> c==> f3 c= cMEM cfind_list f4 f1 cCONS f2 f4 b0 c= c==> cssreflect_eq f0 c~ cMEM f1 f2 cMEM cfind_list f4 f1 cCONS f2 f4 c==> f3 b0 f5 * / c==> c= cssreflect_eq f0 c~ cMEM f1 f2 f3 c==> c==> f3 c= cMEM cfind_list f4 f1 cCONS f2 f4 b0 c= c==> cssreflect_eq f0 c~ cMEM f1 f2 cMEM cfind_list f4 f1 cCONS f2 f4 c==> f3 b0 f5
+- |- (((!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))) ==> (!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x))))) = (!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))))
+T c= c==> ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1
++ |- ((MEM (((COND T) l) ((find_list t) x))) ((CONS l) t))
+T cMEM cCOND cT f0 cfind_list f1 f2 cCONS f0 f1
++ |- (((!p'. (!q'. ((((ssreflect_eq xh) (((MEM x) h) = F)) = p') ==> ((p' ==> (((MEM (((COND F) h) ((find_list t) x))) ((CONS h) t)) = q')) ==> ((((ssreflect_eq xh) (((MEM x) h) = F)) ==> ((MEM (((COND F) h) ((find_list t) x))) ((CONS h) t))) = (p' ==> q')))))) ==> ((\p'. (!q'. ((((ssreflect_eq xh) (((MEM x) h) = F)) = p') ==> ((p' ==> (((MEM (((COND F) h) ((find_list t) x))) ((CONS h) t)) = q')) ==> ((((ssreflect_eq xh) (((MEM x) h) = F)) ==> ((MEM (((COND F) h) ((find_list t) x))) ((CONS h) t))) = (p' ==> q')))))) p')) = ((\p'. (!q'. ((((ssreflect_eq xh) (((MEM x) h) = F)) = p') ==> ((p' ==> (((MEM (((COND F) h) ((find_list t) x))) ((CONS h) t)) = q')) ==> ((((ssreflect_eq xh) (((MEM x) h) = F)) ==> ((MEM (((COND F) h) ((find_list t) x))) ((CONS h) t))) = (p' ==> q')))))) p'))
+T c= c==> ! ! c==> c= cssreflect_eq f0 c= cMEM f1 f2 cF b0 c==> c==> b0 c= cMEM cCOND cF f2 cfind_list f3 f1 cCONS f2 f3 b1 c= c==> cssreflect_eq f0 c= cMEM f1 f2 cF cMEM cCOND cF f2 cfind_list f3 f1 cCONS f2 f3 c==> b0 b1 * / ! c==> c= cssreflect_eq f0 c= cMEM f1 f2 cF b0 c==> c==> b0 c= cMEM cCOND cF f2 cfind_list f3 f1 cCONS f2 f3 b1 c= c==> cssreflect_eq f0 c= cMEM f1 f2 cF cMEM cCOND cF f2 cfind_list f3 f1 cCONS f2 f3 c==> b0 b1 f4 * / ! c==> c= cssreflect_eq f0 c= cMEM f1 f2 cF b0 c==> c==> b0 c= cMEM cCOND cF f2 cfind_list f3 f1 cCONS f2 f3 b1 c= c==> cssreflect_eq f0 c= cMEM f1 f2 cF cMEM cCOND cF f2 cfind_list f3 f1 cCONS f2 f3 c==> b0 b1 f4
+- (!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))), ((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) |- (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) /\ (!x. (P x)))
+T c==> ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 c==> c/\ * f0 cNIL ! ! c==> * f0 b1 * f0 cCONS b0 b1 c/\ c/\ * f0 cNIL ! ! c==> * f0 b1 * f0 cCONS b0 b1 ! * f0 b0
++ |- (!a0. (!a1. (((((MEM l) a1) /\ ((MEM x) l)) ==> ((MEM ((find_list a1) x)) a1)) ==> ((((MEM l) ((CONS a0) a1)) /\ ((MEM x) l)) ==> ((MEM ((find_list ((CONS a0) a1)) x)) ((CONS a0) a1))))))
+T c==> c==> c/\ cMEM f0 f1 cMEM f2 f0 cMEM cfind_list f1 f2 f1 c==> c/\ cMEM f0 cCONS f3 f1 cMEM f2 f0 cMEM cfind_list cCONS f3 f1 f2 cCONS f3 f1
++ |- (((((ssreflect_eq xh) (((MEM x) h) = F)) = ((ssreflect_eq xh) (~ ((MEM x) h)))) ==> ((((ssreflect_eq xh) (~ ((MEM x) h))) ==> (((MEM (((COND F) h) ((find_list t) x))) ((CONS h) t)) = q')) ==> ((((ssreflect_eq xh) (((MEM x) h) = F)) ==> ((MEM (((COND F) h) ((find_list t) x))) ((CONS h) t))) = (((ssreflect_eq xh) (~ ((MEM x) h))) ==> q')))) = ((((ssreflect_eq xh) (~ ((MEM x) h))) ==> (((MEM (((COND F) h) ((find_list t) x))) ((CONS h) t)) = q')) ==> ((((ssreflect_eq xh) (((MEM x) h) = F)) ==> ((MEM (((COND F) h) ((find_list t) x))) ((CONS h) t))) = (((ssreflect_eq xh) (~ ((MEM x) h))) ==> q'))))
+T c= c==> c= cssreflect_eq f0 c= cMEM f1 f2 cF cssreflect_eq f0 c~ cMEM f1 f2 c==> c==> cssreflect_eq f0 c~ cMEM f1 f2 c= cMEM cCOND cF f2 cfind_list f3 f1 cCONS f2 f3 f4 c= c==> cssreflect_eq f0 c= cMEM f1 f2 cF cMEM cCOND cF f2 cfind_list f3 f1 cCONS f2 f3 c==> cssreflect_eq f0 c~ cMEM f1 f2 f4 c==> c==> cssreflect_eq f0 c~ cMEM f1 f2 c= cMEM cCOND cF f2 cfind_list f3 f1 cCONS f2 f3 f4 c= c==> cssreflect_eq f0 c= cMEM f1 f2 cF cMEM cCOND cF f2 cfind_list f3 f1 cCONS f2 f3 c==> cssreflect_eq f0 c~ cMEM f1 f2 f4
++ |- (((((ssreflect_eq xh) ((MEM x) h)) ==> (((MEM (((COND T) h) ((find_list t) x))) ((CONS h) t)) = ((MEM h) ((CONS h) t)))) ==> ((((ssreflect_eq xh) (((MEM x) h) = T)) ==> ((MEM (((COND T) h) ((find_list t) x))) ((CONS h) t))) = (((ssreflect_eq xh) ((MEM x) h)) ==> ((MEM h) ((CONS h) t))))) = ((((ssreflect_eq xh) (((MEM x) h) = T)) ==> ((MEM (((COND T) h) ((find_list t) x))) ((CONS h) t))) = (((ssreflect_eq xh) ((MEM x) h)) ==> ((MEM h) ((CONS h) t)))))
+T c= c==> c==> cssreflect_eq f0 cMEM f1 f2 c= cMEM cCOND cT f2 cfind_list f3 f1 cCONS f2 f3 cMEM f2 cCONS f2 f3 c= c==> cssreflect_eq f0 c= cMEM f1 f2 cT cMEM cCOND cT f2 cfind_list f3 f1 cCONS f2 f3 c==> cssreflect_eq f0 cMEM f1 f2 cMEM f2 cCONS f2 f3 c= c==> cssreflect_eq f0 c= cMEM f1 f2 cT cMEM cCOND cT f2 cfind_list f3 f1 cCONS f2 f3 c==> cssreflect_eq f0 cMEM f1 f2 cMEM f2 cCONS f2 f3
+- ((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) |- ((!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))) ==> (!x. (P x)))
+T c==> c/\ * f0 cNIL ! ! c==> * f0 b1 * f0 cCONS b0 b1 c==> ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 ! * f0 b0
++ |- (((((l = h) \/ ((MEM l) t)) /\ ((MEM x) l)) ==> ((MEM ((find_list ((CONS h) t)) x)) ((CONS h) t))) = ((((MEM l) ((CONS h) t)) /\ ((MEM x) l)) ==> ((MEM ((find_list ((CONS h) t)) x)) ((CONS h) t))))
+T c= c==> c/\ c\/ c= f0 f1 cMEM f0 f2 cMEM f3 f0 cMEM cfind_list cCONS f1 f2 f3 cCONS f1 f2 c==> c/\ cMEM f0 cCONS f1 f2 cMEM f3 f0 cMEM cfind_list cCONS f1 f2 f3 cCONS f1 f2
++ |- (((!x. (((\L1. (L = L1)) x) ==> ((((MEM l) L) /\ ((MEM x) l)) ==> ((MEM ((find_list L) x)) L)))) ==> ((?L1. (L = L1)) ==> ((((MEM l) L) /\ ((MEM x) l)) ==> ((MEM ((find_list L) x)) L)))) = ((?L1. (L = L1)) ==> ((((MEM l) L) /\ ((MEM x) l)) ==> ((MEM ((find_list L) x)) L))))
+T c= c==> ! c==> * / c= f0 b1 b0 c==> c/\ cMEM f1 f0 cMEM f2 f1 cMEM cfind_list f0 f2 f0 c==> c? / c= f0 b0 c==> c/\ cMEM f1 f0 cMEM f2 f1 cMEM cfind_list f0 f2 f0 c==> c? / c= f0 b0 c==> c/\ cMEM f1 f0 cMEM f2 f1 cMEM cfind_list f0 f2 f0
++ ((((MEM l) t) /\ ((MEM x) l)) ==> ((MEM ((find_list t) x)) t)), ((MEM x) l), ((MEM l) t) |- (((!x1. (((ssreflect_eq xh) (((MEM x) h) = x1)) ==> ((MEM (((COND x1) h) ((find_list t) x))) ((CONS h) t)))) ==> ((\x1. (((ssreflect_eq xh) (((MEM x) h) = x1)) ==> ((MEM (((COND x1) h) ((find_list t) x))) ((CONS h) t)))) x1)) = ((\x1. (((ssreflect_eq xh) (((MEM x) h) = x1)) ==> ((MEM (((COND x1) h) ((find_list t) x))) ((CONS h) t)))) x1))
+T c==> c==> c/\ cMEM f0 f1 cMEM f2 f0 cMEM cfind_list f1 f2 f1 c==> cMEM f2 f0 c==> cMEM f0 f1 c= c==> ! c==> cssreflect_eq f3 c= cMEM f2 f4 b0 cMEM cCOND b0 f4 cfind_list f1 f2 cCONS f4 f1 * / c==> cssreflect_eq f3 c= cMEM f2 f4 b0 cMEM cCOND b0 f4 cfind_list f1 f2 cCONS f4 f1 f5 * / c==> cssreflect_eq f3 c= cMEM f2 f4 b0 cMEM cCOND b0 f4 cfind_list f1 f2 cCONS f4 f1 f5
++ |- ((\h. (!t. (!x. ((((find_list NIL) x) = NIL) /\ (((find_list ((CONS h) t)) x) = (((COND ((MEM x) h)) h) ((find_list t) x))))))) h)
+T * / ! ! c/\ c= cfind_list cNIL b2 cNIL c= cfind_list cCONS b0 b1 b2 cCOND cMEM b2 b0 b0 cfind_list b1 b2 f0
++ ((MEM x) l), ((MEM l) t) |- (((MEM l) t) /\ ((MEM x) l))
+T c==> cMEM f0 f1 c==> cMEM f1 f2 c/\ cMEM f1 f2 cMEM f0 f1
++ |- ((\P. (((P T) /\ (P F)) ==> (!x. (P x)))) P)
+T * / c==> c/\ * b0 cT * b0 cF ! * b0 b1 f0
++ |- ((\P. (!Q. (((?x. (P x)) ==> Q) = (!x. ((P x) ==> Q))))) P)
+T * / ! c= c==> c? / * b0 b2 b1 ! c==> * b0 b2 b1 f0
++ ((((MEM l) t) /\ ((MEM x) l)) ==> ((MEM ((find_list t) x)) t)), ((MEM x) l), ((MEM l) t) |- ((MEM ((find_list t) x)) ((CONS h) t))
+T c==> c==> c/\ cMEM f0 f1 cMEM f2 f0 cMEM cfind_list f1 f2 f1 c==> cMEM f2 f0 c==> cMEM f0 f1 cMEM cfind_list f1 f2 cCONS f3 f1
++ |- (T = ((F /\ ((MEM x) l)) ==> ((MEM ((find_list NIL) x)) NIL)))
+T c= cT c==> c/\ cF cMEM f0 f1 cMEM cfind_list cNIL f0 cNIL
+- |- ((?L1. (L = L1)) ==> (?L1. (L = L1)))
+T c==> c? / c= f0 b0 c? / c= f0 b0
++ |- ((x = x) = T)
+T c= c= f0 f0 cT
+- |- ((\Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))) Q)
+T * / c= c==> f0 ! * b0 b1 ! c==> f0 * b0 b1 f1
+- (!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))) |- ((\P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))) P)
+T c==> ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 * / c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 f0
++ (((MEM ((find_list t) x)) t) = T) |- (((((find_list t) x) = h) \/ T) = ((((find_list t) x) = h) \/ ((MEM ((find_list t) x)) t)))
+T c==> c= cMEM cfind_list f0 f1 f0 cT c= c\/ c= cfind_list f0 f1 f2 cT c\/ c= cfind_list f0 f1 f2 cMEM cfind_list f0 f1 f0
++ |- (((((ssreflect_eq xh) (((MEM x) h) = T)) ==> ((MEM (((COND T) h) ((find_list t) x))) ((CONS h) t))) /\ (((ssreflect_eq xh) (((MEM x) h) = F)) ==> ((MEM (((COND F) h) ((find_list t) x))) ((CONS h) t)))) ==> (!x1. (((ssreflect_eq xh) (((MEM x) h) = x1)) ==> ((MEM (((COND x1) h) ((find_list t) x))) ((CONS h) t)))))
+T c==> c/\ c==> cssreflect_eq f0 c= cMEM f1 f2 cT cMEM cCOND cT f2 cfind_list f3 f1 cCONS f2 f3 c==> cssreflect_eq f0 c= cMEM f1 f2 cF cMEM cCOND cF f2 cfind_list f3 f1 cCONS f2 f3 ! c==> cssreflect_eq f0 c= cMEM f1 f2 b0 cMEM cCOND b0 f2 cfind_list f3 f1 cCONS f2 f3
++ (((ssreflect_eq xh) P) = P) |- (P = ((ssreflect_eq xh) P))
+T c==> c= cssreflect_eq f0 f1 f1 c= f1 cssreflect_eq f0 f1
+- (L = L1) |- ((((MEM l) L1) /\ ((MEM x) l)) ==> ((MEM ((find_list L1) x)) L1))
+T c==> c= f0 f1 c==> c/\ cMEM f2 f1 cMEM f3 f2 cMEM cfind_list f1 f3 f1
++ (((l = h) \/ ((MEM l) t)) /\ ((MEM x) l)), ((((MEM l) t) /\ ((MEM x) l)) ==> ((MEM ((find_list t) x)) t)) |- ((MEM (((COND ((MEM x) h)) h) ((find_list t) x))) ((CONS h) t))
+T c==> c/\ c\/ c= f0 f1 cMEM f0 f2 cMEM f3 f0 c==> c==> c/\ cMEM f0 f2 cMEM f3 f0 cMEM cfind_list f2 f3 f2 cMEM cCOND cMEM f3 f1 f1 cfind_list f2 f3 cCONS f1 f2
++ |- ((\p'. (!q'. ((((ssreflect_eq xh) (((MEM x) h) = T)) = p') ==> ((p' ==> (((MEM (((COND T) h) ((find_list t) x))) ((CONS h) t)) = q')) ==> ((((ssreflect_eq xh) (((MEM x) h) = T)) ==> ((MEM (((COND T) h) ((find_list t) x))) ((CONS h) t))) = (p' ==> q')))))) p')
+T * / ! c==> c= cssreflect_eq f0 c= cMEM f1 f2 cT b0 c==> c==> b0 c= cMEM cCOND cT f2 cfind_list f3 f1 cCONS f2 f3 b1 c= c==> cssreflect_eq f0 c= cMEM f1 f2 cT cMEM cCOND cT f2 cfind_list f3 f1 cCONS f2 f3 c==> b0 b1 f4
++ |- ((t = T) = t)
+T c= c= f0 cT f0
+- ((\L1. (L = L1)) L1) |- (((L = L1) ==> (?L1. (L = L1))) = (?L1. (L = L1)))
+T c==> * / c= f0 b0 f1 c= c==> c= f0 f1 c? / c= f0 b0 c? / c= f0 b0
++ |- ((((find_list t) x) = h) \/ T)
+T c\/ c= cfind_list f0 f1 f2 cT
+- ((((MEM l) t) /\ ((MEM x) l)) ==> ((MEM ((find_list t) x)) t)), ((l = h) \/ ((MEM l) t)) |- (((l = h) \/ ((MEM l) t)) /\ (((MEM x) l) ==> ((MEM (((COND ((MEM x) h)) h) ((find_list t) x))) ((CONS h) t))))
+T c==> c==> c/\ cMEM f0 f1 cMEM f2 f0 cMEM cfind_list f1 f2 f1 c==> c\/ c= f0 f3 cMEM f0 f1 c/\ c\/ c= f0 f3 cMEM f0 f1 c==> cMEM f2 f0 cMEM cCOND cMEM f2 f3 f3 cfind_list f1 f2 cCONS f3 f1
++ |- ((((ssreflect_eq xh) (((MEM x) h) = F)) ==> ((MEM (((COND F) h) ((find_list t) x))) ((CONS h) t))) = (((ssreflect_eq xh) (~ ((MEM x) h))) ==> ((MEM ((find_list t) x)) ((CONS h) t))))
+T c= c==> cssreflect_eq f0 c= cMEM f1 f2 cF cMEM cCOND cF f2 cfind_list f3 f1 cCONS f2 f3 c==> cssreflect_eq f0 c~ cMEM f1 f2 cMEM cfind_list f3 f1 cCONS f2 f3
+- |- ((!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))) ==> (!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))))
+T c==> ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1
++ ((((MEM l) t) /\ ((MEM x) l)) ==> ((MEM ((find_list t) x)) t)), ((MEM x) l), ((MEM l) t) |- ((((((ssreflect_eq xh) (((MEM x) h) = T)) ==> ((MEM (((COND T) h) ((find_list t) x))) ((CONS h) t))) /\ (((ssreflect_eq xh) (((MEM x) h) = F)) ==> ((MEM (((COND F) h) ((find_list t) x))) ((CONS h) t)))) ==> (!x1. (((ssreflect_eq xh) (((MEM x) h) = x1)) ==> ((MEM (((COND x1) h) ((find_list t) x))) ((CONS h) t))))) = (!x1. (((ssreflect_eq xh) (((MEM x) h) = x1)) ==> ((MEM (((COND x1) h) ((find_list t) x))) ((CONS h) t)))))
+T c==> c==> c/\ cMEM f0 f1 cMEM f2 f0 cMEM cfind_list f1 f2 f1 c==> cMEM f2 f0 c==> cMEM f0 f1 c= c==> c/\ c==> cssreflect_eq f3 c= cMEM f2 f4 cT cMEM cCOND cT f4 cfind_list f1 f2 cCONS f4 f1 c==> cssreflect_eq f3 c= cMEM f2 f4 cF cMEM cCOND cF f4 cfind_list f1 f2 cCONS f4 f1 ! c==> cssreflect_eq f3 c= cMEM f2 f4 b0 cMEM cCOND b0 f4 cfind_list f1 f2 cCONS f4 f1 ! c==> cssreflect_eq f3 c= cMEM f2 f4 b0 cMEM cCOND b0 f4 cfind_list f1 f2 cCONS f4 f1
++ |- ((L = L) = ((\L1. (L = L1)) L))
+T c= c= f0 f0 * / c= f0 b0 f0
++ ((((MEM l) t) /\ ((MEM x) l)) ==> ((MEM ((find_list t) x)) t)), ((MEM x) l), ((MEM l) t) |- ((((\x1. (((MEM x) h) = x1)) x1) ==> ((MEM (((COND ((MEM x) h)) h) ((find_list t) x))) ((CONS h) t))) = T)
+T c==> c==> c/\ cMEM f0 f1 cMEM f2 f0 cMEM cfind_list f1 f2 f1 c==> cMEM f2 f0 c==> cMEM f0 f1 c= c==> * / c= cMEM f2 f3 b0 f4 cMEM cCOND cMEM f2 f3 f3 cfind_list f1 f2 cCONS f3 f1 cT
++ (l = h) |- (((MEM x) l) ==> ((MEM (((COND ((MEM x) l)) l) ((find_list t) x))) ((CONS h) t)))
+T c==> c= f0 f1 c==> cMEM f2 f0 cMEM cCOND cMEM f2 f0 f0 cfind_list f3 f2 cCONS f1 f3
+- |- (((((ssreflect_eq xh) ((MEM x) h)) = ((ssreflect_eq xh) ((MEM x) h))) ==> ((((ssreflect_eq xh) ((MEM x) h)) ==> (((MEM h) ((CONS h) t)) = q')) ==> ((((ssreflect_eq xh) ((MEM x) h)) ==> ((MEM h) ((CONS h) t))) = (((ssreflect_eq xh) ((MEM x) h)) ==> q')))) = ((((ssreflect_eq xh) ((MEM x) h)) ==> (((MEM h) ((CONS h) t)) = q')) ==> ((((ssreflect_eq xh) ((MEM x) h)) ==> ((MEM h) ((CONS h) t))) = (((ssreflect_eq xh) ((MEM x) h)) ==> q'))))
+T c= c==> c= cssreflect_eq f0 cMEM f1 f2 cssreflect_eq f0 cMEM f1 f2 c==> c==> cssreflect_eq f0 cMEM f1 f2 c= cMEM f2 cCONS f2 f3 f4 c= c==> cssreflect_eq f0 cMEM f1 f2 cMEM f2 cCONS f2 f3 c==> cssreflect_eq f0 cMEM f1 f2 f4 c==> c==> cssreflect_eq f0 cMEM f1 f2 c= cMEM f2 cCONS f2 f3 f4 c= c==> cssreflect_eq f0 cMEM f1 f2 cMEM f2 cCONS f2 f3 c==> cssreflect_eq f0 cMEM f1 f2 f4
++ ((((MEM l) t) /\ ((MEM x) l)) ==> ((MEM ((find_list t) x)) t)), ((MEM x) l), ((MEM l) t) |- (((\x1. (((MEM x) h) = x1)) x1) ==> ((MEM (((COND ((MEM x) h)) h) ((find_list t) x))) ((CONS h) t)))
+T c==> c==> c/\ cMEM f0 f1 cMEM f2 f0 cMEM cfind_list f1 f2 f1 c==> cMEM f2 f0 c==> cMEM f0 f1 c==> * / c= cMEM f2 f3 b0 f4 cMEM cCOND cMEM f2 f3 f3 cfind_list f1 f2 cCONS f3 f1
++ |- (((!t. (!x. ((((find_list NIL) x) = NIL) /\ (((find_list ((CONS h) t)) x) = (((COND ((MEM x) h)) h) ((find_list t) x)))))) ==> ((\t. (!x. ((((find_list NIL) x) = NIL) /\ (((find_list ((CONS h) t)) x) = (((COND ((MEM x) h)) h) ((find_list t) x)))))) t)) = ((\t. (!x. ((((find_list NIL) x) = NIL) /\ (((find_list ((CONS h) t)) x) = (((COND ((MEM x) h)) h) ((find_list t) x)))))) t))
+T c= c==> ! ! c/\ c= cfind_list cNIL b1 cNIL c= cfind_list cCONS f0 b0 b1 cCOND cMEM b1 f0 f0 cfind_list b0 b1 * / ! c/\ c= cfind_list cNIL b1 cNIL c= cfind_list cCONS f0 b0 b1 cCOND cMEM b1 f0 f0 cfind_list b0 b1 f1 * / ! c/\ c= cfind_list cNIL b1 cNIL c= cfind_list cCONS f0 b0 b1 cCOND cMEM b1 f0 f0 cfind_list b0 b1 f1
+- (!P. (((P T) /\ (P F)) ==> (!x. (P x)))) |- ((((P T) /\ (P F)) ==> (!x. (P x))) = T)
+T c==> ! c==> c/\ * b0 cT * b0 cF ! * b0 b1 c= c==> c/\ * f0 cT * f0 cF ! * f0 b0 cT
++ (((MEM x) h) = x1), ((((MEM l) t) /\ ((MEM x) l)) ==> ((MEM ((find_list t) x)) t)), ((MEM x) l), ((MEM l) t) |- ((MEM (((COND ((MEM x) h)) h) ((find_list t) x))) ((CONS h) t))
+T c==> c= cMEM f0 f1 f2 c==> c==> c/\ cMEM f3 f4 cMEM f0 f3 cMEM cfind_list f4 f0 f4 c==> cMEM f0 f3 c==> cMEM f3 f4 cMEM cCOND cMEM f0 f1 f1 cfind_list f4 f0 cCONS f1 f4
+- |- (((!P. (!Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x)))))) ==> ((\P. (!Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x)))))) P)) = ((\P. (!Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x)))))) P))
+T c= c==> ! ! c= c==> b0 ! * b1 b2 ! c==> b0 * b1 b2 * / ! c= c==> b0 ! * b1 b2 ! c==> b0 * b1 b2 f0 * / ! c= c==> b0 ! * b1 b2 ! c==> b0 * b1 b2 f0
++ |- (((!Q. (((?x. (P x)) ==> Q) = (!x. ((P x) ==> Q)))) ==> ((\Q. (((?x. (P x)) ==> Q) = (!x. ((P x) ==> Q)))) Q)) = ((\Q. (((?x. (P x)) ==> Q) = (!x. ((P x) ==> Q)))) Q))
+T c= c==> ! c= c==> c? / * f0 b1 b0 ! c==> * f0 b1 b0 * / c= c==> c? / * f0 b1 b0 ! c==> * f0 b1 b0 f1 * / c= c==> c? / * f0 b1 b0 ! c==> * f0 b1 b0 f1
+- (((?x. (P x)) ==> Q) = (!x. ((P x) ==> Q))) |- ((!x. ((P x) ==> Q)) = ((?x. (P x)) ==> Q))
+T c==> c= c==> c? / * f0 b0 f1 ! c==> * f0 b0 f1 c= ! c==> * f0 b0 f1 c==> c? / * f0 b0 f1
++ |- ((((ssreflect_eq xh) ((MEM x) h)) ==> ((MEM h) ((CONS h) t))) = (((ssreflect_eq xh) (((MEM x) h) = T)) ==> ((MEM (((COND T) h) ((find_list t) x))) ((CONS h) t))))
+T c= c==> cssreflect_eq f0 cMEM f1 f2 cMEM f2 cCONS f2 f3 c==> cssreflect_eq f0 c= cMEM f1 f2 cT cMEM cCOND cT f2 cfind_list f3 f1 cCONS f2 f3
++ ((\L1. (L = L1)) L1) |- (L = L1)
+T c==> * / c= f0 b0 f1 c= f0 f1
+- (L = L1) |- ((L = L1) /\ (?L1. (L = L1)))
+T c==> c= f0 f1 c/\ c= f0 f1 c? / c= f0 b0
+- |- (((!p'. (!q'. ((((ssreflect_eq xh) ((MEM x) h)) = p') ==> ((p' ==> (((MEM h) ((CONS h) t)) = q')) ==> ((((ssreflect_eq xh) ((MEM x) h)) ==> ((MEM h) ((CONS h) t))) = (p' ==> q')))))) ==> ((\p'. (!q'. ((((ssreflect_eq xh) ((MEM x) h)) = p') ==> ((p' ==> (((MEM h) ((CONS h) t)) = q')) ==> ((((ssreflect_eq xh) ((MEM x) h)) ==> ((MEM h) ((CONS h) t))) = (p' ==> q')))))) p')) = ((\p'. (!q'. ((((ssreflect_eq xh) ((MEM x) h)) = p') ==> ((p' ==> (((MEM h) ((CONS h) t)) = q')) ==> ((((ssreflect_eq xh) ((MEM x) h)) ==> ((MEM h) ((CONS h) t))) = (p' ==> q')))))) p'))
+T c= c==> ! ! c==> c= cssreflect_eq f0 cMEM f1 f2 b0 c==> c==> b0 c= cMEM f2 cCONS f2 f3 b1 c= c==> cssreflect_eq f0 cMEM f1 f2 cMEM f2 cCONS f2 f3 c==> b0 b1 * / ! c==> c= cssreflect_eq f0 cMEM f1 f2 b0 c==> c==> b0 c= cMEM f2 cCONS f2 f3 b1 c= c==> cssreflect_eq f0 cMEM f1 f2 cMEM f2 cCONS f2 f3 c==> b0 b1 f4 * / ! c==> c= cssreflect_eq f0 cMEM f1 f2 b0 c==> c==> b0 c= cMEM f2 cCONS f2 f3 b1 c= c==> cssreflect_eq f0 cMEM f1 f2 cMEM f2 cCONS f2 f3 c==> b0 b1 f4
+- ((\L1. (L = L1)) L1) |- (((\L1. (L = L1)) L1) /\ (?L1. (L = L1)))
+T c==> * / c= f0 b0 f1 c/\ * / c= f0 b0 f1 c? / c= f0 b0
+- ((ssreflect_eq xh) (~ ((MEM x) h))) |- (~ ((MEM x) h))
+T c==> cssreflect_eq f0 c~ cMEM f1 f2 c~ cMEM f1 f2
+- |- ((\p'. (!q'. ((((ssreflect_eq xh) ((MEM x) h)) = p') ==> ((p' ==> (((MEM h) ((CONS h) t)) = q')) ==> ((((ssreflect_eq xh) ((MEM x) h)) ==> ((MEM h) ((CONS h) t))) = (p' ==> q')))))) p')
+T * / ! c==> c= cssreflect_eq f0 cMEM f1 f2 b0 c==> c==> b0 c= cMEM f2 cCONS f2 f3 b1 c= c==> cssreflect_eq f0 cMEM f1 f2 cMEM f2 cCONS f2 f3 c==> b0 b1 f4
+- |- (((!P. (((P T) /\ (P F)) ==> (!x. (P x)))) ==> (!P. (((P T) /\ (P F)) ==> (!x. (P x))))) = (!P. (((P T) /\ (P F)) ==> (!x. (P x)))))
+T c= c==> ! c==> c/\ * b0 cT * b0 cF ! * b0 b1 ! c==> c/\ * b0 cT * b0 cF ! * b0 b1 ! c==> c/\ * b0 cT * b0 cF ! * b0 b1
+- (!P. (((P T) /\ (P F)) ==> (!x. (P x)))) |- ((!P. (((P T) /\ (P F)) ==> (!x. (P x)))) /\ (!P. (((P T) /\ (P F)) ==> (!x. (P x)))))
+T c==> ! c==> c/\ * b0 cT * b0 cF ! * b0 b1 c/\ ! c==> c/\ * b0 cT * b0 cF ! * b0 b1 ! c==> c/\ * b0 cT * b0 cF ! * b0 b1
+- ((ssreflect_eq xh) (~ ((MEM x) h))) |- (((~ ((MEM x) h)) ==> (((MEM x) h) = F)) = (((MEM x) h) = F))
+T c==> cssreflect_eq f0 c~ cMEM f1 f2 c= c==> c~ cMEM f1 f2 c= cMEM f1 f2 cF c= cMEM f1 f2 cF
+- (L = L1) |- (((((MEM l) L1) /\ ((MEM x) l)) ==> ((MEM ((find_list L1) x)) L1)) = ((((MEM l) L) /\ ((MEM x) l)) ==> ((MEM ((find_list L) x)) L)))
+T c==> c= f0 f1 c= c==> c/\ cMEM f2 f1 cMEM f3 f2 cMEM cfind_list f1 f3 f1 c==> c/\ cMEM f2 f0 cMEM f3 f2 cMEM cfind_list f0 f3 f0
+- |- (((!x. (((\L1. (L = L1)) x) ==> (?L1. (L = L1)))) ==> ((?L1. (L = L1)) ==> (?L1. (L = L1)))) = ((?L1. (L = L1)) ==> (?L1. (L = L1))))
+T c= c==> ! c==> * / c= f0 b1 b0 c? / c= f0 b1 c==> c? / c= f0 b0 c? / c= f0 b0 c==> c? / c= f0 b0 c? / c= f0 b0
+- |- (((((ssreflect_eq xh) (~ ((MEM x) h))) = ((ssreflect_eq xh) (~ ((MEM x) h)))) ==> ((((ssreflect_eq xh) (~ ((MEM x) h))) ==> (((MEM ((find_list t) x)) ((CONS h) t)) = q')) ==> ((((ssreflect_eq xh) (~ ((MEM x) h))) ==> ((MEM ((find_list t) x)) ((CONS h) t))) = (((ssreflect_eq xh) (~ ((MEM x) h))) ==> q')))) = ((((ssreflect_eq xh) (~ ((MEM x) h))) ==> (((MEM ((find_list t) x)) ((CONS h) t)) = q')) ==> ((((ssreflect_eq xh) (~ ((MEM x) h))) ==> ((MEM ((find_list t) x)) ((CONS h) t))) = (((ssreflect_eq xh) (~ ((MEM x) h))) ==> q'))))
+T c= c==> c= cssreflect_eq f0 c~ cMEM f1 f2 cssreflect_eq f0 c~ cMEM f1 f2 c==> c==> cssreflect_eq f0 c~ cMEM f1 f2 c= cMEM cfind_list f3 f1 cCONS f2 f3 f4 c= c==> cssreflect_eq f0 c~ cMEM f1 f2 cMEM cfind_list f3 f1 cCONS f2 f3 c==> cssreflect_eq f0 c~ cMEM f1 f2 f4 c==> c==> cssreflect_eq f0 c~ cMEM f1 f2 c= cMEM cfind_list f3 f1 cCONS f2 f3 f4 c= c==> cssreflect_eq f0 c~ cMEM f1 f2 cMEM cfind_list f3 f1 cCONS f2 f3 c==> cssreflect_eq f0 c~ cMEM f1 f2 f4
+- |- ((t /\ t) = t)
+T c= c/\ f0 f0 f0
+- |- (((!p'. (!q'. ((((ssreflect_eq xh) (~ ((MEM x) h))) = p') ==> ((p' ==> (((MEM ((find_list t) x)) ((CONS h) t)) = q')) ==> ((((ssreflect_eq xh) (~ ((MEM x) h))) ==> ((MEM ((find_list t) x)) ((CONS h) t))) = (p' ==> q')))))) ==> ((\p'. (!q'. ((((ssreflect_eq xh) (~ ((MEM x) h))) = p') ==> ((p' ==> (((MEM ((find_list t) x)) ((CONS h) t)) = q')) ==> ((((ssreflect_eq xh) (~ ((MEM x) h))) ==> ((MEM ((find_list t) x)) ((CONS h) t))) = (p' ==> q')))))) p')) = ((\p'. (!q'. ((((ssreflect_eq xh) (~ ((MEM x) h))) = p') ==> ((p' ==> (((MEM ((find_list t) x)) ((CONS h) t)) = q')) ==> ((((ssreflect_eq xh) (~ ((MEM x) h))) ==> ((MEM ((find_list t) x)) ((CONS h) t))) = (p' ==> q')))))) p'))
+T c= c==> ! ! c==> c= cssreflect_eq f0 c~ cMEM f1 f2 b0 c==> c==> b0 c= cMEM cfind_list f3 f1 cCONS f2 f3 b1 c= c==> cssreflect_eq f0 c~ cMEM f1 f2 cMEM cfind_list f3 f1 cCONS f2 f3 c==> b0 b1 * / ! c==> c= cssreflect_eq f0 c~ cMEM f1 f2 b0 c==> c==> b0 c= cMEM cfind_list f3 f1 cCONS f2 f3 b1 c= c==> cssreflect_eq f0 c~ cMEM f1 f2 cMEM cfind_list f3 f1 cCONS f2 f3 c==> b0 b1 f4 * / ! c==> c= cssreflect_eq f0 c~ cMEM f1 f2 b0 c==> c==> b0 c= cMEM cfind_list f3 f1 cCONS f2 f3 b1 c= c==> cssreflect_eq f0 c~ cMEM f1 f2 cMEM cfind_list f3 f1 cCONS f2 f3 c==> b0 b1 f4
+- |- ((L = L1) ==> (?L1. (L = L1)))
+T c==> c= f0 f1 c? / c= f0 b0
+- |- ((!P. (((P T) /\ (P F)) ==> (!x. (P x)))) ==> (!P. (((P T) /\ (P F)) ==> (!x. (P x)))))
+T c==> ! c==> c/\ * b0 cT * b0 cF ! * b0 b1 ! c==> c/\ * b0 cT * b0 cF ! * b0 b1
+- |- ((((ssreflect_eq xh) (~ ((MEM x) h))) ==> ((MEM ((find_list t) x)) ((CONS h) t))) = (((ssreflect_eq xh) (~ ((MEM x) h))) ==> ((MEM ((find_list t) x)) ((CONS h) t))))
+T c= c==> cssreflect_eq f0 c~ cMEM f1 f2 cMEM cfind_list f3 f1 cCONS f2 f3 c==> cssreflect_eq f0 c~ cMEM f1 f2 cMEM cfind_list f3 f1 cCONS f2 f3
+- |- ((\h. (!x. (!t. ((((MEM x) NIL) = F) /\ (((MEM x) ((CONS h) t)) = ((x = h) \/ ((MEM x) t))))))) h)
+T * / ! ! c/\ c= cMEM b1 cNIL cF c= cMEM b1 cCONS b0 b2 c\/ c= b1 b0 cMEM b1 b2 f0
+- ((!x. ((P x) ==> Q)) = ((?x. (P x)) ==> Q)) |- (((?x. (P x)) ==> Q) = (!x. ((P x) ==> Q)))
+T c==> c= ! c==> * f0 b0 f1 c==> c? / * f0 b0 f1 c= c==> c? / * f0 b0 f1 ! c==> * f0 b0 f1
+- (!P. (((P T) /\ (P F)) ==> (!x. (P x)))), ((P T) /\ (P F)) |- (((P T) /\ (P F)) /\ (!x. (P x)))
+T c==> ! c==> c/\ * b0 cT * b0 cF ! * b0 b1 c==> c/\ * f0 cT * f0 cF c/\ c/\ * f0 cT * f0 cF ! * f0 b0
+- |- (((((ssreflect_eq xh) ((MEM x) h)) ==> (((MEM h) ((CONS h) t)) = ((MEM h) ((CONS h) t)))) ==> ((((ssreflect_eq xh) ((MEM x) h)) ==> ((MEM h) ((CONS h) t))) = (((ssreflect_eq xh) ((MEM x) h)) ==> ((MEM h) ((CONS h) t))))) = ((((ssreflect_eq xh) ((MEM x) h)) ==> ((MEM h) ((CONS h) t))) = (((ssreflect_eq xh) ((MEM x) h)) ==> ((MEM h) ((CONS h) t)))))
+T c= c==> c==> cssreflect_eq f0 cMEM f1 f2 c= cMEM f2 cCONS f2 f3 cMEM f2 cCONS f2 f3 c= c==> cssreflect_eq f0 cMEM f1 f2 cMEM f2 cCONS f2 f3 c==> cssreflect_eq f0 cMEM f1 f2 cMEM f2 cCONS f2 f3 c= c==> cssreflect_eq f0 cMEM f1 f2 cMEM f2 cCONS f2 f3 c==> cssreflect_eq f0 cMEM f1 f2 cMEM f2 cCONS f2 f3
+- ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x)))) |- ((!x. (P ==> (Q x))) = (P ==> (!x. (Q x))))
+T c==> c= c==> f0 ! * f1 b0 ! c==> f0 * f1 b0 c= ! c==> f0 * f1 b0 c==> f0 ! * f1 b0
+- (((MEM x) h) = x1) |- ((\x1. (((MEM x) h) = x1)) x1)
+T c==> c= cMEM f0 f1 f2 * / c= cMEM f0 f1 b0 f2
+- ((ssreflect_eq xh) ((MEM x) h)) |- (((ssreflect_eq xh) ((MEM x) h)) = T)
+T c==> cssreflect_eq f0 cMEM f1 f2 c= cssreflect_eq f0 cMEM f1 f2 cT
+- (((MEM x) h) = x1) |- ((((MEM x) h) = x1) /\ (?x1. (((MEM x) h) = x1)))
+T c==> c= cMEM f0 f1 f2 c/\ c= cMEM f0 f1 f2 c? / c= cMEM f0 f1 b0
+- (!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))) |- ((((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x))) = T)
+T c==> ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 c= c==> c/\ * f0 cNIL ! ! c==> * f0 b1 * f0 cCONS b0 b1 ! * f0 b0 cT
+- ((ssreflect_eq xh) (~ ((MEM x) h))) |- (((ssreflect_eq xh) (~ ((MEM x) h))) /\ (((MEM ((find_list t) x)) ((CONS h) t)) = ((MEM ((find_list t) x)) ((CONS h) t))))
+T c==> cssreflect_eq f0 c~ cMEM f1 f2 c/\ cssreflect_eq f0 c~ cMEM f1 f2 c= cMEM cfind_list f3 f1 cCONS f2 f3 cMEM cfind_list f3 f1 cCONS f2 f3
+- (L = L1) |- ((\L1. (L = L1)) L1)
+T c==> c= f0 f1 * / c= f0 b0 f1
+- |- ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))
+T c= c==> f0 ! * f1 b0 ! c==> f0 * f1 b0
+- |- ((((ssreflect_eq xh) ((MEM x) h)) = p') ==> ((p' ==> (((MEM h) ((CONS h) t)) = q')) ==> ((((ssreflect_eq xh) ((MEM x) h)) ==> ((MEM h) ((CONS h) t))) = (p' ==> q'))))
+T c==> c= cssreflect_eq f0 cMEM f1 f2 f3 c==> c==> f3 c= cMEM f2 cCONS f2 f4 f5 c= c==> cssreflect_eq f0 cMEM f1 f2 cMEM f2 cCONS f2 f4 c==> f3 f5
+- (!P. (((P T) /\ (P F)) ==> (!x. (P x)))), ((P T) /\ (P F)) |- ((!P. (((P T) /\ (P F)) ==> (!x. (P x)))) /\ (!x. (P x)))
+T c==> ! c==> c/\ * b0 cT * b0 cF ! * b0 b1 c==> c/\ * f0 cT * f0 cF c/\ ! c==> c/\ * b0 cT * b0 cF ! * b0 b1 ! * f0 b0
+- |- ((\q'. ((((ssreflect_eq xh) ((MEM x) h)) = p') ==> ((p' ==> (((MEM h) ((CONS h) t)) = q')) ==> ((((ssreflect_eq xh) ((MEM x) h)) ==> ((MEM h) ((CONS h) t))) = (p' ==> q'))))) q')
+T * / c==> c= cssreflect_eq f0 cMEM f1 f2 f3 c==> c==> f3 c= cMEM f2 cCONS f2 f4 b0 c= c==> cssreflect_eq f0 cMEM f1 f2 cMEM f2 cCONS f2 f4 c==> f3 b0 f5
+- |- ((\p'. (!q'. ((((ssreflect_eq xh) (~ ((MEM x) h))) = p') ==> ((p' ==> (((MEM ((find_list t) x)) ((CONS h) t)) = q')) ==> ((((ssreflect_eq xh) (~ ((MEM x) h))) ==> ((MEM ((find_list t) x)) ((CONS h) t))) = (p' ==> q')))))) p')
+T * / ! c==> c= cssreflect_eq f0 c~ cMEM f1 f2 b0 c==> c==> b0 c= cMEM cfind_list f3 f1 cCONS f2 f3 b1 c= c==> cssreflect_eq f0 c~ cMEM f1 f2 cMEM cfind_list f3 f1 cCONS f2 f3 c==> b0 b1 f4
+- ((ssreflect_eq xh) (~ ((MEM x) h))) |- (((MEM x) h) = F)
+T c==> cssreflect_eq f0 c~ cMEM f1 f2 c= cMEM f1 f2 cF
+- |- (((!Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))) ==> ((\Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))) Q)) = ((\Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))) Q))
+T c= c==> ! c= c==> f0 ! * b0 b1 ! c==> f0 * b0 b1 * / c= c==> f0 ! * b0 b1 ! c==> f0 * b0 b1 f1 * / c= c==> f0 ! * b0 b1 ! c==> f0 * b0 b1 f1
+- |- ((((\L1. (L = L1)) L1) ==> (?L1. (L = L1))) = T)
+T c= c==> * / c= f0 b0 f1 c? / c= f0 b0 cT
+- ((\x1. (((MEM x) h) = x1)) x1) |- (((\x1. (((MEM x) h) = x1)) x1) /\ (?x1. (((MEM x) h) = x1)))
+T c==> * / c= cMEM f0 f1 b0 f2 c/\ * / c= cMEM f0 f1 b0 f2 c? / c= cMEM f0 f1 b0
+- |- (((!x. (!t. ((((MEM x) NIL) = F) /\ (((MEM x) ((CONS h) t)) = ((x = h) \/ ((MEM x) t)))))) ==> ((\x. (!t. ((((MEM x) NIL) = F) /\ (((MEM x) ((CONS h) t)) = ((x = h) \/ ((MEM x) t)))))) x)) = ((\x. (!t. ((((MEM x) NIL) = F) /\ (((MEM x) ((CONS h) t)) = ((x = h) \/ ((MEM x) t)))))) x))
+T c= c==> ! ! c/\ c= cMEM b0 cNIL cF c= cMEM b0 cCONS f0 b1 c\/ c= b0 f0 cMEM b0 b1 * / ! c/\ c= cMEM b0 cNIL cF c= cMEM b0 cCONS f0 b1 c\/ c= b0 f0 cMEM b0 b1 f1 * / ! c/\ c= cMEM b0 cNIL cF c= cMEM b0 cCONS f0 b1 c\/ c= b0 f0 cMEM b0 b1 f1
+- |- ((((ssreflect_eq xh) (~ ((MEM x) h))) ==> (((MEM ((find_list t) x)) ((CONS h) t)) = q')) ==> ((((ssreflect_eq xh) (~ ((MEM x) h))) ==> ((MEM ((find_list t) x)) ((CONS h) t))) = (((ssreflect_eq xh) (~ ((MEM x) h))) ==> q')))
+T c==> c==> cssreflect_eq f0 c~ cMEM f1 f2 c= cMEM cfind_list f3 f1 cCONS f2 f3 f4 c= c==> cssreflect_eq f0 c~ cMEM f1 f2 cMEM cfind_list f3 f1 cCONS f2 f3 c==> cssreflect_eq f0 c~ cMEM f1 f2 f4
+- (!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))) |- ((!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))) /\ (!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))))
+T c==> ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 c/\ ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1
+- |- (((((ssreflect_eq xh) (~ ((MEM x) h))) ==> (((MEM ((find_list t) x)) ((CONS h) t)) = ((MEM ((find_list t) x)) ((CONS h) t)))) ==> ((((ssreflect_eq xh) (~ ((MEM x) h))) ==> ((MEM ((find_list t) x)) ((CONS h) t))) = (((ssreflect_eq xh) (~ ((MEM x) h))) ==> ((MEM ((find_list t) x)) ((CONS h) t))))) = ((((ssreflect_eq xh) (~ ((MEM x) h))) ==> ((MEM ((find_list t) x)) ((CONS h) t))) = (((ssreflect_eq xh) (~ ((MEM x) h))) ==> ((MEM ((find_list t) x)) ((CONS h) t)))))
+T c= c==> c==> cssreflect_eq f0 c~ cMEM f1 f2 c= cMEM cfind_list f3 f1 cCONS f2 f3 cMEM cfind_list f3 f1 cCONS f2 f3 c= c==> cssreflect_eq f0 c~ cMEM f1 f2 cMEM cfind_list f3 f1 cCONS f2 f3 c==> cssreflect_eq f0 c~ cMEM f1 f2 cMEM cfind_list f3 f1 cCONS f2 f3 c= c==> cssreflect_eq f0 c~ cMEM f1 f2 cMEM cfind_list f3 f1 cCONS f2 f3 c==> cssreflect_eq f0 c~ cMEM f1 f2 cMEM cfind_list f3 f1 cCONS f2 f3

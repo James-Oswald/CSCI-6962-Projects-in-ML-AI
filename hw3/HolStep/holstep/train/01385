@@ -1,0 +1,69 @@
+N INFNORM_2
+C |- ((infnorm x) = ((real_max (real_abs (x $ (NUMERAL (BIT1 _0))))) (real_abs (x $ (NUMERAL (BIT0 (BIT1 _0)))))))
+T c= cinfnorm f0 creal_max creal_abs c$ f0 cNUMERAL cBIT1 c_0 creal_abs c$ f0 cNUMERAL cBIT0 cBIT1 c_0
+D TRUTH
+A |- T
+T cT
+D EXCLUDED_MIDDLE
+A |- (!t. (t \/ (~ t)))
+T c\/ f0 c~ f0
+D BOOL_CASES_AX
+A |- (!t. ((t = T) \/ (t = F)))
+T c\/ c= f0 cT c= f0 cF
+D NOT_CLAUSES
+A |- ((!t. ((~ (~ t)) = t)) /\ (((~ T) = F) /\ ((~ F) = T)))
+T c/\ ! c= c~ c~ b0 b0 c/\ c= c~ cT cF c= c~ cF cT
+D NUMERAL
+A |- (!n. ((NUMERAL n) = n))
+T c= cNUMERAL f0 f0
+D ADD_CLAUSES
+A |- ((!n. (((NUMERAL _0) + n) = n)) /\ ((!m. ((m + (NUMERAL _0)) = m)) /\ ((!m. (!n. (((SUC m) + n) = (SUC (m + n))))) /\ (!m. (!n. ((m + (SUC n)) = (SUC (m + n))))))))
+T c/\ ! c= c+ cNUMERAL c_0 b0 b0 c/\ ! c= c+ b0 cNUMERAL c_0 b0 c/\ ! ! c= c+ cSUC b0 b1 cSUC c+ b0 b1 ! ! c= c+ b0 cSUC b1 cSUC c+ b0 b1
+D Ssrnat.addnC
+A |- (!m. (!n. ((m + n) = (n + m))))
+T c= c+ f0 f1 c+ f1 f0
+D ADD1
+A |- (!m. ((SUC m) = (m + (NUMERAL (BIT1 _0)))))
+T c= cSUC f0 c+ f0 cNUMERAL cBIT1 c_0
+D LE_ADD
+A |- (!m. (!n. (m <= (m + n))))
+T c<= f0 c+ f0 f1
+D ARITH_SUC
+A |- ((!n. ((SUC (NUMERAL n)) = (NUMERAL (SUC n)))) /\ (((SUC _0) = (BIT1 _0)) /\ ((!n. ((SUC (BIT0 n)) = (BIT1 n))) /\ (!n. ((SUC (BIT1 n)) = (BIT0 (SUC n)))))))
+T c/\ ! c= cSUC cNUMERAL b0 cNUMERAL cSUC b0 c/\ c= cSUC c_0 cBIT1 c_0 c/\ ! c= cSUC cBIT0 b0 cBIT1 b0 ! c= cSUC cBIT1 b0 cBIT0 cSUC b0
+D ARITH_ADD
+A |- ((!m. (!n. (((NUMERAL m) + (NUMERAL n)) = (NUMERAL (m + n))))) /\ (((_0 + _0) = _0) /\ ((!n. ((_0 + (BIT0 n)) = (BIT0 n))) /\ ((!n. ((_0 + (BIT1 n)) = (BIT1 n))) /\ ((!n. (((BIT0 n) + _0) = (BIT0 n))) /\ ((!n. (((BIT1 n) + _0) = (BIT1 n))) /\ ((!m. (!n. (((BIT0 m) + (BIT0 n)) = (BIT0 (m + n))))) /\ ((!m. (!n. (((BIT0 m) + (BIT1 n)) = (BIT1 (m + n))))) /\ ((!m. (!n. (((BIT1 m) + (BIT0 n)) = (BIT1 (m + n))))) /\ (!m. (!n. (((BIT1 m) + (BIT1 n)) = (BIT0 (SUC (m + n)))))))))))))))
+T c/\ ! ! c= c+ cNUMERAL b0 cNUMERAL b1 cNUMERAL c+ b0 b1 c/\ c= c+ c_0 c_0 c_0 c/\ ! c= c+ c_0 cBIT0 b0 cBIT0 b0 c/\ ! c= c+ c_0 cBIT1 b0 cBIT1 b0 c/\ ! c= c+ cBIT0 b0 c_0 cBIT0 b0 c/\ ! c= c+ cBIT1 b0 c_0 cBIT1 b0 c/\ ! ! c= c+ cBIT0 b0 cBIT0 b1 cBIT0 c+ b0 b1 c/\ ! ! c= c+ cBIT0 b0 cBIT1 b1 cBIT1 c+ b0 b1 c/\ ! ! c= c+ cBIT1 b0 cBIT0 b1 cBIT1 c+ b0 b1 ! ! c= c+ cBIT1 b0 cBIT1 b1 cBIT0 cSUC c+ b0 b1
+D IMAGE_CLAUSES
+A |- ((((IMAGE f) EMPTY) = EMPTY) /\ (((IMAGE f) (x INSERT s)) = ((f x) INSERT ((IMAGE f) s))))
+T c/\ c= * * part cIMAGE f0 part cEMPTY part cEMPTY c= * * part cIMAGE f0 * * part cINSERT f1 f2 * * part cINSERT * f0 f1 * * part cIMAGE f0 f2
+D NUMSEG_LREC
+A |- (!m. (!n. ((m <= n) ==> ((m INSERT ((m + (NUMERAL (BIT1 _0))) .. n)) = (m .. n)))))
+T c==> c<= f0 f1 c= * * part cINSERT f0 * * part c.. c+ f0 cNUMERAL cBIT1 c_0 f1 * * part c.. f0 f1
+D NUMSEG_SING
+A |- (!n. ((n .. n) = (n INSERT EMPTY)))
+T c= * * part c.. f0 f0 * * part cINSERT f0 part cEMPTY
+D DIMINDEX_2
+A |- ((dimindex UNIV) = (NUMERAL (BIT0 (BIT1 _0))))
+T c= cdimindex part cUNIV cNUMERAL cBIT0 cBIT1 c_0
+D REAL_MAX_SUP
+A |- (!x. (!y. (((real_max x) y) = (sup (x INSERT (y INSERT EMPTY))))))
+T c= creal_max f0 f1 csup * * part cINSERT f0 * * part cINSERT f1 part cEMPTY
+D infnorm
+A |- ((infnorm x) = (sup (GSPEC (\GEN%PVAR%229. (?i. (((SETSPEC GEN%PVAR%229) (((NUMERAL (BIT1 _0)) <= i) /\ (i <= (dimindex UNIV)))) (real_abs (x $ i))))))))
+T c= cinfnorm f0 csup * part cGSPEC / c? / cSETSPEC b0 c/\ c<= cNUMERAL cBIT1 c_0 b1 c<= b1 cdimindex part cUNIV creal_abs c$ f0 b1
+D INFNORM_SET_IMAGE
+A |- ((GSPEC (\GEN%PVAR%230. (?i. (((SETSPEC GEN%PVAR%230) (((NUMERAL (BIT1 _0)) <= i) /\ (i <= (dimindex UNIV)))) (real_abs (x $ i)))))) = ((IMAGE (\i. (real_abs (x $ i)))) ((NUMERAL (BIT1 _0)) .. (dimindex UNIV))))
+T c= * part cGSPEC / c? / cSETSPEC b0 c/\ c<= cNUMERAL cBIT1 c_0 b1 c<= b1 cdimindex part cUNIV creal_abs c$ f0 b1 * * part cIMAGE / creal_abs c$ f0 b0 * * part c.. cNUMERAL cBIT1 c_0 cdimindex part cUNIV
++ |- (((IMAGE f) (x INSERT s)) = ((f x) INSERT ((IMAGE f) s)))
+T c= * * part cIMAGE f0 * * part cINSERT f1 f2 * * part cINSERT * f0 f1 * * part cIMAGE f0 f2
++ |- ((((NUMERAL (BIT1 _0)) <= (NUMERAL (BIT0 (BIT1 _0)))) ==> (((NUMERAL (BIT1 _0)) .. (NUMERAL (BIT0 (BIT1 _0)))) = ((NUMERAL (BIT1 _0)) INSERT ((SUC (NUMERAL (BIT1 _0))) .. (NUMERAL (BIT0 (BIT1 _0))))))) = (((NUMERAL (BIT1 _0)) .. (NUMERAL (BIT0 (BIT1 _0)))) = ((NUMERAL (BIT1 _0)) INSERT ((SUC (NUMERAL (BIT1 _0))) .. (NUMERAL (BIT0 (BIT1 _0)))))))
+T c= c==> c<= cNUMERAL cBIT1 c_0 cNUMERAL cBIT0 cBIT1 c_0 c= * * part c.. cNUMERAL cBIT1 c_0 cNUMERAL cBIT0 cBIT1 c_0 * * part cINSERT cNUMERAL cBIT1 c_0 * * part c.. cSUC cNUMERAL cBIT1 c_0 cNUMERAL cBIT0 cBIT1 c_0 c= * * part c.. cNUMERAL cBIT1 c_0 cNUMERAL cBIT0 cBIT1 c_0 * * part cINSERT cNUMERAL cBIT1 c_0 * * part c.. cSUC cNUMERAL cBIT1 c_0 cNUMERAL cBIT0 cBIT1 c_0
++ |- (((!x. (!y. ((sup (x INSERT (y INSERT EMPTY))) = ((real_max x) y)))) ==> ((\x. (!y. ((sup (x INSERT (y INSERT EMPTY))) = ((real_max x) y)))) x)) = ((\x. (!y. ((sup (x INSERT (y INSERT EMPTY))) = ((real_max x) y)))) x))
+T c= c==> ! ! c= csup * * part cINSERT b0 * * part cINSERT b1 part cEMPTY creal_max b0 b1 * / ! c= csup * * part cINSERT b0 * * part cINSERT b1 part cEMPTY creal_max b0 b1 f0 * / ! c= csup * * part cINSERT b0 * * part cINSERT b1 part cEMPTY creal_max b0 b1 f0
+- |- ((x = x) = T)
+T c= c= f0 f0 cT
+- |- (T = ((sup ((IMAGE (\i. (real_abs (x $ i)))) ((NUMERAL (BIT1 _0)) INSERT ((NUMERAL (BIT0 (BIT1 _0))) INSERT EMPTY)))) = ((real_max (real_abs (x $ (NUMERAL (BIT1 _0))))) (real_abs (x $ (NUMERAL (BIT0 (BIT1 _0))))))))
+T c= cT c= csup * * part cIMAGE / creal_abs c$ f0 b0 * * part cINSERT cNUMERAL cBIT1 c_0 * * part cINSERT cNUMERAL cBIT0 cBIT1 c_0 part cEMPTY creal_max creal_abs c$ f0 cNUMERAL cBIT1 c_0 creal_abs c$ f0 cNUMERAL cBIT0 cBIT1 c_0
+- |- (((\i. (f i)) y) = (f y))
+T c= * / * f0 b0 f1 * f0 f1

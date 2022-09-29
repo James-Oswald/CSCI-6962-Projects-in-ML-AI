@@ -1,0 +1,314 @@
+N Seq.all_pred1_nseq
+C |- (!x. (!y. (!n. (((all (pred1 x)) ((nseq n) y)) = ((n = (NUMERAL _0)) \/ (x = y))))))
+T c= call * part cpred1 f0 cnseq f1 f2 c\/ c= f1 cNUMERAL c_0 c= f0 f2
+D TRUTH
+A |- T
+T cT
+D num_INDUCTION
+A |- (!P. (((P (NUMERAL _0)) /\ (!n. ((P n) ==> (P (SUC n))))) ==> (!n. (P n))))
+T c==> c/\ * f0 cNUMERAL c_0 ! c==> * f0 b0 * f0 cSUC b0 ! * f0 b0
+D Ssrbool.orFb
+A |- (!b. ((F \/ b) = b))
+T c= c\/ cF f0 f0
+D Ssrnat.iter
+A |- (((((iter (SUC n)) f) x) = (f (((iter n) f) x))) /\ ((((iter (NUMERAL _0)) f) x) = x))
+T c/\ c= citer cSUC f0 f1 f2 * f1 citer f0 f1 f2 c= citer cNUMERAL c_0 f1 f2 f2
+D Seq.ncons
+A |- (!n. (!x. (((ncons n) x) = ((iter n) (CONS x)))))
+T c= * * part cncons f0 f1 * * part citer f0 * part cCONS f1
+D Seq.nseq
+A |- (!n. (!x. (((nseq n) x) = (((ncons n) x) NIL))))
+T c= cnseq f0 f1 cncons f0 f1 cNIL
+D Seq.eqS0
+A |- (!n. (((SUC n) = (NUMERAL _0)) = F))
+T c= c= cSUC f0 cNUMERAL c_0 cF
+D Seq.all
+A |- (!a. (!x. (!s'. ((((all a) NIL) = T) /\ (((all a) ((CONS x) s')) = ((a x) /\ ((all a) s')))))))
+T c/\ c= call f0 cNIL cT c= call f0 cCONS f1 f2 c/\ * f0 f1 call f0 f2
+D Seq.pred1
+A |- (!a. ((pred1 a) = (\x. (x = a))))
+T c= * part cpred1 f0 / c= b0 f0
++ |- ((((all (\x'. (x' = x))) ((nseq (NUMERAL _0)) y)) = (T \/ (x = y))) = (((all (pred1 x)) ((nseq (NUMERAL _0)) y)) = (((NUMERAL _0) = (NUMERAL _0)) \/ (x = y))))
+T c= c= call / c= b0 f0 cnseq cNUMERAL c_0 f1 c\/ cT c= f0 f1 c= call * part cpred1 f0 cnseq cNUMERAL c_0 f1 c\/ c= cNUMERAL c_0 cNUMERAL c_0 c= f0 f1
+- (!P. (((P (NUMERAL _0)) /\ (!n. ((P n) ==> (P (SUC n))))) ==> (!n. (P n)))) |- ((((P (NUMERAL _0)) /\ (!n. ((P n) ==> (P (SUC n))))) ==> (!n. (P n))) = T)
+T c==> ! c==> c/\ * b0 cNUMERAL c_0 ! c==> * b0 b1 * b0 cSUC b1 ! * b0 b1 c= c==> c/\ * f0 cNUMERAL c_0 ! c==> * f0 b0 * f0 cSUC b0 ! * f0 b0 cT
++ |- ((all (\x'. (x' = y))) (((iter n) (CONS y)) NIL))
+T call / c= b0 f0 citer f1 * part cCONS f0 cNIL
+- ((!x. (P ==> (Q x))) = (P ==> (!x. (Q x)))) |- ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))
+T c==> c= ! c==> f0 * f1 b0 c==> f0 ! * f1 b0 c= c==> f0 ! * f1 b0 ! c==> f0 * f1 b0
++ |- ((\a. ((pred1 a) = (\x. (x = a)))) a)
+T * / c= * part cpred1 b0 / c= b1 b0 f0
++ |- (((!P. (((P (NUMERAL _0)) /\ (!n. ((P n) ==> (P (SUC n))))) ==> (!n. (P n)))) ==> ((\P. (((P (NUMERAL _0)) /\ (!n. ((P n) ==> (P (SUC n))))) ==> (!n. (P n)))) P)) = ((\P. (((P (NUMERAL _0)) /\ (!n. ((P n) ==> (P (SUC n))))) ==> (!n. (P n)))) P))
+T c= c==> ! c==> c/\ * b0 cNUMERAL c_0 ! c==> * b0 b1 * b0 cSUC b1 ! * b0 b1 * / c==> c/\ * b0 cNUMERAL c_0 ! c==> * b0 b1 * b0 cSUC b1 ! * b0 b1 f0 * / c==> c/\ * b0 cNUMERAL c_0 ! c==> * b0 b1 * b0 cSUC b1 ! * b0 b1 f0
++ |- (((all (\x'. (x' = y))) NIL) = ((all (\x'. (x' = y))) (((iter (NUMERAL _0)) (CONS y)) NIL)))
+T c= call / c= b0 f0 cNIL call / c= b0 f0 citer cNUMERAL c_0 * part cCONS f0 cNIL
++ |- (((all (\x'. (x' = x))) ((nseq (SUC n)) y)) = (((SUC n) = (NUMERAL _0)) \/ (x = y)))
+T c= call / c= b0 f0 cnseq cSUC f1 f2 c\/ c= cSUC f1 cNUMERAL c_0 c= f0 f2
+- (!a. (!b. ((a ==> b) ==> ((a /\ b) = a)))) |- ((!a. (!b. ((a ==> b) ==> ((a /\ b) = a)))) /\ (((x = y) /\ ((all (\x'. (x' = x))) (((iter n) (CONS y)) NIL))) = (x = y)))
+T c==> ! ! c==> c==> b0 b1 c= c/\ b0 b1 b0 c/\ ! ! c==> c==> b0 b1 c= c/\ b0 b1 b0 c= c/\ c= f0 f1 call / c= b0 f0 citer f2 * part cCONS f1 cNIL c= f0 f1
+- (n = n1) |- ((n = n1) /\ (((all (pred1 x)) ((nseq n) y)) = ((n = (NUMERAL _0)) \/ (x = y))))
+T c==> c= f0 f1 c/\ c= f0 f1 c= call * part cpred1 f2 cnseq f0 f3 c\/ c= f0 cNUMERAL c_0 c= f2 f3
++ |- ((!n. (((all (\x'. (x' = y))) (((iter n) (CONS y)) NIL)) ==> ((all (\x'. (x' = y))) (((iter (SUC n)) (CONS y)) NIL)))) = (((all (\x'. (x' = y))) (((iter (NUMERAL _0)) (CONS y)) NIL)) /\ (!n. (((all (\x'. (x' = y))) (((iter n) (CONS y)) NIL)) ==> ((all (\x'. (x' = y))) (((iter (SUC n)) (CONS y)) NIL))))))
+T c= ! c==> call / c= b1 f0 citer b0 * part cCONS f0 cNIL call / c= b1 f0 citer cSUC b0 * part cCONS f0 cNIL c/\ call / c= b0 f0 citer cNUMERAL c_0 * part cCONS f0 cNIL ! c==> call / c= b1 f0 citer b0 * part cCONS f0 cNIL call / c= b1 f0 citer cSUC b0 * part cCONS f0 cNIL
+- |- ((\P. (!Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x)))))) P)
+T * / ! c= c==> b0 ! * b1 b2 ! c==> b0 * b1 b2 f0
++ ((\n1. (n = n1)) n1) |- (((\n1. (n = n1)) n1) /\ ((all (\x'. (x' = y))) (((iter n) (CONS y)) NIL)))
+T c==> * / c= f0 b0 f1 c/\ * / c= f0 b0 f1 call / c= b0 f2 citer f0 * part cCONS f2 cNIL
+- (!a. (!b. ((a ==> b) ==> ((a /\ b) = a)))) |- ((\a. ((a ==> b) ==> ((a /\ b) = a))) a)
+T c==> ! ! c==> c==> b0 b1 c= c/\ b0 b1 b0 * / c==> c==> b0 f0 c= c/\ b0 f0 b0 f1
+- |- (((?n1. (n = n1)) ==> (((all (pred1 x)) ((nseq n) y)) = ((n = (NUMERAL _0)) \/ (x = y)))) = (((all (pred1 x)) ((nseq n) y)) = ((n = (NUMERAL _0)) \/ (x = y))))
+T c= c==> c? / c= f0 b0 c= call * part cpred1 f1 cnseq f0 f2 c\/ c= f0 cNUMERAL c_0 c= f1 f2 c= call * part cpred1 f1 cnseq f0 f2 c\/ c= f0 cNUMERAL c_0 c= f1 f2
++ |- ((((all (\x'. (x' = x))) ((CONS y) (((iter n) (CONS y)) NIL))) = (((SUC n) = (NUMERAL _0)) \/ (x = y))) = (((all (\x'. (x' = x))) (((iter (SUC n)) (CONS y)) NIL)) = (((SUC n) = (NUMERAL _0)) \/ (x = y))))
+T c= c= call / c= b0 f0 cCONS f1 citer f2 * part cCONS f1 cNIL c\/ c= cSUC f2 cNUMERAL c_0 c= f0 f1 c= call / c= b0 f0 citer cSUC f2 * part cCONS f1 cNIL c\/ c= cSUC f2 cNUMERAL c_0 c= f0 f1
++ |- (((!a. ((pred1 a) = (\x. (x = a)))) ==> ((\a. ((pred1 a) = (\x. (x = a)))) a)) = ((\a. ((pred1 a) = (\x. (x = a)))) a))
+T c= c==> ! c= * part cpred1 b0 / c= b1 b0 * / c= * part cpred1 b0 / c= b1 b0 f0 * / c= * part cpred1 b0 / c= b1 b0 f0
+- |- ((\n. (((all (pred1 x)) ((nseq n) y)) = ((n = (NUMERAL _0)) \/ (x = y)))) n1)
+T * / c= call * part cpred1 f0 cnseq b0 f1 c\/ c= b0 cNUMERAL c_0 c= f0 f1 f2
++ |- (((!x. (((\n1. (n = n1)) x) ==> ((all (\x'. (x' = y))) (((iter n) (CONS y)) NIL)))) ==> ((?n1. (n = n1)) ==> ((all (\x'. (x' = y))) (((iter n) (CONS y)) NIL)))) = ((?n1. (n = n1)) ==> ((all (\x'. (x' = y))) (((iter n) (CONS y)) NIL))))
+T c= c==> ! c==> * / c= f0 b1 b0 call / c= b1 f1 citer f0 * part cCONS f1 cNIL c==> c? / c= f0 b0 call / c= b0 f1 citer f0 * part cCONS f1 cNIL c==> c? / c= f0 b0 call / c= b0 f1 citer f0 * part cCONS f1 cNIL
++ |- (((((all (pred1 x)) ((nseq n) y)) = ((n = (NUMERAL _0)) \/ (x = y))) ==> (((all (pred1 x)) ((nseq (SUC n)) y)) = (((SUC n) = (NUMERAL _0)) \/ (x = y)))) = T)
+T c= c==> c= call * part cpred1 f0 cnseq f1 f2 c\/ c= f1 cNUMERAL c_0 c= f0 f2 c= call * part cpred1 f0 cnseq cSUC f1 f2 c\/ c= cSUC f1 cNUMERAL c_0 c= f0 f2 cT
++ |- ((all (\x'. (x' = y))) NIL)
+T call / c= b0 f0 cNIL
+- |- ((t \/ t) = t)
+T c= c\/ f0 f0 f0
+- |- ((((x = y) ==> ((all (\x'. (x' = x))) (((iter n) (CONS y)) NIL))) ==> (((x = y) /\ ((all (\x'. (x' = x))) (((iter n) (CONS y)) NIL))) = (x = y))) = (((x = y) /\ ((all (\x'. (x' = x))) (((iter n) (CONS y)) NIL))) = (x = y)))
+T c= c==> c==> c= f0 f1 call / c= b0 f0 citer f2 * part cCONS f1 cNIL c= c/\ c= f0 f1 call / c= b0 f0 citer f2 * part cCONS f1 cNIL c= f0 f1 c= c/\ c= f0 f1 call / c= b0 f0 citer f2 * part cCONS f1 cNIL c= f0 f1
+- |- (!n1. (((\n1. (n = n1)) n1) ==> (?n1. (n = n1))))
+T c==> * / c= f0 b0 f1 c? / c= f0 b0
+- (n = n1) |- (((all (pred1 x)) ((nseq n1) y)) = ((n = (NUMERAL _0)) \/ (x = y)))
+T c==> c= f0 f1 c= call * part cpred1 f2 cnseq f1 f3 c\/ c= f0 cNUMERAL c_0 c= f2 f3
++ |- ((\x. (((ncons n) x) = ((iter n) (CONS x)))) x)
+T * / c= * * part cncons f0 b0 * * part citer f0 * part cCONS b0 f1
+- (!a. (!b. ((a ==> b) ==> ((a /\ b) = a)))) |- ((\b. ((a ==> b) ==> ((a /\ b) = a))) b)
+T c==> ! ! c==> c==> b0 b1 c= c/\ b0 b1 b0 * / c==> c==> f0 b0 c= c/\ f0 b0 f0 f1
+- (!a. (!b. ((a ==> b) ==> ((a /\ b) = a)))) |- ((!a. (!b. ((a ==> b) ==> ((a /\ b) = a)))) /\ (!b. (!a. ((a ==> b) ==> ((a /\ b) = a)))))
+T c==> ! ! c==> c==> b0 b1 c= c/\ b0 b1 b0 c/\ ! ! c==> c==> b0 b1 c= c/\ b0 b1 b0 ! ! c==> c==> b1 b0 c= c/\ b1 b0 b1
++ |- ((\n1. (n = n1)) n)
+T * / c= f0 b0 f0
+- (!a. (!b. ((a ==> b) ==> ((a /\ b) = a)))) |- ((!a. ((a ==> b) ==> ((a /\ b) = a))) = T)
+T c==> ! ! c==> c==> b0 b1 c= c/\ b0 b1 b0 c= ! c==> c==> b0 f0 c= c/\ b0 f0 b0 cT
++ |- ((?n1. (n = n1)) ==> ((all (\x'. (x' = y))) (((iter n) (CONS y)) NIL)))
+T c==> c? / c= f0 b0 call / c= b0 f1 citer f0 * part cCONS f1 cNIL
+- ((P (NUMERAL _0)) /\ (!n. ((P n) ==> (P (SUC n))))) |- ((!P. (((P (NUMERAL _0)) /\ (!n. ((P n) ==> (P (SUC n))))) ==> (!n. (P n)))) ==> (!n. (P n)))
+T c==> c/\ * f0 cNUMERAL c_0 ! c==> * f0 b0 * f0 cSUC b0 c==> ! c==> c/\ * b0 cNUMERAL c_0 ! c==> * b0 b1 * b0 cSUC b1 ! * b0 b1 ! * f0 b0
++ |- ((!y. (!n. (((all (pred1 x)) ((nseq n) y)) = ((n = (NUMERAL _0)) \/ (x = y))))) = T)
+T c= ! ! c= call * part cpred1 f0 cnseq b1 b0 c\/ c= b1 cNUMERAL c_0 c= f0 b0 cT
+- (!P. (((P (NUMERAL _0)) /\ (!n. ((P n) ==> (P (SUC n))))) ==> (!n. (P n)))), ((P (NUMERAL _0)) /\ (!n. ((P n) ==> (P (SUC n))))) |- (((P (NUMERAL _0)) /\ (!n. ((P n) ==> (P (SUC n))))) /\ (!n. (P n)))
+T c==> ! c==> c/\ * b0 cNUMERAL c_0 ! c==> * b0 b1 * b0 cSUC b1 ! * b0 b1 c==> c/\ * f0 cNUMERAL c_0 ! c==> * f0 b0 * f0 cSUC b0 c/\ c/\ * f0 cNUMERAL c_0 ! c==> * f0 b0 * f0 cSUC b0 ! * f0 b0
+- (n = n1) |- ((all (\x'. (x' = y))) (((iter n1) (CONS y)) NIL))
+T c==> c= f0 f1 call / c= b0 f2 citer f1 * part cCONS f2 cNIL
++ |- (((!x. (!y. ((x = y) = (y = x)))) ==> ((\x. (!y. ((x = y) = (y = x)))) x)) = ((\x. (!y. ((x = y) = (y = x)))) x))
+T c= c==> ! ! c= c= b0 b1 c= b1 b0 * / ! c= c= b0 b1 c= b1 b0 f0 * / ! c= c= b0 b1 c= b1 b0 f0
++ |- (((all (\x'. (x' = x))) (((ncons (NUMERAL _0)) y) NIL)) = T)
+T c= call / c= b0 f0 cncons cNUMERAL c_0 f1 cNIL cT
++ |- (((all (\x'. (x' = x))) (((ncons (NUMERAL _0)) y) NIL)) = (((all (\x'. (x' = x))) (((ncons (NUMERAL _0)) y) NIL)) = T))
+T c= call / c= b0 f0 cncons cNUMERAL c_0 f1 cNIL c= call / c= b0 f0 cncons cNUMERAL c_0 f1 cNIL cT
++ |- (((!y. ((x = y) = (y = x))) ==> ((\y. ((x = y) = (y = x))) y)) = ((\y. ((x = y) = (y = x))) y))
+T c= c==> ! c= c= f0 b0 c= b0 f0 * / c= c= f0 b0 c= b0 f0 f1 * / c= c= f0 b0 c= b0 f0 f1
++ |- (((all (pred1 x)) ((nseq (NUMERAL _0)) y)) = (((NUMERAL _0) = (NUMERAL _0)) \/ (x = y)))
+T c= call * part cpred1 f0 cnseq cNUMERAL c_0 f1 c\/ c= cNUMERAL c_0 cNUMERAL c_0 c= f0 f1
++ |- (((!n. (((SUC n) = (NUMERAL _0)) = F)) ==> ((\n. (((SUC n) = (NUMERAL _0)) = F)) n)) = ((\n. (((SUC n) = (NUMERAL _0)) = F)) n))
+T c= c==> ! c= c= cSUC b0 cNUMERAL c_0 cF * / c= c= cSUC b0 cNUMERAL c_0 cF f0 * / c= c= cSUC b0 cNUMERAL c_0 cF f0
++ ((all (\x'. (x' = y))) (((iter n) (CONS y)) NIL)) |- ((all (\x'. (x' = y))) ((CONS y) (((iter n) (CONS y)) NIL)))
+T c==> call / c= b0 f0 citer f1 * part cCONS f0 cNIL call / c= b0 f0 cCONS f0 citer f1 * part cCONS f0 cNIL
++ |- ((\n. (((SUC n) = (NUMERAL _0)) = F)) n)
+T * / c= c= cSUC b0 cNUMERAL c_0 cF f0
+- (!a. (!b. ((a ==> b) ==> ((a /\ b) = a)))) |- (((!a. ((a ==> b) ==> ((a /\ b) = a))) ==> ((\a. ((a ==> b) ==> ((a /\ b) = a))) a)) = ((\a. ((a ==> b) ==> ((a /\ b) = a))) a))
+T c==> ! ! c==> c==> b0 b1 c= c/\ b0 b1 b0 c= c==> ! c==> c==> b0 f0 c= c/\ b0 f0 b0 * / c==> c==> b0 f0 c= c/\ b0 f0 b0 f1 * / c==> c==> b0 f0 c= c/\ b0 f0 b0 f1
++ |- (((all (\x'. (x' = x))) (((iter (NUMERAL _0)) (CONS y)) NIL)) = ((all (\x'. (x' = x))) (((ncons (NUMERAL _0)) y) NIL)))
+T c= call / c= b0 f0 citer cNUMERAL c_0 * part cCONS f1 cNIL call / c= b0 f0 cncons cNUMERAL c_0 f1 cNIL
++ |- (((((\x'. (x' = x)) y) /\ ((all (\x'. (x' = x))) (((iter n) (CONS y)) NIL))) = (((SUC n) = (NUMERAL _0)) \/ (x = y))) = (((all (\x'. (x' = x))) ((CONS y) (((iter n) (CONS y)) NIL))) = (((SUC n) = (NUMERAL _0)) \/ (x = y))))
+T c= c= c/\ * / c= b0 f0 f1 call / c= b0 f0 citer f2 * part cCONS f1 cNIL c\/ c= cSUC f2 cNUMERAL c_0 c= f0 f1 c= call / c= b0 f0 cCONS f1 citer f2 * part cCONS f1 cNIL c\/ c= cSUC f2 cNUMERAL c_0 c= f0 f1
++ |- ((x = y) = (y = x))
+T c= c= f0 f1 c= f1 f0
+- (n = n1) |- ((((all (pred1 x)) ((nseq n1) y)) = ((n1 = (NUMERAL _0)) \/ (x = y))) = (((all (pred1 x)) ((nseq n1) y)) = ((n = (NUMERAL _0)) \/ (x = y))))
+T c==> c= f0 f1 c= c= call * part cpred1 f2 cnseq f1 f3 c\/ c= f1 cNUMERAL c_0 c= f2 f3 c= call * part cpred1 f2 cnseq f1 f3 c\/ c= f0 cNUMERAL c_0 c= f2 f3
+- (!a. (!b. ((a ==> b) ==> ((a /\ b) = a)))) |- (((!b. ((a ==> b) ==> ((a /\ b) = a))) ==> ((\b. ((a ==> b) ==> ((a /\ b) = a))) b)) = ((\b. ((a ==> b) ==> ((a /\ b) = a))) b))
+T c==> ! ! c==> c==> b0 b1 c= c/\ b0 b1 b0 c= c==> ! c==> c==> f0 b0 c= c/\ f0 b0 f0 * / c==> c==> f0 b0 c= c/\ f0 b0 f0 f1 * / c==> c==> f0 b0 c= c/\ f0 b0 f0 f1
++ |- (!n1. (((\n1. (n = n1)) n1) ==> ((all (\x'. (x' = y))) (((iter n) (CONS y)) NIL))))
+T c==> * / c= f0 b0 f1 call / c= b0 f2 citer f0 * part cCONS f2 cNIL
++ |- ((((\x'. (x' = x)) y) /\ ((all (\x'. (x' = x))) (((iter n) (CONS y)) NIL))) = (((SUC n) = (NUMERAL _0)) \/ (x = y)))
+T c= c/\ * / c= b0 f0 f1 call / c= b0 f0 citer f2 * part cCONS f1 cNIL c\/ c= cSUC f2 cNUMERAL c_0 c= f0 f1
+- (n = n1) |- ((((all (pred1 x)) ((nseq n1) y)) = ((n = (NUMERAL _0)) \/ (x = y))) = (((all (pred1 x)) ((nseq n) y)) = ((n = (NUMERAL _0)) \/ (x = y))))
+T c==> c= f0 f1 c= c= call * part cpred1 f2 cnseq f1 f3 c\/ c= f0 cNUMERAL c_0 c= f2 f3 c= call * part cpred1 f2 cnseq f0 f3 c\/ c= f0 cNUMERAL c_0 c= f2 f3
+- |- ((n = n1) = ((\n1. (n = n1)) n1))
+T c= c= f0 f1 * / c= f0 b0 f1
++ (n = n1) |- ((n = n1) /\ ((all (\x'. (x' = y))) (((iter n) (CONS y)) NIL)))
+T c==> c= f0 f1 c/\ c= f0 f1 call / c= b0 f2 citer f0 * part cCONS f2 cNIL
++ |- ((((x = y) /\ ((all (\x'. (x' = x))) (((iter n) (CONS y)) NIL))) = (F \/ (x = y))) = (((x = y) /\ ((all (\x'. (x' = x))) (((iter n) (CONS y)) NIL))) = (((SUC n) = (NUMERAL _0)) \/ (x = y))))
+T c= c= c/\ c= f0 f1 call / c= b0 f0 citer f2 * part cCONS f1 cNIL c\/ cF c= f0 f1 c= c/\ c= f0 f1 call / c= b0 f0 citer f2 * part cCONS f1 cNIL c\/ c= cSUC f2 cNUMERAL c_0 c= f0 f1
+- (!P. (((P (NUMERAL _0)) /\ (!n. ((P n) ==> (P (SUC n))))) ==> (!n. (P n)))) |- ((\P. (((P (NUMERAL _0)) /\ (!n. ((P n) ==> (P (SUC n))))) ==> (!n. (P n)))) P)
+T c==> ! c==> c/\ * b0 cNUMERAL c_0 ! c==> * b0 b1 * b0 cSUC b1 ! * b0 b1 * / c==> c/\ * b0 cNUMERAL c_0 ! c==> * b0 b1 * b0 cSUC b1 ! * b0 b1 f0
+- (n = n1) |- ((((all (pred1 x)) ((nseq n1) y)) = ((n1 = (NUMERAL _0)) \/ (x = y))) = (((all (pred1 x)) ((nseq n) y)) = ((n = (NUMERAL _0)) \/ (x = y))))
+T c==> c= f0 f1 c= c= call * part cpred1 f2 cnseq f1 f3 c\/ c= f1 cNUMERAL c_0 c= f2 f3 c= call * part cpred1 f2 cnseq f0 f3 c\/ c= f0 cNUMERAL c_0 c= f2 f3
+- |- ((?n1. (n = n1)) ==> (((all (pred1 x)) ((nseq n) y)) = ((n = (NUMERAL _0)) \/ (x = y))))
+T c==> c? / c= f0 b0 c= call * part cpred1 f1 cnseq f0 f2 c\/ c= f0 cNUMERAL c_0 c= f1 f2
++ |- (((!x. (!s'. ((((all a) NIL) = T) /\ (((all a) ((CONS x) s')) = ((a x) /\ ((all a) s')))))) ==> ((\x. (!s'. ((((all a) NIL) = T) /\ (((all a) ((CONS x) s')) = ((a x) /\ ((all a) s')))))) x)) = ((\x. (!s'. ((((all a) NIL) = T) /\ (((all a) ((CONS x) s')) = ((a x) /\ ((all a) s')))))) x))
+T c= c==> ! ! c/\ c= call f0 cNIL cT c= call f0 cCONS b0 b1 c/\ * f0 b0 call f0 b1 * / ! c/\ c= call f0 cNIL cT c= call f0 cCONS b0 b1 c/\ * f0 b0 call f0 b1 f1 * / ! c/\ c= call f0 cNIL cT c= call f0 cCONS b0 b1 c/\ * f0 b0 call f0 b1 f1
++ |- ((\y. ((x = y) = (y = x))) y)
+T * / c= c= f0 b0 c= b0 f0 f1
++ |- (((((all (pred1 x)) ((nseq (NUMERAL _0)) y)) = (((NUMERAL _0) = (NUMERAL _0)) \/ (x = y))) /\ (!n. ((((all (pred1 x)) ((nseq n) y)) = ((n = (NUMERAL _0)) \/ (x = y))) ==> (((all (pred1 x)) ((nseq (SUC n)) y)) = (((SUC n) = (NUMERAL _0)) \/ (x = y)))))) ==> (!n. (((all (pred1 x)) ((nseq n) y)) = ((n = (NUMERAL _0)) \/ (x = y)))))
+T c==> c/\ c= call * part cpred1 f0 cnseq cNUMERAL c_0 f1 c\/ c= cNUMERAL c_0 cNUMERAL c_0 c= f0 f1 ! c==> c= call * part cpred1 f0 cnseq b0 f1 c\/ c= b0 cNUMERAL c_0 c= f0 f1 c= call * part cpred1 f0 cnseq cSUC b0 f1 c\/ c= cSUC b0 cNUMERAL c_0 c= f0 f1 ! c= call * part cpred1 f0 cnseq b0 f1 c\/ c= b0 cNUMERAL c_0 c= f0 f1
++ |- ((((((all (pred1 x)) ((nseq (NUMERAL _0)) y)) = (((NUMERAL _0) = (NUMERAL _0)) \/ (x = y))) /\ (!n. ((((all (pred1 x)) ((nseq n) y)) = ((n = (NUMERAL _0)) \/ (x = y))) ==> (((all (pred1 x)) ((nseq (SUC n)) y)) = (((SUC n) = (NUMERAL _0)) \/ (x = y)))))) ==> (!n. (((all (pred1 x)) ((nseq n) y)) = ((n = (NUMERAL _0)) \/ (x = y))))) = (!n. (((all (pred1 x)) ((nseq n) y)) = ((n = (NUMERAL _0)) \/ (x = y)))))
+T c= c==> c/\ c= call * part cpred1 f0 cnseq cNUMERAL c_0 f1 c\/ c= cNUMERAL c_0 cNUMERAL c_0 c= f0 f1 ! c==> c= call * part cpred1 f0 cnseq b0 f1 c\/ c= b0 cNUMERAL c_0 c= f0 f1 c= call * part cpred1 f0 cnseq cSUC b0 f1 c\/ c= cSUC b0 cNUMERAL c_0 c= f0 f1 ! c= call * part cpred1 f0 cnseq b0 f1 c\/ c= b0 cNUMERAL c_0 c= f0 f1 ! c= call * part cpred1 f0 cnseq b0 f1 c\/ c= b0 cNUMERAL c_0 c= f0 f1
++ |- (((((all (\x'. (x' = y))) (((iter (NUMERAL _0)) (CONS y)) NIL)) /\ (!n. (((all (\x'. (x' = y))) (((iter n) (CONS y)) NIL)) ==> ((all (\x'. (x' = y))) (((iter (SUC n)) (CONS y)) NIL))))) ==> (!n. ((all (\x'. (x' = y))) (((iter n) (CONS y)) NIL)))) = (!n. ((all (\x'. (x' = y))) (((iter n) (CONS y)) NIL))))
+T c= c==> c/\ call / c= b0 f0 citer cNUMERAL c_0 * part cCONS f0 cNIL ! c==> call / c= b1 f0 citer b0 * part cCONS f0 cNIL call / c= b1 f0 citer cSUC b0 * part cCONS f0 cNIL ! call / c= b1 f0 citer b0 * part cCONS f0 cNIL ! call / c= b1 f0 citer b0 * part cCONS f0 cNIL
++ |- ((((all (\x'. (x' = x))) ((nseq (SUC n)) y)) = (((SUC n) = (NUMERAL _0)) \/ (x = y))) = (((all (pred1 x)) ((nseq (SUC n)) y)) = (((SUC n) = (NUMERAL _0)) \/ (x = y))))
+T c= c= call / c= b0 f0 cnseq cSUC f1 f2 c\/ c= cSUC f1 cNUMERAL c_0 c= f0 f2 c= call * part cpred1 f0 cnseq cSUC f1 f2 c\/ c= cSUC f1 cNUMERAL c_0 c= f0 f2
+- (!a. (!b. ((a ==> b) ==> ((a /\ b) = a)))), (a ==> b) |- ((!a. (!b. ((a ==> b) ==> ((a /\ b) = a)))) /\ ((a /\ b) = a))
+T c==> ! ! c==> c==> b0 b1 c= c/\ b0 b1 b0 c==> c==> f0 f1 c/\ ! ! c==> c==> b0 b1 c= c/\ b0 b1 b0 c= c/\ f0 f1 f0
++ |- ((\n. (!x. (((ncons n) x) = ((iter n) (CONS x))))) n)
+T * / ! c= * * part cncons b0 b1 * * part citer b0 * part cCONS b1 f0
+- |- (((!n. (((all (pred1 x)) ((nseq n) y)) = ((n = (NUMERAL _0)) \/ (x = y)))) ==> ((\n. (((all (pred1 x)) ((nseq n) y)) = ((n = (NUMERAL _0)) \/ (x = y)))) n1)) = ((\n. (((all (pred1 x)) ((nseq n) y)) = ((n = (NUMERAL _0)) \/ (x = y)))) n1))
+T c= c==> ! c= call * part cpred1 f0 cnseq b0 f1 c\/ c= b0 cNUMERAL c_0 c= f0 f1 * / c= call * part cpred1 f0 cnseq b0 f1 c\/ c= b0 cNUMERAL c_0 c= f0 f1 f2 * / c= call * part cpred1 f0 cnseq b0 f1 c\/ c= b0 cNUMERAL c_0 c= f0 f1 f2
+- |- ((n = n1) ==> (((all (pred1 x)) ((nseq n) y)) = ((n = (NUMERAL _0)) \/ (x = y))))
+T c==> c= f0 f1 c= call * part cpred1 f2 cnseq f0 f3 c\/ c= f0 cNUMERAL c_0 c= f2 f3
++ |- ((((all (pred1 x)) ((nseq (NUMERAL _0)) y)) = (((NUMERAL _0) = (NUMERAL _0)) \/ (x = y))) /\ (!n. ((((all (pred1 x)) ((nseq n) y)) = ((n = (NUMERAL _0)) \/ (x = y))) ==> (((all (pred1 x)) ((nseq (SUC n)) y)) = (((SUC n) = (NUMERAL _0)) \/ (x = y))))))
+T c/\ c= call * part cpred1 f0 cnseq cNUMERAL c_0 f1 c\/ c= cNUMERAL c_0 cNUMERAL c_0 c= f0 f1 ! c==> c= call * part cpred1 f0 cnseq b0 f1 c\/ c= b0 cNUMERAL c_0 c= f0 f1 c= call * part cpred1 f0 cnseq cSUC b0 f1 c\/ c= cSUC b0 cNUMERAL c_0 c= f0 f1
+- (!a. (!b. ((a ==> b) ==> ((a /\ b) = a)))) |- ((\b. (!a. ((a ==> b) ==> ((a /\ b) = a)))) b)
+T c==> ! ! c==> c==> b0 b1 c= c/\ b0 b1 b0 * / ! c==> c==> b1 b0 c= c/\ b1 b0 b1 f0
+- (!a. (!b. ((a ==> b) ==> ((a /\ b) = a)))), (a ==> b) |- ((a ==> b) /\ ((a /\ b) = a))
+T c==> ! ! c==> c==> b0 b1 c= c/\ b0 b1 b0 c==> c==> f0 f1 c/\ c==> f0 f1 c= c/\ f0 f1 f0
++ |- (((!x. (((nseq n) x) = (((ncons n) x) NIL))) ==> ((\x. (((nseq n) x) = (((ncons n) x) NIL))) x)) = ((\x. (((nseq n) x) = (((ncons n) x) NIL))) x))
+T c= c==> ! c= cnseq f0 b0 cncons f0 b0 cNIL * / c= cnseq f0 b0 cncons f0 b0 cNIL f1 * / c= cnseq f0 b0 cncons f0 b0 cNIL f1
+- |- ((((\n1. (n = n1)) n1) ==> (((all (pred1 x)) ((nseq n) y)) = ((n = (NUMERAL _0)) \/ (x = y)))) = T)
+T c= c==> * / c= f0 b0 f1 c= call * part cpred1 f2 cnseq f0 f3 c\/ c= f0 cNUMERAL c_0 c= f2 f3 cT
+- |- ((?n1. (n = n1)) ==> (?n1. (n = n1)))
+T c==> c? / c= f0 b0 c? / c= f0 b0
++ |- ((x = x) = T)
+T c= c= f0 f0 cT
+- |- ((\Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))) Q)
+T * / c= c==> f0 ! * b0 b1 ! c==> f0 * b0 b1 f1
++ ((all (\x'. (x' = y))) (((iter n) (CONS y)) NIL)) |- (((all (\x'. (x' = y))) (((iter n) (CONS y)) NIL)) /\ ((all (\x'. (x' = y))) (((iter (SUC n)) (CONS y)) NIL)))
+T c==> call / c= b0 f0 citer f1 * part cCONS f0 cNIL c/\ call / c= b0 f0 citer f1 * part cCONS f0 cNIL call / c= b0 f0 citer cSUC f1 * part cCONS f0 cNIL
+- ((all (\x'. (x' = y))) (((iter n) (CONS y)) NIL)) |- (T = ((all (\x'. (x' = y))) (((iter n) (CONS y)) NIL)))
+T c==> call / c= b0 f0 citer f1 * part cCONS f0 cNIL c= cT call / c= b0 f0 citer f1 * part cCONS f0 cNIL
++ |- ((\x. (((nseq n) x) = (((ncons n) x) NIL))) x)
+T * / c= cnseq f0 b0 cncons f0 b0 cNIL f1
+- (n = n1) |- (n1 = n)
+T c==> c= f0 f1 c= f1 f0
++ |- ((all (\x'. (x' = x))) (((ncons (NUMERAL _0)) y) NIL))
+T call / c= b0 f0 cncons cNUMERAL c_0 f1 cNIL
+- |- (((!a. (!b. ((a ==> b) ==> ((a /\ b) = a)))) ==> (((x = y) /\ ((all (\x'. (x' = x))) (((iter n) (CONS y)) NIL))) = (x = y))) = (((x = y) /\ ((all (\x'. (x' = x))) (((iter n) (CONS y)) NIL))) = (x = y)))
+T c= c==> ! ! c==> c==> b0 b1 c= c/\ b0 b1 b0 c= c/\ c= f0 f1 call / c= b0 f0 citer f2 * part cCONS f1 cNIL c= f0 f1 c= c/\ c= f0 f1 call / c= b0 f0 citer f2 * part cCONS f1 cNIL c= f0 f1
++ |- ((t = T) = t)
+T c= c= f0 cT f0
++ |- ((((x = y) /\ ((all (\x'. (x' = x))) (((iter n) (CONS y)) NIL))) = (((SUC n) = (NUMERAL _0)) \/ (x = y))) = (((y = x) /\ ((all (\x'. (x' = x))) (((iter n) (CONS y)) NIL))) = (((SUC n) = (NUMERAL _0)) \/ (x = y))))
+T c= c= c/\ c= f0 f1 call / c= b0 f0 citer f2 * part cCONS f1 cNIL c\/ c= cSUC f2 cNUMERAL c_0 c= f0 f1 c= c/\ c= f1 f0 call / c= b0 f0 citer f2 * part cCONS f1 cNIL c\/ c= cSUC f2 cNUMERAL c_0 c= f0 f1
++ |- (((x = y) /\ ((all (\x'. (x' = x))) (((iter n) (CONS y)) NIL))) = (F \/ (x = y)))
+T c= c/\ c= f0 f1 call / c= b0 f0 citer f2 * part cCONS f1 cNIL c\/ cF c= f0 f1
+- ((\n1. (n = n1)) n1) |- (((\n1. (n = n1)) n1) /\ (((all (pred1 x)) ((nseq n) y)) = ((n = (NUMERAL _0)) \/ (x = y))))
+T c==> * / c= f0 b0 f1 c/\ * / c= f0 b0 f1 c= call * part cpred1 f2 cnseq f0 f3 c\/ c= f0 cNUMERAL c_0 c= f2 f3
++ |- (((all (\x'. (x' = y))) (((iter (NUMERAL _0)) (CONS y)) NIL)) /\ (!n. (((all (\x'. (x' = y))) (((iter n) (CONS y)) NIL)) ==> ((all (\x'. (x' = y))) (((iter (SUC n)) (CONS y)) NIL)))))
+T c/\ call / c= b0 f0 citer cNUMERAL c_0 * part cCONS f0 cNIL ! c==> call / c= b1 f0 citer b0 * part cCONS f0 cNIL call / c= b1 f0 citer cSUC b0 * part cCONS f0 cNIL
+- ((\n1. (n = n1)) n1) |- (((n = n1) ==> (?n1. (n = n1))) = (?n1. (n = n1)))
+T c==> * / c= f0 b0 f1 c= c==> c= f0 f1 c? / c= f0 b0 c? / c= f0 b0
+- |- (((!P. (((P (NUMERAL _0)) /\ (!n. ((P n) ==> (P (SUC n))))) ==> (!n. (P n)))) ==> (!P. (((P (NUMERAL _0)) /\ (!n. ((P n) ==> (P (SUC n))))) ==> (!n. (P n))))) = (!P. (((P (NUMERAL _0)) /\ (!n. ((P n) ==> (P (SUC n))))) ==> (!n. (P n)))))
+T c= c==> ! c==> c/\ * b0 cNUMERAL c_0 ! c==> * b0 b1 * b0 cSUC b1 ! * b0 b1 ! c==> c/\ * b0 cNUMERAL c_0 ! c==> * b0 b1 * b0 cSUC b1 ! * b0 b1 ! c==> c/\ * b0 cNUMERAL c_0 ! c==> * b0 b1 * b0 cSUC b1 ! * b0 b1
++ |- (((all a) NIL) = T)
+T c= call f0 cNIL cT
++ |- (((!n. (!x. (((nseq n) x) = (((ncons n) x) NIL)))) ==> ((\n. (!x. (((nseq n) x) = (((ncons n) x) NIL)))) n)) = ((\n. (!x. (((nseq n) x) = (((ncons n) x) NIL)))) n))
+T c= c==> ! ! c= cnseq b0 b1 cncons b0 b1 cNIL * / ! c= cnseq b0 b1 cncons b0 b1 cNIL f0 * / ! c= cnseq b0 b1 cncons b0 b1 cNIL f0
++ |- ((n = n) = ((\n1. (n = n1)) n))
+T c= c= f0 f0 * / c= f0 b0 f0
++ |- ((((all (\x'. (x' = x))) (((ncons (SUC n)) y) NIL)) = (((SUC n) = (NUMERAL _0)) \/ (x = y))) = (((all (\x'. (x' = x))) ((nseq (SUC n)) y)) = (((SUC n) = (NUMERAL _0)) \/ (x = y))))
+T c= c= call / c= b0 f0 cncons cSUC f1 f2 cNIL c\/ c= cSUC f1 cNUMERAL c_0 c= f0 f2 c= call / c= b0 f0 cnseq cSUC f1 f2 c\/ c= cSUC f1 cNUMERAL c_0 c= f0 f2
++ |- (((x = y) /\ ((all (\x'. (x' = x))) (((iter n) (CONS y)) NIL))) = (((SUC n) = (NUMERAL _0)) \/ (x = y)))
+T c= c/\ c= f0 f1 call / c= b0 f0 citer f2 * part cCONS f1 cNIL c\/ c= cSUC f2 cNUMERAL c_0 c= f0 f1
++ (n = n1) |- (((all (\x'. (x' = y))) (((iter n1) (CONS y)) NIL)) = ((all (\x'. (x' = y))) (((iter n) (CONS y)) NIL)))
+T c==> c= f0 f1 c= call / c= b0 f2 citer f1 * part cCONS f2 cNIL call / c= b0 f2 citer f0 * part cCONS f2 cNIL
++ |- (((y = x) /\ ((all (\x'. (x' = x))) (((iter n) (CONS y)) NIL))) = (((SUC n) = (NUMERAL _0)) \/ (x = y)))
+T c= c/\ c= f0 f1 call / c= b0 f1 citer f2 * part cCONS f0 cNIL c\/ c= cSUC f2 cNUMERAL c_0 c= f1 f0
+- |- (((!P. (!Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x)))))) ==> ((\P. (!Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x)))))) P)) = ((\P. (!Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x)))))) P))
+T c= c==> ! ! c= c==> b0 ! * b1 b2 ! c==> b0 * b1 b2 * / ! c= c==> b0 ! * b1 b2 ! c==> b0 * b1 b2 f0 * / ! c= c==> b0 ! * b1 b2 ! c==> b0 * b1 b2 f0
++ |- ((((iter (SUC n)) f) x) = (f (((iter n) f) x)))
+T c= citer cSUC f0 f1 f2 * f1 citer f0 f1 f2
++ |- ((all (\x'. (x' = y))) (((iter (NUMERAL _0)) (CONS y)) NIL))
+T call / c= b0 f0 citer cNUMERAL c_0 * part cCONS f0 cNIL
++ ((all (\x'. (x' = y))) (((iter n) (CONS y)) NIL)) |- (((\x'. (x' = y)) y) /\ ((all (\x'. (x' = y))) (((iter n) (CONS y)) NIL)))
+T c==> call / c= b0 f0 citer f1 * part cCONS f0 cNIL c/\ * / c= b0 f0 f0 call / c= b0 f0 citer f1 * part cCONS f0 cNIL
++ |- ((all (\x'. (x' = x))) (((iter (NUMERAL _0)) (CONS y)) NIL))
+T call / c= b0 f0 citer cNUMERAL c_0 * part cCONS f1 cNIL
++ ((\n1. (n = n1)) n1) |- (n = n1)
+T c==> * / c= f0 b0 f1 c= f0 f1
+- (n = n1) |- ((n = n1) /\ (?n1. (n = n1)))
+T c==> c= f0 f1 c/\ c= f0 f1 c? / c= f0 b0
+- |- (((!x. (((\n1. (n = n1)) x) ==> (((all (pred1 x)) ((nseq n) y)) = ((n = (NUMERAL _0)) \/ (x = y))))) ==> ((?n1. (n = n1)) ==> (((all (pred1 x)) ((nseq n) y)) = ((n = (NUMERAL _0)) \/ (x = y))))) = ((?n1. (n = n1)) ==> (((all (pred1 x)) ((nseq n) y)) = ((n = (NUMERAL _0)) \/ (x = y)))))
+T c= c==> ! c==> * / c= f0 b1 b0 c= call * part cpred1 f1 cnseq f0 f2 c\/ c= f0 cNUMERAL c_0 c= f1 f2 c==> c? / c= f0 b0 c= call * part cpred1 f1 cnseq f0 f2 c\/ c= f0 cNUMERAL c_0 c= f1 f2 c==> c? / c= f0 b0 c= call * part cpred1 f1 cnseq f0 f2 c\/ c= f0 cNUMERAL c_0 c= f1 f2
++ |- (((all (\x'. (x' = x))) ((nseq (NUMERAL _0)) y)) = (T \/ (x = y)))
+T c= call / c= b0 f0 cnseq cNUMERAL c_0 f1 c\/ cT c= f0 f1
+- ((\n1. (n = n1)) n1) |- (((\n1. (n = n1)) n1) /\ (?n1. (n = n1)))
+T c==> * / c= f0 b0 f1 c/\ * / c= f0 b0 f1 c? / c= f0 b0
+- ((\n1. (n = n1)) n1) |- (((n = n1) ==> (((all (pred1 x)) ((nseq n) y)) = ((n = (NUMERAL _0)) \/ (x = y)))) = (((all (pred1 x)) ((nseq n) y)) = ((n = (NUMERAL _0)) \/ (x = y))))
+T c==> * / c= f0 b0 f1 c= c==> c= f0 f1 c= call * part cpred1 f2 cnseq f0 f3 c\/ c= f0 cNUMERAL c_0 c= f2 f3 c= call * part cpred1 f2 cnseq f0 f3 c\/ c= f0 cNUMERAL c_0 c= f2 f3
+- |- ((!P. (((P (NUMERAL _0)) /\ (!n. ((P n) ==> (P (SUC n))))) ==> (!n. (P n)))) ==> (!P. (((P (NUMERAL _0)) /\ (!n. ((P n) ==> (P (SUC n))))) ==> (!n. (P n)))))
+T c==> ! c==> c/\ * b0 cNUMERAL c_0 ! c==> * b0 b1 * b0 cSUC b1 ! * b0 b1 ! c==> c/\ * b0 cNUMERAL c_0 ! c==> * b0 b1 * b0 cSUC b1 ! * b0 b1
++ |- ((((all (\x'. (x' = x))) (((ncons (NUMERAL _0)) y) NIL)) = T) = (((all (\x'. (x' = x))) ((nseq (NUMERAL _0)) y)) = (T \/ (x = y))))
+T c= c= call / c= b0 f0 cncons cNUMERAL c_0 f1 cNIL cT c= call / c= b0 f0 cnseq cNUMERAL c_0 f1 c\/ cT c= f0 f1
+- (!a. (!b. ((a ==> b) ==> ((a /\ b) = a)))) |- (!a. ((a ==> b) ==> ((a /\ b) = a)))
+T c==> ! ! c==> c==> b0 b1 c= c/\ b0 b1 b0 ! c==> c==> b0 f0 c= c/\ b0 f0 b0
++ |- (((!x. (((ncons n) x) = ((iter n) (CONS x)))) ==> ((\x. (((ncons n) x) = ((iter n) (CONS x)))) x)) = ((\x. (((ncons n) x) = ((iter n) (CONS x)))) x))
+T c= c==> ! c= * * part cncons f0 b0 * * part citer f0 * part cCONS b0 * / c= * * part cncons f0 b0 * * part citer f0 * part cCONS b0 f1 * / c= * * part cncons f0 b0 * * part citer f0 * part cCONS b0 f1
++ |- ((((x = y) /\ ((all (\x'. (x' = x))) (((iter n) (CONS y)) NIL))) = (x = y)) = (((x = y) /\ ((all (\x'. (x' = x))) (((iter n) (CONS y)) NIL))) = (F \/ (x = y))))
+T c= c= c/\ c= f0 f1 call / c= b0 f0 citer f2 * part cCONS f1 cNIL c= f0 f1 c= c/\ c= f0 f1 call / c= b0 f0 citer f2 * part cCONS f1 cNIL c\/ cF c= f0 f1
+- (!a. (!b. ((a ==> b) ==> ((a /\ b) = a)))) |- (((!b. (!a. ((a ==> b) ==> ((a /\ b) = a)))) ==> ((\b. (!a. ((a ==> b) ==> ((a /\ b) = a)))) b)) = ((\b. (!a. ((a ==> b) ==> ((a /\ b) = a)))) b))
+T c==> ! ! c==> c==> b0 b1 c= c/\ b0 b1 b0 c= c==> ! ! c==> c==> b1 b0 c= c/\ b1 b0 b1 * / ! c==> c==> b1 b0 c= c/\ b1 b0 b1 f0 * / ! c==> c==> b1 b0 c= c/\ b1 b0 b1 f0
++ |- ((((iter (NUMERAL _0)) f) x) = x)
+T c= citer cNUMERAL c_0 f0 f1 f1
++ ((\n1. (n = n1)) n1) |- (((n = n1) ==> ((all (\x'. (x' = y))) (((iter n) (CONS y)) NIL))) = ((all (\x'. (x' = y))) (((iter n) (CONS y)) NIL)))
+T c==> * / c= f0 b0 f1 c= c==> c= f0 f1 call / c= b0 f2 citer f0 * part cCONS f2 cNIL call / c= b0 f2 citer f0 * part cCONS f2 cNIL
++ |- ((T \/ t) = T)
+T c= c\/ cT f0 cT
++ |- ((\n. (!x. (((nseq n) x) = (((ncons n) x) NIL)))) n)
+T * / ! c= cnseq b0 b1 cncons b0 b1 cNIL f0
++ |- ((((\n1. (n = n1)) n1) ==> ((all (\x'. (x' = y))) (((iter n) (CONS y)) NIL))) = T)
+T c= c==> * / c= f0 b0 f1 call / c= b0 f2 citer f0 * part cCONS f2 cNIL cT
+- |- (((!x. (((\n1. (n = n1)) x) ==> (?n1. (n = n1)))) ==> ((?n1. (n = n1)) ==> (?n1. (n = n1)))) = ((?n1. (n = n1)) ==> (?n1. (n = n1))))
+T c= c==> ! c==> * / c= f0 b1 b0 c? / c= f0 b1 c==> c? / c= f0 b0 c? / c= f0 b0 c==> c? / c= f0 b0 c? / c= f0 b0
+- |- ((t /\ t) = t)
+T c= c/\ f0 f0 f0
++ |- (!n. ((((all (pred1 x)) ((nseq n) y)) = ((n = (NUMERAL _0)) \/ (x = y))) ==> (((all (pred1 x)) ((nseq (SUC n)) y)) = (((SUC n) = (NUMERAL _0)) \/ (x = y)))))
+T c==> c= call * part cpred1 f0 cnseq f1 f2 c\/ c= f1 cNUMERAL c_0 c= f0 f2 c= call * part cpred1 f0 cnseq cSUC f1 f2 c\/ c= cSUC f1 cNUMERAL c_0 c= f0 f2
+- (!P. (((P (NUMERAL _0)) /\ (!n. ((P n) ==> (P (SUC n))))) ==> (!n. (P n)))), ((P (NUMERAL _0)) /\ (!n. ((P n) ==> (P (SUC n))))) |- (!n. (P n))
+T c==> ! c==> c/\ * b0 cNUMERAL c_0 ! c==> * b0 b1 * b0 cSUC b1 ! * b0 b1 c==> c/\ * f0 cNUMERAL c_0 ! c==> * f0 b0 * f0 cSUC b0 ! * f0 b0
+- |- ((n = n1) ==> (?n1. (n = n1)))
+T c==> c= f0 f1 c? / c= f0 b0
+- |- (!n1. (((\n1. (n = n1)) n1) ==> (((all (pred1 x)) ((nseq n) y)) = ((n = (NUMERAL _0)) \/ (x = y)))))
+T c==> * / c= f0 b0 f1 c= call * part cpred1 f2 cnseq f0 f3 c\/ c= f0 cNUMERAL c_0 c= f2 f3
+- |- ((((all (pred1 x)) ((nseq n) y)) = ((n = (NUMERAL _0)) \/ (x = y))) = T)
+T c= c= call * part cpred1 f0 cnseq f1 f2 c\/ c= f1 cNUMERAL c_0 c= f0 f2 cT
+- (a ==> b) |- ((!a. (!b. ((a ==> b) ==> ((a /\ b) = a)))) ==> ((a /\ b) = a))
+T c==> c==> f0 f1 c==> ! ! c==> c==> b0 b1 c= c/\ b0 b1 b0 c= c/\ f0 f1 f0
+- ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x)))) |- ((!x. (P ==> (Q x))) = (P ==> (!x. (Q x))))
+T c==> c= c==> f0 ! * f1 b0 ! c==> f0 * f1 b0 c= ! c==> f0 * f1 b0 c==> f0 ! * f1 b0
+- |- ((!a. (!b. ((a ==> b) ==> ((a /\ b) = a)))) ==> (!b. (!a. ((a ==> b) ==> ((a /\ b) = a)))))
+T c==> ! ! c==> c==> b0 b1 c= c/\ b0 b1 b0 ! ! c==> c==> b1 b0 c= c/\ b1 b0 b1
+- (!a. (!b. ((a ==> b) ==> ((a /\ b) = a)))), (a ==> b) |- ((a /\ b) = a)
+T c==> ! ! c==> c==> b0 b1 c= c/\ b0 b1 b0 c==> c==> f0 f1 c= c/\ f0 f1 f0
+- |- ((!a. (!b. ((a ==> b) ==> ((a /\ b) = a)))) ==> (((x = y) /\ ((all (\x'. (x' = x))) (((iter n) (CONS y)) NIL))) = (x = y)))
+T c==> ! ! c==> c==> b0 b1 c= c/\ b0 b1 b0 c= c/\ c= f0 f1 call / c= b0 f0 citer f2 * part cCONS f1 cNIL c= f0 f1
+- (n = n1) |- ((\n1. (n = n1)) n1)
+T c==> c= f0 f1 * / c= f0 b0 f1
+- (n = n1) |- (((all (pred1 x)) ((nseq n1) y)) = ((n1 = (NUMERAL _0)) \/ (x = y)))
+T c==> c= f0 f1 c= call * part cpred1 f2 cnseq f1 f3 c\/ c= f1 cNUMERAL c_0 c= f2 f3
+- |- ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))
+T c= c==> f0 ! * f1 b0 ! c==> f0 * f1 b0
+- ((all (\x'. (x' = y))) (((iter n) (CONS y)) NIL)) |- (((all (\x'. (x' = y))) (((iter n) (CONS y)) NIL)) = T)
+T c==> call / c= b0 f0 citer f1 * part cCONS f0 cNIL c= call / c= b0 f0 citer f1 * part cCONS f0 cNIL cT
+- |- (((\x'. (f x')) y) = (f y))
+T c= * / * f0 b0 f1 * f0 f1
+- (!a. (!b. ((a ==> b) ==> ((a /\ b) = a)))) |- (((a ==> b) ==> ((a /\ b) = a)) = T)
+T c==> ! ! c==> c==> b0 b1 c= c/\ b0 b1 b0 c= c==> c==> f0 f1 c= c/\ f0 f1 f0 cT
+- (!a. (!b. ((a ==> b) ==> ((a /\ b) = a)))) |- (!b. ((a ==> b) ==> ((a /\ b) = a)))
+T c==> ! ! c==> c==> b0 b1 c= c/\ b0 b1 b0 ! c==> c==> f0 b0 c= c/\ f0 b0 f0
+- (!a. (!b. ((a ==> b) ==> ((a /\ b) = a)))) |- ((\a. (!b. ((a ==> b) ==> ((a /\ b) = a)))) a)
+T c==> ! ! c==> c==> b0 b1 c= c/\ b0 b1 b0 * / ! c==> c==> b0 b1 c= c/\ b0 b1 b0 f0
+- |- (((!Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))) ==> ((\Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))) Q)) = ((\Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))) Q))
+T c= c==> ! c= c==> f0 ! * b0 b1 ! c==> f0 * b0 b1 * / c= c==> f0 ! * b0 b1 ! c==> f0 * b0 b1 f1 * / c= c==> f0 ! * b0 b1 ! c==> f0 * b0 b1 f1
+- (!P. (((P (NUMERAL _0)) /\ (!n. ((P n) ==> (P (SUC n))))) ==> (!n. (P n)))) |- ((!P. (((P (NUMERAL _0)) /\ (!n. ((P n) ==> (P (SUC n))))) ==> (!n. (P n)))) /\ (!P. (((P (NUMERAL _0)) /\ (!n. ((P n) ==> (P (SUC n))))) ==> (!n. (P n)))))
+T c==> ! c==> c/\ * b0 cNUMERAL c_0 ! c==> * b0 b1 * b0 cSUC b1 ! * b0 b1 c/\ ! c==> c/\ * b0 cNUMERAL c_0 ! c==> * b0 b1 * b0 cSUC b1 ! * b0 b1 ! c==> c/\ * b0 cNUMERAL c_0 ! c==> * b0 b1 * b0 cSUC b1 ! * b0 b1
+- |- ((((\n1. (n = n1)) n1) ==> (?n1. (n = n1))) = T)
+T c= c==> * / c= f0 b0 f1 c? / c= f0 b0 cT
+- (!P. (((P (NUMERAL _0)) /\ (!n. ((P n) ==> (P (SUC n))))) ==> (!n. (P n)))), ((P (NUMERAL _0)) /\ (!n. ((P n) ==> (P (SUC n))))) |- ((!P. (((P (NUMERAL _0)) /\ (!n. ((P n) ==> (P (SUC n))))) ==> (!n. (P n)))) /\ (!n. (P n)))
+T c==> ! c==> c/\ * b0 cNUMERAL c_0 ! c==> * b0 b1 * b0 cSUC b1 ! * b0 b1 c==> c/\ * f0 cNUMERAL c_0 ! c==> * f0 b0 * f0 cSUC b0 c/\ ! c==> c/\ * b0 cNUMERAL c_0 ! c==> * b0 b1 * b0 cSUC b1 ! * b0 b1 ! * f0 b0

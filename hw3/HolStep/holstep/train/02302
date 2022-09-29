@@ -1,0 +1,576 @@
+N NADD_COMPLETE
+C |- (!P. (((?x. (P x)) /\ (?M. (!x. ((P x) ==> ((nadd_le x) M))))) ==> (?M. ((!x. ((P x) ==> ((nadd_le x) M))) /\ (!M'. ((!x. ((P x) ==> ((nadd_le x) M'))) ==> ((nadd_le M) M')))))))
+T c==> c/\ c? / * f0 b0 c? / ! c==> * f0 b1 cnadd_le b1 b0 c? / c/\ ! c==> * f0 b1 cnadd_le b1 b0 ! c==> ! c==> * f0 b2 cnadd_le b2 b1 cnadd_le b0 b1
+D TRUTH
+A |- T
+T cT
+D NOT_EXISTS_THM
+A |- (!P. ((~ (?x. (P x))) = (!x. (~ (P x)))))
+T c= c~ c? / * f0 b0 ! c~ * f0 b0
+D SKOLEM_THM
+A |- (!P. ((!x. (?y. ((P x) y))) = (?y. (!x. ((P x) (y x))))))
+T c= ! c? / * * f0 b0 b1 c? / ! * * f0 b1 * b0 b1
+D ADD_0
+A |- (!m. ((m + (NUMERAL _0)) = m))
+T c= c+ f0 cNUMERAL c_0 f0
+D Ssrnat.addnC
+A |- (!m. (!n. ((m + n) = (n + m))))
+T c= c+ f0 f1 c+ f1 f0
+D ADD_ASSOC
+A |- (!m. (!n. (!p. ((m + (n + p)) = ((m + n) + p)))))
+T c= c+ f0 c+ f1 f2 c+ c+ f0 f1 f2
+D ADD1
+A |- (!m. ((SUC m) = (m + (NUMERAL (BIT1 _0)))))
+T c= cSUC f0 c+ f0 cNUMERAL cBIT1 c_0
+D MULT_SUC
+A |- (!m. (!n. ((m * (SUC n)) = (m + (m * n)))))
+T c= c* f0 cSUC f1 c+ f0 c* f0 f1
+D Ssrnat.mul1n
+A |- (!n. (((NUMERAL (BIT1 _0)) * n) = n))
+T c= c* cNUMERAL cBIT1 c_0 f0 f0
+D MULT_SYM
+A |- (!m. (!n. ((m * n) = (n * m))))
+T c= c* f0 f1 c* f1 f0
+D RIGHT_ADD_DISTRIB
+A |- (!m. (!n. (!p. (((m + n) * p) = ((m * p) + (n * p))))))
+T c= c* c+ f0 f1 f2 c+ c* f0 f2 c* f1 f2
+D MULT_2
+A |- (!n. (((NUMERAL (BIT0 (BIT1 _0))) * n) = (n + n)))
+T c= c* cNUMERAL cBIT0 cBIT1 c_0 f0 c+ f0 f0
+D LE_SUC_LT
+A |- (!m. (!n. (((SUC m) <= n) = (m < n))))
+T c= c<= cSUC f0 f1 c< f0 f1
+D LT_REFL
+A |- (!n. (~ (n < n)))
+T c~ c< f0 f0
+D LE_TRANS
+A |- (!m. (!n. (!p. (((m <= n) /\ (n <= p)) ==> (m <= p)))))
+T c==> c/\ c<= f0 f1 c<= f1 f2 c<= f0 f2
+D LE_ADD
+A |- (!m. (!n. (m <= (m + n))))
+T c<= f0 c+ f0 f1
+D LE_ADD_LCANCEL
+A |- (!m. (!n. (!p. (((m + n) <= (m + p)) = (n <= p)))))
+T c= c<= c+ f0 f1 c+ f0 f2 c<= f1 f2
+D LE_ADD_RCANCEL
+A |- (!m. (!n. (!p. (((m + p) <= (n + p)) = (m <= n)))))
+T c= c<= c+ f0 f1 c+ f2 f1 c<= f0 f2
+D num_MAX
+A |- (!P. (((?x. (P x)) /\ (?M. (!x. ((P x) ==> (x <= M))))) = (?m. ((P m) /\ (!x. ((P x) ==> (x <= m)))))))
+T c= c/\ c? / * f0 b0 c? / ! c==> * f0 b1 c<= b1 b0 c? / c/\ * f0 b0 ! c==> * f0 b1 c<= b1 b0
+D DIST_LE_CASES
+A |- (!m. (!n. (!p. (((dist (m , n)) <= p) = ((m <= (n + p)) /\ (n <= (m + p)))))))
+T c= c<= cdist c, f0 f1 f2 c/\ c<= f0 c+ f1 f2 c<= f1 c+ f0 f2
+D BOUNDS_IGNORE
+A |- (!P. (!Q. ((?B. (!i. ((P i) <= ((Q i) + B)))) = (?B. (?N. (!i. ((N <= i) ==> ((P i) <= ((Q i) + B)))))))))
+T c= c? / ! c<= * f0 b1 c+ * f1 b1 b0 c? / c? / ! c==> c<= b1 b2 c<= * f0 b2 c+ * f1 b2 b0
+D is_nadd
+A |- (!x. ((is_nadd x) = (?B. (!m. (!n. ((dist ((m * (x n)) , (n * (x m)))) <= (B * (m + n))))))))
+T c= cis_nadd f0 c? / ! ! c<= cdist c, c* b1 * f0 b2 c* b2 * f0 b1 c* b0 c+ b1 b2
+D nadd_rep
+A |- ((is_nadd r) = ((dest_nadd (mk_nadd r)) = r))
+T c= cis_nadd f0 c= * part cdest_nadd cmk_nadd f0 f0
+D NADD_EQ_REFL
+A |- (!x. ((nadd_eq x) x))
+T cnadd_eq f0 f0
+D NADD_EQ_SYM
+A |- (!x. (!y. (((nadd_eq x) y) = ((nadd_eq y) x))))
+T c= cnadd_eq f0 f1 cnadd_eq f1 f0
+D NADD_EQ_TRANS
+A |- (!x. (!y. (!z. ((((nadd_eq x) y) /\ ((nadd_eq y) z)) ==> ((nadd_eq x) z)))))
+T c==> c/\ cnadd_eq f0 f1 cnadd_eq f1 f2 cnadd_eq f0 f2
+D NADD_OF_NUM
+A |- (!k. ((dest_nadd (nadd_of_num k)) = (\n. (k * n))))
+T c= * part cdest_nadd cnadd_of_num f0 / c* f0 b0
+D nadd_le
+A |- (!x. (!y. (((nadd_le x) y) = (?B. (!n. (((dest_nadd x) n) <= (((dest_nadd y) n) + B)))))))
+T c= cnadd_le f0 f1 c? / ! c<= cdest_nadd f0 b1 c+ cdest_nadd f1 b1 b0
+D NADD_LE_TRANS
+A |- (!x. (!y. (!z. ((((nadd_le x) y) /\ ((nadd_le y) z)) ==> ((nadd_le x) z)))))
+T c==> c/\ cnadd_le f0 f1 cnadd_le f1 f2 cnadd_le f0 f2
+D NADD_LE_TOTAL
+A |- (!x. (!y. (((nadd_le x) y) \/ ((nadd_le y) x))))
+T c\/ cnadd_le f0 f1 cnadd_le f1 f0
+D NADD_ARCH
+A |- (!x. (?n. ((nadd_le x) (nadd_of_num n))))
+T c? / cnadd_le f0 cnadd_of_num b0
+D NADD_OF_NUM_LE
+A |- (!m. (!n. (((nadd_le (nadd_of_num m)) (nadd_of_num n)) = (m <= n))))
+T c= cnadd_le cnadd_of_num f0 cnadd_of_num f1 c<= f0 f1
+D NADD_ADD
+A |- (!x. (!y. ((dest_nadd ((nadd_add x) y)) = (\n. (((dest_nadd x) n) + ((dest_nadd y) n))))))
+T c= * part cdest_nadd cnadd_add f0 f1 / c+ cdest_nadd f0 b0 cdest_nadd f1 b0
+D NADD_MUL
+A |- (!x. (!y. ((dest_nadd ((nadd_mul x) y)) = (\n. ((dest_nadd x) ((dest_nadd y) n))))))
+T c= * part cdest_nadd cnadd_mul f0 f1 / cdest_nadd f0 cdest_nadd f1 b0
+D NADD_MUL_SYM
+A |- (!x. (!y. ((nadd_eq ((nadd_mul x) y)) ((nadd_mul y) x))))
+T cnadd_eq cnadd_mul f0 f1 cnadd_mul f1 f0
+D NADD_MUL_ASSOC
+A |- (!x. (!y. (!z. ((nadd_eq ((nadd_mul x) ((nadd_mul y) z))) ((nadd_mul ((nadd_mul x) y)) z)))))
+T cnadd_eq cnadd_mul f0 cnadd_mul f1 f2 cnadd_mul cnadd_mul f0 f1 f2
+D NADD_MUL_WELLDEF
+A |- (!x. (!x'. (!y. (!y'. ((((nadd_eq x) x') /\ ((nadd_eq y) y')) ==> ((nadd_eq ((nadd_mul x) y)) ((nadd_mul x') y')))))))
+T c==> c/\ cnadd_eq f0 f1 cnadd_eq f2 f3 cnadd_eq cnadd_mul f0 f2 cnadd_mul f1 f3
+D NADD_OF_NUM_MUL
+A |- (!m. (!n. ((nadd_eq ((nadd_mul (nadd_of_num m)) (nadd_of_num n))) (nadd_of_num (m * n)))))
+T cnadd_eq cnadd_mul cnadd_of_num f0 cnadd_of_num f1 cnadd_of_num c* f0 f1
+D NADD_LE_0
+A |- (!x. ((nadd_le (nadd_of_num (NUMERAL _0))) x))
+T cnadd_le cnadd_of_num cNUMERAL c_0 f0
+D NADD_EQ_IMP_LE
+A |- (!x. (!y. (((nadd_eq x) y) ==> ((nadd_le x) y))))
+T c==> cnadd_eq f0 f1 cnadd_le f0 f1
+D NADD_LE_LMUL
+A |- (!x. (!y. (!z. (((nadd_le y) z) ==> ((nadd_le ((nadd_mul x) y)) ((nadd_mul x) z))))))
+T c==> cnadd_le f0 f1 cnadd_le cnadd_mul f2 f0 cnadd_mul f2 f1
+D NADD_LE_RADD
+A |- (!x. (!y. (!z. (((nadd_le ((nadd_add x) z)) ((nadd_add y) z)) = ((nadd_le x) y)))))
+T c= cnadd_le cnadd_add f0 f1 cnadd_add f2 f1 cnadd_le f0 f2
+D NADD_ARCH_LEMMA
+A |- (!x. (!y. (!z. ((!n. ((nadd_le ((nadd_mul (nadd_of_num n)) x)) ((nadd_add ((nadd_mul (nadd_of_num n)) y)) z))) ==> ((nadd_le x) y)))))
+T c==> ! cnadd_le cnadd_mul cnadd_of_num b0 f0 cnadd_add cnadd_mul cnadd_of_num b0 f1 f2 cnadd_le f0 f1
++ |- ((((nadd_le ((nadd_mul (nadd_of_num i)) ((nadd_mul (nadd_of_num n)) x))) ((nadd_mul (nadd_of_num n)) ((nadd_mul (nadd_of_num i)) x))) /\ ((nadd_le ((nadd_mul (nadd_of_num n)) ((nadd_mul (nadd_of_num i)) x))) ((nadd_mul (nadd_of_num n)) (nadd_of_num (SUC (r i)))))) = ((\y. (((nadd_le ((nadd_mul (nadd_of_num i)) ((nadd_mul (nadd_of_num n)) x))) y) /\ ((nadd_le y) ((nadd_mul (nadd_of_num n)) (nadd_of_num (SUC (r i))))))) ((nadd_mul (nadd_of_num n)) ((nadd_mul (nadd_of_num i)) x))))
+T c= c/\ cnadd_le cnadd_mul cnadd_of_num f0 cnadd_mul cnadd_of_num f1 f2 cnadd_mul cnadd_of_num f1 cnadd_mul cnadd_of_num f0 f2 cnadd_le cnadd_mul cnadd_of_num f1 cnadd_mul cnadd_of_num f0 f2 cnadd_mul cnadd_of_num f1 cnadd_of_num cSUC * f3 f0 * / c/\ cnadd_le cnadd_mul cnadd_of_num f0 cnadd_mul cnadd_of_num f1 f2 b0 cnadd_le b0 cnadd_mul cnadd_of_num f1 cnadd_of_num cSUC * f3 f0 cnadd_mul cnadd_of_num f1 cnadd_mul cnadd_of_num f0 f2
++ (!x. ((P x) ==> ((nadd_le x) m))), (P w), ((nadd_le m) (nadd_of_num N)) |- ((((nadd_le w) (nadd_of_num N)) ==> ((nadd_le ((nadd_mul (nadd_of_num n)) w)) ((nadd_mul (nadd_of_num n)) (nadd_of_num N)))) = ((nadd_le ((nadd_mul (nadd_of_num n)) w)) ((nadd_mul (nadd_of_num n)) (nadd_of_num N))))
+T c==> ! c==> * f0 b0 cnadd_le b0 f1 c==> * f0 f2 c==> cnadd_le f1 cnadd_of_num f3 c= c==> cnadd_le f2 cnadd_of_num f3 cnadd_le cnadd_mul cnadd_of_num f4 f2 cnadd_mul cnadd_of_num f4 cnadd_of_num f3 cnadd_le cnadd_mul cnadd_of_num f4 f2 cnadd_mul cnadd_of_num f4 cnadd_of_num f3
++ |- ((?B. (!n'. ((((r n) * n') + ((NUMERAL (BIT1 _0)) * n')) <= (B + ((n * (r n')) + ((NUMERAL (BIT0 (BIT1 _0))) * n')))))) = (?B. (!n'. (((SUC (r n)) * n') <= (B + ((n * (r n')) + ((NUMERAL (BIT0 (BIT1 _0))) * n')))))))
+T c= c? / ! c<= c+ c* * f0 f1 b1 c* cNUMERAL cBIT1 c_0 b1 c+ b0 c+ c* f1 * f0 b1 c* cNUMERAL cBIT0 cBIT1 c_0 b1 c? / ! c<= c* cSUC * f0 f1 b1 c+ b0 c+ c* f1 * f0 b1 c* cNUMERAL cBIT0 cBIT1 c_0 b1
++ (P a) |- (T = ((P a) /\ ((nadd_le (nadd_of_num (NUMERAL _0))) ((nadd_mul (nadd_of_num n)) a))))
+T c==> * f0 f1 c= cT c/\ * f0 f1 cnadd_le cnadd_of_num cNUMERAL c_0 cnadd_mul cnadd_of_num f2 f1
++ |- ((\p. (((dist (m , n)) <= p) = ((m <= (n + p)) /\ (n <= (m + p))))) p)
+T * / c= c<= cdist c, f0 f1 b0 c/\ c<= f0 c+ f1 b0 c<= f1 c+ f0 b0 f2
++ |- (((!x. (!y. (((nadd_le x) y) = (?B. (!n. (((dest_nadd x) n) <= (((dest_nadd y) n) + B))))))) ==> ((\x. (!y. (((nadd_le x) y) = (?B. (!n. (((dest_nadd x) n) <= (((dest_nadd y) n) + B))))))) x)) = ((\x. (!y. (((nadd_le x) y) = (?B. (!n. (((dest_nadd x) n) <= (((dest_nadd y) n) + B))))))) x))
+T c= c==> ! ! c= cnadd_le b0 b1 c? / ! c<= cdest_nadd b0 b3 c+ cdest_nadd b1 b3 b2 * / ! c= cnadd_le b0 b1 c? / ! c<= cdest_nadd b0 b3 c+ cdest_nadd b1 b3 b2 f0 * / ! c= cnadd_le b0 b1 c? / ! c<= cdest_nadd b0 b3 c+ cdest_nadd b1 b3 b2 f0
++ ((nadd_le (nadd_of_num (r n))) ((nadd_mul (nadd_of_num n)) x)) |- ((nadd_le ((nadd_mul (nadd_of_num i)) (nadd_of_num (r n)))) ((nadd_mul (nadd_of_num i)) ((nadd_mul (nadd_of_num n)) x)))
+T c==> cnadd_le cnadd_of_num * f0 f1 cnadd_mul cnadd_of_num f1 f2 cnadd_le cnadd_mul cnadd_of_num f3 cnadd_of_num * f0 f1 cnadd_mul cnadd_of_num f3 cnadd_mul cnadd_of_num f1 f2
++ |- ((?z. (!n. ((nadd_le ((nadd_mul (nadd_of_num n)) x)) ((nadd_add ((nadd_mul (nadd_of_num n)) y)) z)))) ==> ((nadd_le x) y))
+T c==> c? / ! cnadd_le cnadd_mul cnadd_of_num b1 f0 cnadd_add cnadd_mul cnadd_of_num b1 f1 b0 cnadd_le f0 f1
++ |- (((!m. (!n. ((m * (r n)) <= ((n * (r m)) + (m + n))))) /\ (!n. (!m. ((n * (r m)) <= ((m * (r n)) + (m + n)))))) = ((!m. (!n. ((m * (r n)) <= ((n * (r m)) + (m + n))))) /\ (!m. (!n. ((n * (r m)) <= ((m * (r n)) + (m + n)))))))
+T c= c/\ ! ! c<= c* b0 * f0 b1 c+ c* b1 * f0 b0 c+ b0 b1 ! ! c<= c* b0 * f0 b1 c+ c* b1 * f0 b0 c+ b1 b0 c/\ ! ! c<= c* b0 * f0 b1 c+ c* b1 * f0 b0 c+ b0 b1 ! ! c<= c* b1 * f0 b0 c+ c* b0 * f0 b1 c+ b0 b1
++ (!n. (!i. ((i * (r n)) <= ((n * (r i)) + n)))), (!n. (!x. (~ ((P x) /\ ((nadd_le (nadd_of_num (SUC (r n)))) ((nadd_mul (nadd_of_num n)) x)))))), (P x), ((dest_nadd (mk_nadd r)) = r) |- ((nadd_le x) (mk_nadd r))
+T c==> ! ! c<= c* b1 * f0 b0 c+ c* b0 * f0 b1 b0 c==> ! ! c~ c/\ * f1 b1 cnadd_le cnadd_of_num cSUC * f0 b0 cnadd_mul cnadd_of_num b0 b1 c==> * f1 f2 c==> c= * part cdest_nadd cmk_nadd f0 f0 cnadd_le f2 cmk_nadd f0
++ |- (((!y. (!z. (((nadd_le ((nadd_add x) z)) ((nadd_add y) z)) = ((nadd_le x) y)))) ==> ((\y. (!z. (((nadd_le ((nadd_add x) z)) ((nadd_add y) z)) = ((nadd_le x) y)))) y)) = ((\y. (!z. (((nadd_le ((nadd_add x) z)) ((nadd_add y) z)) = ((nadd_le x) y)))) y))
+T c= c==> ! ! c= cnadd_le cnadd_add f0 b1 cnadd_add b0 b1 cnadd_le f0 b0 * / ! c= cnadd_le cnadd_add f0 b1 cnadd_add b0 b1 cnadd_le f0 b0 f1 * / ! c= cnadd_le cnadd_add f0 b1 cnadd_add b0 b1 cnadd_le f0 b0 f1
++ |- ((((nadd_le ((nadd_mul (nadd_of_num n)) x)) (nadd_of_num (SUC (r n)))) /\ ((nadd_le (nadd_of_num (SUC (r n)))) ((nadd_add ((nadd_mul (nadd_of_num n)) (mk_nadd r))) (nadd_of_num (NUMERAL (BIT0 (BIT1 _0))))))) = ((\y. (((nadd_le ((nadd_mul (nadd_of_num n)) x)) y) /\ ((nadd_le y) ((nadd_add ((nadd_mul (nadd_of_num n)) (mk_nadd r))) (nadd_of_num (NUMERAL (BIT0 (BIT1 _0)))))))) (nadd_of_num (SUC (r n)))))
+T c= c/\ cnadd_le cnadd_mul cnadd_of_num f0 f1 cnadd_of_num cSUC * f2 f0 cnadd_le cnadd_of_num cSUC * f2 f0 cnadd_add cnadd_mul cnadd_of_num f0 cmk_nadd f2 cnadd_of_num cNUMERAL cBIT0 cBIT1 c_0 * / c/\ cnadd_le cnadd_mul cnadd_of_num f0 f1 b0 cnadd_le b0 cnadd_add cnadd_mul cnadd_of_num f0 cmk_nadd f2 cnadd_of_num cNUMERAL cBIT0 cBIT1 c_0 cnadd_of_num cSUC * f2 f0
++ (!x. ((P x) ==> ((nadd_le x) m))), ((nadd_le m) (nadd_of_num N)) |- (((?x. ((P x) /\ ((nadd_le (nadd_of_num p)) ((nadd_mul (nadd_of_num n)) x)))) ==> (p <= (n * N))) = T)
+T c==> ! c==> * f0 b0 cnadd_le b0 f1 c==> cnadd_le f1 cnadd_of_num f2 c= c==> c? / c/\ * f0 b0 cnadd_le cnadd_of_num f3 cnadd_mul cnadd_of_num f4 b0 c<= f3 c* f4 f2 cT
++ |- ((\m. (!n. (m <= (m + n)))) m)
+T * / ! c<= b0 c+ b0 b1 f0
++ (!n. (!x. (~ ((P x) /\ ((nadd_le (nadd_of_num (SUC (r n)))) ((nadd_mul (nadd_of_num n)) x)))))), (P x) |- ((nadd_le ((nadd_mul (nadd_of_num n)) x)) (nadd_of_num (SUC (r n))))
+T c==> ! ! c~ c/\ * f0 b1 cnadd_le cnadd_of_num cSUC * f1 b0 cnadd_mul cnadd_of_num b0 b1 c==> * f0 f2 cnadd_le cnadd_mul cnadd_of_num f3 f2 cnadd_of_num cSUC * f1 f3
++ |- ((t /\ T) = t)
+T c= c/\ f0 cT f0
++ (!x. (!y. (!z. ((((nadd_le x) y) /\ ((nadd_le y) z)) ==> ((nadd_le x) z))))) |- ((!x. (!y. (!z. ((((nadd_le x) y) /\ ((nadd_le y) z)) ==> ((nadd_le x) z))))) /\ (!x. (!z. ((?y. (((nadd_le x) y) /\ ((nadd_le y) z))) ==> ((nadd_le x) z)))))
+T c==> ! ! ! c==> c/\ cnadd_le b0 b1 cnadd_le b1 b2 cnadd_le b0 b2 c/\ ! ! ! c==> c/\ cnadd_le b0 b1 cnadd_le b1 b2 cnadd_le b0 b2 ! ! c==> c? / c/\ cnadd_le b0 b2 cnadd_le b2 b1 cnadd_le b0 b1
++ (!n. (!x. (~ ((P x) /\ ((nadd_le (nadd_of_num (SUC (r n)))) ((nadd_mul (nadd_of_num n)) x)))))), (!n. (?x. ((P x) /\ ((nadd_le (nadd_of_num (r n))) ((nadd_mul (nadd_of_num n)) x))))) |- (!n. (!i. ((i * (r n)) <= ((n * (r i)) + n))))
+T c==> ! ! c~ c/\ * f0 b1 cnadd_le cnadd_of_num cSUC * f1 b0 cnadd_mul cnadd_of_num b0 b1 c==> ! c? / c/\ * f0 b1 cnadd_le cnadd_of_num * f1 b0 cnadd_mul cnadd_of_num b0 b1 ! ! c<= c* b1 * f1 b0 c+ c* b0 * f1 b1 b0
++ |- ((\n. (!p. (((m + n) <= (m + p)) = (n <= p)))) n)
+T * / ! c= c<= c+ f0 b0 c+ f0 b1 c<= b0 b1 f1
++ |- (((!m. (!n. (!p. (((m <= n) /\ (n <= p)) ==> (m <= p))))) ==> (!m. (!p. ((?n. ((m <= n) /\ (n <= p))) ==> (m <= p))))) = (!m. (!p. ((?n. ((m <= n) /\ (n <= p))) ==> (m <= p)))))
+T c= c==> ! ! ! c==> c/\ c<= b0 b1 c<= b1 b2 c<= b0 b2 ! ! c==> c? / c/\ c<= b0 b2 c<= b2 b1 c<= b0 b1 ! ! c==> c? / c/\ c<= b0 b2 c<= b2 b1 c<= b0 b1
+- (!n. (!x. (~ ((P x) /\ ((nadd_le (nadd_of_num (SUC (r n)))) ((nadd_mul (nadd_of_num n)) x)))))) |- ((\x. (!n. ((P x) ==> ((nadd_le ((nadd_mul (nadd_of_num n)) x)) (nadd_of_num (SUC (r n))))))) x)
+T c==> ! ! c~ c/\ * f0 b1 cnadd_le cnadd_of_num cSUC * f1 b0 cnadd_mul cnadd_of_num b0 b1 * / ! c==> * f0 b0 cnadd_le cnadd_mul cnadd_of_num b1 b0 cnadd_of_num cSUC * f1 b1 f2
++ |- (((!x. (!y. ((?z. (!n. ((nadd_le ((nadd_mul (nadd_of_num n)) x)) ((nadd_add ((nadd_mul (nadd_of_num n)) y)) z)))) ==> ((nadd_le x) y)))) ==> ((\x. (!y. ((?z. (!n. ((nadd_le ((nadd_mul (nadd_of_num n)) x)) ((nadd_add ((nadd_mul (nadd_of_num n)) y)) z)))) ==> ((nadd_le x) y)))) x)) = ((\x. (!y. ((?z. (!n. ((nadd_le ((nadd_mul (nadd_of_num n)) x)) ((nadd_add ((nadd_mul (nadd_of_num n)) y)) z)))) ==> ((nadd_le x) y)))) x))
+T c= c==> ! ! c==> c? / ! cnadd_le cnadd_mul cnadd_of_num b3 b0 cnadd_add cnadd_mul cnadd_of_num b3 b1 b2 cnadd_le b0 b1 * / ! c==> c? / ! cnadd_le cnadd_mul cnadd_of_num b3 b0 cnadd_add cnadd_mul cnadd_of_num b3 b1 b2 cnadd_le b0 b1 f0 * / ! c==> c? / ! cnadd_le cnadd_mul cnadd_of_num b3 b0 cnadd_add cnadd_mul cnadd_of_num b3 b1 b2 cnadd_le b0 b1 f0
++ |- ((((\y. (((nadd_eq x) y) /\ ((nadd_eq y) z))) y) ==> ((!x. (!y. (!z. ((((nadd_eq x) y) /\ ((nadd_eq y) z)) ==> ((nadd_eq x) z))))) ==> ((nadd_eq x) z))) = T)
+T c= c==> * / c/\ cnadd_eq f0 b0 cnadd_eq b0 f1 f2 c==> ! ! ! c==> c/\ cnadd_eq b0 b1 cnadd_eq b1 b2 cnadd_eq b0 b2 cnadd_eq f0 f1 cT
++ (!x. ((P x) ==> ((nadd_le x) z))), (P x), ((nadd_le (nadd_of_num (r n))) ((nadd_mul (nadd_of_num n)) x)) |- ((\y. (((nadd_le (nadd_of_num (r n))) y) /\ ((nadd_le y) ((nadd_mul (nadd_of_num n)) z)))) ((nadd_mul (nadd_of_num n)) x))
+T c==> ! c==> * f0 b0 cnadd_le b0 f1 c==> * f0 f2 c==> cnadd_le cnadd_of_num * f3 f4 cnadd_mul cnadd_of_num f4 f2 * / c/\ cnadd_le cnadd_of_num * f3 f4 b0 cnadd_le b0 cnadd_mul cnadd_of_num f4 f1 cnadd_mul cnadd_of_num f4 f2
++ |- ((\y. (((nadd_le x) y) = (?B. (!n. (((dest_nadd x) n) <= (((dest_nadd y) n) + B)))))) y)
+T * / c= cnadd_le f0 b0 c? / ! c<= cdest_nadd f0 b2 c+ cdest_nadd b0 b2 b1 f1
++ ((\x. (P x)) a) |- (P a)
+T c==> * / * f0 b0 f1 * f0 f1
++ (!n. (!x. (~ ((P x) /\ ((nadd_le (nadd_of_num (SUC (r n)))) ((nadd_mul (nadd_of_num n)) x)))))), (P x), ((nadd_le (nadd_of_num (r n))) ((nadd_mul (nadd_of_num n)) x)) |- ((\y. (((nadd_le (nadd_of_num (i * (r n)))) y) /\ ((nadd_le y) (nadd_of_num ((n * (r i)) + n))))) ((nadd_mul (nadd_of_num i)) ((nadd_mul (nadd_of_num n)) x)))
+T c==> ! ! c~ c/\ * f0 b1 cnadd_le cnadd_of_num cSUC * f1 b0 cnadd_mul cnadd_of_num b0 b1 c==> * f0 f2 c==> cnadd_le cnadd_of_num * f1 f3 cnadd_mul cnadd_of_num f3 f2 * / c/\ cnadd_le cnadd_of_num c* f4 * f1 f3 b0 cnadd_le b0 cnadd_of_num c+ c* f3 * f1 f4 f3 cnadd_mul cnadd_of_num f4 cnadd_mul cnadd_of_num f3 f2
++ (!n. (!x. (~ ((P x) /\ ((nadd_le (nadd_of_num (SUC (r n)))) ((nadd_mul (nadd_of_num n)) x)))))), (P x) |- (((?y. (((nadd_le ((nadd_mul (nadd_of_num i)) ((nadd_mul (nadd_of_num n)) x))) y) /\ ((nadd_le y) ((nadd_mul (nadd_of_num n)) (nadd_of_num (SUC (r i))))))) ==> ((nadd_le ((nadd_mul (nadd_of_num i)) ((nadd_mul (nadd_of_num n)) x))) ((nadd_mul (nadd_of_num n)) (nadd_of_num (SUC (r i)))))) = ((nadd_le ((nadd_mul (nadd_of_num i)) ((nadd_mul (nadd_of_num n)) x))) ((nadd_mul (nadd_of_num n)) (nadd_of_num (SUC (r i))))))
+T c==> ! ! c~ c/\ * f0 b1 cnadd_le cnadd_of_num cSUC * f1 b0 cnadd_mul cnadd_of_num b0 b1 c==> * f0 f2 c= c==> c? / c/\ cnadd_le cnadd_mul cnadd_of_num f3 cnadd_mul cnadd_of_num f4 f2 b0 cnadd_le b0 cnadd_mul cnadd_of_num f4 cnadd_of_num cSUC * f1 f3 cnadd_le cnadd_mul cnadd_of_num f3 cnadd_mul cnadd_of_num f4 f2 cnadd_mul cnadd_of_num f4 cnadd_of_num cSUC * f1 f3 cnadd_le cnadd_mul cnadd_of_num f3 cnadd_mul cnadd_of_num f4 f2 cnadd_mul cnadd_of_num f4 cnadd_of_num cSUC * f1 f3
++ |- ((?x. ((P x) /\ ((nadd_le (nadd_of_num (NUMERAL _0))) ((nadd_mul (nadd_of_num n)) x)))) = ((\r'. (?x. ((P x) /\ ((nadd_le (nadd_of_num r')) ((nadd_mul (nadd_of_num n)) x))))) (NUMERAL _0)))
+T c= c? / c/\ * f0 b0 cnadd_le cnadd_of_num cNUMERAL c_0 cnadd_mul cnadd_of_num f1 b0 * / c? / c/\ * f0 b1 cnadd_le cnadd_of_num b0 cnadd_mul cnadd_of_num f1 b1 cNUMERAL c_0
+- ((nadd_eq x) y) |- ((!x. (!y. (((nadd_eq x) y) ==> ((nadd_le x) y)))) ==> ((nadd_le x) y))
+T c==> cnadd_eq f0 f1 c==> ! ! c==> cnadd_eq b0 b1 cnadd_le b0 b1 cnadd_le f0 f1
++ (!x. ((P x) ==> ((nadd_le x) m))), (P w), ((nadd_le m) (nadd_of_num N)), ((nadd_le (nadd_of_num p)) ((nadd_mul (nadd_of_num n)) w)) |- (((?y. (((nadd_le (nadd_of_num p)) y) /\ ((nadd_le y) (nadd_of_num (n * N))))) ==> ((nadd_le (nadd_of_num p)) (nadd_of_num (n * N)))) = ((nadd_le (nadd_of_num p)) (nadd_of_num (n * N))))
+T c==> ! c==> * f0 b0 cnadd_le b0 f1 c==> * f0 f2 c==> cnadd_le f1 cnadd_of_num f3 c==> cnadd_le cnadd_of_num f4 cnadd_mul cnadd_of_num f5 f2 c= c==> c? / c/\ cnadd_le cnadd_of_num f4 b0 cnadd_le b0 cnadd_of_num c* f5 f3 cnadd_le cnadd_of_num f4 cnadd_of_num c* f5 f3 cnadd_le cnadd_of_num f4 cnadd_of_num c* f5 f3
++ (!n. (!x. (~ ((P x) /\ ((nadd_le (nadd_of_num (SUC (r n)))) ((nadd_mul (nadd_of_num n)) x)))))), (P x) |- ((((nadd_le ((nadd_mul (nadd_of_num i)) x)) (nadd_of_num (SUC (r i)))) ==> ((nadd_le ((nadd_mul (nadd_of_num n)) ((nadd_mul (nadd_of_num i)) x))) ((nadd_mul (nadd_of_num n)) (nadd_of_num (SUC (r i)))))) = ((nadd_le ((nadd_mul (nadd_of_num n)) ((nadd_mul (nadd_of_num i)) x))) ((nadd_mul (nadd_of_num n)) (nadd_of_num (SUC (r i))))))
+T c==> ! ! c~ c/\ * f0 b1 cnadd_le cnadd_of_num cSUC * f1 b0 cnadd_mul cnadd_of_num b0 b1 c==> * f0 f2 c= c==> cnadd_le cnadd_mul cnadd_of_num f3 f2 cnadd_of_num cSUC * f1 f3 cnadd_le cnadd_mul cnadd_of_num f4 cnadd_mul cnadd_of_num f3 f2 cnadd_mul cnadd_of_num f4 cnadd_of_num cSUC * f1 f3 cnadd_le cnadd_mul cnadd_of_num f4 cnadd_mul cnadd_of_num f3 f2 cnadd_mul cnadd_of_num f4 cnadd_of_num cSUC * f1 f3
++ |- (((!x'. (!y'. ((((nadd_eq x) x') /\ ((nadd_eq y) y')) ==> ((nadd_eq ((nadd_mul x) y)) ((nadd_mul x') y'))))) ==> ((\x'. (!y'. ((((nadd_eq x) x') /\ ((nadd_eq y) y')) ==> ((nadd_eq ((nadd_mul x) y)) ((nadd_mul x') y'))))) x')) = ((\x'. (!y'. ((((nadd_eq x) x') /\ ((nadd_eq y) y')) ==> ((nadd_eq ((nadd_mul x) y)) ((nadd_mul x') y'))))) x'))
+T c= c==> ! ! c==> c/\ cnadd_eq f0 b0 cnadd_eq f1 b1 cnadd_eq cnadd_mul f0 f1 cnadd_mul b0 b1 * / ! c==> c/\ cnadd_eq f0 b0 cnadd_eq f1 b1 cnadd_eq cnadd_mul f0 f1 cnadd_mul b0 b1 f2 * / ! c==> c/\ cnadd_eq f0 b0 cnadd_eq f1 b1 cnadd_eq cnadd_mul f0 f1 cnadd_mul b0 b1 f2
++ (!x. (!y. (!z. ((!n. ((nadd_le ((nadd_mul (nadd_of_num n)) x)) ((nadd_add ((nadd_mul (nadd_of_num n)) y)) z))) ==> ((nadd_le x) y))))) |- (((!y. (!z. ((!n. ((nadd_le ((nadd_mul (nadd_of_num n)) x)) ((nadd_add ((nadd_mul (nadd_of_num n)) y)) z))) ==> ((nadd_le x) y)))) ==> ((\y. (!z. ((!n. ((nadd_le ((nadd_mul (nadd_of_num n)) x)) ((nadd_add ((nadd_mul (nadd_of_num n)) y)) z))) ==> ((nadd_le x) y)))) y)) = ((\y. (!z. ((!n. ((nadd_le ((nadd_mul (nadd_of_num n)) x)) ((nadd_add ((nadd_mul (nadd_of_num n)) y)) z))) ==> ((nadd_le x) y)))) y))
+T c==> ! ! ! c==> ! cnadd_le cnadd_mul cnadd_of_num b3 b0 cnadd_add cnadd_mul cnadd_of_num b3 b1 b2 cnadd_le b0 b1 c= c==> ! ! c==> ! cnadd_le cnadd_mul cnadd_of_num b2 f0 cnadd_add cnadd_mul cnadd_of_num b2 b0 b1 cnadd_le f0 b0 * / ! c==> ! cnadd_le cnadd_mul cnadd_of_num b2 f0 cnadd_add cnadd_mul cnadd_of_num b2 b0 b1 cnadd_le f0 b0 f1 * / ! c==> ! cnadd_le cnadd_mul cnadd_of_num b2 f0 cnadd_add cnadd_mul cnadd_of_num b2 b0 b1 cnadd_le f0 b0 f1
+- (!n. (!x. (~ ((P x) /\ ((nadd_le (nadd_of_num (SUC (r n)))) ((nadd_mul (nadd_of_num n)) x)))))) |- (!x. ((P x) ==> ((nadd_le ((nadd_mul (nadd_of_num n)) x)) (nadd_of_num (SUC (r n))))))
+T c==> ! ! c~ c/\ * f0 b1 cnadd_le cnadd_of_num cSUC * f1 b0 cnadd_mul cnadd_of_num b0 b1 ! c==> * f0 b0 cnadd_le cnadd_mul cnadd_of_num f2 b0 cnadd_of_num cSUC * f1 f2
++ (!x. ((P x) ==> ((nadd_le x) m))), (P w), ((P w) /\ ((nadd_le (nadd_of_num p)) ((nadd_mul (nadd_of_num n)) w))), ((nadd_le m) (nadd_of_num N)) |- (p <= (n * N))
+T c==> ! c==> * f0 b0 cnadd_le b0 f1 c==> * f0 f2 c==> c/\ * f0 f2 cnadd_le cnadd_of_num f3 cnadd_mul cnadd_of_num f4 f2 c==> cnadd_le f1 cnadd_of_num f5 c<= f3 c* f4 f5
++ (!n. (!i. ((i * (r n)) <= ((n * (r i)) + n)))) |- (((?n'. (((i * (r n)) <= n') /\ (n' <= ((n * (r i)) + (n + i))))) ==> ((i * (r n)) <= ((n * (r i)) + (n + i)))) = ((i * (r n)) <= ((n * (r i)) + (n + i))))
+T c==> ! ! c<= c* b1 * f0 b0 c+ c* b0 * f0 b1 b0 c= c==> c? / c/\ c<= c* f1 * f0 f2 b0 c<= b0 c+ c* f2 * f0 f1 c+ f2 f1 c<= c* f1 * f0 f2 c+ c* f2 * f0 f1 c+ f2 f1 c<= c* f1 * f0 f2 c+ c* f2 * f0 f1 c+ f2 f1
++ (!x. ((P x) ==> ((nadd_le x) m))) |- ((?n. ((nadd_le m) (nadd_of_num n))) ==> (?M. (!r'. ((?x. ((P x) /\ ((nadd_le (nadd_of_num r')) ((nadd_mul (nadd_of_num n)) x)))) ==> (r' <= M)))))
+T c==> ! c==> * f0 b0 cnadd_le b0 f1 c==> c? / cnadd_le f1 cnadd_of_num b0 c? / ! c==> c? / c/\ * f0 b2 cnadd_le cnadd_of_num b1 cnadd_mul cnadd_of_num f2 b2 c<= b1 b0
++ |- (((!y. (!z. ((nadd_eq ((nadd_mul x) ((nadd_mul y) z))) ((nadd_mul ((nadd_mul x) y)) z)))) ==> ((\y. (!z. ((nadd_eq ((nadd_mul x) ((nadd_mul y) z))) ((nadd_mul ((nadd_mul x) y)) z)))) y)) = ((\y. (!z. ((nadd_eq ((nadd_mul x) ((nadd_mul y) z))) ((nadd_mul ((nadd_mul x) y)) z)))) y))
+T c= c==> ! ! cnadd_eq cnadd_mul f0 cnadd_mul b0 b1 cnadd_mul cnadd_mul f0 b0 b1 * / ! cnadd_eq cnadd_mul f0 cnadd_mul b0 b1 cnadd_mul cnadd_mul f0 b0 b1 f1 * / ! cnadd_eq cnadd_mul f0 cnadd_mul b0 b1 cnadd_mul cnadd_mul f0 b0 b1 f1
++ |- ((((i * (r n)) <= ((n * (r i)) + n)) /\ (((n * (r i)) + n) <= ((n * (r i)) + (n + i)))) = ((\n'. (((i * (r n)) <= n') /\ (n' <= ((n * (r i)) + (n + i))))) ((n * (r i)) + n)))
+T c= c/\ c<= c* f0 * f1 f2 c+ c* f2 * f1 f0 f2 c<= c+ c* f2 * f1 f0 f2 c+ c* f2 * f1 f0 c+ f2 f0 * / c/\ c<= c* f0 * f1 f2 b0 c<= b0 c+ c* f2 * f1 f0 c+ f2 f0 c+ c* f2 * f1 f0 f2
++ (!x. (!x'. (!y. (!y'. ((((nadd_eq x) x') /\ ((nadd_eq y) y')) ==> ((nadd_eq ((nadd_mul x) y)) ((nadd_mul x') y'))))))) |- ((\x'. (!y. (!y'. ((((nadd_eq x) x') /\ ((nadd_eq y) y')) ==> ((nadd_eq ((nadd_mul x) y)) ((nadd_mul x') y')))))) x')
+T c==> ! ! ! ! c==> c/\ cnadd_eq b0 b1 cnadd_eq b2 b3 cnadd_eq cnadd_mul b0 b2 cnadd_mul b1 b3 * / ! ! c==> c/\ cnadd_eq f0 b0 cnadd_eq b1 b2 cnadd_eq cnadd_mul f0 b1 cnadd_mul b0 b2 f1
++ |- (((!n. ((m + n) = (n + m))) ==> ((\n. ((m + n) = (n + m))) n)) = ((\n. ((m + n) = (n + m))) n))
+T c= c==> ! c= c+ f0 b0 c+ b0 f0 * / c= c+ f0 b0 c+ b0 f0 f1 * / c= c+ f0 b0 c+ b0 f0 f1
+- |- (((!x. (!y. (((nadd_eq x) y) ==> ((nadd_le x) y)))) ==> (!x. (!y. (((nadd_eq x) y) ==> ((nadd_le x) y))))) = (!x. (!y. (((nadd_eq x) y) ==> ((nadd_le x) y)))))
+T c= c==> ! ! c==> cnadd_eq b0 b1 cnadd_le b0 b1 ! ! c==> cnadd_eq b0 b1 cnadd_le b0 b1 ! ! c==> cnadd_eq b0 b1 cnadd_le b0 b1
++ (!x. ((P x) ==> ((nadd_le x) m))), (P w), ((nadd_le m) (nadd_of_num N)) |- ((nadd_le ((nadd_mul (nadd_of_num n)) w)) (nadd_of_num (n * N)))
+T c==> ! c==> * f0 b0 cnadd_le b0 f1 c==> * f0 f2 c==> cnadd_le f1 cnadd_of_num f3 cnadd_le cnadd_mul cnadd_of_num f4 f2 cnadd_of_num c* f4 f3
++ |- (((!p. ((m + (n + p)) = ((m + n) + p))) ==> ((\p. ((m + (n + p)) = ((m + n) + p))) p)) = ((\p. ((m + (n + p)) = ((m + n) + p))) p))
+T c= c==> ! c= c+ f0 c+ f1 b0 c+ c+ f0 f1 b0 * / c= c+ f0 c+ f1 b0 c+ c+ f0 f1 b0 f2 * / c= c+ f0 c+ f1 b0 c+ c+ f0 f1 b0 f2
++ (!x. (!y. (!z. (((nadd_le y) z) ==> ((nadd_le ((nadd_mul x) y)) ((nadd_mul x) z)))))) |- (!z. (((nadd_le y) z) ==> ((nadd_le ((nadd_mul x) y)) ((nadd_mul x) z))))
+T c==> ! ! ! c==> cnadd_le b1 b2 cnadd_le cnadd_mul b0 b1 cnadd_mul b0 b2 ! c==> cnadd_le f0 b0 cnadd_le cnadd_mul f1 f0 cnadd_mul f1 b0
++ (!n. (?x. ((P x) /\ ((nadd_le (nadd_of_num (r n))) ((nadd_mul (nadd_of_num n)) x))))) |- (((?x. ((P x) /\ ((nadd_le (nadd_of_num (r n))) ((nadd_mul (nadd_of_num n)) x)))) ==> ((i * (r n)) <= ((n * (r i)) + n))) = ((i * (r n)) <= ((n * (r i)) + n)))
+T c==> ! c? / c/\ * f0 b1 cnadd_le cnadd_of_num * f1 b0 cnadd_mul cnadd_of_num b0 b1 c= c==> c? / c/\ * f0 b0 cnadd_le cnadd_of_num * f1 f2 cnadd_mul cnadd_of_num f2 b0 c<= c* f3 * f1 f2 c+ c* f2 * f1 f3 f2 c<= c* f3 * f1 f2 c+ c* f2 * f1 f3 f2
++ |- (((!n. (!p. ((m + (n + p)) = ((m + n) + p)))) ==> ((\n. (!p. ((m + (n + p)) = ((m + n) + p)))) n)) = ((\n. (!p. ((m + (n + p)) = ((m + n) + p)))) n))
+T c= c==> ! ! c= c+ f0 c+ b0 b1 c+ c+ f0 b0 b1 * / ! c= c+ f0 c+ b0 b1 c+ c+ f0 b0 b1 f1 * / ! c= c+ f0 c+ b0 b1 c+ c+ f0 b0 b1 f1
++ (!n. (!i. ((i * (r n)) <= ((n * (r i)) + n)))) |- (?B. (!n'. (((r n) * n') <= (B + ((n * (r n')) + n')))))
+T c==> ! ! c<= c* b1 * f0 b0 c+ c* b0 * f0 b1 b0 c? / ! c<= c* * f0 f1 b1 c+ b0 c+ c* f1 * f0 b1 b1
++ (!x. (!y. (!z. ((!n. ((nadd_le ((nadd_mul (nadd_of_num n)) x)) ((nadd_add ((nadd_mul (nadd_of_num n)) y)) z))) ==> ((nadd_le x) y))))) |- (!z. ((!n. ((nadd_le ((nadd_mul (nadd_of_num n)) x)) ((nadd_add ((nadd_mul (nadd_of_num n)) y)) z))) ==> ((nadd_le x) y)))
+T c==> ! ! ! c==> ! cnadd_le cnadd_mul cnadd_of_num b3 b0 cnadd_add cnadd_mul cnadd_of_num b3 b1 b2 cnadd_le b0 b1 ! c==> ! cnadd_le cnadd_mul cnadd_of_num b1 f0 cnadd_add cnadd_mul cnadd_of_num b1 f1 b0 cnadd_le f0 f1
++ |- ((\P. ((~ (?x. (P x))) = (!x. (~ (P x))))) P)
+T * / c= c~ c? / * b0 b1 ! c~ * b0 b1 f0
++ (!m. (!n. (!p. (((m <= n) /\ (n <= p)) ==> (m <= p))))) |- (!n. (!p. (((m <= n) /\ (n <= p)) ==> (m <= p))))
+T c==> ! ! ! c==> c/\ c<= b0 b1 c<= b1 b2 c<= b0 b2 ! ! c==> c/\ c<= f0 b0 c<= b0 b1 c<= f0 b1
++ (!m. (!n. (!p. (((m <= n) /\ (n <= p)) ==> (m <= p))))) |- (!p. (((m <= n) /\ (n <= p)) ==> (m <= p)))
+T c==> ! ! ! c==> c/\ c<= b0 b1 c<= b1 b2 c<= b0 b2 ! c==> c/\ c<= f0 f1 c<= f1 b0 c<= f0 b0
++ (!n. (!i. ((i * (r n)) <= ((n * (r i)) + n)))) |- (T = (((i * (r n)) <= ((n * (r i)) + n)) /\ (((n * (r i)) + n) <= ((n * (r i)) + (n + i)))))
+T c==> ! ! c<= c* b1 * f0 b0 c+ c* b0 * f0 b1 b0 c= cT c/\ c<= c* f1 * f0 f2 c+ c* f2 * f0 f1 f2 c<= c+ c* f2 * f0 f1 f2 c+ c* f2 * f0 f1 c+ f2 f1
++ |- (!y. (((\y. (((nadd_eq x) y) /\ ((nadd_eq y) z))) y) ==> ((!x. (!y. (!z. ((((nadd_eq x) y) /\ ((nadd_eq y) z)) ==> ((nadd_eq x) z))))) ==> ((nadd_eq x) z))))
+T c==> * / c/\ cnadd_eq f0 b0 cnadd_eq b0 f1 f2 c==> ! ! ! c==> c/\ cnadd_eq b0 b1 cnadd_eq b1 b2 cnadd_eq b0 b2 cnadd_eq f0 f1
++ (!x. (!y. (!z. ((!n. ((nadd_le ((nadd_mul (nadd_of_num n)) x)) ((nadd_add ((nadd_mul (nadd_of_num n)) y)) z))) ==> ((nadd_le x) y))))) |- (((?z. (!n. ((nadd_le ((nadd_mul (nadd_of_num n)) x)) ((nadd_add ((nadd_mul (nadd_of_num n)) y)) z)))) ==> ((nadd_le x) y)) = T)
+T c==> ! ! ! c==> ! cnadd_le cnadd_mul cnadd_of_num b3 b0 cnadd_add cnadd_mul cnadd_of_num b3 b1 b2 cnadd_le b0 b1 c= c==> c? / ! cnadd_le cnadd_mul cnadd_of_num b1 f0 cnadd_add cnadd_mul cnadd_of_num b1 f1 b0 cnadd_le f0 f1 cT
++ (!x. ((P x) ==> ((nadd_le x) m))), (P w), ((nadd_le m) (nadd_of_num N)), ((nadd_le (nadd_of_num p)) ((nadd_mul (nadd_of_num n)) w)) |- (?y. (((nadd_le (nadd_of_num p)) y) /\ ((nadd_le y) (nadd_of_num (n * N)))))
+T c==> ! c==> * f0 b0 cnadd_le b0 f1 c==> * f0 f2 c==> cnadd_le f1 cnadd_of_num f3 c==> cnadd_le cnadd_of_num f4 cnadd_mul cnadd_of_num f5 f2 c? / c/\ cnadd_le cnadd_of_num f4 b0 cnadd_le b0 cnadd_of_num c* f5 f3
++ ((?m. ((P m) /\ (!x. ((P x) ==> (x <= m))))) = ((?x. (P x)) /\ (?M. (!x. ((P x) ==> (x <= M)))))) |- (((?x. (P x)) /\ (?M. (!x. ((P x) ==> (x <= M))))) = (?m. ((P m) /\ (!x. ((P x) ==> (x <= m))))))
+T c==> c= c? / c/\ * f0 b0 ! c==> * f0 b1 c<= b1 b0 c/\ c? / * f0 b0 c? / ! c==> * f0 b1 c<= b1 b0 c= c/\ c? / * f0 b0 c? / ! c==> * f0 b1 c<= b1 b0 c? / c/\ * f0 b0 ! c==> * f0 b1 c<= b1 b0
++ |- ((\P. (!Q. ((!x. ((P x) /\ (Q x))) = ((!x. (P x)) /\ (!x. (Q x)))))) P)
+T * / ! c= ! c/\ * b0 b2 * b1 b2 c/\ ! * b0 b2 ! * b1 b2 f0
++ (!n. (!x. (~ ((P x) /\ ((nadd_le (nadd_of_num (SUC (r n)))) ((nadd_mul (nadd_of_num n)) x)))))), (P x) |- ((nadd_le ((nadd_mul (nadd_of_num n)) ((nadd_mul (nadd_of_num i)) x))) ((nadd_mul (nadd_of_num n)) (nadd_of_num (SUC (r i)))))
+T c==> ! ! c~ c/\ * f0 b1 cnadd_le cnadd_of_num cSUC * f1 b0 cnadd_mul cnadd_of_num b0 b1 c==> * f0 f2 cnadd_le cnadd_mul cnadd_of_num f3 cnadd_mul cnadd_of_num f4 f2 cnadd_mul cnadd_of_num f3 cnadd_of_num cSUC * f1 f4
++ (!x. (!y. (!z. ((((nadd_eq x) y) /\ ((nadd_eq y) z)) ==> ((nadd_eq x) z))))) |- ((?y. (((nadd_eq x) y) /\ ((nadd_eq y) z))) ==> ((nadd_eq x) z))
+T c==> ! ! ! c==> c/\ cnadd_eq b0 b1 cnadd_eq b1 b2 cnadd_eq b0 b2 c==> c? / c/\ cnadd_eq f0 b0 cnadd_eq b0 f1 cnadd_eq f0 f1
++ (!n. (!i. ((i * (r n)) <= ((n * (r i)) + n)))), (!n. (?x. ((P x) /\ ((nadd_le (nadd_of_num (r n))) ((nadd_mul (nadd_of_num n)) x))))), (!x. ((P x) ==> ((nadd_le x) z))), ((dest_nadd (mk_nadd r)) = r) |- ((\y. (((nadd_le ((nadd_mul (nadd_of_num n)) (mk_nadd r))) y) /\ ((nadd_le y) ((nadd_add ((nadd_mul (nadd_of_num n)) z)) (nadd_of_num (NUMERAL (BIT1 _0))))))) ((nadd_add (nadd_of_num (r n))) (nadd_of_num (NUMERAL (BIT1 _0)))))
+T c==> ! ! c<= c* b1 * f0 b0 c+ c* b0 * f0 b1 b0 c==> ! c? / c/\ * f1 b1 cnadd_le cnadd_of_num * f0 b0 cnadd_mul cnadd_of_num b0 b1 c==> ! c==> * f1 b0 cnadd_le b0 f2 c==> c= * part cdest_nadd cmk_nadd f0 f0 * / c/\ cnadd_le cnadd_mul cnadd_of_num f3 cmk_nadd f0 b0 cnadd_le b0 cnadd_add cnadd_mul cnadd_of_num f3 f2 cnadd_of_num cNUMERAL cBIT1 c_0 cnadd_add cnadd_of_num * f0 f3 cnadd_of_num cNUMERAL cBIT1 c_0
++ |- ((?N. (!n'. ((N <= n') ==> (((r n) * n') <= (((n * (r n')) + n') + (NUMERAL _0)))))) = ((\B. (?N. (!n'. ((N <= n') ==> (((r n) * n') <= (((n * (r n')) + n') + B)))))) (NUMERAL _0)))
+T c= c? / ! c==> c<= b0 b1 c<= c* * f0 f1 b1 c+ c+ c* f1 * f0 b1 b1 cNUMERAL c_0 * / c? / ! c==> c<= b1 b2 c<= c* * f0 f1 b2 c+ c+ c* f1 * f0 b2 b2 b0 cNUMERAL c_0
+- |- ((!m. (!n. (((SUC m) + n) = (SUC (m + n))))) /\ (!m. (!n. ((m + (SUC n)) = (SUC (m + n))))))
+T c/\ ! ! c= c+ cSUC b0 b1 cSUC c+ b0 b1 ! ! c= c+ b0 cSUC b1 cSUC c+ b0 b1
++ (!x. ((P x) ==> ((nadd_le x) m))), ((nadd_le m) (nadd_of_num N)) |- ((\M. (!r'. ((?x. ((P x) /\ ((nadd_le (nadd_of_num r')) ((nadd_mul (nadd_of_num n)) x)))) ==> (r' <= M)))) (n * N))
+T c==> ! c==> * f0 b0 cnadd_le b0 f1 c==> cnadd_le f1 cnadd_of_num f2 * / ! c==> c? / c/\ * f0 b2 cnadd_le cnadd_of_num b1 cnadd_mul cnadd_of_num f3 b2 c<= b1 b0 c* f3 f2
++ (!n. (!r'. ((?x. ((P x) /\ ((nadd_le (nadd_of_num r')) ((nadd_mul (nadd_of_num n)) x)))) ==> (r' <= (r n))))) |- ((\n. (!r'. ((?x. ((P x) /\ ((nadd_le (nadd_of_num r')) ((nadd_mul (nadd_of_num n)) x)))) ==> (r' <= (r n))))) n)
+T c==> ! ! c==> c? / c/\ * f0 b2 cnadd_le cnadd_of_num b1 cnadd_mul cnadd_of_num b0 b2 c<= b1 * f1 b0 * / ! c==> c? / c/\ * f0 b2 cnadd_le cnadd_of_num b1 cnadd_mul cnadd_of_num b0 b2 c<= b1 * f1 b0 f2
++ |- ((((nadd_eq ((nadd_mul (nadd_of_num n)) (nadd_of_num (SUC (r i))))) (nadd_of_num (n * (SUC (r i))))) ==> ((nadd_le ((nadd_mul (nadd_of_num n)) (nadd_of_num (SUC (r i))))) (nadd_of_num (n * (SUC (r i)))))) = ((nadd_le ((nadd_mul (nadd_of_num n)) (nadd_of_num (SUC (r i))))) (nadd_of_num (n * (SUC (r i))))))
+T c= c==> cnadd_eq cnadd_mul cnadd_of_num f0 cnadd_of_num cSUC * f1 f2 cnadd_of_num c* f0 cSUC * f1 f2 cnadd_le cnadd_mul cnadd_of_num f0 cnadd_of_num cSUC * f1 f2 cnadd_of_num c* f0 cSUC * f1 f2 cnadd_le cnadd_mul cnadd_of_num f0 cnadd_of_num cSUC * f1 f2 cnadd_of_num c* f0 cSUC * f1 f2
++ (!n. (!i. ((i * (r n)) <= ((n * (r i)) + n)))), (!n. (!x. (~ ((P x) /\ ((nadd_le (nadd_of_num (SUC (r n)))) ((nadd_mul (nadd_of_num n)) x)))))), (!n. (?x. ((P x) /\ ((nadd_le (nadd_of_num (r n))) ((nadd_mul (nadd_of_num n)) x))))), ((dest_nadd (mk_nadd r)) = r) |- ((!x. ((P x) ==> ((nadd_le x) (mk_nadd r)))) /\ (!M'. ((!x. ((P x) ==> ((nadd_le x) M'))) ==> ((nadd_le (mk_nadd r)) M'))))
+T c==> ! ! c<= c* b1 * f0 b0 c+ c* b0 * f0 b1 b0 c==> ! ! c~ c/\ * f1 b1 cnadd_le cnadd_of_num cSUC * f0 b0 cnadd_mul cnadd_of_num b0 b1 c==> ! c? / c/\ * f1 b1 cnadd_le cnadd_of_num * f0 b0 cnadd_mul cnadd_of_num b0 b1 c==> c= * part cdest_nadd cmk_nadd f0 f0 c/\ ! c==> * f1 b0 cnadd_le b0 cmk_nadd f0 ! c==> ! c==> * f1 b1 cnadd_le b1 b0 cnadd_le cmk_nadd f0 b0
++ |- (((!z. ((nadd_eq ((nadd_mul ((nadd_mul x) y)) z)) ((nadd_mul x) ((nadd_mul y) z)))) ==> ((\z. ((nadd_eq ((nadd_mul ((nadd_mul x) y)) z)) ((nadd_mul x) ((nadd_mul y) z)))) z)) = ((\z. ((nadd_eq ((nadd_mul ((nadd_mul x) y)) z)) ((nadd_mul x) ((nadd_mul y) z)))) z))
+T c= c==> ! cnadd_eq cnadd_mul cnadd_mul f0 f1 b0 cnadd_mul f0 cnadd_mul f1 b0 * / cnadd_eq cnadd_mul cnadd_mul f0 f1 b0 cnadd_mul f0 cnadd_mul f1 b0 f2 * / cnadd_eq cnadd_mul cnadd_mul f0 f1 b0 cnadd_mul f0 cnadd_mul f1 b0 f2
++ (!x. ((P x) ==> ((nadd_le x) m))), (P w), ((nadd_le m) (nadd_of_num N)) |- (((nadd_le ((nadd_mul (nadd_of_num n)) (nadd_of_num N))) (nadd_of_num (n * N))) = (((nadd_le ((nadd_mul (nadd_of_num n)) w)) ((nadd_mul (nadd_of_num n)) (nadd_of_num N))) /\ ((nadd_le ((nadd_mul (nadd_of_num n)) (nadd_of_num N))) (nadd_of_num (n * N)))))
+T c==> ! c==> * f0 b0 cnadd_le b0 f1 c==> * f0 f2 c==> cnadd_le f1 cnadd_of_num f3 c= cnadd_le cnadd_mul cnadd_of_num f4 cnadd_of_num f3 cnadd_of_num c* f4 f3 c/\ cnadd_le cnadd_mul cnadd_of_num f4 f2 cnadd_mul cnadd_of_num f4 cnadd_of_num f3 cnadd_le cnadd_mul cnadd_of_num f4 cnadd_of_num f3 cnadd_of_num c* f4 f3
++ |- (((!k. ((dest_nadd (nadd_of_num k)) = (\n. (k * n)))) ==> ((\k. ((dest_nadd (nadd_of_num k)) = (\n. (k * n)))) k)) = ((\k. ((dest_nadd (nadd_of_num k)) = (\n. (k * n)))) k))
+T c= c==> ! c= * part cdest_nadd cnadd_of_num b0 / c* b0 b1 * / c= * part cdest_nadd cnadd_of_num b0 / c* b0 b1 f0 * / c= * part cdest_nadd cnadd_of_num b0 / c* b0 b1 f0
++ |- ((\y. (!z. ((nadd_eq ((nadd_mul ((nadd_mul x) y)) z)) ((nadd_mul x) ((nadd_mul y) z))))) y)
+T * / ! cnadd_eq cnadd_mul cnadd_mul f0 b0 b1 cnadd_mul f0 cnadd_mul b0 b1 f1
++ (!x. ((P x) ==> ((nadd_le x) m))), (P a) |- (?M. ((!x. ((P x) ==> ((nadd_le x) M))) /\ (!M'. ((!x. ((P x) ==> ((nadd_le x) M'))) ==> ((nadd_le M) M')))))
+T c==> ! c==> * f0 b0 cnadd_le b0 f1 c==> * f0 f2 c? / c/\ ! c==> * f0 b1 cnadd_le b1 b0 ! c==> ! c==> * f0 b2 cnadd_le b2 b1 cnadd_le b0 b1
++ (!x. (!x'. (!y. (!y'. ((((nadd_eq x) x') /\ ((nadd_eq y) y')) ==> ((nadd_eq ((nadd_mul x) y)) ((nadd_mul x') y'))))))) |- (!y. (!y'. ((((nadd_eq x) x') /\ ((nadd_eq y) y')) ==> ((nadd_eq ((nadd_mul x) y)) ((nadd_mul x') y')))))
+T c==> ! ! ! ! c==> c/\ cnadd_eq b0 b1 cnadd_eq b2 b3 cnadd_eq cnadd_mul b0 b2 cnadd_mul b1 b3 ! ! c==> c/\ cnadd_eq f0 f1 cnadd_eq b0 b1 cnadd_eq cnadd_mul f0 b0 cnadd_mul f1 b1
++ |- ((\z. ((?y. (((nadd_le x) y) /\ ((nadd_le y) z))) ==> ((nadd_le x) z))) z)
+T * / c==> c? / c/\ cnadd_le f0 b1 cnadd_le b1 b0 cnadd_le f0 b0 f1
++ (!n. (!i. ((i * (r n)) <= ((n * (r i)) + n)))), (!n. (?x. ((P x) /\ ((nadd_le (nadd_of_num (r n))) ((nadd_mul (nadd_of_num n)) x))))), (!x. ((P x) ==> ((nadd_le x) z))), ((dest_nadd (mk_nadd r)) = r) |- (((?z'. (!n. ((nadd_le ((nadd_mul (nadd_of_num n)) (mk_nadd r))) ((nadd_add ((nadd_mul (nadd_of_num n)) z)) z')))) ==> ((nadd_le (mk_nadd r)) z)) = ((nadd_le (mk_nadd r)) z))
+T c==> ! ! c<= c* b1 * f0 b0 c+ c* b0 * f0 b1 b0 c==> ! c? / c/\ * f1 b1 cnadd_le cnadd_of_num * f0 b0 cnadd_mul cnadd_of_num b0 b1 c==> ! c==> * f1 b0 cnadd_le b0 f2 c==> c= * part cdest_nadd cmk_nadd f0 f0 c= c==> c? / ! cnadd_le cnadd_mul cnadd_of_num b1 cmk_nadd f0 cnadd_add cnadd_mul cnadd_of_num b1 f2 b0 cnadd_le cmk_nadd f0 f2 cnadd_le cmk_nadd f0 f2
++ |- (((!p. (((m + n) <= (m + p)) = (n <= p))) ==> ((\p. (((m + n) <= (m + p)) = (n <= p))) p)) = ((\p. (((m + n) <= (m + p)) = (n <= p))) p))
+T c= c==> ! c= c<= c+ f0 f1 c+ f0 b0 c<= f1 b0 * / c= c<= c+ f0 f1 c+ f0 b0 c<= f1 b0 f2 * / c= c<= c+ f0 f1 c+ f0 b0 c<= f1 b0 f2
++ |- ((\m. (!n. (!p. (((m + n) <= (m + p)) = (n <= p))))) m)
+T * / ! ! c= c<= c+ b0 b1 c+ b0 b2 c<= b1 b2 f0
++ |- ((!n. ((nadd_le ((nadd_mul (nadd_of_num n)) (mk_nadd r))) ((nadd_add ((nadd_mul (nadd_of_num n)) z)) (nadd_of_num (NUMERAL (BIT1 _0)))))) = ((\z'. (!n. ((nadd_le ((nadd_mul (nadd_of_num n)) (mk_nadd r))) ((nadd_add ((nadd_mul (nadd_of_num n)) z)) z')))) (nadd_of_num (NUMERAL (BIT1 _0)))))
+T c= ! cnadd_le cnadd_mul cnadd_of_num b0 cmk_nadd f0 cnadd_add cnadd_mul cnadd_of_num b0 f1 cnadd_of_num cNUMERAL cBIT1 c_0 * / ! cnadd_le cnadd_mul cnadd_of_num b1 cmk_nadd f0 cnadd_add cnadd_mul cnadd_of_num b1 f1 b0 cnadd_of_num cNUMERAL cBIT1 c_0
+- |- ((\m. (!n. ((m * (SUC n)) = (m + (m * n))))) m)
+T * / ! c= c* b0 cSUC b1 c+ b0 c* b0 b1 f0
++ |- (((!x. (!y. (!z. ((!n. ((nadd_le ((nadd_mul (nadd_of_num n)) x)) ((nadd_add ((nadd_mul (nadd_of_num n)) y)) z))) ==> ((nadd_le x) y))))) ==> (!x. (!y. ((?z. (!n. ((nadd_le ((nadd_mul (nadd_of_num n)) x)) ((nadd_add ((nadd_mul (nadd_of_num n)) y)) z)))) ==> ((nadd_le x) y))))) = (!x. (!y. ((?z. (!n. ((nadd_le ((nadd_mul (nadd_of_num n)) x)) ((nadd_add ((nadd_mul (nadd_of_num n)) y)) z)))) ==> ((nadd_le x) y)))))
+T c= c==> ! ! ! c==> ! cnadd_le cnadd_mul cnadd_of_num b3 b0 cnadd_add cnadd_mul cnadd_of_num b3 b1 b2 cnadd_le b0 b1 ! ! c==> c? / ! cnadd_le cnadd_mul cnadd_of_num b3 b0 cnadd_add cnadd_mul cnadd_of_num b3 b1 b2 cnadd_le b0 b1 ! ! c==> c? / ! cnadd_le cnadd_mul cnadd_of_num b3 b0 cnadd_add cnadd_mul cnadd_of_num b3 b1 b2 cnadd_le b0 b1
++ (!n. (!x. (~ ((P x) /\ ((nadd_le (nadd_of_num (SUC (r n)))) ((nadd_mul (nadd_of_num n)) x)))))) |- (((\x. ((P x) /\ ((nadd_le (nadd_of_num (r n))) ((nadd_mul (nadd_of_num n)) x)))) x) ==> ((i * (r n)) <= ((n * (r i)) + n)))
+T c==> ! ! c~ c/\ * f0 b1 cnadd_le cnadd_of_num cSUC * f1 b0 cnadd_mul cnadd_of_num b0 b1 c==> * / c/\ * f0 b0 cnadd_le cnadd_of_num * f1 f2 cnadd_mul cnadd_of_num f2 b0 f3 c<= c* f4 * f1 f2 c+ c* f2 * f1 f4 f2
++ |- ((\y. (!x. (!z. (((nadd_le y) z) ==> ((nadd_le ((nadd_mul x) y)) ((nadd_mul x) z)))))) y)
+T * / ! ! c==> cnadd_le b0 b2 cnadd_le cnadd_mul b1 b0 cnadd_mul b1 b2 f0
++ (!n. (!x. (~ ((P x) /\ ((nadd_le (nadd_of_num (SUC (r n)))) ((nadd_mul (nadd_of_num n)) x)))))), (P x), ((nadd_le (nadd_of_num (r n))) ((nadd_mul (nadd_of_num n)) x)) |- (((nadd_le (nadd_of_num (i * (r n)))) ((nadd_mul (nadd_of_num i)) ((nadd_mul (nadd_of_num n)) x))) /\ ((nadd_le ((nadd_mul (nadd_of_num i)) ((nadd_mul (nadd_of_num n)) x))) (nadd_of_num ((n * (r i)) + n))))
+T c==> ! ! c~ c/\ * f0 b1 cnadd_le cnadd_of_num cSUC * f1 b0 cnadd_mul cnadd_of_num b0 b1 c==> * f0 f2 c==> cnadd_le cnadd_of_num * f1 f3 cnadd_mul cnadd_of_num f3 f2 c/\ cnadd_le cnadd_of_num c* f4 * f1 f3 cnadd_mul cnadd_of_num f4 cnadd_mul cnadd_of_num f3 f2 cnadd_le cnadd_mul cnadd_of_num f4 cnadd_mul cnadd_of_num f3 f2 cnadd_of_num c+ c* f3 * f1 f4 f3
++ (!n. (!i. ((i * (r n)) <= ((n * (r i)) + n)))), (n <= i) |- (((?n'. (((i * (r n)) <= n') /\ (n' <= (((n * (r i)) + i) + (NUMERAL _0))))) ==> ((i * (r n)) <= (((n * (r i)) + i) + (NUMERAL _0)))) = ((i * (r n)) <= (((n * (r i)) + i) + (NUMERAL _0))))
+T c==> ! ! c<= c* b1 * f0 b0 c+ c* b0 * f0 b1 b0 c==> c<= f1 f2 c= c==> c? / c/\ c<= c* f2 * f0 f1 b0 c<= b0 c+ c+ c* f1 * f0 f2 f2 cNUMERAL c_0 c<= c* f2 * f0 f1 c+ c+ c* f1 * f0 f2 f2 cNUMERAL c_0 c<= c* f2 * f0 f1 c+ c+ c* f1 * f0 f2 f2 cNUMERAL c_0
++ |- (((?n. ((nadd_le m) (nadd_of_num n))) ==> (?M. (!r'. ((?x. ((P x) /\ ((nadd_le (nadd_of_num r')) ((nadd_mul (nadd_of_num n)) x)))) ==> (r' <= M))))) = (?M. (!r'. ((?x. ((P x) /\ ((nadd_le (nadd_of_num r')) ((nadd_mul (nadd_of_num n)) x)))) ==> (r' <= M)))))
+T c= c==> c? / cnadd_le f0 cnadd_of_num b0 c? / ! c==> c? / c/\ * f1 b2 cnadd_le cnadd_of_num b1 cnadd_mul cnadd_of_num f2 b2 c<= b1 b0 c? / ! c==> c? / c/\ * f1 b2 cnadd_le cnadd_of_num b1 cnadd_mul cnadd_of_num f2 b2 c<= b1 b0
++ |- ((\y. (((nadd_eq x) y) = ((nadd_eq y) x))) y)
+T * / c= cnadd_eq f0 b0 cnadd_eq b0 f0 f1
++ |- ((~ ((P x) /\ ((nadd_le (nadd_of_num (SUC (r n)))) ((nadd_mul (nadd_of_num n)) x)))) = ((((nadd_le ((nadd_mul (nadd_of_num n)) x)) (nadd_of_num (SUC (r n)))) \/ ((nadd_le (nadd_of_num (SUC (r n)))) ((nadd_mul (nadd_of_num n)) x))) /\ (~ ((P x) /\ ((nadd_le (nadd_of_num (SUC (r n)))) ((nadd_mul (nadd_of_num n)) x))))))
+T c= c~ c/\ * f0 f1 cnadd_le cnadd_of_num cSUC * f2 f3 cnadd_mul cnadd_of_num f3 f1 c/\ c\/ cnadd_le cnadd_mul cnadd_of_num f3 f1 cnadd_of_num cSUC * f2 f3 cnadd_le cnadd_of_num cSUC * f2 f3 cnadd_mul cnadd_of_num f3 f1 c~ c/\ * f0 f1 cnadd_le cnadd_of_num cSUC * f2 f3 cnadd_mul cnadd_of_num f3 f1
++ (!x. (!y. (!z. ((((nadd_le x) y) /\ ((nadd_le y) z)) ==> ((nadd_le x) z))))) |- ((\z. ((((nadd_le x) y) /\ ((nadd_le y) z)) ==> ((nadd_le x) z))) z)
+T c==> ! ! ! c==> c/\ cnadd_le b0 b1 cnadd_le b1 b2 cnadd_le b0 b2 * / c==> c/\ cnadd_le f0 f1 cnadd_le f1 b0 cnadd_le f0 b0 f2
++ |- (((n * (r n')) <= ((n' * (r n)) + n')) = ((n * (r n')) <= (((r n) * n') + n')))
+T c= c<= c* f0 * f1 f2 c+ c* f2 * f1 f0 f2 c<= c* f0 * f1 f2 c+ c* * f1 f0 f2 f2
++ (!x. (!y. (!z. (((nadd_le y) z) ==> ((nadd_le ((nadd_mul x) y)) ((nadd_mul x) z)))))) |- (!x. (!z. (((nadd_le y) z) ==> ((nadd_le ((nadd_mul x) y)) ((nadd_mul x) z)))))
+T c==> ! ! ! c==> cnadd_le b1 b2 cnadd_le cnadd_mul b0 b1 cnadd_mul b0 b2 ! ! c==> cnadd_le f0 b1 cnadd_le cnadd_mul b0 f0 cnadd_mul b0 b1
++ (!x. (!y. (!z. ((((nadd_le x) y) /\ ((nadd_le y) z)) ==> ((nadd_le x) z))))), (((nadd_le x) y) /\ ((nadd_le y) z)) |- ((!x. (!y. (!z. ((((nadd_le x) y) /\ ((nadd_le y) z)) ==> ((nadd_le x) z))))) /\ ((nadd_le x) z))
+T c==> ! ! ! c==> c/\ cnadd_le b0 b1 cnadd_le b1 b2 cnadd_le b0 b2 c==> c/\ cnadd_le f0 f1 cnadd_le f1 f2 c/\ ! ! ! c==> c/\ cnadd_le b0 b1 cnadd_le b1 b2 cnadd_le b0 b2 cnadd_le f0 f2
++ (?M. (!x. ((P x) ==> ((nadd_le x) M)))) |- ((P a) ==> (?M. ((!x. ((P x) ==> ((nadd_le x) M))) /\ (!M'. ((!x. ((P x) ==> ((nadd_le x) M'))) ==> ((nadd_le M) M'))))))
+T c==> c? / ! c==> * f0 b1 cnadd_le b1 b0 c==> * f0 f1 c? / c/\ ! c==> * f0 b1 cnadd_le b1 b0 ! c==> ! c==> * f0 b2 cnadd_le b2 b1 cnadd_le b0 b1
++ |- (((nadd_eq ((nadd_mul x) y)) ((nadd_mul y) x)) = T)
+T c= cnadd_eq cnadd_mul f0 f1 cnadd_mul f1 f0 cT
++ ((\z. (!n. ((nadd_le ((nadd_mul (nadd_of_num n)) x)) ((nadd_add ((nadd_mul (nadd_of_num n)) y)) z)))) z) |- (!n. ((nadd_le ((nadd_mul (nadd_of_num n)) x)) ((nadd_add ((nadd_mul (nadd_of_num n)) y)) z)))
+T c==> * / ! cnadd_le cnadd_mul cnadd_of_num b1 f0 cnadd_add cnadd_mul cnadd_of_num b1 f1 b0 f2 ! cnadd_le cnadd_mul cnadd_of_num b0 f0 cnadd_add cnadd_mul cnadd_of_num b0 f1 f2
++ ((?x. (P x)) /\ (?M. (!x. ((P x) ==> ((nadd_le x) M))))) |- (((?x. (P x)) /\ (?M. (!x. ((P x) ==> ((nadd_le x) M))))) /\ (?M. ((!x. ((P x) ==> ((nadd_le x) M))) /\ (!M'. ((!x. ((P x) ==> ((nadd_le x) M'))) ==> ((nadd_le M) M'))))))
+T c==> c/\ c? / * f0 b0 c? / ! c==> * f0 b1 cnadd_le b1 b0 c/\ c/\ c? / * f0 b0 c? / ! c==> * f0 b1 cnadd_le b1 b0 c? / c/\ ! c==> * f0 b1 cnadd_le b1 b0 ! c==> ! c==> * f0 b2 cnadd_le b2 b1 cnadd_le b0 b1
++ |- ((?B. (!n'. (((SUC (r n)) * n') <= (B + ((n * (r n')) + ((NUMERAL (BIT0 (BIT1 _0))) * n')))))) = (?B. (!n'. (((SUC (r n)) * n') <= (((n * (r n')) + ((NUMERAL (BIT0 (BIT1 _0))) * n')) + B)))))
+T c= c? / ! c<= c* cSUC * f0 f1 b1 c+ b0 c+ c* f1 * f0 b1 c* cNUMERAL cBIT0 cBIT1 c_0 b1 c? / ! c<= c* cSUC * f0 f1 b1 c+ c+ c* f1 * f0 b1 c* cNUMERAL cBIT0 cBIT1 c_0 b1 b0
++ (!x. ((P x) ==> ((nadd_le x) z))) |- ((?x. ((P x) /\ ((nadd_le (nadd_of_num (r n))) ((nadd_mul (nadd_of_num n)) x)))) ==> ((nadd_le (nadd_of_num (r n))) ((nadd_mul (nadd_of_num n)) z)))
+T c==> ! c==> * f0 b0 cnadd_le b0 f1 c==> c? / c/\ * f0 b0 cnadd_le cnadd_of_num * f2 f3 cnadd_mul cnadd_of_num f3 b0 cnadd_le cnadd_of_num * f2 f3 cnadd_mul cnadd_of_num f3 f1
++ |- (((nadd_eq ((nadd_mul (nadd_of_num m)) (nadd_of_num n))) (nadd_of_num (m * n))) = T)
+T c= cnadd_eq cnadd_mul cnadd_of_num f0 cnadd_of_num f1 cnadd_of_num c* f0 f1 cT
++ |- ((\m. ((SUC m) = (m + (NUMERAL (BIT1 _0))))) m)
+T * / c= cSUC b0 c+ b0 cNUMERAL cBIT1 c_0 f0
+- ((nadd_le y) z) |- ((!x. (!y. (!z. (((nadd_le y) z) ==> ((nadd_le ((nadd_mul x) y)) ((nadd_mul x) z)))))) ==> ((nadd_le ((nadd_mul x) y)) ((nadd_mul x) z)))
+T c==> cnadd_le f0 f1 c==> ! ! ! c==> cnadd_le b1 b2 cnadd_le cnadd_mul b0 b1 cnadd_mul b0 b2 cnadd_le cnadd_mul f2 f0 cnadd_mul f2 f1
++ |- ((((nadd_eq ((nadd_mul (nadd_of_num i)) ((nadd_mul (nadd_of_num n)) x))) ((nadd_mul ((nadd_mul (nadd_of_num i)) (nadd_of_num n))) x)) /\ ((nadd_eq ((nadd_mul ((nadd_mul (nadd_of_num i)) (nadd_of_num n))) x)) ((nadd_mul (nadd_of_num n)) ((nadd_mul (nadd_of_num i)) x)))) = ((\y. (((nadd_eq ((nadd_mul (nadd_of_num i)) ((nadd_mul (nadd_of_num n)) x))) y) /\ ((nadd_eq y) ((nadd_mul (nadd_of_num n)) ((nadd_mul (nadd_of_num i)) x))))) ((nadd_mul ((nadd_mul (nadd_of_num i)) (nadd_of_num n))) x)))
+T c= c/\ cnadd_eq cnadd_mul cnadd_of_num f0 cnadd_mul cnadd_of_num f1 f2 cnadd_mul cnadd_mul cnadd_of_num f0 cnadd_of_num f1 f2 cnadd_eq cnadd_mul cnadd_mul cnadd_of_num f0 cnadd_of_num f1 f2 cnadd_mul cnadd_of_num f1 cnadd_mul cnadd_of_num f0 f2 * / c/\ cnadd_eq cnadd_mul cnadd_of_num f0 cnadd_mul cnadd_of_num f1 f2 b0 cnadd_eq b0 cnadd_mul cnadd_of_num f1 cnadd_mul cnadd_of_num f0 f2 cnadd_mul cnadd_mul cnadd_of_num f0 cnadd_of_num f1 f2
++ |- (((!m. (!n. ((m * (r n)) <= ((n * (r m)) + (n + m))))) /\ (!n. (!m. ((n * (r m)) <= ((m * (r n)) + (m + n)))))) = ((!m. (!n. ((m * (r n)) <= ((n * (r m)) + (m + n))))) /\ (!n. (!m. ((n * (r m)) <= ((m * (r n)) + (m + n)))))))
+T c= c/\ ! ! c<= c* b0 * f0 b1 c+ c* b1 * f0 b0 c+ b1 b0 ! ! c<= c* b0 * f0 b1 c+ c* b1 * f0 b0 c+ b1 b0 c/\ ! ! c<= c* b0 * f0 b1 c+ c* b1 * f0 b0 c+ b0 b1 ! ! c<= c* b0 * f0 b1 c+ c* b1 * f0 b0 c+ b1 b0
++ ((nadd_le (nadd_of_num (r n))) ((nadd_mul (nadd_of_num n)) x)) |- (?y. (((nadd_le (nadd_of_num (i * (r n)))) y) /\ ((nadd_le y) ((nadd_mul (nadd_of_num i)) ((nadd_mul (nadd_of_num n)) x)))))
+T c==> cnadd_le cnadd_of_num * f0 f1 cnadd_mul cnadd_of_num f1 f2 c? / c/\ cnadd_le cnadd_of_num c* f3 * f0 f1 b0 cnadd_le b0 cnadd_mul cnadd_of_num f3 cnadd_mul cnadd_of_num f1 f2
+- |- (((!n. (((NUMERAL _0) + n) = n)) ==> ((\n. (((NUMERAL _0) + n) = n)) n)) = ((\n. (((NUMERAL _0) + n) = n)) n))
+T c= c==> ! c= c+ cNUMERAL c_0 b0 b0 * / c= c+ cNUMERAL c_0 b0 b0 f0 * / c= c+ cNUMERAL c_0 b0 b0 f0
++ |- ((\n. (((NUMERAL (BIT1 _0)) * n) = n)) n)
+T * / c= c* cNUMERAL cBIT1 c_0 b0 b0 f0
++ |- (((!Q. ((?B. (!i. ((P i) <= ((Q i) + B)))) = (?B. (?N. (!i. ((N <= i) ==> ((P i) <= ((Q i) + B)))))))) ==> ((\Q. ((?B. (!i. ((P i) <= ((Q i) + B)))) = (?B. (?N. (!i. ((N <= i) ==> ((P i) <= ((Q i) + B)))))))) Q)) = ((\Q. ((?B. (!i. ((P i) <= ((Q i) + B)))) = (?B. (?N. (!i. ((N <= i) ==> ((P i) <= ((Q i) + B)))))))) Q))
+T c= c==> ! c= c? / ! c<= * f0 b2 c+ * b0 b2 b1 c? / c? / ! c==> c<= b2 b3 c<= * f0 b3 c+ * b0 b3 b1 * / c= c? / ! c<= * f0 b2 c+ * b0 b2 b1 c? / c? / ! c==> c<= b2 b3 c<= * f0 b3 c+ * b0 b3 b1 f1 * / c= c? / ! c<= * f0 b2 c+ * b0 b2 b1 c? / c? / ! c==> c<= b2 b3 c<= * f0 b3 c+ * b0 b3 b1 f1
++ |- ((\p. (((m + n) <= (m + p)) = (n <= p))) p)
+T * / c= c<= c+ f0 f1 c+ f0 b0 c<= f1 b0 f2
++ (!x. ((P x) ==> ((nadd_le x) m))) |- ((((\n. ((nadd_le m) (nadd_of_num n))) N) ==> (?M. (!r'. ((?x. ((P x) /\ ((nadd_le (nadd_of_num r')) ((nadd_mul (nadd_of_num n)) x)))) ==> (r' <= M))))) = T)
+T c==> ! c==> * f0 b0 cnadd_le b0 f1 c= c==> * / cnadd_le f1 cnadd_of_num b0 f2 c? / ! c==> c? / c/\ * f0 b2 cnadd_le cnadd_of_num b1 cnadd_mul cnadd_of_num f3 b2 c<= b1 b0 cT
++ (!x. ((P x) ==> ((nadd_le x) m))), (P w), ((nadd_le m) (nadd_of_num N)) |- ((\y. (((nadd_le ((nadd_mul (nadd_of_num n)) w)) y) /\ ((nadd_le y) (nadd_of_num (n * N))))) ((nadd_mul (nadd_of_num n)) (nadd_of_num N)))
+T c==> ! c==> * f0 b0 cnadd_le b0 f1 c==> * f0 f2 c==> cnadd_le f1 cnadd_of_num f3 * / c/\ cnadd_le cnadd_mul cnadd_of_num f4 f2 b0 cnadd_le b0 cnadd_of_num c* f4 f3 cnadd_mul cnadd_of_num f4 cnadd_of_num f3
++ (!x. ((P x) ==> ((nadd_le x) m))), ((nadd_le m) (nadd_of_num N)) |- (((P w) /\ ((nadd_le (nadd_of_num p)) ((nadd_mul (nadd_of_num n)) w))) ==> (p <= (n * N)))
+T c==> ! c==> * f0 b0 cnadd_le b0 f1 c==> cnadd_le f1 cnadd_of_num f2 c==> c/\ * f0 f3 cnadd_le cnadd_of_num f4 cnadd_mul cnadd_of_num f5 f3 c<= f4 c* f5 f2
+- |- ((t ==> t) = T)
+T c= c==> f0 f0 cT
++ |- (!y. (((nadd_le ((nadd_mul (nadd_of_num n)) x)) y) \/ ((nadd_le y) ((nadd_mul (nadd_of_num n)) x))))
+T c\/ cnadd_le cnadd_mul cnadd_of_num f0 f1 f2 cnadd_le f2 cnadd_mul cnadd_of_num f0 f1
++ |- ((\P. ((?m. ((P m) /\ (!x. ((P x) ==> (x <= m))))) = ((?x. (P x)) /\ (?M. (!x. ((P x) ==> (x <= M))))))) P)
+T * / c= c? / c/\ * b0 b1 ! c==> * b0 b2 c<= b2 b1 c/\ c? / * b0 b1 c? / ! c==> * b0 b2 c<= b2 b1 f0
+- (!x. (!y. (((nadd_eq x) y) ==> ((nadd_le x) y)))) |- ((!x. (!y. (((nadd_eq x) y) ==> ((nadd_le x) y)))) /\ (!x. (!y. (((nadd_eq x) y) ==> ((nadd_le x) y)))))
+T c==> ! ! c==> cnadd_eq b0 b1 cnadd_le b0 b1 c/\ ! ! c==> cnadd_eq b0 b1 cnadd_le b0 b1 ! ! c==> cnadd_eq b0 b1 cnadd_le b0 b1
++ ((nadd_le (nadd_of_num (r n))) ((nadd_mul (nadd_of_num n)) x)) |- (((nadd_le ((nadd_mul (nadd_of_num i)) ((nadd_mul (nadd_of_num n)) x))) (nadd_of_num ((n * (r i)) + n))) = (((nadd_le (nadd_of_num (i * (r n)))) ((nadd_mul (nadd_of_num i)) ((nadd_mul (nadd_of_num n)) x))) /\ ((nadd_le ((nadd_mul (nadd_of_num i)) ((nadd_mul (nadd_of_num n)) x))) (nadd_of_num ((n * (r i)) + n)))))
+T c==> cnadd_le cnadd_of_num * f0 f1 cnadd_mul cnadd_of_num f1 f2 c= cnadd_le cnadd_mul cnadd_of_num f3 cnadd_mul cnadd_of_num f1 f2 cnadd_of_num c+ c* f1 * f0 f3 f1 c/\ cnadd_le cnadd_of_num c* f3 * f0 f1 cnadd_mul cnadd_of_num f3 cnadd_mul cnadd_of_num f1 f2 cnadd_le cnadd_mul cnadd_of_num f3 cnadd_mul cnadd_of_num f1 f2 cnadd_of_num c+ c* f1 * f0 f3 f1
++ |- (((!Q. ((!x. ((P x) /\ (Q x))) = ((!x. (P x)) /\ (!x. (Q x))))) ==> ((\Q. ((!x. ((P x) /\ (Q x))) = ((!x. (P x)) /\ (!x. (Q x))))) Q)) = ((\Q. ((!x. ((P x) /\ (Q x))) = ((!x. (P x)) /\ (!x. (Q x))))) Q))
+T c= c==> ! c= ! c/\ * f0 b1 * b0 b1 c/\ ! * f0 b1 ! * b0 b1 * / c= ! c/\ * f0 b1 * b0 b1 c/\ ! * f0 b1 ! * b0 b1 f1 * / c= ! c/\ * f0 b1 * b0 b1 c/\ ! * f0 b1 ! * b0 b1 f1
++ |- (((!m. (!n. (!p. (((m + n) + p) = (m + (n + p)))))) ==> ((\m. (!n. (!p. (((m + n) + p) = (m + (n + p)))))) m)) = ((\m. (!n. (!p. (((m + n) + p) = (m + (n + p)))))) m))
+T c= c==> ! ! ! c= c+ c+ b0 b1 b2 c+ b0 c+ b1 b2 * / ! ! c= c+ c+ b0 b1 b2 c+ b0 c+ b1 b2 f0 * / ! ! c= c+ c+ b0 b1 b2 c+ b0 c+ b1 b2 f0
+- |- ((\m. ((m * (NUMERAL _0)) = (NUMERAL _0))) m)
+T * / c= c* b0 cNUMERAL c_0 cNUMERAL c_0 f0
++ |- (((!z. (((nadd_le ((nadd_add x) z)) ((nadd_add y) z)) = ((nadd_le x) y))) ==> ((\z. (((nadd_le ((nadd_add x) z)) ((nadd_add y) z)) = ((nadd_le x) y))) z)) = ((\z. (((nadd_le ((nadd_add x) z)) ((nadd_add y) z)) = ((nadd_le x) y))) z))
+T c= c==> ! c= cnadd_le cnadd_add f0 b0 cnadd_add f1 b0 cnadd_le f0 f1 * / c= cnadd_le cnadd_add f0 b0 cnadd_add f1 b0 cnadd_le f0 f1 f2 * / c= cnadd_le cnadd_add f0 b0 cnadd_add f1 b0 cnadd_le f0 f1 f2
++ (P a) |- (!m. (((\M. (!x. ((P x) ==> ((nadd_le x) M)))) m) ==> (?M. ((!x. ((P x) ==> ((nadd_le x) M))) /\ (!M'. ((!x. ((P x) ==> ((nadd_le x) M'))) ==> ((nadd_le M) M')))))))
+T c==> * f0 f1 ! c==> * / ! c==> * f0 b2 cnadd_le b2 b1 b0 c? / c/\ ! c==> * f0 b2 cnadd_le b2 b1 ! c==> ! c==> * f0 b3 cnadd_le b3 b2 cnadd_le b1 b2
++ |- (((!x. ((nadd_le (nadd_of_num (NUMERAL _0))) x)) ==> ((\x. ((nadd_le (nadd_of_num (NUMERAL _0))) x)) x)) = ((\x. ((nadd_le (nadd_of_num (NUMERAL _0))) x)) x))
+T c= c==> ! cnadd_le cnadd_of_num cNUMERAL c_0 b0 * / cnadd_le cnadd_of_num cNUMERAL c_0 b0 f0 * / cnadd_le cnadd_of_num cNUMERAL c_0 b0 f0
+- (!n. (!x. ((P x) ==> ((nadd_le ((nadd_mul (nadd_of_num n)) x)) (nadd_of_num (SUC (r n))))))) |- (((P x) ==> ((nadd_le ((nadd_mul (nadd_of_num n)) x)) (nadd_of_num (SUC (r n))))) = T)
+T c==> ! ! c==> * f0 b1 cnadd_le cnadd_mul cnadd_of_num b0 b1 cnadd_of_num cSUC * f1 b0 c= c==> * f0 f2 cnadd_le cnadd_mul cnadd_of_num f3 f2 cnadd_of_num cSUC * f1 f3 cT
+- |- ((!n'. t) = t)
+T c= ! f0 f0
+- (!x. (!x'. (!y. (!y'. ((((nadd_eq x) x') /\ ((nadd_eq y) y')) ==> ((nadd_eq ((nadd_mul x) y)) ((nadd_mul x') y'))))))), (((nadd_eq x) x') /\ ((nadd_eq y) y')) |- ((((nadd_eq x) x') /\ ((nadd_eq y) y')) /\ ((nadd_eq ((nadd_mul x) y)) ((nadd_mul x') y')))
+T c==> ! ! ! ! c==> c/\ cnadd_eq b0 b1 cnadd_eq b2 b3 cnadd_eq cnadd_mul b0 b2 cnadd_mul b1 b3 c==> c/\ cnadd_eq f0 f1 cnadd_eq f2 f3 c/\ c/\ cnadd_eq f0 f1 cnadd_eq f2 f3 cnadd_eq cnadd_mul f0 f2 cnadd_mul f1 f3
+- |- ((?B. t) = t)
+T c= c? / f0 f0
+- |- ((!x. ((P x) ==> ((nadd_le x) z))) ==> (!x. ((P x) ==> ((nadd_le x) z))))
+T c==> ! c==> * f0 b0 cnadd_le b0 f1 ! c==> * f0 b0 cnadd_le b0 f1
+- (!n. (!x. (~ ((P x) /\ ((nadd_le (nadd_of_num (SUC (r n)))) ((nadd_mul (nadd_of_num n)) x)))))) |- ((\n. (!x. ((P x) ==> ((nadd_le ((nadd_mul (nadd_of_num n)) x)) (nadd_of_num (SUC (r n))))))) n)
+T c==> ! ! c~ c/\ * f0 b1 cnadd_le cnadd_of_num cSUC * f1 b0 cnadd_mul cnadd_of_num b0 b1 * / ! c==> * f0 b1 cnadd_le cnadd_mul cnadd_of_num b0 b1 cnadd_of_num cSUC * f1 b0 f2
+- (!x. (!x'. (!y. (!y'. ((((nadd_eq x) x') /\ ((nadd_eq y) y')) ==> ((nadd_eq ((nadd_mul x) y)) ((nadd_mul x') y'))))))) |- (((((nadd_eq x) x') /\ ((nadd_eq y) y')) ==> ((nadd_eq ((nadd_mul x) y)) ((nadd_mul x') y'))) = T)
+T c==> ! ! ! ! c==> c/\ cnadd_eq b0 b1 cnadd_eq b2 b3 cnadd_eq cnadd_mul b0 b2 cnadd_mul b1 b3 c= c==> c/\ cnadd_eq f0 f1 cnadd_eq f2 f3 cnadd_eq cnadd_mul f0 f2 cnadd_mul f1 f3 cT
+- |- (((!n. (((SUC m) * n) = ((m * n) + n))) ==> ((\n. (((SUC m) * n) = ((m * n) + n))) n)) = ((\n. (((SUC m) * n) = ((m * n) + n))) n))
+T c= c==> ! c= c* cSUC f0 b0 c+ c* f0 b0 b0 * / c= c* cSUC f0 b0 c+ c* f0 b0 b0 f1 * / c= c* cSUC f0 b0 c+ c* f0 b0 b0 f1
+- |- ((\n. (((NUMERAL _0) + n) = n)) n)
+T * / c= c+ cNUMERAL c_0 b0 b0 f0
+- (!n. (!x. ((P x) ==> ((nadd_le ((nadd_mul (nadd_of_num n)) x)) (nadd_of_num (SUC (r n))))))), (P x) |- ((nadd_le ((nadd_mul (nadd_of_num n)) x)) (nadd_of_num (SUC (r n))))
+T c==> ! ! c==> * f0 b1 cnadd_le cnadd_mul cnadd_of_num b0 b1 cnadd_of_num cSUC * f1 b0 c==> * f0 f2 cnadd_le cnadd_mul cnadd_of_num f3 f2 cnadd_of_num cSUC * f1 f3
+- (!n. (!x. ((P x) ==> ((nadd_le ((nadd_mul (nadd_of_num n)) x)) (nadd_of_num (SUC (r n))))))) |- ((!n. (!x. ((P x) ==> ((nadd_le ((nadd_mul (nadd_of_num n)) x)) (nadd_of_num (SUC (r n))))))) /\ (!x. (!n. ((P x) ==> ((nadd_le ((nadd_mul (nadd_of_num n)) x)) (nadd_of_num (SUC (r n))))))))
+T c==> ! ! c==> * f0 b1 cnadd_le cnadd_mul cnadd_of_num b0 b1 cnadd_of_num cSUC * f1 b0 c/\ ! ! c==> * f0 b1 cnadd_le cnadd_mul cnadd_of_num b0 b1 cnadd_of_num cSUC * f1 b0 ! ! c==> * f0 b0 cnadd_le cnadd_mul cnadd_of_num b1 b0 cnadd_of_num cSUC * f1 b1
+- (!x. (!y. (!z. (((nadd_le y) z) ==> ((nadd_le ((nadd_mul x) y)) ((nadd_mul x) z)))))), ((nadd_le y) z) |- (((nadd_le y) z) /\ ((nadd_le ((nadd_mul x) y)) ((nadd_mul x) z)))
+T c==> ! ! ! c==> cnadd_le b1 b2 cnadd_le cnadd_mul b0 b1 cnadd_mul b0 b2 c==> cnadd_le f0 f1 c/\ cnadd_le f0 f1 cnadd_le cnadd_mul f2 f0 cnadd_mul f2 f1
+- (!x. (!y. (((nadd_eq x) y) ==> ((nadd_le x) y)))) |- ((\x. (!y. (((nadd_eq x) y) ==> ((nadd_le x) y)))) x)
+T c==> ! ! c==> cnadd_eq b0 b1 cnadd_le b0 b1 * / ! c==> cnadd_eq b0 b1 cnadd_le b0 b1 f0
+- (!x. (!y. (((nadd_eq x) y) ==> ((nadd_le x) y)))) |- (!y. (((nadd_eq x) y) ==> ((nadd_le x) y)))
+T c==> ! ! c==> cnadd_eq b0 b1 cnadd_le b0 b1 ! c==> cnadd_eq f0 b0 cnadd_le f0 b0
+- |- ((\m. (!n. (((SUC m) * n) = ((m * n) + n)))) m)
+T * / ! c= c* cSUC b0 b1 c+ c* b0 b1 b1 f0
+- (((dest_nadd (mk_nadd r)) = r) = (is_nadd r)) |- ((is_nadd r) = ((dest_nadd (mk_nadd r)) = r))
+T c==> c= c= * part cdest_nadd cmk_nadd f0 f0 cis_nadd f0 c= cis_nadd f0 c= * part cdest_nadd cmk_nadd f0 f0
+- |- ((m * (NUMERAL (BIT1 _0))) = m)
+T c= c* f0 cNUMERAL cBIT1 c_0 f0
+- (!n. (!x. (~ ((P x) /\ ((nadd_le (nadd_of_num (SUC (r n)))) ((nadd_mul (nadd_of_num n)) x)))))) |- (((!n. ((P x) ==> ((nadd_le ((nadd_mul (nadd_of_num n)) x)) (nadd_of_num (SUC (r n)))))) ==> ((\n. ((P x) ==> ((nadd_le ((nadd_mul (nadd_of_num n)) x)) (nadd_of_num (SUC (r n)))))) n)) = ((\n. ((P x) ==> ((nadd_le ((nadd_mul (nadd_of_num n)) x)) (nadd_of_num (SUC (r n)))))) n))
+T c==> ! ! c~ c/\ * f0 b1 cnadd_le cnadd_of_num cSUC * f1 b0 cnadd_mul cnadd_of_num b0 b1 c= c==> ! c==> * f0 f2 cnadd_le cnadd_mul cnadd_of_num b0 f2 cnadd_of_num cSUC * f1 b0 * / c==> * f0 f2 cnadd_le cnadd_mul cnadd_of_num b0 f2 cnadd_of_num cSUC * f1 b0 f3 * / c==> * f0 f2 cnadd_le cnadd_mul cnadd_of_num b0 f2 cnadd_of_num cSUC * f1 b0 f3
+- (!n. (!x. (~ ((P x) /\ ((nadd_le (nadd_of_num (SUC (r n)))) ((nadd_mul (nadd_of_num n)) x)))))) |- (!x. (!n. ((P x) ==> ((nadd_le ((nadd_mul (nadd_of_num n)) x)) (nadd_of_num (SUC (r n)))))))
+T c==> ! ! c~ c/\ * f0 b1 cnadd_le cnadd_of_num cSUC * f1 b0 cnadd_mul cnadd_of_num b0 b1 ! ! c==> * f0 b0 cnadd_le cnadd_mul cnadd_of_num b1 b0 cnadd_of_num cSUC * f1 b1
+- |- ((!n. (!x. ((P x) ==> ((nadd_le ((nadd_mul (nadd_of_num n)) x)) (nadd_of_num (SUC (r n))))))) ==> (!x. (!n. ((P x) ==> ((nadd_le ((nadd_mul (nadd_of_num n)) x)) (nadd_of_num (SUC (r n))))))))
+T c==> ! ! c==> * f0 b1 cnadd_le cnadd_mul cnadd_of_num b0 b1 cnadd_of_num cSUC * f1 b0 ! ! c==> * f0 b0 cnadd_le cnadd_mul cnadd_of_num b1 b0 cnadd_of_num cSUC * f1 b1
+- (!x. (!y. (!z. (((nadd_le y) z) ==> ((nadd_le ((nadd_mul x) y)) ((nadd_mul x) z)))))), ((nadd_le y) z) |- ((nadd_le ((nadd_mul x) y)) ((nadd_mul x) z))
+T c==> ! ! ! c==> cnadd_le b1 b2 cnadd_le cnadd_mul b0 b1 cnadd_mul b0 b2 c==> cnadd_le f0 f1 cnadd_le cnadd_mul f2 f0 cnadd_mul f2 f1
+- (!n. (!x. ((P x) ==> ((nadd_le ((nadd_mul (nadd_of_num n)) x)) (nadd_of_num (SUC (r n))))))) |- (((!x. ((P x) ==> ((nadd_le ((nadd_mul (nadd_of_num n)) x)) (nadd_of_num (SUC (r n)))))) ==> ((\x. ((P x) ==> ((nadd_le ((nadd_mul (nadd_of_num n)) x)) (nadd_of_num (SUC (r n)))))) x)) = ((\x. ((P x) ==> ((nadd_le ((nadd_mul (nadd_of_num n)) x)) (nadd_of_num (SUC (r n)))))) x))
+T c==> ! ! c==> * f0 b1 cnadd_le cnadd_mul cnadd_of_num b0 b1 cnadd_of_num cSUC * f1 b0 c= c==> ! c==> * f0 b0 cnadd_le cnadd_mul cnadd_of_num f2 b0 cnadd_of_num cSUC * f1 f2 * / c==> * f0 b0 cnadd_le cnadd_mul cnadd_of_num f2 b0 cnadd_of_num cSUC * f1 f2 f3 * / c==> * f0 b0 cnadd_le cnadd_mul cnadd_of_num f2 b0 cnadd_of_num cSUC * f1 f2 f3
+- (!x. (!y. (((nadd_eq x) y) ==> ((nadd_le x) y)))), ((nadd_eq x) y) |- ((nadd_le x) y)
+T c==> ! ! c==> cnadd_eq b0 b1 cnadd_le b0 b1 c==> cnadd_eq f0 f1 cnadd_le f0 f1
+- |- (((!m. (!n. ((m * (SUC n)) = (m + (m * n))))) ==> ((\m. (!n. ((m * (SUC n)) = (m + (m * n))))) m)) = ((\m. (!n. ((m * (SUC n)) = (m + (m * n))))) m))
+T c= c==> ! ! c= c* b0 cSUC b1 c+ b0 c* b0 b1 * / ! c= c* b0 cSUC b1 c+ b0 c* b0 b1 f0 * / ! c= c* b0 cSUC b1 c+ b0 c* b0 b1 f0
+- (!x. (!y. (((nadd_eq x) y) ==> ((nadd_le x) y)))) |- ((!y. (((nadd_eq x) y) ==> ((nadd_le x) y))) = T)
+T c==> ! ! c==> cnadd_eq b0 b1 cnadd_le b0 b1 c= ! c==> cnadd_eq f0 b0 cnadd_le f0 b0 cT
+- |- ((!m. ((m * (NUMERAL _0)) = (NUMERAL _0))) /\ ((!n. (((NUMERAL (BIT1 _0)) * n) = n)) /\ ((!m. ((m * (NUMERAL (BIT1 _0))) = m)) /\ ((!m. (!n. (((SUC m) * n) = ((m * n) + n)))) /\ (!m. (!n. ((m * (SUC n)) = (m + (m * n)))))))))
+T c/\ ! c= c* b0 cNUMERAL c_0 cNUMERAL c_0 c/\ ! c= c* cNUMERAL cBIT1 c_0 b0 b0 c/\ ! c= c* b0 cNUMERAL cBIT1 c_0 b0 c/\ ! ! c= c* cSUC b0 b1 c+ c* b0 b1 b1 ! ! c= c* b0 cSUC b1 c+ b0 c* b0 b1
+- |- (((!n. (((SUC m) + n) = (SUC (m + n)))) ==> ((\n. (((SUC m) + n) = (SUC (m + n)))) n)) = ((\n. (((SUC m) + n) = (SUC (m + n)))) n))
+T c= c==> ! c= c+ cSUC f0 b0 cSUC c+ f0 b0 * / c= c+ cSUC f0 b0 cSUC c+ f0 b0 f1 * / c= c+ cSUC f0 b0 cSUC c+ f0 b0 f1
+- (!x. (!y. (((nadd_eq x) y) ==> ((nadd_le x) y)))) |- ((\y. (((nadd_eq x) y) ==> ((nadd_le x) y))) y)
+T c==> ! ! c==> cnadd_eq b0 b1 cnadd_le b0 b1 * / c==> cnadd_eq f0 b0 cnadd_le f0 b0 f1
+- |- ((!n. (((NUMERAL (BIT1 _0)) * n) = n)) /\ ((!m. ((m * (NUMERAL (BIT1 _0))) = m)) /\ ((!m. (!n. (((SUC m) * n) = ((m * n) + n)))) /\ (!m. (!n. ((m * (SUC n)) = (m + (m * n))))))))
+T c/\ ! c= c* cNUMERAL cBIT1 c_0 b0 b0 c/\ ! c= c* b0 cNUMERAL cBIT1 c_0 b0 c/\ ! ! c= c* cSUC b0 b1 c+ c* b0 b1 b1 ! ! c= c* b0 cSUC b1 c+ b0 c* b0 b1
+- |- ((\n. ((m + (SUC n)) = (SUC (m + n)))) n)
+T * / c= c+ f0 cSUC b0 cSUC c+ f0 b0 f1
+- (!x. ((P x) ==> ((nadd_le x) z))), (P x) |- ((!x. ((P x) ==> ((nadd_le x) z))) /\ ((nadd_le x) z))
+T c==> ! c==> * f0 b0 cnadd_le b0 f1 c==> * f0 f2 c/\ ! c==> * f0 b0 cnadd_le b0 f1 cnadd_le f2 f1
+- |- (((SUC m) + n) = (SUC (m + n)))
+T c= c+ cSUC f0 f1 cSUC c+ f0 f1
+- (P x) |- ((!x. ((P x) ==> ((nadd_le x) z))) ==> ((nadd_le x) z))
+T c==> * f0 f1 c==> ! c==> * f0 b0 cnadd_le b0 f2 cnadd_le f1 f2
+- |- (((dest_nadd (mk_nadd r)) = r) = (is_nadd r))
+T c= c= * part cdest_nadd cmk_nadd f0 f0 cis_nadd f0
+- ((is_nadd r) = ((dest_nadd (mk_nadd r)) = r)) |- (((dest_nadd (mk_nadd r)) = r) = (is_nadd r))
+T c==> c= cis_nadd f0 c= * part cdest_nadd cmk_nadd f0 f0 c= c= * part cdest_nadd cmk_nadd f0 f0 cis_nadd f0
+- (!n. (!x. (~ ((P x) /\ ((nadd_le (nadd_of_num (SUC (r n)))) ((nadd_mul (nadd_of_num n)) x)))))) |- (((!n. (!x. ((P x) ==> ((nadd_le ((nadd_mul (nadd_of_num n)) x)) (nadd_of_num (SUC (r n))))))) ==> (!x. (!n. ((P x) ==> ((nadd_le ((nadd_mul (nadd_of_num n)) x)) (nadd_of_num (SUC (r n)))))))) = (!x. (!n. ((P x) ==> ((nadd_le ((nadd_mul (nadd_of_num n)) x)) (nadd_of_num (SUC (r n))))))))
+T c==> ! ! c~ c/\ * f0 b1 cnadd_le cnadd_of_num cSUC * f1 b0 cnadd_mul cnadd_of_num b0 b1 c= c==> ! ! c==> * f0 b1 cnadd_le cnadd_mul cnadd_of_num b0 b1 cnadd_of_num cSUC * f1 b0 ! ! c==> * f0 b0 cnadd_le cnadd_mul cnadd_of_num b1 b0 cnadd_of_num cSUC * f1 b1 ! ! c==> * f0 b0 cnadd_le cnadd_mul cnadd_of_num b1 b0 cnadd_of_num cSUC * f1 b1
+- |- ((!x. (!y. (((nadd_eq x) y) ==> ((nadd_le x) y)))) ==> (!x. (!y. (((nadd_eq x) y) ==> ((nadd_le x) y)))))
+T c==> ! ! c==> cnadd_eq b0 b1 cnadd_le b0 b1 ! ! c==> cnadd_eq b0 b1 cnadd_le b0 b1
+- (!x. ((P x) ==> ((nadd_le x) m))), (?x. ((P x) /\ ((nadd_le (nadd_of_num p)) ((nadd_mul (nadd_of_num n)) x)))), ((nadd_le m) (nadd_of_num N)) |- ((?x. ((P x) /\ ((nadd_le (nadd_of_num p)) ((nadd_mul (nadd_of_num n)) x)))) /\ (p <= (n * N)))
+T c==> ! c==> * f0 b0 cnadd_le b0 f1 c==> c? / c/\ * f0 b0 cnadd_le cnadd_of_num f2 cnadd_mul cnadd_of_num f3 b0 c==> cnadd_le f1 cnadd_of_num f4 c/\ c? / c/\ * f0 b0 cnadd_le cnadd_of_num f2 cnadd_mul cnadd_of_num f3 b0 c<= f2 c* f3 f4
+- |- (((!m. (!n. (((SUC m) + n) = (SUC (m + n))))) ==> ((\m. (!n. (((SUC m) + n) = (SUC (m + n))))) m)) = ((\m. (!n. (((SUC m) + n) = (SUC (m + n))))) m))
+T c= c==> ! ! c= c+ cSUC b0 b1 cSUC c+ b0 b1 * / ! c= c+ cSUC b0 b1 cSUC c+ b0 b1 f0 * / ! c= c+ cSUC b0 b1 cSUC c+ b0 b1 f0
+- (!x. (!y. (((nadd_eq x) y) ==> ((nadd_le x) y)))), ((nadd_eq x) y) |- ((!x. (!y. (((nadd_eq x) y) ==> ((nadd_le x) y)))) /\ ((nadd_le x) y))
+T c==> ! ! c==> cnadd_eq b0 b1 cnadd_le b0 b1 c==> cnadd_eq f0 f1 c/\ ! ! c==> cnadd_eq b0 b1 cnadd_le b0 b1 cnadd_le f0 f1
+- (!n. (!x. ((P x) ==> ((nadd_le ((nadd_mul (nadd_of_num n)) x)) (nadd_of_num (SUC (r n))))))) |- ((!n. ((P x) ==> ((nadd_le ((nadd_mul (nadd_of_num n)) x)) (nadd_of_num (SUC (r n)))))) = T)
+T c==> ! ! c==> * f0 b1 cnadd_le cnadd_mul cnadd_of_num b0 b1 cnadd_of_num cSUC * f1 b0 c= ! c==> * f0 f2 cnadd_le cnadd_mul cnadd_of_num b0 f2 cnadd_of_num cSUC * f1 b0 cT
+- (!n. (!x. (~ ((P x) /\ ((nadd_le (nadd_of_num (SUC (r n)))) ((nadd_mul (nadd_of_num n)) x)))))) |- ((!x. ((P x) ==> ((nadd_le ((nadd_mul (nadd_of_num n)) x)) (nadd_of_num (SUC (r n)))))) = T)
+T c==> ! ! c~ c/\ * f0 b1 cnadd_le cnadd_of_num cSUC * f1 b0 cnadd_mul cnadd_of_num b0 b1 c= ! c==> * f0 b0 cnadd_le cnadd_mul cnadd_of_num f2 b0 cnadd_of_num cSUC * f1 f2 cT
+- |- ((m + (SUC n)) = (SUC (m + n)))
+T c= c+ f0 cSUC f1 cSUC c+ f0 f1
+- (!x. (!x'. (!y. (!y'. ((((nadd_eq x) x') /\ ((nadd_eq y) y')) ==> ((nadd_eq ((nadd_mul x) y)) ((nadd_mul x') y'))))))) |- ((\y'. ((((nadd_eq x) x') /\ ((nadd_eq y) y')) ==> ((nadd_eq ((nadd_mul x) y)) ((nadd_mul x') y')))) y')
+T c==> ! ! ! ! c==> c/\ cnadd_eq b0 b1 cnadd_eq b2 b3 cnadd_eq cnadd_mul b0 b2 cnadd_mul b1 b3 * / c==> c/\ cnadd_eq f0 f1 cnadd_eq f2 b0 cnadd_eq cnadd_mul f0 f2 cnadd_mul f1 b0 f3
+- |- ((!m. ((m + (NUMERAL _0)) = m)) /\ ((!m. (!n. (((SUC m) + n) = (SUC (m + n))))) /\ (!m. (!n. ((m + (SUC n)) = (SUC (m + n)))))))
+T c/\ ! c= c+ b0 cNUMERAL c_0 b0 c/\ ! ! c= c+ cSUC b0 b1 cSUC c+ b0 b1 ! ! c= c+ b0 cSUC b1 cSUC c+ b0 b1
+- (!n. (!x. (~ ((P x) /\ ((nadd_le (nadd_of_num (SUC (r n)))) ((nadd_mul (nadd_of_num n)) x)))))) |- (((P x) ==> ((nadd_le ((nadd_mul (nadd_of_num n)) x)) (nadd_of_num (SUC (r n))))) = T)
+T c==> ! ! c~ c/\ * f0 b1 cnadd_le cnadd_of_num cSUC * f1 b0 cnadd_mul cnadd_of_num b0 b1 c= c==> * f0 f2 cnadd_le cnadd_mul cnadd_of_num f3 f2 cnadd_of_num cSUC * f1 f3 cT
+- (!x. (!y. (!z. (((nadd_le y) z) ==> ((nadd_le ((nadd_mul x) y)) ((nadd_mul x) z)))))), ((nadd_le y) z) |- ((!x. (!y. (!z. (((nadd_le y) z) ==> ((nadd_le ((nadd_mul x) y)) ((nadd_mul x) z)))))) /\ ((nadd_le ((nadd_mul x) y)) ((nadd_mul x) z)))
+T c==> ! ! ! c==> cnadd_le b1 b2 cnadd_le cnadd_mul b0 b1 cnadd_mul b0 b2 c==> cnadd_le f0 f1 c/\ ! ! ! c==> cnadd_le b1 b2 cnadd_le cnadd_mul b0 b1 cnadd_mul b0 b2 cnadd_le cnadd_mul f2 f0 cnadd_mul f2 f1
+- (!n. (!x. ((P x) ==> ((nadd_le ((nadd_mul (nadd_of_num n)) x)) (nadd_of_num (SUC (r n))))))) |- (!x. ((P x) ==> ((nadd_le ((nadd_mul (nadd_of_num n)) x)) (nadd_of_num (SUC (r n))))))
+T c==> ! ! c==> * f0 b1 cnadd_le cnadd_mul cnadd_of_num b0 b1 cnadd_of_num cSUC * f1 b0 ! c==> * f0 b0 cnadd_le cnadd_mul cnadd_of_num f2 b0 cnadd_of_num cSUC * f1 f2
+- |- ((\n. ((m * (SUC n)) = (m + (m * n)))) n)
+T * / c= c* f0 cSUC b0 c+ f0 c* f0 b0 f1
+- |- ((!m. ((m * (NUMERAL (BIT1 _0))) = m)) /\ ((!m. (!n. (((SUC m) * n) = ((m * n) + n)))) /\ (!m. (!n. ((m * (SUC n)) = (m + (m * n)))))))
+T c/\ ! c= c* b0 cNUMERAL cBIT1 c_0 b0 c/\ ! ! c= c* cSUC b0 b1 c+ c* b0 b1 b1 ! ! c= c* b0 cSUC b1 c+ b0 c* b0 b1
+- |- ((\m. ((m * (NUMERAL (BIT1 _0))) = m)) m)
+T * / c= c* b0 cNUMERAL cBIT1 c_0 b0 f0
+- (((nadd_eq x) x') /\ ((nadd_eq y) y')) |- ((!x. (!x'. (!y. (!y'. ((((nadd_eq x) x') /\ ((nadd_eq y) y')) ==> ((nadd_eq ((nadd_mul x) y)) ((nadd_mul x') y'))))))) ==> ((nadd_eq ((nadd_mul x) y)) ((nadd_mul x') y')))
+T c==> c/\ cnadd_eq f0 f1 cnadd_eq f2 f3 c==> ! ! ! ! c==> c/\ cnadd_eq b0 b1 cnadd_eq b2 b3 cnadd_eq cnadd_mul b0 b2 cnadd_mul b1 b3 cnadd_eq cnadd_mul f0 f2 cnadd_mul f1 f3
+- (!x. ((P x) ==> ((nadd_le x) z))) |- ((!x. ((P x) ==> ((nadd_le x) z))) /\ (!x. ((P x) ==> ((nadd_le x) z))))
+T c==> ! c==> * f0 b0 cnadd_le b0 f1 c/\ ! c==> * f0 b0 cnadd_le b0 f1 ! c==> * f0 b0 cnadd_le b0 f1
+- |- (((!m. (!n. (((SUC m) * n) = ((m * n) + n)))) ==> ((\m. (!n. (((SUC m) * n) = ((m * n) + n)))) m)) = ((\m. (!n. (((SUC m) * n) = ((m * n) + n)))) m))
+T c= c==> ! ! c= c* cSUC b0 b1 c+ c* b0 b1 b1 * / ! c= c* cSUC b0 b1 c+ c* b0 b1 b1 f0 * / ! c= c* cSUC b0 b1 c+ c* b0 b1 b1 f0
+- |- (((!m. ((m * (NUMERAL _0)) = (NUMERAL _0))) ==> ((\m. ((m * (NUMERAL _0)) = (NUMERAL _0))) m)) = ((\m. ((m * (NUMERAL _0)) = (NUMERAL _0))) m))
+T c= c==> ! c= c* b0 cNUMERAL c_0 cNUMERAL c_0 * / c= c* b0 cNUMERAL c_0 cNUMERAL c_0 f0 * / c= c* b0 cNUMERAL c_0 cNUMERAL c_0 f0
+- |- (((!n. (((NUMERAL _0) * n) = (NUMERAL _0))) ==> ((\n. (((NUMERAL _0) * n) = (NUMERAL _0))) n)) = ((\n. (((NUMERAL _0) * n) = (NUMERAL _0))) n))
+T c= c==> ! c= c* cNUMERAL c_0 b0 cNUMERAL c_0 * / c= c* cNUMERAL c_0 b0 cNUMERAL c_0 f0 * / c= c* cNUMERAL c_0 b0 cNUMERAL c_0 f0
+- (!n. (!x. (~ ((P x) /\ ((nadd_le (nadd_of_num (SUC (r n)))) ((nadd_mul (nadd_of_num n)) x)))))) |- (!n. (!x. ((P x) ==> ((nadd_le ((nadd_mul (nadd_of_num n)) x)) (nadd_of_num (SUC (r n)))))))
+T c==> ! ! c~ c/\ * f0 b1 cnadd_le cnadd_of_num cSUC * f1 b0 cnadd_mul cnadd_of_num b0 b1 ! ! c==> * f0 b1 cnadd_le cnadd_mul cnadd_of_num b0 b1 cnadd_of_num cSUC * f1 b0
+- |- (((NUMERAL _0) * n) = (NUMERAL _0))
+T c= c* cNUMERAL c_0 f0 cNUMERAL c_0
+- (!n. (!x. ((P x) ==> ((nadd_le ((nadd_mul (nadd_of_num n)) x)) (nadd_of_num (SUC (r n))))))) |- ((\n. (!x. ((P x) ==> ((nadd_le ((nadd_mul (nadd_of_num n)) x)) (nadd_of_num (SUC (r n))))))) n)
+T c==> ! ! c==> * f0 b1 cnadd_le cnadd_mul cnadd_of_num b0 b1 cnadd_of_num cSUC * f1 b0 * / ! c==> * f0 b1 cnadd_le cnadd_mul cnadd_of_num b0 b1 cnadd_of_num cSUC * f1 b0 f2
+- (!n. (!x. (~ ((P x) /\ ((nadd_le (nadd_of_num (SUC (r n)))) ((nadd_mul (nadd_of_num n)) x)))))) |- (((!n. (!x. ((P x) ==> ((nadd_le ((nadd_mul (nadd_of_num n)) x)) (nadd_of_num (SUC (r n))))))) ==> ((\n. (!x. ((P x) ==> ((nadd_le ((nadd_mul (nadd_of_num n)) x)) (nadd_of_num (SUC (r n))))))) n)) = ((\n. (!x. ((P x) ==> ((nadd_le ((nadd_mul (nadd_of_num n)) x)) (nadd_of_num (SUC (r n))))))) n))
+T c==> ! ! c~ c/\ * f0 b1 cnadd_le cnadd_of_num cSUC * f1 b0 cnadd_mul cnadd_of_num b0 b1 c= c==> ! ! c==> * f0 b1 cnadd_le cnadd_mul cnadd_of_num b0 b1 cnadd_of_num cSUC * f1 b0 * / ! c==> * f0 b1 cnadd_le cnadd_mul cnadd_of_num b0 b1 cnadd_of_num cSUC * f1 b0 f2 * / ! c==> * f0 b1 cnadd_le cnadd_mul cnadd_of_num b0 b1 cnadd_of_num cSUC * f1 b0 f2
+- (!n. (!x. ((P x) ==> ((nadd_le ((nadd_mul (nadd_of_num n)) x)) (nadd_of_num (SUC (r n))))))), (P x) |- ((P x) /\ ((nadd_le ((nadd_mul (nadd_of_num n)) x)) (nadd_of_num (SUC (r n)))))
+T c==> ! ! c==> * f0 b1 cnadd_le cnadd_mul cnadd_of_num b0 b1 cnadd_of_num cSUC * f1 b0 c==> * f0 f2 c/\ * f0 f2 cnadd_le cnadd_mul cnadd_of_num f3 f2 cnadd_of_num cSUC * f1 f3
+- (!x. (!x'. (!y. (!y'. ((((nadd_eq x) x') /\ ((nadd_eq y) y')) ==> ((nadd_eq ((nadd_mul x) y)) ((nadd_mul x') y'))))))) |- (((!y'. ((((nadd_eq x) x') /\ ((nadd_eq y) y')) ==> ((nadd_eq ((nadd_mul x) y)) ((nadd_mul x') y')))) ==> ((\y'. ((((nadd_eq x) x') /\ ((nadd_eq y) y')) ==> ((nadd_eq ((nadd_mul x) y)) ((nadd_mul x') y')))) y')) = ((\y'. ((((nadd_eq x) x') /\ ((nadd_eq y) y')) ==> ((nadd_eq ((nadd_mul x) y)) ((nadd_mul x') y')))) y'))
+T c==> ! ! ! ! c==> c/\ cnadd_eq b0 b1 cnadd_eq b2 b3 cnadd_eq cnadd_mul b0 b2 cnadd_mul b1 b3 c= c==> ! c==> c/\ cnadd_eq f0 f1 cnadd_eq f2 b0 cnadd_eq cnadd_mul f0 f2 cnadd_mul f1 b0 * / c==> c/\ cnadd_eq f0 f1 cnadd_eq f2 b0 cnadd_eq cnadd_mul f0 f2 cnadd_mul f1 b0 f3 * / c==> c/\ cnadd_eq f0 f1 cnadd_eq f2 b0 cnadd_eq cnadd_mul f0 f2 cnadd_mul f1 b0 f3
+- (!n. (!x. ((P x) ==> ((nadd_le ((nadd_mul (nadd_of_num n)) x)) (nadd_of_num (SUC (r n))))))) |- ((\x. ((P x) ==> ((nadd_le ((nadd_mul (nadd_of_num n)) x)) (nadd_of_num (SUC (r n)))))) x)
+T c==> ! ! c==> * f0 b1 cnadd_le cnadd_mul cnadd_of_num b0 b1 cnadd_of_num cSUC * f1 b0 * / c==> * f0 b0 cnadd_le cnadd_mul cnadd_of_num f2 b0 cnadd_of_num cSUC * f1 f2 f3
+- (!x. (!x'. (!y. (!y'. ((((nadd_eq x) x') /\ ((nadd_eq y) y')) ==> ((nadd_eq ((nadd_mul x) y)) ((nadd_mul x') y'))))))), (((nadd_eq x) x') /\ ((nadd_eq y) y')) |- ((nadd_eq ((nadd_mul x) y)) ((nadd_mul x') y'))
+T c==> ! ! ! ! c==> c/\ cnadd_eq b0 b1 cnadd_eq b2 b3 cnadd_eq cnadd_mul b0 b2 cnadd_mul b1 b3 c==> c/\ cnadd_eq f0 f1 cnadd_eq f2 f3 cnadd_eq cnadd_mul f0 f2 cnadd_mul f1 f3
+- (!n. (!x. (~ ((P x) /\ ((nadd_le (nadd_of_num (SUC (r n)))) ((nadd_mul (nadd_of_num n)) x)))))) |- ((\n. ((P x) ==> ((nadd_le ((nadd_mul (nadd_of_num n)) x)) (nadd_of_num (SUC (r n)))))) n)
+T c==> ! ! c~ c/\ * f0 b1 cnadd_le cnadd_of_num cSUC * f1 b0 cnadd_mul cnadd_of_num b0 b1 * / c==> * f0 f2 cnadd_le cnadd_mul cnadd_of_num b0 f2 cnadd_of_num cSUC * f1 b0 f3
+- (!x. (!y. (!z. (((nadd_le y) z) ==> ((nadd_le ((nadd_mul x) y)) ((nadd_mul x) z)))))) |- ((((nadd_le y) z) ==> ((nadd_le ((nadd_mul x) y)) ((nadd_mul x) z))) = T)
+T c==> ! ! ! c==> cnadd_le b1 b2 cnadd_le cnadd_mul b0 b1 cnadd_mul b0 b2 c= c==> cnadd_le f0 f1 cnadd_le cnadd_mul f2 f0 cnadd_mul f2 f1 cT
+- (!x. (!y. (((nadd_eq x) y) ==> ((nadd_le x) y)))), ((nadd_eq x) y) |- (((nadd_eq x) y) /\ ((nadd_le x) y))
+T c==> ! ! c==> cnadd_eq b0 b1 cnadd_le b0 b1 c==> cnadd_eq f0 f1 c/\ cnadd_eq f0 f1 cnadd_le f0 f1
+- |- (((!n. ((m + (SUC n)) = (SUC (m + n)))) ==> ((\n. ((m + (SUC n)) = (SUC (m + n)))) n)) = ((\n. ((m + (SUC n)) = (SUC (m + n)))) n))
+T c= c==> ! c= c+ f0 cSUC b0 cSUC c+ f0 b0 * / c= c+ f0 cSUC b0 cSUC c+ f0 b0 f1 * / c= c+ f0 cSUC b0 cSUC c+ f0 b0 f1
+- |- (((!m. (!n. ((m + (SUC n)) = (SUC (m + n))))) ==> ((\m. (!n. ((m + (SUC n)) = (SUC (m + n))))) m)) = ((\m. (!n. ((m + (SUC n)) = (SUC (m + n))))) m))
+T c= c==> ! ! c= c+ b0 cSUC b1 cSUC c+ b0 b1 * / ! c= c+ b0 cSUC b1 cSUC c+ b0 b1 f0 * / ! c= c+ b0 cSUC b1 cSUC c+ b0 b1 f0
+- (!n. (!x. ((P x) ==> ((nadd_le ((nadd_mul (nadd_of_num n)) x)) (nadd_of_num (SUC (r n))))))) |- (!n. ((P x) ==> ((nadd_le ((nadd_mul (nadd_of_num n)) x)) (nadd_of_num (SUC (r n))))))
+T c==> ! ! c==> * f0 b1 cnadd_le cnadd_mul cnadd_of_num b0 b1 cnadd_of_num cSUC * f1 b0 ! c==> * f0 f2 cnadd_le cnadd_mul cnadd_of_num b0 f2 cnadd_of_num cSUC * f1 b0
+- (!n. (!x. (~ ((P x) /\ ((nadd_le (nadd_of_num (SUC (r n)))) ((nadd_mul (nadd_of_num n)) x)))))) |- (((!x. ((P x) ==> ((nadd_le ((nadd_mul (nadd_of_num n)) x)) (nadd_of_num (SUC (r n)))))) ==> ((\x. ((P x) ==> ((nadd_le ((nadd_mul (nadd_of_num n)) x)) (nadd_of_num (SUC (r n)))))) x)) = ((\x. ((P x) ==> ((nadd_le ((nadd_mul (nadd_of_num n)) x)) (nadd_of_num (SUC (r n)))))) x))
+T c==> ! ! c~ c/\ * f0 b1 cnadd_le cnadd_of_num cSUC * f1 b0 cnadd_mul cnadd_of_num b0 b1 c= c==> ! c==> * f0 b0 cnadd_le cnadd_mul cnadd_of_num f2 b0 cnadd_of_num cSUC * f1 f2 * / c==> * f0 b0 cnadd_le cnadd_mul cnadd_of_num f2 b0 cnadd_of_num cSUC * f1 f2 f3 * / c==> * f0 b0 cnadd_le cnadd_mul cnadd_of_num f2 b0 cnadd_of_num cSUC * f1 f2 f3
+- |- (((SUC m) * n) = ((m * n) + n))
+T c= c* cSUC f0 f1 c+ c* f0 f1 f1
+- |- ((!m. (!n. (((SUC m) * n) = ((m * n) + n)))) /\ (!m. (!n. ((m * (SUC n)) = (m + (m * n))))))
+T c/\ ! ! c= c* cSUC b0 b1 c+ c* b0 b1 b1 ! ! c= c* b0 cSUC b1 c+ b0 c* b0 b1
+- |- ((\n. (((SUC m) + n) = (SUC (m + n)))) n)
+T * / c= c+ cSUC f0 b0 cSUC c+ f0 b0 f1
+- (!n. (!x. (~ ((P x) /\ ((nadd_le (nadd_of_num (SUC (r n)))) ((nadd_mul (nadd_of_num n)) x)))))) |- (((!x. (!n. ((P x) ==> ((nadd_le ((nadd_mul (nadd_of_num n)) x)) (nadd_of_num (SUC (r n))))))) ==> ((\x. (!n. ((P x) ==> ((nadd_le ((nadd_mul (nadd_of_num n)) x)) (nadd_of_num (SUC (r n))))))) x)) = ((\x. (!n. ((P x) ==> ((nadd_le ((nadd_mul (nadd_of_num n)) x)) (nadd_of_num (SUC (r n))))))) x))
+T c==> ! ! c~ c/\ * f0 b1 cnadd_le cnadd_of_num cSUC * f1 b0 cnadd_mul cnadd_of_num b0 b1 c= c==> ! ! c==> * f0 b0 cnadd_le cnadd_mul cnadd_of_num b1 b0 cnadd_of_num cSUC * f1 b1 * / ! c==> * f0 b0 cnadd_le cnadd_mul cnadd_of_num b1 b0 cnadd_of_num cSUC * f1 b1 f2 * / ! c==> * f0 b0 cnadd_le cnadd_mul cnadd_of_num b1 b0 cnadd_of_num cSUC * f1 b1 f2
+- (!n. (!x. ((P x) ==> ((nadd_le ((nadd_mul (nadd_of_num n)) x)) (nadd_of_num (SUC (r n))))))), (P x) |- ((!n. (!x. ((P x) ==> ((nadd_le ((nadd_mul (nadd_of_num n)) x)) (nadd_of_num (SUC (r n))))))) /\ ((nadd_le ((nadd_mul (nadd_of_num n)) x)) (nadd_of_num (SUC (r n)))))
+T c==> ! ! c==> * f0 b1 cnadd_le cnadd_mul cnadd_of_num b0 b1 cnadd_of_num cSUC * f1 b0 c==> * f0 f2 c/\ ! ! c==> * f0 b1 cnadd_le cnadd_mul cnadd_of_num b0 b1 cnadd_of_num cSUC * f1 b0 cnadd_le cnadd_mul cnadd_of_num f3 f2 cnadd_of_num cSUC * f1 f3
+- (!x. ((P x) ==> ((nadd_le x) z))) |- (((P x) ==> ((nadd_le x) z)) = T)
+T c==> ! c==> * f0 b0 cnadd_le b0 f1 c= c==> * f0 f2 cnadd_le f2 f1 cT
+- (!x. (!y. (((nadd_eq x) y) ==> ((nadd_le x) y)))) |- ((((nadd_eq x) y) ==> ((nadd_le x) y)) = T)
+T c==> ! ! c==> cnadd_eq b0 b1 cnadd_le b0 b1 c= c==> cnadd_eq f0 f1 cnadd_le f0 f1 cT
+- |- ((m * (NUMERAL _0)) = (NUMERAL _0))
+T c= c* f0 cNUMERAL c_0 cNUMERAL c_0
+- (?r. (!n. ((?x. ((P x) /\ ((nadd_le (nadd_of_num (r n))) ((nadd_mul (nadd_of_num n)) x)))) /\ (!r'. ((?x. ((P x) /\ ((nadd_le (nadd_of_num r')) ((nadd_mul (nadd_of_num n)) x)))) ==> (r' <= (r n))))))) |- ((?r. (!n. ((?x. ((P x) /\ ((nadd_le (nadd_of_num (r n))) ((nadd_mul (nadd_of_num n)) x)))) /\ (!r'. ((?x. ((P x) /\ ((nadd_le (nadd_of_num r')) ((nadd_mul (nadd_of_num n)) x)))) ==> (r' <= (r n))))))) /\ (?M. ((!x. ((P x) ==> ((nadd_le x) M))) /\ (!M'. ((!x. ((P x) ==> ((nadd_le x) M'))) ==> ((nadd_le M) M'))))))
+T c==> c? / ! c/\ c? / c/\ * f0 b2 cnadd_le cnadd_of_num * b0 b1 cnadd_mul cnadd_of_num b1 b2 ! c==> c? / c/\ * f0 b3 cnadd_le cnadd_of_num b2 cnadd_mul cnadd_of_num b1 b3 c<= b2 * b0 b1 c/\ c? / ! c/\ c? / c/\ * f0 b2 cnadd_le cnadd_of_num * b0 b1 cnadd_mul cnadd_of_num b1 b2 ! c==> c? / c/\ * f0 b3 cnadd_le cnadd_of_num b2 cnadd_mul cnadd_of_num b1 b3 c<= b2 * b0 b1 c? / c/\ ! c==> * f0 b1 cnadd_le b1 b0 ! c==> ! c==> * f0 b2 cnadd_le b2 b1 cnadd_le b0 b1
+- ((nadd_le (nadd_of_num (r n))) ((nadd_mul (nadd_of_num n)) x)) |- (T = ((nadd_le (nadd_of_num (r n))) ((nadd_mul (nadd_of_num n)) x)))
+T c==> cnadd_le cnadd_of_num * f0 f1 cnadd_mul cnadd_of_num f1 f2 c= cT cnadd_le cnadd_of_num * f0 f1 cnadd_mul cnadd_of_num f1 f2
+- (!x. (!x'. (!y. (!y'. ((((nadd_eq x) x') /\ ((nadd_eq y) y')) ==> ((nadd_eq ((nadd_mul x) y)) ((nadd_mul x') y'))))))), (((nadd_eq x) x') /\ ((nadd_eq y) y')) |- ((!x. (!x'. (!y. (!y'. ((((nadd_eq x) x') /\ ((nadd_eq y) y')) ==> ((nadd_eq ((nadd_mul x) y)) ((nadd_mul x') y'))))))) /\ ((nadd_eq ((nadd_mul x) y)) ((nadd_mul x') y')))
+T c==> ! ! ! ! c==> c/\ cnadd_eq b0 b1 cnadd_eq b2 b3 cnadd_eq cnadd_mul b0 b2 cnadd_mul b1 b3 c==> c/\ cnadd_eq f0 f1 cnadd_eq f2 f3 c/\ ! ! ! ! c==> c/\ cnadd_eq b0 b1 cnadd_eq b2 b3 cnadd_eq cnadd_mul b0 b2 cnadd_mul b1 b3 cnadd_eq cnadd_mul f0 f2 cnadd_mul f1 f3
+- (!x. (!y. (((nadd_eq x) y) ==> ((nadd_le x) y)))) |- (((!y. (((nadd_eq x) y) ==> ((nadd_le x) y))) ==> ((\y. (((nadd_eq x) y) ==> ((nadd_le x) y))) y)) = ((\y. (((nadd_eq x) y) ==> ((nadd_le x) y))) y))
+T c==> ! ! c==> cnadd_eq b0 b1 cnadd_le b0 b1 c= c==> ! c==> cnadd_eq f0 b0 cnadd_le f0 b0 * / c==> cnadd_eq f0 b0 cnadd_le f0 b0 f1 * / c==> cnadd_eq f0 b0 cnadd_le f0 b0 f1
+- |- ((\m. (!n. ((m + (SUC n)) = (SUC (m + n))))) m)
+T * / ! c= c+ b0 cSUC b1 cSUC c+ b0 b1 f0
+- (!n. (?x. ((P x) /\ ((nadd_le (nadd_of_num (r n))) ((nadd_mul (nadd_of_num n)) x))))) |- ((?x. ((P x) /\ ((nadd_le (nadd_of_num (r n))) ((nadd_mul (nadd_of_num n)) x)))) = T)
+T c==> ! c? / c/\ * f0 b1 cnadd_le cnadd_of_num * f1 b0 cnadd_mul cnadd_of_num b0 b1 c= c? / c/\ * f0 b0 cnadd_le cnadd_of_num * f1 f2 cnadd_mul cnadd_of_num f2 b0 cT
+- (!x. (!y. (!z. (((nadd_le y) z) ==> ((nadd_le ((nadd_mul x) y)) ((nadd_mul x) z)))))) |- ((\z. (((nadd_le y) z) ==> ((nadd_le ((nadd_mul x) y)) ((nadd_mul x) z)))) z)
+T c==> ! ! ! c==> cnadd_le b1 b2 cnadd_le cnadd_mul b0 b1 cnadd_mul b0 b2 * / c==> cnadd_le f0 b0 cnadd_le cnadd_mul f1 f0 cnadd_mul f1 b0 f2
+- (P x) |- (T = (P x))
+T c==> * f0 f1 c= cT * f0 f1
+- |- ((\m. (!n. (((SUC m) + n) = (SUC (m + n))))) m)
+T * / ! c= c+ cSUC b0 b1 cSUC c+ b0 b1 f0
+- |- ((\n. (((NUMERAL _0) * n) = (NUMERAL _0))) n)
+T * / c= c* cNUMERAL c_0 b0 cNUMERAL c_0 f0
+- |- (((NUMERAL _0) + n) = n)
+T c= c+ cNUMERAL c_0 f0 f0
+- |- ((\n. (((SUC m) * n) = ((m * n) + n))) n)
+T * / c= c* cSUC f0 b0 c+ c* f0 b0 b0 f1
+- |- (((!n. ((m * (SUC n)) = (m + (m * n)))) ==> ((\n. ((m * (SUC n)) = (m + (m * n)))) n)) = ((\n. ((m * (SUC n)) = (m + (m * n)))) n))
+T c= c==> ! c= c* f0 cSUC b0 c+ f0 c* f0 b0 * / c= c* f0 cSUC b0 c+ f0 c* f0 b0 f1 * / c= c* f0 cSUC b0 c+ f0 c* f0 b0 f1
+- |- (((\n. (f n)) y) = (f y))
+T c= * / * f0 b0 f1 * f0 f1
+- (!x. ((P x) ==> ((nadd_le x) m))), (?x. ((P x) /\ ((nadd_le (nadd_of_num p)) ((nadd_mul (nadd_of_num n)) x)))), ((nadd_le m) (nadd_of_num N)) |- (p <= (n * N))
+T c==> ! c==> * f0 b0 cnadd_le b0 f1 c==> c? / c/\ * f0 b0 cnadd_le cnadd_of_num f2 cnadd_mul cnadd_of_num f3 b0 c==> cnadd_le f1 cnadd_of_num f4 c<= f2 c* f3 f4
+- (!n. (!x. (~ ((P x) /\ ((nadd_le (nadd_of_num (SUC (r n)))) ((nadd_mul (nadd_of_num n)) x)))))) |- (!n. ((P x) ==> ((nadd_le ((nadd_mul (nadd_of_num n)) x)) (nadd_of_num (SUC (r n))))))
+T c==> ! ! c~ c/\ * f0 b1 cnadd_le cnadd_of_num cSUC * f1 b0 cnadd_mul cnadd_of_num b0 b1 ! c==> * f0 f2 cnadd_le cnadd_mul cnadd_of_num b0 f2 cnadd_of_num cSUC * f1 b0
+- (!x. ((P x) ==> ((nadd_le x) z))), (P x) |- ((P x) /\ ((nadd_le x) z))
+T c==> ! c==> * f0 b0 cnadd_le b0 f1 c==> * f0 f2 c/\ * f0 f2 cnadd_le f2 f1
+- (!x. (!y. (!z. (((nadd_le y) z) ==> ((nadd_le ((nadd_mul x) y)) ((nadd_mul x) z)))))) |- (((!z. (((nadd_le y) z) ==> ((nadd_le ((nadd_mul x) y)) ((nadd_mul x) z)))) ==> ((\z. (((nadd_le y) z) ==> ((nadd_le ((nadd_mul x) y)) ((nadd_mul x) z)))) z)) = ((\z. (((nadd_le y) z) ==> ((nadd_le ((nadd_mul x) y)) ((nadd_mul x) z)))) z))
+T c==> ! ! ! c==> cnadd_le b1 b2 cnadd_le cnadd_mul b0 b1 cnadd_mul b0 b2 c= c==> ! c==> cnadd_le f0 b0 cnadd_le cnadd_mul f1 f0 cnadd_mul f1 b0 * / c==> cnadd_le f0 b0 cnadd_le cnadd_mul f1 f0 cnadd_mul f1 b0 f2 * / c==> cnadd_le f0 b0 cnadd_le cnadd_mul f1 f0 cnadd_mul f1 b0 f2
+- (!n. (!x. (~ ((P x) /\ ((nadd_le (nadd_of_num (SUC (r n)))) ((nadd_mul (nadd_of_num n)) x)))))) |- ((\x. ((P x) ==> ((nadd_le ((nadd_mul (nadd_of_num n)) x)) (nadd_of_num (SUC (r n)))))) x)
+T c==> ! ! c~ c/\ * f0 b1 cnadd_le cnadd_of_num cSUC * f1 b0 cnadd_mul cnadd_of_num b0 b1 * / c==> * f0 b0 cnadd_le cnadd_mul cnadd_of_num f2 b0 cnadd_of_num cSUC * f1 f2 f3
+- (P x) |- ((!n. (!x. ((P x) ==> ((nadd_le ((nadd_mul (nadd_of_num n)) x)) (nadd_of_num (SUC (r n))))))) ==> ((nadd_le ((nadd_mul (nadd_of_num n)) x)) (nadd_of_num (SUC (r n)))))
+T c==> * f0 f1 c==> ! ! c==> * f0 b1 cnadd_le cnadd_mul cnadd_of_num b0 b1 cnadd_of_num cSUC * f2 b0 cnadd_le cnadd_mul cnadd_of_num f3 f1 cnadd_of_num cSUC * f2 f3
+- |- (((!m. ((m * (NUMERAL (BIT1 _0))) = m)) ==> ((\m. ((m * (NUMERAL (BIT1 _0))) = m)) m)) = ((\m. ((m * (NUMERAL (BIT1 _0))) = m)) m))
+T c= c==> ! c= c* b0 cNUMERAL cBIT1 c_0 b0 * / c= c* b0 cNUMERAL cBIT1 c_0 b0 f0 * / c= c* b0 cNUMERAL cBIT1 c_0 b0 f0

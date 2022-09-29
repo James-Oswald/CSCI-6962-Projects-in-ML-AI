@@ -1,0 +1,53 @@
+N Seq.mem_rev
+C |- (!s. (!x. (((MEM x) (rev s)) = ((MEM x) s))))
+T c= cMEM f0 crev f1 cMEM f0 f1
+D list_INDUCT
+A |- (!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x))))
+T c==> c/\ * f0 cNIL ! ! c==> * f0 b1 * f0 cCONS b0 b1 ! * f0 b0
+D Seq.catrev
+A |- ((((catrev ((CONS x) s1)) s2) = ((catrev s1) ((CONS x) s2))) /\ (((catrev NIL) s2) = s2))
+T c/\ c= ccatrev cCONS f0 f1 f2 ccatrev f1 cCONS f0 f2 c= ccatrev cNIL f2 f2
+D Seq.rev
+A |- (!s. ((rev s) = ((catrev s) NIL)))
+T c= crev f0 ccatrev f0 cNIL
+D Seq.rev_cons
+A |- (!x. (!s. ((rev ((CONS x) s)) = ((rcons (rev s)) x))))
+T c= crev cCONS f0 f1 crcons crev f1 f0
+D Seq.in_cons
+A |- (!y. (!s. (!x. (((MEM x) ((CONS y) s)) = ((x = y) \/ ((MEM x) s))))))
+T c= cMEM f0 cCONS f1 f2 c\/ c= f0 f1 cMEM f0 f2
+D Seq.mem_rcons
+A |- (!s. (!y. (!x. (((MEM x) ((rcons s) y)) = ((MEM x) ((CONS y) s))))))
+T c= cMEM f0 crcons f1 f2 cMEM f0 cCONS f2 f1
+- |- (((catrev ((CONS x) s1)) s2) = ((catrev s1) ((CONS x) s2)))
+T c= ccatrev cCONS f0 f1 f2 ccatrev f1 cCONS f0 f2
++ (((MEM y) (rev s)) = ((MEM y) s)) |- (((y = x) \/ ((MEM y) (rev s))) = ((MEM y) ((CONS x) s)))
+T c==> c= cMEM f0 crev f1 cMEM f0 f1 c= c\/ c= f0 f2 cMEM f0 crev f1 cMEM f0 cCONS f2 f1
++ (s = s1) |- ((s = s1) /\ (((MEM y) (rev s)) = ((MEM y) s)))
+T c==> c= f0 f1 c/\ c= f0 f1 c= cMEM f2 crev f0 cMEM f2 f0
++ |- ((((MEM y) (rev NIL)) = ((MEM y) NIL)) /\ (!a0. (!a1. ((((MEM y) (rev a1)) = ((MEM y) a1)) ==> (((MEM y) (rev ((CONS a0) a1))) = ((MEM y) ((CONS a0) a1)))))))
+T c/\ c= cMEM f0 crev cNIL cMEM f0 cNIL ! ! c==> c= cMEM f0 crev b1 cMEM f0 b1 c= cMEM f0 crev cCONS b0 b1 cMEM f0 cCONS b0 b1
++ |- (((!s. (((MEM y) (rev s)) = ((MEM y) s))) ==> ((\s. (((MEM y) (rev s)) = ((MEM y) s))) s1)) = ((\s. (((MEM y) (rev s)) = ((MEM y) s))) s1))
+T c= c==> ! c= cMEM f0 crev b0 cMEM f0 b0 * / c= cMEM f0 crev b0 cMEM f0 b0 f1 * / c= cMEM f0 crev b0 cMEM f0 b0 f1
++ |- (((((MEM y) (rev NIL)) = ((MEM y) NIL)) /\ (!a0. (!a1. ((((MEM y) (rev a1)) = ((MEM y) a1)) ==> (((MEM y) (rev ((CONS a0) a1))) = ((MEM y) ((CONS a0) a1))))))) ==> (!s. (((MEM y) (rev s)) = ((MEM y) s))))
+T c==> c/\ c= cMEM f0 crev cNIL cMEM f0 cNIL ! ! c==> c= cMEM f0 crev b1 cMEM f0 b1 c= cMEM f0 crev cCONS b0 b1 cMEM f0 cCONS b0 b1 ! c= cMEM f0 crev b0 cMEM f0 b0
++ ((\s1. (s = s1)) s1) |- (((\s1. (s = s1)) s1) /\ (((MEM y) (rev s)) = ((MEM y) s)))
+T c==> * / c= f0 b0 f1 c/\ * / c= f0 b0 f1 c= cMEM f2 crev f0 cMEM f2 f0
++ |- ((((y = x) \/ ((MEM y) (rev s))) = ((MEM y) ((CONS x) s))) = (((MEM y) ((CONS x) (rev s))) = ((MEM y) ((CONS x) s))))
+T c= c= c\/ c= f0 f1 cMEM f0 crev f2 cMEM f0 cCONS f1 f2 c= cMEM f0 cCONS f1 crev f2 cMEM f0 cCONS f1 f2
+- |- (T = (((y = x) \/ ((MEM y) s)) = ((y = x) \/ ((MEM y) s))))
+T c= cT c= c\/ c= f0 f1 cMEM f0 f2 c\/ c= f0 f1 cMEM f0 f2
++ |- ((((y = x) \/ ((MEM y) (rev s))) = ((y = x) \/ ((MEM y) s))) = (((y = x) \/ ((MEM y) (rev s))) = ((MEM y) ((CONS x) s))))
+T c= c= c\/ c= f0 f1 cMEM f0 crev f2 c\/ c= f0 f1 cMEM f0 f2 c= c\/ c= f0 f1 cMEM f0 crev f2 cMEM f0 cCONS f1 f2
+- |- ((x = x) = T)
+T c= c= f0 f0 cT
+- |- (T = (((MEM y) NIL) = ((MEM y) NIL)))
+T c= cT c= cMEM f0 cNIL cMEM f0 cNIL
+- (s = s1) |- (((MEM y) (rev s1)) = ((MEM y) s1))
+T c==> c= f0 f1 c= cMEM f2 crev f1 cMEM f2 f1
+- |- ((((MEM y) NIL) = ((MEM y) NIL)) = (((MEM y) ((catrev NIL) NIL)) = ((MEM y) NIL)))
+T c= c= cMEM f0 cNIL cMEM f0 cNIL c= cMEM f0 ccatrev cNIL cNIL cMEM f0 cNIL
+- (((MEM y) (rev s)) = ((MEM y) s)) |- ((((y = x) \/ ((MEM y) s)) = ((y = x) \/ ((MEM y) s))) = (((y = x) \/ ((MEM y) (rev s))) = ((y = x) \/ ((MEM y) s))))
+T c==> c= cMEM f0 crev f1 cMEM f0 f1 c= c= c\/ c= f0 f2 cMEM f0 f1 c\/ c= f0 f2 cMEM f0 f1 c= c\/ c= f0 f2 cMEM f0 crev f1 c\/ c= f0 f2 cMEM f0 f1
+- (s = s1) |- ((((MEM y) (rev s1)) = ((MEM y) s1)) = (((MEM y) (rev s)) = ((MEM y) s)))
+T c==> c= f0 f1 c= c= cMEM f2 crev f1 cMEM f2 f1 c= cMEM f2 crev f0 cMEM f2 f0

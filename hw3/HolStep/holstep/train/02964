@@ -1,0 +1,60 @@
+N Sort.sorted_merge_sort
+C |- (!R. ((!x. (!y. (!z. ((((R x) y) /\ ((R y) z)) ==> ((R x) z))))) ==> ((!x. (!y. (((R x) y) \/ ((R y) x)))) ==> (!s. (((sorted R) ((merge_sort R) s)) s)))))
+T c==> ! ! ! c==> c/\ * * f0 b0 b1 * * f0 b1 b2 * * f0 b0 b2 c==> ! ! c\/ * * f0 b0 b1 * * f0 b1 b0 ! csorted f0 cmerge_sort f0 b0 b0
+D TRUTH
+A |- T
+T cT
+D COND_CLAUSES
+A |- (!t1. (!t2. (((((COND T) t1) t2) = t1) /\ ((((COND F) t1) t2) = t2))))
+T c/\ c= cCOND cT f0 f1 f0 c= cCOND cF f0 f1 f1
+D IN_UNIV
+A |- (!x. (x IN UNIV))
+T cIN f0 part cUNIV
+D SUBSET_UNIV
+A |- (!s. (s SUBSET UNIV))
+T cSUBSET f0 part cUNIV
+D ssreflect_eq_def
+A |- (!v. (!P. (((ssreflect_eq v) P) = P)))
+T c= cssreflect_eq f0 f1 f1
+D bool_elim
+A |- (!P. (((P T) /\ (P F)) ==> (!x. (P x))))
+T c==> c/\ * f0 cT * f0 cF ! * f0 b0
+D Seq.all
+A |- (!a. (!x. (!s'. ((((all a) NIL) = T) /\ (((all a) ((CONS x) s')) = ((a x) /\ ((all a) s')))))))
+T c/\ c= call f0 cNIL cT c= call f0 cCONS f1 f2 c/\ * f0 f1 call f0 f2
+D Seq.cat_take_drop
+A |- (!n0. (!s. (((cat ((take n0) s)) ((dropl n0) s)) = s)))
+T c= ccat ctake f0 f1 cdropl f0 f1 f1
+D Seq.perm_eq_refl
+A |- (!s. ((perm_eq s) s))
+T cperm_eq f0 f0
+D Seq.perm_eq_trans
+A |- (!s2. (!s1. (!s3. (((perm_eq s1) s2) ==> (((perm_eq s2) s3) ==> ((perm_eq s1) s3))))))
+T c==> cperm_eq f0 f1 c==> cperm_eq f1 f2 cperm_eq f0 f2
+D Seq2.length_le_1
+A |- (!s. (((LENGTH s) <= (NUMERAL (BIT1 _0))) ==> ((s = NIL) \/ (s = ((CONS (HD s)) NIL)))))
+T c==> c<= cLENGTH f0 cNUMERAL cBIT1 c_0 c\/ c= f0 cNIL c= f0 cCONS cHD f0 cNIL
+D Seq2.seq_wf_ind
+A |- (!P. ((!s. ((!l. (((LENGTH l) < (LENGTH s)) ==> (P l))) ==> (P s))) ==> (!s. (P s))))
+T c==> ! c==> ! c==> c< cLENGTH b1 cLENGTH b0 * f0 b1 * f0 b0 ! * f0 b0
+D Seq2.perm_eq_cat
+A |- (!s1. (!t1. (!s2. (!t2. ((((perm_eq s1) s2) /\ ((perm_eq t1) t2)) ==> ((perm_eq ((cat s1) t1)) ((cat s2) t2)))))))
+T c==> c/\ cperm_eq f0 f1 cperm_eq f2 f3 cperm_eq ccat f0 f2 ccat f1 f3
+D Sort.ordered
+A |- (!R. (!h. (!t. ((((ordered R) NIL) = T) /\ (((ordered R) ((CONS h) t)) = (((ordered R) t) /\ ((all (R h)) t)))))))
+T c/\ c= cordered f0 cNIL cT c= cordered f0 cCONS f1 f2 c/\ cordered f0 f2 call * f0 f1 f2
+D Sort.sorted
+A |- (!R. (!s. (!s0. ((((sorted R) s) s0) = (((ordered R) s) /\ ((perm_eq s) s0))))))
+T c= csorted f0 f1 f2 c/\ cordered f0 f1 cperm_eq f1 f2
+D Sort.merge_ineqs
+A |- (!s. ((~ ((LENGTH s) <= (NUMERAL (BIT1 _0)))) ==> (((LENGTH ((take ((LENGTH s) DIV (NUMERAL (BIT0 (BIT1 _0))))) s)) < (LENGTH s)) /\ ((LENGTH ((dropl ((LENGTH s) DIV (NUMERAL (BIT0 (BIT1 _0))))) s)) < (LENGTH s)))))
+T c==> c~ c<= cLENGTH f0 cNUMERAL cBIT1 c_0 c/\ c< cLENGTH ctake cDIV cLENGTH f0 cNUMERAL cBIT0 cBIT1 c_0 f0 cLENGTH f0 c< cLENGTH cdropl cDIV cLENGTH f0 cNUMERAL cBIT0 cBIT1 c_0 f0 cLENGTH f0
+D Sort.merge_sort
+A |- (!R. (!s. (((merge_sort R) s) = (((COND ((LENGTH s) <= (NUMERAL (BIT1 _0)))) s) (((merge R) ((merge_sort R) ((take ((LENGTH s) DIV (NUMERAL (BIT0 (BIT1 _0))))) s))) ((merge_sort R) ((dropl ((LENGTH s) DIV (NUMERAL (BIT0 (BIT1 _0))))) s)))))))
+T c= cmerge_sort f0 f1 cCOND c<= cLENGTH f1 cNUMERAL cBIT1 c_0 f1 cmerge f0 cmerge_sort f0 ctake cDIV cLENGTH f1 cNUMERAL cBIT0 cBIT1 c_0 f1 cmerge_sort f0 cdropl cDIV cLENGTH f1 cNUMERAL cBIT0 cBIT1 c_0 f1
+D Sort.perm_eq_merge
+A |- (!R. (!s1. (!s2. ((perm_eq (((merge R) s1) s2)) ((cat s1) s2)))))
+T cperm_eq cmerge f0 f1 f2 ccat f1 f2
+D Sort.ordered_merge_general
+A |- (!R. (!S. ((!x. (!y. (!z. (((x IN S) /\ ((y IN S) /\ (z IN S))) ==> ((((R x) y) /\ ((R y) z)) ==> ((R x) z)))))) ==> ((!x. (!y. (((x IN S) /\ (y IN S)) ==> (((R x) y) \/ ((R y) x))))) ==> (!s1. (!s2. ((((set_of_list s1) SUBSET S) /\ ((set_of_list s2) SUBSET S)) ==> ((((ordered R) s1) /\ ((ordered R) s2)) ==> ((ordered R) (((merge R) s1) s2))))))))))
+T c==> ! ! ! c==> c/\ cIN b0 f0 c/\ cIN b1 f0 cIN b2 f0 c==> c/\ * * f1 b0 b1 * * f1 b1 b2 * * f1 b0 b2 c==> ! ! c==> c/\ cIN b0 f0 cIN b1 f0 c\/ * * f1 b0 b1 * * f1 b1 b0 ! ! c==> c/\ cSUBSET * part cset_of_list b0 f0 cSUBSET * part cset_of_list b1 f0 c==> c/\ cordered f1 b0 cordered f1 b1 cordered f1 cmerge f1 b0 b1

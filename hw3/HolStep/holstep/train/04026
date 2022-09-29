@@ -1,0 +1,287 @@
+N Seq.zip_cat
+C |- (!s1. (!s2. (!t1. (!t2. (((sizel s1) = (sizel t1)) ==> (((zip ((cat s1) s2)) ((cat t1) t2)) = ((cat ((zip s1) t1)) ((zip s2) t2))))))))
+T c==> c= csizel f0 csizel f1 c= czip ccat f0 f2 ccat f1 f3 ccat czip f0 f1 czip f2 f3
+D TRUTH
+A |- T
+T cT
+D Hypermap.EQ_SUC
+A |- (!m. (!n. (((SUC m) = (SUC n)) = (m = n))))
+T c= c= cSUC f0 cSUC f1 c= f0 f1
+D list_INDUCT
+A |- (!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x))))
+T c==> c/\ * f0 cNIL ! ! c==> * f0 b1 * f0 cCONS b0 b1 ! * f0 b0
+D Seq.size_nil
+A |- ((sizel NIL) = (NUMERAL _0))
+T c= csizel cNIL cNUMERAL c_0
+D Seq.size_cons
+A |- (!h. (!t. ((sizel ((CONS h) t)) = (SUC (sizel t)))))
+T c= csizel cCONS f0 f1 cSUC csizel f1
+D Seq.cat
+A |- (!x. (!t. (!s2. ((((cat NIL) s2) = s2) /\ (((cat ((CONS x) t)) s2) = ((CONS x) ((cat t) s2)))))))
+T c/\ c= ccat cNIL f0 f0 c= ccat cCONS f1 f2 f0 cCONS f1 ccat f2 f0
+D Seq.eqS0
+A |- (!n. (((SUC n) = (NUMERAL _0)) = F))
+T c= c= cSUC f0 cNUMERAL c_0 cF
+D Seq.zip
+A |- ((((zip ((CONS x) s)) ((CONS y) t)) = ((CONS (x , y)) ((zip s) t))) /\ ((((zip NIL) t) = NIL) /\ (((zip s) NIL) = NIL)))
+T c/\ c= czip cCONS f0 f1 cCONS f2 f3 cCONS c, f0 f2 czip f1 f3 c/\ c= czip cNIL f3 cNIL c= czip f1 cNIL cNIL
++ |- (((sizel ((CONS x) s)) = (NUMERAL _0)) ==> (((zip ((CONS x) ((cat s) s2))) t2) = ((zip s2) t2)))
+T c==> c= csizel cCONS f0 f1 cNUMERAL c_0 c= czip cCONS f0 ccat f1 f2 f3 czip f2 f3
++ |- ((\s2. ((((cat NIL) s2) = s2) /\ (((cat ((CONS x) t)) s2) = ((CONS x) ((cat t) s2))))) s2)
+T * / c/\ c= ccat cNIL b0 b0 c= ccat cCONS f0 f1 b0 cCONS f0 ccat f1 b0 f2
++ |- (((!s1. (!t1. (((sizel s1) = (sizel t1)) ==> (((zip ((cat s1) s2)) ((cat t1) t2)) = ((cat ((zip s1) t1)) ((zip s2) t2)))))) ==> ((\s1. (!t1. (((sizel s1) = (sizel t1)) ==> (((zip ((cat s1) s2)) ((cat t1) t2)) = ((cat ((zip s1) t1)) ((zip s2) t2)))))) s11)) = ((\s1. (!t1. (((sizel s1) = (sizel t1)) ==> (((zip ((cat s1) s2)) ((cat t1) t2)) = ((cat ((zip s1) t1)) ((zip s2) t2)))))) s11))
+T c= c==> ! ! c==> c= csizel b0 csizel b1 c= czip ccat b0 f0 ccat b1 f1 ccat czip b0 b1 czip f0 f1 * / ! c==> c= csizel b0 csizel b1 c= czip ccat b0 f0 ccat b1 f1 ccat czip b0 b1 czip f0 f1 f2 * / ! c==> c= csizel b0 csizel b1 c= czip ccat b0 f0 ccat b1 f1 ccat czip b0 b1 czip f0 f1 f2
++ |- (((?s11. (s1 = s11)) ==> (!t1. (((sizel s1) = (sizel t1)) ==> (((zip ((cat s1) s2)) ((cat t1) t2)) = ((cat ((zip s1) t1)) ((zip s2) t2)))))) = (!t1. (((sizel s1) = (sizel t1)) ==> (((zip ((cat s1) s2)) ((cat t1) t2)) = ((cat ((zip s1) t1)) ((zip s2) t2))))))
+T c= c==> c? / c= f0 b0 ! c==> c= csizel f0 csizel b0 c= czip ccat f0 f1 ccat b0 f2 ccat czip f0 b0 czip f1 f2 ! c==> c= csizel f0 csizel b0 c= czip ccat f0 f1 ccat b0 f2 ccat czip f0 b0 czip f1 f2
++ |- ((\t. (!s2. ((((cat NIL) s2) = s2) /\ (((cat ((CONS x) t)) s2) = ((CONS x) ((cat t) s2)))))) t)
+T * / ! c/\ c= ccat cNIL b1 b1 c= ccat cCONS f0 b0 b1 cCONS f0 ccat b0 b1 f1
++ |- ((((NUMERAL _0) = (sizel ((CONS y) t))) ==> (((zip s2) ((CONS y) ((cat t) t2))) = ((zip s2) t2))) = (((sizel NIL) = (sizel ((CONS y) t))) ==> (((zip s2) ((CONS y) ((cat t) t2))) = ((zip s2) t2))))
+T c= c==> c= cNUMERAL c_0 csizel cCONS f0 f1 c= czip f2 cCONS f0 ccat f1 f3 czip f2 f3 c==> c= csizel cNIL csizel cCONS f0 f1 c= czip f2 cCONS f0 ccat f1 f3 czip f2 f3
+- ((!x. (P ==> (Q x))) = (P ==> (!x. (Q x)))) |- ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))
+T c==> c= ! c==> f0 * f1 b0 c==> f0 ! * f1 b0 c= c==> f0 ! * f1 b0 ! c==> f0 * f1 b0
++ (s1 = s11) |- (!t1. (((sizel s11) = (sizel t1)) ==> (((zip ((cat s1) s2)) ((cat t1) t2)) = ((cat ((zip s1) t1)) ((zip s2) t2)))))
+T c==> c= f0 f1 ! c==> c= csizel f1 csizel b0 c= czip ccat f0 f2 ccat b0 f3 ccat czip f0 b0 czip f2 f3
++ |- (((sizel NIL) = (sizel ((CONS y) t))) ==> (((zip ((cat NIL) s2)) ((cat ((CONS y) t)) t2)) = ((cat ((zip NIL) ((CONS y) t))) ((zip s2) t2))))
+T c==> c= csizel cNIL csizel cCONS f0 f1 c= czip ccat cNIL f2 ccat cCONS f0 f1 f3 ccat czip cNIL cCONS f0 f1 czip f2 f3
++ (s1 = s11) |- ((!t1. (((sizel s11) = (sizel t1)) ==> (((zip ((cat s11) s2)) ((cat t1) t2)) = ((cat ((zip s1) t1)) ((zip s2) t2))))) = (!t1. (((sizel s11) = (sizel t1)) ==> (((zip ((cat s1) s2)) ((cat t1) t2)) = ((cat ((zip s1) t1)) ((zip s2) t2))))))
+T c==> c= f0 f1 c= ! c==> c= csizel f1 csizel b0 c= czip ccat f1 f2 ccat b0 f3 ccat czip f0 b0 czip f2 f3 ! c==> c= csizel f1 csizel b0 c= czip ccat f0 f2 ccat b0 f3 ccat czip f0 b0 czip f2 f3
+- ((\s1. (s = s1)) s1) |- (((\s1. (s = s1)) s1) /\ (!t. ((sizel ((zip s) t)) = ((minn (sizel s)) (sizel t)))))
+T c==> * / c= f0 b0 f1 c/\ * / c= f0 b0 f1 ! c= csizel czip f0 b0 cminn csizel f0 csizel b0
++ |- (((sizel NIL) = (sizel NIL)) ==> (((zip s2) t2) = ((zip s2) t2)))
+T c==> c= csizel cNIL csizel cNIL c= czip f0 f1 czip f0 f1
++ |- ((!a0. (!a1. ((((sizel NIL) = (sizel a1)) ==> (((zip ((cat NIL) s2)) ((cat a1) t2)) = ((cat ((zip NIL) a1)) ((zip s2) t2)))) ==> (((sizel NIL) = (sizel ((CONS a0) a1))) ==> (((zip ((cat NIL) s2)) ((cat ((CONS a0) a1)) t2)) = ((cat ((zip NIL) ((CONS a0) a1))) ((zip s2) t2))))))) = ((((sizel NIL) = (sizel NIL)) ==> (((zip ((cat NIL) s2)) ((cat NIL) t2)) = ((cat ((zip NIL) NIL)) ((zip s2) t2)))) /\ (!a0. (!a1. ((((sizel NIL) = (sizel a1)) ==> (((zip ((cat NIL) s2)) ((cat a1) t2)) = ((cat ((zip NIL) a1)) ((zip s2) t2)))) ==> (((sizel NIL) = (sizel ((CONS a0) a1))) ==> (((zip ((cat NIL) s2)) ((cat ((CONS a0) a1)) t2)) = ((cat ((zip NIL) ((CONS a0) a1))) ((zip s2) t2)))))))))
+T c= ! ! c==> c==> c= csizel cNIL csizel b1 c= czip ccat cNIL f0 ccat b1 f1 ccat czip cNIL b1 czip f0 f1 c==> c= csizel cNIL csizel cCONS b0 b1 c= czip ccat cNIL f0 ccat cCONS b0 b1 f1 ccat czip cNIL cCONS b0 b1 czip f0 f1 c/\ c==> c= csizel cNIL csizel cNIL c= czip ccat cNIL f0 ccat cNIL f1 ccat czip cNIL cNIL czip f0 f1 ! ! c==> c==> c= csizel cNIL csizel b1 c= czip ccat cNIL f0 ccat b1 f1 ccat czip cNIL b1 czip f0 f1 c==> c= csizel cNIL csizel cCONS b0 b1 c= czip ccat cNIL f0 ccat cCONS b0 b1 f1 ccat czip cNIL cCONS b0 b1 czip f0 f1
+- |- (((!t. ((sizel ((zip s) t)) = ((minn (sizel s)) (sizel t)))) ==> ((\t. ((sizel ((zip s) t)) = ((minn (sizel s)) (sizel t)))) t1)) = ((\t. ((sizel ((zip s) t)) = ((minn (sizel s)) (sizel t)))) t1))
+T c= c==> ! c= csizel czip f0 b0 cminn csizel f0 csizel b0 * / c= csizel czip f0 b0 cminn csizel f0 csizel b0 f1 * / c= csizel czip f0 b0 cminn csizel f0 csizel b0 f1
++ |- ((((sizel NIL) = (sizel ((CONS y) t))) ==> (((zip s2) ((CONS y) ((cat t) t2))) = ((zip s2) t2))) = (((sizel NIL) = (sizel ((CONS y) t))) ==> (((zip s2) ((CONS y) ((cat t) t2))) = ((cat NIL) ((zip s2) t2)))))
+T c= c==> c= csizel cNIL csizel cCONS f0 f1 c= czip f2 cCONS f0 ccat f1 f3 czip f2 f3 c==> c= csizel cNIL csizel cCONS f0 f1 c= czip f2 cCONS f0 ccat f1 f3 ccat cNIL czip f2 f3
++ ((\s11. (s1 = s11)) s11) |- (((\s11. (s1 = s11)) s11) /\ (!t1. (((sizel s1) = (sizel t1)) ==> (((zip ((cat s1) s2)) ((cat t1) t2)) = ((cat ((zip s1) t1)) ((zip s2) t2))))))
+T c==> * / c= f0 b0 f1 c/\ * / c= f0 b0 f1 ! c==> c= csizel f0 csizel b0 c= czip ccat f0 f2 ccat b0 f3 ccat czip f0 b0 czip f2 f3
+- |- ((\P. (!Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x)))))) P)
+T * / ! c= c==> b0 ! * b1 b2 ! c==> b0 * b1 b2 f0
++ |- (((!h. (!t. ((sizel ((CONS h) t)) = (SUC (sizel t))))) ==> ((\h. (!t. ((sizel ((CONS h) t)) = (SUC (sizel t))))) h)) = ((\h. (!t. ((sizel ((CONS h) t)) = (SUC (sizel t))))) h))
+T c= c==> ! ! c= csizel cCONS b0 b1 cSUC csizel b1 * / ! c= csizel cCONS b0 b1 cSUC csizel b1 f0 * / ! c= csizel cCONS b0 b1 cSUC csizel b1 f0
++ (t1 = t11) |- ((((sizel s1) = (sizel t11)) ==> (((zip ((cat s1) s2)) ((cat t1) t2)) = ((cat ((zip s1) t1)) ((zip s2) t2)))) = (((sizel s1) = (sizel t1)) ==> (((zip ((cat s1) s2)) ((cat t1) t2)) = ((cat ((zip s1) t1)) ((zip s2) t2)))))
+T c==> c= f0 f1 c= c==> c= csizel f2 csizel f1 c= czip ccat f2 f3 ccat f0 f4 ccat czip f2 f0 czip f3 f4 c==> c= csizel f2 csizel f0 c= czip ccat f2 f3 ccat f0 f4 ccat czip f2 f0 czip f3 f4
++ |- ((!a1. ((((sizel NIL) = (sizel a1)) ==> (((zip ((cat NIL) s2)) ((cat a1) t2)) = ((cat ((zip NIL) a1)) ((zip s2) t2)))) ==> (((sizel NIL) = (sizel ((CONS y) a1))) ==> (((zip ((cat NIL) s2)) ((cat ((CONS y) a1)) t2)) = ((cat ((zip NIL) ((CONS y) a1))) ((zip s2) t2)))))) = T)
+T c= ! c==> c==> c= csizel cNIL csizel b0 c= czip ccat cNIL f0 ccat b0 f1 ccat czip cNIL b0 czip f0 f1 c==> c= csizel cNIL csizel cCONS f2 b0 c= czip ccat cNIL f0 ccat cCONS f2 b0 f1 ccat czip cNIL cCONS f2 b0 czip f0 f1 cT
++ |- (((!m. (!n. (((SUC m) = (SUC n)) = (m = n)))) ==> ((\m. (!n. (((SUC m) = (SUC n)) = (m = n)))) m)) = ((\m. (!n. (((SUC m) = (SUC n)) = (m = n)))) m))
+T c= c==> ! ! c= c= cSUC b0 cSUC b1 c= b0 b1 * / ! c= c= cSUC b0 cSUC b1 c= b0 b1 f0 * / ! c= c= cSUC b0 cSUC b1 c= b0 b1 f0
+- |- (((!x. (((\t1. (t = t1)) x) ==> ((sizel ((zip s) t)) = ((minn (sizel s)) (sizel t))))) ==> ((?t1. (t = t1)) ==> ((sizel ((zip s) t)) = ((minn (sizel s)) (sizel t))))) = ((?t1. (t = t1)) ==> ((sizel ((zip s) t)) = ((minn (sizel s)) (sizel t)))))
+T c= c==> ! c==> * / c= f0 b1 b0 c= csizel czip f1 f0 cminn csizel f1 csizel f0 c==> c? / c= f0 b0 c= csizel czip f1 f0 cminn csizel f1 csizel f0 c==> c? / c= f0 b0 c= csizel czip f1 f0 cminn csizel f1 csizel f0
+- |- ((?s1. (s = s1)) ==> (!t. ((sizel ((zip s) t)) = ((minn (sizel s)) (sizel t)))))
+T c==> c? / c= f0 b0 ! c= csizel czip f0 b0 cminn csizel f0 csizel b0
++ |- ((t ==> T) = T)
+T c= c==> f0 cT cT
++ |- ((\h. (!t. ((sizel ((CONS h) t)) = (SUC (sizel t))))) h)
+T * / ! c= csizel cCONS b0 b1 cSUC csizel b1 f0
++ |- (((cat ((CONS x) t)) s2) = ((CONS x) ((cat t) s2)))
+T c= ccat cCONS f0 f1 f2 cCONS f0 ccat f1 f2
+- |- ((t = t1) ==> ((sizel ((zip s) t)) = ((minn (sizel s)) (sizel t))))
+T c==> c= f0 f1 c= csizel czip f2 f0 cminn csizel f2 csizel f0
++ |- (((!x. (((\s11. (s1 = s11)) x) ==> (!t1. (((sizel s1) = (sizel t1)) ==> (((zip ((cat s1) s2)) ((cat t1) t2)) = ((cat ((zip s1) t1)) ((zip s2) t2))))))) ==> ((?s11. (s1 = s11)) ==> (!t1. (((sizel s1) = (sizel t1)) ==> (((zip ((cat s1) s2)) ((cat t1) t2)) = ((cat ((zip s1) t1)) ((zip s2) t2))))))) = ((?s11. (s1 = s11)) ==> (!t1. (((sizel s1) = (sizel t1)) ==> (((zip ((cat s1) s2)) ((cat t1) t2)) = ((cat ((zip s1) t1)) ((zip s2) t2)))))))
+T c= c==> ! c==> * / c= f0 b1 b0 ! c==> c= csizel f0 csizel b1 c= czip ccat f0 f1 ccat b1 f2 ccat czip f0 b1 czip f1 f2 c==> c? / c= f0 b0 ! c==> c= csizel f0 csizel b0 c= czip ccat f0 f1 ccat b0 f2 ccat czip f0 b0 czip f1 f2 c==> c? / c= f0 b0 ! c==> c= csizel f0 csizel b0 c= czip ccat f0 f1 ccat b0 f2 ccat czip f0 b0 czip f1 f2
++ |- ((((sizel ((CONS x) s)) = (sizel NIL)) ==> (((zip ((CONS x) ((cat s) s2))) t2) = ((zip s2) t2))) = (((sizel ((CONS x) s)) = (sizel NIL)) ==> (((zip ((CONS x) ((cat s) s2))) t2) = ((cat NIL) ((zip s2) t2)))))
+T c= c==> c= csizel cCONS f0 f1 csizel cNIL c= czip cCONS f0 ccat f1 f2 f3 czip f2 f3 c==> c= csizel cCONS f0 f1 csizel cNIL c= czip cCONS f0 ccat f1 f2 f3 ccat cNIL czip f2 f3
++ |- ((\P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))) P)
+T * / c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 f0
+- |- ((t ==> t) = T)
+T c= c==> f0 f0 cT
++ |- ((((sizel NIL) = (sizel NIL)) ==> (((zip s2) t2) = ((cat ((zip NIL) NIL)) ((zip s2) t2)))) = (((sizel NIL) = (sizel NIL)) ==> (((zip ((cat NIL) s2)) ((cat NIL) t2)) = ((cat ((zip NIL) NIL)) ((zip s2) t2)))))
+T c= c==> c= csizel cNIL csizel cNIL c= czip f0 f1 ccat czip cNIL cNIL czip f0 f1 c==> c= csizel cNIL csizel cNIL c= czip ccat cNIL f0 ccat cNIL f1 ccat czip cNIL cNIL czip f0 f1
+- |- ((\t. ((sizel ((zip s) t)) = ((minn (sizel s)) (sizel t)))) t1)
+T * / c= csizel czip f0 b0 cminn csizel f0 csizel b0 f1
+- (!t1. (((sizel s) = (sizel t1)) ==> (((zip ((cat s) s2)) ((cat t1) t2)) = ((cat ((zip s) t1)) ((zip s2) t2))))) |- ((((sizel s) = (sizel t1)) ==> (((zip ((cat s) s2)) ((cat t1) t2)) = ((cat ((zip s) t1)) ((zip s2) t2)))) = T)
+T c==> ! c==> c= csizel f0 csizel b0 c= czip ccat f0 f1 ccat b0 f2 ccat czip f0 b0 czip f1 f2 c= c==> c= csizel f0 csizel f3 c= czip ccat f0 f1 ccat f3 f2 ccat czip f0 f3 czip f1 f2 cT
++ |- ((((SUC (sizel t)) = (NUMERAL _0)) ==> (((zip s2) ((CONS y) ((cat t) t2))) = ((zip s2) t2))) = (((NUMERAL _0) = (SUC (sizel t))) ==> (((zip s2) ((CONS y) ((cat t) t2))) = ((zip s2) t2))))
+T c= c==> c= cSUC csizel f0 cNUMERAL c_0 c= czip f1 cCONS f2 ccat f0 f3 czip f1 f3 c==> c= cNUMERAL c_0 cSUC csizel f0 c= czip f1 cCONS f2 ccat f0 f3 czip f1 f3
++ |- (((!n. (((SUC m) = (SUC n)) = (m = n))) ==> ((\n. (((SUC m) = (SUC n)) = (m = n))) n)) = ((\n. (((SUC m) = (SUC n)) = (m = n))) n))
+T c= c==> ! c= c= cSUC f0 cSUC b0 c= f0 b0 * / c= c= cSUC f0 cSUC b0 c= f0 b0 f1 * / c= c= cSUC f0 cSUC b0 c= f0 b0 f1
++ |- ((\s1. (!t1. (((sizel s1) = (sizel t1)) ==> (((zip ((cat s1) s2)) ((cat t1) t2)) = ((cat ((zip s1) t1)) ((zip s2) t2)))))) s11)
+T * / ! c==> c= csizel b0 csizel b1 c= czip ccat b0 f0 ccat b1 f1 ccat czip b0 b1 czip f0 f1 f2
++ |- (((?t11. (t1 = t11)) ==> (((sizel s1) = (sizel t1)) ==> (((zip ((cat s1) s2)) ((cat t1) t2)) = ((cat ((zip s1) t1)) ((zip s2) t2))))) = (((sizel s1) = (sizel t1)) ==> (((zip ((cat s1) s2)) ((cat t1) t2)) = ((cat ((zip s1) t1)) ((zip s2) t2)))))
+T c= c==> c? / c= f0 b0 c==> c= csizel f1 csizel f0 c= czip ccat f1 f2 ccat f0 f3 ccat czip f1 f0 czip f2 f3 c==> c= csizel f1 csizel f0 c= czip ccat f1 f2 ccat f0 f3 ccat czip f1 f0 czip f2 f3
++ |- ((((sizel NIL) = (sizel ((CONS y) t))) ==> (((zip s2) ((CONS y) ((cat t) t2))) = ((cat ((zip NIL) ((CONS y) t))) ((zip s2) t2)))) = (((sizel NIL) = (sizel ((CONS y) t))) ==> (((zip ((cat NIL) s2)) ((cat ((CONS y) t)) t2)) = ((cat ((zip NIL) ((CONS y) t))) ((zip s2) t2)))))
+T c= c==> c= csizel cNIL csizel cCONS f0 f1 c= czip f2 cCONS f0 ccat f1 f3 ccat czip cNIL cCONS f0 f1 czip f2 f3 c==> c= csizel cNIL csizel cCONS f0 f1 c= czip ccat cNIL f2 ccat cCONS f0 f1 f3 ccat czip cNIL cCONS f0 f1 czip f2 f3
+- |- (((x = x) ==> p) = p)
+T c= c==> c= f0 f0 f1 f1
++ |- ((((sizel ((CONS x) s)) = (sizel NIL)) ==> (((zip ((CONS x) ((cat s) s2))) t2) = ((cat NIL) ((zip s2) t2)))) = (((sizel ((CONS x) s)) = (sizel NIL)) ==> (((zip ((CONS x) ((cat s) s2))) t2) = ((cat ((zip ((CONS x) s)) NIL)) ((zip s2) t2)))))
+T c= c==> c= csizel cCONS f0 f1 csizel cNIL c= czip cCONS f0 ccat f1 f2 f3 ccat cNIL czip f2 f3 c==> c= csizel cCONS f0 f1 csizel cNIL c= czip cCONS f0 ccat f1 f2 f3 ccat czip cCONS f0 f1 cNIL czip f2 f3
+- |- (!s11. (((\s11. (s1 = s11)) s11) ==> (?s11. (s1 = s11))))
+T c==> * / c= f0 b0 f1 c? / c= f0 b0
++ |- ((((\s11. (s1 = s11)) s11) ==> (!t1. (((sizel s1) = (sizel t1)) ==> (((zip ((cat s1) s2)) ((cat t1) t2)) = ((cat ((zip s1) t1)) ((zip s2) t2)))))) = T)
+T c= c==> * / c= f0 b0 f1 ! c==> c= csizel f0 csizel b0 c= czip ccat f0 f2 ccat b0 f3 ccat czip f0 b0 czip f2 f3 cT
+- |- (((!x. (((\s1. (s = s1)) x) ==> (!t. ((sizel ((zip s) t)) = ((minn (sizel s)) (sizel t)))))) ==> ((?s1. (s = s1)) ==> (!t. ((sizel ((zip s) t)) = ((minn (sizel s)) (sizel t)))))) = ((?s1. (s = s1)) ==> (!t. ((sizel ((zip s) t)) = ((minn (sizel s)) (sizel t))))))
+T c= c==> ! c==> * / c= f0 b1 b0 ! c= csizel czip f0 b1 cminn csizel f0 csizel b1 c==> c? / c= f0 b0 ! c= csizel czip f0 b0 cminn csizel f0 csizel b0 c==> c? / c= f0 b0 ! c= csizel czip f0 b0 cminn csizel f0 csizel b0
++ |- ((\s11. (s1 = s11)) s1)
+T * / c= f0 b0 f0
+- ((\t1. (t = t1)) t1) |- (((\t1. (t = t1)) t1) /\ ((sizel ((zip s) t)) = ((minn (sizel s)) (sizel t))))
+T c==> * / c= f0 b0 f1 c/\ * / c= f0 b0 f1 c= csizel czip f2 f0 cminn csizel f2 csizel f0
++ |- (((sizel NIL) = (sizel NIL)) ==> (((zip ((cat NIL) s2)) ((cat NIL) t2)) = ((cat ((zip NIL) NIL)) ((zip s2) t2))))
+T c==> c= csizel cNIL csizel cNIL c= czip ccat cNIL f0 ccat cNIL f1 ccat czip cNIL cNIL czip f0 f1
++ |- (((!x. (!y. ((x = y) = (y = x)))) ==> ((\x. (!y. ((x = y) = (y = x)))) x)) = ((\x. (!y. ((x = y) = (y = x)))) x))
+T c= c==> ! ! c= c= b0 b1 c= b1 b0 * / ! c= c= b0 b1 c= b1 b0 f0 * / ! c= c= b0 b1 c= b1 b0 f0
+- |- ((((\s1. (s = s1)) s1) ==> (!t. ((sizel ((zip s) t)) = ((minn (sizel s)) (sizel t))))) = T)
+T c= c==> * / c= f0 b0 f1 ! c= csizel czip f0 b0 cminn csizel f0 csizel b0 cT
+- |- (((!s. (!t. ((sizel ((zip s) t)) = ((minn (sizel s)) (sizel t))))) ==> ((\s. (!t. ((sizel ((zip s) t)) = ((minn (sizel s)) (sizel t))))) s1)) = ((\s. (!t. ((sizel ((zip s) t)) = ((minn (sizel s)) (sizel t))))) s1))
+T c= c==> ! ! c= csizel czip b0 b1 cminn csizel b0 csizel b1 * / ! c= csizel czip b0 b1 cminn csizel b0 csizel b1 f0 * / ! c= csizel czip b0 b1 cminn csizel b0 csizel b1 f0
++ |- (((sizel ((CONS x) s)) = (sizel NIL)) ==> (((zip ((CONS x) ((cat s) s2))) t2) = ((zip s2) t2)))
+T c==> c= csizel cCONS f0 f1 csizel cNIL c= czip cCONS f0 ccat f1 f2 f3 czip f2 f3
++ |- (((!y. ((x = y) = (y = x))) ==> ((\y. ((x = y) = (y = x))) y)) = ((\y. ((x = y) = (y = x))) y))
+T c= c==> ! c= c= f0 b0 c= b0 f0 * / c= c= f0 b0 c= b0 f0 f1 * / c= c= f0 b0 c= b0 f0 f1
+- (!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))), ((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) |- ((!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))) /\ (!x. (P x)))
+T c==> ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 c==> c/\ * f0 cNIL ! ! c==> * f0 b1 * f0 cCONS b0 b1 c/\ ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 ! * f0 b0
++ (!t1. (((sizel s) = (sizel t1)) ==> (((zip ((cat s) s2)) ((cat t1) t2)) = ((cat ((zip s) t1)) ((zip s2) t2))))), ((sizel s) = (sizel t)) |- (((((zip ((cat s) s2)) ((cat t) t2)) = ((cat ((zip s) t)) ((zip s2) t2))) ==> (((CONS (x , y)) ((zip ((cat s) s2)) ((cat t) t2))) = ((CONS (x , y)) ((cat ((zip s) t)) ((zip s2) t2))))) = (((CONS (x , y)) ((zip ((cat s) s2)) ((cat t) t2))) = ((CONS (x , y)) ((cat ((zip s) t)) ((zip s2) t2)))))
+T c==> ! c==> c= csizel f0 csizel b0 c= czip ccat f0 f1 ccat b0 f2 ccat czip f0 b0 czip f1 f2 c==> c= csizel f0 csizel f3 c= c==> c= czip ccat f0 f1 ccat f3 f2 ccat czip f0 f3 czip f1 f2 c= cCONS c, f4 f5 czip ccat f0 f1 ccat f3 f2 cCONS c, f4 f5 ccat czip f0 f3 czip f1 f2 c= cCONS c, f4 f5 czip ccat f0 f1 ccat f3 f2 cCONS c, f4 f5 ccat czip f0 f3 czip f1 f2
++ |- (((!n. (((SUC n) = (NUMERAL _0)) = F)) ==> ((\n. (((SUC n) = (NUMERAL _0)) = F)) n)) = ((\n. (((SUC n) = (NUMERAL _0)) = F)) n))
+T c= c==> ! c= c= cSUC b0 cNUMERAL c_0 cF * / c= c= cSUC b0 cNUMERAL c_0 cF f0 * / c= c= cSUC b0 cNUMERAL c_0 cF f0
++ |- ((?s11. (s1 = s11)) ==> (!t1. (((sizel s1) = (sizel t1)) ==> (((zip ((cat s1) s2)) ((cat t1) t2)) = ((cat ((zip s1) t1)) ((zip s2) t2))))))
+T c==> c? / c= f0 b0 ! c==> c= csizel f0 csizel b0 c= czip ccat f0 f1 ccat b0 f2 ccat czip f0 b0 czip f1 f2
++ |- ((((sizel ((CONS x) s)) = (sizel ((CONS y) t))) ==> (((zip ((CONS x) ((cat s) s2))) ((CONS y) ((cat t) t2))) = ((cat ((zip ((CONS x) s)) ((CONS y) t))) ((zip s2) t2)))) = (((sizel ((CONS x) s)) = (sizel ((CONS y) t))) ==> (((zip ((cat ((CONS x) s)) s2)) ((cat ((CONS y) t)) t2)) = ((cat ((zip ((CONS x) s)) ((CONS y) t))) ((zip s2) t2)))))
+T c= c==> c= csizel cCONS f0 f1 csizel cCONS f2 f3 c= czip cCONS f0 ccat f1 f4 cCONS f2 ccat f3 f5 ccat czip cCONS f0 f1 cCONS f2 f3 czip f4 f5 c==> c= csizel cCONS f0 f1 csizel cCONS f2 f3 c= czip ccat cCONS f0 f1 f4 ccat cCONS f2 f3 f5 ccat czip cCONS f0 f1 cCONS f2 f3 czip f4 f5
++ |- ((!t2. (((sizel s1) = (sizel t1)) ==> (((zip ((cat s1) s2)) ((cat t1) t2)) = ((cat ((zip s1) t1)) ((zip s2) t2))))) = T)
+T c= ! c==> c= csizel f0 csizel f1 c= czip ccat f0 f2 ccat f1 b0 ccat czip f0 f1 czip f2 b0 cT
++ |- (((!t1. (((sizel s) = (sizel t1)) ==> (((zip ((cat s) s2)) ((cat t1) t2)) = ((cat ((zip s) t1)) ((zip s2) t2))))) ==> (!t1. (((sizel ((CONS x) s)) = (sizel t1)) ==> (((zip ((cat ((CONS x) s)) s2)) ((cat t1) t2)) = ((cat ((zip ((CONS x) s)) t1)) ((zip s2) t2)))))) = T)
+T c= c==> ! c==> c= csizel f0 csizel b0 c= czip ccat f0 f1 ccat b0 f2 ccat czip f0 b0 czip f1 f2 ! c==> c= csizel cCONS f3 f0 csizel b0 c= czip ccat cCONS f3 f0 f1 ccat b0 f2 ccat czip cCONS f3 f0 b0 czip f1 f2 cT
++ |- ((((sizel s) = (sizel t)) ==> (((CONS (x , y)) ((zip ((cat s) s2)) ((cat t) t2))) = ((CONS (x , y)) ((cat ((zip s) t)) ((zip s2) t2))))) = (((SUC (sizel s)) = (SUC (sizel t))) ==> (((CONS (x , y)) ((zip ((cat s) s2)) ((cat t) t2))) = ((CONS (x , y)) ((cat ((zip s) t)) ((zip s2) t2))))))
+T c= c==> c= csizel f0 csizel f1 c= cCONS c, f2 f3 czip ccat f0 f4 ccat f1 f5 cCONS c, f2 f3 ccat czip f0 f1 czip f4 f5 c==> c= cSUC csizel f0 cSUC csizel f1 c= cCONS c, f2 f3 czip ccat f0 f4 ccat f1 f5 cCONS c, f2 f3 ccat czip f0 f1 czip f4 f5
++ (s1 = s11) |- ((s1 = s11) /\ (!t1. (((sizel s1) = (sizel t1)) ==> (((zip ((cat s1) s2)) ((cat t1) t2)) = ((cat ((zip s1) t1)) ((zip s2) t2))))))
+T c==> c= f0 f1 c/\ c= f0 f1 ! c==> c= csizel f0 csizel b0 c= czip ccat f0 f2 ccat b0 f3 ccat czip f0 b0 czip f2 f3
++ |- (((sizel NIL) = (sizel ((CONS y) t))) ==> (((zip s2) ((CONS y) ((cat t) t2))) = ((zip s2) t2)))
+T c==> c= csizel cNIL csizel cCONS f0 f1 c= czip f2 cCONS f0 ccat f1 f3 czip f2 f3
++ |- ((\n. (((SUC n) = (NUMERAL _0)) = F)) n)
+T * / c= c= cSUC b0 cNUMERAL c_0 cF f0
++ |- (((!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))) ==> ((\P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))) P)) = ((\P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))) P))
+T c= c==> ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 * / c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 f0 * / c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 f0
+- (!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))), ((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) |- (!x. (P x))
+T c==> ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 c==> c/\ * f0 cNIL ! ! c==> * f0 b1 * f0 cCONS b0 b1 ! * f0 b0
++ |- ((!s2. (!t1. (!t2. (((sizel s1) = (sizel t1)) ==> (((zip ((cat s1) s2)) ((cat t1) t2)) = ((cat ((zip s1) t1)) ((zip s2) t2))))))) = T)
+T c= ! ! ! c==> c= csizel f0 csizel b1 c= czip ccat f0 b0 ccat b1 b2 ccat czip f0 b1 czip b0 b2 cT
++ (!t1. (((sizel s) = (sizel t1)) ==> (((zip ((cat s) s2)) ((cat t1) t2)) = ((cat ((zip s) t1)) ((zip s2) t2))))) |- (!a0. (!a1. ((((sizel ((CONS x) s)) = (sizel a1)) ==> (((zip ((cat ((CONS x) s)) s2)) ((cat a1) t2)) = ((cat ((zip ((CONS x) s)) a1)) ((zip s2) t2)))) ==> (((sizel ((CONS x) s)) = (sizel ((CONS a0) a1))) ==> (((zip ((cat ((CONS x) s)) s2)) ((cat ((CONS a0) a1)) t2)) = ((cat ((zip ((CONS x) s)) ((CONS a0) a1))) ((zip s2) t2)))))))
+T c==> ! c==> c= csizel f0 csizel b0 c= czip ccat f0 f1 ccat b0 f2 ccat czip f0 b0 czip f1 f2 ! ! c==> c==> c= csizel cCONS f3 f0 csizel b1 c= czip ccat cCONS f3 f0 f1 ccat b1 f2 ccat czip cCONS f3 f0 b1 czip f1 f2 c==> c= csizel cCONS f3 f0 csizel cCONS b0 b1 c= czip ccat cCONS f3 f0 f1 ccat cCONS b0 b1 f2 ccat czip cCONS f3 f0 cCONS b0 b1 czip f1 f2
++ |- ((((sizel NIL) = (sizel NIL)) ==> (((zip s2) t2) = ((zip s2) t2))) = (((sizel NIL) = (sizel NIL)) ==> (((zip s2) t2) = ((cat NIL) ((zip s2) t2)))))
+T c= c==> c= csizel cNIL csizel cNIL c= czip f0 f1 czip f0 f1 c==> c= csizel cNIL csizel cNIL c= czip f0 f1 ccat cNIL czip f0 f1
++ |- (((NUMERAL _0) = (sizel ((CONS y) t))) ==> (((zip s2) ((CONS y) ((cat t) t2))) = ((zip s2) t2)))
+T c==> c= cNUMERAL c_0 csizel cCONS f0 f1 c= czip f2 cCONS f0 ccat f1 f3 czip f2 f3
++ |- ((x = y) = (y = x))
+T c= c= f0 f1 c= f1 f0
++ |- ((((SUC (sizel s)) = (NUMERAL _0)) ==> (((zip ((CONS x) ((cat s) s2))) t2) = ((zip s2) t2))) = (((sizel ((CONS x) s)) = (NUMERAL _0)) ==> (((zip ((CONS x) ((cat s) s2))) t2) = ((zip s2) t2))))
+T c= c==> c= cSUC csizel f0 cNUMERAL c_0 c= czip cCONS f1 ccat f0 f2 f3 czip f2 f3 c==> c= csizel cCONS f1 f0 cNUMERAL c_0 c= czip cCONS f1 ccat f0 f2 f3 czip f2 f3
++ |- (((SUC (sizel t)) = (NUMERAL _0)) ==> (((zip s2) ((CONS y) ((cat t) t2))) = ((zip s2) t2)))
+T c==> c= cSUC csizel f0 cNUMERAL c_0 c= czip f1 cCONS f2 ccat f0 f3 czip f1 f3
++ (((zip ((cat s) s2)) ((cat t) t2)) = ((cat ((zip s) t)) ((zip s2) t2))) |- ((((zip ((cat s) s2)) ((cat t) t2)) = ((cat ((zip s) t)) ((zip s2) t2))) /\ (((CONS (x , y)) ((zip ((cat s) s2)) ((cat t) t2))) = ((CONS (x , y)) ((cat ((zip s) t)) ((zip s2) t2)))))
+T c==> c= czip ccat f0 f1 ccat f2 f3 ccat czip f0 f2 czip f1 f3 c/\ c= czip ccat f0 f1 ccat f2 f3 ccat czip f0 f2 czip f1 f3 c= cCONS c, f4 f5 czip ccat f0 f1 ccat f2 f3 cCONS c, f4 f5 ccat czip f0 f2 czip f1 f3
++ |- (((sizel ((CONS x) s)) = (sizel NIL)) ==> (((zip ((CONS x) ((cat s) s2))) t2) = ((cat NIL) ((zip s2) t2))))
+T c==> c= csizel cCONS f0 f1 csizel cNIL c= czip cCONS f0 ccat f1 f2 f3 ccat cNIL czip f2 f3
++ (!t1. (((sizel s) = (sizel t1)) ==> (((zip ((cat s) s2)) ((cat t1) t2)) = ((cat ((zip s) t1)) ((zip s2) t2))))), (((sizel ((CONS x) s)) = (sizel t)) ==> (((zip ((cat ((CONS x) s)) s2)) ((cat t) t2)) = ((cat ((zip ((CONS x) s)) t)) ((zip s2) t2)))) |- ((((sizel ((CONS x) s)) = (sizel t)) ==> (((zip ((cat ((CONS x) s)) s2)) ((cat t) t2)) = ((cat ((zip ((CONS x) s)) t)) ((zip s2) t2)))) /\ (((sizel ((CONS x) s)) = (sizel ((CONS y) t))) ==> (((zip ((cat ((CONS x) s)) s2)) ((cat ((CONS y) t)) t2)) = ((cat ((zip ((CONS x) s)) ((CONS y) t))) ((zip s2) t2)))))
+T c==> ! c==> c= csizel f0 csizel b0 c= czip ccat f0 f1 ccat b0 f2 ccat czip f0 b0 czip f1 f2 c==> c==> c= csizel cCONS f3 f0 csizel f4 c= czip ccat cCONS f3 f0 f1 ccat f4 f2 ccat czip cCONS f3 f0 f4 czip f1 f2 c/\ c==> c= csizel cCONS f3 f0 csizel f4 c= czip ccat cCONS f3 f0 f1 ccat f4 f2 ccat czip cCONS f3 f0 f4 czip f1 f2 c==> c= csizel cCONS f3 f0 csizel cCONS f5 f4 c= czip ccat cCONS f3 f0 f1 ccat cCONS f5 f4 f2 ccat czip cCONS f3 f0 cCONS f5 f4 czip f1 f2
++ |- (((NUMERAL _0) = (SUC (sizel t))) ==> (((zip s2) ((CONS y) ((cat t) t2))) = ((zip s2) t2)))
+T c==> c= cNUMERAL c_0 cSUC csizel f0 c= czip f1 cCONS f2 ccat f0 f3 czip f1 f3
++ (!t1. (((sizel s) = (sizel t1)) ==> (((zip ((cat s) s2)) ((cat t1) t2)) = ((cat ((zip s) t1)) ((zip s2) t2))))) |- (((sizel ((CONS x) s)) = (sizel ((CONS y) t))) ==> (((zip ((cat ((CONS x) s)) s2)) ((cat ((CONS y) t)) t2)) = ((cat ((zip ((CONS x) s)) ((CONS y) t))) ((zip s2) t2))))
+T c==> ! c==> c= csizel f0 csizel b0 c= czip ccat f0 f1 ccat b0 f2 ccat czip f0 b0 czip f1 f2 c==> c= csizel cCONS f3 f0 csizel cCONS f4 f5 c= czip ccat cCONS f3 f0 f1 ccat cCONS f4 f5 f2 ccat czip cCONS f3 f0 cCONS f4 f5 czip f1 f2
+- |- ((s1 = s11) = ((\s11. (s1 = s11)) s11))
+T c= c= f0 f1 * / c= f0 b0 f1
+- (s = s1) |- (!t. ((sizel ((zip s1) t)) = ((minn (sizel s1)) (sizel t))))
+T c==> c= f0 f1 ! c= csizel czip f1 b0 cminn csizel f1 csizel b0
++ |- (!a0. (!a1. ((!t1. (((sizel a1) = (sizel t1)) ==> (((zip ((cat a1) s2)) ((cat t1) t2)) = ((cat ((zip a1) t1)) ((zip s2) t2))))) ==> (!t1. (((sizel ((CONS a0) a1)) = (sizel t1)) ==> (((zip ((cat ((CONS a0) a1)) s2)) ((cat t1) t2)) = ((cat ((zip ((CONS a0) a1)) t1)) ((zip s2) t2))))))))
+T c==> ! c==> c= csizel f0 csizel b0 c= czip ccat f0 f1 ccat b0 f2 ccat czip f0 b0 czip f1 f2 ! c==> c= csizel cCONS f3 f0 csizel b0 c= czip ccat cCONS f3 f0 f1 ccat b0 f2 ccat czip cCONS f3 f0 b0 czip f1 f2
++ |- ((\y. ((x = y) = (y = x))) y)
+T * / c= c= f0 b0 c= b0 f0 f1
++ (!t1. (((sizel s) = (sizel t1)) ==> (((zip ((cat s) s2)) ((cat t1) t2)) = ((cat ((zip s) t1)) ((zip s2) t2))))) |- ((((sizel ((CONS x) s)) = (sizel NIL)) ==> (((zip ((cat ((CONS x) s)) s2)) ((cat NIL) t2)) = ((cat ((zip ((CONS x) s)) NIL)) ((zip s2) t2)))) /\ (!a0. (!a1. ((((sizel ((CONS x) s)) = (sizel a1)) ==> (((zip ((cat ((CONS x) s)) s2)) ((cat a1) t2)) = ((cat ((zip ((CONS x) s)) a1)) ((zip s2) t2)))) ==> (((sizel ((CONS x) s)) = (sizel ((CONS a0) a1))) ==> (((zip ((cat ((CONS x) s)) s2)) ((cat ((CONS a0) a1)) t2)) = ((cat ((zip ((CONS x) s)) ((CONS a0) a1))) ((zip s2) t2))))))))
+T c==> ! c==> c= csizel f0 csizel b0 c= czip ccat f0 f1 ccat b0 f2 ccat czip f0 b0 czip f1 f2 c/\ c==> c= csizel cCONS f3 f0 csizel cNIL c= czip ccat cCONS f3 f0 f1 ccat cNIL f2 ccat czip cCONS f3 f0 cNIL czip f1 f2 ! ! c==> c==> c= csizel cCONS f3 f0 csizel b1 c= czip ccat cCONS f3 f0 f1 ccat b1 f2 ccat czip cCONS f3 f0 b1 czip f1 f2 c==> c= csizel cCONS f3 f0 csizel cCONS b0 b1 c= czip ccat cCONS f3 f0 f1 ccat cCONS b0 b1 f2 ccat czip cCONS f3 f0 cCONS b0 b1 czip f1 f2
++ |- ((F ==> (((zip ((CONS x) ((cat s) s2))) t2) = ((zip s2) t2))) = (((SUC (sizel s)) = (NUMERAL _0)) ==> (((zip ((CONS x) ((cat s) s2))) t2) = ((zip s2) t2))))
+T c= c==> cF c= czip cCONS f0 ccat f1 f2 f3 czip f2 f3 c==> c= cSUC csizel f1 cNUMERAL c_0 c= czip cCONS f0 ccat f1 f2 f3 czip f2 f3
+- |- (((!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))) ==> (!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x))))) = (!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))))
+T c= c==> ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1
+- |- (T = (((CONS (x , y)) ((cat ((zip s) t)) ((zip s2) t2))) = ((CONS (x , y)) ((cat ((zip s) t)) ((zip s2) t2)))))
+T c= cT c= cCONS c, f0 f1 ccat czip f2 f3 czip f4 f5 cCONS c, f0 f1 ccat czip f2 f3 czip f4 f5
+- (t1 = t11) |- (((sizel s1) = (sizel t11)) ==> (((zip ((cat s1) s2)) ((cat t11) t2)) = ((cat ((zip s1) t11)) ((zip s2) t2))))
+T c==> c= f0 f1 c==> c= csizel f2 csizel f1 c= czip ccat f2 f3 ccat f1 f4 ccat czip f2 f1 czip f3 f4
+- (s1 = s11) |- (!t1. (((sizel s11) = (sizel t1)) ==> (((zip ((cat s11) s2)) ((cat t1) t2)) = ((cat ((zip s11) t1)) ((zip s2) t2)))))
+T c==> c= f0 f1 ! c==> c= csizel f1 csizel b0 c= czip ccat f1 f2 ccat b0 f3 ccat czip f1 b0 czip f2 f3
++ |- ((((sizel ((CONS x) s)) = (sizel ((CONS y) t))) ==> (((CONS (x , y)) ((zip ((cat s) s2)) ((cat t) t2))) = ((cat ((CONS (x , y)) ((zip s) t))) ((zip s2) t2)))) = (((sizel ((CONS x) s)) = (sizel ((CONS y) t))) ==> (((zip ((CONS x) ((cat s) s2))) ((CONS y) ((cat t) t2))) = ((cat ((zip ((CONS x) s)) ((CONS y) t))) ((zip s2) t2)))))
+T c= c==> c= csizel cCONS f0 f1 csizel cCONS f2 f3 c= cCONS c, f0 f2 czip ccat f1 f4 ccat f3 f5 ccat cCONS c, f0 f2 czip f1 f3 czip f4 f5 c==> c= csizel cCONS f0 f1 csizel cCONS f2 f3 c= czip cCONS f0 ccat f1 f4 cCONS f2 ccat f3 f5 ccat czip cCONS f0 f1 cCONS f2 f3 czip f4 f5
+- (!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))), ((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) |- (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) /\ (!x. (P x)))
+T c==> ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 c==> c/\ * f0 cNIL ! ! c==> * f0 b1 * f0 cCONS b0 b1 c/\ c/\ * f0 cNIL ! ! c==> * f0 b1 * f0 cCONS b0 b1 ! * f0 b0
++ |- ((!a0. (!a1. ((((sizel ((CONS x) s)) = (sizel a1)) ==> (((zip ((cat ((CONS x) s)) s2)) ((cat a1) t2)) = ((cat ((zip ((CONS x) s)) a1)) ((zip s2) t2)))) ==> (((sizel ((CONS x) s)) = (sizel ((CONS a0) a1))) ==> (((zip ((cat ((CONS x) s)) s2)) ((cat ((CONS a0) a1)) t2)) = ((cat ((zip ((CONS x) s)) ((CONS a0) a1))) ((zip s2) t2))))))) = ((((sizel ((CONS x) s)) = (sizel NIL)) ==> (((zip ((cat ((CONS x) s)) s2)) ((cat NIL) t2)) = ((cat ((zip ((CONS x) s)) NIL)) ((zip s2) t2)))) /\ (!a0. (!a1. ((((sizel ((CONS x) s)) = (sizel a1)) ==> (((zip ((cat ((CONS x) s)) s2)) ((cat a1) t2)) = ((cat ((zip ((CONS x) s)) a1)) ((zip s2) t2)))) ==> (((sizel ((CONS x) s)) = (sizel ((CONS a0) a1))) ==> (((zip ((cat ((CONS x) s)) s2)) ((cat ((CONS a0) a1)) t2)) = ((cat ((zip ((CONS x) s)) ((CONS a0) a1))) ((zip s2) t2)))))))))
+T c= ! ! c==> c==> c= csizel cCONS f0 f1 csizel b1 c= czip ccat cCONS f0 f1 f2 ccat b1 f3 ccat czip cCONS f0 f1 b1 czip f2 f3 c==> c= csizel cCONS f0 f1 csizel cCONS b0 b1 c= czip ccat cCONS f0 f1 f2 ccat cCONS b0 b1 f3 ccat czip cCONS f0 f1 cCONS b0 b1 czip f2 f3 c/\ c==> c= csizel cCONS f0 f1 csizel cNIL c= czip ccat cCONS f0 f1 f2 ccat cNIL f3 ccat czip cCONS f0 f1 cNIL czip f2 f3 ! ! c==> c==> c= csizel cCONS f0 f1 csizel b1 c= czip ccat cCONS f0 f1 f2 ccat b1 f3 ccat czip cCONS f0 f1 b1 czip f2 f3 c==> c= csizel cCONS f0 f1 csizel cCONS b0 b1 c= czip ccat cCONS f0 f1 f2 ccat cCONS b0 b1 f3 ccat czip cCONS f0 f1 cCONS b0 b1 czip f2 f3
+- ((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) |- ((!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))) ==> (!x. (P x)))
+T c==> c/\ * f0 cNIL ! ! c==> * f0 b1 * f0 cCONS b0 b1 c==> ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 ! * f0 b0
+- |- (!t1. (((\t1. (t = t1)) t1) ==> ((sizel ((zip s) t)) = ((minn (sizel s)) (sizel t)))))
+T c==> * / c= f0 b0 f1 c= csizel czip f2 f0 cminn csizel f2 csizel f0
+- |- ((s = s1) ==> (!t. ((sizel ((zip s) t)) = ((minn (sizel s)) (sizel t)))))
+T c==> c= f0 f1 ! c= csizel czip f0 b0 cminn csizel f0 csizel b0
+- |- (!s1. (((\s1. (s = s1)) s1) ==> (!t. ((sizel ((zip s) t)) = ((minn (sizel s)) (sizel t))))))
+T c==> * / c= f0 b0 f1 ! c= csizel czip f0 b0 cminn csizel f0 csizel b0
+- |- ((?s11. (s1 = s11)) ==> (?s11. (s1 = s11)))
+T c==> c? / c= f0 b0 c? / c= f0 b0
+- |- (((?s1. (s = s1)) ==> (!t. ((sizel ((zip s) t)) = ((minn (sizel s)) (sizel t))))) = (!t. ((sizel ((zip s) t)) = ((minn (sizel s)) (sizel t)))))
+T c= c==> c? / c= f0 b0 ! c= csizel czip f0 b0 cminn csizel f0 csizel b0 ! c= csizel czip f0 b0 cminn csizel f0 csizel b0
+- |- ((\Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))) Q)
+T * / c= c==> f0 ! * b0 b1 ! c==> f0 * b0 b1 f1
+- (!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))) |- ((\P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))) P)
+T c==> ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 * / c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 f0
+- (s1 = s11) |- (s11 = s1)
+T c==> c= f0 f1 c= f1 f0
+- ((\s11. (s1 = s11)) s11) |- (((s1 = s11) ==> (?s11. (s1 = s11))) = (?s11. (s1 = s11)))
+T c==> * / c= f0 b0 f1 c= c==> c= f0 f1 c? / c= f0 b0 c? / c= f0 b0
+- |- ((!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))) ==> (!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))))
+T c==> ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1
+- |- ((?t1. (t = t1)) ==> ((sizel ((zip s) t)) = ((minn (sizel s)) (sizel t))))
+T c==> c? / c= f0 b0 c= csizel czip f1 f0 cminn csizel f1 csizel f0
+- (t1 = t11) |- ((((sizel s1) = (sizel t11)) ==> (((zip ((cat s1) s2)) ((cat t11) t2)) = ((cat ((zip s1) t11)) ((zip s2) t2)))) = (((sizel s1) = (sizel t1)) ==> (((zip ((cat s1) s2)) ((cat t1) t2)) = ((cat ((zip s1) t1)) ((zip s2) t2)))))
+T c==> c= f0 f1 c= c==> c= csizel f2 csizel f1 c= czip ccat f2 f3 ccat f1 f4 ccat czip f2 f1 czip f3 f4 c==> c= csizel f2 csizel f0 c= czip ccat f2 f3 ccat f0 f4 ccat czip f2 f0 czip f3 f4
+- |- (((!P. (!Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x)))))) ==> ((\P. (!Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x)))))) P)) = ((\P. (!Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x)))))) P))
+T c= c==> ! ! c= c==> b0 ! * b1 b2 ! c==> b0 * b1 b2 * / ! c= c==> b0 ! * b1 b2 ! c==> b0 * b1 b2 f0 * / ! c= c==> b0 ! * b1 b2 ! c==> b0 * b1 b2 f0
+- (s = s1) |- ((s = s1) /\ (!t. ((sizel ((zip s) t)) = ((minn (sizel s)) (sizel t)))))
+T c==> c= f0 f1 c/\ c= f0 f1 ! c= csizel czip f0 b0 cminn csizel f0 csizel b0
+- (s1 = s11) |- ((s1 = s11) /\ (?s11. (s1 = s11)))
+T c==> c= f0 f1 c/\ c= f0 f1 c? / c= f0 b0
+- ((\s11. (s1 = s11)) s11) |- (((\s11. (s1 = s11)) s11) /\ (?s11. (s1 = s11)))
+T c==> * / c= f0 b0 f1 c/\ * / c= f0 b0 f1 c? / c= f0 b0
+- (((zip ((cat s) s2)) ((cat t) t2)) = ((cat ((zip s) t)) ((zip s2) t2))) |- ((((CONS (x , y)) ((cat ((zip s) t)) ((zip s2) t2))) = ((CONS (x , y)) ((cat ((zip s) t)) ((zip s2) t2)))) = (((CONS (x , y)) ((zip ((cat s) s2)) ((cat t) t2))) = ((CONS (x , y)) ((cat ((zip s) t)) ((zip s2) t2)))))
+T c==> c= czip ccat f0 f1 ccat f2 f3 ccat czip f0 f2 czip f1 f3 c= c= cCONS c, f4 f5 ccat czip f0 f2 czip f1 f3 cCONS c, f4 f5 ccat czip f0 f2 czip f1 f3 c= cCONS c, f4 f5 czip ccat f0 f1 ccat f2 f3 cCONS c, f4 f5 ccat czip f0 f2 czip f1 f3
+- |- ((((\t1. (t = t1)) t1) ==> ((sizel ((zip s) t)) = ((minn (sizel s)) (sizel t)))) = T)
+T c= c==> * / c= f0 b0 f1 c= csizel czip f2 f0 cminn csizel f2 csizel f0 cT
+- (t = t1) |- ((sizel ((zip s) t1)) = ((minn (sizel s)) (sizel t1)))
+T c==> c= f0 f1 c= csizel czip f2 f1 cminn csizel f2 csizel f1
+- |- (((!x. (((\s11. (s1 = s11)) x) ==> (?s11. (s1 = s11)))) ==> ((?s11. (s1 = s11)) ==> (?s11. (s1 = s11)))) = ((?s11. (s1 = s11)) ==> (?s11. (s1 = s11))))
+T c= c==> ! c==> * / c= f0 b1 b0 c? / c= f0 b1 c==> c? / c= f0 b0 c? / c= f0 b0 c==> c? / c= f0 b0 c? / c= f0 b0
+- (s = s1) |- (!t. ((sizel ((zip s1) t)) = ((minn (sizel s)) (sizel t))))
+T c==> c= f0 f1 ! c= csizel czip f1 b0 cminn csizel f0 csizel b0
+- |- (((?t1. (t = t1)) ==> ((sizel ((zip s) t)) = ((minn (sizel s)) (sizel t)))) = ((sizel ((zip s) t)) = ((minn (sizel s)) (sizel t))))
+T c= c==> c? / c= f0 b0 c= csizel czip f1 f0 cminn csizel f1 csizel f0 c= csizel czip f1 f0 cminn csizel f1 csizel f0
+- (t = t1) |- ((t = t1) /\ ((sizel ((zip s) t)) = ((minn (sizel s)) (sizel t))))
+T c==> c= f0 f1 c/\ c= f0 f1 c= csizel czip f2 f0 cminn csizel f2 csizel f0
+- |- ((s1 = s11) ==> (?s11. (s1 = s11)))
+T c==> c= f0 f1 c? / c= f0 b0
+- (s1 = s11) |- ((!t1. (((sizel s11) = (sizel t1)) ==> (((zip ((cat s11) s2)) ((cat t1) t2)) = ((cat ((zip s11) t1)) ((zip s2) t2))))) = (!t1. (((sizel s1) = (sizel t1)) ==> (((zip ((cat s1) s2)) ((cat t1) t2)) = ((cat ((zip s1) t1)) ((zip s2) t2))))))
+T c==> c= f0 f1 c= ! c==> c= csizel f1 csizel b0 c= czip ccat f1 f2 ccat b0 f3 ccat czip f1 b0 czip f2 f3 ! c==> c= csizel f0 csizel b0 c= czip ccat f0 f2 ccat b0 f3 ccat czip f0 b0 czip f2 f3
+- ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x)))) |- ((!x. (P ==> (Q x))) = (P ==> (!x. (Q x))))
+T c==> c= c==> f0 ! * f1 b0 ! c==> f0 * f1 b0 c= ! c==> f0 * f1 b0 c==> f0 ! * f1 b0
+- ((\s1. (s = s1)) s1) |- (((s = s1) ==> (!t. ((sizel ((zip s) t)) = ((minn (sizel s)) (sizel t))))) = (!t. ((sizel ((zip s) t)) = ((minn (sizel s)) (sizel t)))))
+T c==> * / c= f0 b0 f1 c= c==> c= f0 f1 ! c= csizel czip f0 b0 cminn csizel f0 csizel b0 ! c= csizel czip f0 b0 cminn csizel f0 csizel b0
+- (!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))) |- ((((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x))) = T)
+T c==> ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 c= c==> c/\ * f0 cNIL ! ! c==> * f0 b1 * f0 cCONS b0 b1 ! * f0 b0 cT
+- |- (((sizel ((zip s) t)) = ((minn (sizel s)) (sizel t))) = T)
+T c= c= csizel czip f0 f1 cminn csizel f0 csizel f1 cT
+- (t = t1) |- ((sizel ((zip s) t1)) = ((minn (sizel s)) (sizel t)))
+T c==> c= f0 f1 c= csizel czip f2 f1 cminn csizel f2 csizel f0
+- (s1 = s11) |- ((\s11. (s1 = s11)) s11)
+T c==> c= f0 f1 * / c= f0 b0 f1
+- ((\t1. (t = t1)) t1) |- (((t = t1) ==> ((sizel ((zip s) t)) = ((minn (sizel s)) (sizel t)))) = ((sizel ((zip s) t)) = ((minn (sizel s)) (sizel t))))
+T c==> * / c= f0 b0 f1 c= c==> c= f0 f1 c= csizel czip f2 f0 cminn csizel f2 csizel f0 c= csizel czip f2 f0 cminn csizel f2 csizel f0
+- |- ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))
+T c= c==> f0 ! * f1 b0 ! c==> f0 * f1 b0
+- |- ((\s. (!t. ((sizel ((zip s) t)) = ((minn (sizel s)) (sizel t))))) s1)
+T * / ! c= csizel czip b0 b1 cminn csizel b0 csizel b1 f0
+- |- (((!Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))) ==> ((\Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))) Q)) = ((\Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))) Q))
+T c= c==> ! c= c==> f0 ! * b0 b1 ! c==> f0 * b0 b1 * / c= c==> f0 ! * b0 b1 ! c==> f0 * b0 b1 f1 * / c= c==> f0 ! * b0 b1 ! c==> f0 * b0 b1 f1
+- |- ((!t. ((sizel ((zip s) t)) = ((minn (sizel s)) (sizel t)))) = T)
+T c= ! c= csizel czip f0 b0 cminn csizel f0 csizel b0 cT
+- |- ((((\s11. (s1 = s11)) s11) ==> (?s11. (s1 = s11))) = T)
+T c= c==> * / c= f0 b0 f1 c? / c= f0 b0 cT
+- (!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))) |- ((!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))) /\ (!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))))
+T c==> ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 c/\ ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1
+- |- ((sizel ((zip s) t)) = ((minn (sizel s)) (sizel t)))
+T c= csizel czip f0 f1 cminn csizel f0 csizel f1

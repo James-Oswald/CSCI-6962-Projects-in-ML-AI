@@ -1,0 +1,301 @@
+N SETDIST_SINGS
+C |- (!x. (!y. ((setdist ((x INSERT EMPTY) , (y INSERT EMPTY))) = (distance (x , y)))))
+T c= csetdist c, * * part cINSERT f0 part cEMPTY * * part cINSERT f1 part cEMPTY cdistance c, f0 f1
+D TRUTH
+A |- T
+T cT
+D ETA_AX
+A |- (!t. ((\x. (t x)) = t))
+T c= / * f0 b0 f0
+D BOOL_CASES_AX
+A |- (!t. ((t = T) \/ (t = F)))
+T c\/ c= f0 cT c= f0 cF
+D NOT_CLAUSES
+A |- ((!t. ((~ (~ t)) = t)) /\ (((~ T) = F) /\ ((~ F) = T)))
+T c/\ ! c= c~ c~ b0 b0 c/\ c= c~ cT cF c= c~ cF cT
+D NOT_EXISTS_THM
+A |- (!P. ((~ (?x. (P x))) = (!x. (~ (P x)))))
+T c= c~ c? / * f0 b0 ! c~ * f0 b0
+D COND_CLAUSES
+A |- (!t1. (!t2. (((((COND T) t1) t2) = t1) /\ ((((COND F) t1) t2) = t2))))
+T c/\ c= cCOND cT f0 f1 f0 c= cCOND cF f0 f1 f1
+D EXTENSION
+A |- (!s. (!t. ((s = t) = (!x. ((x IN s) = (x IN t))))))
+T c= c= f0 f1 ! c= cIN b0 f0 cIN b0 f1
+D Misc_defs_and_lemmas.IN_ELIM_THM'
+A |- ((!P. (!x. ((x IN (GSPEC (\v. (P (SETSPEC v))))) = (P (\p. (\t. (p /\ (x = t)))))))) /\ ((!p. (!x. ((x IN (GSPEC (\v. (?y. (((SETSPEC v) (p y)) y))))) = (p x)))) /\ ((!P. (!x. (((GSPEC (\v. (P (SETSPEC v)))) x) = (P (\p. (\t. (p /\ (x = t)))))))) /\ ((!p. (!x. (((GSPEC (\v. (?y. (((SETSPEC v) (p y)) y)))) x) = (p x)))) /\ (!p. (!x. ((x IN (\y. (p y))) = (p x))))))))
+T c/\ ! ! c= cIN b1 * part cGSPEC / * b0 * part cSETSPEC b2 * b0 / / c/\ b2 c= b1 b3 c/\ ! ! c= cIN b1 * part cGSPEC / c? / cSETSPEC b2 * b0 b3 b3 * b0 b1 c/\ ! ! c= cGSPEC / * b0 * part cSETSPEC b2 b1 * b0 / / c/\ b2 c= b1 b3 c/\ ! ! c= cGSPEC / c? / cSETSPEC b2 * b0 b3 b3 b1 * b0 b1 ! ! c= cIN b1 / * b0 b2 * b0 b1
+D NOT_IN_EMPTY
+A |- (!x. (~ (x IN EMPTY)))
+T c~ cIN f0 part cEMPTY
+D IN_INSERT
+A |- (!x. (!y. (!s. ((x IN (y INSERT s)) = ((x = y) \/ (x IN s))))))
+T c= cIN f0 * * part cINSERT f1 f2 c\/ c= f0 f1 cIN f0 f2
+D NOT_INSERT_EMPTY
+A |- (!x. (!s. (~ ((x INSERT s) = EMPTY))))
+T c~ c= * * part cINSERT f0 f1 part cEMPTY
+D FINITE_EMPTY
+A |- (FINITE EMPTY)
+T cFINITE part cEMPTY
+D INF_INSERT_FINITE
+A |- (!x. (!s. ((FINITE s) ==> ((inf (x INSERT s)) = (((COND (s = EMPTY)) x) ((real_min x) (inf s)))))))
+T c==> cFINITE f0 c= cinf * * part cINSERT f1 f0 cCOND c= f0 part cEMPTY f1 creal_min f1 cinf f0
+D setdist
+A |- (!s. (!t. ((setdist (s , t)) = (((COND ((s = EMPTY) \/ (t = EMPTY))) (real_of_num (NUMERAL _0))) (inf (GSPEC (\GEN%PVAR%1128. (?x. (?y. (((SETSPEC GEN%PVAR%1128) ((x IN s) /\ (y IN t))) (distance (x , y))))))))))))
+T c= csetdist c, f0 f1 cCOND c\/ c= f0 part cEMPTY c= f1 part cEMPTY creal_of_num cNUMERAL c_0 cinf * part cGSPEC / c? / c? / cSETSPEC b0 c/\ cIN b1 f0 cIN b2 f1 cdistance c, b1 b2
++ |- (((~ ((?x. (?y. (((x = a) /\ (y = b)) /\ (x = ((f x) y))))) = (x = ((f a) b)))) ==> F) = ((?x. (?y. (((x = a) /\ (y = b)) /\ (x = ((f x) y))))) = (x = ((f a) b))))
+T c= c==> c~ c= c? / c? / c/\ c/\ c= b0 f0 c= b1 f1 c= f2 * * f3 b0 b1 c= f2 * * f3 f0 f1 cF c= c? / c? / c/\ c/\ c= b0 f0 c= b1 f1 c= f2 * * f3 b0 b1 c= f2 * * f3 f0 f1
+- |- ((~ (_409995 = _409997)) \/ ((~ (_409994 = _409996)) \/ (((f _409994) _409995) = ((f _409996) _409997))))
+T c\/ c~ c= f0 f1 c\/ c~ c= f2 f3 c= * * f4 f2 f0 * * f4 f3 f1
+- |- ((~ (((f a) b) = ((f a) b))) ==> (((f a) b) = ((f a) b)))
+T c==> c~ c= * * f0 f1 f2 * * f0 f1 f2 c= * * f0 f1 f2 * * f0 f1 f2
++ |- ((t \/ F) = t)
+T c= c\/ f0 cF f0
+- (_409995 = _409997) |- ((_409994 = _409996) ==> (((f _409994) _409995) = ((f _409996) _409997)))
+T c==> c= f0 f1 c==> c= f2 f3 c= * * f4 f2 f0 * * f4 f3 f1
++ |- ((\t1. (!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))))) t1)
+T * / ! ! c= c\/ b0 c\/ b1 b2 c\/ c\/ b0 b1 b2 f0
+- |- ((~ (b = b)) ==> (b = b))
+T c==> c~ c= f0 f0 c= f0 f0
++ |- (((!x. (!s. ((FINITE s) ==> ((inf (x INSERT s)) = (((COND (s = EMPTY)) x) ((real_min x) (inf s))))))) ==> ((\x. (!s. ((FINITE s) ==> ((inf (x INSERT s)) = (((COND (s = EMPTY)) x) ((real_min x) (inf s))))))) x)) = ((\x. (!s. ((FINITE s) ==> ((inf (x INSERT s)) = (((COND (s = EMPTY)) x) ((real_min x) (inf s))))))) x))
+T c= c==> ! ! c==> cFINITE b1 c= cinf * * part cINSERT b0 b1 cCOND c= b1 part cEMPTY b0 creal_min b0 cinf b1 * / ! c==> cFINITE b1 c= cinf * * part cINSERT b0 b1 cCOND c= b1 part cEMPTY b0 creal_min b0 cinf b1 f0 * / ! c==> cFINITE b1 c= cinf * * part cINSERT b0 b1 cCOND c= b1 part cEMPTY b0 creal_min b0 cinf b1 f0
+- |- ((((~ (!x. ((?x. (?y. (((x = a) /\ (y = b)) /\ (x = ((f x) y))))) = (x = ((f a) b))))) ==> F) ==> ((~ (!x. ((?x. (?y. (((x = a) /\ (y = b)) /\ (x = ((f x) y))))) = (x = ((f a) b))))) ==> F)) = ((~ (!x. ((?x. (?y. (((x = a) /\ (y = b)) /\ (x = ((f x) y))))) = (x = ((f a) b))))) ==> F))
+T c= c==> c==> c~ ! c= c? / c? / c/\ c/\ c= b1 f0 c= b2 f1 c= b0 * * f2 b1 b2 c= b0 * * f2 f0 f1 cF c==> c~ ! c= c? / c? / c/\ c/\ c= b1 f0 c= b2 f1 c= b0 * * f2 b1 b2 c= b0 * * f2 f0 f1 cF c==> c~ ! c= c? / c? / c/\ c/\ c= b1 f0 c= b2 f1 c= b0 * * f2 b1 b2 c= b0 * * f2 f0 f1 cF
++ |- ((((\x. (?y. (((((x = a) /\ (y = b)) /\ (x = ((f x) y))) /\ (~ (x = ((f a) b)))) \/ ((!x. (!y. (((~ (x = a)) \/ (~ (y = b))) \/ (~ (x = ((f x) y)))))) /\ (x = ((f a) b)))))) x') ==> F) = T)
+T c= c==> * / c? / c\/ c/\ c/\ c/\ c= b0 f0 c= b1 f1 c= f2 * * f3 b0 b1 c~ c= f2 * * f3 f0 f1 c/\ ! ! c\/ c\/ c~ c= b2 f0 c~ c= b2 f1 c~ c= f2 * * f3 b2 b2 c= f2 * * f3 f0 f1 f4 cF cT
++ ((!x. (!y. (((~ (x = a)) \/ (~ (y = b))) \/ (~ (x = ((f x) y)))))) /\ (x = ((f a) b))) |- ((\y. (((~ (_409966 = a)) \/ (~ (y = b))) \/ (~ (x = ((f _409966) y))))) _409967)
+T c==> c/\ ! ! c\/ c\/ c~ c= b0 f0 c~ c= b1 f1 c~ c= f2 * * f3 b0 b1 c= f2 * * f3 f0 f1 * / c\/ c\/ c~ c= f4 f0 c~ c= b0 f1 c~ c= f2 * * f3 f4 b0 f5
+- (_409995 = _409997), (_409994 = _409996) |- ((_409994 = _409996) /\ (((f _409994) _409995) = ((f _409996) _409997)))
+T c==> c= f0 f1 c==> c= f2 f3 c/\ c= f2 f3 c= * * f4 f2 f0 * * f4 f3 f1
++ |- (((?y. (P y)) \/ Q) = (?y. ((P y) \/ Q)))
+T c= c\/ c? / * f0 b0 f1 c? / c\/ * f0 b0 f1
+- |- ((?y'. (((x = a) /\ (y' = b)) /\ (x = ((f x) y)))) = ((?y. ((x = a) /\ (y = b))) /\ (x = ((f x) y))))
+T c= c? / c/\ c/\ c= f0 f1 c= b0 f2 c= f3 * * f4 f0 f5 c/\ c? / c/\ c= f0 f1 c= b0 f2 c= f3 * * f4 f0 f5
++ |- (((FINITE EMPTY) ==> ((inf ((distance (x , y)) INSERT EMPTY)) = (((COND (EMPTY = EMPTY)) (distance (x , y))) ((real_min (distance (x , y))) (inf EMPTY))))) = ((inf ((distance (x , y)) INSERT EMPTY)) = (((COND (EMPTY = EMPTY)) (distance (x , y))) ((real_min (distance (x , y))) (inf EMPTY)))))
+T c= c==> cFINITE part cEMPTY c= cinf * * part cINSERT cdistance c, f0 f1 part cEMPTY cCOND c= part cEMPTY part cEMPTY cdistance c, f0 f1 creal_min cdistance c, f0 f1 cinf part cEMPTY c= cinf * * part cINSERT cdistance c, f0 f1 part cEMPTY cCOND c= part cEMPTY part cEMPTY cdistance c, f0 f1 creal_min cdistance c, f0 f1 cinf part cEMPTY
++ ((((x' = a) /\ (y = b)) /\ (x = ((f x') y))) /\ (~ (x = ((f a) b)))) |- ((x = ((f x') y)) = (x = ((f x') b)))
+T c==> c/\ c/\ c/\ c= f0 f1 c= f2 f3 c= f4 * * f5 f0 f2 c~ c= f4 * * f5 f1 f3 c= c= f4 * * f5 f0 f2 c= f4 * * f5 f0 f3
++ ((!x. (!y. (((~ (x = a)) \/ (~ (y = b))) \/ (~ (x = ((f x) y)))))) /\ (x = ((f a) b))) |- (((!y. (((~ (_409966 = a)) \/ (~ (y = b))) \/ (~ (x = ((f _409966) y))))) ==> ((\y. (((~ (_409966 = a)) \/ (~ (y = b))) \/ (~ (x = ((f _409966) y))))) _409967)) = ((\y. (((~ (_409966 = a)) \/ (~ (y = b))) \/ (~ (x = ((f _409966) y))))) _409967))
+T c==> c/\ ! ! c\/ c\/ c~ c= b0 f0 c~ c= b1 f1 c~ c= f2 * * f3 b0 b1 c= f2 * * f3 f0 f1 c= c==> ! c\/ c\/ c~ c= f4 f0 c~ c= b0 f1 c~ c= f2 * * f3 f4 b0 * / c\/ c\/ c~ c= f4 f0 c~ c= b0 f1 c~ c= f2 * * f3 f4 b0 f5 * / c\/ c\/ c~ c= f4 f0 c~ c= b0 f1 c~ c= f2 * * f3 f4 b0 f5
+- ((((x' = a) /\ (y = b)) /\ (x = ((f x') y))) /\ (~ (x = ((f a) b)))) |- ((x' = a) = (x' = a))
+T c==> c/\ c/\ c/\ c= f0 f1 c= f2 f3 c= f4 * * f5 f0 f2 c~ c= f4 * * f5 f1 f3 c= c= f0 f1 c= f0 f1
+- |- ((?y. (P y)) = ((P T) \/ (P F)))
+T c= c? / * f0 b0 c\/ * f0 cT * f0 cF
++ ((((x' = a) /\ (y = b)) /\ (x = ((f x') y))) /\ (~ (x = ((f a) b)))) |- (x = ((f x') y))
+T c==> c/\ c/\ c/\ c= f0 f1 c= f2 f3 c= f4 * * f5 f0 f2 c~ c= f4 * * f5 f1 f3 c= f4 * * f5 f0 f2
+- ((~ (!x. ((?x. (?y. (((x = a) /\ (y = b)) /\ (x = ((f x) y))))) = (x = ((f a) b))))) ==> F) |- (((~ (!x. ((?x. (?y. (((x = a) /\ (y = b)) /\ (x = ((f x) y))))) = (x = ((f a) b))))) ==> F) /\ ((~ (!x. ((?x. (?y. (((x = a) /\ (y = b)) /\ (x = ((f x) y))))) = (x = ((f a) b))))) ==> F))
+T c==> c==> c~ ! c= c? / c? / c/\ c/\ c= b1 f0 c= b2 f1 c= b0 * * f2 b1 b2 c= b0 * * f2 f0 f1 cF c/\ c==> c~ ! c= c? / c? / c/\ c/\ c= b1 f0 c= b2 f1 c= b0 * * f2 b1 b2 c= b0 * * f2 f0 f1 cF c==> c~ ! c= c? / c? / c/\ c/\ c= b1 f0 c= b2 f1 c= b0 * * f2 b1 b2 c= b0 * * f2 f0 f1 cF
+- |- (((!b. (!a. (!f. ((~ (!x. ((?x. (?y. (((x = a) /\ (y = b)) /\ (x = ((f x) y))))) = (x = ((f a) b))))) ==> F)))) ==> ((\b. (!a. (!f. ((~ (!x. ((?x. (?y. (((x = a) /\ (y = b)) /\ (x = ((f x) y))))) = (x = ((f a) b))))) ==> F)))) b)) = ((\b. (!a. (!f. ((~ (!x. ((?x. (?y. (((x = a) /\ (y = b)) /\ (x = ((f x) y))))) = (x = ((f a) b))))) ==> F)))) b))
+T c= c==> ! ! ! c==> c~ ! c= c? / c? / c/\ c/\ c= b4 b1 c= b5 b0 c= b3 * * b2 b4 b5 c= b3 * * b2 b1 b0 cF * / ! ! c==> c~ ! c= c? / c? / c/\ c/\ c= b4 b1 c= b5 b0 c= b3 * * b2 b4 b5 c= b3 * * b2 b1 b0 cF f0 * / ! ! c==> c~ ! c= c? / c? / c/\ c/\ c= b4 b1 c= b5 b0 c= b3 * * b2 b4 b5 c= b3 * * b2 b1 b0 cF f0
++ |- (((?y. (P y)) /\ Q) = (?y. ((P y) /\ Q)))
+T c= c/\ c? / * f0 b0 f1 c? / c/\ * f0 b0 f1
++ (~ ((?x. (?y. (((x = a) /\ (y = b)) /\ (x = ((f x) y))))) = (x = ((f a) b)))) |- (?x. (?y. (((((x = a) /\ (y = b)) /\ (x = ((f x) y))) /\ (~ (x = ((f a) b)))) \/ ((!x. (!y. (((~ (x = a)) \/ (~ (y = b))) \/ (~ (x = ((f x) y)))))) /\ (x = ((f a) b))))))
+T c==> c~ c= c? / c? / c/\ c/\ c= b0 f0 c= b1 f1 c= f2 * * f3 b0 b1 c= f2 * * f3 f0 f1 c? / c? / c\/ c/\ c/\ c/\ c= b0 f0 c= b1 f1 c= f2 * * f3 b0 b1 c~ c= f2 * * f3 f0 f1 c/\ ! ! c\/ c\/ c~ c= b2 f0 c~ c= b2 f1 c~ c= f2 * * f3 b2 b2 c= f2 * * f3 f0 f1
+- ((!x. (!y. (((~ (x = a)) \/ (~ (y = b))) \/ (~ (x = ((f x) y)))))) /\ (x = ((f a) b))) |- (F = F)
+T c==> c/\ ! ! c\/ c\/ c~ c= b0 f0 c~ c= b1 f1 c~ c= f2 * * f3 b0 b1 c= f2 * * f3 f0 f1 c= cF cF
+- |- ((t \/ t) = t)
+T c= c\/ f0 f0 f0
+- |- (((((~ (!x. ((?x. (?y. (((x = a) /\ (y = b)) /\ (x = ((f x) y))))) = (x = ((f a) b))))) ==> F) ==> ((~ (!x. ((?x. (?y. (((x = a) /\ (y = b)) /\ (x = ((f x) y))))) = (x = ((f a) b))))) ==> F)) ==> (((~ (!x. ((?x. (?y. (((x = a) /\ (y = b)) /\ (x = ((f x) y))))) = (x = ((f a) b))))) ==> F) ==> ((~ (!x. ((?x. (?y. (((x = a) /\ (y = b)) /\ (x = ((f x) y))))) = (x = ((f a) b))))) ==> F))) = (((~ (!x. ((?x. (?y. (((x = a) /\ (y = b)) /\ (x = ((f x) y))))) = (x = ((f a) b))))) ==> F) ==> ((~ (!x. ((?x. (?y. (((x = a) /\ (y = b)) /\ (x = ((f x) y))))) = (x = ((f a) b))))) ==> F)))
+T c= c==> c==> c==> c~ ! c= c? / c? / c/\ c/\ c= b1 f0 c= b2 f1 c= b0 * * f2 b1 b2 c= b0 * * f2 f0 f1 cF c==> c~ ! c= c? / c? / c/\ c/\ c= b1 f0 c= b2 f1 c= b0 * * f2 b1 b2 c= b0 * * f2 f0 f1 cF c==> c==> c~ ! c= c? / c? / c/\ c/\ c= b1 f0 c= b2 f1 c= b0 * * f2 b1 b2 c= b0 * * f2 f0 f1 cF c==> c~ ! c= c? / c? / c/\ c/\ c= b1 f0 c= b2 f1 c= b0 * * f2 b1 b2 c= b0 * * f2 f0 f1 cF c==> c==> c~ ! c= c? / c? / c/\ c/\ c= b1 f0 c= b2 f1 c= b0 * * f2 b1 b2 c= b0 * * f2 f0 f1 cF c==> c~ ! c= c? / c? / c/\ c/\ c= b1 f0 c= b2 f1 c= b0 * * f2 b1 b2 c= b0 * * f2 f0 f1 cF
++ |- ((\t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))) t3)
+T * / c= c\/ f0 c\/ f1 b0 c\/ c\/ f0 f1 b0 f2
++ |- ((FINITE EMPTY) = T)
+T c= cFINITE part cEMPTY cT
+- |- (((~ p) ==> p) = p)
+T c= c==> c~ f0 f0 f0
++ |- (((!s. (!t. ((setdist (s , t)) = (((COND ((s = EMPTY) \/ (t = EMPTY))) (real_of_num (NUMERAL _0))) (inf (GSPEC (\GEN%PVAR%1128. (?x. (?y. (((SETSPEC GEN%PVAR%1128) ((x IN s) /\ (y IN t))) (distance (x , y)))))))))))) ==> ((\s. (!t. ((setdist (s , t)) = (((COND ((s = EMPTY) \/ (t = EMPTY))) (real_of_num (NUMERAL _0))) (inf (GSPEC (\GEN%PVAR%1128. (?x. (?y. (((SETSPEC GEN%PVAR%1128) ((x IN s) /\ (y IN t))) (distance (x , y)))))))))))) s)) = ((\s. (!t. ((setdist (s , t)) = (((COND ((s = EMPTY) \/ (t = EMPTY))) (real_of_num (NUMERAL _0))) (inf (GSPEC (\GEN%PVAR%1128. (?x. (?y. (((SETSPEC GEN%PVAR%1128) ((x IN s) /\ (y IN t))) (distance (x , y)))))))))))) s))
+T c= c==> ! ! c= csetdist c, b0 b1 cCOND c\/ c= b0 part cEMPTY c= b1 part cEMPTY creal_of_num cNUMERAL c_0 cinf * part cGSPEC / c? / c? / cSETSPEC b2 c/\ cIN b3 b0 cIN b4 b1 cdistance c, b3 b4 * / ! c= csetdist c, b0 b1 cCOND c\/ c= b0 part cEMPTY c= b1 part cEMPTY creal_of_num cNUMERAL c_0 cinf * part cGSPEC / c? / c? / cSETSPEC b2 c/\ cIN b3 b0 cIN b4 b1 cdistance c, b3 b4 f0 * / ! c= csetdist c, b0 b1 cCOND c\/ c= b0 part cEMPTY c= b1 part cEMPTY creal_of_num cNUMERAL c_0 cinf * part cGSPEC / c? / c? / cSETSPEC b2 c/\ cIN b3 b0 cIN b4 b1 cdistance c, b3 b4 f0
+- |- ((_409995 = _409997) ==> ((~ (_409994 = _409996)) \/ (((f _409994) _409995) = ((f _409996) _409997))))
+T c==> c= f0 f1 c\/ c~ c= f2 f3 c= * * f4 f2 f0 * * f4 f3 f1
++ |- (T = (FINITE EMPTY))
+T c= cT cFINITE part cEMPTY
+- ((x INSERT s) = EMPTY) |- (EMPTY = (x INSERT s))
+T c==> c= * * part cINSERT f0 f1 part cEMPTY c= part cEMPTY * * part cINSERT f0 f1
+- (EMPTY = (x INSERT s)) |- ((x INSERT s) = EMPTY)
+T c==> c= part cEMPTY * * part cINSERT f0 f1 c= * * part cINSERT f0 f1 part cEMPTY
+- ((((x' = a) /\ (y = b)) /\ (x = ((f x') y))) /\ (~ (x = ((f a) b)))) |- (F = F)
+T c==> c/\ c/\ c/\ c= f0 f1 c= f2 f3 c= f4 * * f5 f0 f2 c~ c= f4 * * f5 f1 f3 c= cF cF
++ |- ((\t. ((setdist (s , t)) = (((COND ((s = EMPTY) \/ (t = EMPTY))) (real_of_num (NUMERAL _0))) (inf (GSPEC (\GEN%PVAR%1128. (?x. (?y. (((SETSPEC GEN%PVAR%1128) ((x IN s) /\ (y IN t))) (distance (x , y))))))))))) t)
+T * / c= csetdist c, f0 b0 cCOND c\/ c= f0 part cEMPTY c= b0 part cEMPTY creal_of_num cNUMERAL c_0 cinf * part cGSPEC / c? / c? / cSETSPEC b1 c/\ cIN b2 f0 cIN b3 b0 cdistance c, b2 b3 f1
+- |- ((t ==> F) = (~ t))
+T c= c==> f0 cF c~ f0
++ |- (p = ((~ p) ==> F))
+T c= f0 c==> c~ f0 cF
+- |- ((?y'. t) = t)
+T c= c? / f0 f0
++ |- (((!s. ((FINITE s) ==> ((inf (x INSERT s)) = (((COND (s = EMPTY)) x) ((real_min x) (inf s)))))) ==> ((\s. ((FINITE s) ==> ((inf (x INSERT s)) = (((COND (s = EMPTY)) x) ((real_min x) (inf s)))))) s)) = ((\s. ((FINITE s) ==> ((inf (x INSERT s)) = (((COND (s = EMPTY)) x) ((real_min x) (inf s)))))) s))
+T c= c==> ! c==> cFINITE b0 c= cinf * * part cINSERT f0 b0 cCOND c= b0 part cEMPTY f0 creal_min f0 cinf b0 * / c==> cFINITE b0 c= cinf * * part cINSERT f0 b0 cCOND c= b0 part cEMPTY f0 creal_min f0 cinf b0 f1 * / c==> cFINITE b0 c= cinf * * part cINSERT f0 b0 cCOND c= b0 part cEMPTY f0 creal_min f0 cinf b0 f1
+- (~ (!x. ((?x. (?y. (((x = a) /\ (y = b)) /\ (x = ((f x) y))))) = (x = ((f a) b))))) |- F
+T c==> c~ ! c= c? / c? / c/\ c/\ c= b1 f0 c= b2 f1 c= b0 * * f2 b1 b2 c= b0 * * f2 f0 f1 cF
+- |- ((!y'. (((~ (x = a)) \/ (~ (y = b))) \/ (~ (x = ((f x) y'))))) = (((~ (x = a)) \/ (~ (y = b))) \/ (!y. (~ (x = ((f x) y))))))
+T c= ! c\/ c\/ c~ c= f0 f1 c~ c= f2 f3 c~ c= f4 * * f5 f0 b0 c\/ c\/ c~ c= f0 f1 c~ c= f2 f3 ! c~ c= f4 * * f5 f0 b0
++ |- ((inf ((distance (x , y)) INSERT EMPTY)) = (((COND (EMPTY = EMPTY)) (distance (x , y))) ((real_min (distance (x , y))) (inf EMPTY))))
+T c= cinf * * part cINSERT cdistance c, f0 f1 part cEMPTY cCOND c= part cEMPTY part cEMPTY cdistance c, f0 f1 creal_min cdistance c, f0 f1 cinf part cEMPTY
++ (~ ((?x. (?y. (((x = a) /\ (y = b)) /\ (x = ((f x) y))))) = (x = ((f a) b)))) |- (((?x. (?y. (((((x = a) /\ (y = b)) /\ (x = ((f x) y))) /\ (~ (x = ((f a) b)))) \/ ((!x. (!y. (((~ (x = a)) \/ (~ (y = b))) \/ (~ (x = ((f x) y)))))) /\ (x = ((f a) b)))))) ==> F) = F)
+T c==> c~ c= c? / c? / c/\ c/\ c= b0 f0 c= b1 f1 c= f2 * * f3 b0 b1 c= f2 * * f3 f0 f1 c= c==> c? / c? / c\/ c/\ c/\ c/\ c= b0 f0 c= b1 f1 c= f2 * * f3 b0 b1 c~ c= f2 * * f3 f0 f1 c/\ ! ! c\/ c\/ c~ c= b2 f0 c~ c= b2 f1 c~ c= f2 * * f3 b2 b2 c= f2 * * f3 f0 f1 cF cF
++ |- ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))
+T c= c\/ f0 c\/ f1 f2 c\/ c\/ f0 f1 f2
++ ((\y. (((((x' = a) /\ (y = b)) /\ (x = ((f x') y))) /\ (~ (x = ((f a) b)))) \/ ((!x. (!y. (((~ (x = a)) \/ (~ (y = b))) \/ (~ (x = ((f x) y)))))) /\ (x = ((f a) b))))) y) |- (((\y. (((((x' = a) /\ (y = b)) /\ (x = ((f x') y))) /\ (~ (x = ((f a) b)))) \/ ((!x. (!y. (((~ (x = a)) \/ (~ (y = b))) \/ (~ (x = ((f x) y)))))) /\ (x = ((f a) b))))) y) /\ F)
+T c==> * / c\/ c/\ c/\ c/\ c= f0 f1 c= b0 f2 c= f3 * * f4 f0 b0 c~ c= f3 * * f4 f1 f2 c/\ ! ! c\/ c\/ c~ c= b1 f1 c~ c= b2 f2 c~ c= f3 * * f4 b1 b2 c= f3 * * f4 f1 f2 f5 c/\ * / c\/ c/\ c/\ c/\ c= f0 f1 c= b0 f2 c= f3 * * f4 f0 b0 c~ c= f3 * * f4 f1 f2 c/\ ! ! c\/ c\/ c~ c= b1 f1 c~ c= b2 f2 c~ c= f3 * * f4 b1 b2 c= f3 * * f4 f1 f2 f5 cF
++ |- ((?x. (?y. (((((x = a) /\ (y = b)) /\ (x = ((f x) y))) /\ (~ (x = ((f a) b)))) \/ ((!x. (!y. (((~ (x = a)) \/ (~ (y = b))) \/ (~ (x = ((f x) y)))))) /\ (x = ((f a) b)))))) ==> F)
+T c==> c? / c? / c\/ c/\ c/\ c/\ c= b0 f0 c= b1 f1 c= f2 * * f3 b0 b1 c~ c= f2 * * f3 f0 f1 c/\ ! ! c\/ c\/ c~ c= b2 f0 c~ c= b2 f1 c~ c= f2 * * f3 b2 b2 c= f2 * * f3 f0 f1 cF
++ ((((x' = a) /\ (y = b)) /\ (x = ((f x') y))) /\ (~ (x = ((f a) b)))) |- (x = ((f a) b))
+T c==> c/\ c/\ c/\ c= f0 f1 c= f2 f3 c= f4 * * f5 f0 f2 c~ c= f4 * * f5 f1 f3 c= f4 * * f5 f1 f3
+- |- (((~ (!x. ((?x. (?y. (((x = a) /\ (y = b)) /\ (x = ((f x) y))))) = (x = ((f a) b))))) ==> F) = (!x. ((?x. (?y. (((x = a) /\ (y = b)) /\ (x = ((f x) y))))) = (x = ((f a) b)))))
+T c= c==> c~ ! c= c? / c? / c/\ c/\ c= b1 f0 c= b2 f1 c= b0 * * f2 b1 b2 c= b0 * * f2 f0 f1 cF ! c= c? / c? / c/\ c/\ c= b1 f0 c= b2 f1 c= b0 * * f2 b1 b2 c= b0 * * f2 f0 f1
++ |- (((?y. (((x = a) /\ (y = b)) /\ (x = ((f x) y)))) /\ (~ (x = ((f a) b)))) = (?y. ((((x = a) /\ (y = b)) /\ (x = ((f x) y))) /\ (~ (x = ((f a) b))))))
+T c= c/\ c? / c/\ c/\ c= f0 f1 c= b0 f2 c= f3 * * f4 f0 b0 c~ c= f3 * * f4 f1 f2 c? / c/\ c/\ c/\ c= f0 f1 c= b0 f2 c= f3 * * f4 f0 b0 c~ c= f3 * * f4 f1 f2
++ |- ((~ ((?x. (?y. (((x = a) /\ (y = b)) /\ (x = ((f x) y))))) = (x = ((f a) b)))) ==> F)
+T c==> c~ c= c? / c? / c/\ c/\ c= b0 f0 c= b1 f1 c= f2 * * f3 b0 b1 c= f2 * * f3 f0 f1 cF
++ |- (!x. (!y. ((inf ((distance (x , y)) INSERT EMPTY)) = (distance (x , y)))))
+T c= cinf * * part cINSERT cdistance c, f0 f1 part cEMPTY cdistance c, f0 f1
+- ((~ (!x. ((?x. (?y. (((x = a) /\ (y = b)) /\ (x = ((f x) y))))) = (x = ((f a) b))))) ==> F) |- ((((~ (!x. ((?x. (?y. (((x = a) /\ (y = b)) /\ (x = ((f x) y))))) = (x = ((f a) b))))) ==> F) ==> ((~ (!x. ((?x. (?y. (((x = a) /\ (y = b)) /\ (x = ((f x) y))))) = (x = ((f a) b))))) ==> F)) ==> ((~ (!x. ((?x. (?y. (((x = a) /\ (y = b)) /\ (x = ((f x) y))))) = (x = ((f a) b))))) ==> F))
+T c==> c==> c~ ! c= c? / c? / c/\ c/\ c= b1 f0 c= b2 f1 c= b0 * * f2 b1 b2 c= b0 * * f2 f0 f1 cF c==> c==> c==> c~ ! c= c? / c? / c/\ c/\ c= b1 f0 c= b2 f1 c= b0 * * f2 b1 b2 c= b0 * * f2 f0 f1 cF c==> c~ ! c= c? / c? / c/\ c/\ c= b1 f0 c= b2 f1 c= b0 * * f2 b1 b2 c= b0 * * f2 f0 f1 cF c==> c~ ! c= c? / c? / c/\ c/\ c= b1 f0 c= b2 f1 c= b0 * * f2 b1 b2 c= b0 * * f2 f0 f1 cF
++ ((!x. (!y. (((~ (x = a)) \/ (~ (y = b))) \/ (~ (x = ((f x) y)))))) /\ (x = ((f a) b))) |- (((!x. (!y. (((~ (x = a)) \/ (~ (y = b))) \/ (~ (x = ((f x) y)))))) ==> ((\x. (!y. (((~ (x = a)) \/ (~ (y = b))) \/ (~ (x = ((f x) y)))))) _409966)) = ((\x. (!y. (((~ (x = a)) \/ (~ (y = b))) \/ (~ (x = ((f x) y)))))) _409966))
+T c==> c/\ ! ! c\/ c\/ c~ c= b0 f0 c~ c= b1 f1 c~ c= f2 * * f3 b0 b1 c= f2 * * f3 f0 f1 c= c==> ! ! c\/ c\/ c~ c= b0 f0 c~ c= b1 f1 c~ c= f2 * * f3 b0 b1 * / ! c\/ c\/ c~ c= b0 f0 c~ c= b1 f1 c~ c= f2 * * f3 b0 b1 f4 * / ! c\/ c\/ c~ c= b0 f0 c~ c= b1 f1 c~ c= f2 * * f3 b0 b1 f4
++ ((!x. (!y. (((~ (x = a)) \/ (~ (y = b))) \/ (~ (x = ((f x) y)))))) /\ (x = ((f a) b))) |- (((_409966 = a) /\ ((_409967 = b) /\ (((f a) b) = ((f _409966) _409967)))) ==> F)
+T c==> c/\ ! ! c\/ c\/ c~ c= b0 f0 c~ c= b1 f1 c~ c= f2 * * f3 b0 b1 c= f2 * * f3 f0 f1 c==> c/\ c= f4 f0 c/\ c= f5 f1 c= * * f3 f0 f1 * * f3 f4 f5 cF
++ |- ((\t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3)))) t2)
+T * / ! c= c\/ f0 c\/ b0 b1 c\/ c\/ f0 b0 b1 f1
+- |- ((!y. ((P y) \/ Q)) = ((!y. (P y)) \/ Q))
+T c= ! c\/ * f0 b0 f1 c\/ ! * f0 b0 f1
++ |- (!x'. (((\x. (?y. (((((x = a) /\ (y = b)) /\ (x = ((f x) y))) /\ (~ (x = ((f a) b)))) \/ ((!x. (!y. (((~ (x = a)) \/ (~ (y = b))) \/ (~ (x = ((f x) y)))))) /\ (x = ((f a) b)))))) x') ==> F))
+T c==> * / c? / c\/ c/\ c/\ c/\ c= b0 f0 c= b1 f1 c= f2 * * f3 b0 b1 c~ c= f2 * * f3 f0 f1 c/\ ! ! c\/ c\/ c~ c= b2 f0 c~ c= b2 f1 c~ c= f2 * * f3 b2 b2 c= f2 * * f3 f0 f1 f4 cF
++ |- (((!s. (~ ((x INSERT s) = EMPTY))) ==> ((\s. (~ ((x INSERT s) = EMPTY))) s)) = ((\s. (~ ((x INSERT s) = EMPTY))) s))
+T c= c==> ! c~ c= * * part cINSERT f0 b0 part cEMPTY * / c~ c= * * part cINSERT f0 b0 part cEMPTY f1 * / c~ c= * * part cINSERT f0 b0 part cEMPTY f1
++ |- ((b = b) /\ (((f a) b) = ((f a) b)))
+T c/\ c= f0 f0 c= * * f1 f2 f0 * * f1 f2 f0
++ |- (((!x. (!y. (((~ (x = a)) \/ (~ (y = b))) \/ (~ (x = ((f x) y)))))) /\ (x = ((f a) b))) ==> F)
+T c==> c/\ ! ! c\/ c\/ c~ c= b0 f0 c~ c= b1 f1 c~ c= f2 * * f3 b0 b1 c= f2 * * f3 f0 f1 cF
++ ((((x' = a) /\ (y = b)) /\ (x = ((f x') y))) /\ (~ (x = ((f a) b)))) |- ((x' = a) /\ (y = b))
+T c==> c/\ c/\ c/\ c= f0 f1 c= f2 f3 c= f4 * * f5 f0 f2 c~ c= f4 * * f5 f1 f3 c/\ c= f0 f1 c= f2 f3
+- (~ (!x. ((?x. (?y. (((x = a) /\ (y = b)) /\ (x = ((f x) y))))) = (x = ((f a) b))))) |- ((~ (!x. ((?x. (?y. (((x = a) /\ (y = b)) /\ (x = ((f x) y))))) = (x = ((f a) b))))) /\ F)
+T c==> c~ ! c= c? / c? / c/\ c/\ c= b1 f0 c= b2 f1 c= b0 * * f2 b1 b2 c= b0 * * f2 f0 f1 c/\ c~ ! c= c? / c? / c/\ c/\ c= b1 f0 c= b2 f1 c= b0 * * f2 b1 b2 c= b0 * * f2 f0 f1 cF
++ ((!x. (!y. (((~ (x = a)) \/ (~ (y = b))) \/ (~ (x = ((f x) y)))))) /\ (x = ((f a) b))) |- (((~ (_409966 = a)) \/ (~ (_409967 = b))) \/ (~ (x = ((f _409966) _409967))))
+T c==> c/\ ! ! c\/ c\/ c~ c= b0 f0 c~ c= b1 f1 c~ c= f2 * * f3 b0 b1 c= f2 * * f3 f0 f1 c\/ c\/ c~ c= f4 f0 c~ c= f5 f1 c~ c= f2 * * f3 f4 f5
++ |- (((?x. (?y. (((x = a) /\ (y = b)) /\ (x = ((f x) y))))) = (x = ((f a) b))) = T)
+T c= c= c? / c? / c/\ c/\ c= b0 f0 c= b1 f1 c= f2 * * f3 b0 b1 c= f2 * * f3 f0 f1 cT
++ |- (((!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3)))) ==> ((\t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3)))) t2)) = ((\t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3)))) t2))
+T c= c==> ! ! c= c\/ f0 c\/ b0 b1 c\/ c\/ f0 b0 b1 * / ! c= c\/ f0 c\/ b0 b1 c\/ c\/ f0 b0 b1 f1 * / ! c= c\/ f0 c\/ b0 b1 c\/ c\/ f0 b0 b1 f1
++ |- ((\s. ((FINITE s) ==> ((inf (x INSERT s)) = (((COND (s = EMPTY)) x) ((real_min x) (inf s)))))) s)
+T * / c==> cFINITE b0 c= cinf * * part cINSERT f0 b0 cCOND c= b0 part cEMPTY f0 creal_min f0 cinf b0 f1
++ |- ((((COND (x = x)) y) z) = y)
+T c= cCOND c= f0 f0 f1 f2 f1
++ |- (((((f a) b) = ((f a) b)) ==> F) = F)
+T c= c==> c= * * f0 f1 f2 * * f0 f1 f2 cF cF
++ ((\x. (?y. (((((x = a) /\ (y = b)) /\ (x = ((f x) y))) /\ (~ (x = ((f a) b)))) \/ ((!x. (!y. (((~ (x = a)) \/ (~ (y = b))) \/ (~ (x = ((f x) y)))))) /\ (x = ((f a) b)))))) x') |- (?y. (((((x' = a) /\ (y = b)) /\ (x = ((f x') y))) /\ (~ (x = ((f a) b)))) \/ ((!x. (!y. (((~ (x = a)) \/ (~ (y = b))) \/ (~ (x = ((f x) y)))))) /\ (x = ((f a) b)))))
+T c==> * / c? / c\/ c/\ c/\ c/\ c= b0 f0 c= b1 f1 c= f2 * * f3 b0 b1 c~ c= f2 * * f3 f0 f1 c/\ ! ! c\/ c\/ c~ c= b2 f0 c~ c= b2 f1 c~ c= f2 * * f3 b2 b2 c= f2 * * f3 f0 f1 f4 c? / c\/ c/\ c/\ c/\ c= f4 f0 c= b0 f1 c= f2 * * f3 f4 b0 c~ c= f2 * * f3 f0 f1 c/\ ! ! c\/ c\/ c~ c= b1 f0 c~ c= b2 f1 c~ c= f2 * * f3 b1 b2 c= f2 * * f3 f0 f1
++ |- (((!t. ((setdist (s , t)) = (((COND ((s = EMPTY) \/ (t = EMPTY))) (real_of_num (NUMERAL _0))) (inf (GSPEC (\GEN%PVAR%1128. (?x. (?y. (((SETSPEC GEN%PVAR%1128) ((x IN s) /\ (y IN t))) (distance (x , y))))))))))) ==> ((\t. ((setdist (s , t)) = (((COND ((s = EMPTY) \/ (t = EMPTY))) (real_of_num (NUMERAL _0))) (inf (GSPEC (\GEN%PVAR%1128. (?x. (?y. (((SETSPEC GEN%PVAR%1128) ((x IN s) /\ (y IN t))) (distance (x , y))))))))))) t)) = ((\t. ((setdist (s , t)) = (((COND ((s = EMPTY) \/ (t = EMPTY))) (real_of_num (NUMERAL _0))) (inf (GSPEC (\GEN%PVAR%1128. (?x. (?y. (((SETSPEC GEN%PVAR%1128) ((x IN s) /\ (y IN t))) (distance (x , y))))))))))) t))
+T c= c==> ! c= csetdist c, f0 b0 cCOND c\/ c= f0 part cEMPTY c= b0 part cEMPTY creal_of_num cNUMERAL c_0 cinf * part cGSPEC / c? / c? / cSETSPEC b1 c/\ cIN b2 f0 cIN b3 b0 cdistance c, b2 b3 * / c= csetdist c, f0 b0 cCOND c\/ c= f0 part cEMPTY c= b0 part cEMPTY creal_of_num cNUMERAL c_0 cinf * part cGSPEC / c? / c? / cSETSPEC b1 c/\ cIN b2 f0 cIN b3 b0 cdistance c, b2 b3 f1 * / c= csetdist c, f0 b0 cCOND c\/ c= f0 part cEMPTY c= b0 part cEMPTY creal_of_num cNUMERAL c_0 cinf * part cGSPEC / c? / c? / cSETSPEC b1 c/\ cIN b2 f0 cIN b3 b0 cdistance c, b2 b3 f1
++ ((!x. (!y. (((~ (x = a)) \/ (~ (y = b))) \/ (~ (x = ((f x) y)))))) /\ (x = ((f a) b))) |- (((~ (_409966 = a)) \/ ((~ (_409967 = b)) \/ (~ (x = ((f _409966) _409967))))) = ((~ (_409966 = a)) \/ ((~ (_409967 = b)) \/ (~ (((f a) b) = ((f _409966) _409967))))))
+T c==> c/\ ! ! c\/ c\/ c~ c= b0 f0 c~ c= b1 f1 c~ c= f2 * * f3 b0 b1 c= f2 * * f3 f0 f1 c= c\/ c~ c= f4 f0 c\/ c~ c= f5 f1 c~ c= f2 * * f3 f4 f5 c\/ c~ c= f4 f0 c\/ c~ c= f5 f1 c~ c= * * f3 f0 f1 * * f3 f4 f5
++ ((!x. (!y. (((~ (x = a)) \/ (~ (y = b))) \/ (~ (x = ((f x) y)))))) /\ (x = ((f a) b))) |- ((\x. (!y. (((~ (x = a)) \/ (~ (y = b))) \/ (~ (x = ((f x) y)))))) _409966)
+T c==> c/\ ! ! c\/ c\/ c~ c= b0 f0 c~ c= b1 f1 c~ c= f2 * * f3 b0 b1 c= f2 * * f3 f0 f1 * / ! c\/ c\/ c~ c= b0 f0 c~ c= b1 f1 c~ c= f2 * * f3 b0 b1 f4
+- |- ((!b. (!a. (!f. (!x. ((?x. (?y. (((x = a) /\ (y = b)) /\ (x = ((f x) y))))) = (x = ((f a) b))))))) = (!b. (!a. (!f. ((~ (!x. ((?x. (?y. (((x = a) /\ (y = b)) /\ (x = ((f x) y))))) = (x = ((f a) b))))) ==> F)))))
+T c= ! ! ! ! c= c? / c? / c/\ c/\ c= b4 b1 c= b5 b0 c= b3 * * b2 b4 b5 c= b3 * * b2 b1 b0 ! ! ! c==> c~ ! c= c? / c? / c/\ c/\ c= b4 b1 c= b5 b0 c= b3 * * b2 b4 b5 c= b3 * * b2 b1 b0 cF
++ (~ ((?x. (?y. (((x = a) /\ (y = b)) /\ (x = ((f x) y))))) = (x = ((f a) b)))) |- ((~ ((?x. (?y. (((x = a) /\ (y = b)) /\ (x = ((f x) y))))) = (x = ((f a) b)))) /\ F)
+T c==> c~ c= c? / c? / c/\ c/\ c= b0 f0 c= b1 f1 c= f2 * * f3 b0 b1 c= f2 * * f3 f0 f1 c/\ c~ c= c? / c? / c/\ c/\ c= b0 f0 c= b1 f1 c= f2 * * f3 b0 b1 c= f2 * * f3 f0 f1 cF
++ |- ((x = x) = T)
+T c= c= f0 f0 cT
+- |- ((!a. (!f. (!x. ((?x. (?y. (((x = a) /\ (y = b)) /\ (x = ((f x) y))))) = (x = ((f a) b)))))) = T)
+T c= ! ! ! c= c? / c? / c/\ c/\ c= b3 b0 c= b4 f0 c= b2 * * b1 b3 b4 c= b2 * * b1 b0 f0 cT
++ |- (!x. ((x IN (GSPEC (\GEN%PVAR%1131. (?x. (?y. (((SETSPEC GEN%PVAR%1131) ((x IN (a INSERT EMPTY)) /\ (y IN (b INSERT EMPTY)))) ((f x) y))))))) = (x IN (((f a) b) INSERT EMPTY))))
+T c= cIN f0 * part cGSPEC / c? / c? / cSETSPEC b0 c/\ cIN b1 * * part cINSERT f1 part cEMPTY cIN b2 * * part cINSERT f2 part cEMPTY * * f3 b1 b2 cIN f0 * * part cINSERT * * f3 f1 f2 part cEMPTY
++ |- ((((a = a) /\ ((b = b) /\ (((f a) b) = ((f a) b)))) ==> F) = F)
+T c= c==> c/\ c= f0 f0 c/\ c= f1 f1 c= * * f2 f0 f1 * * f2 f0 f1 cF cF
+- |- ((a ==> b) = ((~ a) \/ b))
+T c= c==> f0 f1 c\/ c~ f0 f1
++ ((((x' = a) /\ (y = b)) /\ (x = ((f x') y))) /\ (~ (x = ((f a) b)))) |- ((x = ((f x') b)) = (x = ((f a) b)))
+T c==> c/\ c/\ c/\ c= f0 f1 c= f2 f3 c= f4 * * f5 f0 f2 c~ c= f4 * * f5 f1 f3 c= c= f4 * * f5 f0 f3 c= f4 * * f5 f1 f3
++ |- (((?x. (?y. (((x = a) /\ (y = b)) /\ (x = ((f x) y))))) /\ (~ (x = ((f a) b)))) = (?x. ((?y. (((x = a) /\ (y = b)) /\ (x = ((f x) y)))) /\ (~ (x = ((f a) b))))))
+T c= c/\ c? / c? / c/\ c/\ c= b0 f0 c= b1 f1 c= f2 * * f3 b0 b1 c~ c= f2 * * f3 f0 f1 c? / c/\ c? / c/\ c/\ c= b0 f0 c= b1 f1 c= f2 * * f3 b0 b1 c~ c= f2 * * f3 f0 f1
++ |- ((GSPEC (\GEN%PVAR%1128. (?x'. (?y'. (((SETSPEC GEN%PVAR%1128) ((x' IN (a INSERT EMPTY)) /\ (y' IN (b INSERT EMPTY)))) ((f x') y')))))) = (((f a) b) INSERT EMPTY))
+T c= * part cGSPEC / c? / c? / cSETSPEC b0 c/\ cIN b1 * * part cINSERT f0 part cEMPTY cIN b2 * * part cINSERT f1 part cEMPTY * * f2 b1 b2 * * part cINSERT * * f2 f0 f1 part cEMPTY
++ |- (((~ a) \/ (~ b)) = (~ (a /\ b)))
+T c= c\/ c~ f0 c~ f1 c~ c/\ f0 f1
++ ((\y. (((((x' = a) /\ (y = b)) /\ (x = ((f x') y))) /\ (~ (x = ((f a) b)))) \/ ((!x. (!y. (((~ (x = a)) \/ (~ (y = b))) \/ (~ (x = ((f x) y)))))) /\ (x = ((f a) b))))) y) |- (((((x' = a) /\ (y = b)) /\ (x = ((f x') y))) /\ (~ (x = ((f a) b)))) \/ ((!x. (!y. (((~ (x = a)) \/ (~ (y = b))) \/ (~ (x = ((f x) y)))))) /\ (x = ((f a) b))))
+T c==> * / c\/ c/\ c/\ c/\ c= f0 f1 c= b0 f2 c= f3 * * f4 f0 b0 c~ c= f3 * * f4 f1 f2 c/\ ! ! c\/ c\/ c~ c= b1 f1 c~ c= b2 f2 c~ c= f3 * * f4 b1 b2 c= f3 * * f4 f1 f2 f5 c\/ c/\ c/\ c/\ c= f0 f1 c= f5 f2 c= f3 * * f4 f0 f5 c~ c= f3 * * f4 f1 f2 c/\ ! ! c\/ c\/ c~ c= b0 f1 c~ c= b1 f2 c~ c= f3 * * f4 b0 b1 c= f3 * * f4 f1 f2
++ |- (!x. (!y. ((inf (GSPEC (\GEN%PVAR%1128. (?x'. (?y'. (((SETSPEC GEN%PVAR%1128) ((x' IN (x INSERT EMPTY)) /\ (y' IN (y INSERT EMPTY)))) (distance (x' , y')))))))) = (distance (x , y)))))
+T c= cinf * part cGSPEC / c? / c? / cSETSPEC b0 c/\ cIN b1 * * part cINSERT f0 part cEMPTY cIN b2 * * part cINSERT f1 part cEMPTY cdistance c, b1 b2 cdistance c, f0 f1
+- |- ((EMPTY = (x INSERT s)) = F)
+T c= c= part cEMPTY * * part cINSERT f0 f1 cF
+- |- (((~ (EMPTY = (x INSERT s))) ==> ((EMPTY = (x INSERT s)) = F)) = ((EMPTY = (x INSERT s)) = F))
+T c= c==> c~ c= part cEMPTY * * part cINSERT f0 f1 c= c= part cEMPTY * * part cINSERT f0 f1 cF c= c= part cEMPTY * * part cINSERT f0 f1 cF
++ |- (((((x' = a) /\ (y = b)) /\ (x = ((f x') y))) /\ (~ (x = ((f a) b)))) ==> F)
+T c==> c/\ c/\ c/\ c= f0 f1 c= f2 f3 c= f4 * * f5 f0 f2 c~ c= f4 * * f5 f1 f3 cF
+- |- (((!f. ((~ (!x. ((?x. (?y. (((x = a) /\ (y = b)) /\ (x = ((f x) y))))) = (x = ((f a) b))))) ==> F)) ==> ((\f. ((~ (!x. ((?x. (?y. (((x = a) /\ (y = b)) /\ (x = ((f x) y))))) = (x = ((f a) b))))) ==> F)) f)) = ((\f. ((~ (!x. ((?x. (?y. (((x = a) /\ (y = b)) /\ (x = ((f x) y))))) = (x = ((f a) b))))) ==> F)) f))
+T c= c==> ! c==> c~ ! c= c? / c? / c/\ c/\ c= b2 f0 c= b3 f1 c= b1 * * b0 b2 b3 c= b1 * * b0 f0 f1 cF * / c==> c~ ! c= c? / c? / c/\ c/\ c= b2 f0 c= b3 f1 c= b1 * * b0 b2 b3 c= b1 * * b0 f0 f1 cF f2 * / c==> c~ ! c= c? / c? / c/\ c/\ c= b2 f0 c= b3 f1 c= b1 * * b0 b2 b3 c= b1 * * b0 f0 f1 cF f2
++ ((((x' = a) /\ (y = b)) /\ (x = ((f x') y))) /\ (~ (x = ((f a) b)))) |- (x = ((f x') b))
+T c==> c/\ c/\ c/\ c= f0 f1 c= f2 f3 c= f4 * * f5 f0 f2 c~ c= f4 * * f5 f1 f3 c= f4 * * f5 f0 f3
++ |- ((\x. (!s. (~ ((x INSERT s) = EMPTY)))) x)
+T * / ! c~ c= * * part cINSERT b0 b1 part cEMPTY f0
++ |- (((~ ((x INSERT s) = EMPTY)) ==> (((x INSERT s) = EMPTY) = F)) = (((x INSERT s) = EMPTY) = F))
+T c= c==> c~ c= * * part cINSERT f0 f1 part cEMPTY c= c= * * part cINSERT f0 f1 part cEMPTY cF c= c= * * part cINSERT f0 f1 part cEMPTY cF
++ |- (!y. (((\y. (((((x' = a) /\ (y = b)) /\ (x = ((f x') y))) /\ (~ (x = ((f a) b)))) \/ ((!x. (!y. (((~ (x = a)) \/ (~ (y = b))) \/ (~ (x = ((f x) y)))))) /\ (x = ((f a) b))))) y) ==> F))
+T c==> * / c\/ c/\ c/\ c/\ c= f0 f1 c= b0 f2 c= f3 * * f4 f0 b0 c~ c= f3 * * f4 f1 f2 c/\ ! ! c\/ c\/ c~ c= b1 f1 c~ c= b2 f2 c~ c= f3 * * f4 b1 b2 c= f3 * * f4 f1 f2 f5 cF
++ ((\x. (?y. (((((x = a) /\ (y = b)) /\ (x = ((f x) y))) /\ (~ (x = ((f a) b)))) \/ ((!x. (!y. (((~ (x = a)) \/ (~ (y = b))) \/ (~ (x = ((f x) y)))))) /\ (x = ((f a) b)))))) x') |- (((\x. (?y. (((((x = a) /\ (y = b)) /\ (x = ((f x) y))) /\ (~ (x = ((f a) b)))) \/ ((!x. (!y. (((~ (x = a)) \/ (~ (y = b))) \/ (~ (x = ((f x) y)))))) /\ (x = ((f a) b)))))) x') /\ F)
+T c==> * / c? / c\/ c/\ c/\ c/\ c= b0 f0 c= b1 f1 c= f2 * * f3 b0 b1 c~ c= f2 * * f3 f0 f1 c/\ ! ! c\/ c\/ c~ c= b2 f0 c~ c= b2 f1 c~ c= f2 * * f3 b2 b2 c= f2 * * f3 f0 f1 f4 c/\ * / c? / c\/ c/\ c/\ c/\ c= b0 f0 c= b1 f1 c= f2 * * f3 b0 b1 c~ c= f2 * * f3 f0 f1 c/\ ! ! c\/ c\/ c~ c= b2 f0 c~ c= b2 f1 c~ c= f2 * * f3 b2 b2 c= f2 * * f3 f0 f1 f4 cF
++ |- (((t1 \/ t2) \/ t3) = (t1 \/ (t2 \/ t3)))
+T c= c\/ c\/ f0 f1 f2 c\/ f0 c\/ f1 f2
+- |- ((!y. (P \/ (Q y))) = (P \/ (!y. (Q y))))
+T c= ! c\/ f0 * f1 b0 c\/ f0 ! * f1 b0
+- ((((x' = a) /\ (y = b)) /\ (x = ((f x') y))) /\ (~ (x = ((f a) b)))) |- ((~ (x = ((f a) b))) = (~ (x = ((f a) b))))
+T c==> c/\ c/\ c/\ c= f0 f1 c= f2 f3 c= f4 * * f5 f0 f2 c~ c= f4 * * f5 f1 f3 c= c~ c= f4 * * f5 f1 f3 c~ c= f4 * * f5 f1 f3
+- (((~ (!x. ((?x. (?y. (((x = a) /\ (y = b)) /\ (x = ((f x) y))))) = (x = ((f a) b))))) ==> F) ==> ((~ (!x. ((?x. (?y. (((x = a) /\ (y = b)) /\ (x = ((f x) y))))) = (x = ((f a) b))))) ==> F)) |- ((((~ (!x. ((?x. (?y. (((x = a) /\ (y = b)) /\ (x = ((f x) y))))) = (x = ((f a) b))))) ==> F) ==> ((~ (!x. ((?x. (?y. (((x = a) /\ (y = b)) /\ (x = ((f x) y))))) = (x = ((f a) b))))) ==> F)) /\ (((~ (!x. ((?x. (?y. (((x = a) /\ (y = b)) /\ (x = ((f x) y))))) = (x = ((f a) b))))) ==> F) ==> ((~ (!x. ((?x. (?y. (((x = a) /\ (y = b)) /\ (x = ((f x) y))))) = (x = ((f a) b))))) ==> F)))
+T c==> c==> c==> c~ ! c= c? / c? / c/\ c/\ c= b1 f0 c= b2 f1 c= b0 * * f2 b1 b2 c= b0 * * f2 f0 f1 cF c==> c~ ! c= c? / c? / c/\ c/\ c= b1 f0 c= b2 f1 c= b0 * * f2 b1 b2 c= b0 * * f2 f0 f1 cF c/\ c==> c==> c~ ! c= c? / c? / c/\ c/\ c= b1 f0 c= b2 f1 c= b0 * * f2 b1 b2 c= b0 * * f2 f0 f1 cF c==> c~ ! c= c? / c? / c/\ c/\ c= b1 f0 c= b2 f1 c= b0 * * f2 b1 b2 c= b0 * * f2 f0 f1 cF c==> c==> c~ ! c= c? / c? / c/\ c/\ c= b1 f0 c= b2 f1 c= b0 * * f2 b1 b2 c= b0 * * f2 f0 f1 cF c==> c~ ! c= c? / c? / c/\ c/\ c= b1 f0 c= b2 f1 c= b0 * * f2 b1 b2 c= b0 * * f2 f0 f1 cF
+- |- ((t /\ t) = t)
+T c= c/\ f0 f0 f0
+- (_409995 = _409997) |- ((_409995 = _409997) /\ ((~ (_409994 = _409996)) \/ (((f _409994) _409995) = ((f _409996) _409997))))
+T c==> c= f0 f1 c/\ c= f0 f1 c\/ c~ c= f2 f3 c= * * f4 f2 f0 * * f4 f3 f1
+- |- (((~ (!x. ((?x. (?y. (((x = a) /\ (y = b)) /\ (x = ((f x) y))))) = (x = ((f a) b))))) ==> F) ==> ((~ (!x. ((?x. (?y. (((x = a) /\ (y = b)) /\ (x = ((f x) y))))) = (x = ((f a) b))))) ==> F))
+T c==> c==> c~ ! c= c? / c? / c/\ c/\ c= b1 f0 c= b2 f1 c= b0 * * f2 b1 b2 c= b0 * * f2 f0 f1 cF c==> c~ ! c= c? / c? / c/\ c/\ c= b1 f0 c= b2 f1 c= b0 * * f2 b1 b2 c= b0 * * f2 f0 f1 cF
+- (FINITE s) |- ((FINITE s) /\ ((inf (x INSERT s)) = (((COND (s = EMPTY)) x) ((real_min x) (inf s)))))
+T c==> cFINITE f0 c/\ cFINITE f0 c= cinf * * part cINSERT f1 f0 cCOND c= f0 part cEMPTY f1 creal_min f1 cinf f0
+- ((((x' = a) /\ (y = b)) /\ (x = ((f x') y))) /\ (~ (x = ((f a) b)))) |- ((~ F) ==> F)
+T c==> c/\ c/\ c/\ c= f0 f1 c= f2 f3 c= f4 * * f5 f0 f2 c~ c= f4 * * f5 f1 f3 c==> c~ cF cF
+- |- ((\f. ((~ (!x. ((?x. (?y. (((x = a) /\ (y = b)) /\ (x = ((f x) y))))) = (x = ((f a) b))))) ==> F)) f)
+T * / c==> c~ ! c= c? / c? / c/\ c/\ c= b2 f0 c= b3 f1 c= b1 * * b0 b2 b3 c= b1 * * b0 f0 f1 cF f2
+- |- ((((~ (!x. ((?x. (?y. (((x = a) /\ (y = b)) /\ (x = ((f x) y))))) = (x = ((f a) b))))) ==> F) ==> ((~ (!x. ((?x. (?y. (((x = a) /\ (y = b)) /\ (x = ((f x) y))))) = (x = ((f a) b))))) ==> F)) ==> (((~ (!x. ((?x. (?y. (((x = a) /\ (y = b)) /\ (x = ((f x) y))))) = (x = ((f a) b))))) ==> F) ==> ((~ (!x. ((?x. (?y. (((x = a) /\ (y = b)) /\ (x = ((f x) y))))) = (x = ((f a) b))))) ==> F)))
+T c==> c==> c==> c~ ! c= c? / c? / c/\ c/\ c= b1 f0 c= b2 f1 c= b0 * * f2 b1 b2 c= b0 * * f2 f0 f1 cF c==> c~ ! c= c? / c? / c/\ c/\ c= b1 f0 c= b2 f1 c= b0 * * f2 b1 b2 c= b0 * * f2 f0 f1 cF c==> c==> c~ ! c= c? / c? / c/\ c/\ c= b1 f0 c= b2 f1 c= b0 * * f2 b1 b2 c= b0 * * f2 f0 f1 cF c==> c~ ! c= c? / c? / c/\ c/\ c= b1 f0 c= b2 f1 c= b0 * * f2 b1 b2 c= b0 * * f2 f0 f1 cF
+- |- ((\a. (!f. ((~ (!x. ((?x. (?y. (((x = a) /\ (y = b)) /\ (x = ((f x) y))))) = (x = ((f a) b))))) ==> F))) a)
+T * / ! c==> c~ ! c= c? / c? / c/\ c/\ c= b3 b0 c= b4 f0 c= b2 * * b1 b3 b4 c= b2 * * b1 b0 f0 cF f1
+- |- (((!a. (!f. ((~ (!x. ((?x. (?y. (((x = a) /\ (y = b)) /\ (x = ((f x) y))))) = (x = ((f a) b))))) ==> F))) ==> ((\a. (!f. ((~ (!x. ((?x. (?y. (((x = a) /\ (y = b)) /\ (x = ((f x) y))))) = (x = ((f a) b))))) ==> F))) a)) = ((\a. (!f. ((~ (!x. ((?x. (?y. (((x = a) /\ (y = b)) /\ (x = ((f x) y))))) = (x = ((f a) b))))) ==> F))) a))
+T c= c==> ! ! c==> c~ ! c= c? / c? / c/\ c/\ c= b3 b0 c= b4 f0 c= b2 * * b1 b3 b4 c= b2 * * b1 b0 f0 cF * / ! c==> c~ ! c= c? / c? / c/\ c/\ c= b3 b0 c= b4 f0 c= b2 * * b1 b3 b4 c= b2 * * b1 b0 f0 cF f1 * / ! c==> c~ ! c= c? / c? / c/\ c/\ c= b3 b0 c= b4 f0 c= b2 * * b1 b3 b4 c= b2 * * b1 b0 f0 cF f1
+- |- ((!x. (P x)) = ((P T) /\ (P F)))
+T c= ! * f0 b0 c/\ * f0 cT * f0 cF
+- (~ F), ((((x' = a) /\ (y = b)) /\ (x = ((f x') y))) /\ (~ (x = ((f a) b)))) |- ((~ F) /\ F)
+T c==> c~ cF c==> c/\ c/\ c/\ c= f0 f1 c= f2 f3 c= f4 * * f5 f0 f2 c~ c= f4 * * f5 f1 f3 c/\ c~ cF cF
+- |- ((~ (~ t)) = t)
+T c= c~ c~ f0 f0
+- ((!x. (!y. (((~ (x = a)) \/ (~ (y = b))) \/ (~ (x = ((f x) y)))))) /\ (x = ((f a) b))) |- ((~ F) ==> F)
+T c==> c/\ ! ! c\/ c\/ c~ c= b0 f0 c~ c= b1 f1 c~ c= f2 * * f3 b0 b1 c= f2 * * f3 f0 f1 c==> c~ cF cF
+- |- ((?y. (P /\ (Q y))) = (P /\ (?y. (Q y))))
+T c= c? / c/\ f0 * f1 b0 c/\ f0 c? / * f1 b0
+- (~ F), ((!x. (!y. (((~ (x = a)) \/ (~ (y = b))) \/ (~ (x = ((f x) y)))))) /\ (x = ((f a) b))) |- ((~ F) /\ F)
+T c==> c~ cF c==> c/\ ! ! c\/ c\/ c~ c= b0 f0 c~ c= b1 f1 c~ c= f2 * * f3 b0 b1 c= f2 * * f3 f0 f1 c/\ c~ cF cF
+- |- (((\t. (f t)) y) = (f y))
+T c= * / * f0 b0 f1 * f0 f1
+- ((~ (!x. ((?x. (?y. (((x = a) /\ (y = b)) /\ (x = ((f x) y))))) = (x = ((f a) b))))) ==> F), (((~ (!x. ((?x. (?y. (((x = a) /\ (y = b)) /\ (x = ((f x) y))))) = (x = ((f a) b))))) ==> F) ==> ((~ (!x. ((?x. (?y. (((x = a) /\ (y = b)) /\ (x = ((f x) y))))) = (x = ((f a) b))))) ==> F)) |- (((~ (!x. ((?x. (?y. (((x = a) /\ (y = b)) /\ (x = ((f x) y))))) = (x = ((f a) b))))) ==> F) /\ ((~ (!x. ((?x. (?y. (((x = a) /\ (y = b)) /\ (x = ((f x) y))))) = (x = ((f a) b))))) ==> F))
+T c==> c==> c~ ! c= c? / c? / c/\ c/\ c= b1 f0 c= b2 f1 c= b0 * * f2 b1 b2 c= b0 * * f2 f0 f1 cF c==> c==> c==> c~ ! c= c? / c? / c/\ c/\ c= b1 f0 c= b2 f1 c= b0 * * f2 b1 b2 c= b0 * * f2 f0 f1 cF c==> c~ ! c= c? / c? / c/\ c/\ c= b1 f0 c= b2 f1 c= b0 * * f2 b1 b2 c= b0 * * f2 f0 f1 cF c/\ c==> c~ ! c= c? / c? / c/\ c/\ c= b1 f0 c= b2 f1 c= b0 * * f2 b1 b2 c= b0 * * f2 f0 f1 cF c==> c~ ! c= c? / c? / c/\ c/\ c= b1 f0 c= b2 f1 c= b0 * * f2 b1 b2 c= b0 * * f2 f0 f1 cF
+- |- ((!f. (!x. ((?x. (?y. (((x = a) /\ (y = b)) /\ (x = ((f x) y))))) = (x = ((f a) b))))) = T)
+T c= ! ! c= c? / c? / c/\ c/\ c= b2 f0 c= b3 f1 c= b1 * * b0 b2 b3 c= b1 * * b0 f0 f1 cT
+- |- ((!x. ((?x. (?y. (((x = a) /\ (y = b)) /\ (x = ((f x) y))))) = (x = ((f a) b)))) = T)
+T c= ! c= c? / c? / c/\ c/\ c= b1 f0 c= b2 f1 c= b0 * * f2 b1 b2 c= b0 * * f2 f0 f1 cT
+- (~ (((f a) b) = ((f a) b))) |- ((~ (((f a) b) = ((f a) b))) /\ (((f a) b) = ((f a) b)))
+T c==> c~ c= * * f0 f1 f2 * * f0 f1 f2 c/\ c~ c= * * f0 f1 f2 * * f0 f1 f2 c= * * f0 f1 f2 * * f0 f1 f2
+- (~ (b = b)) |- ((~ (b = b)) /\ (b = b))
+T c==> c~ c= f0 f0 c/\ c~ c= f0 f0 c= f0 f0
+- (?y. (((((x' = a) /\ (y = b)) /\ (x = ((f x') y))) /\ (~ (x = ((f a) b)))) \/ ((!x. (!y. (((~ (x = a)) \/ (~ (y = b))) \/ (~ (x = ((f x) y)))))) /\ (x = ((f a) b))))) |- ((?y. (((((x' = a) /\ (y = b)) /\ (x = ((f x') y))) /\ (~ (x = ((f a) b)))) \/ ((!x. (!y. (((~ (x = a)) \/ (~ (y = b))) \/ (~ (x = ((f x) y)))))) /\ (x = ((f a) b))))) /\ F)
+T c==> c? / c\/ c/\ c/\ c/\ c= f0 f1 c= b0 f2 c= f3 * * f4 f0 b0 c~ c= f3 * * f4 f1 f2 c/\ ! ! c\/ c\/ c~ c= b1 f1 c~ c= b2 f2 c~ c= f3 * * f4 b1 b2 c= f3 * * f4 f1 f2 c/\ c? / c\/ c/\ c/\ c/\ c= f0 f1 c= b0 f2 c= f3 * * f4 f0 b0 c~ c= f3 * * f4 f1 f2 c/\ ! ! c\/ c\/ c~ c= b1 f1 c~ c= b2 f2 c~ c= f3 * * f4 b1 b2 c= f3 * * f4 f1 f2 cF
+- |- (~ (EMPTY = (x INSERT s)))
+T c~ c= part cEMPTY * * part cINSERT f0 f1
+- |- ((?y'. (((x = a) /\ (y = b)) /\ (x = ((f x) y')))) = (((x = a) /\ (y = b)) /\ (?y. (x = ((f x) y)))))
+T c= c? / c/\ c/\ c= f0 f1 c= f2 f3 c= f4 * * f5 f0 b0 c/\ c/\ c= f0 f1 c= f2 f3 c? / c= f4 * * f5 f0 b0
+- |- ((\b. (!a. (!f. ((~ (!x. ((?x. (?y. (((x = a) /\ (y = b)) /\ (x = ((f x) y))))) = (x = ((f a) b))))) ==> F)))) b)
+T * / ! ! c==> c~ ! c= c? / c? / c/\ c/\ c= b4 b1 c= b5 b0 c= b3 * * b2 b4 b5 c= b3 * * b2 b1 b0 cF f0
+- ((~ (!x. ((?x. (?y. (((x = a) /\ (y = b)) /\ (x = ((f x) y))))) = (x = ((f a) b))))) ==> F), (((~ (!x. ((?x. (?y. (((x = a) /\ (y = b)) /\ (x = ((f x) y))))) = (x = ((f a) b))))) ==> F) ==> ((~ (!x. ((?x. (?y. (((x = a) /\ (y = b)) /\ (x = ((f x) y))))) = (x = ((f a) b))))) ==> F)) |- ((((~ (!x. ((?x. (?y. (((x = a) /\ (y = b)) /\ (x = ((f x) y))))) = (x = ((f a) b))))) ==> F) ==> ((~ (!x. ((?x. (?y. (((x = a) /\ (y = b)) /\ (x = ((f x) y))))) = (x = ((f a) b))))) ==> F)) /\ ((~ (!x. ((?x. (?y. (((x = a) /\ (y = b)) /\ (x = ((f x) y))))) = (x = ((f a) b))))) ==> F))
+T c==> c==> c~ ! c= c? / c? / c/\ c/\ c= b1 f0 c= b2 f1 c= b0 * * f2 b1 b2 c= b0 * * f2 f0 f1 cF c==> c==> c==> c~ ! c= c? / c? / c/\ c/\ c= b1 f0 c= b2 f1 c= b0 * * f2 b1 b2 c= b0 * * f2 f0 f1 cF c==> c~ ! c= c? / c? / c/\ c/\ c= b1 f0 c= b2 f1 c= b0 * * f2 b1 b2 c= b0 * * f2 f0 f1 cF c/\ c==> c==> c~ ! c= c? / c? / c/\ c/\ c= b1 f0 c= b2 f1 c= b0 * * f2 b1 b2 c= b0 * * f2 f0 f1 cF c==> c~ ! c= c? / c? / c/\ c/\ c= b1 f0 c= b2 f1 c= b0 * * f2 b1 b2 c= b0 * * f2 f0 f1 cF c==> c~ ! c= c? / c? / c/\ c/\ c= b1 f0 c= b2 f1 c= b0 * * f2 b1 b2 c= b0 * * f2 f0 f1 cF
+- |- ((?y. ((P y) /\ Q)) = ((?y. (P y)) /\ Q))
+T c= c? / c/\ * f0 b0 f1 c/\ c? / * f0 b0 f1
+- |- ((!y'. (((~ (x = a)) \/ (~ (y' = b))) \/ (~ (x = ((f x) y))))) = ((!y. ((~ (x = a)) \/ (~ (y = b)))) \/ (~ (x = ((f x) y)))))
+T c= ! c\/ c\/ c~ c= f0 f1 c~ c= b0 f2 c~ c= f3 * * f4 f0 f5 c\/ ! c\/ c~ c= f0 f1 c~ c= b0 f2 c~ c= f3 * * f4 f0 f5

@@ -1,0 +1,33 @@
+N ADJOINT_LINEAR
+C |- (!f. ((linear f) ==> (linear (adjoint f))))
+T c==> clinear f0 clinear * part cadjoint f0
+D TRUTH
+A |- T
+T cT
+D DOT_RADD
+A |- (!x. (!y. (!z. (((dot x) ((vector_add y) z)) = ((real_add ((dot x) y)) ((dot x) z))))))
+T c= cdot f0 cvector_add f1 f2 creal_add cdot f0 f1 cdot f0 f2
+D DOT_RMUL
+A |- (!c. (!x. (!y. (((dot x) ((% c) y)) = ((real_mul c) ((dot x) y))))))
+T c= cdot f0 c% f1 f2 creal_mul f1 cdot f0 f2
+D VECTOR_EQ_LDOT
+A |- (!y. (!z. ((!x. (((dot x) y) = ((dot x) z))) = (y = z))))
+T c= ! c= cdot b0 f0 cdot b0 f1 c= f0 f1
+D linear
+A |- (!f. ((linear f) = ((!x. (!y. ((f ((vector_add x) y)) = ((vector_add (f x)) (f y))))) /\ (!c. (!x. ((f ((% c) x)) = ((% c) (f x))))))))
+T c= clinear f0 c/\ ! ! c= * f0 cvector_add b0 b1 cvector_add * f0 b0 * f0 b1 ! ! c= * f0 c% b0 b1 c% b0 * f0 b1
+D ADJOINT_WORKS
+A |- (!f. ((linear f) ==> (!x. (!y. (((dot (f x)) y) = ((dot x) ((adjoint f) y)))))))
+T c==> clinear f0 ! ! c= cdot * f0 b0 b1 cdot b0 cadjoint f0 b1
++ |- (((!x. (!y. (!x. (((dot x) ((adjoint f) ((vector_add x) y))) = ((dot x) ((vector_add ((adjoint f) x)) ((adjoint f) y))))))) /\ (!c. (!x. (!x. (((dot x) ((adjoint f) ((% c) x))) = ((dot x) ((% c) ((adjoint f) x)))))))) = (linear (adjoint f)))
+T c= c/\ ! ! ! c= cdot b2 cadjoint f0 cvector_add b0 b1 cdot b2 cvector_add cadjoint f0 b0 cadjoint f0 b1 ! ! ! c= cdot b2 cadjoint f0 c% b0 b1 cdot b2 c% b0 cadjoint f0 b1 clinear * part cadjoint f0
++ |- (((!y. (!z. (((dot x) ((vector_add y) z)) = ((real_add ((dot x) y)) ((dot x) z))))) ==> ((\y. (!z. (((dot x) ((vector_add y) z)) = ((real_add ((dot x) y)) ((dot x) z))))) y)) = ((\y. (!z. (((dot x) ((vector_add y) z)) = ((real_add ((dot x) y)) ((dot x) z))))) y))
+T c= c==> ! ! c= cdot f0 cvector_add b0 b1 creal_add cdot f0 b0 cdot f0 b1 * / ! c= cdot f0 cvector_add b0 b1 creal_add cdot f0 b0 cdot f0 b1 f1 * / ! c= cdot f0 cvector_add b0 b1 creal_add cdot f0 b0 cdot f0 b1 f1
++ |- ((\y. (((dot x) ((% c) y)) = ((real_mul c) ((dot x) y)))) y)
+T * / c= cdot f0 c% f1 b0 creal_mul f1 cdot f0 b0 f2
+- (linear f) |- ((linear f) = T)
+T c==> clinear f0 c= clinear f0 cT
+- (linear f) |- (T = (linear f))
+T c==> clinear f0 c= cT clinear f0
+- |- ((t /\ t) = t)
+T c= c/\ f0 f0 f0

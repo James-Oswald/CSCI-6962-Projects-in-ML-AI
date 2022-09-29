@@ -1,0 +1,75 @@
+N Seq2.rot_nil
+C |- (!n. (((rot n) NIL) = NIL))
+T c= crot f0 cNIL cNIL
+D Seq.cat
+A |- (!x. (!t. (!s2. ((((cat NIL) s2) = s2) /\ (((cat ((CONS x) t)) s2) = ((CONS x) ((cat t) s2)))))))
+T c/\ c= ccat cNIL f0 f0 c= ccat cCONS f1 f2 f0 cCONS f1 ccat f2 f0
+D Seq.drop
+A |- (!n. (!x. (!s. ((((dropl (SUC n)) ((CONS x) s)) = ((dropl n) s)) /\ ((((dropl n) NIL) = NIL) /\ (((dropl (NUMERAL _0)) s) = s))))))
+T c/\ c= cdropl cSUC f0 cCONS f1 f2 cdropl f0 f2 c/\ c= cdropl f0 cNIL cNIL c= cdropl cNUMERAL c_0 f2 f2
+D Seq2.take
+A |- (!x. (!s. (!n. ((((take (SUC n)) ((CONS x) s)) = ((CONS x) ((take n) s))) /\ ((((take (NUMERAL _0)) s) = NIL) /\ (((take n) NIL) = NIL))))))
+T c/\ c= ctake cSUC f0 cCONS f1 f2 cCONS f1 ctake f0 f2 c/\ c= ctake cNUMERAL c_0 f2 cNIL c= ctake f0 cNIL cNIL
+D Seq.rot
+A |- (!n. (!s. (((rot n) s) = ((cat ((dropl n) s)) ((take n) s)))))
+T c= crot f0 f1 ccat cdropl f0 f1 ctake f0 f1
++ |- ((\s2. ((((cat NIL) s2) = s2) /\ (((cat ((CONS x) t)) s2) = ((CONS x) ((cat t) s2))))) s2)
+T * / c/\ c= ccat cNIL b0 b0 c= ccat cCONS f0 f1 b0 cCONS f0 ccat f1 b0 f2
++ |- ((\t. (!s2. ((((cat NIL) s2) = s2) /\ (((cat ((CONS x) t)) s2) = ((CONS x) ((cat t) s2)))))) t)
+T * / ! c/\ c= ccat cNIL b1 b1 c= ccat cCONS f0 b0 b1 cCONS f0 ccat b0 b1 f1
+- ((!x. (P ==> (Q x))) = (P ==> (!x. (Q x)))) |- ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))
+T c==> c= ! c==> f0 * f1 b0 c==> f0 ! * f1 b0 c= c==> f0 ! * f1 b0 ! c==> f0 * f1 b0
++ |- (((!n. (!x. (!s. ((((dropl (SUC n)) ((CONS x) s)) = ((dropl n) s)) /\ ((((dropl n) NIL) = NIL) /\ (((dropl (NUMERAL _0)) s) = s)))))) ==> ((\n. (!x. (!s. ((((dropl (SUC n)) ((CONS x) s)) = ((dropl n) s)) /\ ((((dropl n) NIL) = NIL) /\ (((dropl (NUMERAL _0)) s) = s)))))) n)) = ((\n. (!x. (!s. ((((dropl (SUC n)) ((CONS x) s)) = ((dropl n) s)) /\ ((((dropl n) NIL) = NIL) /\ (((dropl (NUMERAL _0)) s) = s)))))) n))
+T c= c==> ! ! ! c/\ c= cdropl cSUC b0 cCONS b1 b2 cdropl b0 b2 c/\ c= cdropl b0 cNIL cNIL c= cdropl cNUMERAL c_0 b2 b2 * / ! ! c/\ c= cdropl cSUC b0 cCONS b1 b2 cdropl b0 b2 c/\ c= cdropl b0 cNIL cNIL c= cdropl cNUMERAL c_0 b2 b2 f0 * / ! ! c/\ c= cdropl cSUC b0 cCONS b1 b2 cdropl b0 b2 c/\ c= cdropl b0 cNIL cNIL c= cdropl cNUMERAL c_0 b2 b2 f0
+- |- ((\P. (!Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x)))))) P)
+T * / ! c= c==> b0 ! * b1 b2 ! c==> b0 * b1 b2 f0
++ |- (((!x. (!s. (!n. ((((take (SUC n)) ((CONS x) s)) = ((CONS x) ((take n) s))) /\ ((((take (NUMERAL _0)) s) = NIL) /\ (((take n) NIL) = NIL)))))) ==> ((\x. (!s. (!n. ((((take (SUC n)) ((CONS x) s)) = ((CONS x) ((take n) s))) /\ ((((take (NUMERAL _0)) s) = NIL) /\ (((take n) NIL) = NIL)))))) x)) = ((\x. (!s. (!n. ((((take (SUC n)) ((CONS x) s)) = ((CONS x) ((take n) s))) /\ ((((take (NUMERAL _0)) s) = NIL) /\ (((take n) NIL) = NIL)))))) x))
+T c= c==> ! ! ! c/\ c= ctake cSUC b2 cCONS b0 b1 cCONS b0 ctake b2 b1 c/\ c= ctake cNUMERAL c_0 b1 cNIL c= ctake b2 cNIL cNIL * / ! ! c/\ c= ctake cSUC b2 cCONS b0 b1 cCONS b0 ctake b2 b1 c/\ c= ctake cNUMERAL c_0 b1 cNIL c= ctake b2 cNIL cNIL f0 * / ! ! c/\ c= ctake cSUC b2 cCONS b0 b1 cCONS b0 ctake b2 b1 c/\ c= ctake cNUMERAL c_0 b1 cNIL c= ctake b2 cNIL cNIL f0
+- |- (((cat ((CONS x) t)) s2) = ((CONS x) ((cat t) s2)))
+T c= ccat cCONS f0 f1 f2 cCONS f0 ccat f1 f2
+- |- (((dropl (NUMERAL _0)) s) = s)
+T c= cdropl cNUMERAL c_0 f0 f0
+- |- (((take (SUC n)) ((CONS x) s)) = ((CONS x) ((take n) s)))
+T c= ctake cSUC f0 cCONS f1 f2 cCONS f1 ctake f0 f2
++ |- (((cat ((dropl n) NIL)) ((take n) NIL)) = NIL)
+T c= ccat cdropl f0 cNIL ctake f0 cNIL cNIL
++ |- ((\s. (!n. ((((take (SUC n)) ((CONS x) s)) = ((CONS x) ((take n) s))) /\ ((((take (NUMERAL _0)) s) = NIL) /\ (((take n) NIL) = NIL))))) s)
+T * / ! c/\ c= ctake cSUC b1 cCONS f0 b0 cCONS f0 ctake b1 b0 c/\ c= ctake cNUMERAL c_0 b0 cNIL c= ctake b1 cNIL cNIL f1
++ |- (((cat NIL) ((take n) NIL)) = NIL)
+T c= ccat cNIL ctake f0 cNIL cNIL
++ |- (((take n) NIL) = NIL)
+T c= ctake f0 cNIL cNIL
+- |- ((NIL = NIL) = (((cat NIL) NIL) = NIL))
+T c= c= cNIL cNIL c= ccat cNIL cNIL cNIL
+- |- (((take (NUMERAL _0)) s) = NIL)
+T c= ctake cNUMERAL c_0 f0 cNIL
++ |- (((cat NIL) s2) = s2)
+T c= ccat cNIL f0 f0
++ |- ((\x. (!s. ((((dropl (SUC n)) ((CONS x) s)) = ((dropl n) s)) /\ ((((dropl n) NIL) = NIL) /\ (((dropl (NUMERAL _0)) s) = s))))) x)
+T * / ! c/\ c= cdropl cSUC f0 cCONS b0 b1 cdropl f0 b1 c/\ c= cdropl f0 cNIL cNIL c= cdropl cNUMERAL c_0 b1 b1 f1
+- |- ((x = x) = T)
+T c= c= f0 f0 cT
++ |- ((((rot n) NIL) = NIL) = T)
+T c= c= crot f0 cNIL cNIL cT
+- |- ((\Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))) Q)
+T * / c= c==> f0 ! * b0 b1 ! c==> f0 * b0 b1 f1
++ |- ((\s. ((((dropl (SUC n)) ((CONS x) s)) = ((dropl n) s)) /\ ((((dropl n) NIL) = NIL) /\ (((dropl (NUMERAL _0)) s) = s)))) s)
+T * / c/\ c= cdropl cSUC f0 cCONS f1 b0 cdropl f0 b0 c/\ c= cdropl f0 cNIL cNIL c= cdropl cNUMERAL c_0 b0 b0 f2
++ |- (((!s2. ((((cat NIL) s2) = s2) /\ (((cat ((CONS x) t)) s2) = ((CONS x) ((cat t) s2))))) ==> ((\s2. ((((cat NIL) s2) = s2) /\ (((cat ((CONS x) t)) s2) = ((CONS x) ((cat t) s2))))) s2)) = ((\s2. ((((cat NIL) s2) = s2) /\ (((cat ((CONS x) t)) s2) = ((CONS x) ((cat t) s2))))) s2))
+T c= c==> ! c/\ c= ccat cNIL b0 b0 c= ccat cCONS f0 f1 b0 cCONS f0 ccat f1 b0 * / c/\ c= ccat cNIL b0 b0 c= ccat cCONS f0 f1 b0 cCONS f0 ccat f1 b0 f2 * / c/\ c= ccat cNIL b0 b0 c= ccat cCONS f0 f1 b0 cCONS f0 ccat f1 b0 f2
+- |- (((!P. (!Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x)))))) ==> ((\P. (!Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x)))))) P)) = ((\P. (!Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x)))))) P))
+T c= c==> ! ! c= c==> b0 ! * b1 b2 ! c==> b0 * b1 b2 * / ! c= c==> b0 ! * b1 b2 ! c==> b0 * b1 b2 f0 * / ! c= c==> b0 ! * b1 b2 ! c==> b0 * b1 b2 f0
+- |- (((dropl (SUC n)) ((CONS x) s)) = ((dropl n) s))
+T c= cdropl cSUC f0 cCONS f1 f2 cdropl f0 f2
++ |- (((!s. (!n. ((((take (SUC n)) ((CONS x) s)) = ((CONS x) ((take n) s))) /\ ((((take (NUMERAL _0)) s) = NIL) /\ (((take n) NIL) = NIL))))) ==> ((\s. (!n. ((((take (SUC n)) ((CONS x) s)) = ((CONS x) ((take n) s))) /\ ((((take (NUMERAL _0)) s) = NIL) /\ (((take n) NIL) = NIL))))) s)) = ((\s. (!n. ((((take (SUC n)) ((CONS x) s)) = ((CONS x) ((take n) s))) /\ ((((take (NUMERAL _0)) s) = NIL) /\ (((take n) NIL) = NIL))))) s))
+T c= c==> ! ! c/\ c= ctake cSUC b1 cCONS f0 b0 cCONS f0 ctake b1 b0 c/\ c= ctake cNUMERAL c_0 b0 cNIL c= ctake b1 cNIL cNIL * / ! c/\ c= ctake cSUC b1 cCONS f0 b0 cCONS f0 ctake b1 b0 c/\ c= ctake cNUMERAL c_0 b0 cNIL c= ctake b1 cNIL cNIL f1 * / ! c/\ c= ctake cSUC b1 cCONS f0 b0 cCONS f0 ctake b1 b0 c/\ c= ctake cNUMERAL c_0 b0 cNIL c= ctake b1 cNIL cNIL f1
++ |- (((!n. ((((take (SUC n)) ((CONS x) s)) = ((CONS x) ((take n) s))) /\ ((((take (NUMERAL _0)) s) = NIL) /\ (((take n) NIL) = NIL)))) ==> ((\n. ((((take (SUC n)) ((CONS x) s)) = ((CONS x) ((take n) s))) /\ ((((take (NUMERAL _0)) s) = NIL) /\ (((take n) NIL) = NIL)))) n)) = ((\n. ((((take (SUC n)) ((CONS x) s)) = ((CONS x) ((take n) s))) /\ ((((take (NUMERAL _0)) s) = NIL) /\ (((take n) NIL) = NIL)))) n))
+T c= c==> ! c/\ c= ctake cSUC b0 cCONS f0 f1 cCONS f0 ctake b0 f1 c/\ c= ctake cNUMERAL c_0 f1 cNIL c= ctake b0 cNIL cNIL * / c/\ c= ctake cSUC b0 cCONS f0 f1 cCONS f0 ctake b0 f1 c/\ c= ctake cNUMERAL c_0 f1 cNIL c= ctake b0 cNIL cNIL f2 * / c/\ c= ctake cSUC b0 cCONS f0 f1 cCONS f0 ctake b0 f1 c/\ c= ctake cNUMERAL c_0 f1 cNIL c= ctake b0 cNIL cNIL f2
+- |- (T = (NIL = NIL))
+T c= cT c= cNIL cNIL
+- ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x)))) |- ((!x. (P ==> (Q x))) = (P ==> (!x. (Q x))))
+T c==> c= c==> f0 ! * f1 b0 ! c==> f0 * f1 b0 c= ! c==> f0 * f1 b0 c==> f0 ! * f1 b0
+- |- ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))
+T c= c==> f0 ! * f1 b0 ! c==> f0 * f1 b0
+- |- (((!Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))) ==> ((\Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))) Q)) = ((\Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))) Q))
+T c= c==> ! c= c==> f0 ! * b0 b1 ! c==> f0 * b0 b1 * / c= c==> f0 ! * b0 b1 ! c==> f0 * b0 b1 f1 * / c= c==> f0 ! * b0 b1 ! c==> f0 * b0 b1 f1

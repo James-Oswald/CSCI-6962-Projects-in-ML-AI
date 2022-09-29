@@ -1,0 +1,376 @@
+N Seq.mem_undup
+C |- (!s. (!x. (((MEM x) (undup s)) = ((MEM x) s))))
+T c= cMEM f0 cundup f1 cMEM f0 f1
+D TRUTH
+A |- T
+T cT
+D EXCLUDED_MIDDLE
+A |- (!t. (t \/ (~ t)))
+T c\/ f0 c~ f0
+D BOOL_CASES_AX
+A |- (!t. ((t = T) \/ (t = F)))
+T c\/ c= f0 cT c= f0 cF
+D COND_CLAUSES
+A |- (!t1. (!t2. (((((COND T) t1) t2) = t1) /\ ((((COND F) t1) t2) = t2))))
+T c/\ c= cCOND cT f0 f1 f0 c= cCOND cF f0 f1 f1
+D list_INDUCT
+A |- (!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x))))
+T c==> c/\ * f0 cNIL ! ! c==> * f0 b1 * f0 cCONS b0 b1 ! * f0 b0
+D Seq.in_cons
+A |- (!y. (!s. (!x. (((MEM x) ((CONS y) s)) = ((x = y) \/ ((MEM x) s))))))
+T c= cMEM f0 cCONS f1 f2 c\/ c= f0 f1 cMEM f0 f2
+D Seq.undup
+A |- (((undup NIL) = NIL) /\ ((undup ((CONS x) s')) = (((COND ((MEM x) s')) (undup s')) ((CONS x) (undup s')))))
+T c/\ c= cundup cNIL cNIL c= cundup cCONS f0 f1 cCOND cMEM f0 f1 cundup f1 cCONS f0 cundup f1
++ |- (T = ((~ (x = y)) ==> (((MEM x) s) = ((x = y) \/ ((MEM x) s)))))
+T c= cT c==> c~ c= f0 f1 c= cMEM f0 f2 c\/ c= f0 f1 cMEM f0 f2
++ |- ((((MEM x) (((COND ((MEM y) s)) (undup s)) ((CONS y) (undup s)))) = ((MEM x) ((CONS y) s))) = (((MEM x) (undup ((CONS y) s))) = ((MEM x) ((CONS y) s))))
+T c= c= cMEM f0 cCOND cMEM f1 f2 cundup f2 cCONS f1 cundup f2 cMEM f0 cCONS f1 f2 c= cMEM f0 cundup cCONS f1 f2 cMEM f0 cCONS f1 f2
++ (s = s1) |- ((((MEM x) (undup s1)) = ((MEM x) s1)) = (((MEM x) (undup s1)) = ((MEM x) s)))
+T c==> c= f0 f1 c= c= cMEM f2 cundup f1 cMEM f2 f1 c= cMEM f2 cundup f1 cMEM f2 f0
+- (x = y), ((MEM y) s) |- (((MEM x) s) = ((x = y) \/ ((MEM x) s)))
+T c==> c= f0 f1 c==> cMEM f1 f2 c= cMEM f0 f2 c\/ c= f0 f1 cMEM f0 f2
++ |- ((!a0. (!a1. ((((MEM x) (undup a1)) = ((MEM x) a1)) ==> (((MEM x) (undup ((CONS a0) a1))) = ((MEM x) ((CONS a0) a1)))))) = ((((MEM x) (undup NIL)) = ((MEM x) NIL)) /\ (!a0. (!a1. ((((MEM x) (undup a1)) = ((MEM x) a1)) ==> (((MEM x) (undup ((CONS a0) a1))) = ((MEM x) ((CONS a0) a1))))))))
+T c= ! ! c==> c= cMEM f0 cundup b1 cMEM f0 b1 c= cMEM f0 cundup cCONS b0 b1 cMEM f0 cCONS b0 b1 c/\ c= cMEM f0 cundup cNIL cMEM f0 cNIL ! ! c==> c= cMEM f0 cundup b1 cMEM f0 b1 c= cMEM f0 cundup cCONS b0 b1 cMEM f0 cCONS b0 b1
+- ((!x. (P ==> (Q x))) = (P ==> (!x. (Q x)))) |- ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))
+T c==> c= ! c==> f0 * f1 b0 c==> f0 ! * f1 b0 c= c==> f0 ! * f1 b0 ! c==> f0 * f1 b0
++ |- (((MEM y) s) \/ (~ ((MEM y) s)))
+T c\/ cMEM f0 f1 c~ cMEM f0 f1
++ |- (((((MEM y) s) \/ (~ ((MEM y) s))) ==> (((MEM x) (((COND ((MEM y) s)) (undup s)) ((CONS y) (undup s)))) = ((MEM x) ((CONS y) s)))) = (((MEM x) (((COND ((MEM y) s)) (undup s)) ((CONS y) (undup s)))) = ((MEM x) ((CONS y) s))))
+T c= c==> c\/ cMEM f0 f1 c~ cMEM f0 f1 c= cMEM f2 cCOND cMEM f0 f1 cundup f1 cCONS f0 cundup f1 cMEM f2 cCONS f0 f1 c= cMEM f2 cCOND cMEM f0 f1 cundup f1 cCONS f0 cundup f1 cMEM f2 cCONS f0 f1
++ |- ((~ ((MEM y) s)) ==> ((((MEM x) (((COND ((MEM y) s)) (undup s)) ((CONS y) (undup s)))) = ((MEM x) ((CONS y) s))) = (((MEM x) ((CONS y) (undup s))) = ((MEM x) ((CONS y) s)))))
+T c==> c~ cMEM f0 f1 c= c= cMEM f2 cCOND cMEM f0 f1 cundup f1 cCONS f0 cundup f1 cMEM f2 cCONS f0 f1 c= cMEM f2 cCONS f0 cundup f1 cMEM f2 cCONS f0 f1
++ |- ((\t'. (!e'. ((((MEM y) s) = g') ==> ((g' ==> ((undup s) = t')) ==> (((~ g') ==> (((CONS y) (undup s)) = e')) ==> ((((COND ((MEM y) s)) (undup s)) ((CONS y) (undup s))) = (((COND g') t') e'))))))) t')
+T * / ! c==> c= cMEM f0 f1 f2 c==> c==> f2 c= cundup f1 b0 c==> c==> c~ f2 c= cCONS f0 cundup f1 b1 c= cCOND cMEM f0 f1 cundup f1 cCONS f0 cundup f1 cCOND f2 b0 b1 f3
++ |- (((!q'. ((((MEM y) s) = p') ==> ((p' ==> ((((MEM x) (((COND ((MEM y) s)) (undup s)) ((CONS y) (undup s)))) = ((MEM x) ((CONS y) s))) = q')) ==> ((((MEM y) s) ==> (((MEM x) (((COND ((MEM y) s)) (undup s)) ((CONS y) (undup s)))) = ((MEM x) ((CONS y) s)))) = (p' ==> q'))))) ==> ((\q'. ((((MEM y) s) = p') ==> ((p' ==> ((((MEM x) (((COND ((MEM y) s)) (undup s)) ((CONS y) (undup s)))) = ((MEM x) ((CONS y) s))) = q')) ==> ((((MEM y) s) ==> (((MEM x) (((COND ((MEM y) s)) (undup s)) ((CONS y) (undup s)))) = ((MEM x) ((CONS y) s)))) = (p' ==> q'))))) q')) = ((\q'. ((((MEM y) s) = p') ==> ((p' ==> ((((MEM x) (((COND ((MEM y) s)) (undup s)) ((CONS y) (undup s)))) = ((MEM x) ((CONS y) s))) = q')) ==> ((((MEM y) s) ==> (((MEM x) (((COND ((MEM y) s)) (undup s)) ((CONS y) (undup s)))) = ((MEM x) ((CONS y) s)))) = (p' ==> q'))))) q'))
+T c= c==> ! c==> c= cMEM f0 f1 f2 c==> c==> f2 c= c= cMEM f3 cCOND cMEM f0 f1 cundup f1 cCONS f0 cundup f1 cMEM f3 cCONS f0 f1 b0 c= c==> cMEM f0 f1 c= cMEM f3 cCOND cMEM f0 f1 cundup f1 cCONS f0 cundup f1 cMEM f3 cCONS f0 f1 c==> f2 b0 * / c==> c= cMEM f0 f1 f2 c==> c==> f2 c= c= cMEM f3 cCOND cMEM f0 f1 cundup f1 cCONS f0 cundup f1 cMEM f3 cCONS f0 f1 b0 c= c==> cMEM f0 f1 c= cMEM f3 cCOND cMEM f0 f1 cundup f1 cCONS f0 cundup f1 cMEM f3 cCONS f0 f1 c==> f2 b0 f4 * / c==> c= cMEM f0 f1 f2 c==> c==> f2 c= c= cMEM f3 cCOND cMEM f0 f1 cundup f1 cCONS f0 cundup f1 cMEM f3 cCONS f0 f1 b0 c= c==> cMEM f0 f1 c= cMEM f3 cCOND cMEM f0 f1 cundup f1 cCONS f0 cundup f1 cMEM f3 cCONS f0 f1 c==> f2 b0 f4
+- |- ((\P. (!Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x)))))) P)
+T * / ! c= c==> b0 ! * b1 b2 ! c==> b0 * b1 b2 f0
+- |- ((\p'. (!q'. (((~ ((MEM y) s)) = p') ==> ((p' ==> ((((MEM x) ((CONS y) (undup s))) = ((MEM x) ((CONS y) s))) = q')) ==> (((~ ((MEM y) s)) ==> (((MEM x) ((CONS y) (undup s))) = ((MEM x) ((CONS y) s)))) = (p' ==> q')))))) p')
+T * / ! c==> c= c~ cMEM f0 f1 b0 c==> c==> b0 c= c= cMEM f2 cCONS f0 cundup f1 cMEM f2 cCONS f0 f1 b1 c= c==> c~ cMEM f0 f1 c= cMEM f2 cCONS f0 cundup f1 cMEM f2 cCONS f0 f1 c==> b0 b1 f3
++ (((MEM x) (undup s)) = ((MEM x) s)) |- ((((MEM y) s) \/ (~ ((MEM y) s))) ==> (((MEM x) (((COND ((MEM y) s)) (undup s)) ((CONS y) (undup s)))) = ((MEM x) ((CONS y) s))))
+T c==> c= cMEM f0 cundup f1 cMEM f0 f1 c==> c\/ cMEM f2 f1 c~ cMEM f2 f1 c= cMEM f0 cCOND cMEM f2 f1 cundup f1 cCONS f2 cundup f1 cMEM f0 cCONS f2 f1
++ |- (((!q'. (((x = y) = p') ==> ((p' ==> (((MEM y) s) = q')) ==> (((x = y) ==> ((MEM y) s)) = (p' ==> q'))))) ==> ((\q'. (((x = y) = p') ==> ((p' ==> (((MEM y) s) = q')) ==> (((x = y) ==> ((MEM y) s)) = (p' ==> q'))))) q')) = ((\q'. (((x = y) = p') ==> ((p' ==> (((MEM y) s) = q')) ==> (((x = y) ==> ((MEM y) s)) = (p' ==> q'))))) q'))
+T c= c==> ! c==> c= c= f0 f1 f2 c==> c==> f2 c= cMEM f1 f3 b0 c= c==> c= f0 f1 cMEM f1 f3 c==> f2 b0 * / c==> c= c= f0 f1 f2 c==> c==> f2 c= cMEM f1 f3 b0 c= c==> c= f0 f1 cMEM f1 f3 c==> f2 b0 f4 * / c==> c= c= f0 f1 f2 c==> c==> f2 c= cMEM f1 f3 b0 c= c==> c= f0 f1 cMEM f1 f3 c==> f2 b0 f4
++ |- ((\p'. (!q'. ((((MEM y) s) = p') ==> ((p' ==> ((((MEM x) (((COND ((MEM y) s)) (undup s)) ((CONS y) (undup s)))) = ((MEM x) ((CONS y) s))) = q')) ==> ((((MEM y) s) ==> (((MEM x) (((COND ((MEM y) s)) (undup s)) ((CONS y) (undup s)))) = ((MEM x) ((CONS y) s)))) = (p' ==> q')))))) p')
+T * / ! c==> c= cMEM f0 f1 b0 c==> c==> b0 c= c= cMEM f2 cCOND cMEM f0 f1 cundup f1 cCONS f0 cundup f1 cMEM f2 cCONS f0 f1 b1 c= c==> cMEM f0 f1 c= cMEM f2 cCOND cMEM f0 f1 cundup f1 cCONS f0 cundup f1 cMEM f2 cCONS f0 f1 c==> b0 b1 f3
++ |- ((((~ F) ==> (((CONS y) (undup s)) = ((CONS y) (undup s)))) ==> ((((COND ((MEM y) s)) (undup s)) ((CONS y) (undup s))) = (((COND F) (undup s)) ((CONS y) (undup s))))) = ((((COND ((MEM y) s)) (undup s)) ((CONS y) (undup s))) = (((COND F) (undup s)) ((CONS y) (undup s)))))
+T c= c==> c==> c~ cF c= cCONS f0 cundup f1 cCONS f0 cundup f1 c= cCOND cMEM f0 f1 cundup f1 cCONS f0 cundup f1 cCOND cF cundup f1 cCONS f0 cundup f1 c= cCOND cMEM f0 f1 cundup f1 cCONS f0 cundup f1 cCOND cF cundup f1 cCONS f0 cundup f1
++ |- ((\q'. (((~ (x = y)) = p') ==> ((p' ==> ((((MEM x) s) = ((x = y) \/ ((MEM x) s))) = q')) ==> (((~ (x = y)) ==> (((MEM x) s) = ((x = y) \/ ((MEM x) s)))) = (p' ==> q'))))) q')
+T * / c==> c= c~ c= f0 f1 f2 c==> c==> f2 c= c= cMEM f0 f3 c\/ c= f0 f1 cMEM f0 f3 b0 c= c==> c~ c= f0 f1 c= cMEM f0 f3 c\/ c= f0 f1 cMEM f0 f3 c==> f2 b0 f4
++ |- ((\s. (((MEM x) (undup s)) = ((MEM x) s))) s1)
+T * / c= cMEM f0 cundup b0 cMEM f0 b0 f1
++ |- ((\t. (t \/ (~ t))) ((MEM y) s))
+T * / c\/ b0 c~ b0 cMEM f0 f1
++ |- (((!p'. (!q'. ((((MEM y) s) = p') ==> ((p' ==> ((((MEM x) (((COND ((MEM y) s)) (undup s)) ((CONS y) (undup s)))) = ((MEM x) ((CONS y) s))) = q')) ==> ((((MEM y) s) ==> (((MEM x) (((COND ((MEM y) s)) (undup s)) ((CONS y) (undup s)))) = ((MEM x) ((CONS y) s)))) = (p' ==> q')))))) ==> ((\p'. (!q'. ((((MEM y) s) = p') ==> ((p' ==> ((((MEM x) (((COND ((MEM y) s)) (undup s)) ((CONS y) (undup s)))) = ((MEM x) ((CONS y) s))) = q')) ==> ((((MEM y) s) ==> (((MEM x) (((COND ((MEM y) s)) (undup s)) ((CONS y) (undup s)))) = ((MEM x) ((CONS y) s)))) = (p' ==> q')))))) p')) = ((\p'. (!q'. ((((MEM y) s) = p') ==> ((p' ==> ((((MEM x) (((COND ((MEM y) s)) (undup s)) ((CONS y) (undup s)))) = ((MEM x) ((CONS y) s))) = q')) ==> ((((MEM y) s) ==> (((MEM x) (((COND ((MEM y) s)) (undup s)) ((CONS y) (undup s)))) = ((MEM x) ((CONS y) s)))) = (p' ==> q')))))) p'))
+T c= c==> ! ! c==> c= cMEM f0 f1 b0 c==> c==> b0 c= c= cMEM f2 cCOND cMEM f0 f1 cundup f1 cCONS f0 cundup f1 cMEM f2 cCONS f0 f1 b1 c= c==> cMEM f0 f1 c= cMEM f2 cCOND cMEM f0 f1 cundup f1 cCONS f0 cundup f1 cMEM f2 cCONS f0 f1 c==> b0 b1 * / ! c==> c= cMEM f0 f1 b0 c==> c==> b0 c= c= cMEM f2 cCOND cMEM f0 f1 cundup f1 cCONS f0 cundup f1 cMEM f2 cCONS f0 f1 b1 c= c==> cMEM f0 f1 c= cMEM f2 cCOND cMEM f0 f1 cundup f1 cCONS f0 cundup f1 cMEM f2 cCONS f0 f1 c==> b0 b1 f3 * / ! c==> c= cMEM f0 f1 b0 c==> c==> b0 c= c= cMEM f2 cCOND cMEM f0 f1 cundup f1 cCONS f0 cundup f1 cMEM f2 cCONS f0 f1 b1 c= c==> cMEM f0 f1 c= cMEM f2 cCOND cMEM f0 f1 cundup f1 cCONS f0 cundup f1 cMEM f2 cCONS f0 f1 c==> b0 b1 f3
++ |- ((t ==> T) = T)
+T c= c==> f0 cT cT
++ |- ((((x = y) ==> ((((MEM x) s) = ((x = y) \/ ((MEM x) s))) = ((MEM y) s))) ==> (((x = y) ==> (((MEM x) s) = ((x = y) \/ ((MEM x) s)))) = ((x = y) ==> ((MEM y) s)))) = (((x = y) ==> (((MEM x) s) = ((x = y) \/ ((MEM x) s)))) = ((x = y) ==> ((MEM y) s))))
+T c= c==> c==> c= f0 f1 c= c= cMEM f0 f2 c\/ c= f0 f1 cMEM f0 f2 cMEM f1 f2 c= c==> c= f0 f1 c= cMEM f0 f2 c\/ c= f0 f1 cMEM f0 f2 c==> c= f0 f1 cMEM f1 f2 c= c==> c= f0 f1 c= cMEM f0 f2 c\/ c= f0 f1 cMEM f0 f2 c==> c= f0 f1 cMEM f1 f2
+- |- ((s = s1) ==> ((sizel (undup s)) <= (sizel s)))
+T c==> c= f0 f1 c<= csizel cundup f0 csizel f0
+- |- ((((~ ((MEM y) s)) = (~ ((MEM y) s))) ==> (((~ ((MEM y) s)) ==> ((((MEM x) ((CONS y) (undup s))) = ((MEM x) ((CONS y) s))) = q')) ==> (((~ ((MEM y) s)) ==> (((MEM x) ((CONS y) (undup s))) = ((MEM x) ((CONS y) s)))) = ((~ ((MEM y) s)) ==> q')))) = (((~ ((MEM y) s)) ==> ((((MEM x) ((CONS y) (undup s))) = ((MEM x) ((CONS y) s))) = q')) ==> (((~ ((MEM y) s)) ==> (((MEM x) ((CONS y) (undup s))) = ((MEM x) ((CONS y) s)))) = ((~ ((MEM y) s)) ==> q'))))
+T c= c==> c= c~ cMEM f0 f1 c~ cMEM f0 f1 c==> c==> c~ cMEM f0 f1 c= c= cMEM f2 cCONS f0 cundup f1 cMEM f2 cCONS f0 f1 f3 c= c==> c~ cMEM f0 f1 c= cMEM f2 cCONS f0 cundup f1 cMEM f2 cCONS f0 f1 c==> c~ cMEM f0 f1 f3 c==> c==> c~ cMEM f0 f1 c= c= cMEM f2 cCONS f0 cundup f1 cMEM f2 cCONS f0 f1 f3 c= c==> c~ cMEM f0 f1 c= cMEM f2 cCONS f0 cundup f1 cMEM f2 cCONS f0 f1 c==> c~ cMEM f0 f1 f3
++ |- ((\P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))) P)
+T * / c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 f0
++ |- (((((MEM x) (undup NIL)) = ((MEM x) NIL)) /\ (!a0. (!a1. ((((MEM x) (undup a1)) = ((MEM x) a1)) ==> (((MEM x) (undup ((CONS a0) a1))) = ((MEM x) ((CONS a0) a1))))))) ==> (!s. (((MEM x) (undup s)) = ((MEM x) s))))
+T c==> c/\ c= cMEM f0 cundup cNIL cMEM f0 cNIL ! ! c==> c= cMEM f0 cundup b1 cMEM f0 b1 c= cMEM f0 cundup cCONS b0 b1 cMEM f0 cCONS b0 b1 ! c= cMEM f0 cundup b0 cMEM f0 b0
++ |- ((((MEM y) s) ==> (((MEM x) (undup s)) = ((MEM x) ((CONS y) s)))) = (((MEM y) s) ==> (((MEM x) (((COND ((MEM y) s)) (undup s)) ((CONS y) (undup s)))) = ((MEM x) ((CONS y) s)))))
+T c= c==> cMEM f0 f1 c= cMEM f2 cundup f1 cMEM f2 cCONS f0 f1 c==> cMEM f0 f1 c= cMEM f2 cCOND cMEM f0 f1 cundup f1 cCONS f0 cundup f1 cMEM f2 cCONS f0 f1
++ |- (((!p'. (!q'. (((~ (x = y)) = p') ==> ((p' ==> ((((MEM x) s) = ((x = y) \/ ((MEM x) s))) = q')) ==> (((~ (x = y)) ==> (((MEM x) s) = ((x = y) \/ ((MEM x) s)))) = (p' ==> q')))))) ==> ((\p'. (!q'. (((~ (x = y)) = p') ==> ((p' ==> ((((MEM x) s) = ((x = y) \/ ((MEM x) s))) = q')) ==> (((~ (x = y)) ==> (((MEM x) s) = ((x = y) \/ ((MEM x) s)))) = (p' ==> q')))))) p')) = ((\p'. (!q'. (((~ (x = y)) = p') ==> ((p' ==> ((((MEM x) s) = ((x = y) \/ ((MEM x) s))) = q')) ==> (((~ (x = y)) ==> (((MEM x) s) = ((x = y) \/ ((MEM x) s)))) = (p' ==> q')))))) p'))
+T c= c==> ! ! c==> c= c~ c= f0 f1 b0 c==> c==> b0 c= c= cMEM f0 f2 c\/ c= f0 f1 cMEM f0 f2 b1 c= c==> c~ c= f0 f1 c= cMEM f0 f2 c\/ c= f0 f1 cMEM f0 f2 c==> b0 b1 * / ! c==> c= c~ c= f0 f1 b0 c==> c==> b0 c= c= cMEM f0 f2 c\/ c= f0 f1 cMEM f0 f2 b1 c= c==> c~ c= f0 f1 c= cMEM f0 f2 c\/ c= f0 f1 cMEM f0 f2 c==> b0 b1 f3 * / ! c==> c= c~ c= f0 f1 b0 c==> c==> b0 c= c= cMEM f0 f2 c\/ c= f0 f1 cMEM f0 f2 b1 c= c==> c~ c= f0 f1 c= cMEM f0 f2 c\/ c= f0 f1 cMEM f0 f2 c==> b0 b1 f3
+- (~ (x = y)) |- ((~ (x = y)) /\ (((MEM x) s) = ((x = y) \/ ((MEM x) s))))
+T c==> c~ c= f0 f1 c/\ c~ c= f0 f1 c= cMEM f0 f2 c\/ c= f0 f1 cMEM f0 f2
+- (~ ((MEM y) s)), (((MEM x) (undup s)) = ((MEM x) s)) |- ((~ ((MEM y) s)) /\ (((MEM x) (((COND ((MEM y) s)) (undup s)) ((CONS y) (undup s)))) = ((MEM x) ((CONS y) s))))
+T c==> c~ cMEM f0 f1 c==> c= cMEM f2 cundup f1 cMEM f2 f1 c/\ c~ cMEM f0 f1 c= cMEM f2 cCOND cMEM f0 f1 cundup f1 cCONS f0 cundup f1 cMEM f2 cCONS f0 f1
+- |- ((t ==> t) = T)
+T c= c==> f0 f0 cT
++ (((MEM x) (undup s)) = ((MEM x) s)), ((MEM y) s) |- (((MEM y) s) /\ (((MEM x) (undup s)) = ((MEM x) ((CONS y) s))))
+T c==> c= cMEM f0 cundup f1 cMEM f0 f1 c==> cMEM f2 f1 c/\ cMEM f2 f1 c= cMEM f0 cundup f1 cMEM f0 cCONS f2 f1
+- |- ((t \/ t) = t)
+T c= c\/ f0 f0 f0
++ ((\s1. (s = s1)) s1) |- (((\s1. (s = s1)) s1) /\ (((MEM x) (undup s)) = ((MEM x) s)))
+T c==> * / c= f0 b0 f1 c/\ * / c= f0 b0 f1 c= cMEM f2 cundup f0 cMEM f2 f0
+- |- (((~ ((MEM y) s)) = p') ==> ((p' ==> ((((MEM x) ((CONS y) (undup s))) = ((MEM x) ((CONS y) s))) = q')) ==> (((~ ((MEM y) s)) ==> (((MEM x) ((CONS y) (undup s))) = ((MEM x) ((CONS y) s)))) = (p' ==> q'))))
+T c==> c= c~ cMEM f0 f1 f2 c==> c==> f2 c= c= cMEM f3 cCONS f0 cundup f1 cMEM f3 cCONS f0 f1 f4 c= c==> c~ cMEM f0 f1 c= cMEM f3 cCONS f0 cundup f1 cMEM f3 cCONS f0 f1 c==> f2 f4
++ |- ((((~ (x = y)) = (~ (x = y))) ==> (((~ (x = y)) ==> ((((MEM x) s) = ((x = y) \/ ((MEM x) s))) = q')) ==> (((~ (x = y)) ==> (((MEM x) s) = ((x = y) \/ ((MEM x) s)))) = ((~ (x = y)) ==> q')))) = (((~ (x = y)) ==> ((((MEM x) s) = ((x = y) \/ ((MEM x) s))) = q')) ==> (((~ (x = y)) ==> (((MEM x) s) = ((x = y) \/ ((MEM x) s)))) = ((~ (x = y)) ==> q'))))
+T c= c==> c= c~ c= f0 f1 c~ c= f0 f1 c==> c==> c~ c= f0 f1 c= c= cMEM f0 f2 c\/ c= f0 f1 cMEM f0 f2 f3 c= c==> c~ c= f0 f1 c= cMEM f0 f2 c\/ c= f0 f1 cMEM f0 f2 c==> c~ c= f0 f1 f3 c==> c==> c~ c= f0 f1 c= c= cMEM f0 f2 c\/ c= f0 f1 cMEM f0 f2 f3 c= c==> c~ c= f0 f1 c= cMEM f0 f2 c\/ c= f0 f1 cMEM f0 f2 c==> c~ c= f0 f1 f3
++ |- (((x = y) \/ ((MEM x) s)) = ((MEM x) ((CONS y) s)))
+T c= c\/ c= f0 f1 cMEM f0 f2 cMEM f0 cCONS f1 f2
+- ((MEM y) s) |- (((MEM y) s) /\ ((((MEM x) (undup s)) = ((MEM x) ((CONS y) s))) = (((MEM x) (undup s)) = ((MEM x) ((CONS y) s)))))
+T c==> cMEM f0 f1 c/\ cMEM f0 f1 c= c= cMEM f2 cundup f1 cMEM f2 cCONS f0 f1 c= cMEM f2 cundup f1 cMEM f2 cCONS f0 f1
++ (~ ((MEM y) s)) |- (((~ F) ==> (((CONS y) (undup s)) = e')) ==> ((((COND ((MEM y) s)) (undup s)) ((CONS y) (undup s))) = (((COND F) (undup s)) e')))
+T c==> c~ cMEM f0 f1 c==> c==> c~ cF c= cCONS f0 cundup f1 f2 c= cCOND cMEM f0 f1 cundup f1 cCONS f0 cundup f1 cCOND cF cundup f1 f2
++ |- ((((MEM x) (undup s)) = ((x = y) \/ ((MEM x) s))) = (((MEM x) (undup s)) = ((MEM x) ((CONS y) s))))
+T c= c= cMEM f0 cundup f1 c\/ c= f0 f2 cMEM f0 f1 c= cMEM f0 cundup f1 cMEM f0 cCONS f2 f1
++ |- (((!t. (t \/ (~ t))) ==> ((\t. (t \/ (~ t))) ((MEM y) s))) = ((\t. (t \/ (~ t))) ((MEM y) s)))
+T c= c==> ! c\/ b0 c~ b0 * / c\/ b0 c~ b0 cMEM f0 f1 * / c\/ b0 c~ b0 cMEM f0 f1
+- |- (((x = x) ==> p) = p)
+T c= c==> c= f0 f0 f1 f1
++ |- ((((x = y) = (x = y)) ==> (((x = y) ==> ((((MEM x) s) = ((x = y) \/ ((MEM x) s))) = q')) ==> (((x = y) ==> (((MEM x) s) = ((x = y) \/ ((MEM x) s)))) = ((x = y) ==> q')))) = (((x = y) ==> ((((MEM x) s) = ((x = y) \/ ((MEM x) s))) = q')) ==> (((x = y) ==> (((MEM x) s) = ((x = y) \/ ((MEM x) s)))) = ((x = y) ==> q'))))
+T c= c==> c= c= f0 f1 c= f0 f1 c==> c==> c= f0 f1 c= c= cMEM f0 f2 c\/ c= f0 f1 cMEM f0 f2 f3 c= c==> c= f0 f1 c= cMEM f0 f2 c\/ c= f0 f1 cMEM f0 f2 c==> c= f0 f1 f3 c==> c==> c= f0 f1 c= c= cMEM f0 f2 c\/ c= f0 f1 cMEM f0 f2 f3 c= c==> c= f0 f1 c= cMEM f0 f2 c\/ c= f0 f1 cMEM f0 f2 c==> c= f0 f1 f3
++ |- (((((MEM x) (undup s)) = ((MEM x) s)) ==> (((MEM x) (undup ((CONS y) s))) = ((MEM x) ((CONS y) s)))) = T)
+T c= c==> c= cMEM f0 cundup f1 cMEM f0 f1 c= cMEM f0 cundup cCONS f2 f1 cMEM f0 cCONS f2 f1 cT
++ |- ((((~ T) ==> (((CONS y) (undup s)) = ((CONS y) (undup s)))) ==> ((((COND ((MEM y) s)) (undup s)) ((CONS y) (undup s))) = (((COND T) (undup s)) ((CONS y) (undup s))))) = ((((COND ((MEM y) s)) (undup s)) ((CONS y) (undup s))) = (((COND T) (undup s)) ((CONS y) (undup s)))))
+T c= c==> c==> c~ cT c= cCONS f0 cundup f1 cCONS f0 cundup f1 c= cCOND cMEM f0 f1 cundup f1 cCONS f0 cundup f1 cCOND cT cundup f1 cCONS f0 cundup f1 c= cCOND cMEM f0 f1 cundup f1 cCONS f0 cundup f1 cCOND cT cundup f1 cCONS f0 cundup f1
++ |- ((((MEM x) (undup s)) = ((MEM x) s)) = T)
+T c= c= cMEM f0 cundup f1 cMEM f0 f1 cT
++ (~ ((MEM y) s)) |- ((((COND ((MEM y) s)) (undup s)) ((CONS y) (undup s))) = (((COND F) (undup s)) ((CONS y) (undup s))))
+T c==> c~ cMEM f0 f1 c= cCOND cMEM f0 f1 cundup f1 cCONS f0 cundup f1 cCOND cF cundup f1 cCONS f0 cundup f1
+- |- (((!q'. ((((MEM y) s) = p') ==> ((p' ==> ((((MEM x) (undup s)) = ((MEM x) ((CONS y) s))) = q')) ==> ((((MEM y) s) ==> (((MEM x) (undup s)) = ((MEM x) ((CONS y) s)))) = (p' ==> q'))))) ==> ((\q'. ((((MEM y) s) = p') ==> ((p' ==> ((((MEM x) (undup s)) = ((MEM x) ((CONS y) s))) = q')) ==> ((((MEM y) s) ==> (((MEM x) (undup s)) = ((MEM x) ((CONS y) s)))) = (p' ==> q'))))) q')) = ((\q'. ((((MEM y) s) = p') ==> ((p' ==> ((((MEM x) (undup s)) = ((MEM x) ((CONS y) s))) = q')) ==> ((((MEM y) s) ==> (((MEM x) (undup s)) = ((MEM x) ((CONS y) s)))) = (p' ==> q'))))) q'))
+T c= c==> ! c==> c= cMEM f0 f1 f2 c==> c==> f2 c= c= cMEM f3 cundup f1 cMEM f3 cCONS f0 f1 b0 c= c==> cMEM f0 f1 c= cMEM f3 cundup f1 cMEM f3 cCONS f0 f1 c==> f2 b0 * / c==> c= cMEM f0 f1 f2 c==> c==> f2 c= c= cMEM f3 cundup f1 cMEM f3 cCONS f0 f1 b0 c= c==> cMEM f0 f1 c= cMEM f3 cundup f1 cMEM f3 cCONS f0 f1 c==> f2 b0 f4 * / c==> c= cMEM f0 f1 f2 c==> c==> f2 c= c= cMEM f3 cundup f1 cMEM f3 cCONS f0 f1 b0 c= c==> cMEM f0 f1 c= cMEM f3 cundup f1 cMEM f3 cCONS f0 f1 c==> f2 b0 f4
+- |- ((((MEM y) s) ==> ((((MEM x) (undup s)) = ((MEM x) ((CONS y) s))) = q')) ==> ((((MEM y) s) ==> (((MEM x) (undup s)) = ((MEM x) ((CONS y) s)))) = (((MEM y) s) ==> q')))
+T c==> c==> cMEM f0 f1 c= c= cMEM f2 cundup f1 cMEM f2 cCONS f0 f1 f3 c= c==> cMEM f0 f1 c= cMEM f2 cundup f1 cMEM f2 cCONS f0 f1 c==> cMEM f0 f1 f3
+- |- (!s1. (((\s1. (s = s1)) s1) ==> (?s1. (s = s1))))
+T c==> * / c= f0 b0 f1 c? / c= f0 b0
++ |- ((\q'. ((((MEM y) s) = p') ==> ((p' ==> ((((MEM x) (((COND ((MEM y) s)) (undup s)) ((CONS y) (undup s)))) = ((MEM x) ((CONS y) s))) = q')) ==> ((((MEM y) s) ==> (((MEM x) (((COND ((MEM y) s)) (undup s)) ((CONS y) (undup s)))) = ((MEM x) ((CONS y) s)))) = (p' ==> q'))))) q')
+T * / c==> c= cMEM f0 f1 f2 c==> c==> f2 c= c= cMEM f3 cCOND cMEM f0 f1 cundup f1 cCONS f0 cundup f1 cMEM f3 cCONS f0 f1 b0 c= c==> cMEM f0 f1 c= cMEM f3 cCOND cMEM f0 f1 cundup f1 cCONS f0 cundup f1 cMEM f3 cCONS f0 f1 c==> f2 b0 f4
++ |- ((((MEM y) s) ==> (((MEM x) (((COND ((MEM y) s)) (undup s)) ((CONS y) (undup s)))) = ((MEM x) ((CONS y) s)))) = (((MEM y) s) ==> (((MEM x) (undup s)) = ((MEM x) ((CONS y) s)))))
+T c= c==> cMEM f0 f1 c= cMEM f2 cCOND cMEM f0 f1 cundup f1 cCONS f0 cundup f1 cMEM f2 cCONS f0 f1 c==> cMEM f0 f1 c= cMEM f2 cundup f1 cMEM f2 cCONS f0 f1
+- (((MEM x) (undup s)) = ((MEM x) s)), ((MEM y) s) |- (((MEM y) s) /\ (((MEM x) (((COND ((MEM y) s)) (undup s)) ((CONS y) (undup s)))) = ((MEM x) ((CONS y) s))))
+T c==> c= cMEM f0 cundup f1 cMEM f0 f1 c==> cMEM f2 f1 c/\ cMEM f2 f1 c= cMEM f0 cCOND cMEM f2 f1 cundup f1 cCONS f2 cundup f1 cMEM f0 cCONS f2 f1
++ |- ((\s1. (s = s1)) s)
+T * / c= f0 b0 f0
++ |- ((((MEM y) s) = g') ==> ((g' ==> ((undup s) = t')) ==> (((~ g') ==> (((CONS y) (undup s)) = e')) ==> ((((COND ((MEM y) s)) (undup s)) ((CONS y) (undup s))) = (((COND g') t') e')))))
+T c==> c= cMEM f0 f1 f2 c==> c==> f2 c= cundup f1 f3 c==> c==> c~ f2 c= cCONS f0 cundup f1 f4 c= cCOND cMEM f0 f1 cundup f1 cCONS f0 cundup f1 cCOND f2 f3 f4
++ ((MEM y) s) |- (T = ((x = y) ==> ((MEM y) s)))
+T c==> cMEM f0 f1 c= cT c==> c= f2 f0 cMEM f0 f1
++ |- ((((MEM y) s) = p') ==> ((p' ==> ((((MEM x) (((COND ((MEM y) s)) (undup s)) ((CONS y) (undup s)))) = ((MEM x) ((CONS y) s))) = q')) ==> ((((MEM y) s) ==> (((MEM x) (((COND ((MEM y) s)) (undup s)) ((CONS y) (undup s)))) = ((MEM x) ((CONS y) s)))) = (p' ==> q'))))
+T c==> c= cMEM f0 f1 f2 c==> c==> f2 c= c= cMEM f3 cCOND cMEM f0 f1 cundup f1 cCONS f0 cundup f1 cMEM f3 cCONS f0 f1 f4 c= c==> cMEM f0 f1 c= cMEM f3 cCOND cMEM f0 f1 cundup f1 cCONS f0 cundup f1 cMEM f3 cCONS f0 f1 c==> f2 f4
+- |- (T = (((x = y) \/ ((MEM x) s)) = ((x = y) \/ ((MEM x) s))))
+T c= cT c= c\/ c= f0 f1 cMEM f0 f2 c\/ c= f0 f1 cMEM f0 f2
++ |- ((?s1. (s = s1)) ==> (((MEM x) (undup s)) = ((MEM x) s)))
+T c==> c? / c= f0 b0 c= cMEM f1 cundup f0 cMEM f1 f0
++ (x = y) |- ((x = y) /\ ((((MEM x) s) = ((x = y) \/ ((MEM x) s))) = ((MEM y) s)))
+T c==> c= f0 f1 c/\ c= f0 f1 c= c= cMEM f0 f2 c\/ c= f0 f1 cMEM f0 f2 cMEM f1 f2
++ |- ((\p'. (!q'. (((x = y) = p') ==> ((p' ==> ((((MEM x) s) = ((x = y) \/ ((MEM x) s))) = q')) ==> (((x = y) ==> (((MEM x) s) = ((x = y) \/ ((MEM x) s)))) = (p' ==> q')))))) p')
+T * / ! c==> c= c= f0 f1 b0 c==> c==> b0 c= c= cMEM f0 f2 c\/ c= f0 f1 cMEM f0 f2 b1 c= c==> c= f0 f1 c= cMEM f0 f2 c\/ c= f0 f1 cMEM f0 f2 c==> b0 b1 f3
+- (!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))), ((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) |- ((!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))) /\ (!x. (P x)))
+T c==> ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 c==> c/\ * f0 cNIL ! ! c==> * f0 b1 * f0 cCONS b0 b1 c/\ ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 ! * f0 b0
+- |- ((((MEM y) s) = p') ==> ((p' ==> ((((MEM x) (undup s)) = ((MEM x) ((CONS y) s))) = q')) ==> ((((MEM y) s) ==> (((MEM x) (undup s)) = ((MEM x) ((CONS y) s)))) = (p' ==> q'))))
+T c==> c= cMEM f0 f1 f2 c==> c==> f2 c= c= cMEM f3 cundup f1 cMEM f3 cCONS f0 f1 f4 c= c==> cMEM f0 f1 c= cMEM f3 cundup f1 cMEM f3 cCONS f0 f1 c==> f2 f4
++ |- (((!q'. (((x = y) = p') ==> ((p' ==> ((((MEM x) s) = ((x = y) \/ ((MEM x) s))) = q')) ==> (((x = y) ==> (((MEM x) s) = ((x = y) \/ ((MEM x) s)))) = (p' ==> q'))))) ==> ((\q'. (((x = y) = p') ==> ((p' ==> ((((MEM x) s) = ((x = y) \/ ((MEM x) s))) = q')) ==> (((x = y) ==> (((MEM x) s) = ((x = y) \/ ((MEM x) s)))) = (p' ==> q'))))) q')) = ((\q'. (((x = y) = p') ==> ((p' ==> ((((MEM x) s) = ((x = y) \/ ((MEM x) s))) = q')) ==> (((x = y) ==> (((MEM x) s) = ((x = y) \/ ((MEM x) s)))) = (p' ==> q'))))) q'))
+T c= c==> ! c==> c= c= f0 f1 f2 c==> c==> f2 c= c= cMEM f0 f3 c\/ c= f0 f1 cMEM f0 f3 b0 c= c==> c= f0 f1 c= cMEM f0 f3 c\/ c= f0 f1 cMEM f0 f3 c==> f2 b0 * / c==> c= c= f0 f1 f2 c==> c==> f2 c= c= cMEM f0 f3 c\/ c= f0 f1 cMEM f0 f3 b0 c= c==> c= f0 f1 c= cMEM f0 f3 c\/ c= f0 f1 cMEM f0 f3 c==> f2 b0 f4 * / c==> c= c= f0 f1 f2 c==> c==> f2 c= c= cMEM f0 f3 c\/ c= f0 f1 cMEM f0 f3 b0 c= c==> c= f0 f1 c= cMEM f0 f3 c\/ c= f0 f1 cMEM f0 f3 c==> f2 b0 f4
++ ((MEM y) s) |- (((x = y) \/ (~ (x = y))) ==> (((MEM x) s) = ((x = y) \/ ((MEM x) s))))
+T c==> cMEM f0 f1 c==> c\/ c= f2 f0 c~ c= f2 f0 c= cMEM f2 f1 c\/ c= f2 f0 cMEM f2 f1
++ |- (((~ ((MEM y) s)) = p') ==> ((p' ==> ((((MEM x) (((COND ((MEM y) s)) (undup s)) ((CONS y) (undup s)))) = ((MEM x) ((CONS y) s))) = q')) ==> (((~ ((MEM y) s)) ==> (((MEM x) (((COND ((MEM y) s)) (undup s)) ((CONS y) (undup s)))) = ((MEM x) ((CONS y) s)))) = (p' ==> q'))))
+T c==> c= c~ cMEM f0 f1 f2 c==> c==> f2 c= c= cMEM f3 cCOND cMEM f0 f1 cundup f1 cCONS f0 cundup f1 cMEM f3 cCONS f0 f1 f4 c= c==> c~ cMEM f0 f1 c= cMEM f3 cCOND cMEM f0 f1 cundup f1 cCONS f0 cundup f1 cMEM f3 cCONS f0 f1 c==> f2 f4
+- |- (((!p'. (!q'. ((((MEM y) s) = p') ==> ((p' ==> ((((MEM x) (undup s)) = ((MEM x) ((CONS y) s))) = q')) ==> ((((MEM y) s) ==> (((MEM x) (undup s)) = ((MEM x) ((CONS y) s)))) = (p' ==> q')))))) ==> ((\p'. (!q'. ((((MEM y) s) = p') ==> ((p' ==> ((((MEM x) (undup s)) = ((MEM x) ((CONS y) s))) = q')) ==> ((((MEM y) s) ==> (((MEM x) (undup s)) = ((MEM x) ((CONS y) s)))) = (p' ==> q')))))) p')) = ((\p'. (!q'. ((((MEM y) s) = p') ==> ((p' ==> ((((MEM x) (undup s)) = ((MEM x) ((CONS y) s))) = q')) ==> ((((MEM y) s) ==> (((MEM x) (undup s)) = ((MEM x) ((CONS y) s)))) = (p' ==> q')))))) p'))
+T c= c==> ! ! c==> c= cMEM f0 f1 b0 c==> c==> b0 c= c= cMEM f2 cundup f1 cMEM f2 cCONS f0 f1 b1 c= c==> cMEM f0 f1 c= cMEM f2 cundup f1 cMEM f2 cCONS f0 f1 c==> b0 b1 * / ! c==> c= cMEM f0 f1 b0 c==> c==> b0 c= c= cMEM f2 cundup f1 cMEM f2 cCONS f0 f1 b1 c= c==> cMEM f0 f1 c= cMEM f2 cundup f1 cMEM f2 cCONS f0 f1 c==> b0 b1 f3 * / ! c==> c= cMEM f0 f1 b0 c==> c==> b0 c= c= cMEM f2 cundup f1 cMEM f2 cCONS f0 f1 b1 c= c==> cMEM f0 f1 c= cMEM f2 cundup f1 cMEM f2 cCONS f0 f1 c==> b0 b1 f3
+- |- ((((~ ((MEM y) s)) ==> ((((MEM x) ((CONS y) (undup s))) = ((MEM x) ((CONS y) s))) = (((MEM x) ((CONS y) (undup s))) = ((MEM x) ((CONS y) s))))) ==> (((~ ((MEM y) s)) ==> (((MEM x) ((CONS y) (undup s))) = ((MEM x) ((CONS y) s)))) = ((~ ((MEM y) s)) ==> (((MEM x) ((CONS y) (undup s))) = ((MEM x) ((CONS y) s)))))) = (((~ ((MEM y) s)) ==> (((MEM x) ((CONS y) (undup s))) = ((MEM x) ((CONS y) s)))) = ((~ ((MEM y) s)) ==> (((MEM x) ((CONS y) (undup s))) = ((MEM x) ((CONS y) s))))))
+T c= c==> c==> c~ cMEM f0 f1 c= c= cMEM f2 cCONS f0 cundup f1 cMEM f2 cCONS f0 f1 c= cMEM f2 cCONS f0 cundup f1 cMEM f2 cCONS f0 f1 c= c==> c~ cMEM f0 f1 c= cMEM f2 cCONS f0 cundup f1 cMEM f2 cCONS f0 f1 c==> c~ cMEM f0 f1 c= cMEM f2 cCONS f0 cundup f1 cMEM f2 cCONS f0 f1 c= c==> c~ cMEM f0 f1 c= cMEM f2 cCONS f0 cundup f1 cMEM f2 cCONS f0 f1 c==> c~ cMEM f0 f1 c= cMEM f2 cCONS f0 cundup f1 cMEM f2 cCONS f0 f1
++ |- (((~ (x = y)) = p') ==> ((p' ==> ((((MEM x) s) = ((x = y) \/ ((MEM x) s))) = q')) ==> (((~ (x = y)) ==> (((MEM x) s) = ((x = y) \/ ((MEM x) s)))) = (p' ==> q'))))
+T c==> c= c~ c= f0 f1 f2 c==> c==> f2 c= c= cMEM f0 f3 c\/ c= f0 f1 cMEM f0 f3 f4 c= c==> c~ c= f0 f1 c= cMEM f0 f3 c\/ c= f0 f1 cMEM f0 f3 c==> f2 f4
+- |- (((MEM y) s) ==> ((((MEM x) (undup s)) = ((MEM x) ((CONS y) s))) = (((MEM x) (undup s)) = ((MEM x) ((CONS y) s)))))
+T c==> cMEM f0 f1 c= c= cMEM f2 cundup f1 cMEM f2 cCONS f0 f1 c= cMEM f2 cundup f1 cMEM f2 cCONS f0 f1
+- |- ((\q'. ((((MEM y) s) = p') ==> ((p' ==> ((((MEM x) (undup s)) = ((MEM x) ((CONS y) s))) = q')) ==> ((((MEM y) s) ==> (((MEM x) (undup s)) = ((MEM x) ((CONS y) s)))) = (p' ==> q'))))) q')
+T * / c==> c= cMEM f0 f1 f2 c==> c==> f2 c= c= cMEM f3 cundup f1 cMEM f3 cCONS f0 f1 b0 c= c==> cMEM f0 f1 c= cMEM f3 cundup f1 cMEM f3 cCONS f0 f1 c==> f2 b0 f4
++ |- ((\t. (t \/ (~ t))) (x = y))
+T * / c\/ b0 c~ b0 c= f0 f1
++ |- (!a0. (!a1. ((((MEM x) (undup a1)) = ((MEM x) a1)) ==> (((MEM x) (undup ((CONS a0) a1))) = ((MEM x) ((CONS a0) a1))))))
+T c==> c= cMEM f0 cundup f1 cMEM f0 f1 c= cMEM f0 cundup cCONS f2 f1 cMEM f0 cCONS f2 f1
++ |- (((!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))) ==> ((\P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))) P)) = ((\P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))) P))
+T c= c==> ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 * / c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 f0 * / c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 f0
+- (!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))), ((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) |- (!x. (P x))
+T c==> ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 c==> c/\ * f0 cNIL ! ! c==> * f0 b1 * f0 cCONS b0 b1 ! * f0 b0
+- T |- (T = T)
+T c==> cT c= cT cT
++ |- ((((~ ((MEM y) s)) = (~ ((MEM y) s))) ==> (((~ ((MEM y) s)) ==> ((((MEM x) (((COND ((MEM y) s)) (undup s)) ((CONS y) (undup s)))) = ((MEM x) ((CONS y) s))) = q')) ==> (((~ ((MEM y) s)) ==> (((MEM x) (((COND ((MEM y) s)) (undup s)) ((CONS y) (undup s)))) = ((MEM x) ((CONS y) s)))) = ((~ ((MEM y) s)) ==> q')))) = (((~ ((MEM y) s)) ==> ((((MEM x) (((COND ((MEM y) s)) (undup s)) ((CONS y) (undup s)))) = ((MEM x) ((CONS y) s))) = q')) ==> (((~ ((MEM y) s)) ==> (((MEM x) (((COND ((MEM y) s)) (undup s)) ((CONS y) (undup s)))) = ((MEM x) ((CONS y) s)))) = ((~ ((MEM y) s)) ==> q'))))
+T c= c==> c= c~ cMEM f0 f1 c~ cMEM f0 f1 c==> c==> c~ cMEM f0 f1 c= c= cMEM f2 cCOND cMEM f0 f1 cundup f1 cCONS f0 cundup f1 cMEM f2 cCONS f0 f1 f3 c= c==> c~ cMEM f0 f1 c= cMEM f2 cCOND cMEM f0 f1 cundup f1 cCONS f0 cundup f1 cMEM f2 cCONS f0 f1 c==> c~ cMEM f0 f1 f3 c==> c==> c~ cMEM f0 f1 c= c= cMEM f2 cCOND cMEM f0 f1 cundup f1 cCONS f0 cundup f1 cMEM f2 cCONS f0 f1 f3 c= c==> c~ cMEM f0 f1 c= cMEM f2 cCOND cMEM f0 f1 cundup f1 cCONS f0 cundup f1 cMEM f2 cCONS f0 f1 c==> c~ cMEM f0 f1 f3
++ |- (((!q'. (((~ ((MEM y) s)) = p') ==> ((p' ==> ((((MEM x) (((COND ((MEM y) s)) (undup s)) ((CONS y) (undup s)))) = ((MEM x) ((CONS y) s))) = q')) ==> (((~ ((MEM y) s)) ==> (((MEM x) (((COND ((MEM y) s)) (undup s)) ((CONS y) (undup s)))) = ((MEM x) ((CONS y) s)))) = (p' ==> q'))))) ==> ((\q'. (((~ ((MEM y) s)) = p') ==> ((p' ==> ((((MEM x) (((COND ((MEM y) s)) (undup s)) ((CONS y) (undup s)))) = ((MEM x) ((CONS y) s))) = q')) ==> (((~ ((MEM y) s)) ==> (((MEM x) (((COND ((MEM y) s)) (undup s)) ((CONS y) (undup s)))) = ((MEM x) ((CONS y) s)))) = (p' ==> q'))))) q')) = ((\q'. (((~ ((MEM y) s)) = p') ==> ((p' ==> ((((MEM x) (((COND ((MEM y) s)) (undup s)) ((CONS y) (undup s)))) = ((MEM x) ((CONS y) s))) = q')) ==> (((~ ((MEM y) s)) ==> (((MEM x) (((COND ((MEM y) s)) (undup s)) ((CONS y) (undup s)))) = ((MEM x) ((CONS y) s)))) = (p' ==> q'))))) q'))
+T c= c==> ! c==> c= c~ cMEM f0 f1 f2 c==> c==> f2 c= c= cMEM f3 cCOND cMEM f0 f1 cundup f1 cCONS f0 cundup f1 cMEM f3 cCONS f0 f1 b0 c= c==> c~ cMEM f0 f1 c= cMEM f3 cCOND cMEM f0 f1 cundup f1 cCONS f0 cundup f1 cMEM f3 cCONS f0 f1 c==> f2 b0 * / c==> c= c~ cMEM f0 f1 f2 c==> c==> f2 c= c= cMEM f3 cCOND cMEM f0 f1 cundup f1 cCONS f0 cundup f1 cMEM f3 cCONS f0 f1 b0 c= c==> c~ cMEM f0 f1 c= cMEM f3 cCOND cMEM f0 f1 cundup f1 cCONS f0 cundup f1 cMEM f3 cCONS f0 f1 c==> f2 b0 f4 * / c==> c= c~ cMEM f0 f1 f2 c==> c==> f2 c= c= cMEM f3 cCOND cMEM f0 f1 cundup f1 cCONS f0 cundup f1 cMEM f3 cCONS f0 f1 b0 c= c==> c~ cMEM f0 f1 c= cMEM f3 cCOND cMEM f0 f1 cundup f1 cCONS f0 cundup f1 cMEM f3 cCONS f0 f1 c==> f2 b0 f4
++ |- ((x = y) ==> ((((MEM x) s) = ((x = y) \/ ((MEM x) s))) = ((MEM y) s)))
+T c==> c= f0 f1 c= c= cMEM f0 f2 c\/ c= f0 f1 cMEM f0 f2 cMEM f1 f2
++ (((MEM x) (undup s)) = ((MEM x) s)) |- (((MEM y) s) ==> (((MEM x) (undup s)) = ((MEM x) ((CONS y) s))))
+T c==> c= cMEM f0 cundup f1 cMEM f0 f1 c==> cMEM f2 f1 c= cMEM f0 cundup f1 cMEM f0 cCONS f2 f1
++ (~ ((MEM y) s)) |- ((~ ((MEM y) s)) /\ ((((MEM x) (((COND ((MEM y) s)) (undup s)) ((CONS y) (undup s)))) = ((MEM x) ((CONS y) s))) = (((MEM x) ((CONS y) (undup s))) = ((MEM x) ((CONS y) s)))))
+T c==> c~ cMEM f0 f1 c/\ c~ cMEM f0 f1 c= c= cMEM f2 cCOND cMEM f0 f1 cundup f1 cCONS f0 cundup f1 cMEM f2 cCONS f0 f1 c= cMEM f2 cCONS f0 cundup f1 cMEM f2 cCONS f0 f1
++ |- ((!q'. ((p = p') ==> ((p' ==> (q = q')) ==> ((p ==> q) = (p' ==> q'))))) = T)
+T c= ! c==> c= f0 f1 c==> c==> f1 c= f2 b0 c= c==> f0 f2 c==> f1 b0 cT
+- |- ((?s1. (s = s1)) ==> ((sizel (undup s)) <= (sizel s)))
+T c==> c? / c= f0 b0 c<= csizel cundup f0 csizel f0
+- (~ (x = y)) |- (((~ (y = x)) ==> ((y = x) = F)) = ((y = x) = F))
+T c==> c~ c= f0 f1 c= c==> c~ c= f1 f0 c= c= f1 f0 cF c= c= f1 f0 cF
+- |- ((s = s1) = ((\s1. (s = s1)) s1))
+T c= c= f0 f1 * / c= f0 b0 f1
++ (~ (x = y)) |- ((x = y) = F)
+T c==> c~ c= f0 f1 c= c= f0 f1 cF
++ (s = s1) |- ((((MEM x) (undup s1)) = ((MEM x) s)) = (((MEM x) (undup s)) = ((MEM x) s)))
+T c==> c= f0 f1 c= c= cMEM f2 cundup f1 cMEM f2 f0 c= cMEM f2 cundup f0 cMEM f2 f0
++ |- (((g = g') ==> ((g' ==> (t = t')) ==> (((~ g') ==> (e = e')) ==> ((((COND g) t) e) = (((COND g') t') e'))))) = T)
+T c= c==> c= f0 f1 c==> c==> f1 c= f2 f3 c==> c==> c~ f1 c= f4 f5 c= cCOND f0 f2 f4 cCOND f1 f3 f5 cT
++ |- (((T ==> ((undup s) = (undup s))) ==> (((~ T) ==> (((CONS y) (undup s)) = e')) ==> ((((COND ((MEM y) s)) (undup s)) ((CONS y) (undup s))) = (((COND T) (undup s)) e')))) = (((~ T) ==> (((CONS y) (undup s)) = e')) ==> ((((COND ((MEM y) s)) (undup s)) ((CONS y) (undup s))) = (((COND T) (undup s)) e'))))
+T c= c==> c==> cT c= cundup f0 cundup f0 c==> c==> c~ cT c= cCONS f1 cundup f0 f2 c= cCOND cMEM f1 f0 cundup f0 cCONS f1 cundup f0 cCOND cT cundup f0 f2 c==> c==> c~ cT c= cCONS f1 cundup f0 f2 c= cCOND cMEM f1 f0 cundup f0 cCONS f1 cundup f0 cCOND cT cundup f0 f2
+- |- (!s1. (((\s1. (s = s1)) s1) ==> ((sizel (undup s)) <= (sizel s))))
+T c==> * / c= f0 b0 f1 c<= csizel cundup f0 csizel f0
++ |- ((((MEM x) (undup NIL)) = ((MEM x) NIL)) /\ (!a0. (!a1. ((((MEM x) (undup a1)) = ((MEM x) a1)) ==> (((MEM x) (undup ((CONS a0) a1))) = ((MEM x) ((CONS a0) a1)))))))
+T c/\ c= cMEM f0 cundup cNIL cMEM f0 cNIL ! ! c==> c= cMEM f0 cundup b1 cMEM f0 b1 c= cMEM f0 cundup cCONS b0 b1 cMEM f0 cCONS b0 b1
+- (s = s1) |- (((MEM x) (undup s1)) = ((MEM x) s1))
+T c==> c= f0 f1 c= cMEM f2 cundup f1 cMEM f2 f1
++ |- ((\s. (!x. (((MEM x) ((CONS y) s)) = ((x = y) \/ ((MEM x) s))))) s)
+T * / ! c= cMEM b1 cCONS f0 b0 c\/ c= b1 f0 cMEM b1 b0 f1
+- |- (((!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))) ==> (!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x))))) = (!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))))
+T c= c==> ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1
++ |- (((?s1. (s = s1)) ==> (((MEM x) (undup s)) = ((MEM x) s))) = (((MEM x) (undup s)) = ((MEM x) s)))
+T c= c==> c? / c= f0 b0 c= cMEM f1 cundup f0 cMEM f1 f0 c= cMEM f1 cundup f0 cMEM f1 f0
++ (((MEM x) (undup s)) = ((MEM x) s)) |- ((~ ((MEM y) s)) ==> (((MEM x) (((COND ((MEM y) s)) (undup s)) ((CONS y) (undup s)))) = ((MEM x) ((CONS y) s))))
+T c==> c= cMEM f0 cundup f1 cMEM f0 f1 c==> c~ cMEM f2 f1 c= cMEM f0 cCOND cMEM f2 f1 cundup f1 cCONS f2 cundup f1 cMEM f0 cCONS f2 f1
++ |- (!s1. (((\s1. (s = s1)) s1) ==> (((MEM x) (undup s)) = ((MEM x) s))))
+T c==> * / c= f0 b0 f1 c= cMEM f2 cundup f0 cMEM f2 f0
+- |- (((((MEM y) s) = ((MEM y) s)) ==> ((((MEM y) s) ==> ((((MEM x) (undup s)) = ((MEM x) ((CONS y) s))) = q')) ==> ((((MEM y) s) ==> (((MEM x) (undup s)) = ((MEM x) ((CONS y) s)))) = (((MEM y) s) ==> q')))) = ((((MEM y) s) ==> ((((MEM x) (undup s)) = ((MEM x) ((CONS y) s))) = q')) ==> ((((MEM y) s) ==> (((MEM x) (undup s)) = ((MEM x) ((CONS y) s)))) = (((MEM y) s) ==> q'))))
+T c= c==> c= cMEM f0 f1 cMEM f0 f1 c==> c==> cMEM f0 f1 c= c= cMEM f2 cundup f1 cMEM f2 cCONS f0 f1 f3 c= c==> cMEM f0 f1 c= cMEM f2 cundup f1 cMEM f2 cCONS f0 f1 c==> cMEM f0 f1 f3 c==> c==> cMEM f0 f1 c= c= cMEM f2 cundup f1 cMEM f2 cCONS f0 f1 f3 c= c==> cMEM f0 f1 c= cMEM f2 cundup f1 cMEM f2 cCONS f0 f1 c==> cMEM f0 f1 f3
+- |- ((~ ((MEM y) s)) ==> ((((MEM x) ((CONS y) (undup s))) = ((MEM x) ((CONS y) s))) = (((MEM x) ((CONS y) (undup s))) = ((MEM x) ((CONS y) s)))))
+T c==> c~ cMEM f0 f1 c= c= cMEM f2 cCONS f0 cundup f1 cMEM f2 cCONS f0 f1 c= cMEM f2 cCONS f0 cundup f1 cMEM f2 cCONS f0 f1
+- (!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))), ((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) |- (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) /\ (!x. (P x)))
+T c==> ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 c==> c/\ * f0 cNIL ! ! c==> * f0 b1 * f0 cCONS b0 b1 c/\ c/\ * f0 cNIL ! ! c==> * f0 b1 * f0 cCONS b0 b1 ! * f0 b0
++ |- ((((x = y) ==> (((MEM y) s) = ((MEM y) s))) ==> (((x = y) ==> ((MEM y) s)) = ((x = y) ==> ((MEM y) s)))) = (((x = y) ==> ((MEM y) s)) = ((x = y) ==> ((MEM y) s))))
+T c= c==> c==> c= f0 f1 c= cMEM f1 f2 cMEM f1 f2 c= c==> c= f0 f1 cMEM f1 f2 c==> c= f0 f1 cMEM f1 f2 c= c==> c= f0 f1 cMEM f1 f2 c==> c= f0 f1 cMEM f1 f2
+- ((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) |- ((!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))) ==> (!x. (P x)))
+T c==> c/\ * f0 cNIL ! ! c==> * f0 b1 * f0 cCONS b0 b1 c==> ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 ! * f0 b0
+- |- (((!q'. (((~ ((MEM y) s)) = p') ==> ((p' ==> ((((MEM x) ((CONS y) (undup s))) = ((MEM x) ((CONS y) s))) = q')) ==> (((~ ((MEM y) s)) ==> (((MEM x) ((CONS y) (undup s))) = ((MEM x) ((CONS y) s)))) = (p' ==> q'))))) ==> ((\q'. (((~ ((MEM y) s)) = p') ==> ((p' ==> ((((MEM x) ((CONS y) (undup s))) = ((MEM x) ((CONS y) s))) = q')) ==> (((~ ((MEM y) s)) ==> (((MEM x) ((CONS y) (undup s))) = ((MEM x) ((CONS y) s)))) = (p' ==> q'))))) q')) = ((\q'. (((~ ((MEM y) s)) = p') ==> ((p' ==> ((((MEM x) ((CONS y) (undup s))) = ((MEM x) ((CONS y) s))) = q')) ==> (((~ ((MEM y) s)) ==> (((MEM x) ((CONS y) (undup s))) = ((MEM x) ((CONS y) s)))) = (p' ==> q'))))) q'))
+T c= c==> ! c==> c= c~ cMEM f0 f1 f2 c==> c==> f2 c= c= cMEM f3 cCONS f0 cundup f1 cMEM f3 cCONS f0 f1 b0 c= c==> c~ cMEM f0 f1 c= cMEM f3 cCONS f0 cundup f1 cMEM f3 cCONS f0 f1 c==> f2 b0 * / c==> c= c~ cMEM f0 f1 f2 c==> c==> f2 c= c= cMEM f3 cCONS f0 cundup f1 cMEM f3 cCONS f0 f1 b0 c= c==> c~ cMEM f0 f1 c= cMEM f3 cCONS f0 cundup f1 cMEM f3 cCONS f0 f1 c==> f2 b0 f4 * / c==> c= c~ cMEM f0 f1 f2 c==> c==> f2 c= c= cMEM f3 cCONS f0 cundup f1 cMEM f3 cCONS f0 f1 b0 c= c==> c~ cMEM f0 f1 c= cMEM f3 cCONS f0 cundup f1 cMEM f3 cCONS f0 f1 c==> f2 b0 f4
+- (s = s1) |- ((s = s1) /\ ((sizel (undup s)) <= (sizel s)))
+T c==> c= f0 f1 c/\ c= f0 f1 c<= csizel cundup f0 csizel f0
+- (~ F) |- ((F = F) = T)
+T c==> c~ cF c= c= cF cF cT
++ (x = y) |- ((x = y) /\ (((MEM y) s) = ((MEM y) s)))
+T c==> c= f0 f1 c/\ c= f0 f1 c= cMEM f1 f2 cMEM f1 f2
+- |- ((((MEM y) s) ==> (((MEM x) (undup s)) = ((MEM x) ((CONS y) s)))) = (((MEM y) s) ==> (((MEM x) (undup s)) = ((MEM x) ((CONS y) s)))))
+T c= c==> cMEM f0 f1 c= cMEM f2 cundup f1 cMEM f2 cCONS f0 f1 c==> cMEM f0 f1 c= cMEM f2 cundup f1 cMEM f2 cCONS f0 f1
++ |- (((~ ((MEM y) s)) ==> ((((MEM x) (((COND ((MEM y) s)) (undup s)) ((CONS y) (undup s)))) = ((MEM x) ((CONS y) s))) = q')) ==> (((~ ((MEM y) s)) ==> (((MEM x) (((COND ((MEM y) s)) (undup s)) ((CONS y) (undup s)))) = ((MEM x) ((CONS y) s)))) = ((~ ((MEM y) s)) ==> q')))
+T c==> c==> c~ cMEM f0 f1 c= c= cMEM f2 cCOND cMEM f0 f1 cundup f1 cCONS f0 cundup f1 cMEM f2 cCONS f0 f1 f3 c= c==> c~ cMEM f0 f1 c= cMEM f2 cCOND cMEM f0 f1 cundup f1 cCONS f0 cundup f1 cMEM f2 cCONS f0 f1 c==> c~ cMEM f0 f1 f3
++ |- (((!g'. (!t'. (!e'. ((((MEM y) s) = g') ==> ((g' ==> ((undup s) = t')) ==> (((~ g') ==> (((CONS y) (undup s)) = e')) ==> ((((COND ((MEM y) s)) (undup s)) ((CONS y) (undup s))) = (((COND g') t') e')))))))) ==> ((\g'. (!t'. (!e'. ((((MEM y) s) = g') ==> ((g' ==> ((undup s) = t')) ==> (((~ g') ==> (((CONS y) (undup s)) = e')) ==> ((((COND ((MEM y) s)) (undup s)) ((CONS y) (undup s))) = (((COND g') t') e')))))))) g')) = ((\g'. (!t'. (!e'. ((((MEM y) s) = g') ==> ((g' ==> ((undup s) = t')) ==> (((~ g') ==> (((CONS y) (undup s)) = e')) ==> ((((COND ((MEM y) s)) (undup s)) ((CONS y) (undup s))) = (((COND g') t') e')))))))) g'))
+T c= c==> ! ! ! c==> c= cMEM f0 f1 b0 c==> c==> b0 c= cundup f1 b1 c==> c==> c~ b0 c= cCONS f0 cundup f1 b2 c= cCOND cMEM f0 f1 cundup f1 cCONS f0 cundup f1 cCOND b0 b1 b2 * / ! ! c==> c= cMEM f0 f1 b0 c==> c==> b0 c= cundup f1 b1 c==> c==> c~ b0 c= cCONS f0 cundup f1 b2 c= cCOND cMEM f0 f1 cundup f1 cCONS f0 cundup f1 cCOND b0 b1 b2 f2 * / ! ! c==> c= cMEM f0 f1 b0 c==> c==> b0 c= cundup f1 b1 c==> c==> c~ b0 c= cCONS f0 cundup f1 b2 c= cCOND cMEM f0 f1 cundup f1 cCONS f0 cundup f1 cCOND b0 b1 b2 f2
++ |- (((x = y) = p') ==> ((p' ==> ((((MEM x) s) = ((x = y) \/ ((MEM x) s))) = q')) ==> (((x = y) ==> (((MEM x) s) = ((x = y) \/ ((MEM x) s)))) = (p' ==> q'))))
+T c==> c= c= f0 f1 f2 c==> c==> f2 c= c= cMEM f0 f3 c\/ c= f0 f1 cMEM f0 f3 f4 c= c==> c= f0 f1 c= cMEM f0 f3 c\/ c= f0 f1 cMEM f0 f3 c==> f2 f4
++ |- ((\y. (!s. (!x. (((MEM x) ((CONS y) s)) = ((x = y) \/ ((MEM x) s)))))) y)
+T * / ! ! c= cMEM b2 cCONS b0 b1 c\/ c= b2 b0 cMEM b2 b1 f0
+- |- ((?s1. (s = s1)) ==> (?s1. (s = s1)))
+T c==> c? / c= f0 b0 c? / c= f0 b0
++ (s = s1) |- ((s = s1) /\ (((MEM x) (undup s)) = ((MEM x) s)))
+T c==> c= f0 f1 c/\ c= f0 f1 c= cMEM f2 cundup f0 cMEM f2 f0
++ |- (((((MEM y) s) ==> ((((MEM x) (((COND ((MEM y) s)) (undup s)) ((CONS y) (undup s)))) = ((MEM x) ((CONS y) s))) = (((MEM x) (undup s)) = ((MEM x) ((CONS y) s))))) ==> ((((MEM y) s) ==> (((MEM x) (((COND ((MEM y) s)) (undup s)) ((CONS y) (undup s)))) = ((MEM x) ((CONS y) s)))) = (((MEM y) s) ==> (((MEM x) (undup s)) = ((MEM x) ((CONS y) s)))))) = ((((MEM y) s) ==> (((MEM x) (((COND ((MEM y) s)) (undup s)) ((CONS y) (undup s)))) = ((MEM x) ((CONS y) s)))) = (((MEM y) s) ==> (((MEM x) (undup s)) = ((MEM x) ((CONS y) s))))))
+T c= c==> c==> cMEM f0 f1 c= c= cMEM f2 cCOND cMEM f0 f1 cundup f1 cCONS f0 cundup f1 cMEM f2 cCONS f0 f1 c= cMEM f2 cundup f1 cMEM f2 cCONS f0 f1 c= c==> cMEM f0 f1 c= cMEM f2 cCOND cMEM f0 f1 cundup f1 cCONS f0 cundup f1 cMEM f2 cCONS f0 f1 c==> cMEM f0 f1 c= cMEM f2 cundup f1 cMEM f2 cCONS f0 f1 c= c==> cMEM f0 f1 c= cMEM f2 cCOND cMEM f0 f1 cundup f1 cCONS f0 cundup f1 cMEM f2 cCONS f0 f1 c==> cMEM f0 f1 c= cMEM f2 cundup f1 cMEM f2 cCONS f0 f1
++ |- ((x = x) = T)
+T c= c= f0 f0 cT
+- |- (((?s1. (s = s1)) ==> ((sizel (undup s)) <= (sizel s))) = ((sizel (undup s)) <= (sizel s)))
+T c= c==> c? / c= f0 b0 c<= csizel cundup f0 csizel f0 c<= csizel cundup f0 csizel f0
++ |- (((~ (x = y)) ==> ((((MEM x) s) = ((x = y) \/ ((MEM x) s))) = q')) ==> (((~ (x = y)) ==> (((MEM x) s) = ((x = y) \/ ((MEM x) s)))) = ((~ (x = y)) ==> q')))
+T c==> c==> c~ c= f0 f1 c= c= cMEM f0 f2 c\/ c= f0 f1 cMEM f0 f2 f3 c= c==> c~ c= f0 f1 c= cMEM f0 f2 c\/ c= f0 f1 cMEM f0 f2 c==> c~ c= f0 f1 f3
+- |- ((\Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))) Q)
+T * / c= c==> f0 ! * b0 b1 ! c==> f0 * b0 b1 f1
+- (!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))) |- ((\P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))) P)
+T c==> ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 * / c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 f0
+- |- (((!s. ((sizel (undup s)) <= (sizel s))) ==> ((\s. ((sizel (undup s)) <= (sizel s))) s1)) = ((\s. ((sizel (undup s)) <= (sizel s))) s1))
+T c= c==> ! c<= csizel cundup b0 csizel b0 * / c<= csizel cundup b0 csizel b0 f0 * / c<= csizel cundup b0 csizel b0 f0
+- (y = x) |- (x = y)
+T c==> c= f0 f1 c= f1 f0
++ ((\s1. (s = s1)) s1) |- (((s = s1) ==> (((MEM x) (undup s)) = ((MEM x) s))) = (((MEM x) (undup s)) = ((MEM x) s)))
+T c==> * / c= f0 b0 f1 c= c==> c= f0 f1 c= cMEM f2 cundup f0 cMEM f2 f0 c= cMEM f2 cundup f0 cMEM f2 f0
+- F |- (F = T)
+T c==> cF c= cF cT
++ |- ((t = T) = t)
+T c= c= f0 cT f0
+- |- (T = (((MEM x) NIL) = ((MEM x) NIL)))
+T c= cT c= cMEM f0 cNIL cMEM f0 cNIL
++ (((MEM x) (undup s)) = ((MEM x) s)) |- (((MEM x) (((COND ((MEM y) s)) (undup s)) ((CONS y) (undup s)))) = ((MEM x) ((CONS y) s)))
+T c==> c= cMEM f0 cundup f1 cMEM f0 f1 c= cMEM f0 cCOND cMEM f2 f1 cundup f1 cCONS f2 cundup f1 cMEM f0 cCONS f2 f1
+- ((\s1. (s = s1)) s1) |- (((s = s1) ==> (?s1. (s = s1))) = (?s1. (s = s1)))
+T c==> * / c= f0 b0 f1 c= c==> c= f0 f1 c? / c= f0 b0 c? / c= f0 b0
++ |- ((((x = y) \/ ((MEM x) s)) = ((x = y) \/ ((MEM x) s))) = (((x = y) \/ ((MEM x) s)) = ((MEM x) ((CONS y) s))))
+T c= c= c\/ c= f0 f1 cMEM f0 f2 c\/ c= f0 f1 cMEM f0 f2 c= c\/ c= f0 f1 cMEM f0 f2 cMEM f0 cCONS f1 f2
+- |- ((!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))) ==> (!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))))
+T c==> ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1
++ |- ((s = s) = ((\s1. (s = s1)) s))
+T c= c= f0 f0 * / c= f0 b0 f0
++ |- (((((MEM y) s) = ((MEM y) s)) ==> ((((MEM y) s) ==> ((((MEM x) (((COND ((MEM y) s)) (undup s)) ((CONS y) (undup s)))) = ((MEM x) ((CONS y) s))) = q')) ==> ((((MEM y) s) ==> (((MEM x) (((COND ((MEM y) s)) (undup s)) ((CONS y) (undup s)))) = ((MEM x) ((CONS y) s)))) = (((MEM y) s) ==> q')))) = ((((MEM y) s) ==> ((((MEM x) (((COND ((MEM y) s)) (undup s)) ((CONS y) (undup s)))) = ((MEM x) ((CONS y) s))) = q')) ==> ((((MEM y) s) ==> (((MEM x) (((COND ((MEM y) s)) (undup s)) ((CONS y) (undup s)))) = ((MEM x) ((CONS y) s)))) = (((MEM y) s) ==> q'))))
+T c= c==> c= cMEM f0 f1 cMEM f0 f1 c==> c==> cMEM f0 f1 c= c= cMEM f2 cCOND cMEM f0 f1 cundup f1 cCONS f0 cundup f1 cMEM f2 cCONS f0 f1 f3 c= c==> cMEM f0 f1 c= cMEM f2 cCOND cMEM f0 f1 cundup f1 cCONS f0 cundup f1 cMEM f2 cCONS f0 f1 c==> cMEM f0 f1 f3 c==> c==> cMEM f0 f1 c= c= cMEM f2 cCOND cMEM f0 f1 cundup f1 cCONS f0 cundup f1 cMEM f2 cCONS f0 f1 f3 c= c==> cMEM f0 f1 c= cMEM f2 cCOND cMEM f0 f1 cundup f1 cCONS f0 cundup f1 cMEM f2 cCONS f0 f1 c==> cMEM f0 f1 f3
++ (((MEM x) (undup s)) = ((MEM x) s)) |- (((MEM x) ((CONS y) (undup s))) = ((MEM x) ((CONS y) s)))
+T c==> c= cMEM f0 cundup f1 cMEM f0 f1 c= cMEM f0 cCONS f2 cundup f1 cMEM f0 cCONS f2 f1
++ |- ((\q'. (((x = y) = p') ==> ((p' ==> (((MEM y) s) = q')) ==> (((x = y) ==> ((MEM y) s)) = (p' ==> q'))))) q')
+T * / c==> c= c= f0 f1 f2 c==> c==> f2 c= cMEM f1 f3 b0 c= c==> c= f0 f1 cMEM f1 f3 c==> f2 b0 f4
+- (~ ((MEM y) s)) |- ((~ ((MEM y) s)) /\ ((((MEM x) ((CONS y) (undup s))) = ((MEM x) ((CONS y) s))) = (((MEM x) ((CONS y) (undup s))) = ((MEM x) ((CONS y) s)))))
+T c==> c~ cMEM f0 f1 c/\ c~ cMEM f0 f1 c= c= cMEM f2 cCONS f0 cundup f1 cMEM f2 cCONS f0 f1 c= cMEM f2 cCONS f0 cundup f1 cMEM f2 cCONS f0 f1
++ (~ (x = y)) |- ((~ (x = y)) /\ ((((MEM x) s) = ((x = y) \/ ((MEM x) s))) = T))
+T c==> c~ c= f0 f1 c/\ c~ c= f0 f1 c= c= cMEM f0 f2 c\/ c= f0 f1 cMEM f0 f2 cT
+- |- ((\s. ((sizel (undup s)) <= (sizel s))) s1)
+T * / c<= csizel cundup b0 csizel b0 f0
++ (s = s1) |- (((MEM x) (undup s1)) = ((MEM x) s))
+T c==> c= f0 f1 c= cMEM f2 cundup f1 cMEM f2 f0
++ |- (!g'. (!t'. (!e'. ((g = g') ==> ((g' ==> (t = t')) ==> (((~ g') ==> (e = e')) ==> ((((COND g) t) e) = (((COND g') t') e'))))))))
+T c==> c= f0 f1 c==> c==> f1 c= f2 f3 c==> c==> c~ f1 c= f4 f5 c= cCOND f0 f2 f4 cCOND f1 f3 f5
++ |- (((!t. (t \/ (~ t))) ==> ((\t. (t \/ (~ t))) (x = y))) = ((\t. (t \/ (~ t))) (x = y)))
+T c= c==> ! c\/ b0 c~ b0 * / c\/ b0 c~ b0 c= f0 f1 * / c\/ b0 c~ b0 c= f0 f1
+- |- (((!P. (!Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x)))))) ==> ((\P. (!Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x)))))) P)) = ((\P. (!Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x)))))) P))
+T c= c==> ! ! c= c==> b0 ! * b1 b2 ! c==> b0 * b1 b2 * / ! c= c==> b0 ! * b1 b2 ! c==> b0 * b1 b2 f0 * / ! c= c==> b0 ! * b1 b2 ! c==> b0 * b1 b2 f0
+- (s = s1) |- ((s = s1) /\ (?s1. (s = s1)))
+T c==> c= f0 f1 c/\ c= f0 f1 c? / c= f0 b0
+- ((\s1. (s = s1)) s1) |- (((\s1. (s = s1)) s1) /\ (?s1. (s = s1)))
+T c==> * / c= f0 b0 f1 c/\ * / c= f0 b0 f1 c? / c= f0 b0
+- (x = y), ((MEM y) s) |- ((x = y) /\ (((MEM x) s) = ((x = y) \/ ((MEM x) s))))
+T c==> c= f0 f1 c==> cMEM f1 f2 c/\ c= f0 f1 c= cMEM f0 f2 c\/ c= f0 f1 cMEM f0 f2
+- |- (((sizel (undup s)) <= (sizel s)) = T)
+T c= c<= csizel cundup f0 csizel f0 cT
+- |- (((!p'. (!q'. (((~ ((MEM y) s)) = p') ==> ((p' ==> ((((MEM x) ((CONS y) (undup s))) = ((MEM x) ((CONS y) s))) = q')) ==> (((~ ((MEM y) s)) ==> (((MEM x) ((CONS y) (undup s))) = ((MEM x) ((CONS y) s)))) = (p' ==> q')))))) ==> ((\p'. (!q'. (((~ ((MEM y) s)) = p') ==> ((p' ==> ((((MEM x) ((CONS y) (undup s))) = ((MEM x) ((CONS y) s))) = q')) ==> (((~ ((MEM y) s)) ==> (((MEM x) ((CONS y) (undup s))) = ((MEM x) ((CONS y) s)))) = (p' ==> q')))))) p')) = ((\p'. (!q'. (((~ ((MEM y) s)) = p') ==> ((p' ==> ((((MEM x) ((CONS y) (undup s))) = ((MEM x) ((CONS y) s))) = q')) ==> (((~ ((MEM y) s)) ==> (((MEM x) ((CONS y) (undup s))) = ((MEM x) ((CONS y) s)))) = (p' ==> q')))))) p'))
+T c= c==> ! ! c==> c= c~ cMEM f0 f1 b0 c==> c==> b0 c= c= cMEM f2 cCONS f0 cundup f1 cMEM f2 cCONS f0 f1 b1 c= c==> c~ cMEM f0 f1 c= cMEM f2 cCONS f0 cundup f1 cMEM f2 cCONS f0 f1 c==> b0 b1 * / ! c==> c= c~ cMEM f0 f1 b0 c==> c==> b0 c= c= cMEM f2 cCONS f0 cundup f1 cMEM f2 cCONS f0 f1 b1 c= c==> c~ cMEM f0 f1 c= cMEM f2 cCONS f0 cundup f1 cMEM f2 cCONS f0 f1 c==> b0 b1 f3 * / ! c==> c= c~ cMEM f0 f1 b0 c==> c==> b0 c= c= cMEM f2 cCONS f0 cundup f1 cMEM f2 cCONS f0 f1 b1 c= c==> c~ cMEM f0 f1 c= cMEM f2 cCONS f0 cundup f1 cMEM f2 cCONS f0 f1 c==> b0 b1 f3
+- ((\s1. (s = s1)) s1) |- (((s = s1) ==> ((sizel (undup s)) <= (sizel s))) = ((sizel (undup s)) <= (sizel s)))
+T c==> * / c= f0 b0 f1 c= c==> c= f0 f1 c<= csizel cundup f0 csizel f0 c<= csizel cundup f0 csizel f0
+- |- (((!x. (((\s1. (s = s1)) x) ==> (?s1. (s = s1)))) ==> ((?s1. (s = s1)) ==> (?s1. (s = s1)))) = ((?s1. (s = s1)) ==> (?s1. (s = s1))))
+T c= c==> ! c==> * / c= f0 b1 b0 c? / c= f0 b1 c==> c? / c= f0 b0 c? / c= f0 b0 c==> c? / c= f0 b0 c? / c= f0 b0
+- |- ((sizel (undup s)) <= (sizel s))
+T c<= csizel cundup f0 csizel f0
+- |- ((s = s1) ==> (?s1. (s = s1)))
+T c==> c= f0 f1 c? / c= f0 b0
+- (~ (x = y)) |- (~ (y = x))
+T c==> c~ c= f0 f1 c~ c= f1 f0
+- |- ((\q'. (((~ ((MEM y) s)) = p') ==> ((p' ==> ((((MEM x) ((CONS y) (undup s))) = ((MEM x) ((CONS y) s))) = q')) ==> (((~ ((MEM y) s)) ==> (((MEM x) ((CONS y) (undup s))) = ((MEM x) ((CONS y) s)))) = (p' ==> q'))))) q')
+T * / c==> c= c~ cMEM f0 f1 f2 c==> c==> f2 c= c= cMEM f3 cCONS f0 cundup f1 cMEM f3 cCONS f0 f1 b0 c= c==> c~ cMEM f0 f1 c= cMEM f3 cCONS f0 cundup f1 cMEM f3 cCONS f0 f1 c==> f2 b0 f4
+- (~ F) |- (F = F)
+T c==> c~ cF c= cF cF
+- (~ ((MEM y) s)), (((MEM x) (undup s)) = ((MEM x) s)) |- (((MEM x) (((COND ((MEM y) s)) (undup s)) ((CONS y) (undup s)))) = ((MEM x) ((CONS y) s)))
+T c==> c~ cMEM f0 f1 c==> c= cMEM f2 cundup f1 cMEM f2 f1 c= cMEM f2 cCOND cMEM f0 f1 cundup f1 cCONS f0 cundup f1 cMEM f2 cCONS f0 f1
+- ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x)))) |- ((!x. (P ==> (Q x))) = (P ==> (!x. (Q x))))
+T c==> c= c==> f0 ! * f1 b0 ! c==> f0 * f1 b0 c= ! c==> f0 * f1 b0 c==> f0 ! * f1 b0
+- |- (((!x. (((\s1. (s = s1)) x) ==> ((sizel (undup s)) <= (sizel s)))) ==> ((?s1. (s = s1)) ==> ((sizel (undup s)) <= (sizel s)))) = ((?s1. (s = s1)) ==> ((sizel (undup s)) <= (sizel s))))
+T c= c==> ! c==> * / c= f0 b1 b0 c<= csizel cundup f0 csizel f0 c==> c? / c= f0 b0 c<= csizel cundup f0 csizel f0 c==> c? / c= f0 b0 c<= csizel cundup f0 csizel f0
+- (~ (x = y)) |- ((y = x) = F)
+T c==> c~ c= f0 f1 c= c= f1 f0 cF
+- |- (((~ ((MEM y) s)) ==> (((MEM x) ((CONS y) (undup s))) = ((MEM x) ((CONS y) s)))) = ((~ ((MEM y) s)) ==> (((MEM x) ((CONS y) (undup s))) = ((MEM x) ((CONS y) s)))))
+T c= c==> c~ cMEM f0 f1 c= cMEM f2 cCONS f0 cundup f1 cMEM f2 cCONS f0 f1 c==> c~ cMEM f0 f1 c= cMEM f2 cCONS f0 cundup f1 cMEM f2 cCONS f0 f1
+- (!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))) |- ((((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x))) = T)
+T c==> ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 c= c==> c/\ * f0 cNIL ! ! c==> * f0 b1 * f0 cCONS b0 b1 ! * f0 b0 cT
+- (s = s1) |- ((\s1. (s = s1)) s1)
+T c==> c= f0 f1 * / c= f0 b0 f1
+- ((\s1. (s = s1)) s1) |- (((\s1. (s = s1)) s1) /\ ((sizel (undup s)) <= (sizel s)))
+T c==> * / c= f0 b0 f1 c/\ * / c= f0 b0 f1 c<= csizel cundup f0 csizel f0
+- |- (((~ ((MEM y) s)) ==> ((((MEM x) ((CONS y) (undup s))) = ((MEM x) ((CONS y) s))) = q')) ==> (((~ ((MEM y) s)) ==> (((MEM x) ((CONS y) (undup s))) = ((MEM x) ((CONS y) s)))) = ((~ ((MEM y) s)) ==> q')))
+T c==> c==> c~ cMEM f0 f1 c= c= cMEM f2 cCONS f0 cundup f1 cMEM f2 cCONS f0 f1 f3 c= c==> c~ cMEM f0 f1 c= cMEM f2 cCONS f0 cundup f1 cMEM f2 cCONS f0 f1 c==> c~ cMEM f0 f1 f3
+- |- ((((MEM x) NIL) = ((MEM x) NIL)) = (((MEM x) (undup NIL)) = ((MEM x) NIL)))
+T c= c= cMEM f0 cNIL cMEM f0 cNIL c= cMEM f0 cundup cNIL cMEM f0 cNIL
+- |- ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))
+T c= c==> f0 ! * f1 b0 ! c==> f0 * f1 b0
+- (~ T) |- (T = F)
+T c==> c~ cT c= cT cF
+- (s = s1) |- ((((MEM x) (undup s1)) = ((MEM x) s1)) = (((MEM x) (undup s)) = ((MEM x) s)))
+T c==> c= f0 f1 c= c= cMEM f2 cundup f1 cMEM f2 f1 c= cMEM f2 cundup f0 cMEM f2 f0
+- T |- ((T = T) = T)
+T c==> cT c= c= cT cT cT
+- (s = s1) |- ((sizel (undup s1)) <= (sizel s1))
+T c==> c= f0 f1 c<= csizel cundup f1 csizel f1
+- (s = s1) |- ((sizel (undup s1)) <= (sizel s))
+T c==> c= f0 f1 c<= csizel cundup f1 csizel f0
+- |- ((((\s1. (s = s1)) s1) ==> ((sizel (undup s)) <= (sizel s))) = T)
+T c= c==> * / c= f0 b0 f1 c<= csizel cundup f0 csizel f0 cT
+- |- (((MEM x) NIL) = F)
+T c= cMEM f0 cNIL cF
+- |- (((!Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))) ==> ((\Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))) Q)) = ((\Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))) Q))
+T c= c==> ! c= c==> f0 ! * b0 b1 ! c==> f0 * b0 b1 * / c= c==> f0 ! * b0 b1 ! c==> f0 * b0 b1 f1 * / c= c==> f0 ! * b0 b1 ! c==> f0 * b0 b1 f1
+- |- ((((\s1. (s = s1)) s1) ==> (?s1. (s = s1))) = T)
+T c= c==> * / c= f0 b0 f1 c? / c= f0 b0 cT
+- |- ((\p'. (!q'. ((((MEM y) s) = p') ==> ((p' ==> ((((MEM x) (undup s)) = ((MEM x) ((CONS y) s))) = q')) ==> ((((MEM y) s) ==> (((MEM x) (undup s)) = ((MEM x) ((CONS y) s)))) = (p' ==> q')))))) p')
+T * / ! c==> c= cMEM f0 f1 b0 c==> c==> b0 c= c= cMEM f2 cundup f1 cMEM f2 cCONS f0 f1 b1 c= c==> cMEM f0 f1 c= cMEM f2 cundup f1 cMEM f2 cCONS f0 f1 c==> b0 b1 f3
+- |- (((((MEM y) s) ==> ((((MEM x) (undup s)) = ((MEM x) ((CONS y) s))) = (((MEM x) (undup s)) = ((MEM x) ((CONS y) s))))) ==> ((((MEM y) s) ==> (((MEM x) (undup s)) = ((MEM x) ((CONS y) s)))) = (((MEM y) s) ==> (((MEM x) (undup s)) = ((MEM x) ((CONS y) s)))))) = ((((MEM y) s) ==> (((MEM x) (undup s)) = ((MEM x) ((CONS y) s)))) = (((MEM y) s) ==> (((MEM x) (undup s)) = ((MEM x) ((CONS y) s))))))
+T c= c==> c==> cMEM f0 f1 c= c= cMEM f2 cundup f1 cMEM f2 cCONS f0 f1 c= cMEM f2 cundup f1 cMEM f2 cCONS f0 f1 c= c==> cMEM f0 f1 c= cMEM f2 cundup f1 cMEM f2 cCONS f0 f1 c==> cMEM f0 f1 c= cMEM f2 cundup f1 cMEM f2 cCONS f0 f1 c= c==> cMEM f0 f1 c= cMEM f2 cundup f1 cMEM f2 cCONS f0 f1 c==> cMEM f0 f1 c= cMEM f2 cundup f1 cMEM f2 cCONS f0 f1
+- (!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))) |- ((!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))) /\ (!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))))
+T c==> ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 c/\ ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1

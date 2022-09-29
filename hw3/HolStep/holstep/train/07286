@@ -1,0 +1,44 @@
+N REAL_SEGMENT_INTERVAL
+C |- ((!a. (!b. ((closed_real_segment ((CONS (a , b)) NIL)) = (((COND ((real_le a) b)) (closed_real_interval ((CONS (a , b)) NIL))) (closed_real_interval ((CONS (b , a)) NIL)))))) /\ (!a. (!b. ((open_real_segment (a , b)) = (((COND ((real_le a) b)) (open_real_interval (a , b))) (open_real_interval (b , a)))))))
+T c/\ ! ! c= * part cclosed_real_segment cCONS c, b0 b1 cNIL * * * part cCOND creal_le b0 b1 * part cclosed_real_interval cCONS c, b0 b1 cNIL * part cclosed_real_interval cCONS c, b1 b0 cNIL ! ! c= * part copen_real_segment c, b0 b1 * * * part cCOND creal_le b0 b1 * part copen_real_interval c, b0 b1 * part copen_real_interval c, b1 b0
+D TRUTH
+A |- T
+T cT
+D COND_CLAUSES
+A |- (!t1. (!t2. (((((COND T) t1) t2) = t1) /\ ((((COND F) t1) t2) = t2))))
+T c/\ c= cCOND cT f0 f1 f0 c= cCOND cF f0 f1 f1
+D COND_ELIM_THM
+A |- ((P (((COND c) x) y)) = ((c ==> (P x)) /\ ((~ c) ==> (P y))))
+T c= * f0 cCOND f1 f2 f3 c/\ c==> f1 * f0 f2 c==> c~ f1 * f0 f3
+D LIFT_DROP
+A |- ((!x. ((lift (drop x)) = x)) /\ (!x. ((drop (lift x)) = x)))
+T c/\ ! c= clift cdrop b0 b0 ! c= cdrop clift b0 b0
+D SEGMENT_1
+A |- ((!a. (!b. ((closed_segment ((CONS (a , b)) NIL)) = (((COND ((real_le (drop a)) (drop b))) (closed_interval ((CONS (a , b)) NIL))) (closed_interval ((CONS (b , a)) NIL)))))) /\ (!a. (!b. ((open_segment (a , b)) = (((COND ((real_le (drop a)) (drop b))) (open_interval (a , b))) (open_interval (b , a)))))))
+T c/\ ! ! c= * part cclosed_segment cCONS c, b0 b1 cNIL * * * part cCOND creal_le cdrop b0 cdrop b1 * part cclosed_interval cCONS c, b0 b1 cNIL * part cclosed_interval cCONS c, b1 b0 cNIL ! ! c= * part copen_segment c, b0 b1 * * * part cCOND creal_le cdrop b0 cdrop b1 * part copen_interval c, b0 b1 * part copen_interval c, b1 b0
+D REAL_INTERVAL_INTERVAL
+A |- (((closed_real_interval ((CONS (a , b)) NIL)) = ((IMAGE drop) (closed_interval ((CONS ((lift a) , (lift b))) NIL)))) /\ ((open_real_interval (a , b)) = ((IMAGE drop) (open_interval ((lift a) , (lift b))))))
+T c/\ c= * part cclosed_real_interval cCONS c, f0 f1 cNIL * * part cIMAGE part cdrop * part cclosed_interval cCONS c, clift f0 clift f1 cNIL c= * part copen_real_interval c, f0 f1 * * part cIMAGE part cdrop * part copen_interval c, clift f0 clift f1
+D REAL_SEGMENT_SEGMENT
+A |- ((!a. (!b. ((closed_real_segment ((CONS (a , b)) NIL)) = ((IMAGE drop) (closed_segment ((CONS ((lift a) , (lift b))) NIL)))))) /\ (!a. (!b. ((open_real_segment (a , b)) = ((IMAGE drop) (open_segment ((lift a) , (lift b))))))))
+T c/\ ! ! c= * part cclosed_real_segment cCONS c, b0 b1 cNIL * * part cIMAGE part cdrop * part cclosed_segment cCONS c, clift b0 clift b1 cNIL ! ! c= * part copen_real_segment c, b0 b1 * * part cIMAGE part cdrop * part copen_segment c, clift b0 clift b1
++ |- (((!b. ((open_real_segment (a , b)) = ((IMAGE drop) (open_segment ((lift a) , (lift b)))))) ==> ((\b. ((open_real_segment (a , b)) = ((IMAGE drop) (open_segment ((lift a) , (lift b)))))) b)) = ((\b. ((open_real_segment (a , b)) = ((IMAGE drop) (open_segment ((lift a) , (lift b)))))) b))
+T c= c==> ! c= * part copen_real_segment c, f0 b0 * * part cIMAGE part cdrop * part copen_segment c, clift f0 clift b0 * / c= * part copen_real_segment c, f0 b0 * * part cIMAGE part cdrop * part copen_segment c, clift f0 clift b0 f1 * / c= * part copen_real_segment c, f0 b0 * * part cIMAGE part cdrop * part copen_segment c, clift f0 clift b0 f1
++ |- ((\a. (!b. ((closed_real_segment ((CONS (a , b)) NIL)) = ((IMAGE drop) (closed_segment ((CONS ((lift a) , (lift b))) NIL)))))) a)
+T * / ! c= * part cclosed_real_segment cCONS c, b0 b1 cNIL * * part cIMAGE part cdrop * part cclosed_segment cCONS c, clift b0 clift b1 cNIL f0
++ ((real_le a) b) |- (((real_le a) b) /\ (((IMAGE drop) (closed_interval ((CONS ((lift a) , (lift b))) NIL))) = (((COND ((real_le a) b)) ((IMAGE drop) (closed_interval ((CONS ((lift a) , (lift b))) NIL)))) ((IMAGE drop) (closed_interval ((CONS ((lift b) , (lift a))) NIL))))))
+T c==> creal_le f0 f1 c/\ creal_le f0 f1 c= * * part cIMAGE part cdrop * part cclosed_interval cCONS c, clift f0 clift f1 cNIL * * * part cCOND creal_le f0 f1 * * part cIMAGE part cdrop * part cclosed_interval cCONS c, clift f0 clift f1 cNIL * * part cIMAGE part cdrop * part cclosed_interval cCONS c, clift f1 clift f0 cNIL
++ |- ((open_real_interval (a , b)) = ((IMAGE drop) (open_interval ((lift a) , (lift b)))))
+T c= * part copen_real_interval c, f0 f1 * * part cIMAGE part cdrop * part copen_interval c, clift f0 clift f1
+- |- (((!x. ((lift (drop x)) = x)) ==> ((\x. ((lift (drop x)) = x)) x)) = ((\x. ((lift (drop x)) = x)) x))
+T c= c==> ! c= clift cdrop b0 b0 * / c= clift cdrop b0 b0 f0 * / c= clift cdrop b0 b0 f0
++ (~ ((real_le a) b)) |- ((((IMAGE drop) (closed_interval ((CONS ((lift b) , (lift a))) NIL))) = (((COND F) ((IMAGE drop) (closed_interval ((CONS ((lift a) , (lift b))) NIL)))) ((IMAGE drop) (closed_interval ((CONS ((lift b) , (lift a))) NIL))))) = (((IMAGE drop) (closed_interval ((CONS ((lift b) , (lift a))) NIL))) = (((COND ((real_le a) b)) ((IMAGE drop) (closed_interval ((CONS ((lift a) , (lift b))) NIL)))) ((IMAGE drop) (closed_interval ((CONS ((lift b) , (lift a))) NIL))))))
+T c==> c~ creal_le f0 f1 c= c= * * part cIMAGE part cdrop * part cclosed_interval cCONS c, clift f1 clift f0 cNIL * * * part cCOND cF * * part cIMAGE part cdrop * part cclosed_interval cCONS c, clift f0 clift f1 cNIL * * part cIMAGE part cdrop * part cclosed_interval cCONS c, clift f1 clift f0 cNIL c= * * part cIMAGE part cdrop * part cclosed_interval cCONS c, clift f1 clift f0 cNIL * * * part cCOND creal_le f0 f1 * * part cIMAGE part cdrop * part cclosed_interval cCONS c, clift f0 clift f1 cNIL * * part cIMAGE part cdrop * part cclosed_interval cCONS c, clift f1 clift f0 cNIL
+- |- ((!b. t) = t)
+T c= ! f0 f0
+- |- ((\x. ((lift (drop x)) = x)) x)
+T * / c= clift cdrop b0 b0 f0
+- |- ((t /\ t) = t)
+T c= c/\ f0 f0 f0
+- |- ((lift (drop x)) = x)
+T c= clift cdrop f0 f0

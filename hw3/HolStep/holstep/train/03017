@@ -1,0 +1,184 @@
+N FSTCART_VSUM
+C |- (!k. (!x. ((FINITE k) ==> ((fstcart ((vsum k) x)) = ((vsum k) (\i. (fstcart (x i))))))))
+T c==> cFINITE f0 c= cfstcart cvsum f0 f1 cvsum f0 / cfstcart * f1 b0
+D TRUTH
+A |- T
+T cT
+D BOOL_CASES_AX
+A |- (!t. ((t = T) \/ (t = F)))
+T c\/ c= f0 cT c= f0 cF
+D COND_CLAUSES
+A |- (!t1. (!t2. (((((COND T) t1) t2) = t1) /\ ((((COND F) t1) t2) = t2))))
+T c/\ c= cCOND cT f0 f1 f0 c= cCOND cF f0 f1 f1
+D FINITE_INDUCT_STRONG
+A |- (!P. (((P EMPTY) /\ (!x. (!s. (((P s) /\ ((~ (x IN s)) /\ (FINITE s))) ==> (P (x INSERT s)))))) ==> (!s. ((FINITE s) ==> (P s)))))
+T c==> c/\ * f0 part cEMPTY ! ! c==> c/\ * f0 b1 c/\ c~ cIN b0 b1 cFINITE b1 * f0 * * part cINSERT b0 b1 ! c==> cFINITE b0 * f0 b0
+D VSUM_CLAUSES
+A |- ((!f. (((vsum EMPTY) f) = (vec (NUMERAL _0)))) /\ (!x. (!f. (!s. ((FINITE s) ==> (((vsum (x INSERT s)) f) = (((COND (x IN s)) ((vsum s) f)) ((vector_add (f x)) ((vsum s) f)))))))))
+T c/\ ! c= cvsum part cEMPTY b0 cvec cNUMERAL c_0 ! ! ! c==> cFINITE b2 c= cvsum * * part cINSERT b0 b2 b1 cCOND cIN b0 b2 cvsum b2 b1 cvector_add * b1 b0 cvsum b2 b1
+D FSTCART_VEC
+A |- (!n. ((fstcart (vec n)) = (vec n)))
+T c= cfstcart cvec f0 cvec f0
+D FSTCART_ADD
+A |- (!x. (!y. ((fstcart ((vector_add x) y)) = ((vector_add (fstcart x)) (fstcart y)))))
+T c= cfstcart cvector_add f0 f1 cvector_add cfstcart f0 cfstcart f1
++ |- (((F ==> (((vsum k) x) = ((vsum k) x))) ==> (((~ F) ==> (((vector_add (x x)) ((vsum k) x)) = e')) ==> ((((COND (x IN k)) ((vsum k) x)) ((vector_add (x x)) ((vsum k) x))) = (((COND F) ((vsum k) x)) e')))) = (((~ F) ==> (((vector_add (x x)) ((vsum k) x)) = e')) ==> ((((COND (x IN k)) ((vsum k) x)) ((vector_add (x x)) ((vsum k) x))) = (((COND F) ((vsum k) x)) e'))))
+T c= c==> c==> cF c= cvsum f0 f1 cvsum f0 f1 c==> c==> c~ cF c= cvector_add * f1 f2 cvsum f0 f1 f3 c= cCOND cIN f2 f0 cvsum f0 f1 cvector_add * f1 f2 cvsum f0 f1 cCOND cF cvsum f0 f1 f3 c==> c==> c~ cF c= cvector_add * f1 f2 cvsum f0 f1 f3 c= cCOND cIN f2 f0 cvsum f0 f1 cvector_add * f1 f2 cvsum f0 f1 cCOND cF cvsum f0 f1 f3
+- |- (FINITE EMPTY)
+T cFINITE part cEMPTY
+- (FINITE s) |- (FINITE (x INSERT s))
+T c==> cFINITE f0 cFINITE * * part cINSERT f1 f0
++ |- (((F ==> (((vsum k) (\i. (fstcart (x i)))) = ((vsum k) (\i. (fstcart (x i)))))) ==> (((~ F) ==> (((vector_add ((\i. (fstcart (x i))) x)) ((vsum k) (\i. (fstcart (x i))))) = e')) ==> ((((COND (x IN k)) ((vsum k) (\i. (fstcart (x i))))) ((vector_add ((\i. (fstcart (x i))) x)) ((vsum k) (\i. (fstcart (x i)))))) = (((COND F) ((vsum k) (\i. (fstcart (x i))))) e')))) = (((~ F) ==> (((vector_add ((\i. (fstcart (x i))) x)) ((vsum k) (\i. (fstcart (x i))))) = e')) ==> ((((COND (x IN k)) ((vsum k) (\i. (fstcart (x i))))) ((vector_add ((\i. (fstcart (x i))) x)) ((vsum k) (\i. (fstcart (x i)))))) = (((COND F) ((vsum k) (\i. (fstcart (x i))))) e'))))
+T c= c==> c==> cF c= cvsum f0 / cfstcart * f1 b0 cvsum f0 / cfstcart * f1 b0 c==> c==> c~ cF c= cvector_add * / cfstcart * f1 b0 f2 cvsum f0 / cfstcart * f1 b0 f3 c= cCOND cIN f2 f0 cvsum f0 / cfstcart * f1 b0 cvector_add * / cfstcart * f1 b0 f2 cvsum f0 / cfstcart * f1 b0 cCOND cF cvsum f0 / cfstcart * f1 b0 f3 c==> c==> c~ cF c= cvector_add * / cfstcart * f1 b0 f2 cvsum f0 / cfstcart * f1 b0 f3 c= cCOND cIN f2 f0 cvsum f0 / cfstcart * f1 b0 cvector_add * / cfstcart * f1 b0 f2 cvsum f0 / cfstcart * f1 b0 cCOND cF cvsum f0 / cfstcart * f1 b0 f3
+- (FINITE s) |- ((FINITE s) /\ (((vsum (x INSERT s)) f) = (((COND (x IN s)) ((vsum s) f)) ((vector_add (f x)) ((vsum s) f)))))
+T c==> cFINITE f0 c/\ cFINITE f0 c= cvsum * * part cINSERT f1 f0 f2 cCOND cIN f1 f0 cvsum f0 f2 cvector_add * f2 f1 cvsum f0 f2
++ (~ F) |- ((~ F) /\ (((vector_add (x x)) ((vsum k) x)) = ((vector_add (x x)) ((vsum k) x))))
+T c==> c~ cF c/\ c~ cF c= cvector_add * f0 f1 cvsum f2 f0 cvector_add * f0 f1 cvsum f2 f0
+- (!P. (((P EMPTY) /\ (!x. (!s. (((P s) /\ ((~ (x IN s)) /\ (FINITE s))) ==> (P (x INSERT s)))))) ==> (!s. ((FINITE s) ==> (P s))))), ((P EMPTY) /\ (!x. (!s. (((P s) /\ ((~ (x IN s)) /\ (FINITE s))) ==> (P (x INSERT s)))))) |- (!s. ((FINITE s) ==> (P s)))
+T c==> ! c==> c/\ * b0 part cEMPTY ! ! c==> c/\ * b0 b2 c/\ c~ cIN b1 b2 cFINITE b2 * b0 * * part cINSERT b1 b2 ! c==> cFINITE b1 * b0 b1 c==> c/\ * f0 part cEMPTY ! ! c==> c/\ * f0 b1 c/\ c~ cIN b0 b1 cFINITE b1 * f0 * * part cINSERT b0 b1 ! c==> cFINITE b0 * f0 b0
++ |- ((!k. ((FINITE k) ==> (!x. ((fstcart ((vsum k) x)) = ((vsum k) (\i. (fstcart (x i)))))))) = (!k. (!x. ((FINITE k) ==> ((fstcart ((vsum k) x)) = ((vsum k) (\i. (fstcart (x i)))))))))
+T c= ! c==> cFINITE b0 ! c= cfstcart cvsum b0 b1 cvsum b0 / cfstcart * b1 b2 ! ! c==> cFINITE b0 c= cfstcart cvsum b0 b1 cvsum b0 / cfstcart * b1 b2
++ |- ((\p'. (!q'. ((((!x. ((fstcart ((vsum k) x)) = ((vsum k) (\i. (fstcart (x i)))))) /\ ((~ (x IN k)) /\ (FINITE k))) = p') ==> ((p' ==> ((!x. ((fstcart ((vsum (x INSERT k)) x)) = ((vsum (x INSERT k)) (\i. (fstcart (x i)))))) = q')) ==> ((((!x. ((fstcart ((vsum k) x)) = ((vsum k) (\i. (fstcart (x i)))))) /\ ((~ (x IN k)) /\ (FINITE k))) ==> (!x. ((fstcart ((vsum (x INSERT k)) x)) = ((vsum (x INSERT k)) (\i. (fstcart (x i))))))) = (p' ==> q')))))) p')
+T * / ! c==> c= c/\ ! c= cfstcart cvsum f0 b2 cvsum f0 / cfstcart * b2 b3 c/\ c~ cIN f1 f0 cFINITE f0 b0 c==> c==> b0 c= ! c= cfstcart cvsum * * part cINSERT f1 f0 b2 cvsum * * part cINSERT f1 f0 / cfstcart * b2 b3 b1 c= c==> c/\ ! c= cfstcart cvsum f0 b2 cvsum f0 / cfstcart * b2 b3 c/\ c~ cIN f1 f0 cFINITE f0 ! c= cfstcart cvsum * * part cINSERT f1 f0 b2 cvsum * * part cINSERT f1 f0 / cfstcart * b2 b3 c==> b0 b1 f2
++ |- (((!f. (((vsum EMPTY) f) = (vec (NUMERAL _0)))) ==> ((\f. (((vsum EMPTY) f) = (vec (NUMERAL _0)))) f)) = ((\f. (((vsum EMPTY) f) = (vec (NUMERAL _0)))) f))
+T c= c==> ! c= cvsum part cEMPTY b0 cvec cNUMERAL c_0 * / c= cvsum part cEMPTY b0 cvec cNUMERAL c_0 f0 * / c= cvsum part cEMPTY b0 cvec cNUMERAL c_0 f0
+- ((!x. ((fstcart ((vsum k) x)) = ((vsum k) (\i. (fstcart (x i)))))) /\ ((~ (x IN k)) /\ (FINITE k))) |- ((FINITE k) = T)
+T c==> c/\ ! c= cfstcart cvsum f0 b0 cvsum f0 / cfstcart * b0 b1 c/\ c~ cIN f1 f0 cFINITE f0 c= cFINITE f0 cT
++ |- (((!x. ((fstcart ((vsum k) x)) = ((vsum k) (\i. (fstcart (x i)))))) /\ ((~ (x IN k)) /\ (FINITE k))) ==> ((!x. ((fstcart ((vsum (x INSERT k)) x)) = ((vsum (x INSERT k)) (\i. (fstcart (x i)))))) = T))
+T c==> c/\ ! c= cfstcart cvsum f0 b0 cvsum f0 / cfstcart * b0 b1 c/\ c~ cIN f1 f0 cFINITE f0 c= ! c= cfstcart cvsum * * part cINSERT f1 f0 b0 cvsum * * part cINSERT f1 f0 / cfstcart * b0 b1 cT
++ |- ((\s. ((FINITE s) ==> (((vsum (x INSERT s)) f) = (((COND (x IN s)) ((vsum s) f)) ((vector_add (f x)) ((vsum s) f)))))) s)
+T * / c==> cFINITE b0 c= cvsum * * part cINSERT f0 b0 f1 cCOND cIN f0 b0 cvsum b0 f1 cvector_add * f1 f0 cvsum b0 f1 f2
++ ((!x. ((fstcart ((vsum k) x)) = ((vsum k) (\i. (fstcart (x i)))))) /\ ((~ (x IN k)) /\ (FINITE k))) |- ((F ==> (((vsum k) x) = t')) ==> (((~ F) ==> (((vector_add (x x)) ((vsum k) x)) = e')) ==> ((((COND (x IN k)) ((vsum k) x)) ((vector_add (x x)) ((vsum k) x))) = (((COND F) t') e'))))
+T c==> c/\ ! c= cfstcart cvsum f0 b0 cvsum f0 / cfstcart * b0 b1 c/\ c~ cIN f1 f0 cFINITE f0 c==> c==> cF c= cvsum f0 f2 f3 c==> c==> c~ cF c= cvector_add * f2 f1 cvsum f0 f2 f4 c= cCOND cIN f1 f0 cvsum f0 f2 cvector_add * f2 f1 cvsum f0 f2 cCOND cF f3 f4
++ |- ((t ==> T) = T)
+T c= c==> f0 cT cT
+- |- ((t ==> t) = T)
+T c= c==> f0 f0 cT
++ F |- (F /\ (((vsum k) x) = ((vsum k) x)))
+T c==> cF c/\ cF c= cvsum f0 f1 cvsum f0 f1
+- |- ((!k'. ((FINITE k) ==> (!x. ((fstcart ((vsum k') x)) = ((vsum k') (\i. (fstcart (x i)))))))) = ((FINITE k) ==> (!k. (!x. ((fstcart ((vsum k) x)) = ((vsum k) (\i. (fstcart (x i)))))))))
+T c= ! c==> cFINITE f0 ! c= cfstcart cvsum b0 b1 cvsum b0 / cfstcart * b1 b2 c==> cFINITE f0 ! ! c= cfstcart cvsum b0 b1 cvsum b0 / cfstcart * b1 b2
+- |- ((!x. ((x IN k) ==> ((fstcart (x x)) = (fstcart (x x))))) ==> (((vsum k) (\i. (fstcart (x i)))) = ((vsum k) (\x. (fstcart (x x))))))
+T c==> ! c==> cIN b0 f0 c= cfstcart * f1 b0 cfstcart * f1 b0 c= cvsum f0 / cfstcart * f1 b0 cvsum f0 / cfstcart * f1 b0
++ |- ((((~ F) ==> (((vector_add (x x)) ((vsum k) x)) = ((vector_add (x x)) ((vsum k) x)))) ==> ((((COND (x IN k)) ((vsum k) x)) ((vector_add (x x)) ((vsum k) x))) = (((COND F) ((vsum k) x)) ((vector_add (x x)) ((vsum k) x))))) = ((((COND (x IN k)) ((vsum k) x)) ((vector_add (x x)) ((vsum k) x))) = (((COND F) ((vsum k) x)) ((vector_add (x x)) ((vsum k) x)))))
+T c= c==> c==> c~ cF c= cvector_add * f0 f1 cvsum f2 f0 cvector_add * f0 f1 cvsum f2 f0 c= cCOND cIN f1 f2 cvsum f2 f0 cvector_add * f0 f1 cvsum f2 f0 cCOND cF cvsum f2 f0 cvector_add * f0 f1 cvsum f2 f0 c= cCOND cIN f1 f2 cvsum f2 f0 cvector_add * f0 f1 cvsum f2 f0 cCOND cF cvsum f2 f0 cvector_add * f0 f1 cvsum f2 f0
+- |- ((FINITE EMPTY) = T)
+T c= cFINITE part cEMPTY cT
++ |- (((vsum EMPTY) f) = (vec (NUMERAL _0)))
+T c= cvsum part cEMPTY f0 cvec cNUMERAL c_0
++ |- (((!f. (!s. ((FINITE s) ==> (((vsum (x INSERT s)) f) = (((COND (x IN s)) ((vsum s) f)) ((vector_add (f x)) ((vsum s) f))))))) ==> ((\f. (!s. ((FINITE s) ==> (((vsum (x INSERT s)) f) = (((COND (x IN s)) ((vsum s) f)) ((vector_add (f x)) ((vsum s) f))))))) f)) = ((\f. (!s. ((FINITE s) ==> (((vsum (x INSERT s)) f) = (((COND (x IN s)) ((vsum s) f)) ((vector_add (f x)) ((vsum s) f))))))) f))
+T c= c==> ! ! c==> cFINITE b1 c= cvsum * * part cINSERT f0 b1 b0 cCOND cIN f0 b1 cvsum b1 b0 cvector_add * b0 f0 cvsum b1 b0 * / ! c==> cFINITE b1 c= cvsum * * part cINSERT f0 b1 b0 cCOND cIN f0 b1 cvsum b1 b0 cvector_add * b0 f0 cvsum b1 b0 f1 * / ! c==> cFINITE b1 c= cvsum * * part cINSERT f0 b1 b0 cCOND cIN f0 b1 cvsum b1 b0 cvector_add * b0 f0 cvsum b1 b0 f1
++ ((!x. ((fstcart ((vsum k) x)) = ((vsum k) (\i. (fstcart (x i)))))) /\ ((~ (x IN k)) /\ (FINITE k))) |- ((((x IN k) = F) ==> ((F ==> (((vsum k) (\i. (fstcart (x i)))) = t')) ==> (((~ F) ==> (((vector_add ((\i. (fstcart (x i))) x)) ((vsum k) (\i. (fstcart (x i))))) = e')) ==> ((((COND (x IN k)) ((vsum k) (\i. (fstcart (x i))))) ((vector_add ((\i. (fstcart (x i))) x)) ((vsum k) (\i. (fstcart (x i)))))) = (((COND F) t') e'))))) = ((F ==> (((vsum k) (\i. (fstcart (x i)))) = t')) ==> (((~ F) ==> (((vector_add ((\i. (fstcart (x i))) x)) ((vsum k) (\i. (fstcart (x i))))) = e')) ==> ((((COND (x IN k)) ((vsum k) (\i. (fstcart (x i))))) ((vector_add ((\i. (fstcart (x i))) x)) ((vsum k) (\i. (fstcart (x i)))))) = (((COND F) t') e')))))
+T c==> c/\ ! c= cfstcart cvsum f0 b0 cvsum f0 / cfstcart * b0 b1 c/\ c~ cIN f1 f0 cFINITE f0 c= c==> c= cIN f1 f0 cF c==> c==> cF c= cvsum f0 / cfstcart * f2 b0 f3 c==> c==> c~ cF c= cvector_add * / cfstcart * f2 b0 f1 cvsum f0 / cfstcart * f2 b0 f4 c= cCOND cIN f1 f0 cvsum f0 / cfstcart * f2 b0 cvector_add * / cfstcart * f2 b0 f1 cvsum f0 / cfstcart * f2 b0 cCOND cF f3 f4 c==> c==> cF c= cvsum f0 / cfstcart * f2 b0 f3 c==> c==> c~ cF c= cvector_add * / cfstcart * f2 b0 f1 cvsum f0 / cfstcart * f2 b0 f4 c= cCOND cIN f1 f0 cvsum f0 / cfstcart * f2 b0 cvector_add * / cfstcart * f2 b0 f1 cvsum f0 / cfstcart * f2 b0 cCOND cF f3 f4
++ |- ((!x. t) = t)
+T c= ! f0 f0
++ |- (T = ((!x. ((fstcart ((vsum EMPTY) x)) = ((vsum EMPTY) (\i. (fstcart (x i)))))) /\ (!x. (!k. (((!x. ((fstcart ((vsum k) x)) = ((vsum k) (\i. (fstcart (x i)))))) /\ ((~ (x IN k)) /\ (FINITE k))) ==> (!x. ((fstcart ((vsum (x INSERT k)) x)) = ((vsum (x INSERT k)) (\i. (fstcart (x i)))))))))))
+T c= cT c/\ ! c= cfstcart cvsum part cEMPTY b0 cvsum part cEMPTY / cfstcart * b0 b1 ! ! c==> c/\ ! c= cfstcart cvsum b1 b2 cvsum b1 / cfstcart * b2 b3 c/\ c~ cIN b0 b1 cFINITE b1 ! c= cfstcart cvsum * * part cINSERT b0 b1 b2 cvsum * * part cINSERT b0 b1 / cfstcart * b2 b3
++ |- (((((!x. ((fstcart ((vsum k) x)) = ((vsum k) (\i. (fstcart (x i)))))) /\ ((~ (x IN k)) /\ (FINITE k))) = ((!x. ((fstcart ((vsum k) x)) = ((vsum k) (\i. (fstcart (x i)))))) /\ ((~ (x IN k)) /\ (FINITE k)))) ==> ((((!x. ((fstcart ((vsum k) x)) = ((vsum k) (\i. (fstcart (x i)))))) /\ ((~ (x IN k)) /\ (FINITE k))) ==> ((!x. ((fstcart ((vsum (x INSERT k)) x)) = ((vsum (x INSERT k)) (\i. (fstcart (x i)))))) = q')) ==> ((((!x. ((fstcart ((vsum k) x)) = ((vsum k) (\i. (fstcart (x i)))))) /\ ((~ (x IN k)) /\ (FINITE k))) ==> (!x. ((fstcart ((vsum (x INSERT k)) x)) = ((vsum (x INSERT k)) (\i. (fstcart (x i))))))) = (((!x. ((fstcart ((vsum k) x)) = ((vsum k) (\i. (fstcart (x i)))))) /\ ((~ (x IN k)) /\ (FINITE k))) ==> q')))) = ((((!x. ((fstcart ((vsum k) x)) = ((vsum k) (\i. (fstcart (x i)))))) /\ ((~ (x IN k)) /\ (FINITE k))) ==> ((!x. ((fstcart ((vsum (x INSERT k)) x)) = ((vsum (x INSERT k)) (\i. (fstcart (x i)))))) = q')) ==> ((((!x. ((fstcart ((vsum k) x)) = ((vsum k) (\i. (fstcart (x i)))))) /\ ((~ (x IN k)) /\ (FINITE k))) ==> (!x. ((fstcart ((vsum (x INSERT k)) x)) = ((vsum (x INSERT k)) (\i. (fstcart (x i))))))) = (((!x. ((fstcart ((vsum k) x)) = ((vsum k) (\i. (fstcart (x i)))))) /\ ((~ (x IN k)) /\ (FINITE k))) ==> q'))))
+T c= c==> c= c/\ ! c= cfstcart cvsum f0 b0 cvsum f0 / cfstcart * b0 b1 c/\ c~ cIN f1 f0 cFINITE f0 c/\ ! c= cfstcart cvsum f0 b0 cvsum f0 / cfstcart * b0 b1 c/\ c~ cIN f1 f0 cFINITE f0 c==> c==> c/\ ! c= cfstcart cvsum f0 b0 cvsum f0 / cfstcart * b0 b1 c/\ c~ cIN f1 f0 cFINITE f0 c= ! c= cfstcart cvsum * * part cINSERT f1 f0 b0 cvsum * * part cINSERT f1 f0 / cfstcart * b0 b1 f2 c= c==> c/\ ! c= cfstcart cvsum f0 b0 cvsum f0 / cfstcart * b0 b1 c/\ c~ cIN f1 f0 cFINITE f0 ! c= cfstcart cvsum * * part cINSERT f1 f0 b0 cvsum * * part cINSERT f1 f0 / cfstcart * b0 b1 c==> c/\ ! c= cfstcart cvsum f0 b0 cvsum f0 / cfstcart * b0 b1 c/\ c~ cIN f1 f0 cFINITE f0 f2 c==> c==> c/\ ! c= cfstcart cvsum f0 b0 cvsum f0 / cfstcart * b0 b1 c/\ c~ cIN f1 f0 cFINITE f0 c= ! c= cfstcart cvsum * * part cINSERT f1 f0 b0 cvsum * * part cINSERT f1 f0 / cfstcart * b0 b1 f2 c= c==> c/\ ! c= cfstcart cvsum f0 b0 cvsum f0 / cfstcart * b0 b1 c/\ c~ cIN f1 f0 cFINITE f0 ! c= cfstcart cvsum * * part cINSERT f1 f0 b0 cvsum * * part cINSERT f1 f0 / cfstcart * b0 b1 c==> c/\ ! c= cfstcart cvsum f0 b0 cvsum f0 / cfstcart * b0 b1 c/\ c~ cIN f1 f0 cFINITE f0 f2
++ |- (((!P. (!Q. ((!x. (P ==> (Q x))) = (P ==> (!x. (Q x)))))) ==> ((\P. (!Q. ((!x. (P ==> (Q x))) = (P ==> (!x. (Q x)))))) P)) = ((\P. (!Q. ((!x. (P ==> (Q x))) = (P ==> (!x. (Q x)))))) P))
+T c= c==> ! ! c= ! c==> b0 * b1 b2 c==> b0 ! * b1 b2 * / ! c= ! c==> b0 * b1 b2 c==> b0 ! * b1 b2 f0 * / ! c= ! c==> b0 * b1 b2 c==> b0 ! * b1 b2 f0
+- |- (((!x. ((x IN s) ==> ((f x) = (g x)))) ==> (((vsum s) (\i. (f i))) = ((vsum s) g))) = T)
+T c= c==> ! c==> cIN b0 f0 c= * f1 b0 * f2 b0 c= cvsum f0 / * f1 b0 cvsum f0 f2 cT
+- (x IN k) |- ((x IN k) = T)
+T c==> cIN f0 f1 c= cIN f0 f1 cT
++ |- ((\y. ((fstcart ((vector_add x) y)) = ((vector_add (fstcart x)) (fstcart y)))) y)
+T * / c= cfstcart cvector_add f0 b0 cvector_add cfstcart f0 cfstcart b0 f1
++ |- (((!P. (((P EMPTY) /\ (!x. (!s. (((P s) /\ ((~ (x IN s)) /\ (FINITE s))) ==> (P (x INSERT s)))))) ==> (!s. ((FINITE s) ==> (P s))))) ==> ((\P. (((P EMPTY) /\ (!x. (!s. (((P s) /\ ((~ (x IN s)) /\ (FINITE s))) ==> (P (x INSERT s)))))) ==> (!s. ((FINITE s) ==> (P s))))) P)) = ((\P. (((P EMPTY) /\ (!x. (!s. (((P s) /\ ((~ (x IN s)) /\ (FINITE s))) ==> (P (x INSERT s)))))) ==> (!s. ((FINITE s) ==> (P s))))) P))
+T c= c==> ! c==> c/\ * b0 part cEMPTY ! ! c==> c/\ * b0 b2 c/\ c~ cIN b1 b2 cFINITE b2 * b0 * * part cINSERT b1 b2 ! c==> cFINITE b1 * b0 b1 * / c==> c/\ * b0 part cEMPTY ! ! c==> c/\ * b0 b2 c/\ c~ cIN b1 b2 cFINITE b2 * b0 * * part cINSERT b1 b2 ! c==> cFINITE b1 * b0 b1 f0 * / c==> c/\ * b0 part cEMPTY ! ! c==> c/\ * b0 b2 c/\ c~ cIN b1 b2 cFINITE b2 * b0 * * part cINSERT b1 b2 ! c==> cFINITE b1 * b0 b1 f0
+- |- (((vsum k) (\i. (fstcart (x i)))) = ((vsum k) (\x. (fstcart (x x)))))
+T c= cvsum f0 / cfstcart * f1 b0 cvsum f0 / cfstcart * f1 b0
++ |- ((\x. (!f. (!s. ((FINITE s) ==> (((vsum (x INSERT s)) f) = (((COND (x IN s)) ((vsum s) f)) ((vector_add (f x)) ((vsum s) f)))))))) x)
+T * / ! ! c==> cFINITE b2 c= cvsum * * part cINSERT b0 b2 b1 cCOND cIN b0 b2 cvsum b2 b1 cvector_add * b1 b0 cvsum b2 b1 f0
++ ((!x. ((fstcart ((vsum k) x)) = ((vsum k) (\i. (fstcart (x i)))))) /\ ((~ (x IN k)) /\ (FINITE k))) |- (((vsum (x INSERT k)) x) = (((COND (x IN k)) ((vsum k) x)) ((vector_add (x x)) ((vsum k) x))))
+T c==> c/\ ! c= cfstcart cvsum f0 b0 cvsum f0 / cfstcart * b0 b1 c/\ c~ cIN f1 f0 cFINITE f0 c= cvsum * * part cINSERT f1 f0 f2 cCOND cIN f1 f0 cvsum f0 f2 cvector_add * f2 f1 cvsum f0 f2
++ |- ((!q'. ((p = p') ==> ((p' ==> (q = q')) ==> ((p ==> q) = (p' ==> q'))))) = T)
+T c= ! c==> c= f0 f1 c==> c==> f1 c= f2 b0 c= c==> f0 f2 c==> f1 b0 cT
++ ((!x. ((fstcart ((vsum k) x)) = ((vsum k) (\i. (fstcart (x i)))))) /\ ((~ (x IN k)) /\ (FINITE k))) |- ((x IN k) = F)
+T c==> c/\ ! c= cfstcart cvsum f0 b0 cvsum f0 / cfstcart * b0 b1 c/\ c~ cIN f1 f0 cFINITE f0 c= cIN f1 f0 cF
++ |- ((~ F) ==> (((vector_add ((\i. (fstcart (x i))) x)) ((vsum k) (\i. (fstcart (x i))))) = ((vector_add (fstcart (x x))) ((vsum k) (\i. (fstcart (x i)))))))
+T c==> c~ cF c= cvector_add * / cfstcart * f0 b0 f1 cvsum f2 / cfstcart * f0 b0 cvector_add cfstcart * f0 f1 cvsum f2 / cfstcart * f0 b0
++ |- (((g = g') ==> ((g' ==> (t = t')) ==> (((~ g') ==> (e = e')) ==> ((((COND g) t) e) = (((COND g') t') e'))))) = T)
+T c= c==> c= f0 f1 c==> c==> f1 c= f2 f3 c==> c==> c~ f1 c= f4 f5 c= cCOND f0 f2 f4 cCOND f1 f3 f5 cT
++ |- ((!x. ((FINITE k) ==> ((fstcart ((vsum k) x)) = ((vsum k) (\i. (fstcart (x i))))))) = ((FINITE k) ==> (!x. ((fstcart ((vsum k) x)) = ((vsum k) (\i. (fstcart (x i))))))))
+T c= ! c==> cFINITE f0 c= cfstcart cvsum f0 b0 cvsum f0 / cfstcart * b0 b1 c==> cFINITE f0 ! c= cfstcart cvsum f0 b0 cvsum f0 / cfstcart * b0 b1
++ |- (((!e'. (((x IN k) = g') ==> ((g' ==> (((vsum k) (\i. (fstcart (x i)))) = t')) ==> (((~ g') ==> (((vector_add ((\i. (fstcart (x i))) x)) ((vsum k) (\i. (fstcart (x i))))) = e')) ==> ((((COND (x IN k)) ((vsum k) (\i. (fstcart (x i))))) ((vector_add ((\i. (fstcart (x i))) x)) ((vsum k) (\i. (fstcart (x i)))))) = (((COND g') t') e')))))) ==> ((\e'. (((x IN k) = g') ==> ((g' ==> (((vsum k) (\i. (fstcart (x i)))) = t')) ==> (((~ g') ==> (((vector_add ((\i. (fstcart (x i))) x)) ((vsum k) (\i. (fstcart (x i))))) = e')) ==> ((((COND (x IN k)) ((vsum k) (\i. (fstcart (x i))))) ((vector_add ((\i. (fstcart (x i))) x)) ((vsum k) (\i. (fstcart (x i)))))) = (((COND g') t') e')))))) e')) = ((\e'. (((x IN k) = g') ==> ((g' ==> (((vsum k) (\i. (fstcart (x i)))) = t')) ==> (((~ g') ==> (((vector_add ((\i. (fstcart (x i))) x)) ((vsum k) (\i. (fstcart (x i))))) = e')) ==> ((((COND (x IN k)) ((vsum k) (\i. (fstcart (x i))))) ((vector_add ((\i. (fstcart (x i))) x)) ((vsum k) (\i. (fstcart (x i)))))) = (((COND g') t') e')))))) e'))
+T c= c==> ! c==> c= cIN f0 f1 f2 c==> c==> f2 c= cvsum f1 / cfstcart * f3 b1 f4 c==> c==> c~ f2 c= cvector_add * / cfstcart * f3 b1 f0 cvsum f1 / cfstcart * f3 b1 b0 c= cCOND cIN f0 f1 cvsum f1 / cfstcart * f3 b1 cvector_add * / cfstcart * f3 b1 f0 cvsum f1 / cfstcart * f3 b1 cCOND f2 f4 b0 * / c==> c= cIN f0 f1 f2 c==> c==> f2 c= cvsum f1 / cfstcart * f3 b1 f4 c==> c==> c~ f2 c= cvector_add * / cfstcart * f3 b1 f0 cvsum f1 / cfstcart * f3 b1 b0 c= cCOND cIN f0 f1 cvsum f1 / cfstcart * f3 b1 cvector_add * / cfstcart * f3 b1 f0 cvsum f1 / cfstcart * f3 b1 cCOND f2 f4 b0 f5 * / c==> c= cIN f0 f1 f2 c==> c==> f2 c= cvsum f1 / cfstcart * f3 b1 f4 c==> c==> c~ f2 c= cvector_add * / cfstcart * f3 b1 f0 cvsum f1 / cfstcart * f3 b1 b0 c= cCOND cIN f0 f1 cvsum f1 / cfstcart * f3 b1 cvector_add * / cfstcart * f3 b1 f0 cvsum f1 / cfstcart * f3 b1 cCOND f2 f4 b0 f5
++ |- ((\f. (((vsum EMPTY) f) = (vec (NUMERAL _0)))) f)
+T * / c= cvsum part cEMPTY b0 cvec cNUMERAL c_0 f0
++ |- ((\t'. (!e'. (((x IN k) = g') ==> ((g' ==> (((vsum k) (\i. (fstcart (x i)))) = t')) ==> (((~ g') ==> (((vector_add ((\i. (fstcart (x i))) x)) ((vsum k) (\i. (fstcart (x i))))) = e')) ==> ((((COND (x IN k)) ((vsum k) (\i. (fstcart (x i))))) ((vector_add ((\i. (fstcart (x i))) x)) ((vsum k) (\i. (fstcart (x i)))))) = (((COND g') t') e'))))))) t')
+T * / ! c==> c= cIN f0 f1 f2 c==> c==> f2 c= cvsum f1 / cfstcart * f3 b2 b0 c==> c==> c~ f2 c= cvector_add * / cfstcart * f3 b2 f0 cvsum f1 / cfstcart * f3 b2 b1 c= cCOND cIN f0 f1 cvsum f1 / cfstcart * f3 b2 cvector_add * / cfstcart * f3 b2 f0 cvsum f1 / cfstcart * f3 b2 cCOND f2 b0 b1 f4
+- |- (!x. ((x IN k) ==> ((fstcart (x x)) = (fstcart (x x)))))
+T c==> cIN f0 f1 c= cfstcart * f2 f0 cfstcart * f2 f0
++ |- (((x IN k) = g') ==> ((g' ==> (((vsum k) (\i. (fstcart (x i)))) = t')) ==> (((~ g') ==> (((vector_add ((\i. (fstcart (x i))) x)) ((vsum k) (\i. (fstcart (x i))))) = e')) ==> ((((COND (x IN k)) ((vsum k) (\i. (fstcart (x i))))) ((vector_add ((\i. (fstcart (x i))) x)) ((vsum k) (\i. (fstcart (x i)))))) = (((COND g') t') e')))))
+T c==> c= cIN f0 f1 f2 c==> c==> f2 c= cvsum f1 / cfstcart * f3 b0 f4 c==> c==> c~ f2 c= cvector_add * / cfstcart * f3 b0 f0 cvsum f1 / cfstcart * f3 b0 f5 c= cCOND cIN f0 f1 cvsum f1 / cfstcart * f3 b0 cvector_add * / cfstcart * f3 b0 f0 cvsum f1 / cfstcart * f3 b0 cCOND f2 f4 f5
++ |- ((\q'. ((((!x. ((fstcart ((vsum k) x)) = ((vsum k) (\i. (fstcart (x i)))))) /\ ((~ (x IN k)) /\ (FINITE k))) = p') ==> ((p' ==> ((!x. ((fstcart ((vsum (x INSERT k)) x)) = ((vsum (x INSERT k)) (\i. (fstcart (x i)))))) = q')) ==> ((((!x. ((fstcart ((vsum k) x)) = ((vsum k) (\i. (fstcart (x i)))))) /\ ((~ (x IN k)) /\ (FINITE k))) ==> (!x. ((fstcart ((vsum (x INSERT k)) x)) = ((vsum (x INSERT k)) (\i. (fstcart (x i))))))) = (p' ==> q'))))) q')
+T * / c==> c= c/\ ! c= cfstcart cvsum f0 b1 cvsum f0 / cfstcart * b1 b2 c/\ c~ cIN f1 f0 cFINITE f0 f2 c==> c==> f2 c= ! c= cfstcart cvsum * * part cINSERT f1 f0 b1 cvsum * * part cINSERT f1 f0 / cfstcart * b1 b2 b0 c= c==> c/\ ! c= cfstcart cvsum f0 b1 cvsum f0 / cfstcart * b1 b2 c/\ c~ cIN f1 f0 cFINITE f0 ! c= cfstcart cvsum * * part cINSERT f1 f0 b1 cvsum * * part cINSERT f1 f0 / cfstcart * b1 b2 c==> f2 b0 f3
++ |- (((!x. (!y. ((fstcart ((vector_add x) y)) = ((vector_add (fstcart x)) (fstcart y))))) ==> ((\x. (!y. ((fstcart ((vector_add x) y)) = ((vector_add (fstcart x)) (fstcart y))))) x)) = ((\x. (!y. ((fstcart ((vector_add x) y)) = ((vector_add (fstcart x)) (fstcart y))))) x))
+T c= c==> ! ! c= cfstcart cvector_add b0 b1 cvector_add cfstcart b0 cfstcart b1 * / ! c= cfstcart cvector_add b0 b1 cvector_add cfstcart b0 cfstcart b1 f0 * / ! c= cfstcart cvector_add b0 b1 cvector_add cfstcart b0 cfstcart b1 f0
++ |- (F ==> (((vsum k) (\i. (fstcart (x i)))) = ((vsum k) (\i. (fstcart (x i))))))
+T c==> cF c= cvsum f0 / cfstcart * f1 b0 cvsum f0 / cfstcart * f1 b0
+- (!P. (((P EMPTY) /\ (!x. (!s. (((P s) /\ ((~ (x IN s)) /\ (FINITE s))) ==> (P (x INSERT s)))))) ==> (!s. ((FINITE s) ==> (P s))))) |- ((\P. (((P EMPTY) /\ (!x. (!s. (((P s) /\ ((~ (x IN s)) /\ (FINITE s))) ==> (P (x INSERT s)))))) ==> (!s. ((FINITE s) ==> (P s))))) P)
+T c==> ! c==> c/\ * b0 part cEMPTY ! ! c==> c/\ * b0 b2 c/\ c~ cIN b1 b2 cFINITE b2 * b0 * * part cINSERT b1 b2 ! c==> cFINITE b1 * b0 b1 * / c==> c/\ * b0 part cEMPTY ! ! c==> c/\ * b0 b2 c/\ c~ cIN b1 b2 cFINITE b2 * b0 * * part cINSERT b1 b2 ! c==> cFINITE b1 * b0 b1 f0
++ |- (((!s. ((FINITE s) ==> (((vsum (x INSERT s)) f) = (((COND (x IN s)) ((vsum s) f)) ((vector_add (f x)) ((vsum s) f)))))) ==> ((\s. ((FINITE s) ==> (((vsum (x INSERT s)) f) = (((COND (x IN s)) ((vsum s) f)) ((vector_add (f x)) ((vsum s) f)))))) s)) = ((\s. ((FINITE s) ==> (((vsum (x INSERT s)) f) = (((COND (x IN s)) ((vsum s) f)) ((vector_add (f x)) ((vsum s) f)))))) s))
+T c= c==> ! c==> cFINITE b0 c= cvsum * * part cINSERT f0 b0 f1 cCOND cIN f0 b0 cvsum b0 f1 cvector_add * f1 f0 cvsum b0 f1 * / c==> cFINITE b0 c= cvsum * * part cINSERT f0 b0 f1 cCOND cIN f0 b0 cvsum b0 f1 cvector_add * f1 f0 cvsum b0 f1 f2 * / c==> cFINITE b0 c= cvsum * * part cINSERT f0 b0 f1 cCOND cIN f0 b0 cvsum b0 f1 cvector_add * f1 f0 cvsum b0 f1 f2
+- (~ F) |- ((F = F) = T)
+T c==> c~ cF c= c= cF cF cT
+- |- (((!P. (((P EMPTY) /\ (!x. (!s. (((P s) /\ ((~ (x IN s)) /\ (FINITE s))) ==> (P (x INSERT s)))))) ==> (!s. ((FINITE s) ==> (P s))))) ==> (!P. (((P EMPTY) /\ (!x. (!s. (((P s) /\ ((~ (x IN s)) /\ (FINITE s))) ==> (P (x INSERT s)))))) ==> (!s. ((FINITE s) ==> (P s)))))) = (!P. (((P EMPTY) /\ (!x. (!s. (((P s) /\ ((~ (x IN s)) /\ (FINITE s))) ==> (P (x INSERT s)))))) ==> (!s. ((FINITE s) ==> (P s))))))
+T c= c==> ! c==> c/\ * b0 part cEMPTY ! ! c==> c/\ * b0 b2 c/\ c~ cIN b1 b2 cFINITE b2 * b0 * * part cINSERT b1 b2 ! c==> cFINITE b1 * b0 b1 ! c==> c/\ * b0 part cEMPTY ! ! c==> c/\ * b0 b2 c/\ c~ cIN b1 b2 cFINITE b2 * b0 * * part cINSERT b1 b2 ! c==> cFINITE b1 * b0 b1 ! c==> c/\ * b0 part cEMPTY ! ! c==> c/\ * b0 b2 c/\ c~ cIN b1 b2 cFINITE b2 * b0 * * part cINSERT b1 b2 ! c==> cFINITE b1 * b0 b1
++ |- ((x = x) = T)
+T c= c= f0 f0 cT
++ |- (!k. ((FINITE k) ==> (!x. ((fstcart ((vsum k) x)) = ((vsum k) (\i. (fstcart (x i))))))))
+T c==> cFINITE f0 ! c= cfstcart cvsum f0 b0 cvsum f0 / cfstcart * b0 b1
++ ((!x. ((fstcart ((vsum k) x)) = ((vsum k) (\i. (fstcart (x i)))))) /\ ((~ (x IN k)) /\ (FINITE k))) |- (((vsum (x INSERT k)) (\i. (fstcart (x i)))) = (((COND (x IN k)) ((vsum k) (\i. (fstcart (x i))))) ((vector_add ((\i. (fstcart (x i))) x)) ((vsum k) (\i. (fstcart (x i)))))))
+T c==> c/\ ! c= cfstcart cvsum f0 b0 cvsum f0 / cfstcart * b0 b1 c/\ c~ cIN f1 f0 cFINITE f0 c= cvsum * * part cINSERT f1 f0 / cfstcart * f2 b0 cCOND cIN f1 f0 cvsum f0 / cfstcart * f2 b0 cvector_add * / cfstcart * f2 b0 f1 cvsum f0 / cfstcart * f2 b0
++ ((!x. ((fstcart ((vsum k) x)) = ((vsum k) (\i. (fstcart (x i)))))) /\ ((~ (x IN k)) /\ (FINITE k))) |- (((~ F) ==> (((vector_add ((\i. (fstcart (x i))) x)) ((vsum k) (\i. (fstcart (x i))))) = e')) ==> ((((COND (x IN k)) ((vsum k) (\i. (fstcart (x i))))) ((vector_add ((\i. (fstcart (x i))) x)) ((vsum k) (\i. (fstcart (x i)))))) = (((COND F) ((vsum k) (\i. (fstcart (x i))))) e')))
+T c==> c/\ ! c= cfstcart cvsum f0 b0 cvsum f0 / cfstcart * b0 b1 c/\ c~ cIN f1 f0 cFINITE f0 c==> c==> c~ cF c= cvector_add * / cfstcart * f2 b0 f1 cvsum f0 / cfstcart * f2 b0 f3 c= cCOND cIN f1 f0 cvsum f0 / cfstcart * f2 b0 cvector_add * / cfstcart * f2 b0 f1 cvsum f0 / cfstcart * f2 b0 cCOND cF cvsum f0 / cfstcart * f2 b0 f3
+- F |- (F = T)
+T c==> cF c= cF cT
+- (FINITE s) |- ((FINITE s) /\ ((FINITE (x INSERT s)) = T))
+T c==> cFINITE f0 c/\ cFINITE f0 c= cFINITE * * part cINSERT f1 f0 cT
+- |- (((!x. ((x IN k) ==> ((fstcart (x x)) = (fstcart (x x))))) ==> (((vsum k) (\i. (fstcart (x i)))) = ((vsum k) (\x. (fstcart (x x)))))) = (((vsum k) (\i. (fstcart (x i)))) = ((vsum k) (\x. (fstcart (x x))))))
+T c= c==> ! c==> cIN b0 f0 c= cfstcart * f1 b0 cfstcart * f1 b0 c= cvsum f0 / cfstcart * f1 b0 cvsum f0 / cfstcart * f1 b0 c= cvsum f0 / cfstcart * f1 b0 cvsum f0 / cfstcart * f1 b0
+- ((P EMPTY) /\ (!x. (!s. (((P s) /\ ((~ (x IN s)) /\ (FINITE s))) ==> (P (x INSERT s)))))) |- ((!P. (((P EMPTY) /\ (!x. (!s. (((P s) /\ ((~ (x IN s)) /\ (FINITE s))) ==> (P (x INSERT s)))))) ==> (!s. ((FINITE s) ==> (P s))))) ==> (!s. ((FINITE s) ==> (P s))))
+T c==> c/\ * f0 part cEMPTY ! ! c==> c/\ * f0 b1 c/\ c~ cIN b0 b1 cFINITE b1 * f0 * * part cINSERT b0 b1 c==> ! c==> c/\ * b0 part cEMPTY ! ! c==> c/\ * b0 b2 c/\ c~ cIN b1 b2 cFINITE b2 * b0 * * part cINSERT b1 b2 ! c==> cFINITE b1 * b0 b1 ! c==> cFINITE b0 * f0 b0
+- |- (((!g. ((!x. ((x IN k) ==> ((fstcart (x x)) = (g x)))) ==> (((vsum k) (\i. (fstcart (x i)))) = ((vsum k) g)))) ==> ((\g. ((!x. ((x IN k) ==> ((fstcart (x x)) = (g x)))) ==> (((vsum k) (\i. (fstcart (x i)))) = ((vsum k) g)))) g)) = ((\g. ((!x. ((x IN k) ==> ((fstcart (x x)) = (g x)))) ==> (((vsum k) (\i. (fstcart (x i)))) = ((vsum k) g)))) g))
+T c= c==> ! c==> ! c==> cIN b1 f0 c= cfstcart * f1 b1 * b0 b1 c= cvsum f0 / cfstcart * f1 b1 cvsum f0 b0 * / c==> ! c==> cIN b1 f0 c= cfstcart * f1 b1 * b0 b1 c= cvsum f0 / cfstcart * f1 b1 cvsum f0 b0 f2 * / c==> ! c==> cIN b1 f0 c= cfstcart * f1 b1 * b0 b1 c= cvsum f0 / cfstcart * f1 b1 cvsum f0 b0 f2
+- |- ((\s. ((FINITE s) ==> (FINITE (x INSERT s)))) s)
+T * / c==> cFINITE b0 cFINITE * * part cINSERT f0 b0 f1
+- |- (((x IN k) ==> ((fstcart (x x)) = (fstcart (x x)))) = T)
+T c= c==> cIN f0 f1 c= cfstcart * f2 f0 cfstcart * f2 f0 cT
+- (!P. (((P EMPTY) /\ (!x. (!s. (((P s) /\ ((~ (x IN s)) /\ (FINITE s))) ==> (P (x INSERT s)))))) ==> (!s. ((FINITE s) ==> (P s))))) |- ((((P EMPTY) /\ (!x. (!s. (((P s) /\ ((~ (x IN s)) /\ (FINITE s))) ==> (P (x INSERT s)))))) ==> (!s. ((FINITE s) ==> (P s)))) = T)
+T c==> ! c==> c/\ * b0 part cEMPTY ! ! c==> c/\ * b0 b2 c/\ c~ cIN b1 b2 cFINITE b2 * b0 * * part cINSERT b1 b2 ! c==> cFINITE b1 * b0 b1 c= c==> c/\ * f0 part cEMPTY ! ! c==> c/\ * f0 b1 c/\ c~ cIN b0 b1 cFINITE b1 * f0 * * part cINSERT b0 b1 ! c==> cFINITE b0 * f0 b0 cT
+- |- ((t /\ t) = t)
+T c= c/\ f0 f0 f0
+- (!P. (((P EMPTY) /\ (!x. (!s. (((P s) /\ ((~ (x IN s)) /\ (FINITE s))) ==> (P (x INSERT s)))))) ==> (!s. ((FINITE s) ==> (P s))))) |- ((!P. (((P EMPTY) /\ (!x. (!s. (((P s) /\ ((~ (x IN s)) /\ (FINITE s))) ==> (P (x INSERT s)))))) ==> (!s. ((FINITE s) ==> (P s))))) /\ (!P. (((P EMPTY) /\ (!x. (!s. (((P s) /\ ((~ (x IN s)) /\ (FINITE s))) ==> (P (x INSERT s)))))) ==> (!s. ((FINITE s) ==> (P s))))))
+T c==> ! c==> c/\ * b0 part cEMPTY ! ! c==> c/\ * b0 b2 c/\ c~ cIN b1 b2 cFINITE b2 * b0 * * part cINSERT b1 b2 ! c==> cFINITE b1 * b0 b1 c/\ ! c==> c/\ * b0 part cEMPTY ! ! c==> c/\ * b0 b2 c/\ c~ cIN b1 b2 cFINITE b2 * b0 * * part cINSERT b1 b2 ! c==> cFINITE b1 * b0 b1 ! c==> c/\ * b0 part cEMPTY ! ! c==> c/\ * b0 b2 c/\ c~ cIN b1 b2 cFINITE b2 * b0 * * part cINSERT b1 b2 ! c==> cFINITE b1 * b0 b1
+- |- (((!x. (!s. ((FINITE s) ==> (FINITE (x INSERT s))))) ==> ((\x. (!s. ((FINITE s) ==> (FINITE (x INSERT s))))) x)) = ((\x. (!s. ((FINITE s) ==> (FINITE (x INSERT s))))) x))
+T c= c==> ! ! c==> cFINITE b1 cFINITE * * part cINSERT b0 b1 * / ! c==> cFINITE b1 cFINITE * * part cINSERT b0 b1 f0 * / ! c==> cFINITE b1 cFINITE * * part cINSERT b0 b1 f0
+- |- ((!P. (((P EMPTY) /\ (!x. (!s. (((P s) /\ ((~ (x IN s)) /\ (FINITE s))) ==> (P (x INSERT s)))))) ==> (!s. ((FINITE s) ==> (P s))))) ==> (!P. (((P EMPTY) /\ (!x. (!s. (((P s) /\ ((~ (x IN s)) /\ (FINITE s))) ==> (P (x INSERT s)))))) ==> (!s. ((FINITE s) ==> (P s))))))
+T c==> ! c==> c/\ * b0 part cEMPTY ! ! c==> c/\ * b0 b2 c/\ c~ cIN b1 b2 cFINITE b2 * b0 * * part cINSERT b1 b2 ! c==> cFINITE b1 * b0 b1 ! c==> c/\ * b0 part cEMPTY ! ! c==> c/\ * b0 b2 c/\ c~ cIN b1 b2 cFINITE b2 * b0 * * part cINSERT b1 b2 ! c==> cFINITE b1 * b0 b1
+- (~ F) |- (F = F)
+T c==> c~ cF c= cF cF
+- |- (((!s. ((FINITE s) ==> (FINITE (x INSERT s)))) ==> ((\s. ((FINITE s) ==> (FINITE (x INSERT s)))) s)) = ((\s. ((FINITE s) ==> (FINITE (x INSERT s)))) s))
+T c= c==> ! c==> cFINITE b0 cFINITE * * part cINSERT f0 b0 * / c==> cFINITE b0 cFINITE * * part cINSERT f0 b0 f1 * / c==> cFINITE b0 cFINITE * * part cINSERT f0 b0 f1
+- (!P. (((P EMPTY) /\ (!x. (!s. (((P s) /\ ((~ (x IN s)) /\ (FINITE s))) ==> (P (x INSERT s)))))) ==> (!s. ((FINITE s) ==> (P s))))), ((P EMPTY) /\ (!x. (!s. (((P s) /\ ((~ (x IN s)) /\ (FINITE s))) ==> (P (x INSERT s)))))) |- ((!P. (((P EMPTY) /\ (!x. (!s. (((P s) /\ ((~ (x IN s)) /\ (FINITE s))) ==> (P (x INSERT s)))))) ==> (!s. ((FINITE s) ==> (P s))))) /\ (!s. ((FINITE s) ==> (P s))))
+T c==> ! c==> c/\ * b0 part cEMPTY ! ! c==> c/\ * b0 b2 c/\ c~ cIN b1 b2 cFINITE b2 * b0 * * part cINSERT b1 b2 ! c==> cFINITE b1 * b0 b1 c==> c/\ * f0 part cEMPTY ! ! c==> c/\ * f0 b1 c/\ c~ cIN b0 b1 cFINITE b1 * f0 * * part cINSERT b0 b1 c/\ ! c==> c/\ * b0 part cEMPTY ! ! c==> c/\ * b0 b2 c/\ c~ cIN b1 b2 cFINITE b2 * b0 * * part cINSERT b1 b2 ! c==> cFINITE b1 * b0 b1 ! c==> cFINITE b0 * f0 b0
+- |- ((\g. ((!x. ((x IN k) ==> ((fstcart (x x)) = (g x)))) ==> (((vsum k) (\i. (fstcart (x i)))) = ((vsum k) g)))) g)
+T * / c==> ! c==> cIN b1 f0 c= cfstcart * f1 b1 * b0 b1 c= cvsum f0 / cfstcart * f1 b1 cvsum f0 b0 f2
+- (x IN k) |- ((x IN k) /\ ((fstcart (x x)) = (fstcart (x x))))
+T c==> cIN f0 f1 c/\ cIN f0 f1 c= cfstcart * f2 f0 cfstcart * f2 f0
+- |- (!g. ((!x. ((x IN s) ==> ((f x) = (g x)))) ==> (((vsum s) (\i. (f i))) = ((vsum s) g))))
+T c==> ! c==> cIN b0 f0 c= * f1 b0 * f2 b0 c= cvsum f0 / * f1 b0 cvsum f0 f2
+- |- ((!x. ((x IN k) ==> ((fstcart (x x)) = (g x)))) ==> (((vsum k) (\i. (fstcart (x i)))) = ((vsum k) g)))
+T c==> ! c==> cIN b0 f0 c= cfstcart * f1 b0 * f2 b0 c= cvsum f0 / cfstcart * f1 b0 cvsum f0 f2
+- ((!x. ((fstcart ((vsum k) x)) = ((vsum k) (\i. (fstcart (x i)))))) /\ ((~ (x IN k)) /\ (FINITE k))) |- (T = (FINITE k))
+T c==> c/\ ! c= cfstcart cvsum f0 b0 cvsum f0 / cfstcart * b0 b1 c/\ c~ cIN f1 f0 cFINITE f0 c= cT cFINITE f0
+- |- (((\i. (f i)) y) = (f y))
+T c= * / * f0 b0 f1 * f0 f1
+- |- ((FINITE s) ==> ((FINITE (x INSERT s)) = T))
+T c==> cFINITE f0 c= cFINITE * * part cINSERT f1 f0 cT
+- (!P. (((P EMPTY) /\ (!x. (!s. (((P s) /\ ((~ (x IN s)) /\ (FINITE s))) ==> (P (x INSERT s)))))) ==> (!s. ((FINITE s) ==> (P s))))), ((P EMPTY) /\ (!x. (!s. (((P s) /\ ((~ (x IN s)) /\ (FINITE s))) ==> (P (x INSERT s)))))) |- (((P EMPTY) /\ (!x. (!s. (((P s) /\ ((~ (x IN s)) /\ (FINITE s))) ==> (P (x INSERT s)))))) /\ (!s. ((FINITE s) ==> (P s))))
+T c==> ! c==> c/\ * b0 part cEMPTY ! ! c==> c/\ * b0 b2 c/\ c~ cIN b1 b2 cFINITE b2 * b0 * * part cINSERT b1 b2 ! c==> cFINITE b1 * b0 b1 c==> c/\ * f0 part cEMPTY ! ! c==> c/\ * f0 b1 c/\ c~ cIN b0 b1 cFINITE b1 * f0 * * part cINSERT b0 b1 c/\ c/\ * f0 part cEMPTY ! ! c==> c/\ * f0 b1 c/\ c~ cIN b0 b1 cFINITE b1 * f0 * * part cINSERT b0 b1 ! c==> cFINITE b0 * f0 b0
+- |- ((\x. (!s. ((FINITE s) ==> (FINITE (x INSERT s))))) x)
+T * / ! c==> cFINITE b1 cFINITE * * part cINSERT b0 b1 f0

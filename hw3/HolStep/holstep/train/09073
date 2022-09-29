@@ -1,0 +1,155 @@
+N DOT_RSUM
+C |- (!s. (!f. (!x. ((FINITE s) ==> (((dot x) ((vsum s) f)) = ((sum s) (\y. ((dot x) (f y)))))))))
+T c==> cFINITE f0 c= cdot f1 cvsum f0 f2 csum f0 / cdot f1 * f2 b0
+D TRUTH
+A |- T
+T cT
+D BOOL_CASES_AX
+A |- (!t. ((t = T) \/ (t = F)))
+T c\/ c= f0 cT c= f0 cF
+D COND_CLAUSES
+A |- (!t1. (!t2. (((((COND T) t1) t2) = t1) /\ ((((COND F) t1) t2) = t2))))
+T c/\ c= cCOND cT f0 f1 f0 c= cCOND cF f0 f1 f1
+D FINITE_INDUCT_STRONG
+A |- (!P. (((P EMPTY) /\ (!x. (!s. (((P s) /\ ((~ (x IN s)) /\ (FINITE s))) ==> (P (x INSERT s)))))) ==> (!s. ((FINITE s) ==> (P s)))))
+T c==> c/\ * f0 part cEMPTY ! ! c==> c/\ * f0 b1 c/\ c~ cIN b0 b1 cFINITE b1 * f0 * * part cINSERT b0 b1 ! c==> cFINITE b0 * f0 b0
+D SUM_CLAUSES
+A |- ((!f. (((sum EMPTY) f) = (real_of_num (NUMERAL _0)))) /\ (!x. (!f. (!s. ((FINITE s) ==> (((sum (x INSERT s)) f) = (((COND (x IN s)) ((sum s) f)) ((real_add (f x)) ((sum s) f)))))))))
+T c/\ ! c= csum part cEMPTY b0 creal_of_num cNUMERAL c_0 ! ! ! c==> cFINITE b2 c= csum * * part cINSERT b0 b2 b1 cCOND cIN b0 b2 csum b2 b1 creal_add * b1 b0 csum b2 b1
+D DOT_RADD
+A |- (!x. (!y. (!z. (((dot x) ((vector_add y) z)) = ((real_add ((dot x) y)) ((dot x) z))))))
+T c= cdot f0 cvector_add f1 f2 creal_add cdot f0 f1 cdot f0 f2
+D DOT_RZERO
+A |- (!x. (((dot x) (vec (NUMERAL _0))) = (real_of_num (NUMERAL _0))))
+T c= cdot f0 cvec cNUMERAL c_0 creal_of_num cNUMERAL c_0
+D VSUM_CLAUSES
+A |- ((!f. (((vsum EMPTY) f) = (vec (NUMERAL _0)))) /\ (!x. (!f. (!s. ((FINITE s) ==> (((vsum (x INSERT s)) f) = (((COND (x IN s)) ((vsum s) f)) ((vector_add (f x)) ((vsum s) f)))))))))
+T c/\ ! c= cvsum part cEMPTY b0 cvec cNUMERAL c_0 ! ! ! c==> cFINITE b2 c= cvsum * * part cINSERT b0 b2 b1 cCOND cIN b0 b2 cvsum b2 b1 cvector_add * b1 b0 cvsum b2 b1
+- |- ((!x. ((x IN s) ==> (((dot x) (f x)) = (g x)))) ==> (((sum s) (\y. ((dot x) (f y)))) = ((sum s) g)))
+T c==> ! c==> cIN b0 f0 c= cdot f1 * f2 b0 * f3 b0 c= csum f0 / cdot f1 * f2 b0 csum f0 f3
++ |- (((F ==> (((vsum s) f) = ((vsum s) f))) ==> (((~ F) ==> (((vector_add (f x)) ((vsum s) f)) = e')) ==> ((((COND (x IN s)) ((vsum s) f)) ((vector_add (f x)) ((vsum s) f))) = (((COND F) ((vsum s) f)) e')))) = (((~ F) ==> (((vector_add (f x)) ((vsum s) f)) = e')) ==> ((((COND (x IN s)) ((vsum s) f)) ((vector_add (f x)) ((vsum s) f))) = (((COND F) ((vsum s) f)) e'))))
+T c= c==> c==> cF c= cvsum f0 f1 cvsum f0 f1 c==> c==> c~ cF c= cvector_add * f1 f2 cvsum f0 f1 f3 c= cCOND cIN f2 f0 cvsum f0 f1 cvector_add * f1 f2 cvsum f0 f1 cCOND cF cvsum f0 f1 f3 c==> c==> c~ cF c= cvector_add * f1 f2 cvsum f0 f1 f3 c= cCOND cIN f2 f0 cvsum f0 f1 cvector_add * f1 f2 cvsum f0 f1 cCOND cF cvsum f0 f1 f3
++ |- ((\t'. (!e'. (((x IN s) = g') ==> ((g' ==> (((sum s) (\y. ((dot x) (f y)))) = t')) ==> (((~ g') ==> (((real_add ((\y. ((dot x) (f y))) x)) ((sum s) (\y. ((dot x) (f y))))) = e')) ==> ((((COND (x IN s)) ((sum s) (\y. ((dot x) (f y))))) ((real_add ((\y. ((dot x) (f y))) x)) ((sum s) (\y. ((dot x) (f y)))))) = (((COND g') t') e'))))))) t')
+T * / ! c==> c= cIN f0 f1 f2 c==> c==> f2 c= csum f1 / cdot f3 * f4 b2 b0 c==> c==> c~ f2 c= creal_add * / cdot f3 * f4 b2 f0 csum f1 / cdot f3 * f4 b2 b1 c= cCOND cIN f0 f1 csum f1 / cdot f3 * f4 b2 creal_add * / cdot f3 * f4 b2 f0 csum f1 / cdot f3 * f4 b2 cCOND f2 b0 b1 f5
+- (FINITE s) |- ((FINITE s) /\ (((vsum (x INSERT s)) f) = (((COND (x IN s)) ((vsum s) f)) ((vector_add (f x)) ((vsum s) f)))))
+T c==> cFINITE f0 c/\ cFINITE f0 c= cvsum * * part cINSERT f1 f0 f2 cCOND cIN f1 f0 cvsum f0 f2 cvector_add * f2 f1 cvsum f0 f2
++ |- (((!y. (!z. (((dot x) ((vector_add y) z)) = ((real_add ((dot x) y)) ((dot x) z))))) ==> ((\y. (!z. (((dot x) ((vector_add y) z)) = ((real_add ((dot x) y)) ((dot x) z))))) y)) = ((\y. (!z. (((dot x) ((vector_add y) z)) = ((real_add ((dot x) y)) ((dot x) z))))) y))
+T c= c==> ! ! c= cdot f0 cvector_add b0 b1 creal_add cdot f0 b0 cdot f0 b1 * / ! c= cdot f0 cvector_add b0 b1 creal_add cdot f0 b0 cdot f0 b1 f1 * / ! c= cdot f0 cvector_add b0 b1 creal_add cdot f0 b0 cdot f0 b1 f1
++ (~ F) |- ((~ F) /\ (((vector_add (f x)) ((vsum s) f)) = ((vector_add (f x)) ((vsum s) f))))
+T c==> c~ cF c/\ c~ cF c= cvector_add * f0 f1 cvsum f2 f0 cvector_add * f0 f1 cvsum f2 f0
+- (!P. (((P EMPTY) /\ (!x. (!s. (((P s) /\ ((~ (x IN s)) /\ (FINITE s))) ==> (P (x INSERT s)))))) ==> (!s. ((FINITE s) ==> (P s))))), ((P EMPTY) /\ (!x. (!s. (((P s) /\ ((~ (x IN s)) /\ (FINITE s))) ==> (P (x INSERT s)))))) |- (!s. ((FINITE s) ==> (P s)))
+T c==> ! c==> c/\ * b0 part cEMPTY ! ! c==> c/\ * b0 b2 c/\ c~ cIN b1 b2 cFINITE b2 * b0 * * part cINSERT b1 b2 ! c==> cFINITE b1 * b0 b1 c==> c/\ * f0 part cEMPTY ! ! c==> c/\ * f0 b1 c/\ c~ cIN b0 b1 cFINITE b1 * f0 * * part cINSERT b0 b1 ! c==> cFINITE b0 * f0 b0
++ ((!f. (!x. (((dot x) ((vsum s) f)) = ((sum s) (\y. ((dot x) (f y))))))) /\ ((~ (x IN s)) /\ (FINITE s))) |- ((((x IN s) = F) ==> ((F ==> (((vsum s) f) = t')) ==> (((~ F) ==> (((vector_add (f x)) ((vsum s) f)) = e')) ==> ((((COND (x IN s)) ((vsum s) f)) ((vector_add (f x)) ((vsum s) f))) = (((COND F) t') e'))))) = ((F ==> (((vsum s) f) = t')) ==> (((~ F) ==> (((vector_add (f x)) ((vsum s) f)) = e')) ==> ((((COND (x IN s)) ((vsum s) f)) ((vector_add (f x)) ((vsum s) f))) = (((COND F) t') e')))))
+T c==> c/\ ! ! c= cdot b1 cvsum f0 b0 csum f0 / cdot b1 * b0 b2 c/\ c~ cIN f1 f0 cFINITE f0 c= c==> c= cIN f1 f0 cF c==> c==> cF c= cvsum f0 f2 f3 c==> c==> c~ cF c= cvector_add * f2 f1 cvsum f0 f2 f4 c= cCOND cIN f1 f0 cvsum f0 f2 cvector_add * f2 f1 cvsum f0 f2 cCOND cF f3 f4 c==> c==> cF c= cvsum f0 f2 f3 c==> c==> c~ cF c= cvector_add * f2 f1 cvsum f0 f2 f4 c= cCOND cIN f1 f0 cvsum f0 f2 cvector_add * f2 f1 cvsum f0 f2 cCOND cF f3 f4
++ |- ((\e'. (((x IN s) = g') ==> ((g' ==> (((sum s) (\y. ((dot x) (f y)))) = t')) ==> (((~ g') ==> (((real_add ((\y. ((dot x) (f y))) x)) ((sum s) (\y. ((dot x) (f y))))) = e')) ==> ((((COND (x IN s)) ((sum s) (\y. ((dot x) (f y))))) ((real_add ((\y. ((dot x) (f y))) x)) ((sum s) (\y. ((dot x) (f y)))))) = (((COND g') t') e')))))) e')
+T * / c==> c= cIN f0 f1 f2 c==> c==> f2 c= csum f1 / cdot f3 * f4 b1 f5 c==> c==> c~ f2 c= creal_add * / cdot f3 * f4 b1 f0 csum f1 / cdot f3 * f4 b1 b0 c= cCOND cIN f0 f1 csum f1 / cdot f3 * f4 b1 creal_add * / cdot f3 * f4 b1 f0 csum f1 / cdot f3 * f4 b1 cCOND f2 f5 b0 f6
++ |- (((!f. (((vsum EMPTY) f) = (vec (NUMERAL _0)))) ==> ((\f. (((vsum EMPTY) f) = (vec (NUMERAL _0)))) f)) = ((\f. (((vsum EMPTY) f) = (vec (NUMERAL _0)))) f))
+T c= c==> ! c= cvsum part cEMPTY b0 cvec cNUMERAL c_0 * / c= cvsum part cEMPTY b0 cvec cNUMERAL c_0 f0 * / c= cvsum part cEMPTY b0 cvec cNUMERAL c_0 f0
++ |- ((\s. ((FINITE s) ==> (((vsum (x INSERT s)) f) = (((COND (x IN s)) ((vsum s) f)) ((vector_add (f x)) ((vsum s) f)))))) s)
+T * / c==> cFINITE b0 c= cvsum * * part cINSERT f0 b0 f1 cCOND cIN f0 b0 cvsum b0 f1 cvector_add * f1 f0 cvsum b0 f1 f2
++ ((!f. (!x. (((dot x) ((vsum s) f)) = ((sum s) (\y. ((dot x) (f y))))))) /\ ((~ (x IN s)) /\ (FINITE s))) |- ((F ==> (((sum s) (\y. ((dot x) (f y)))) = t')) ==> (((~ F) ==> (((real_add ((\y. ((dot x) (f y))) x)) ((sum s) (\y. ((dot x) (f y))))) = e')) ==> ((((COND (x IN s)) ((sum s) (\y. ((dot x) (f y))))) ((real_add ((\y. ((dot x) (f y))) x)) ((sum s) (\y. ((dot x) (f y)))))) = (((COND F) t') e'))))
+T c==> c/\ ! ! c= cdot b1 cvsum f0 b0 csum f0 / cdot b1 * b0 b2 c/\ c~ cIN f1 f0 cFINITE f0 c==> c==> cF c= csum f0 / cdot f2 * f3 b0 f4 c==> c==> c~ cF c= creal_add * / cdot f2 * f3 b0 f1 csum f0 / cdot f2 * f3 b0 f5 c= cCOND cIN f1 f0 csum f0 / cdot f2 * f3 b0 creal_add * / cdot f2 * f3 b0 f1 csum f0 / cdot f2 * f3 b0 cCOND cF f4 f5
++ |- (((!q'. ((((!f. (!x. (((dot x) ((vsum s) f)) = ((sum s) (\y. ((dot x) (f y))))))) /\ ((~ (x IN s)) /\ (FINITE s))) = p') ==> ((p' ==> ((!f. (!x. (((dot x) ((vsum (x INSERT s)) f)) = ((sum (x INSERT s)) (\y. ((dot x) (f y))))))) = q')) ==> ((((!f. (!x. (((dot x) ((vsum s) f)) = ((sum s) (\y. ((dot x) (f y))))))) /\ ((~ (x IN s)) /\ (FINITE s))) ==> (!f. (!x. (((dot x) ((vsum (x INSERT s)) f)) = ((sum (x INSERT s)) (\y. ((dot x) (f y)))))))) = (p' ==> q'))))) ==> ((\q'. ((((!f. (!x. (((dot x) ((vsum s) f)) = ((sum s) (\y. ((dot x) (f y))))))) /\ ((~ (x IN s)) /\ (FINITE s))) = p') ==> ((p' ==> ((!f. (!x. (((dot x) ((vsum (x INSERT s)) f)) = ((sum (x INSERT s)) (\y. ((dot x) (f y))))))) = q')) ==> ((((!f. (!x. (((dot x) ((vsum s) f)) = ((sum s) (\y. ((dot x) (f y))))))) /\ ((~ (x IN s)) /\ (FINITE s))) ==> (!f. (!x. (((dot x) ((vsum (x INSERT s)) f)) = ((sum (x INSERT s)) (\y. ((dot x) (f y)))))))) = (p' ==> q'))))) q')) = ((\q'. ((((!f. (!x. (((dot x) ((vsum s) f)) = ((sum s) (\y. ((dot x) (f y))))))) /\ ((~ (x IN s)) /\ (FINITE s))) = p') ==> ((p' ==> ((!f. (!x. (((dot x) ((vsum (x INSERT s)) f)) = ((sum (x INSERT s)) (\y. ((dot x) (f y))))))) = q')) ==> ((((!f. (!x. (((dot x) ((vsum s) f)) = ((sum s) (\y. ((dot x) (f y))))))) /\ ((~ (x IN s)) /\ (FINITE s))) ==> (!f. (!x. (((dot x) ((vsum (x INSERT s)) f)) = ((sum (x INSERT s)) (\y. ((dot x) (f y)))))))) = (p' ==> q'))))) q'))
+T c= c==> ! c==> c= c/\ ! ! c= cdot b2 cvsum f0 b1 csum f0 / cdot b2 * b1 b3 c/\ c~ cIN f1 f0 cFINITE f0 f2 c==> c==> f2 c= ! ! c= cdot b2 cvsum * * part cINSERT f1 f0 b1 csum * * part cINSERT f1 f0 / cdot b2 * b1 b3 b0 c= c==> c/\ ! ! c= cdot b2 cvsum f0 b1 csum f0 / cdot b2 * b1 b3 c/\ c~ cIN f1 f0 cFINITE f0 ! ! c= cdot b2 cvsum * * part cINSERT f1 f0 b1 csum * * part cINSERT f1 f0 / cdot b2 * b1 b3 c==> f2 b0 * / c==> c= c/\ ! ! c= cdot b2 cvsum f0 b1 csum f0 / cdot b2 * b1 b3 c/\ c~ cIN f1 f0 cFINITE f0 f2 c==> c==> f2 c= ! ! c= cdot b2 cvsum * * part cINSERT f1 f0 b1 csum * * part cINSERT f1 f0 / cdot b2 * b1 b3 b0 c= c==> c/\ ! ! c= cdot b2 cvsum f0 b1 csum f0 / cdot b2 * b1 b3 c/\ c~ cIN f1 f0 cFINITE f0 ! ! c= cdot b2 cvsum * * part cINSERT f1 f0 b1 csum * * part cINSERT f1 f0 / cdot b2 * b1 b3 c==> f2 b0 f3 * / c==> c= c/\ ! ! c= cdot b2 cvsum f0 b1 csum f0 / cdot b2 * b1 b3 c/\ c~ cIN f1 f0 cFINITE f0 f2 c==> c==> f2 c= ! ! c= cdot b2 cvsum * * part cINSERT f1 f0 b1 csum * * part cINSERT f1 f0 / cdot b2 * b1 b3 b0 c= c==> c/\ ! ! c= cdot b2 cvsum f0 b1 csum f0 / cdot b2 * b1 b3 c/\ c~ cIN f1 f0 cFINITE f0 ! ! c= cdot b2 cvsum * * part cINSERT f1 f0 b1 csum * * part cINSERT f1 f0 / cdot b2 * b1 b3 c==> f2 b0 f3
++ |- ((t ==> T) = T)
+T c= c==> f0 cT cT
++ ((!f. (!x. (((dot x) ((vsum s) f)) = ((sum s) (\y. ((dot x) (f y))))))) /\ ((~ (x IN s)) /\ (FINITE s))) |- (((FINITE s) ==> (((vsum (x INSERT s)) f) = (((COND (x IN s)) ((vsum s) f)) ((vector_add (f x)) ((vsum s) f))))) = (((vsum (x INSERT s)) f) = (((COND (x IN s)) ((vsum s) f)) ((vector_add (f x)) ((vsum s) f)))))
+T c==> c/\ ! ! c= cdot b1 cvsum f0 b0 csum f0 / cdot b1 * b0 b2 c/\ c~ cIN f1 f0 cFINITE f0 c= c==> cFINITE f0 c= cvsum * * part cINSERT f1 f0 f2 cCOND cIN f1 f0 cvsum f0 f2 cvector_add * f2 f1 cvsum f0 f2 c= cvsum * * part cINSERT f1 f0 f2 cCOND cIN f1 f0 cvsum f0 f2 cvector_add * f2 f1 cvsum f0 f2
++ ((!f. (!x. (((dot x) ((vsum s) f)) = ((sum s) (\y. ((dot x) (f y))))))) /\ ((~ (x IN s)) /\ (FINITE s))) |- (((!f. (!x. (((dot x) ((vsum s) f)) = ((sum s) (\y. ((dot x) (f y))))))) ==> ((\f. (!x. (((dot x) ((vsum s) f)) = ((sum s) (\y. ((dot x) (f y))))))) f)) = ((\f. (!x. (((dot x) ((vsum s) f)) = ((sum s) (\y. ((dot x) (f y))))))) f))
+T c==> c/\ ! ! c= cdot b1 cvsum f0 b0 csum f0 / cdot b1 * b0 b2 c/\ c~ cIN f1 f0 cFINITE f0 c= c==> ! ! c= cdot b1 cvsum f0 b0 csum f0 / cdot b1 * b0 b2 * / ! c= cdot b1 cvsum f0 b0 csum f0 / cdot b1 * b0 b2 f2 * / ! c= cdot b1 cvsum f0 b0 csum f0 / cdot b1 * b0 b2 f2
+- |- ((t ==> t) = T)
+T c= c==> f0 f0 cT
++ F |- (F /\ (((vsum s) f) = ((vsum s) f)))
+T c==> cF c/\ cF c= cvsum f0 f1 cvsum f0 f1
++ ((!f. (!x. (((dot x) ((vsum s) f)) = ((sum s) (\y. ((dot x) (f y))))))) /\ ((~ (x IN s)) /\ (FINITE s))) |- ((x IN s) = F)
+T c==> c/\ ! ! c= cdot b1 cvsum f0 b0 csum f0 / cdot b1 * b0 b2 c/\ c~ cIN f1 f0 cFINITE f0 c= cIN f1 f0 cF
+- |- ((!s'. ((FINITE s) ==> (!f. (!x. (((dot x) ((vsum s') f)) = ((sum s') (\y. ((dot x) (f y))))))))) = ((FINITE s) ==> (!s. (!f. (!x. (((dot x) ((vsum s) f)) = ((sum s) (\y. ((dot x) (f y))))))))))
+T c= ! c==> cFINITE f0 ! ! c= cdot b2 cvsum b0 b1 csum b0 / cdot b2 * b1 b3 c==> cFINITE f0 ! ! ! c= cdot b2 cvsum b0 b1 csum b0 / cdot b2 * b1 b3
++ |- ((((~ F) ==> (((vector_add (f x)) ((vsum s) f)) = ((vector_add (f x)) ((vsum s) f)))) ==> ((((COND (x IN s)) ((vsum s) f)) ((vector_add (f x)) ((vsum s) f))) = (((COND F) ((vsum s) f)) ((vector_add (f x)) ((vsum s) f))))) = ((((COND (x IN s)) ((vsum s) f)) ((vector_add (f x)) ((vsum s) f))) = (((COND F) ((vsum s) f)) ((vector_add (f x)) ((vsum s) f)))))
+T c= c==> c==> c~ cF c= cvector_add * f0 f1 cvsum f2 f0 cvector_add * f0 f1 cvsum f2 f0 c= cCOND cIN f1 f2 cvsum f2 f0 cvector_add * f0 f1 cvsum f2 f0 cCOND cF cvsum f2 f0 cvector_add * f0 f1 cvsum f2 f0 c= cCOND cIN f1 f2 cvsum f2 f0 cvector_add * f0 f1 cvsum f2 f0 cCOND cF cvsum f2 f0 cvector_add * f0 f1 cvsum f2 f0
+- ((!f. (!x. (((dot x) ((vsum s) f)) = ((sum s) (\y. ((dot x) (f y))))))) /\ ((~ (x IN s)) /\ (FINITE s))) |- (T = (FINITE s))
+T c==> c/\ ! ! c= cdot b1 cvsum f0 b0 csum f0 / cdot b1 * b0 b2 c/\ c~ cIN f1 f0 cFINITE f0 c= cT cFINITE f0
++ |- (((!p'. (!q'. ((((!f. (!x. (((dot x) ((vsum s) f)) = ((sum s) (\y. ((dot x) (f y))))))) /\ ((~ (x IN s)) /\ (FINITE s))) = p') ==> ((p' ==> ((!f. (!x. (((dot x) ((vsum (x INSERT s)) f)) = ((sum (x INSERT s)) (\y. ((dot x) (f y))))))) = q')) ==> ((((!f. (!x. (((dot x) ((vsum s) f)) = ((sum s) (\y. ((dot x) (f y))))))) /\ ((~ (x IN s)) /\ (FINITE s))) ==> (!f. (!x. (((dot x) ((vsum (x INSERT s)) f)) = ((sum (x INSERT s)) (\y. ((dot x) (f y)))))))) = (p' ==> q')))))) ==> ((\p'. (!q'. ((((!f. (!x. (((dot x) ((vsum s) f)) = ((sum s) (\y. ((dot x) (f y))))))) /\ ((~ (x IN s)) /\ (FINITE s))) = p') ==> ((p' ==> ((!f. (!x. (((dot x) ((vsum (x INSERT s)) f)) = ((sum (x INSERT s)) (\y. ((dot x) (f y))))))) = q')) ==> ((((!f. (!x. (((dot x) ((vsum s) f)) = ((sum s) (\y. ((dot x) (f y))))))) /\ ((~ (x IN s)) /\ (FINITE s))) ==> (!f. (!x. (((dot x) ((vsum (x INSERT s)) f)) = ((sum (x INSERT s)) (\y. ((dot x) (f y)))))))) = (p' ==> q')))))) p')) = ((\p'. (!q'. ((((!f. (!x. (((dot x) ((vsum s) f)) = ((sum s) (\y. ((dot x) (f y))))))) /\ ((~ (x IN s)) /\ (FINITE s))) = p') ==> ((p' ==> ((!f. (!x. (((dot x) ((vsum (x INSERT s)) f)) = ((sum (x INSERT s)) (\y. ((dot x) (f y))))))) = q')) ==> ((((!f. (!x. (((dot x) ((vsum s) f)) = ((sum s) (\y. ((dot x) (f y))))))) /\ ((~ (x IN s)) /\ (FINITE s))) ==> (!f. (!x. (((dot x) ((vsum (x INSERT s)) f)) = ((sum (x INSERT s)) (\y. ((dot x) (f y)))))))) = (p' ==> q')))))) p'))
+T c= c==> ! ! c==> c= c/\ ! ! c= cdot b3 cvsum f0 b2 csum f0 / cdot b3 * b2 b4 c/\ c~ cIN f1 f0 cFINITE f0 b0 c==> c==> b0 c= ! ! c= cdot b3 cvsum * * part cINSERT f1 f0 b2 csum * * part cINSERT f1 f0 / cdot b3 * b2 b4 b1 c= c==> c/\ ! ! c= cdot b3 cvsum f0 b2 csum f0 / cdot b3 * b2 b4 c/\ c~ cIN f1 f0 cFINITE f0 ! ! c= cdot b3 cvsum * * part cINSERT f1 f0 b2 csum * * part cINSERT f1 f0 / cdot b3 * b2 b4 c==> b0 b1 * / ! c==> c= c/\ ! ! c= cdot b3 cvsum f0 b2 csum f0 / cdot b3 * b2 b4 c/\ c~ cIN f1 f0 cFINITE f0 b0 c==> c==> b0 c= ! ! c= cdot b3 cvsum * * part cINSERT f1 f0 b2 csum * * part cINSERT f1 f0 / cdot b3 * b2 b4 b1 c= c==> c/\ ! ! c= cdot b3 cvsum f0 b2 csum f0 / cdot b3 * b2 b4 c/\ c~ cIN f1 f0 cFINITE f0 ! ! c= cdot b3 cvsum * * part cINSERT f1 f0 b2 csum * * part cINSERT f1 f0 / cdot b3 * b2 b4 c==> b0 b1 f2 * / ! c==> c= c/\ ! ! c= cdot b3 cvsum f0 b2 csum f0 / cdot b3 * b2 b4 c/\ c~ cIN f1 f0 cFINITE f0 b0 c==> c==> b0 c= ! ! c= cdot b3 cvsum * * part cINSERT f1 f0 b2 csum * * part cINSERT f1 f0 / cdot b3 * b2 b4 b1 c= c==> c/\ ! ! c= cdot b3 cvsum f0 b2 csum f0 / cdot b3 * b2 b4 c/\ c~ cIN f1 f0 cFINITE f0 ! ! c= cdot b3 cvsum * * part cINSERT f1 f0 b2 csum * * part cINSERT f1 f0 / cdot b3 * b2 b4 c==> b0 b1 f2
++ |- ((\y. (!z. (((dot x) ((vector_add y) z)) = ((real_add ((dot x) y)) ((dot x) z))))) y)
+T * / ! c= cdot f0 cvector_add b0 b1 creal_add cdot f0 b0 cdot f0 b1 f1
++ |- (((!f. (!x. (((dot x) ((vsum EMPTY) f)) = ((sum EMPTY) (\y. ((dot x) (f y))))))) /\ (!x. (!s. (((!f. (!x. (((dot x) ((vsum s) f)) = ((sum s) (\y. ((dot x) (f y))))))) /\ ((~ (x IN s)) /\ (FINITE s))) ==> (!f. (!x. (((dot x) ((vsum (x INSERT s)) f)) = ((sum (x INSERT s)) (\y. ((dot x) (f y))))))))))) ==> (!s. ((FINITE s) ==> (!f. (!x. (((dot x) ((vsum s) f)) = ((sum s) (\y. ((dot x) (f y))))))))))
+T c==> c/\ ! ! c= cdot b1 cvsum part cEMPTY b0 csum part cEMPTY / cdot b1 * b0 b2 ! ! c==> c/\ ! ! c= cdot b3 cvsum b1 b2 csum b1 / cdot b3 * b2 b4 c/\ c~ cIN b0 b1 cFINITE b1 ! ! c= cdot b3 cvsum * * part cINSERT b0 b1 b2 csum * * part cINSERT b0 b1 / cdot b3 * b2 b4 ! c==> cFINITE b0 ! ! c= cdot b2 cvsum b0 b1 csum b0 / cdot b2 * b1 b3
++ ((!f. (!x. (((dot x) ((vsum s) f)) = ((sum s) (\y. ((dot x) (f y))))))) /\ ((~ (x IN s)) /\ (FINITE s))) |- (((vsum (x INSERT s)) f) = (((COND (x IN s)) ((vsum s) f)) ((vector_add (f x)) ((vsum s) f))))
+T c==> c/\ ! ! c= cdot b1 cvsum f0 b0 csum f0 / cdot b1 * b0 b2 c/\ c~ cIN f1 f0 cFINITE f0 c= cvsum * * part cINSERT f1 f0 f2 cCOND cIN f1 f0 cvsum f0 f2 cvector_add * f2 f1 cvsum f0 f2
++ |- (((vsum EMPTY) f) = (vec (NUMERAL _0)))
+T c= cvsum part cEMPTY f0 cvec cNUMERAL c_0
++ |- (((!f. (!s. ((FINITE s) ==> (((vsum (x INSERT s)) f) = (((COND (x IN s)) ((vsum s) f)) ((vector_add (f x)) ((vsum s) f))))))) ==> ((\f. (!s. ((FINITE s) ==> (((vsum (x INSERT s)) f) = (((COND (x IN s)) ((vsum s) f)) ((vector_add (f x)) ((vsum s) f))))))) f)) = ((\f. (!s. ((FINITE s) ==> (((vsum (x INSERT s)) f) = (((COND (x IN s)) ((vsum s) f)) ((vector_add (f x)) ((vsum s) f))))))) f))
+T c= c==> ! ! c==> cFINITE b1 c= cvsum * * part cINSERT f0 b1 b0 cCOND cIN f0 b1 cvsum b1 b0 cvector_add * b0 f0 cvsum b1 b0 * / ! c==> cFINITE b1 c= cvsum * * part cINSERT f0 b1 b0 cCOND cIN f0 b1 cvsum b1 b0 cvector_add * b0 f0 cvsum b1 b0 f1 * / ! c==> cFINITE b1 c= cvsum * * part cINSERT f0 b1 b0 cCOND cIN f0 b1 cvsum b1 b0 cvector_add * b0 f0 cvsum b1 b0 f1
++ |- ((!x. t) = t)
+T c= ! f0 f0
++ ((!f. (!x. (((dot x) ((vsum s) f)) = ((sum s) (\y. ((dot x) (f y))))))) /\ ((~ (x IN s)) /\ (FINITE s))) |- (((dot x) ((vsum s) f)) = ((sum s) (\y. ((dot x) (f y)))))
+T c==> c/\ ! ! c= cdot b1 cvsum f0 b0 csum f0 / cdot b1 * b0 b2 c/\ c~ cIN f1 f0 cFINITE f0 c= cdot f2 cvsum f0 f3 csum f0 / cdot f2 * f3 b0
++ ((!f. (!x. (((dot x) ((vsum s) f)) = ((sum s) (\y. ((dot x) (f y))))))) /\ ((~ (x IN s)) /\ (FINITE s))) |- (((sum (x INSERT s)) (\y. ((dot x) (f y)))) = (((COND (x IN s)) ((sum s) (\y. ((dot x) (f y))))) ((real_add ((\y. ((dot x) (f y))) x)) ((sum s) (\y. ((dot x) (f y)))))))
+T c==> c/\ ! ! c= cdot b1 cvsum f0 b0 csum f0 / cdot b1 * b0 b2 c/\ c~ cIN f1 f0 cFINITE f0 c= csum * * part cINSERT f1 f0 / cdot f2 * f3 b0 cCOND cIN f1 f0 csum f0 / cdot f2 * f3 b0 creal_add * / cdot f2 * f3 b0 f1 csum f0 / cdot f2 * f3 b0
++ |- (((!P. (!Q. ((!x. (P ==> (Q x))) = (P ==> (!x. (Q x)))))) ==> ((\P. (!Q. ((!x. (P ==> (Q x))) = (P ==> (!x. (Q x)))))) P)) = ((\P. (!Q. ((!x. (P ==> (Q x))) = (P ==> (!x. (Q x)))))) P))
+T c= c==> ! ! c= ! c==> b0 * b1 b2 c==> b0 ! * b1 b2 * / ! c= ! c==> b0 * b1 b2 c==> b0 ! * b1 b2 f0 * / ! c= ! c==> b0 * b1 b2 c==> b0 ! * b1 b2 f0
++ |- ((\z. (((dot x) ((vector_add y) z)) = ((real_add ((dot x) y)) ((dot x) z)))) z)
+T * / c= cdot f0 cvector_add f1 b0 creal_add cdot f0 f1 cdot f0 b0 f2
+- (x IN s) |- ((x IN s) = T)
+T c==> cIN f0 f1 c= cIN f0 f1 cT
+- |- (((!x. ((x IN s) ==> ((f x) = (g x)))) ==> (((sum s) (\y. (f y))) = ((sum s) g))) = T)
+T c= c==> ! c==> cIN b0 f0 c= * f1 b0 * f2 b0 c= csum f0 / * f1 b0 csum f0 f2 cT
+- |- ((\g. ((!x. ((x IN s) ==> (((dot x) (f x)) = (g x)))) ==> (((sum s) (\y. ((dot x) (f y)))) = ((sum s) g)))) g)
+T * / c==> ! c==> cIN b1 f0 c= cdot f1 * f2 b1 * b0 b1 c= csum f0 / cdot f1 * f2 b1 csum f0 b0 f3
+- (x IN s) |- ((x IN s) /\ (((dot x) (f x)) = ((dot x) (f x))))
+T c==> cIN f0 f1 c/\ cIN f0 f1 c= cdot f2 * f3 f0 cdot f2 * f3 f0
++ |- ((~ F) ==> (((real_add ((\y. ((dot x) (f y))) x)) ((sum s) (\y. ((dot x) (f y))))) = ((real_add ((dot x) (f x))) ((sum s) (\y. ((dot x) (f y)))))))
+T c==> c~ cF c= creal_add * / cdot f0 * f1 b0 f2 csum f3 / cdot f0 * f1 b0 creal_add cdot f0 * f1 f2 csum f3 / cdot f0 * f1 b0
++ |- (((!P. (((P EMPTY) /\ (!x. (!s. (((P s) /\ ((~ (x IN s)) /\ (FINITE s))) ==> (P (x INSERT s)))))) ==> (!s. ((FINITE s) ==> (P s))))) ==> ((\P. (((P EMPTY) /\ (!x. (!s. (((P s) /\ ((~ (x IN s)) /\ (FINITE s))) ==> (P (x INSERT s)))))) ==> (!s. ((FINITE s) ==> (P s))))) P)) = ((\P. (((P EMPTY) /\ (!x. (!s. (((P s) /\ ((~ (x IN s)) /\ (FINITE s))) ==> (P (x INSERT s)))))) ==> (!s. ((FINITE s) ==> (P s))))) P))
+T c= c==> ! c==> c/\ * b0 part cEMPTY ! ! c==> c/\ * b0 b2 c/\ c~ cIN b1 b2 cFINITE b2 * b0 * * part cINSERT b1 b2 ! c==> cFINITE b1 * b0 b1 * / c==> c/\ * b0 part cEMPTY ! ! c==> c/\ * b0 b2 c/\ c~ cIN b1 b2 cFINITE b2 * b0 * * part cINSERT b1 b2 ! c==> cFINITE b1 * b0 b1 f0 * / c==> c/\ * b0 part cEMPTY ! ! c==> c/\ * b0 b2 c/\ c~ cIN b1 b2 cFINITE b2 * b0 * * part cINSERT b1 b2 ! c==> cFINITE b1 * b0 b1 f0
++ ((!f. (!x. (((dot x) ((vsum s) f)) = ((sum s) (\y. ((dot x) (f y))))))) /\ ((~ (x IN s)) /\ (FINITE s))) |- (((!f. (!x. (((dot x) ((vsum s) f)) = ((sum s) (\y. ((dot x) (f y))))))) /\ ((~ (x IN s)) /\ (FINITE s))) /\ ((!f. (!x. (((dot x) ((vsum (x INSERT s)) f)) = ((sum (x INSERT s)) (\y. ((dot x) (f y))))))) = T))
+T c==> c/\ ! ! c= cdot b1 cvsum f0 b0 csum f0 / cdot b1 * b0 b2 c/\ c~ cIN f1 f0 cFINITE f0 c/\ c/\ ! ! c= cdot b1 cvsum f0 b0 csum f0 / cdot b1 * b0 b2 c/\ c~ cIN f1 f0 cFINITE f0 c= ! ! c= cdot b1 cvsum * * part cINSERT f1 f0 b0 csum * * part cINSERT f1 f0 / cdot b1 * b0 b2 cT
++ F |- (F /\ (((sum s) (\y. ((dot x) (f y)))) = ((sum s) (\y. ((dot x) (f y))))))
+T c==> cF c/\ cF c= csum f0 / cdot f1 * f2 b0 csum f0 / cdot f1 * f2 b0
++ |- ((\x. (!f. (!s. ((FINITE s) ==> (((vsum (x INSERT s)) f) = (((COND (x IN s)) ((vsum s) f)) ((vector_add (f x)) ((vsum s) f)))))))) x)
+T * / ! ! c==> cFINITE b2 c= cvsum * * part cINSERT b0 b2 b1 cCOND cIN b0 b2 cvsum b2 b1 cvector_add * b1 b0 cvsum b2 b1 f0
+- |- ((!x. ((x IN s) ==> (((dot x) (f x)) = ((dot x) (f x))))) ==> (((sum s) (\y. ((dot x) (f y)))) = ((sum s) (\x. ((dot x) (f x))))))
+T c==> ! c==> cIN b0 f0 c= cdot f1 * f2 b0 cdot f1 * f2 b0 c= csum f0 / cdot f1 * f2 b0 csum f0 / cdot f1 * f2 b0
+- (!P. (((P EMPTY) /\ (!x. (!s. (((P s) /\ ((~ (x IN s)) /\ (FINITE s))) ==> (P (x INSERT s)))))) ==> (!s. ((FINITE s) ==> (P s))))) |- ((\P. (((P EMPTY) /\ (!x. (!s. (((P s) /\ ((~ (x IN s)) /\ (FINITE s))) ==> (P (x INSERT s)))))) ==> (!s. ((FINITE s) ==> (P s))))) P)
+T c==> ! c==> c/\ * b0 part cEMPTY ! ! c==> c/\ * b0 b2 c/\ c~ cIN b1 b2 cFINITE b2 * b0 * * part cINSERT b1 b2 ! c==> cFINITE b1 * b0 b1 * / c==> c/\ * b0 part cEMPTY ! ! c==> c/\ * b0 b2 c/\ c~ cIN b1 b2 cFINITE b2 * b0 * * part cINSERT b1 b2 ! c==> cFINITE b1 * b0 b1 f0
+- (~ F) |- ((F = F) = T)
+T c==> c~ cF c= c= cF cF cT
+- |- (((!P. (((P EMPTY) /\ (!x. (!s. (((P s) /\ ((~ (x IN s)) /\ (FINITE s))) ==> (P (x INSERT s)))))) ==> (!s. ((FINITE s) ==> (P s))))) ==> (!P. (((P EMPTY) /\ (!x. (!s. (((P s) /\ ((~ (x IN s)) /\ (FINITE s))) ==> (P (x INSERT s)))))) ==> (!s. ((FINITE s) ==> (P s)))))) = (!P. (((P EMPTY) /\ (!x. (!s. (((P s) /\ ((~ (x IN s)) /\ (FINITE s))) ==> (P (x INSERT s)))))) ==> (!s. ((FINITE s) ==> (P s))))))
+T c= c==> ! c==> c/\ * b0 part cEMPTY ! ! c==> c/\ * b0 b2 c/\ c~ cIN b1 b2 cFINITE b2 * b0 * * part cINSERT b1 b2 ! c==> cFINITE b1 * b0 b1 ! c==> c/\ * b0 part cEMPTY ! ! c==> c/\ * b0 b2 c/\ c~ cIN b1 b2 cFINITE b2 * b0 * * part cINSERT b1 b2 ! c==> cFINITE b1 * b0 b1 ! c==> c/\ * b0 part cEMPTY ! ! c==> c/\ * b0 b2 c/\ c~ cIN b1 b2 cFINITE b2 * b0 * * part cINSERT b1 b2 ! c==> cFINITE b1 * b0 b1
+- |- (!x. ((x IN s) ==> (((dot x) (f x)) = ((dot x) (f x)))))
+T c==> cIN f0 f1 c= cdot f2 * f3 f0 cdot f2 * f3 f0
+- F |- (F = T)
+T c==> cF c= cF cT
+- ((P EMPTY) /\ (!x. (!s. (((P s) /\ ((~ (x IN s)) /\ (FINITE s))) ==> (P (x INSERT s)))))) |- ((!P. (((P EMPTY) /\ (!x. (!s. (((P s) /\ ((~ (x IN s)) /\ (FINITE s))) ==> (P (x INSERT s)))))) ==> (!s. ((FINITE s) ==> (P s))))) ==> (!s. ((FINITE s) ==> (P s))))
+T c==> c/\ * f0 part cEMPTY ! ! c==> c/\ * f0 b1 c/\ c~ cIN b0 b1 cFINITE b1 * f0 * * part cINSERT b0 b1 c==> ! c==> c/\ * b0 part cEMPTY ! ! c==> c/\ * b0 b2 c/\ c~ cIN b1 b2 cFINITE b2 * b0 * * part cINSERT b1 b2 ! c==> cFINITE b1 * b0 b1 ! c==> cFINITE b0 * f0 b0
+- |- (((sum s) (\y. ((dot x) (f y)))) = ((sum s) (\x. ((dot x) (f x)))))
+T c= csum f0 / cdot f1 * f2 b0 csum f0 / cdot f1 * f2 b0
+- |- (!g. ((!x. ((x IN s) ==> ((f x) = (g x)))) ==> (((sum s) (\y. (f y))) = ((sum s) g))))
+T c==> ! c==> cIN b0 f0 c= * f1 b0 * f2 b0 c= csum f0 / * f1 b0 csum f0 f2
+- |- (((!x. ((x IN s) ==> (((dot x) (f x)) = ((dot x) (f x))))) ==> (((sum s) (\y. ((dot x) (f y)))) = ((sum s) (\x. ((dot x) (f x)))))) = (((sum s) (\y. ((dot x) (f y)))) = ((sum s) (\x. ((dot x) (f x))))))
+T c= c==> ! c==> cIN b0 f0 c= cdot f1 * f2 b0 cdot f1 * f2 b0 c= csum f0 / cdot f1 * f2 b0 csum f0 / cdot f1 * f2 b0 c= csum f0 / cdot f1 * f2 b0 csum f0 / cdot f1 * f2 b0
+- (!P. (((P EMPTY) /\ (!x. (!s. (((P s) /\ ((~ (x IN s)) /\ (FINITE s))) ==> (P (x INSERT s)))))) ==> (!s. ((FINITE s) ==> (P s))))) |- ((((P EMPTY) /\ (!x. (!s. (((P s) /\ ((~ (x IN s)) /\ (FINITE s))) ==> (P (x INSERT s)))))) ==> (!s. ((FINITE s) ==> (P s)))) = T)
+T c==> ! c==> c/\ * b0 part cEMPTY ! ! c==> c/\ * b0 b2 c/\ c~ cIN b1 b2 cFINITE b2 * b0 * * part cINSERT b1 b2 ! c==> cFINITE b1 * b0 b1 c= c==> c/\ * f0 part cEMPTY ! ! c==> c/\ * f0 b1 c/\ c~ cIN b0 b1 cFINITE b1 * f0 * * part cINSERT b0 b1 ! c==> cFINITE b0 * f0 b0 cT
+- |- ((t /\ t) = t)
+T c= c/\ f0 f0 f0
+- (!P. (((P EMPTY) /\ (!x. (!s. (((P s) /\ ((~ (x IN s)) /\ (FINITE s))) ==> (P (x INSERT s)))))) ==> (!s. ((FINITE s) ==> (P s))))) |- ((!P. (((P EMPTY) /\ (!x. (!s. (((P s) /\ ((~ (x IN s)) /\ (FINITE s))) ==> (P (x INSERT s)))))) ==> (!s. ((FINITE s) ==> (P s))))) /\ (!P. (((P EMPTY) /\ (!x. (!s. (((P s) /\ ((~ (x IN s)) /\ (FINITE s))) ==> (P (x INSERT s)))))) ==> (!s. ((FINITE s) ==> (P s))))))
+T c==> ! c==> c/\ * b0 part cEMPTY ! ! c==> c/\ * b0 b2 c/\ c~ cIN b1 b2 cFINITE b2 * b0 * * part cINSERT b1 b2 ! c==> cFINITE b1 * b0 b1 c/\ ! c==> c/\ * b0 part cEMPTY ! ! c==> c/\ * b0 b2 c/\ c~ cIN b1 b2 cFINITE b2 * b0 * * part cINSERT b1 b2 ! c==> cFINITE b1 * b0 b1 ! c==> c/\ * b0 part cEMPTY ! ! c==> c/\ * b0 b2 c/\ c~ cIN b1 b2 cFINITE b2 * b0 * * part cINSERT b1 b2 ! c==> cFINITE b1 * b0 b1
+- |- ((!P. (((P EMPTY) /\ (!x. (!s. (((P s) /\ ((~ (x IN s)) /\ (FINITE s))) ==> (P (x INSERT s)))))) ==> (!s. ((FINITE s) ==> (P s))))) ==> (!P. (((P EMPTY) /\ (!x. (!s. (((P s) /\ ((~ (x IN s)) /\ (FINITE s))) ==> (P (x INSERT s)))))) ==> (!s. ((FINITE s) ==> (P s))))))
+T c==> ! c==> c/\ * b0 part cEMPTY ! ! c==> c/\ * b0 b2 c/\ c~ cIN b1 b2 cFINITE b2 * b0 * * part cINSERT b1 b2 ! c==> cFINITE b1 * b0 b1 ! c==> c/\ * b0 part cEMPTY ! ! c==> c/\ * b0 b2 c/\ c~ cIN b1 b2 cFINITE b2 * b0 * * part cINSERT b1 b2 ! c==> cFINITE b1 * b0 b1
+- (~ F) |- (F = F)
+T c==> c~ cF c= cF cF
+- (!P. (((P EMPTY) /\ (!x. (!s. (((P s) /\ ((~ (x IN s)) /\ (FINITE s))) ==> (P (x INSERT s)))))) ==> (!s. ((FINITE s) ==> (P s))))), ((P EMPTY) /\ (!x. (!s. (((P s) /\ ((~ (x IN s)) /\ (FINITE s))) ==> (P (x INSERT s)))))) |- ((!P. (((P EMPTY) /\ (!x. (!s. (((P s) /\ ((~ (x IN s)) /\ (FINITE s))) ==> (P (x INSERT s)))))) ==> (!s. ((FINITE s) ==> (P s))))) /\ (!s. ((FINITE s) ==> (P s))))
+T c==> ! c==> c/\ * b0 part cEMPTY ! ! c==> c/\ * b0 b2 c/\ c~ cIN b1 b2 cFINITE b2 * b0 * * part cINSERT b1 b2 ! c==> cFINITE b1 * b0 b1 c==> c/\ * f0 part cEMPTY ! ! c==> c/\ * f0 b1 c/\ c~ cIN b0 b1 cFINITE b1 * f0 * * part cINSERT b0 b1 c/\ ! c==> c/\ * b0 part cEMPTY ! ! c==> c/\ * b0 b2 c/\ c~ cIN b1 b2 cFINITE b2 * b0 * * part cINSERT b1 b2 ! c==> cFINITE b1 * b0 b1 ! c==> cFINITE b0 * f0 b0
+- |- (((x IN s) ==> (((dot x) (f x)) = ((dot x) (f x)))) = T)
+T c= c==> cIN f0 f1 c= cdot f2 * f3 f0 cdot f2 * f3 f0 cT
+- |- (((\y. (f y)) y) = (f y))
+T c= * / * f0 b0 f1 * f0 f1
+- |- (((!g. ((!x. ((x IN s) ==> (((dot x) (f x)) = (g x)))) ==> (((sum s) (\y. ((dot x) (f y)))) = ((sum s) g)))) ==> ((\g. ((!x. ((x IN s) ==> (((dot x) (f x)) = (g x)))) ==> (((sum s) (\y. ((dot x) (f y)))) = ((sum s) g)))) g)) = ((\g. ((!x. ((x IN s) ==> (((dot x) (f x)) = (g x)))) ==> (((sum s) (\y. ((dot x) (f y)))) = ((sum s) g)))) g))
+T c= c==> ! c==> ! c==> cIN b1 f0 c= cdot f1 * f2 b1 * b0 b1 c= csum f0 / cdot f1 * f2 b1 csum f0 b0 * / c==> ! c==> cIN b1 f0 c= cdot f1 * f2 b1 * b0 b1 c= csum f0 / cdot f1 * f2 b1 csum f0 b0 f3 * / c==> ! c==> cIN b1 f0 c= cdot f1 * f2 b1 * b0 b1 c= csum f0 / cdot f1 * f2 b1 csum f0 b0 f3
+- (!P. (((P EMPTY) /\ (!x. (!s. (((P s) /\ ((~ (x IN s)) /\ (FINITE s))) ==> (P (x INSERT s)))))) ==> (!s. ((FINITE s) ==> (P s))))), ((P EMPTY) /\ (!x. (!s. (((P s) /\ ((~ (x IN s)) /\ (FINITE s))) ==> (P (x INSERT s)))))) |- (((P EMPTY) /\ (!x. (!s. (((P s) /\ ((~ (x IN s)) /\ (FINITE s))) ==> (P (x INSERT s)))))) /\ (!s. ((FINITE s) ==> (P s))))
+T c==> ! c==> c/\ * b0 part cEMPTY ! ! c==> c/\ * b0 b2 c/\ c~ cIN b1 b2 cFINITE b2 * b0 * * part cINSERT b1 b2 ! c==> cFINITE b1 * b0 b1 c==> c/\ * f0 part cEMPTY ! ! c==> c/\ * f0 b1 c/\ c~ cIN b0 b1 cFINITE b1 * f0 * * part cINSERT b0 b1 c/\ c/\ * f0 part cEMPTY ! ! c==> c/\ * f0 b1 c/\ c~ cIN b0 b1 cFINITE b1 * f0 * * part cINSERT b0 b1 ! c==> cFINITE b0 * f0 b0
+- ((!f. (!x. (((dot x) ((vsum s) f)) = ((sum s) (\y. ((dot x) (f y))))))) /\ ((~ (x IN s)) /\ (FINITE s))) |- ((FINITE s) = T)
+T c==> c/\ ! ! c= cdot b1 cvsum f0 b0 csum f0 / cdot b1 * b0 b2 c/\ c~ cIN f1 f0 cFINITE f0 c= cFINITE f0 cT
+- (FINITE s) |- ((FINITE s) /\ (((sum (x INSERT s)) f) = (((COND (x IN s)) ((sum s) f)) ((real_add (f x)) ((sum s) f)))))
+T c==> cFINITE f0 c/\ cFINITE f0 c= csum * * part cINSERT f1 f0 f2 cCOND cIN f1 f0 csum f0 f2 creal_add * f2 f1 csum f0 f2

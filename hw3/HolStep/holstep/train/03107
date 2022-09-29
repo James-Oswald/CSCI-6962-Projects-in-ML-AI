@@ -1,0 +1,25 @@
+N Seq.flatten_cons
+C |- (!s. (!ss. ((flatten ((CONS s) ss)) = ((cat s) (flatten ss)))))
+T c= cflatten cCONS f0 f1 ccat f0 cflatten f1
+D Seq.foldr
+A |- (((((foldr f) z0) ((CONS x) s)) = ((f x) (((foldr f) z0) s))) /\ ((((foldr f) z0) NIL) = z0))
+T c/\ c= cfoldr f0 f1 cCONS f2 f3 * * f0 f2 cfoldr f0 f1 f3 c= cfoldr f0 f1 cNIL f1
+D Seq.flatten
+A |- (flatten = ((foldr cat) NIL))
+T c= part cflatten * * part cfoldr part ccat cNIL
+- |- ((((foldr f) z0) NIL) = z0)
+T c= cfoldr f0 f1 cNIL f1
++ |- ((((foldr f) z0) ((CONS x) s)) = ((f x) (((foldr f) z0) s)))
+T c= cfoldr f0 f1 cCONS f2 f3 * * f0 f2 cfoldr f0 f1 f3
+- |- ((x = x) = T)
+T c= c= f0 f0 cT
++ |- (((((foldr cat) NIL) ((CONS s) ss)) = ((cat s) (((foldr cat) NIL) ss))) = ((flatten ((CONS s) ss)) = ((cat s) (flatten ss))))
+T c= c= cfoldr part ccat cNIL cCONS f0 f1 ccat f0 cfoldr part ccat cNIL f1 c= cflatten cCONS f0 f1 ccat f0 cflatten f1
+- |- ((((cat s) (((foldr cat) NIL) ss)) = ((cat s) (((foldr cat) NIL) ss))) = ((((foldr cat) NIL) ((CONS s) ss)) = ((cat s) (((foldr cat) NIL) ss))))
+T c= c= ccat f0 cfoldr part ccat cNIL f1 ccat f0 cfoldr part ccat cNIL f1 c= cfoldr part ccat cNIL cCONS f0 f1 ccat f0 cfoldr part ccat cNIL f1
++ |- (((flatten ((CONS s) ss)) = ((cat s) (flatten ss))) = T)
+T c= c= cflatten cCONS f0 f1 ccat f0 cflatten f1 cT
++ |- ((!ss. ((flatten ((CONS s) ss)) = ((cat s) (flatten ss)))) = T)
+T c= ! c= cflatten cCONS f0 b0 ccat f0 cflatten b0 cT
+- |- (T = (((cat s) (((foldr cat) NIL) ss)) = ((cat s) (((foldr cat) NIL) ss))))
+T c= cT c= ccat f0 cfoldr part ccat cNIL f1 ccat f0 cfoldr part ccat cNIL f1

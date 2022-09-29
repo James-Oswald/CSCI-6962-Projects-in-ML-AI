@@ -1,0 +1,29 @@
+N LINEAR_LIFT_DOT
+C |- (!a. (linear (\x. (lift ((dot a) x)))))
+T clinear / clift cdot f0 b0
+D TRUTH
+A |- T
+T cT
+D DOT_RADD
+A |- (!x. (!y. (!z. (((dot x) ((vector_add y) z)) = ((real_add ((dot x) y)) ((dot x) z))))))
+T c= cdot f0 cvector_add f1 f2 creal_add cdot f0 f1 cdot f0 f2
+D DOT_RMUL
+A |- (!c. (!x. (!y. (((dot x) ((% c) y)) = ((real_mul c) ((dot x) y))))))
+T c= cdot f0 c% f1 f2 creal_mul f1 cdot f0 f2
+D linear
+A |- (!f. ((linear f) = ((!x. (!y. ((f ((vector_add x) y)) = ((vector_add (f x)) (f y))))) /\ (!c. (!x. ((f ((% c) x)) = ((% c) (f x))))))))
+T c= clinear f0 c/\ ! ! c= * f0 cvector_add b0 b1 cvector_add * f0 b0 * f0 b1 ! ! c= * f0 c% b0 b1 c% b0 * f0 b1
+D LIFT_ADD
+A |- (!x. (!y. ((lift ((real_add x) y)) = ((vector_add (lift x)) (lift y)))))
+T c= clift creal_add f0 f1 cvector_add clift f0 clift f1
+D LIFT_CMUL
+A |- (!x. (!c. ((lift ((real_mul c) x)) = ((% c) (lift x)))))
+T c= clift creal_mul f0 f1 c% f0 clift f1
++ |- (((!y. (!z. (((dot x) ((vector_add y) z)) = ((real_add ((dot x) y)) ((dot x) z))))) ==> ((\y. (!z. (((dot x) ((vector_add y) z)) = ((real_add ((dot x) y)) ((dot x) z))))) y)) = ((\y. (!z. (((dot x) ((vector_add y) z)) = ((real_add ((dot x) y)) ((dot x) z))))) y))
+T c= c==> ! ! c= cdot f0 cvector_add b0 b1 creal_add cdot f0 b0 cdot f0 b1 * / ! c= cdot f0 cvector_add b0 b1 creal_add cdot f0 b0 cdot f0 b1 f1 * / ! c= cdot f0 cvector_add b0 b1 creal_add cdot f0 b0 cdot f0 b1 f1
++ |- (((!y. ((lift ((real_add x) y)) = ((vector_add (lift x)) (lift y)))) ==> ((\y. ((lift ((real_add x) y)) = ((vector_add (lift x)) (lift y)))) y)) = ((\y. ((lift ((real_add x) y)) = ((vector_add (lift x)) (lift y)))) y))
+T c= c==> ! c= clift creal_add f0 b0 cvector_add clift f0 clift b0 * / c= clift creal_add f0 b0 cvector_add clift f0 clift b0 f1 * / c= clift creal_add f0 b0 cvector_add clift f0 clift b0 f1
+- |- ((t /\ t) = t)
+T c= c/\ f0 f0 f0
+- |- (((\x. (f x)) y) = (f y))
+T c= * / * f0 b0 f1 * f0 f1
