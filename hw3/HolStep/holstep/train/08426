@@ -1,0 +1,235 @@
+N Tskajxy.SDIFF_TRANS
+C |- (!X. (!Y. (!Z. (((SDIFF X) Z) SUBSET (((SDIFF X) Y) UNION ((SDIFF Y) Z))))))
+T cSUBSET * * part cSDIFF f0 f1 * * part cUNION * * part cSDIFF f0 f2 * * part cSDIFF f2 f1
+D TRUTH
+A |- T
+T cT
+D BOOL_CASES_AX
+A |- (!t. ((t = T) \/ (t = F)))
+T c\/ c= f0 cT c= f0 cF
+D NOT_CLAUSES
+A |- ((!t. ((~ (~ t)) = t)) /\ (((~ T) = F) /\ ((~ F) = T)))
+T c/\ ! c= c~ c~ b0 b0 c/\ c= c~ cT cF c= c~ cF cT
+D IN
+A |- (!P. (!x. ((x IN P) = (P x))))
+T c= cIN f0 f1 * f1 f0
+D SUBSET
+A |- (!s. (!t. ((s SUBSET t) = (!x. ((x IN s) ==> (x IN t))))))
+T c= cSUBSET f0 f1 ! c==> cIN b0 f0 cIN b0 f1
+D IN_UNION
+A |- (!s. (!t. (!x. ((x IN (s UNION t)) = ((x IN s) \/ (x IN t))))))
+T c= cIN f0 * * part cUNION f1 f2 c\/ cIN f0 f1 cIN f0 f2
+D IN_DIFF
+A |- (!s. (!t. (!x. ((x IN (s DIFF t)) = ((x IN s) /\ (~ (x IN t)))))))
+T c= cIN f0 * * part cDIFF f1 f2 c/\ cIN f0 f1 c~ cIN f0 f2
+D SDIFF
+A |- (!Y. (!X. (((SDIFF X) Y) = ((X DIFF Y) UNION (Y DIFF X)))))
+T c= * * part cSDIFF f0 f1 * * part cUNION * * part cDIFF f0 f1 * * part cDIFF f1 f0
++ (X x), (((X x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (X x)))) |- ((Z x) ==> F)
+T c==> * f0 f1 c==> c\/ c/\ * f0 f1 c~ * f2 f1 c/\ * f2 f1 c~ * f0 f1 c==> * f2 f1 cF
++ (~ (X x)), (~ (Y x)), (~ ((((X x) /\ (~ (Y x))) \/ ((Y x) /\ (~ (X x)))) \/ (((Y x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (Y x)))))), (Y x), (((X x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (X x)))) |- F
+T c==> c~ * f0 f1 c==> c~ * f2 f1 c==> c~ c\/ c\/ c/\ * f0 f1 c~ * f2 f1 c/\ * f2 f1 c~ * f0 f1 c\/ c/\ * f2 f1 c~ * f3 f1 c/\ * f3 f1 c~ * f2 f1 c==> * f2 f1 c==> c\/ c/\ * f0 f1 c~ * f3 f1 c/\ * f3 f1 c~ * f0 f1 cF
++ (~ ((((X x) /\ (~ (Y x))) \/ ((Y x) /\ (~ (X x)))) \/ (((Y x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (Y x)))))), (((X x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (X x)))) |- F
+T c==> c~ c\/ c\/ c/\ * f0 f1 c~ * f2 f1 c/\ * f2 f1 c~ * f0 f1 c\/ c/\ * f2 f1 c~ * f3 f1 c/\ * f3 f1 c~ * f2 f1 c==> c\/ c/\ * f0 f1 c~ * f3 f1 c/\ * f3 f1 c~ * f0 f1 cF
++ |- ((!X. (!Y. (!Z. (!x. ((x IN ((X DIFF Z) UNION (Z DIFF X))) ==> (x IN (((X DIFF Y) UNION (Y DIFF X)) UNION ((Y DIFF Z) UNION (Z DIFF Y))))))))) = (!X. (!Y. (!Z. (((X DIFF Z) UNION (Z DIFF X)) SUBSET (((X DIFF Y) UNION (Y DIFF X)) UNION ((Y DIFF Z) UNION (Z DIFF Y))))))))
+T c= ! ! ! ! c==> cIN b3 * * part cUNION * * part cDIFF b0 b2 * * part cDIFF b2 b0 cIN b3 * * part cUNION * * part cUNION * * part cDIFF b0 b1 * * part cDIFF b1 b0 * * part cUNION * * part cDIFF b1 b2 * * part cDIFF b2 b1 ! ! ! cSUBSET * * part cUNION * * part cDIFF b0 b2 * * part cDIFF b2 b0 * * part cUNION * * part cUNION * * part cDIFF b0 b1 * * part cDIFF b1 b0 * * part cUNION * * part cDIFF b1 b2 * * part cDIFF b2 b1
+- |- ((\t1. (!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))))) t1)
+T * / ! ! c= c\/ b0 c\/ b1 b2 c\/ c\/ b0 b1 b2 f0
+- (~ F), (X x), ((Z x) /\ (~ (X x))) |- ((~ F) /\ F)
+T c==> c~ cF c==> * f0 f1 c==> c/\ * f2 f1 c~ * f0 f1 c/\ c~ cF cF
++ (~ ((((X x) /\ (~ (Y x))) \/ ((Y x) /\ (~ (X x)))) \/ (((Y x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (Y x)))))) |- (((~ (X x)) \/ (Y x)) /\ ((~ (Y x)) \/ (X x)))
+T c==> c~ c\/ c\/ c/\ * f0 f1 c~ * f2 f1 c/\ * f2 f1 c~ * f0 f1 c\/ c/\ * f2 f1 c~ * f3 f1 c/\ * f3 f1 c~ * f2 f1 c/\ c\/ c~ * f0 f1 * f2 f1 c\/ c~ * f2 f1 * f0 f1
++ (~ (Y x)), (Y x), ((X x) /\ (~ (Z x))) |- (((X x) /\ (~ (Z x))) /\ F)
+T c==> c~ * f0 f1 c==> * f0 f1 c==> c/\ * f2 f1 c~ * f3 f1 c/\ c/\ * f2 f1 c~ * f3 f1 cF
+- (~ ((((X x) /\ (~ (Y x))) \/ ((Y x) /\ (~ (X x)))) \/ (((Y x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (Y x)))))), (Y x), (((X x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (X x)))) |- ((~ (Z x)) ==> F)
+T c==> c~ c\/ c\/ c/\ * f0 f1 c~ * f2 f1 c/\ * f2 f1 c~ * f0 f1 c\/ c/\ * f2 f1 c~ * f3 f1 c/\ * f3 f1 c~ * f2 f1 c==> * f2 f1 c==> c\/ c/\ * f0 f1 c~ * f3 f1 c/\ * f3 f1 c~ * f0 f1 c==> c~ * f3 f1 cF
++ |- ((\X. (((SDIFF X) Y) = ((X DIFF Y) UNION (Y DIFF X)))) X)
+T * / c= * * part cSDIFF b0 f0 * * part cUNION * * part cDIFF b0 f0 * * part cDIFF f0 b0 f1
++ (~ ((((X x) /\ (~ (Y x))) \/ ((Y x) /\ (~ (X x)))) \/ (((Y x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (Y x)))))), (X x), (((X x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (X x)))) |- ((~ (X x)) ==> F)
+T c==> c~ c\/ c\/ c/\ * f0 f1 c~ * f2 f1 c/\ * f2 f1 c~ * f0 f1 c\/ c/\ * f2 f1 c~ * f3 f1 c/\ * f3 f1 c~ * f2 f1 c==> * f0 f1 c==> c\/ c/\ * f0 f1 c~ * f3 f1 c/\ * f3 f1 c~ * f0 f1 c==> c~ * f0 f1 cF
++ (~ (X x)), (~ (Z x)), (~ ((((X x) /\ (~ (Y x))) \/ ((Y x) /\ (~ (X x)))) \/ (((Y x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (Y x)))))), ((Z x) ==> F), (((X x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (X x)))) |- F
+T c==> c~ * f0 f1 c==> c~ * f2 f1 c==> c~ c\/ c\/ c/\ * f0 f1 c~ * f3 f1 c/\ * f3 f1 c~ * f0 f1 c\/ c/\ * f3 f1 c~ * f2 f1 c/\ * f2 f1 c~ * f3 f1 c==> c==> * f2 f1 cF c==> c\/ c/\ * f0 f1 c~ * f2 f1 c/\ * f2 f1 c~ * f0 f1 cF
++ (Z x), (((Z x) /\ (~ (X x))) ==> F), (((X x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (X x)))) |- F
+T c==> * f0 f1 c==> c==> c/\ * f0 f1 c~ * f2 f1 cF c==> c\/ c/\ * f2 f1 c~ * f0 f1 c/\ * f0 f1 c~ * f2 f1 cF
++ (Y x), (((X x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (X x)))) |- ((~ (Y x)) ==> F)
+T c==> * f0 f1 c==> c\/ c/\ * f2 f1 c~ * f3 f1 c/\ * f3 f1 c~ * f2 f1 c==> c~ * f0 f1 cF
++ (~ (Y x)), (Y x), (((X x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (X x)))) |- ((~ (Y x)) /\ F)
+T c==> c~ * f0 f1 c==> * f0 f1 c==> c\/ c/\ * f2 f1 c~ * f3 f1 c/\ * f3 f1 c~ * f2 f1 c/\ c~ * f0 f1 cF
++ (~ (X x)), (~ (Y x)), (X x), (((X x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (X x)))) |- ((~ (Y x)) /\ F)
+T c==> c~ * f0 f1 c==> c~ * f2 f1 c==> * f0 f1 c==> c\/ c/\ * f0 f1 c~ * f3 f1 c/\ * f3 f1 c~ * f0 f1 c/\ c~ * f2 f1 cF
++ (X x), (Y x), (((X x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (X x)))) |- ((~ (Y x)) ==> F)
+T c==> * f0 f1 c==> * f2 f1 c==> c\/ c/\ * f0 f1 c~ * f3 f1 c/\ * f3 f1 c~ * f0 f1 c==> c~ * f2 f1 cF
++ |- (!X. (!Y. (!Z. (((X DIFF Z) UNION (Z DIFF X)) SUBSET (((X DIFF Y) UNION (Y DIFF X)) UNION ((Y DIFF Z) UNION (Z DIFF Y)))))))
+T cSUBSET * * part cUNION * * part cDIFF f0 f1 * * part cDIFF f1 f0 * * part cUNION * * part cUNION * * part cDIFF f0 f2 * * part cDIFF f2 f0 * * part cUNION * * part cDIFF f2 f1 * * part cDIFF f1 f2
++ (~ (X x)), (~ (Y x)), (~ ((((X x) /\ (~ (Y x))) \/ ((Y x) /\ (~ (X x)))) \/ (((Y x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (Y x)))))), (Y x), (((X x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (X x)))) |- ((Y x) /\ F)
+T c==> c~ * f0 f1 c==> c~ * f2 f1 c==> c~ c\/ c\/ c/\ * f0 f1 c~ * f2 f1 c/\ * f2 f1 c~ * f0 f1 c\/ c/\ * f2 f1 c~ * f3 f1 c/\ * f3 f1 c~ * f2 f1 c==> * f2 f1 c==> c\/ c/\ * f0 f1 c~ * f3 f1 c/\ * f3 f1 c~ * f0 f1 c/\ * f2 f1 cF
+- |- ((t ==> t) = T)
+T c= c==> f0 f0 cT
+- |- ((t \/ t) = t)
+T c= c\/ f0 f0 f0
++ |- ((!X. (!Y. (!Z. (((X DIFF Z) UNION (Z DIFF X)) SUBSET (((X DIFF Y) UNION (Y DIFF X)) UNION ((Y DIFF Z) UNION (Z DIFF Y))))))) = (!X. (!Y. (!Z. (((SDIFF X) Z) SUBSET (((SDIFF X) Y) UNION ((SDIFF Y) Z)))))))
+T c= ! ! ! cSUBSET * * part cUNION * * part cDIFF b0 b2 * * part cDIFF b2 b0 * * part cUNION * * part cUNION * * part cDIFF b0 b1 * * part cDIFF b1 b0 * * part cUNION * * part cDIFF b1 b2 * * part cDIFF b2 b1 ! ! ! cSUBSET * * part cSDIFF b0 b2 * * part cUNION * * part cSDIFF b0 b1 * * part cSDIFF b1 b2
++ (~ ((((X x) /\ (~ (Y x))) \/ ((Y x) /\ (~ (X x)))) \/ (((Y x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (Y x)))))), ((~ (Y x)) ==> F), ((Z x) ==> F) |- F
+T c==> c~ c\/ c\/ c/\ * f0 f1 c~ * f2 f1 c/\ * f2 f1 c~ * f0 f1 c\/ c/\ * f2 f1 c~ * f3 f1 c/\ * f3 f1 c~ * f2 f1 c==> c==> c~ * f2 f1 cF c==> c==> * f3 f1 cF cF
++ |- (!X. (!Y. (!Z. (!x. ((x IN ((X DIFF Z) UNION (Z DIFF X))) ==> (x IN (((X DIFF Y) UNION (Y DIFF X)) UNION ((Y DIFF Z) UNION (Z DIFF Y)))))))))
+T c==> cIN f0 * * part cUNION * * part cDIFF f1 f2 * * part cDIFF f2 f1 cIN f0 * * part cUNION * * part cUNION * * part cDIFF f1 f3 * * part cDIFF f3 f1 * * part cUNION * * part cDIFF f3 f2 * * part cDIFF f2 f3
+- |- ((\t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))) t3)
+T * / c= c\/ f0 c\/ f1 b0 c\/ c\/ f0 f1 b0 f2
++ |- (((!X. (((SDIFF X) Y) = ((X DIFF Y) UNION (Y DIFF X)))) ==> ((\X. (((SDIFF X) Y) = ((X DIFF Y) UNION (Y DIFF X)))) X)) = ((\X. (((SDIFF X) Y) = ((X DIFF Y) UNION (Y DIFF X)))) X))
+T c= c==> ! c= * * part cSDIFF b0 f0 * * part cUNION * * part cDIFF b0 f0 * * part cDIFF f0 b0 * / c= * * part cSDIFF b0 f0 * * part cUNION * * part cDIFF b0 f0 * * part cDIFF f0 b0 f1 * / c= * * part cSDIFF b0 f0 * * part cUNION * * part cDIFF b0 f0 * * part cDIFF f0 b0 f1
+- (~ (X x)), (~ ((((X x) /\ (~ (Y x))) \/ ((Y x) /\ (~ (X x)))) \/ (((Y x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (Y x)))))), (X x), ((Y x) ==> F), (((X x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (X x)))) |- F
+T c==> c~ * f0 f1 c==> c~ c\/ c\/ c/\ * f0 f1 c~ * f2 f1 c/\ * f2 f1 c~ * f0 f1 c\/ c/\ * f2 f1 c~ * f3 f1 c/\ * f3 f1 c~ * f2 f1 c==> * f0 f1 c==> c==> * f2 f1 cF c==> c\/ c/\ * f0 f1 c~ * f3 f1 c/\ * f3 f1 c~ * f0 f1 cF
+- |- (((~ p) ==> p) = p)
+T c= c==> c~ f0 f0 f0
+- |- ((!x. t) = t)
+T c= ! f0 f0
++ (~ ((((X x) /\ (~ (Y x))) \/ ((Y x) /\ (~ (X x)))) \/ (((Y x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (Y x)))))) |- ((((~ (X x)) \/ (Y x)) /\ ((~ (Y x)) \/ (X x))) /\ (((~ (Y x)) \/ (Z x)) /\ ((~ (Z x)) \/ (Y x))))
+T c==> c~ c\/ c\/ c/\ * f0 f1 c~ * f2 f1 c/\ * f2 f1 c~ * f0 f1 c\/ c/\ * f2 f1 c~ * f3 f1 c/\ * f3 f1 c~ * f2 f1 c/\ c/\ c\/ c~ * f0 f1 * f2 f1 c\/ c~ * f2 f1 * f0 f1 c/\ c\/ c~ * f2 f1 * f3 f1 c\/ c~ * f3 f1 * f2 f1
++ |- (!X. (!Y. (!Z. (!x. ((((X x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (X x)))) ==> ((((X x) /\ (~ (Y x))) \/ ((Y x) /\ (~ (X x)))) \/ (((Y x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (Y x))))))))))
+T c==> c\/ c/\ * f0 f1 c~ * f2 f1 c/\ * f2 f1 c~ * f0 f1 c\/ c\/ c/\ * f0 f1 c~ * f3 f1 c/\ * f3 f1 c~ * f0 f1 c\/ c/\ * f3 f1 c~ * f2 f1 c/\ * f2 f1 c~ * f3 f1
+- |- ((t ==> F) = (~ t))
+T c= c==> f0 cF c~ f0
++ (~ (X x)), (~ (Z x)), (((X x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (X x)))) |- F
+T c==> c~ * f0 f1 c==> c~ * f2 f1 c==> c\/ c/\ * f0 f1 c~ * f2 f1 c/\ * f2 f1 c~ * f0 f1 cF
++ |- (p = ((~ p) ==> F))
+T c= f0 c==> c~ f0 cF
++ (~ (Y x)), (~ ((((X x) /\ (~ (Y x))) \/ ((Y x) /\ (~ (X x)))) \/ (((Y x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (Y x)))))), (Y x), (((X x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (X x)))) |- ((Y x) /\ F)
+T c==> c~ * f0 f1 c==> c~ c\/ c\/ c/\ * f2 f1 c~ * f0 f1 c/\ * f0 f1 c~ * f2 f1 c\/ c/\ * f0 f1 c~ * f3 f1 c/\ * f3 f1 c~ * f0 f1 c==> * f0 f1 c==> c\/ c/\ * f2 f1 c~ * f3 f1 c/\ * f3 f1 c~ * f2 f1 c/\ * f0 f1 cF
++ (~ (Z x)), (Z x), (((X x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (X x)))) |- F
+T c==> c~ * f0 f1 c==> * f0 f1 c==> c\/ c/\ * f2 f1 c~ * f0 f1 c/\ * f0 f1 c~ * f2 f1 cF
++ (~ (X x)), (Y x), (((X x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (X x)))) |- ((~ (Y x)) ==> F)
+T c==> c~ * f0 f1 c==> * f2 f1 c==> c\/ c/\ * f0 f1 c~ * f3 f1 c/\ * f3 f1 c~ * f0 f1 c==> c~ * f2 f1 cF
++ (~ ((((X x) /\ (~ (Y x))) \/ ((Y x) /\ (~ (X x)))) \/ (((Y x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (Y x)))))), (X x), ((Y x) ==> F), (((X x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (X x)))) |- F
+T c==> c~ c\/ c\/ c/\ * f0 f1 c~ * f2 f1 c/\ * f2 f1 c~ * f0 f1 c\/ c/\ * f2 f1 c~ * f3 f1 c/\ * f3 f1 c~ * f2 f1 c==> * f0 f1 c==> c==> * f2 f1 cF c==> c\/ c/\ * f0 f1 c~ * f3 f1 c/\ * f3 f1 c~ * f0 f1 cF
++ (~ ((((X x) /\ (~ (Y x))) \/ ((Y x) /\ (~ (X x)))) \/ (((Y x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (Y x)))))) |- ((~ (Y x)) \/ (X x))
+T c==> c~ c\/ c\/ c/\ * f0 f1 c~ * f2 f1 c/\ * f2 f1 c~ * f0 f1 c\/ c/\ * f2 f1 c~ * f3 f1 c/\ * f3 f1 c~ * f2 f1 c\/ c~ * f2 f1 * f0 f1
++ (~ (Y x)), (Y x), (Z x), (((X x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (X x)))) |- ((Z x) /\ F)
+T c==> c~ * f0 f1 c==> * f0 f1 c==> * f2 f1 c==> c\/ c/\ * f3 f1 c~ * f2 f1 c/\ * f2 f1 c~ * f3 f1 c/\ * f2 f1 cF
++ |- ((!x. ((((X x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (X x)))) ==> ((((X x) /\ (~ (Y x))) \/ ((Y x) /\ (~ (X x)))) \/ (((Y x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (Y x))))))) = T)
+T c= ! c==> c\/ c/\ * f0 b0 c~ * f1 b0 c/\ * f1 b0 c~ * f0 b0 c\/ c\/ c/\ * f0 b0 c~ * f2 b0 c/\ * f2 b0 c~ * f0 b0 c\/ c/\ * f2 b0 c~ * f1 b0 c/\ * f1 b0 c~ * f2 b0 cT
++ (~ (X x)), (~ ((((X x) /\ (~ (Y x))) \/ ((Y x) /\ (~ (X x)))) \/ (((Y x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (Y x)))))), (X x), (((X x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (X x)))) |- F
+T c==> c~ * f0 f1 c==> c~ c\/ c\/ c/\ * f0 f1 c~ * f2 f1 c/\ * f2 f1 c~ * f0 f1 c\/ c/\ * f2 f1 c~ * f3 f1 c/\ * f3 f1 c~ * f2 f1 c==> * f0 f1 c==> c\/ c/\ * f0 f1 c~ * f3 f1 c/\ * f3 f1 c~ * f0 f1 cF
++ (~ (Z x)), (((X x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (X x)))) |- ((Z x) ==> F)
+T c==> c~ * f0 f1 c==> c\/ c/\ * f2 f1 c~ * f0 f1 c/\ * f0 f1 c~ * f2 f1 c==> * f0 f1 cF
++ (~ (X x)), (~ ((((X x) /\ (~ (Y x))) \/ ((Y x) /\ (~ (X x)))) \/ (((Y x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (Y x)))))), (((X x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (X x)))) |- ((~ (Z x)) ==> F)
+T c==> c~ * f0 f1 c==> c~ c\/ c\/ c/\ * f0 f1 c~ * f2 f1 c/\ * f2 f1 c~ * f0 f1 c\/ c/\ * f2 f1 c~ * f3 f1 c/\ * f3 f1 c~ * f2 f1 c==> c\/ c/\ * f0 f1 c~ * f3 f1 c/\ * f3 f1 c~ * f0 f1 c==> c~ * f3 f1 cF
++ |- ((!X. (!Y. (!Z. (!x. ((((X x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (X x)))) ==> ((((X x) /\ (~ (Y x))) \/ ((Y x) /\ (~ (X x)))) \/ (((Y x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (Y x)))))))))) = (!X. (!Y. (!Z. (!x. ((x IN ((X DIFF Z) UNION (Z DIFF X))) ==> (x IN (((X DIFF Y) UNION (Y DIFF X)) UNION ((Y DIFF Z) UNION (Z DIFF Y))))))))))
+T c= ! ! ! ! c==> c\/ c/\ * b0 b3 c~ * b2 b3 c/\ * b2 b3 c~ * b0 b3 c\/ c\/ c/\ * b0 b3 c~ * b1 b3 c/\ * b1 b3 c~ * b0 b3 c\/ c/\ * b1 b3 c~ * b2 b3 c/\ * b2 b3 c~ * b1 b3 ! ! ! ! c==> cIN b3 * * part cUNION * * part cDIFF b0 b2 * * part cDIFF b2 b0 cIN b3 * * part cUNION * * part cUNION * * part cDIFF b0 b1 * * part cDIFF b1 b0 * * part cUNION * * part cDIFF b1 b2 * * part cDIFF b2 b1
+- |- ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))
+T c= c\/ f0 c\/ f1 f2 c\/ c\/ f0 f1 f2
+- (~ ((((X x) /\ (~ (Y x))) \/ ((Y x) /\ (~ (X x)))) \/ (((Y x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (Y x)))))), (X x), (Y x), (((X x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (X x)))) |- ((~ (Z x)) ==> F)
+T c==> c~ c\/ c\/ c/\ * f0 f1 c~ * f2 f1 c/\ * f2 f1 c~ * f0 f1 c\/ c/\ * f2 f1 c~ * f3 f1 c/\ * f3 f1 c~ * f2 f1 c==> * f0 f1 c==> * f2 f1 c==> c\/ c/\ * f0 f1 c~ * f3 f1 c/\ * f3 f1 c~ * f0 f1 c==> c~ * f3 f1 cF
++ (~ (Y x)), (Y x), (((X x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (X x)))) |- ((Z x) ==> F)
+T c==> c~ * f0 f1 c==> * f0 f1 c==> c\/ c/\ * f2 f1 c~ * f3 f1 c/\ * f3 f1 c~ * f2 f1 c==> * f3 f1 cF
++ (~ (Y x)), (Y x) |- F
+T c==> c~ * f0 f1 c==> * f0 f1 cF
+- (~ F), (~ (Z x)), ((Z x) /\ (~ (X x))) |- ((~ F) /\ F)
+T c==> c~ cF c==> c~ * f0 f1 c==> c/\ * f0 f1 c~ * f2 f1 c/\ c~ cF cF
+- (~ (Y x)), (~ (Z x)), (Y x), (((X x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (X x)))) |- F
+T c==> c~ * f0 f1 c==> c~ * f2 f1 c==> * f0 f1 c==> c\/ c/\ * f3 f1 c~ * f2 f1 c/\ * f2 f1 c~ * f3 f1 cF
++ (~ (X x)), (X x), (((X x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (X x)))) |- F
+T c==> c~ * f0 f1 c==> * f0 f1 c==> c\/ c/\ * f0 f1 c~ * f2 f1 c/\ * f2 f1 c~ * f0 f1 cF
++ (~ (Y x)), (X x), (Y x), (((X x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (X x)))) |- ((~ (Y x)) /\ F)
+T c==> c~ * f0 f1 c==> * f2 f1 c==> * f0 f1 c==> c\/ c/\ * f2 f1 c~ * f3 f1 c/\ * f3 f1 c~ * f2 f1 c/\ c~ * f0 f1 cF
+- (~ (Y x)), (Y x) |- ((~ F) ==> F)
+T c==> c~ * f0 f1 c==> * f0 f1 c==> c~ cF cF
+- |- ((\t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3)))) t2)
+T * / ! c= c\/ f0 c\/ b0 b1 c\/ c\/ f0 b0 b1 f1
++ (~ ((((X x) /\ (~ (Y x))) \/ ((Y x) /\ (~ (X x)))) \/ (((Y x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (Y x)))))), (X x), (((X x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (X x)))) |- ((Y x) ==> F)
+T c==> c~ c\/ c\/ c/\ * f0 f1 c~ * f2 f1 c/\ * f2 f1 c~ * f0 f1 c\/ c/\ * f2 f1 c~ * f3 f1 c/\ * f3 f1 c~ * f2 f1 c==> * f0 f1 c==> c\/ c/\ * f0 f1 c~ * f3 f1 c/\ * f3 f1 c~ * f0 f1 c==> * f2 f1 cF
+- (~ (X x)), (~ (Z x)), (~ ((((X x) /\ (~ (Y x))) \/ ((Y x) /\ (~ (X x)))) \/ (((Y x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (Y x)))))), (X x), (((X x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (X x)))) |- ((~ (Z x)) /\ F)
+T c==> c~ * f0 f1 c==> c~ * f2 f1 c==> c~ c\/ c\/ c/\ * f0 f1 c~ * f3 f1 c/\ * f3 f1 c~ * f0 f1 c\/ c/\ * f3 f1 c~ * f2 f1 c/\ * f2 f1 c~ * f3 f1 c==> * f0 f1 c==> c\/ c/\ * f0 f1 c~ * f2 f1 c/\ * f2 f1 c~ * f0 f1 c/\ c~ * f2 f1 cF
+- (~ ((((X x) /\ (~ (Y x))) \/ ((Y x) /\ (~ (X x)))) \/ (((Y x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (Y x)))))), (Y x), ((Y x) ==> F), (((X x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (X x)))) |- F
+T c==> c~ c\/ c\/ c/\ * f0 f1 c~ * f2 f1 c/\ * f2 f1 c~ * f0 f1 c\/ c/\ * f2 f1 c~ * f3 f1 c/\ * f3 f1 c~ * f2 f1 c==> * f2 f1 c==> c==> * f2 f1 cF c==> c\/ c/\ * f0 f1 c~ * f3 f1 c/\ * f3 f1 c~ * f0 f1 cF
+- (~ ((((X x) /\ (~ (Y x))) \/ ((Y x) /\ (~ (X x)))) \/ (((Y x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (Y x)))))), (X x), (Y x), ((Y x) ==> F), (((X x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (X x)))) |- F
+T c==> c~ c\/ c\/ c/\ * f0 f1 c~ * f2 f1 c/\ * f2 f1 c~ * f0 f1 c\/ c/\ * f2 f1 c~ * f3 f1 c/\ * f3 f1 c~ * f2 f1 c==> * f0 f1 c==> * f2 f1 c==> c==> * f2 f1 cF c==> c\/ c/\ * f0 f1 c~ * f3 f1 c/\ * f3 f1 c~ * f0 f1 cF
++ (~ ((((X x) /\ (~ (Y x))) \/ ((Y x) /\ (~ (X x)))) \/ (((Y x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (Y x)))))), ((~ (X x)) ==> F), ((Y x) ==> F) |- F
+T c==> c~ c\/ c\/ c/\ * f0 f1 c~ * f2 f1 c/\ * f2 f1 c~ * f0 f1 c\/ c/\ * f2 f1 c~ * f3 f1 c/\ * f3 f1 c~ * f2 f1 c==> c==> c~ * f0 f1 cF c==> c==> * f2 f1 cF cF
++ (~ (X x)), (~ ((((X x) /\ (~ (Y x))) \/ ((Y x) /\ (~ (X x)))) \/ (((Y x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (Y x)))))), (Y x), ((Z x) ==> F), (((X x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (X x)))) |- F
+T c==> c~ * f0 f1 c==> c~ c\/ c\/ c/\ * f0 f1 c~ * f2 f1 c/\ * f2 f1 c~ * f0 f1 c\/ c/\ * f2 f1 c~ * f3 f1 c/\ * f3 f1 c~ * f2 f1 c==> * f2 f1 c==> c==> * f3 f1 cF c==> c\/ c/\ * f0 f1 c~ * f3 f1 c/\ * f3 f1 c~ * f0 f1 cF
+- |- (((!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3)))) ==> ((\t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3)))) t2)) = ((\t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3)))) t2))
+T c= c==> ! ! c= c\/ f0 c\/ b0 b1 c\/ c\/ f0 b0 b1 * / ! c= c\/ f0 c\/ b0 b1 c\/ c\/ f0 b0 b1 f1 * / ! c= c\/ f0 c\/ b0 b1 c\/ c\/ f0 b0 b1 f1
++ (~ ((((X x) /\ (~ (Y x))) \/ ((Y x) /\ (~ (X x)))) \/ (((Y x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (Y x)))))), (X x), (Y x), (((X x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (X x)))) |- F
+T c==> c~ c\/ c\/ c/\ * f0 f1 c~ * f2 f1 c/\ * f2 f1 c~ * f0 f1 c\/ c/\ * f2 f1 c~ * f3 f1 c/\ * f3 f1 c~ * f2 f1 c==> * f0 f1 c==> * f2 f1 c==> c\/ c/\ * f0 f1 c~ * f3 f1 c/\ * f3 f1 c~ * f0 f1 cF
++ (~ ((((X x) /\ (~ (Y x))) \/ ((Y x) /\ (~ (X x)))) \/ (((Y x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (Y x)))))) |- ((~ (Z x)) \/ (Y x))
+T c==> c~ c\/ c\/ c/\ * f0 f1 c~ * f2 f1 c/\ * f2 f1 c~ * f0 f1 c\/ c/\ * f2 f1 c~ * f3 f1 c/\ * f3 f1 c~ * f2 f1 c\/ c~ * f3 f1 * f2 f1
++ (~ ((((X x) /\ (~ (Y x))) \/ ((Y x) /\ (~ (X x)))) \/ (((Y x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (Y x)))))), ((X x) ==> F), (((X x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (X x)))) |- F
+T c==> c~ c\/ c\/ c/\ * f0 f1 c~ * f2 f1 c/\ * f2 f1 c~ * f0 f1 c\/ c/\ * f2 f1 c~ * f3 f1 c/\ * f3 f1 c~ * f2 f1 c==> c==> * f0 f1 cF c==> c\/ c/\ * f0 f1 c~ * f3 f1 c/\ * f3 f1 c~ * f0 f1 cF
++ |- ((\Y. (!X. (((SDIFF X) Y) = ((X DIFF Y) UNION (Y DIFF X))))) Y)
+T * / ! c= * * part cSDIFF b1 b0 * * part cUNION * * part cDIFF b1 b0 * * part cDIFF b0 b1 f0
+- |- ((((~ (!X. (!Y. (!Z. (!x. ((((X x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (X x)))) ==> ((((X x) /\ (~ (Y x))) \/ ((Y x) /\ (~ (X x)))) \/ (((Y x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (Y x))))))))))) ==> F) ==> ((~ (!X. (!Y. (!Z. (!x. ((((X x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (X x)))) ==> ((((X x) /\ (~ (Y x))) \/ ((Y x) /\ (~ (X x)))) \/ (((Y x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (Y x))))))))))) ==> F)) ==> (((~ (!X. (!Y. (!Z. (!x. ((((X x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (X x)))) ==> ((((X x) /\ (~ (Y x))) \/ ((Y x) /\ (~ (X x)))) \/ (((Y x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (Y x))))))))))) ==> F) ==> ((~ (!X. (!Y. (!Z. (!x. ((((X x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (X x)))) ==> ((((X x) /\ (~ (Y x))) \/ ((Y x) /\ (~ (X x)))) \/ (((Y x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (Y x))))))))))) ==> F)))
+T c==> c==> c==> c~ ! ! ! ! c==> c\/ c/\ * b0 b3 c~ * b2 b3 c/\ * b2 b3 c~ * b0 b3 c\/ c\/ c/\ * b0 b3 c~ * b1 b3 c/\ * b1 b3 c~ * b0 b3 c\/ c/\ * b1 b3 c~ * b2 b3 c/\ * b2 b3 c~ * b1 b3 cF c==> c~ ! ! ! ! c==> c\/ c/\ * b0 b3 c~ * b2 b3 c/\ * b2 b3 c~ * b0 b3 c\/ c\/ c/\ * b0 b3 c~ * b1 b3 c/\ * b1 b3 c~ * b0 b3 c\/ c/\ * b1 b3 c~ * b2 b3 c/\ * b2 b3 c~ * b1 b3 cF c==> c==> c~ ! ! ! ! c==> c\/ c/\ * b0 b3 c~ * b2 b3 c/\ * b2 b3 c~ * b0 b3 c\/ c\/ c/\ * b0 b3 c~ * b1 b3 c/\ * b1 b3 c~ * b0 b3 c\/ c/\ * b1 b3 c~ * b2 b3 c/\ * b2 b3 c~ * b1 b3 cF c==> c~ ! ! ! ! c==> c\/ c/\ * b0 b3 c~ * b2 b3 c/\ * b2 b3 c~ * b0 b3 c\/ c\/ c/\ * b0 b3 c~ * b1 b3 c/\ * b1 b3 c~ * b0 b3 c\/ c/\ * b1 b3 c~ * b2 b3 c/\ * b2 b3 c~ * b1 b3 cF
++ (~ ((((X x) /\ (~ (Y x))) \/ ((Y x) /\ (~ (X x)))) \/ (((Y x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (Y x)))))), (((X x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (X x)))) |- ((~ (Y x)) ==> F)
+T c==> c~ c\/ c\/ c/\ * f0 f1 c~ * f2 f1 c/\ * f2 f1 c~ * f0 f1 c\/ c/\ * f2 f1 c~ * f3 f1 c/\ * f3 f1 c~ * f2 f1 c==> c\/ c/\ * f0 f1 c~ * f3 f1 c/\ * f3 f1 c~ * f0 f1 c==> c~ * f2 f1 cF
++ (~ (Y x)), (Y x), (((Z x) /\ (~ (X x))) ==> F), (((X x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (X x)))) |- F
+T c==> c~ * f0 f1 c==> * f0 f1 c==> c==> c/\ * f2 f1 c~ * f3 f1 cF c==> c\/ c/\ * f3 f1 c~ * f2 f1 c/\ * f2 f1 c~ * f3 f1 cF
+- (~ (Z x)), (Y x), (((X x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (X x)))) |- ((~ (Y x)) ==> F)
+T c==> c~ * f0 f1 c==> * f2 f1 c==> c\/ c/\ * f3 f1 c~ * f0 f1 c/\ * f0 f1 c~ * f3 f1 c==> c~ * f2 f1 cF
++ (X x) |- (((Z x) /\ (~ (X x))) ==> F)
+T c==> * f0 f1 c==> c/\ * f2 f1 c~ * f0 f1 cF
++ (~ (Y x)), (~ ((((X x) /\ (~ (Y x))) \/ ((Y x) /\ (~ (X x)))) \/ (((Y x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (Y x)))))), (((X x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (X x)))) |- ((Y x) ==> F)
+T c==> c~ * f0 f1 c==> c~ c\/ c\/ c/\ * f2 f1 c~ * f0 f1 c/\ * f0 f1 c~ * f2 f1 c\/ c/\ * f0 f1 c~ * f3 f1 c/\ * f3 f1 c~ * f0 f1 c==> c\/ c/\ * f2 f1 c~ * f3 f1 c/\ * f3 f1 c~ * f2 f1 c==> * f0 f1 cF
++ (~ (Y x)), (~ ((((X x) /\ (~ (Y x))) \/ ((Y x) /\ (~ (X x)))) \/ (((Y x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (Y x)))))), (((X x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (X x)))) |- ((~ (X x)) ==> F)
+T c==> c~ * f0 f1 c==> c~ c\/ c\/ c/\ * f2 f1 c~ * f0 f1 c/\ * f0 f1 c~ * f2 f1 c\/ c/\ * f0 f1 c~ * f3 f1 c/\ * f3 f1 c~ * f0 f1 c==> c\/ c/\ * f2 f1 c~ * f3 f1 c/\ * f3 f1 c~ * f2 f1 c==> c~ * f2 f1 cF
++ (~ ((((X x) /\ (~ (Y x))) \/ ((Y x) /\ (~ (X x)))) \/ (((Y x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (Y x)))))), (((X x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (X x)))) |- ((X x) ==> F)
+T c==> c~ c\/ c\/ c/\ * f0 f1 c~ * f2 f1 c/\ * f2 f1 c~ * f0 f1 c\/ c/\ * f2 f1 c~ * f3 f1 c/\ * f3 f1 c~ * f2 f1 c==> c\/ c/\ * f0 f1 c~ * f3 f1 c/\ * f3 f1 c~ * f0 f1 c==> * f0 f1 cF
+- (~ (Z x)), ((Z x) /\ (~ (X x))) |- ((~ F) ==> F)
+T c==> c~ * f0 f1 c==> c/\ * f0 f1 c~ * f2 f1 c==> c~ cF cF
+- |- (((~ (!X. (!Y. (!Z. (!x. ((((X x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (X x)))) ==> ((((X x) /\ (~ (Y x))) \/ ((Y x) /\ (~ (X x)))) \/ (((Y x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (Y x))))))))))) ==> F) = (!X. (!Y. (!Z. (!x. ((((X x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (X x)))) ==> ((((X x) /\ (~ (Y x))) \/ ((Y x) /\ (~ (X x)))) \/ (((Y x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (Y x)))))))))))
+T c= c==> c~ ! ! ! ! c==> c\/ c/\ * b0 b3 c~ * b2 b3 c/\ * b2 b3 c~ * b0 b3 c\/ c\/ c/\ * b0 b3 c~ * b1 b3 c/\ * b1 b3 c~ * b0 b3 c\/ c/\ * b1 b3 c~ * b2 b3 c/\ * b2 b3 c~ * b1 b3 cF ! ! ! ! c==> c\/ c/\ * b0 b3 c~ * b2 b3 c/\ * b2 b3 c~ * b0 b3 c\/ c\/ c/\ * b0 b3 c~ * b1 b3 c/\ * b1 b3 c~ * b0 b3 c\/ c/\ * b1 b3 c~ * b2 b3 c/\ * b2 b3 c~ * b1 b3
+- (~ (Z x)), ((Z x) /\ (~ (X x))) |- ((~ (Z x)) /\ (Z x))
+T c==> c~ * f0 f1 c==> c/\ * f0 f1 c~ * f2 f1 c/\ c~ * f0 f1 * f0 f1
+- |- (((((~ (!X. (!Y. (!Z. (!x. ((((X x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (X x)))) ==> ((((X x) /\ (~ (Y x))) \/ ((Y x) /\ (~ (X x)))) \/ (((Y x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (Y x))))))))))) ==> F) ==> ((~ (!X. (!Y. (!Z. (!x. ((((X x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (X x)))) ==> ((((X x) /\ (~ (Y x))) \/ ((Y x) /\ (~ (X x)))) \/ (((Y x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (Y x))))))))))) ==> F)) ==> (((~ (!X. (!Y. (!Z. (!x. ((((X x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (X x)))) ==> ((((X x) /\ (~ (Y x))) \/ ((Y x) /\ (~ (X x)))) \/ (((Y x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (Y x))))))))))) ==> F) ==> ((~ (!X. (!Y. (!Z. (!x. ((((X x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (X x)))) ==> ((((X x) /\ (~ (Y x))) \/ ((Y x) /\ (~ (X x)))) \/ (((Y x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (Y x))))))))))) ==> F))) = (((~ (!X. (!Y. (!Z. (!x. ((((X x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (X x)))) ==> ((((X x) /\ (~ (Y x))) \/ ((Y x) /\ (~ (X x)))) \/ (((Y x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (Y x))))))))))) ==> F) ==> ((~ (!X. (!Y. (!Z. (!x. ((((X x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (X x)))) ==> ((((X x) /\ (~ (Y x))) \/ ((Y x) /\ (~ (X x)))) \/ (((Y x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (Y x))))))))))) ==> F)))
+T c= c==> c==> c==> c~ ! ! ! ! c==> c\/ c/\ * b0 b3 c~ * b2 b3 c/\ * b2 b3 c~ * b0 b3 c\/ c\/ c/\ * b0 b3 c~ * b1 b3 c/\ * b1 b3 c~ * b0 b3 c\/ c/\ * b1 b3 c~ * b2 b3 c/\ * b2 b3 c~ * b1 b3 cF c==> c~ ! ! ! ! c==> c\/ c/\ * b0 b3 c~ * b2 b3 c/\ * b2 b3 c~ * b0 b3 c\/ c\/ c/\ * b0 b3 c~ * b1 b3 c/\ * b1 b3 c~ * b0 b3 c\/ c/\ * b1 b3 c~ * b2 b3 c/\ * b2 b3 c~ * b1 b3 cF c==> c==> c~ ! ! ! ! c==> c\/ c/\ * b0 b3 c~ * b2 b3 c/\ * b2 b3 c~ * b0 b3 c\/ c\/ c/\ * b0 b3 c~ * b1 b3 c/\ * b1 b3 c~ * b0 b3 c\/ c/\ * b1 b3 c~ * b2 b3 c/\ * b2 b3 c~ * b1 b3 cF c==> c~ ! ! ! ! c==> c\/ c/\ * b0 b3 c~ * b2 b3 c/\ * b2 b3 c~ * b0 b3 c\/ c\/ c/\ * b0 b3 c~ * b1 b3 c/\ * b1 b3 c~ * b0 b3 c\/ c/\ * b1 b3 c~ * b2 b3 c/\ * b2 b3 c~ * b1 b3 cF c==> c==> c~ ! ! ! ! c==> c\/ c/\ * b0 b3 c~ * b2 b3 c/\ * b2 b3 c~ * b0 b3 c\/ c\/ c/\ * b0 b3 c~ * b1 b3 c/\ * b1 b3 c~ * b0 b3 c\/ c/\ * b1 b3 c~ * b2 b3 c/\ * b2 b3 c~ * b1 b3 cF c==> c~ ! ! ! ! c==> c\/ c/\ * b0 b3 c~ * b2 b3 c/\ * b2 b3 c~ * b0 b3 c\/ c\/ c/\ * b0 b3 c~ * b1 b3 c/\ * b1 b3 c~ * b0 b3 c\/ c/\ * b1 b3 c~ * b2 b3 c/\ * b2 b3 c~ * b1 b3 cF
+- |- (((t1 \/ t2) \/ t3) = (t1 \/ (t2 \/ t3)))
+T c= c\/ c\/ f0 f1 f2 c\/ f0 c\/ f1 f2
+- (X x), ((Z x) /\ (~ (X x))) |- ((~ F) ==> F)
+T c==> * f0 f1 c==> c/\ * f2 f1 c~ * f0 f1 c==> c~ cF cF
+- (~ (X x)), (X x) |- ((~ (X x)) /\ (X x))
+T c==> c~ * f0 f1 c==> * f0 f1 c/\ c~ * f0 f1 * f0 f1
+- (~ (Z x)), (~ ((((X x) /\ (~ (Y x))) \/ ((Y x) /\ (~ (X x)))) \/ (((Y x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (Y x)))))), (Y x), (((X x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (X x)))) |- F
+T c==> c~ * f0 f1 c==> c~ c\/ c\/ c/\ * f2 f1 c~ * f3 f1 c/\ * f3 f1 c~ * f2 f1 c\/ c/\ * f3 f1 c~ * f0 f1 c/\ * f0 f1 c~ * f3 f1 c==> * f3 f1 c==> c\/ c/\ * f2 f1 c~ * f0 f1 c/\ * f0 f1 c~ * f2 f1 cF
+- ((~ (!X. (!Y. (!Z. (!x. ((((X x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (X x)))) ==> ((((X x) /\ (~ (Y x))) \/ ((Y x) /\ (~ (X x)))) \/ (((Y x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (Y x))))))))))) ==> F), (((~ (!X. (!Y. (!Z. (!x. ((((X x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (X x)))) ==> ((((X x) /\ (~ (Y x))) \/ ((Y x) /\ (~ (X x)))) \/ (((Y x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (Y x))))))))))) ==> F) ==> ((~ (!X. (!Y. (!Z. (!x. ((((X x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (X x)))) ==> ((((X x) /\ (~ (Y x))) \/ ((Y x) /\ (~ (X x)))) \/ (((Y x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (Y x))))))))))) ==> F)) |- (((~ (!X. (!Y. (!Z. (!x. ((((X x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (X x)))) ==> ((((X x) /\ (~ (Y x))) \/ ((Y x) /\ (~ (X x)))) \/ (((Y x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (Y x))))))))))) ==> F) /\ ((~ (!X. (!Y. (!Z. (!x. ((((X x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (X x)))) ==> ((((X x) /\ (~ (Y x))) \/ ((Y x) /\ (~ (X x)))) \/ (((Y x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (Y x))))))))))) ==> F))
+T c==> c==> c~ ! ! ! ! c==> c\/ c/\ * b0 b3 c~ * b2 b3 c/\ * b2 b3 c~ * b0 b3 c\/ c\/ c/\ * b0 b3 c~ * b1 b3 c/\ * b1 b3 c~ * b0 b3 c\/ c/\ * b1 b3 c~ * b2 b3 c/\ * b2 b3 c~ * b1 b3 cF c==> c==> c==> c~ ! ! ! ! c==> c\/ c/\ * b0 b3 c~ * b2 b3 c/\ * b2 b3 c~ * b0 b3 c\/ c\/ c/\ * b0 b3 c~ * b1 b3 c/\ * b1 b3 c~ * b0 b3 c\/ c/\ * b1 b3 c~ * b2 b3 c/\ * b2 b3 c~ * b1 b3 cF c==> c~ ! ! ! ! c==> c\/ c/\ * b0 b3 c~ * b2 b3 c/\ * b2 b3 c~ * b0 b3 c\/ c\/ c/\ * b0 b3 c~ * b1 b3 c/\ * b1 b3 c~ * b0 b3 c\/ c/\ * b1 b3 c~ * b2 b3 c/\ * b2 b3 c~ * b1 b3 cF c/\ c==> c~ ! ! ! ! c==> c\/ c/\ * b0 b3 c~ * b2 b3 c/\ * b2 b3 c~ * b0 b3 c\/ c\/ c/\ * b0 b3 c~ * b1 b3 c/\ * b1 b3 c~ * b0 b3 c\/ c/\ * b1 b3 c~ * b2 b3 c/\ * b2 b3 c~ * b1 b3 cF c==> c~ ! ! ! ! c==> c\/ c/\ * b0 b3 c~ * b2 b3 c/\ * b2 b3 c~ * b0 b3 c\/ c\/ c/\ * b0 b3 c~ * b1 b3 c/\ * b1 b3 c~ * b0 b3 c\/ c/\ * b1 b3 c~ * b2 b3 c/\ * b2 b3 c~ * b1 b3 cF
+- |- (((!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))) ==> ((\t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))) t3)) = ((\t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))) t3))
+T c= c==> ! c= c\/ f0 c\/ f1 b0 c\/ c\/ f0 f1 b0 * / c= c\/ f0 c\/ f1 b0 c\/ c\/ f0 f1 b0 f2 * / c= c\/ f0 c\/ f1 b0 c\/ c\/ f0 f1 b0 f2
+- ((~ (!X. (!Y. (!Z. (!x. ((((X x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (X x)))) ==> ((((X x) /\ (~ (Y x))) \/ ((Y x) /\ (~ (X x)))) \/ (((Y x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (Y x))))))))))) ==> F) |- ((((~ (!X. (!Y. (!Z. (!x. ((((X x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (X x)))) ==> ((((X x) /\ (~ (Y x))) \/ ((Y x) /\ (~ (X x)))) \/ (((Y x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (Y x))))))))))) ==> F) ==> ((~ (!X. (!Y. (!Z. (!x. ((((X x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (X x)))) ==> ((((X x) /\ (~ (Y x))) \/ ((Y x) /\ (~ (X x)))) \/ (((Y x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (Y x))))))))))) ==> F)) ==> ((~ (!X. (!Y. (!Z. (!x. ((((X x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (X x)))) ==> ((((X x) /\ (~ (Y x))) \/ ((Y x) /\ (~ (X x)))) \/ (((Y x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (Y x))))))))))) ==> F))
+T c==> c==> c~ ! ! ! ! c==> c\/ c/\ * b0 b3 c~ * b2 b3 c/\ * b2 b3 c~ * b0 b3 c\/ c\/ c/\ * b0 b3 c~ * b1 b3 c/\ * b1 b3 c~ * b0 b3 c\/ c/\ * b1 b3 c~ * b2 b3 c/\ * b2 b3 c~ * b1 b3 cF c==> c==> c==> c~ ! ! ! ! c==> c\/ c/\ * b0 b3 c~ * b2 b3 c/\ * b2 b3 c~ * b0 b3 c\/ c\/ c/\ * b0 b3 c~ * b1 b3 c/\ * b1 b3 c~ * b0 b3 c\/ c/\ * b1 b3 c~ * b2 b3 c/\ * b2 b3 c~ * b1 b3 cF c==> c~ ! ! ! ! c==> c\/ c/\ * b0 b3 c~ * b2 b3 c/\ * b2 b3 c~ * b0 b3 c\/ c\/ c/\ * b0 b3 c~ * b1 b3 c/\ * b1 b3 c~ * b0 b3 c\/ c/\ * b1 b3 c~ * b2 b3 c/\ * b2 b3 c~ * b1 b3 cF c==> c~ ! ! ! ! c==> c\/ c/\ * b0 b3 c~ * b2 b3 c/\ * b2 b3 c~ * b0 b3 c\/ c\/ c/\ * b0 b3 c~ * b1 b3 c/\ * b1 b3 c~ * b0 b3 c\/ c/\ * b1 b3 c~ * b2 b3 c/\ * b2 b3 c~ * b1 b3 cF
+- |- ((t /\ t) = t)
+T c= c/\ f0 f0 f0
+- (~ (Z x)), (~ ((((X x) /\ (~ (Y x))) \/ ((Y x) /\ (~ (X x)))) \/ (((Y x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (Y x)))))), (X x), (Y x), (((X x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (X x)))) |- ((~ (Z x)) /\ F)
+T c==> c~ * f0 f1 c==> c~ c\/ c\/ c/\ * f2 f1 c~ * f3 f1 c/\ * f3 f1 c~ * f2 f1 c\/ c/\ * f3 f1 c~ * f0 f1 c/\ * f0 f1 c~ * f3 f1 c==> * f2 f1 c==> * f3 f1 c==> c\/ c/\ * f2 f1 c~ * f0 f1 c/\ * f0 f1 c~ * f2 f1 c/\ c~ * f0 f1 cF
+- |- ((((~ (!X. (!Y. (!Z. (!x. ((((X x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (X x)))) ==> ((((X x) /\ (~ (Y x))) \/ ((Y x) /\ (~ (X x)))) \/ (((Y x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (Y x))))))))))) ==> F) ==> ((~ (!X. (!Y. (!Z. (!x. ((((X x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (X x)))) ==> ((((X x) /\ (~ (Y x))) \/ ((Y x) /\ (~ (X x)))) \/ (((Y x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (Y x))))))))))) ==> F)) = ((~ (!X. (!Y. (!Z. (!x. ((((X x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (X x)))) ==> ((((X x) /\ (~ (Y x))) \/ ((Y x) /\ (~ (X x)))) \/ (((Y x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (Y x))))))))))) ==> F))
+T c= c==> c==> c~ ! ! ! ! c==> c\/ c/\ * b0 b3 c~ * b2 b3 c/\ * b2 b3 c~ * b0 b3 c\/ c\/ c/\ * b0 b3 c~ * b1 b3 c/\ * b1 b3 c~ * b0 b3 c\/ c/\ * b1 b3 c~ * b2 b3 c/\ * b2 b3 c~ * b1 b3 cF c==> c~ ! ! ! ! c==> c\/ c/\ * b0 b3 c~ * b2 b3 c/\ * b2 b3 c~ * b0 b3 c\/ c\/ c/\ * b0 b3 c~ * b1 b3 c/\ * b1 b3 c~ * b0 b3 c\/ c/\ * b1 b3 c~ * b2 b3 c/\ * b2 b3 c~ * b1 b3 cF c==> c~ ! ! ! ! c==> c\/ c/\ * b0 b3 c~ * b2 b3 c/\ * b2 b3 c~ * b0 b3 c\/ c\/ c/\ * b0 b3 c~ * b1 b3 c/\ * b1 b3 c~ * b0 b3 c\/ c/\ * b1 b3 c~ * b2 b3 c/\ * b2 b3 c~ * b1 b3 cF
+- (~ F), (~ (Y x)), (Y x) |- ((~ F) /\ F)
+T c==> c~ cF c==> c~ * f0 f1 c==> * f0 f1 c/\ c~ cF cF
+- ((~ (!X. (!Y. (!Z. (!x. ((((X x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (X x)))) ==> ((((X x) /\ (~ (Y x))) \/ ((Y x) /\ (~ (X x)))) \/ (((Y x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (Y x))))))))))) ==> F), (((~ (!X. (!Y. (!Z. (!x. ((((X x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (X x)))) ==> ((((X x) /\ (~ (Y x))) \/ ((Y x) /\ (~ (X x)))) \/ (((Y x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (Y x))))))))))) ==> F) ==> ((~ (!X. (!Y. (!Z. (!x. ((((X x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (X x)))) ==> ((((X x) /\ (~ (Y x))) \/ ((Y x) /\ (~ (X x)))) \/ (((Y x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (Y x))))))))))) ==> F)) |- ((((~ (!X. (!Y. (!Z. (!x. ((((X x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (X x)))) ==> ((((X x) /\ (~ (Y x))) \/ ((Y x) /\ (~ (X x)))) \/ (((Y x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (Y x))))))))))) ==> F) ==> ((~ (!X. (!Y. (!Z. (!x. ((((X x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (X x)))) ==> ((((X x) /\ (~ (Y x))) \/ ((Y x) /\ (~ (X x)))) \/ (((Y x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (Y x))))))))))) ==> F)) /\ ((~ (!X. (!Y. (!Z. (!x. ((((X x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (X x)))) ==> ((((X x) /\ (~ (Y x))) \/ ((Y x) /\ (~ (X x)))) \/ (((Y x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (Y x))))))))))) ==> F))
+T c==> c==> c~ ! ! ! ! c==> c\/ c/\ * b0 b3 c~ * b2 b3 c/\ * b2 b3 c~ * b0 b3 c\/ c\/ c/\ * b0 b3 c~ * b1 b3 c/\ * b1 b3 c~ * b0 b3 c\/ c/\ * b1 b3 c~ * b2 b3 c/\ * b2 b3 c~ * b1 b3 cF c==> c==> c==> c~ ! ! ! ! c==> c\/ c/\ * b0 b3 c~ * b2 b3 c/\ * b2 b3 c~ * b0 b3 c\/ c\/ c/\ * b0 b3 c~ * b1 b3 c/\ * b1 b3 c~ * b0 b3 c\/ c/\ * b1 b3 c~ * b2 b3 c/\ * b2 b3 c~ * b1 b3 cF c==> c~ ! ! ! ! c==> c\/ c/\ * b0 b3 c~ * b2 b3 c/\ * b2 b3 c~ * b0 b3 c\/ c\/ c/\ * b0 b3 c~ * b1 b3 c/\ * b1 b3 c~ * b0 b3 c\/ c/\ * b1 b3 c~ * b2 b3 c/\ * b2 b3 c~ * b1 b3 cF c/\ c==> c==> c~ ! ! ! ! c==> c\/ c/\ * b0 b3 c~ * b2 b3 c/\ * b2 b3 c~ * b0 b3 c\/ c\/ c/\ * b0 b3 c~ * b1 b3 c/\ * b1 b3 c~ * b0 b3 c\/ c/\ * b1 b3 c~ * b2 b3 c/\ * b2 b3 c~ * b1 b3 cF c==> c~ ! ! ! ! c==> c\/ c/\ * b0 b3 c~ * b2 b3 c/\ * b2 b3 c~ * b0 b3 c\/ c\/ c/\ * b0 b3 c~ * b1 b3 c/\ * b1 b3 c~ * b0 b3 c\/ c/\ * b1 b3 c~ * b2 b3 c/\ * b2 b3 c~ * b1 b3 cF c==> c~ ! ! ! ! c==> c\/ c/\ * b0 b3 c~ * b2 b3 c/\ * b2 b3 c~ * b0 b3 c\/ c\/ c/\ * b0 b3 c~ * b1 b3 c/\ * b1 b3 c~ * b0 b3 c\/ c/\ * b1 b3 c~ * b2 b3 c/\ * b2 b3 c~ * b1 b3 cF
+- (~ (X x)), (~ ((((X x) /\ (~ (Y x))) \/ ((Y x) /\ (~ (X x)))) \/ (((Y x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (Y x)))))), (X x), (((X x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (X x)))) |- ((~ (Z x)) ==> F)
+T c==> c~ * f0 f1 c==> c~ c\/ c\/ c/\ * f0 f1 c~ * f2 f1 c/\ * f2 f1 c~ * f0 f1 c\/ c/\ * f2 f1 c~ * f3 f1 c/\ * f3 f1 c~ * f2 f1 c==> * f0 f1 c==> c\/ c/\ * f0 f1 c~ * f3 f1 c/\ * f3 f1 c~ * f0 f1 c==> c~ * f3 f1 cF
+- |- (((~ (!X. (!Y. (!Z. (!x. ((((X x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (X x)))) ==> ((((X x) /\ (~ (Y x))) \/ ((Y x) /\ (~ (X x)))) \/ (((Y x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (Y x))))))))))) ==> F) ==> ((~ (!X. (!Y. (!Z. (!x. ((((X x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (X x)))) ==> ((((X x) /\ (~ (Y x))) \/ ((Y x) /\ (~ (X x)))) \/ (((Y x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (Y x))))))))))) ==> F))
+T c==> c==> c~ ! ! ! ! c==> c\/ c/\ * b0 b3 c~ * b2 b3 c/\ * b2 b3 c~ * b0 b3 c\/ c\/ c/\ * b0 b3 c~ * b1 b3 c/\ * b1 b3 c~ * b0 b3 c\/ c/\ * b1 b3 c~ * b2 b3 c/\ * b2 b3 c~ * b1 b3 cF c==> c~ ! ! ! ! c==> c\/ c/\ * b0 b3 c~ * b2 b3 c/\ * b2 b3 c~ * b0 b3 c\/ c\/ c/\ * b0 b3 c~ * b1 b3 c/\ * b1 b3 c~ * b0 b3 c\/ c/\ * b1 b3 c~ * b2 b3 c/\ * b2 b3 c~ * b1 b3 cF
+- (((~ (!X. (!Y. (!Z. (!x. ((((X x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (X x)))) ==> ((((X x) /\ (~ (Y x))) \/ ((Y x) /\ (~ (X x)))) \/ (((Y x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (Y x))))))))))) ==> F) ==> ((~ (!X. (!Y. (!Z. (!x. ((((X x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (X x)))) ==> ((((X x) /\ (~ (Y x))) \/ ((Y x) /\ (~ (X x)))) \/ (((Y x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (Y x))))))))))) ==> F)) |- ((((~ (!X. (!Y. (!Z. (!x. ((((X x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (X x)))) ==> ((((X x) /\ (~ (Y x))) \/ ((Y x) /\ (~ (X x)))) \/ (((Y x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (Y x))))))))))) ==> F) ==> ((~ (!X. (!Y. (!Z. (!x. ((((X x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (X x)))) ==> ((((X x) /\ (~ (Y x))) \/ ((Y x) /\ (~ (X x)))) \/ (((Y x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (Y x))))))))))) ==> F)) /\ (((~ (!X. (!Y. (!Z. (!x. ((((X x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (X x)))) ==> ((((X x) /\ (~ (Y x))) \/ ((Y x) /\ (~ (X x)))) \/ (((Y x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (Y x))))))))))) ==> F) ==> ((~ (!X. (!Y. (!Z. (!x. ((((X x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (X x)))) ==> ((((X x) /\ (~ (Y x))) \/ ((Y x) /\ (~ (X x)))) \/ (((Y x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (Y x))))))))))) ==> F)))
+T c==> c==> c==> c~ ! ! ! ! c==> c\/ c/\ * b0 b3 c~ * b2 b3 c/\ * b2 b3 c~ * b0 b3 c\/ c\/ c/\ * b0 b3 c~ * b1 b3 c/\ * b1 b3 c~ * b0 b3 c\/ c/\ * b1 b3 c~ * b2 b3 c/\ * b2 b3 c~ * b1 b3 cF c==> c~ ! ! ! ! c==> c\/ c/\ * b0 b3 c~ * b2 b3 c/\ * b2 b3 c~ * b0 b3 c\/ c\/ c/\ * b0 b3 c~ * b1 b3 c/\ * b1 b3 c~ * b0 b3 c\/ c/\ * b1 b3 c~ * b2 b3 c/\ * b2 b3 c~ * b1 b3 cF c/\ c==> c==> c~ ! ! ! ! c==> c\/ c/\ * b0 b3 c~ * b2 b3 c/\ * b2 b3 c~ * b0 b3 c\/ c\/ c/\ * b0 b3 c~ * b1 b3 c/\ * b1 b3 c~ * b0 b3 c\/ c/\ * b1 b3 c~ * b2 b3 c/\ * b2 b3 c~ * b1 b3 cF c==> c~ ! ! ! ! c==> c\/ c/\ * b0 b3 c~ * b2 b3 c/\ * b2 b3 c~ * b0 b3 c\/ c\/ c/\ * b0 b3 c~ * b1 b3 c/\ * b1 b3 c~ * b0 b3 c\/ c/\ * b1 b3 c~ * b2 b3 c/\ * b2 b3 c~ * b1 b3 cF c==> c==> c~ ! ! ! ! c==> c\/ c/\ * b0 b3 c~ * b2 b3 c/\ * b2 b3 c~ * b0 b3 c\/ c\/ c/\ * b0 b3 c~ * b1 b3 c/\ * b1 b3 c~ * b0 b3 c\/ c/\ * b1 b3 c~ * b2 b3 c/\ * b2 b3 c~ * b1 b3 cF c==> c~ ! ! ! ! c==> c\/ c/\ * b0 b3 c~ * b2 b3 c/\ * b2 b3 c~ * b0 b3 c\/ c\/ c/\ * b0 b3 c~ * b1 b3 c/\ * b1 b3 c~ * b0 b3 c\/ c/\ * b1 b3 c~ * b2 b3 c/\ * b2 b3 c~ * b1 b3 cF
+- |- ((!x. (P x)) = ((P T) /\ (P F)))
+T c= ! * f0 b0 c/\ * f0 cT * f0 cF
+- |- (((!t1. (!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))))) ==> ((\t1. (!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))))) t1)) = ((\t1. (!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))))) t1))
+T c= c==> ! ! ! c= c\/ b0 c\/ b1 b2 c\/ c\/ b0 b1 b2 * / ! ! c= c\/ b0 c\/ b1 b2 c\/ c\/ b0 b1 b2 f0 * / ! ! c= c\/ b0 c\/ b1 b2 c\/ c\/ b0 b1 b2 f0
+- |- ((~ (~ t)) = t)
+T c= c~ c~ f0 f0
+- (X x) |- ((~ (X x)) ==> (X x))
+T c==> * f0 f1 c==> c~ * f0 f1 * f0 f1
+- (~ (Y x)), (~ (Z x)), (Y x), (((X x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (X x)))) |- ((~ (Y x)) /\ F)
+T c==> c~ * f0 f1 c==> c~ * f2 f1 c==> * f0 f1 c==> c\/ c/\ * f3 f1 c~ * f2 f1 c/\ * f2 f1 c~ * f3 f1 c/\ c~ * f0 f1 cF
+- ((~ (!X. (!Y. (!Z. (!x. ((((X x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (X x)))) ==> ((((X x) /\ (~ (Y x))) \/ ((Y x) /\ (~ (X x)))) \/ (((Y x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (Y x))))))))))) ==> F) |- (((~ (!X. (!Y. (!Z. (!x. ((((X x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (X x)))) ==> ((((X x) /\ (~ (Y x))) \/ ((Y x) /\ (~ (X x)))) \/ (((Y x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (Y x))))))))))) ==> F) /\ ((~ (!X. (!Y. (!Z. (!x. ((((X x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (X x)))) ==> ((((X x) /\ (~ (Y x))) \/ ((Y x) /\ (~ (X x)))) \/ (((Y x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (Y x))))))))))) ==> F))
+T c==> c==> c~ ! ! ! ! c==> c\/ c/\ * b0 b3 c~ * b2 b3 c/\ * b2 b3 c~ * b0 b3 c\/ c\/ c/\ * b0 b3 c~ * b1 b3 c/\ * b1 b3 c~ * b0 b3 c\/ c/\ * b1 b3 c~ * b2 b3 c/\ * b2 b3 c~ * b1 b3 cF c/\ c==> c~ ! ! ! ! c==> c\/ c/\ * b0 b3 c~ * b2 b3 c/\ * b2 b3 c~ * b0 b3 c\/ c\/ c/\ * b0 b3 c~ * b1 b3 c/\ * b1 b3 c~ * b0 b3 c\/ c/\ * b1 b3 c~ * b2 b3 c/\ * b2 b3 c~ * b1 b3 cF c==> c~ ! ! ! ! c==> c\/ c/\ * b0 b3 c~ * b2 b3 c/\ * b2 b3 c~ * b0 b3 c\/ c\/ c/\ * b0 b3 c~ * b1 b3 c/\ * b1 b3 c~ * b0 b3 c\/ c/\ * b1 b3 c~ * b2 b3 c/\ * b2 b3 c~ * b1 b3 cF
+- (~ (!X. (!Y. (!Z. (!x. ((((X x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (X x)))) ==> ((((X x) /\ (~ (Y x))) \/ ((Y x) /\ (~ (X x)))) \/ (((Y x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (Y x))))))))))) |- F
+T c==> c~ ! ! ! ! c==> c\/ c/\ * b0 b3 c~ * b2 b3 c/\ * b2 b3 c~ * b0 b3 c\/ c\/ c/\ * b0 b3 c~ * b1 b3 c/\ * b1 b3 c~ * b0 b3 c\/ c/\ * b1 b3 c~ * b2 b3 c/\ * b2 b3 c~ * b1 b3 cF
+- (~ (Z x)), (~ ((((X x) /\ (~ (Y x))) \/ ((Y x) /\ (~ (X x)))) \/ (((Y x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (Y x)))))), (Y x), (((X x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (X x)))) |- ((~ (Z x)) /\ F)
+T c==> c~ * f0 f1 c==> c~ c\/ c\/ c/\ * f2 f1 c~ * f3 f1 c/\ * f3 f1 c~ * f2 f1 c\/ c/\ * f3 f1 c~ * f0 f1 c/\ * f0 f1 c~ * f3 f1 c==> * f3 f1 c==> c\/ c/\ * f2 f1 c~ * f0 f1 c/\ * f0 f1 c~ * f2 f1 c/\ c~ * f0 f1 cF
+- (~ (Z x)), (~ ((((X x) /\ (~ (Y x))) \/ ((Y x) /\ (~ (X x)))) \/ (((Y x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (Y x)))))), (Y x), ((Z x) ==> F), (((X x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (X x)))) |- F
+T c==> c~ * f0 f1 c==> c~ c\/ c\/ c/\ * f2 f1 c~ * f3 f1 c/\ * f3 f1 c~ * f2 f1 c\/ c/\ * f3 f1 c~ * f0 f1 c/\ * f0 f1 c~ * f3 f1 c==> * f3 f1 c==> c==> * f0 f1 cF c==> c\/ c/\ * f2 f1 c~ * f0 f1 c/\ * f0 f1 c~ * f2 f1 cF
+- (~ (!X. (!Y. (!Z. (!x. ((((X x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (X x)))) ==> ((((X x) /\ (~ (Y x))) \/ ((Y x) /\ (~ (X x)))) \/ (((Y x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (Y x))))))))))) |- ((~ (!X. (!Y. (!Z. (!x. ((((X x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (X x)))) ==> ((((X x) /\ (~ (Y x))) \/ ((Y x) /\ (~ (X x)))) \/ (((Y x) /\ (~ (Z x))) \/ ((Z x) /\ (~ (Y x))))))))))) /\ F)
+T c==> c~ ! ! ! ! c==> c\/ c/\ * b0 b3 c~ * b2 b3 c/\ * b2 b3 c~ * b0 b3 c\/ c\/ c/\ * b0 b3 c~ * b1 b3 c/\ * b1 b3 c~ * b0 b3 c\/ c/\ * b1 b3 c~ * b2 b3 c/\ * b2 b3 c~ * b1 b3 c/\ c~ ! ! ! ! c==> c\/ c/\ * b0 b3 c~ * b2 b3 c/\ * b2 b3 c~ * b0 b3 c\/ c\/ c/\ * b0 b3 c~ * b1 b3 c/\ * b1 b3 c~ * b0 b3 c\/ c/\ * b1 b3 c~ * b2 b3 c/\ * b2 b3 c~ * b1 b3 cF
+- ((Z x) /\ (~ (X x))) |- ((~ (Z x)) ==> (Z x))
+T c==> c/\ * f0 f1 c~ * f2 f1 c==> c~ * f0 f1 * f0 f1

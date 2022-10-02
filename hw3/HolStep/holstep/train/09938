@@ -1,0 +1,348 @@
+N Pack2.MEASURE_VORONOI_CLOSED_OPEN
+C |- (!s. (!v. ((measure ((voronoi_closed s) v)) = (measure ((voronoi_open s) v)))))
+T c= cmeasure * * part cvoronoi_closed f0 f1 cmeasure * * part cvoronoi_open f0 f1
+D TRUTH
+A |- T
+T cT
+D BOOL_CASES_AX
+A |- (!t. ((t = T) \/ (t = F)))
+T c\/ c= f0 cT c= f0 cF
+D NOT_CLAUSES
+A |- ((!t. ((~ (~ t)) = t)) /\ (((~ T) = F) /\ ((~ F) = T)))
+T c/\ ! c= c~ c~ b0 b0 c/\ c= c~ cT cF c= c~ cF cT
+D IN
+A |- (!P. (!x. ((x IN P) = (P x))))
+T c= cIN f0 f1 * f1 f0
+D SUBSET
+A |- (!s. (!t. ((s SUBSET t) = (!x. ((x IN s) ==> (x IN t))))))
+T c= cSUBSET f0 f1 ! c==> cIN b0 f0 cIN b0 f1
+D IN_UNION
+A |- (!s. (!t. (!x. ((x IN (s UNION t)) = ((x IN s) \/ (x IN t))))))
+T c= cIN f0 * * part cUNION f1 f2 c\/ cIN f0 f1 cIN f0 f2
+D IN_DIFF
+A |- (!s. (!t. (!x. ((x IN (s DIFF t)) = ((x IN s) /\ (~ (x IN t)))))))
+T c= cIN f0 * * part cDIFF f1 f2 c/\ cIN f0 f1 c~ cIN f0 f2
+D INTERIOR_SUBSET
+A |- (!s. ((interior s) SUBSET s))
+T cSUBSET * part cinterior f0 f0
+D CLOSURE_SUBSET
+A |- (!s. (s SUBSET (closure s)))
+T cSUBSET f0 * part cclosure f0
+D frontier
+A |- (!s. ((frontier s) = ((closure s) DIFF (interior s))))
+T c= * part cfrontier f0 * * part cDIFF * part cclosure f0 * part cinterior f0
+D NEGLIGIBLE_SUBSET
+A |- (!s. (!t. (((negligible s) /\ (t SUBSET s)) ==> (negligible t))))
+T c==> c/\ cnegligible f0 cSUBSET f1 f0 cnegligible f1
+D MEASURE_NEGLIGIBLE_SYMDIFF
+A |- (!s. (!t. ((negligible ((s DIFF t) UNION (t DIFF s))) ==> ((measure s) = (measure t)))))
+T c==> cnegligible * * part cUNION * * part cDIFF f0 f1 * * part cDIFF f1 f0 c= cmeasure f0 cmeasure f1
+D NEGLIGIBLE_CONVEX_FRONTIER
+A |- (!s. ((convex s) ==> (negligible (frontier s))))
+T c==> cconvex f0 cnegligible * part cfrontier f0
+D Geomdetail.VORONOI_CONV
+A |- (!s. (!v. (convex ((voronoi_open s) v))))
+T cconvex * * part cvoronoi_open f0 f1
+D Pack2.CLOSURE_VORONOI_OPEN
+A |- (!S. (!v. ((closure ((voronoi_open S) v)) = ((voronoi_closed S) v))))
+T c= * part cclosure * * part cvoronoi_open f0 f1 * * part cvoronoi_closed f0 f1
+- |- ((((~ (((!x. ((i x) ==> (s x))) /\ (!x. ((s x) ==> (c x)))) ==> (!x. ((((c x) /\ (~ (s x))) \/ ((s x) /\ (~ (c x)))) ==> ((c x) /\ (~ (i x))))))) ==> F) ==> ((~ (((!x. ((i x) ==> (s x))) /\ (!x. ((s x) ==> (c x)))) ==> (!x. ((((c x) /\ (~ (s x))) \/ ((s x) /\ (~ (c x)))) ==> ((c x) /\ (~ (i x))))))) ==> F)) = ((~ (((!x. ((i x) ==> (s x))) /\ (!x. ((s x) ==> (c x)))) ==> (!x. ((((c x) /\ (~ (s x))) \/ ((s x) /\ (~ (c x)))) ==> ((c x) /\ (~ (i x))))))) ==> F))
+T c= c==> c==> c~ c==> c/\ ! c==> * f0 b0 * f1 b0 ! c==> * f1 b0 * f2 b0 ! c==> c\/ c/\ * f2 b0 c~ * f1 b0 c/\ * f1 b0 c~ * f2 b0 c/\ * f2 b0 c~ * f0 b0 cF c==> c~ c==> c/\ ! c==> * f0 b0 * f1 b0 ! c==> * f1 b0 * f2 b0 ! c==> c\/ c/\ * f2 b0 c~ * f1 b0 c/\ * f1 b0 c~ * f2 b0 c/\ * f2 b0 c~ * f0 b0 cF c==> c~ c==> c/\ ! c==> * f0 b0 * f1 b0 ! c==> * f1 b0 * f2 b0 ! c==> c\/ c/\ * f2 b0 c~ * f1 b0 c/\ * f1 b0 c~ * f2 b0 c/\ * f2 b0 c~ * f0 b0 cF
+- |- ((!x'. ((~ (s x')) \/ (c x))) = ((!x. (~ (s x))) \/ (c x)))
+T c= ! c\/ c~ * f0 b0 * f1 f2 c\/ ! c~ * f0 b0 * f1 f2
++ |- (((negligible (frontier ((voronoi_open s) v))) /\ ((((closure ((voronoi_open s) v)) DIFF ((voronoi_open s) v)) UNION (((voronoi_open s) v) DIFF (closure ((voronoi_open s) v)))) SUBSET (frontier ((voronoi_open s) v)))) = ((\s'. ((negligible s') /\ ((((closure ((voronoi_open s) v)) DIFF ((voronoi_open s) v)) UNION (((voronoi_open s) v) DIFF (closure ((voronoi_open s) v)))) SUBSET s'))) (frontier ((voronoi_open s) v))))
+T c= c/\ cnegligible * part cfrontier * * part cvoronoi_open f0 f1 cSUBSET * * part cUNION * * part cDIFF * part cclosure * * part cvoronoi_open f0 f1 * * part cvoronoi_open f0 f1 * * part cDIFF * * part cvoronoi_open f0 f1 * part cclosure * * part cvoronoi_open f0 f1 * part cfrontier * * part cvoronoi_open f0 f1 * / c/\ cnegligible b0 cSUBSET * * part cUNION * * part cDIFF * part cclosure * * part cvoronoi_open f0 f1 * * part cvoronoi_open f0 f1 * * part cDIFF * * part cvoronoi_open f0 f1 * part cclosure * * part cvoronoi_open f0 f1 b0 * part cfrontier * * part cvoronoi_open f0 f1
++ ((!x. ((i x) ==> (s x))) /\ (!x. ((s x) ==> (c x)))) |- (((((c x) /\ (~ (s x))) \/ ((s x) /\ (~ (c x)))) ==> ((c x) /\ (~ (i x)))) = T)
+T c==> c/\ ! c==> * f0 b0 * f1 b0 ! c==> * f1 b0 * f2 b0 c= c==> c\/ c/\ * f2 f3 c~ * f1 f3 c/\ * f1 f3 c~ * f2 f3 c/\ * f2 f3 c~ * f0 f3 cT
++ (~ ((c x) /\ (~ (i x)))) |- ((~ (c x)) \/ (i x))
+T c==> c~ c/\ * f0 f1 c~ * f2 f1 c\/ c~ * f0 f1 * f2 f1
+- (~ (c x)), ((!x. ((i x) ==> (s x))) /\ (!x. ((s x) ==> (c x)))), ((s x) /\ (~ (c x))) |- ((~ (c x)) /\ (c x))
+T c==> c~ * f0 f1 c==> c/\ ! c==> * f2 b0 * f3 b0 ! c==> * f3 b0 * f0 b0 c==> c/\ * f3 f1 c~ * f0 f1 c/\ c~ * f0 f1 * f0 f1
+- (!s. (!t. ((negligible ((s DIFF t) UNION (t DIFF s))) ==> ((measure s) = (measure t))))), (negligible ((s DIFF t) UNION (t DIFF s))) |- ((measure s) = (measure t))
+T c==> ! ! c==> cnegligible * * part cUNION * * part cDIFF b0 b1 * * part cDIFF b1 b0 c= cmeasure b0 cmeasure b1 c==> cnegligible * * part cUNION * * part cDIFF f0 f1 * * part cDIFF f1 f0 c= cmeasure f0 cmeasure f1
+- |- ((\t1. (!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))))) t1)
+T * / ! ! c= c\/ b0 c\/ b1 b2 c\/ c\/ b0 b1 b2 f0
++ |- ((\s. (!t. ((negligible ((s DIFF t) UNION (t DIFF s))) ==> ((measure s) = (measure t))))) s)
+T * / ! c==> cnegligible * * part cUNION * * part cDIFF b0 b1 * * part cDIFF b1 b0 c= cmeasure b0 cmeasure b1 f0
+- |- (T = (((~ (s _3481110)) \/ (c _3481110)) = ((c _3481110) \/ (~ (s _3481110)))))
+T c= cT c= c\/ c~ * f0 f1 * f2 f1 c\/ * f2 f1 c~ * f0 f1
+- ((~ (((!x. ((i x) ==> (s x))) /\ (!x. ((s x) ==> (c x)))) ==> (!x. ((((c x) /\ (~ (s x))) \/ ((s x) /\ (~ (c x)))) ==> ((c x) /\ (~ (i x))))))) ==> F), (((~ (((!x. ((i x) ==> (s x))) /\ (!x. ((s x) ==> (c x)))) ==> (!x. ((((c x) /\ (~ (s x))) \/ ((s x) /\ (~ (c x)))) ==> ((c x) /\ (~ (i x))))))) ==> F) ==> ((~ (((!x. ((i x) ==> (s x))) /\ (!x. ((s x) ==> (c x)))) ==> (!x. ((((c x) /\ (~ (s x))) \/ ((s x) /\ (~ (c x)))) ==> ((c x) /\ (~ (i x))))))) ==> F)) |- (((~ (((!x. ((i x) ==> (s x))) /\ (!x. ((s x) ==> (c x)))) ==> (!x. ((((c x) /\ (~ (s x))) \/ ((s x) /\ (~ (c x)))) ==> ((c x) /\ (~ (i x))))))) ==> F) /\ ((~ (((!x. ((i x) ==> (s x))) /\ (!x. ((s x) ==> (c x)))) ==> (!x. ((((c x) /\ (~ (s x))) \/ ((s x) /\ (~ (c x)))) ==> ((c x) /\ (~ (i x))))))) ==> F))
+T c==> c==> c~ c==> c/\ ! c==> * f0 b0 * f1 b0 ! c==> * f1 b0 * f2 b0 ! c==> c\/ c/\ * f2 b0 c~ * f1 b0 c/\ * f1 b0 c~ * f2 b0 c/\ * f2 b0 c~ * f0 b0 cF c==> c==> c==> c~ c==> c/\ ! c==> * f0 b0 * f1 b0 ! c==> * f1 b0 * f2 b0 ! c==> c\/ c/\ * f2 b0 c~ * f1 b0 c/\ * f1 b0 c~ * f2 b0 c/\ * f2 b0 c~ * f0 b0 cF c==> c~ c==> c/\ ! c==> * f0 b0 * f1 b0 ! c==> * f1 b0 * f2 b0 ! c==> c\/ c/\ * f2 b0 c~ * f1 b0 c/\ * f1 b0 c~ * f2 b0 c/\ * f2 b0 c~ * f0 b0 cF c/\ c==> c~ c==> c/\ ! c==> * f0 b0 * f1 b0 ! c==> * f1 b0 * f2 b0 ! c==> c\/ c/\ * f2 b0 c~ * f1 b0 c/\ * f1 b0 c~ * f2 b0 c/\ * f2 b0 c~ * f0 b0 cF c==> c~ c==> c/\ ! c==> * f0 b0 * f1 b0 ! c==> * f1 b0 * f2 b0 ! c==> c\/ c/\ * f2 b0 c~ * f1 b0 c/\ * f1 b0 c~ * f2 b0 c/\ * f2 b0 c~ * f0 b0 cF
++ |- ((a \/ b) = ((~ b) ==> a))
+T c= c\/ f0 f1 c==> c~ f1 f0
++ |- (?s'. ((negligible s') /\ ((((closure ((voronoi_open s) v)) DIFF ((voronoi_open s) v)) UNION (((voronoi_open s) v) DIFF (closure ((voronoi_open s) v)))) SUBSET s')))
+T c? / c/\ cnegligible b0 cSUBSET * * part cUNION * * part cDIFF * part cclosure * * part cvoronoi_open f0 f1 * * part cvoronoi_open f0 f1 * * part cDIFF * * part cvoronoi_open f0 f1 * part cclosure * * part cvoronoi_open f0 f1 b0
+- (!s. (!t. ((negligible ((s DIFF t) UNION (t DIFF s))) ==> ((measure s) = (measure t))))) |- ((!t. ((negligible ((s DIFF t) UNION (t DIFF s))) ==> ((measure s) = (measure t)))) = T)
+T c==> ! ! c==> cnegligible * * part cUNION * * part cDIFF b0 b1 * * part cDIFF b1 b0 c= cmeasure b0 cmeasure b1 c= ! c==> cnegligible * * part cUNION * * part cDIFF f0 b0 * * part cDIFF b0 f0 c= cmeasure f0 cmeasure b0 cT
++ (!s. (!t. (((negligible s) /\ (t SUBSET s)) ==> (negligible t)))) |- (((!t. (((negligible s) /\ (t SUBSET s)) ==> (negligible t))) ==> ((\t. (((negligible s) /\ (t SUBSET s)) ==> (negligible t))) t)) = ((\t. (((negligible s) /\ (t SUBSET s)) ==> (negligible t))) t))
+T c==> ! ! c==> c/\ cnegligible b0 cSUBSET b1 b0 cnegligible b1 c= c==> ! c==> c/\ cnegligible f0 cSUBSET b0 f0 cnegligible b0 * / c==> c/\ cnegligible f0 cSUBSET b0 f0 cnegligible b0 f1 * / c==> c/\ cnegligible f0 cSUBSET b0 f0 cnegligible b0 f1
++ (((voronoi_closed S) v) = (closure ((voronoi_open S) v))) |- ((closure ((voronoi_open S) v)) = ((voronoi_closed S) v))
+T c==> c= * * part cvoronoi_closed f0 f1 * part cclosure * * part cvoronoi_open f0 f1 c= * part cclosure * * part cvoronoi_open f0 f1 * * part cvoronoi_closed f0 f1
+- ((~ (((!x. ((i x) ==> (s x))) /\ (!x. ((s x) ==> (c x)))) ==> (!x. ((((c x) /\ (~ (s x))) \/ ((s x) /\ (~ (c x)))) ==> ((c x) /\ (~ (i x))))))) ==> F), (((~ (((!x. ((i x) ==> (s x))) /\ (!x. ((s x) ==> (c x)))) ==> (!x. ((((c x) /\ (~ (s x))) \/ ((s x) /\ (~ (c x)))) ==> ((c x) /\ (~ (i x))))))) ==> F) ==> ((~ (((!x. ((i x) ==> (s x))) /\ (!x. ((s x) ==> (c x)))) ==> (!x. ((((c x) /\ (~ (s x))) \/ ((s x) /\ (~ (c x)))) ==> ((c x) /\ (~ (i x))))))) ==> F)) |- ((((~ (((!x. ((i x) ==> (s x))) /\ (!x. ((s x) ==> (c x)))) ==> (!x. ((((c x) /\ (~ (s x))) \/ ((s x) /\ (~ (c x)))) ==> ((c x) /\ (~ (i x))))))) ==> F) ==> ((~ (((!x. ((i x) ==> (s x))) /\ (!x. ((s x) ==> (c x)))) ==> (!x. ((((c x) /\ (~ (s x))) \/ ((s x) /\ (~ (c x)))) ==> ((c x) /\ (~ (i x))))))) ==> F)) /\ ((~ (((!x. ((i x) ==> (s x))) /\ (!x. ((s x) ==> (c x)))) ==> (!x. ((((c x) /\ (~ (s x))) \/ ((s x) /\ (~ (c x)))) ==> ((c x) /\ (~ (i x))))))) ==> F))
+T c==> c==> c~ c==> c/\ ! c==> * f0 b0 * f1 b0 ! c==> * f1 b0 * f2 b0 ! c==> c\/ c/\ * f2 b0 c~ * f1 b0 c/\ * f1 b0 c~ * f2 b0 c/\ * f2 b0 c~ * f0 b0 cF c==> c==> c==> c~ c==> c/\ ! c==> * f0 b0 * f1 b0 ! c==> * f1 b0 * f2 b0 ! c==> c\/ c/\ * f2 b0 c~ * f1 b0 c/\ * f1 b0 c~ * f2 b0 c/\ * f2 b0 c~ * f0 b0 cF c==> c~ c==> c/\ ! c==> * f0 b0 * f1 b0 ! c==> * f1 b0 * f2 b0 ! c==> c\/ c/\ * f2 b0 c~ * f1 b0 c/\ * f1 b0 c~ * f2 b0 c/\ * f2 b0 c~ * f0 b0 cF c/\ c==> c==> c~ c==> c/\ ! c==> * f0 b0 * f1 b0 ! c==> * f1 b0 * f2 b0 ! c==> c\/ c/\ * f2 b0 c~ * f1 b0 c/\ * f1 b0 c~ * f2 b0 c/\ * f2 b0 c~ * f0 b0 cF c==> c~ c==> c/\ ! c==> * f0 b0 * f1 b0 ! c==> * f1 b0 * f2 b0 ! c==> c\/ c/\ * f2 b0 c~ * f1 b0 c/\ * f1 b0 c~ * f2 b0 c/\ * f2 b0 c~ * f0 b0 cF c==> c~ c==> c/\ ! c==> * f0 b0 * f1 b0 ! c==> * f1 b0 * f2 b0 ! c==> c\/ c/\ * f2 b0 c~ * f1 b0 c/\ * f1 b0 c~ * f2 b0 c/\ * f2 b0 c~ * f0 b0 cF
++ (~ ((c x) /\ (~ (i x)))), ((!x. ((i x) ==> (s x))) /\ (!x. ((s x) ==> (c x)))), (((c x) /\ (~ (s x))) \/ ((s x) /\ (~ (c x)))) |- F
+T c==> c~ c/\ * f0 f1 c~ * f2 f1 c==> c/\ ! c==> * f2 b0 * f3 b0 ! c==> * f3 b0 * f0 b0 c==> c\/ c/\ * f0 f1 c~ * f3 f1 c/\ * f3 f1 c~ * f0 f1 cF
++ ((!x. ((i x) ==> (s x))) /\ (!x. ((s x) ==> (c x)))) |- ((((c x) /\ (~ (s x))) \/ ((s x) /\ (~ (c x)))) ==> ((c x) /\ (~ (i x))))
+T c==> c/\ ! c==> * f0 b0 * f1 b0 ! c==> * f1 b0 * f2 b0 c==> c\/ c/\ * f2 f3 c~ * f1 f3 c/\ * f1 f3 c~ * f2 f3 c/\ * f2 f3 c~ * f0 f3
++ |- (((!v. (((voronoi_closed S) v) = (closure ((voronoi_open S) v)))) ==> ((\v. (((voronoi_closed S) v) = (closure ((voronoi_open S) v)))) v)) = ((\v. (((voronoi_closed S) v) = (closure ((voronoi_open S) v)))) v))
+T c= c==> ! c= * * part cvoronoi_closed f0 b0 * part cclosure * * part cvoronoi_open f0 b0 * / c= * * part cvoronoi_closed f0 b0 * part cclosure * * part cvoronoi_open f0 b0 f1 * / c= * * part cvoronoi_closed f0 b0 * part cclosure * * part cvoronoi_open f0 b0 f1
++ (i x), ((!x. ((i x) ==> (s x))) /\ (!x. ((s x) ==> (c x)))), ((c x) /\ (~ (s x))) |- (((c x) /\ (~ (s x))) /\ F)
+T c==> * f0 f1 c==> c/\ ! c==> * f0 b0 * f2 b0 ! c==> * f2 b0 * f3 b0 c==> c/\ * f3 f1 c~ * f2 f1 c/\ c/\ * f3 f1 c~ * f2 f1 cF
+- |- (((~ (((!x. ((i x) ==> (s x))) /\ (!x. ((s x) ==> (c x)))) ==> (!x. ((((c x) /\ (~ (s x))) \/ ((s x) /\ (~ (c x)))) ==> ((c x) /\ (~ (i x))))))) ==> F) ==> ((~ (((!x. ((i x) ==> (s x))) /\ (!x. ((s x) ==> (c x)))) ==> (!x. ((((c x) /\ (~ (s x))) \/ ((s x) /\ (~ (c x)))) ==> ((c x) /\ (~ (i x))))))) ==> F))
+T c==> c==> c~ c==> c/\ ! c==> * f0 b0 * f1 b0 ! c==> * f1 b0 * f2 b0 ! c==> c\/ c/\ * f2 b0 c~ * f1 b0 c/\ * f1 b0 c~ * f2 b0 c/\ * f2 b0 c~ * f0 b0 cF c==> c~ c==> c/\ ! c==> * f0 b0 * f1 b0 ! c==> * f1 b0 * f2 b0 ! c==> c\/ c/\ * f2 b0 c~ * f1 b0 c/\ * f1 b0 c~ * f2 b0 c/\ * f2 b0 c~ * f0 b0 cF
+- |- (((!c. (!s. ((~ (((!x. ((i x) ==> (s x))) /\ (!x. ((s x) ==> (c x)))) ==> (!x. ((((c x) /\ (~ (s x))) \/ ((s x) /\ (~ (c x)))) ==> ((c x) /\ (~ (i x))))))) ==> F))) ==> ((\c. (!s. ((~ (((!x. ((i x) ==> (s x))) /\ (!x. ((s x) ==> (c x)))) ==> (!x. ((((c x) /\ (~ (s x))) \/ ((s x) /\ (~ (c x)))) ==> ((c x) /\ (~ (i x))))))) ==> F))) c)) = ((\c. (!s. ((~ (((!x. ((i x) ==> (s x))) /\ (!x. ((s x) ==> (c x)))) ==> (!x. ((((c x) /\ (~ (s x))) \/ ((s x) /\ (~ (c x)))) ==> ((c x) /\ (~ (i x))))))) ==> F))) c))
+T c= c==> ! ! c==> c~ c==> c/\ ! c==> * f0 b2 * b1 b2 ! c==> * b1 b2 * b0 b2 ! c==> c\/ c/\ * b0 b2 c~ * b1 b2 c/\ * b1 b2 c~ * b0 b2 c/\ * b0 b2 c~ * f0 b2 cF * / ! c==> c~ c==> c/\ ! c==> * f0 b2 * b1 b2 ! c==> * b1 b2 * b0 b2 ! c==> c\/ c/\ * b0 b2 c~ * b1 b2 c/\ * b1 b2 c~ * b0 b2 c/\ * b0 b2 c~ * f0 b2 cF f1 * / ! c==> c~ c==> c/\ ! c==> * f0 b2 * b1 b2 ! c==> * b1 b2 * b0 b2 ! c==> c\/ c/\ * b0 b2 c~ * b1 b2 c/\ * b1 b2 c~ * b0 b2 c/\ * b0 b2 c~ * f0 b2 cF f1
+- |- (((~ (((!x. ((i x) ==> (s x))) /\ (!x. ((s x) ==> (c x)))) ==> (!x. ((((c x) /\ (~ (s x))) \/ ((s x) /\ (~ (c x)))) ==> ((c x) /\ (~ (i x))))))) ==> F) = (((!x. ((i x) ==> (s x))) /\ (!x. ((s x) ==> (c x)))) ==> (!x. ((((c x) /\ (~ (s x))) \/ ((s x) /\ (~ (c x)))) ==> ((c x) /\ (~ (i x)))))))
+T c= c==> c~ c==> c/\ ! c==> * f0 b0 * f1 b0 ! c==> * f1 b0 * f2 b0 ! c==> c\/ c/\ * f2 b0 c~ * f1 b0 c/\ * f1 b0 c~ * f2 b0 c/\ * f2 b0 c~ * f0 b0 cF c==> c/\ ! c==> * f0 b0 * f1 b0 ! c==> * f1 b0 * f2 b0 ! c==> c\/ c/\ * f2 b0 c~ * f1 b0 c/\ * f1 b0 c~ * f2 b0 c/\ * f2 b0 c~ * f0 b0
+- |- ((\i. (!c. (!s. ((~ (((!x. ((i x) ==> (s x))) /\ (!x. ((s x) ==> (c x)))) ==> (!x. ((((c x) /\ (~ (s x))) \/ ((s x) /\ (~ (c x)))) ==> ((c x) /\ (~ (i x))))))) ==> F)))) i)
+T * / ! ! c==> c~ c==> c/\ ! c==> * b0 b3 * b2 b3 ! c==> * b2 b3 * b1 b3 ! c==> c\/ c/\ * b1 b3 c~ * b2 b3 c/\ * b2 b3 c~ * b1 b3 c/\ * b1 b3 c~ * b0 b3 cF f0
+- ((!x. ((i x) ==> (s x))) /\ (!x. ((s x) ==> (c x)))), ((s x) /\ (~ (c x))) |- ((~ F) ==> F)
+T c==> c/\ ! c==> * f0 b0 * f1 b0 ! c==> * f1 b0 * f2 b0 c==> c/\ * f1 f3 c~ * f2 f3 c==> c~ cF cF
+- |- ((t ==> t) = T)
+T c= c==> f0 f0 cT
+- |- ((p \/ p) = p)
+T c= c\/ f0 f0 f0
++ |- ((\v. (((voronoi_closed S) v) = (closure ((voronoi_open S) v)))) v)
+T * / c= * * part cvoronoi_closed f0 b0 * part cclosure * * part cvoronoi_open f0 b0 f1
+- |- ((\t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))) t3)
+T * / c= c\/ f0 c\/ f1 b0 c\/ c\/ f0 f1 b0 f2
++ ((!x. ((i x) ==> (s x))) /\ (!x. ((s x) ==> (c x)))), ((s x) /\ (~ (c x))) |- (((s x) /\ (~ (c x))) /\ F)
+T c==> c/\ ! c==> * f0 b0 * f1 b0 ! c==> * f1 b0 * f2 b0 c==> c/\ * f1 f3 c~ * f2 f3 c/\ c/\ * f1 f3 c~ * f2 f3 cF
++ ((!x. ((i x) ==> (s x))) /\ (!x. ((s x) ==> (c x)))), (((c x) /\ (~ (s x))) \/ ((s x) /\ (~ (c x)))) |- ((~ ((c x) /\ (~ (i x)))) ==> F)
+T c==> c/\ ! c==> * f0 b0 * f1 b0 ! c==> * f1 b0 * f2 b0 c==> c\/ c/\ * f2 f3 c~ * f1 f3 c/\ * f1 f3 c~ * f2 f3 c==> c~ c/\ * f2 f3 c~ * f0 f3 cF
++ |- (((!s. (s SUBSET (closure s))) ==> ((\s. (s SUBSET (closure s))) s)) = ((\s. (s SUBSET (closure s))) s))
+T c= c==> ! cSUBSET b0 * part cclosure b0 * / cSUBSET b0 * part cclosure b0 f0 * / cSUBSET b0 * part cclosure b0 f0
+- |- (((~ p) ==> p) = p)
+T c= c==> c~ f0 f0 f0
+- ((!x. ((i x) ==> (s x))) /\ (!x. ((s x) ==> (c x)))), ((s x) /\ (~ (c x))) |- ((~ (c x)) ==> (c x))
+T c==> c/\ ! c==> * f0 b0 * f1 b0 ! c==> * f1 b0 * f2 b0 c==> c/\ * f1 f3 c~ * f2 f3 c==> c~ * f2 f3 * f2 f3
+- |- ((!s. t) = t)
+T c= ! f0 f0
++ ((s x) /\ (~ (c x))) |- (((s x) ==> (c x)) = (c x))
+T c==> c/\ * f0 f1 c~ * f2 f1 c= c==> * f0 f1 * f2 f1 * f2 f1
+- |- (((((i SUBSET s) /\ (s SUBSET c)) ==> (((c DIFF s) UNION (s DIFF c)) SUBSET (c DIFF i))) ==> (((i SUBSET s) /\ (s SUBSET c)) ==> (((c DIFF s) UNION (s DIFF c)) SUBSET (c DIFF i)))) = (((i SUBSET s) /\ (s SUBSET c)) ==> (((c DIFF s) UNION (s DIFF c)) SUBSET (c DIFF i))))
+T c= c==> c==> c/\ cSUBSET f0 f1 cSUBSET f1 f2 cSUBSET * * part cUNION * * part cDIFF f2 f1 * * part cDIFF f1 f2 * * part cDIFF f2 f0 c==> c/\ cSUBSET f0 f1 cSUBSET f1 f2 cSUBSET * * part cUNION * * part cDIFF f2 f1 * * part cDIFF f1 f2 * * part cDIFF f2 f0 c==> c/\ cSUBSET f0 f1 cSUBSET f1 f2 cSUBSET * * part cUNION * * part cDIFF f2 f1 * * part cDIFF f1 f2 * * part cDIFF f2 f0
+- |- ((((~ (((!x. ((i x) ==> (s x))) /\ (!x. ((s x) ==> (c x)))) ==> (!x. ((((c x) /\ (~ (s x))) \/ ((s x) /\ (~ (c x)))) ==> ((c x) /\ (~ (i x))))))) ==> F) ==> ((~ (((!x. ((i x) ==> (s x))) /\ (!x. ((s x) ==> (c x)))) ==> (!x. ((((c x) /\ (~ (s x))) \/ ((s x) /\ (~ (c x)))) ==> ((c x) /\ (~ (i x))))))) ==> F)) ==> (((~ (((!x. ((i x) ==> (s x))) /\ (!x. ((s x) ==> (c x)))) ==> (!x. ((((c x) /\ (~ (s x))) \/ ((s x) /\ (~ (c x)))) ==> ((c x) /\ (~ (i x))))))) ==> F) ==> ((~ (((!x. ((i x) ==> (s x))) /\ (!x. ((s x) ==> (c x)))) ==> (!x. ((((c x) /\ (~ (s x))) \/ ((s x) /\ (~ (c x)))) ==> ((c x) /\ (~ (i x))))))) ==> F)))
+T c==> c==> c==> c~ c==> c/\ ! c==> * f0 b0 * f1 b0 ! c==> * f1 b0 * f2 b0 ! c==> c\/ c/\ * f2 b0 c~ * f1 b0 c/\ * f1 b0 c~ * f2 b0 c/\ * f2 b0 c~ * f0 b0 cF c==> c~ c==> c/\ ! c==> * f0 b0 * f1 b0 ! c==> * f1 b0 * f2 b0 ! c==> c\/ c/\ * f2 b0 c~ * f1 b0 c/\ * f1 b0 c~ * f2 b0 c/\ * f2 b0 c~ * f0 b0 cF c==> c==> c~ c==> c/\ ! c==> * f0 b0 * f1 b0 ! c==> * f1 b0 * f2 b0 ! c==> c\/ c/\ * f2 b0 c~ * f1 b0 c/\ * f1 b0 c~ * f2 b0 c/\ * f2 b0 c~ * f0 b0 cF c==> c~ c==> c/\ ! c==> * f0 b0 * f1 b0 ! c==> * f1 b0 * f2 b0 ! c==> c\/ c/\ * f2 b0 c~ * f1 b0 c/\ * f1 b0 c~ * f2 b0 c/\ * f2 b0 c~ * f0 b0 cF
++ |- (((!x. ((x IN i) ==> (x IN s))) /\ (!x. ((x IN s) ==> (x IN c)))) ==> (!x. ((x IN ((c DIFF s) UNION (s DIFF c))) ==> (x IN (c DIFF i)))))
+T c==> c/\ ! c==> cIN b0 f0 cIN b0 f1 ! c==> cIN b0 f1 cIN b0 f2 ! c==> cIN b0 * * part cUNION * * part cDIFF f2 f1 * * part cDIFF f1 f2 cIN b0 * * part cDIFF f2 f0
++ |- ((!v. ((measure ((voronoi_closed s) v)) = (measure ((voronoi_open s) v)))) = T)
+T c= ! c= cmeasure * * part cvoronoi_closed f0 b0 cmeasure * * part cvoronoi_open f0 b0 cT
+- |- ((t ==> F) = (~ t))
+T c= c==> f0 cF c~ f0
++ ((!x. ((i x) ==> (s x))) /\ (!x. ((s x) ==> (c x)))), (((c x) /\ (~ (s x))) \/ ((s x) /\ (~ (c x)))) |- ((((c x) /\ (~ (s x))) \/ ((s x) /\ (~ (c x)))) /\ ((c x) /\ (~ (i x))))
+T c==> c/\ ! c==> * f0 b0 * f1 b0 ! c==> * f1 b0 * f2 b0 c==> c\/ c/\ * f2 f3 c~ * f1 f3 c/\ * f1 f3 c~ * f2 f3 c/\ c\/ c/\ * f2 f3 c~ * f1 f3 c/\ * f1 f3 c~ * f2 f3 c/\ * f2 f3 c~ * f0 f3
++ |- (((i SUBSET s) /\ (s SUBSET c)) ==> (((c DIFF s) UNION (s DIFF c)) SUBSET (c DIFF i)))
+T c==> c/\ cSUBSET f0 f1 cSUBSET f1 f2 cSUBSET * * part cUNION * * part cDIFF f2 f1 * * part cDIFF f1 f2 * * part cDIFF f2 f0
++ |- ((((\s. ((negligible s) /\ (t SUBSET s))) s) ==> ((!s. (!t. (((negligible s) /\ (t SUBSET s)) ==> (negligible t)))) ==> (negligible t))) = T)
+T c= c==> * / c/\ cnegligible b0 cSUBSET f0 b0 f1 c==> ! ! c==> c/\ cnegligible b0 cSUBSET b1 b0 cnegligible b1 cnegligible f0 cT
++ |- ((measure (closure ((voronoi_open s) v))) = (measure ((voronoi_open s) v)))
+T c= cmeasure * part cclosure * * part cvoronoi_open f0 f1 cmeasure * * part cvoronoi_open f0 f1
+- ((i SUBSET s) /\ (s SUBSET c)) |- ((((i SUBSET s) /\ (s SUBSET c)) ==> (((c DIFF s) UNION (s DIFF c)) SUBSET (c DIFF i))) ==> (((c DIFF s) UNION (s DIFF c)) SUBSET (c DIFF i)))
+T c==> c/\ cSUBSET f0 f1 cSUBSET f1 f2 c==> c==> c/\ cSUBSET f0 f1 cSUBSET f1 f2 cSUBSET * * part cUNION * * part cDIFF f2 f1 * * part cDIFF f1 f2 * * part cDIFF f2 f0 cSUBSET * * part cUNION * * part cDIFF f2 f1 * * part cDIFF f1 f2 * * part cDIFF f2 f0
++ |- (((negligible (((closure ((voronoi_open s) v)) DIFF ((voronoi_open s) v)) UNION (((voronoi_open s) v) DIFF (closure ((voronoi_open s) v))))) ==> ((measure (closure ((voronoi_open s) v))) = (measure ((voronoi_open s) v)))) = ((measure (closure ((voronoi_open s) v))) = (measure ((voronoi_open s) v))))
+T c= c==> cnegligible * * part cUNION * * part cDIFF * part cclosure * * part cvoronoi_open f0 f1 * * part cvoronoi_open f0 f1 * * part cDIFF * * part cvoronoi_open f0 f1 * part cclosure * * part cvoronoi_open f0 f1 c= cmeasure * part cclosure * * part cvoronoi_open f0 f1 cmeasure * * part cvoronoi_open f0 f1 c= cmeasure * part cclosure * * part cvoronoi_open f0 f1 cmeasure * * part cvoronoi_open f0 f1
+- (i x), ((!x. ((i x) ==> (s x))) /\ (!x. ((s x) ==> (c x)))) |- ((~ (s x)) ==> (s x))
+T c==> * f0 f1 c==> c/\ ! c==> * f0 b0 * f2 b0 ! c==> * f2 b0 * f3 b0 c==> c~ * f2 f1 * f2 f1
++ |- (p = ((~ p) ==> F))
+T c= f0 c==> c~ f0 cF
++ |- ((negligible (frontier ((voronoi_open s) v))) /\ ((((closure ((voronoi_open s) v)) DIFF ((voronoi_open s) v)) UNION (((voronoi_open s) v) DIFF (closure ((voronoi_open s) v)))) SUBSET (frontier ((voronoi_open s) v))))
+T c/\ cnegligible * part cfrontier * * part cvoronoi_open f0 f1 cSUBSET * * part cUNION * * part cDIFF * part cclosure * * part cvoronoi_open f0 f1 * * part cvoronoi_open f0 f1 * * part cDIFF * * part cvoronoi_open f0 f1 * part cclosure * * part cvoronoi_open f0 f1 * part cfrontier * * part cvoronoi_open f0 f1
+- |- ((!s. (!t. ((negligible ((s DIFF t) UNION (t DIFF s))) ==> ((measure s) = (measure t))))) ==> (!s. (!t. ((negligible ((s DIFF t) UNION (t DIFF s))) ==> ((measure s) = (measure t))))))
+T c==> ! ! c==> cnegligible * * part cUNION * * part cDIFF b0 b1 * * part cDIFF b1 b0 c= cmeasure b0 cmeasure b1 ! ! c==> cnegligible * * part cUNION * * part cDIFF b0 b1 * * part cDIFF b1 b0 c= cmeasure b0 cmeasure b1
++ |- (((!s. (!t. (((negligible s) /\ (t SUBSET s)) ==> (negligible t)))) ==> (!t. ((?s. ((negligible s) /\ (t SUBSET s))) ==> (negligible t)))) = (!t. ((?s. ((negligible s) /\ (t SUBSET s))) ==> (negligible t))))
+T c= c==> ! ! c==> c/\ cnegligible b0 cSUBSET b1 b0 cnegligible b1 ! c==> c? / c/\ cnegligible b1 cSUBSET b0 b1 cnegligible b0 ! c==> c? / c/\ cnegligible b1 cSUBSET b0 b1 cnegligible b0
+- (~ (((!x. ((i x) ==> (s x))) /\ (!x. ((s x) ==> (c x)))) ==> (!x. ((((c x) /\ (~ (s x))) \/ ((s x) /\ (~ (c x)))) ==> ((c x) /\ (~ (i x))))))) |- ((~ (((!x. ((i x) ==> (s x))) /\ (!x. ((s x) ==> (c x)))) ==> (!x. ((((c x) /\ (~ (s x))) \/ ((s x) /\ (~ (c x)))) ==> ((c x) /\ (~ (i x))))))) /\ F)
+T c==> c~ c==> c/\ ! c==> * f0 b0 * f1 b0 ! c==> * f1 b0 * f2 b0 ! c==> c\/ c/\ * f2 b0 c~ * f1 b0 c/\ * f1 b0 c~ * f2 b0 c/\ * f2 b0 c~ * f0 b0 c/\ c~ c==> c/\ ! c==> * f0 b0 * f1 b0 ! c==> * f1 b0 * f2 b0 ! c==> c\/ c/\ * f2 b0 c~ * f1 b0 c/\ * f1 b0 c~ * f2 b0 c/\ * f2 b0 c~ * f0 b0 cF
++ |- (((!S. (!v. (((voronoi_closed S) v) = (closure ((voronoi_open S) v))))) ==> ((\S. (!v. (((voronoi_closed S) v) = (closure ((voronoi_open S) v))))) S)) = ((\S. (!v. (((voronoi_closed S) v) = (closure ((voronoi_open S) v))))) S))
+T c= c==> ! ! c= * * part cvoronoi_closed b0 b1 * part cclosure * * part cvoronoi_open b0 b1 * / ! c= * * part cvoronoi_closed b0 b1 * part cclosure * * part cvoronoi_open b0 b1 f0 * / ! c= * * part cvoronoi_closed b0 b1 * part cclosure * * part cvoronoi_open b0 b1 f0
+- (~ (((!x. ((i x) ==> (s x))) /\ (!x. ((s x) ==> (c x)))) ==> (!x. ((((c x) /\ (~ (s x))) \/ ((s x) /\ (~ (c x)))) ==> ((c x) /\ (~ (i x))))))) |- F
+T c==> c~ c==> c/\ ! c==> * f0 b0 * f1 b0 ! c==> * f1 b0 * f2 b0 ! c==> c\/ c/\ * f2 b0 c~ * f1 b0 c/\ * f1 b0 c~ * f2 b0 c/\ * f2 b0 c~ * f0 b0 cF
++ |- ((((closure ((voronoi_open s) v)) DIFF ((voronoi_open s) v)) UNION (((voronoi_open s) v) DIFF (closure ((voronoi_open s) v)))) SUBSET (frontier ((voronoi_open s) v)))
+T cSUBSET * * part cUNION * * part cDIFF * part cclosure * * part cvoronoi_open f0 f1 * * part cvoronoi_open f0 f1 * * part cDIFF * * part cvoronoi_open f0 f1 * part cclosure * * part cvoronoi_open f0 f1 * part cfrontier * * part cvoronoi_open f0 f1
+- |- ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))
+T c= c\/ f0 c\/ f1 f2 c\/ c\/ f0 f1 f2
++ (i x), ((!x. ((i x) ==> (s x))) /\ (!x. ((s x) ==> (c x)))), (((c x) /\ (~ (s x))) \/ ((s x) /\ (~ (c x)))) |- ((i x) /\ F)
+T c==> * f0 f1 c==> c/\ ! c==> * f0 b0 * f2 b0 ! c==> * f2 b0 * f3 b0 c==> c\/ c/\ * f3 f1 c~ * f2 f1 c/\ * f2 f1 c~ * f3 f1 c/\ * f0 f1 cF
++ (~ (c x)) |- ((c x) ==> F)
+T c==> c~ * f0 f1 c==> * f0 f1 cF
+- (negligible ((s DIFF t) UNION (t DIFF s))) |- ((!s. (!t. ((negligible ((s DIFF t) UNION (t DIFF s))) ==> ((measure s) = (measure t))))) ==> ((measure s) = (measure t)))
+T c==> cnegligible * * part cUNION * * part cDIFF f0 f1 * * part cDIFF f1 f0 c==> ! ! c==> cnegligible * * part cUNION * * part cDIFF b0 b1 * * part cDIFF b1 b0 c= cmeasure b0 cmeasure b1 c= cmeasure f0 cmeasure f1
+- (~ F), (~ (c x)), ((c x) /\ (~ (s x))) |- ((~ F) /\ F)
+T c==> c~ cF c==> c~ * f0 f1 c==> c/\ * f0 f1 c~ * f2 f1 c/\ c~ cF cF
++ |- ((\t. ((?s. ((negligible s) /\ (t SUBSET s))) ==> (negligible t))) t)
+T * / c==> c? / c/\ cnegligible b1 cSUBSET b0 b1 cnegligible b0 f0
++ |- (((negligible s) /\ (t SUBSET s)) ==> ((!s. (!t. (((negligible s) /\ (t SUBSET s)) ==> (negligible t)))) ==> (negligible t)))
+T c==> c/\ cnegligible f0 cSUBSET f1 f0 c==> ! ! c==> c/\ cnegligible b0 cSUBSET b1 b0 cnegligible b1 cnegligible f1
++ ((!x. ((i x) ==> (s x))) /\ (!x. ((s x) ==> (c x)))) |- ((s _3481107) \/ (~ (i _3481107)))
+T c==> c/\ ! c==> * f0 b0 * f1 b0 ! c==> * f1 b0 * f2 b0 c\/ * f1 f3 c~ * f0 f3
+- (!s. (!t. ((negligible ((s DIFF t) UNION (t DIFF s))) ==> ((measure s) = (measure t))))) |- (((!t. ((negligible ((s DIFF t) UNION (t DIFF s))) ==> ((measure s) = (measure t)))) ==> ((\t. ((negligible ((s DIFF t) UNION (t DIFF s))) ==> ((measure s) = (measure t)))) t)) = ((\t. ((negligible ((s DIFF t) UNION (t DIFF s))) ==> ((measure s) = (measure t)))) t))
+T c==> ! ! c==> cnegligible * * part cUNION * * part cDIFF b0 b1 * * part cDIFF b1 b0 c= cmeasure b0 cmeasure b1 c= c==> ! c==> cnegligible * * part cUNION * * part cDIFF f0 b0 * * part cDIFF b0 f0 c= cmeasure f0 cmeasure b0 * / c==> cnegligible * * part cUNION * * part cDIFF f0 b0 * * part cDIFF b0 f0 c= cmeasure f0 cmeasure b0 f1 * / c==> cnegligible * * part cUNION * * part cDIFF f0 b0 * * part cDIFF b0 f0 c= cmeasure f0 cmeasure b0 f1
++ (i x), ((!x. ((i x) ==> (s x))) /\ (!x. ((s x) ==> (c x)))), (((s x) /\ (~ (c x))) ==> F), (((c x) /\ (~ (s x))) \/ ((s x) /\ (~ (c x)))) |- F
+T c==> * f0 f1 c==> c/\ ! c==> * f0 b0 * f2 b0 ! c==> * f2 b0 * f3 b0 c==> c==> c/\ * f2 f1 c~ * f3 f1 cF c==> c\/ c/\ * f3 f1 c~ * f2 f1 c/\ * f2 f1 c~ * f3 f1 cF
++ |- (((~ ((c x) /\ (~ (i x)))) ==> F) = ((c x) /\ (~ (i x))))
+T c= c==> c~ c/\ * f0 f1 c~ * f2 f1 cF c/\ * f0 f1 c~ * f2 f1
++ |- ((\s. (s SUBSET (closure s))) s)
+T * / cSUBSET b0 * part cclosure b0 f0
++ (!s. (!t. (((negligible s) /\ (t SUBSET s)) ==> (negligible t)))) |- ((?s. ((negligible s) /\ (t SUBSET s))) ==> (negligible t))
+T c==> ! ! c==> c/\ cnegligible b0 cSUBSET b1 b0 cnegligible b1 c==> c? / c/\ cnegligible b0 cSUBSET f0 b0 cnegligible f0
+- ((~ (((!x. ((i x) ==> (s x))) /\ (!x. ((s x) ==> (c x)))) ==> (!x. ((((c x) /\ (~ (s x))) \/ ((s x) /\ (~ (c x)))) ==> ((c x) /\ (~ (i x))))))) ==> F) |- (((~ (((!x. ((i x) ==> (s x))) /\ (!x. ((s x) ==> (c x)))) ==> (!x. ((((c x) /\ (~ (s x))) \/ ((s x) /\ (~ (c x)))) ==> ((c x) /\ (~ (i x))))))) ==> F) /\ ((~ (((!x. ((i x) ==> (s x))) /\ (!x. ((s x) ==> (c x)))) ==> (!x. ((((c x) /\ (~ (s x))) \/ ((s x) /\ (~ (c x)))) ==> ((c x) /\ (~ (i x))))))) ==> F))
+T c==> c==> c~ c==> c/\ ! c==> * f0 b0 * f1 b0 ! c==> * f1 b0 * f2 b0 ! c==> c\/ c/\ * f2 b0 c~ * f1 b0 c/\ * f1 b0 c~ * f2 b0 c/\ * f2 b0 c~ * f0 b0 cF c/\ c==> c~ c==> c/\ ! c==> * f0 b0 * f1 b0 ! c==> * f1 b0 * f2 b0 ! c==> c\/ c/\ * f2 b0 c~ * f1 b0 c/\ * f1 b0 c~ * f2 b0 c/\ * f2 b0 c~ * f0 b0 cF c==> c~ c==> c/\ ! c==> * f0 b0 * f1 b0 ! c==> * f1 b0 * f2 b0 ! c==> c\/ c/\ * f2 b0 c~ * f1 b0 c/\ * f1 b0 c~ * f2 b0 c/\ * f2 b0 c~ * f0 b0 cF
++ |- ((\S. (!v. (((voronoi_closed S) v) = (closure ((voronoi_open S) v))))) S)
+T * / ! c= * * part cvoronoi_closed b0 b1 * part cclosure * * part cvoronoi_open b0 b1 f0
++ |- (((measure ((voronoi_closed s) v)) = (measure ((voronoi_open s) v))) = T)
+T c= c= cmeasure * * part cvoronoi_closed f0 f1 cmeasure * * part cvoronoi_open f0 f1 cT
++ |- (((?s'. ((negligible s') /\ ((((closure ((voronoi_open s) v)) DIFF ((voronoi_open s) v)) UNION (((voronoi_open s) v) DIFF (closure ((voronoi_open s) v)))) SUBSET s'))) ==> (negligible (((closure ((voronoi_open s) v)) DIFF ((voronoi_open s) v)) UNION (((voronoi_open s) v) DIFF (closure ((voronoi_open s) v)))))) = (negligible (((closure ((voronoi_open s) v)) DIFF ((voronoi_open s) v)) UNION (((voronoi_open s) v) DIFF (closure ((voronoi_open s) v))))))
+T c= c==> c? / c/\ cnegligible b0 cSUBSET * * part cUNION * * part cDIFF * part cclosure * * part cvoronoi_open f0 f1 * * part cvoronoi_open f0 f1 * * part cDIFF * * part cvoronoi_open f0 f1 * part cclosure * * part cvoronoi_open f0 f1 b0 cnegligible * * part cUNION * * part cDIFF * part cclosure * * part cvoronoi_open f0 f1 * * part cvoronoi_open f0 f1 * * part cDIFF * * part cvoronoi_open f0 f1 * part cclosure * * part cvoronoi_open f0 f1 cnegligible * * part cUNION * * part cDIFF * part cclosure * * part cvoronoi_open f0 f1 * * part cvoronoi_open f0 f1 * * part cDIFF * * part cvoronoi_open f0 f1 * part cclosure * * part cvoronoi_open f0 f1
+- |- ((\t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3)))) t2)
+T * / ! c= c\/ f0 c\/ b0 b1 c\/ c\/ f0 b0 b1 f1
+- |- ((!x. ((P x) \/ Q)) = ((!x. (P x)) \/ Q))
+T c= ! c\/ * f0 b0 f1 c\/ ! * f0 b0 f1
++ ((negligible s) /\ (t SUBSET s)) |- (((negligible s) /\ (t SUBSET s)) /\ ((!s. (!t. (((negligible s) /\ (t SUBSET s)) ==> (negligible t)))) ==> (negligible t)))
+T c==> c/\ cnegligible f0 cSUBSET f1 f0 c/\ c/\ cnegligible f0 cSUBSET f1 f0 c==> ! ! c==> c/\ cnegligible b0 cSUBSET b1 b0 cnegligible b1 cnegligible f1
+- (!s. (!t. ((negligible ((s DIFF t) UNION (t DIFF s))) ==> ((measure s) = (measure t))))), (negligible ((s DIFF t) UNION (t DIFF s))) |- ((negligible ((s DIFF t) UNION (t DIFF s))) /\ ((measure s) = (measure t)))
+T c==> ! ! c==> cnegligible * * part cUNION * * part cDIFF b0 b1 * * part cDIFF b1 b0 c= cmeasure b0 cmeasure b1 c==> cnegligible * * part cUNION * * part cDIFF f0 f1 * * part cDIFF f1 f0 c/\ cnegligible * * part cUNION * * part cDIFF f0 f1 * * part cDIFF f1 f0 c= cmeasure f0 cmeasure f1
++ (i x), ((!x. ((i x) ==> (s x))) /\ (!x. ((s x) ==> (c x)))) |- (((s x) ==> F) = F)
+T c==> * f0 f1 c==> c/\ ! c==> * f0 b0 * f2 b0 ! c==> * f2 b0 * f3 b0 c= c==> * f2 f1 cF cF
++ |- ((\v. (convex ((voronoi_open s) v))) v)
+T * / cconvex * * part cvoronoi_open f0 b0 f1
+- (!s. (!t. ((negligible ((s DIFF t) UNION (t DIFF s))) ==> ((measure s) = (measure t))))) |- (!t. ((negligible ((s DIFF t) UNION (t DIFF s))) ==> ((measure s) = (measure t))))
+T c==> ! ! c==> cnegligible * * part cUNION * * part cDIFF b0 b1 * * part cDIFF b1 b0 c= cmeasure b0 cmeasure b1 ! c==> cnegligible * * part cUNION * * part cDIFF f0 b0 * * part cDIFF b0 f0 c= cmeasure f0 cmeasure b0
++ |- (((interior ((voronoi_open s) v)) SUBSET ((voronoi_open s) v)) /\ (((voronoi_open s) v) SUBSET (closure ((voronoi_open s) v))))
+T c/\ cSUBSET * part cinterior * * part cvoronoi_open f0 f1 * * part cvoronoi_open f0 f1 cSUBSET * * part cvoronoi_open f0 f1 * part cclosure * * part cvoronoi_open f0 f1
++ |- ((\t. ((negligible ((s DIFF t) UNION (t DIFF s))) ==> ((measure s) = (measure t)))) t)
+T * / c==> cnegligible * * part cUNION * * part cDIFF f0 b0 * * part cDIFF b0 f0 c= cmeasure f0 cmeasure b0 f1
+- (~ F), ((!x. ((i x) ==> (s x))) /\ (!x. ((s x) ==> (c x)))), ((s x) /\ (~ (c x))) |- ((~ F) /\ F)
+T c==> c~ cF c==> c/\ ! c==> * f0 b0 * f1 b0 ! c==> * f1 b0 * f2 b0 c==> c/\ * f1 f3 c~ * f2 f3 c/\ c~ cF cF
+- (~ F), (i x), ((!x. ((i x) ==> (s x))) /\ (!x. ((s x) ==> (c x)))), ((c x) /\ (~ (s x))) |- ((~ F) /\ F)
+T c==> c~ cF c==> * f0 f1 c==> c/\ ! c==> * f0 b0 * f2 b0 ! c==> * f2 b0 * f3 b0 c==> c/\ * f3 f1 c~ * f2 f1 c/\ c~ cF cF
++ ((!x. ((i x) ==> (s x))) /\ (!x. ((s x) ==> (c x)))) |- (((!x. ((i x) ==> (s x))) /\ (!x. ((s x) ==> (c x)))) /\ (!x. ((((c x) /\ (~ (s x))) \/ ((s x) /\ (~ (c x)))) ==> ((c x) /\ (~ (i x))))))
+T c==> c/\ ! c==> * f0 b0 * f1 b0 ! c==> * f1 b0 * f2 b0 c/\ c/\ ! c==> * f0 b0 * f1 b0 ! c==> * f1 b0 * f2 b0 ! c==> c\/ c/\ * f2 b0 c~ * f1 b0 c/\ * f1 b0 c~ * f2 b0 c/\ * f2 b0 c~ * f0 b0
+- |- (((!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3)))) ==> ((\t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3)))) t2)) = ((\t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3)))) t2))
+T c= c==> ! ! c= c\/ f0 c\/ b0 b1 c\/ c\/ f0 b0 b1 * / ! c= c\/ f0 c\/ b0 b1 c\/ c\/ f0 b0 b1 f1 * / ! c= c\/ f0 c\/ b0 b1 c\/ c\/ f0 b0 b1 f1
+- (~ (s x)), (i x), ((!x. ((i x) ==> (s x))) /\ (!x. ((s x) ==> (c x)))) |- ((~ (s x)) /\ (s x))
+T c==> c~ * f0 f1 c==> * f2 f1 c==> c/\ ! c==> * f2 b0 * f0 b0 ! c==> * f0 b0 * f3 b0 c/\ c~ * f0 f1 * f0 f1
++ (!s. (!t. (((negligible s) /\ (t SUBSET s)) ==> (negligible t)))) |- ((!s. (!t. (((negligible s) /\ (t SUBSET s)) ==> (negligible t)))) /\ (!t. ((?s. ((negligible s) /\ (t SUBSET s))) ==> (negligible t))))
+T c==> ! ! c==> c/\ cnegligible b0 cSUBSET b1 b0 cnegligible b1 c/\ ! ! c==> c/\ cnegligible b0 cSUBSET b1 b0 cnegligible b1 ! c==> c? / c/\ cnegligible b1 cSUBSET b0 b1 cnegligible b0
++ ((!x. ((i x) ==> (s x))) /\ (!x. ((s x) ==> (c x)))) |- (!x. ((~ (s x)) \/ (c x)))
+T c==> c/\ ! c==> * f0 b0 * f1 b0 ! c==> * f1 b0 * f2 b0 ! c\/ c~ * f1 b0 * f2 b0
++ |- (!s. (((\s. ((negligible s) /\ (t SUBSET s))) s) ==> ((!s. (!t. (((negligible s) /\ (t SUBSET s)) ==> (negligible t)))) ==> (negligible t))))
+T c==> * / c/\ cnegligible b0 cSUBSET f0 b0 f1 c==> ! ! c==> c/\ cnegligible b0 cSUBSET b1 b0 cnegligible b1 cnegligible f0
++ ((!x. ((i x) ==> (s x))) /\ (!x. ((s x) ==> (c x)))), (((c x) /\ (~ (s x))) \/ ((s x) /\ (~ (c x)))) |- ((~ (c x)) ==> F)
+T c==> c/\ ! c==> * f0 b0 * f1 b0 ! c==> * f1 b0 * f2 b0 c==> c\/ c/\ * f2 f3 c~ * f1 f3 c/\ * f1 f3 c~ * f2 f3 c==> c~ * f2 f3 cF
++ ((closure ((voronoi_open S) v)) = ((voronoi_closed S) v)) |- (((voronoi_closed S) v) = (closure ((voronoi_open S) v)))
+T c==> c= * part cclosure * * part cvoronoi_open f0 f1 * * part cvoronoi_closed f0 f1 c= * * part cvoronoi_closed f0 f1 * part cclosure * * part cvoronoi_open f0 f1
++ |- ((\s. ((convex s) ==> (negligible (frontier s)))) s)
+T * / c==> cconvex b0 cnegligible * part cfrontier b0 f0
++ ((!x. ((i x) ==> (s x))) /\ (!x. ((s x) ==> (c x)))), ((s x) /\ (~ (c x))) |- (((c x) ==> F) = F)
+T c==> c/\ ! c==> * f0 b0 * f1 b0 ! c==> * f1 b0 * f2 b0 c==> c/\ * f1 f3 c~ * f2 f3 c= c==> * f2 f3 cF cF
++ |- (negligible (((closure ((voronoi_open s) v)) DIFF ((voronoi_open s) v)) UNION (((voronoi_open s) v) DIFF (closure ((voronoi_open s) v)))))
+T cnegligible * * part cUNION * * part cDIFF * part cclosure * * part cvoronoi_open f0 f1 * * part cvoronoi_open f0 f1 * * part cDIFF * * part cvoronoi_open f0 f1 * part cclosure * * part cvoronoi_open f0 f1
++ |- ((\s. ((interior s) SUBSET s)) s)
+T * / cSUBSET * part cinterior b0 b0 f0
+- |- (((!i. (!c. (!s. ((~ (((!x. ((i x) ==> (s x))) /\ (!x. ((s x) ==> (c x)))) ==> (!x. ((((c x) /\ (~ (s x))) \/ ((s x) /\ (~ (c x)))) ==> ((c x) /\ (~ (i x))))))) ==> F)))) ==> ((\i. (!c. (!s. ((~ (((!x. ((i x) ==> (s x))) /\ (!x. ((s x) ==> (c x)))) ==> (!x. ((((c x) /\ (~ (s x))) \/ ((s x) /\ (~ (c x)))) ==> ((c x) /\ (~ (i x))))))) ==> F)))) i)) = ((\i. (!c. (!s. ((~ (((!x. ((i x) ==> (s x))) /\ (!x. ((s x) ==> (c x)))) ==> (!x. ((((c x) /\ (~ (s x))) \/ ((s x) /\ (~ (c x)))) ==> ((c x) /\ (~ (i x))))))) ==> F)))) i))
+T c= c==> ! ! ! c==> c~ c==> c/\ ! c==> * b0 b3 * b2 b3 ! c==> * b2 b3 * b1 b3 ! c==> c\/ c/\ * b1 b3 c~ * b2 b3 c/\ * b2 b3 c~ * b1 b3 c/\ * b1 b3 c~ * b0 b3 cF * / ! ! c==> c~ c==> c/\ ! c==> * b0 b3 * b2 b3 ! c==> * b2 b3 * b1 b3 ! c==> c\/ c/\ * b1 b3 c~ * b2 b3 c/\ * b2 b3 c~ * b1 b3 c/\ * b1 b3 c~ * b0 b3 cF f0 * / ! ! c==> c~ c==> c/\ ! c==> * b0 b3 * b2 b3 ! c==> * b2 b3 * b1 b3 ! c==> c\/ c/\ * b1 b3 c~ * b2 b3 c/\ * b2 b3 c~ * b1 b3 c/\ * b1 b3 c~ * b0 b3 cF f0
++ |- ((?s. ((negligible s) /\ (t SUBSET s))) ==> (negligible t))
+T c==> c? / c/\ cnegligible b0 cSUBSET f0 b0 cnegligible f0
+- |- ((x = x) = T)
+T c= c= f0 f0 cT
++ (!s. (!t. (((negligible s) /\ (t SUBSET s)) ==> (negligible t)))), (?s. ((negligible s) /\ (t SUBSET s))) |- ((?s. ((negligible s) /\ (t SUBSET s))) /\ (negligible t))
+T c==> ! ! c==> c/\ cnegligible b0 cSUBSET b1 b0 cnegligible b1 c==> c? / c/\ cnegligible b0 cSUBSET f0 b0 c/\ c? / c/\ cnegligible b0 cSUBSET f0 b0 cnegligible f0
++ |- (((!s. (!v. (convex ((voronoi_open s) v)))) ==> ((\s. (!v. (convex ((voronoi_open s) v)))) s)) = ((\s. (!v. (convex ((voronoi_open s) v)))) s))
+T c= c==> ! ! cconvex * * part cvoronoi_open b0 b1 * / ! cconvex * * part cvoronoi_open b0 b1 f0 * / ! cconvex * * part cvoronoi_open b0 b1 f0
++ |- (((!s. ((interior s) SUBSET s)) ==> ((\s. ((interior s) SUBSET s)) s)) = ((\s. ((interior s) SUBSET s)) s))
+T c= c==> ! cSUBSET * part cinterior b0 b0 * / cSUBSET * part cinterior b0 b0 f0 * / cSUBSET * part cinterior b0 b0 f0
++ |- (((!s. ((frontier s) = ((closure s) DIFF (interior s)))) ==> ((\s. ((frontier s) = ((closure s) DIFF (interior s)))) s)) = ((\s. ((frontier s) = ((closure s) DIFF (interior s)))) s))
+T c= c==> ! c= * part cfrontier b0 * * part cDIFF * part cclosure b0 * part cinterior b0 * / c= * part cfrontier b0 * * part cDIFF * part cclosure b0 * part cinterior b0 f0 * / c= * part cfrontier b0 * * part cDIFF * part cclosure b0 * part cinterior b0 f0
+- |- (((((~ (((!x. ((i x) ==> (s x))) /\ (!x. ((s x) ==> (c x)))) ==> (!x. ((((c x) /\ (~ (s x))) \/ ((s x) /\ (~ (c x)))) ==> ((c x) /\ (~ (i x))))))) ==> F) ==> ((~ (((!x. ((i x) ==> (s x))) /\ (!x. ((s x) ==> (c x)))) ==> (!x. ((((c x) /\ (~ (s x))) \/ ((s x) /\ (~ (c x)))) ==> ((c x) /\ (~ (i x))))))) ==> F)) ==> (((~ (((!x. ((i x) ==> (s x))) /\ (!x. ((s x) ==> (c x)))) ==> (!x. ((((c x) /\ (~ (s x))) \/ ((s x) /\ (~ (c x)))) ==> ((c x) /\ (~ (i x))))))) ==> F) ==> ((~ (((!x. ((i x) ==> (s x))) /\ (!x. ((s x) ==> (c x)))) ==> (!x. ((((c x) /\ (~ (s x))) \/ ((s x) /\ (~ (c x)))) ==> ((c x) /\ (~ (i x))))))) ==> F))) = (((~ (((!x. ((i x) ==> (s x))) /\ (!x. ((s x) ==> (c x)))) ==> (!x. ((((c x) /\ (~ (s x))) \/ ((s x) /\ (~ (c x)))) ==> ((c x) /\ (~ (i x))))))) ==> F) ==> ((~ (((!x. ((i x) ==> (s x))) /\ (!x. ((s x) ==> (c x)))) ==> (!x. ((((c x) /\ (~ (s x))) \/ ((s x) /\ (~ (c x)))) ==> ((c x) /\ (~ (i x))))))) ==> F)))
+T c= c==> c==> c==> c~ c==> c/\ ! c==> * f0 b0 * f1 b0 ! c==> * f1 b0 * f2 b0 ! c==> c\/ c/\ * f2 b0 c~ * f1 b0 c/\ * f1 b0 c~ * f2 b0 c/\ * f2 b0 c~ * f0 b0 cF c==> c~ c==> c/\ ! c==> * f0 b0 * f1 b0 ! c==> * f1 b0 * f2 b0 ! c==> c\/ c/\ * f2 b0 c~ * f1 b0 c/\ * f1 b0 c~ * f2 b0 c/\ * f2 b0 c~ * f0 b0 cF c==> c==> c~ c==> c/\ ! c==> * f0 b0 * f1 b0 ! c==> * f1 b0 * f2 b0 ! c==> c\/ c/\ * f2 b0 c~ * f1 b0 c/\ * f1 b0 c~ * f2 b0 c/\ * f2 b0 c~ * f0 b0 cF c==> c~ c==> c/\ ! c==> * f0 b0 * f1 b0 ! c==> * f1 b0 * f2 b0 ! c==> c\/ c/\ * f2 b0 c~ * f1 b0 c/\ * f1 b0 c~ * f2 b0 c/\ * f2 b0 c~ * f0 b0 cF c==> c==> c~ c==> c/\ ! c==> * f0 b0 * f1 b0 ! c==> * f1 b0 * f2 b0 ! c==> c\/ c/\ * f2 b0 c~ * f1 b0 c/\ * f1 b0 c~ * f2 b0 c/\ * f2 b0 c~ * f0 b0 cF c==> c~ c==> c/\ ! c==> * f0 b0 * f1 b0 ! c==> * f1 b0 * f2 b0 ! c==> c\/ c/\ * f2 b0 c~ * f1 b0 c/\ * f1 b0 c~ * f2 b0 c/\ * f2 b0 c~ * f0 b0 cF
++ |- (((!s. (!t. ((negligible ((s DIFF t) UNION (t DIFF s))) ==> ((measure s) = (measure t))))) ==> ((\s. (!t. ((negligible ((s DIFF t) UNION (t DIFF s))) ==> ((measure s) = (measure t))))) s)) = ((\s. (!t. ((negligible ((s DIFF t) UNION (t DIFF s))) ==> ((measure s) = (measure t))))) s))
+T c= c==> ! ! c==> cnegligible * * part cUNION * * part cDIFF b0 b1 * * part cDIFF b1 b0 c= cmeasure b0 cmeasure b1 * / ! c==> cnegligible * * part cUNION * * part cDIFF b0 b1 * * part cDIFF b1 b0 c= cmeasure b0 cmeasure b1 f0 * / ! c==> cnegligible * * part cUNION * * part cDIFF b0 b1 * * part cDIFF b1 b0 c= cmeasure b0 cmeasure b1 f0
++ |- ((negligible (frontier ((voronoi_open s) v))) = T)
+T c= cnegligible * part cfrontier * * part cvoronoi_open f0 f1 cT
++ |- ((p \/ q) = (q \/ p))
+T c= c\/ f0 f1 c\/ f1 f0
+- |- ((((i SUBSET s) /\ (s SUBSET c)) ==> (((c DIFF s) UNION (s DIFF c)) SUBSET (c DIFF i))) ==> (((i SUBSET s) /\ (s SUBSET c)) ==> (((c DIFF s) UNION (s DIFF c)) SUBSET (c DIFF i))))
+T c==> c==> c/\ cSUBSET f0 f1 cSUBSET f1 f2 cSUBSET * * part cUNION * * part cDIFF f2 f1 * * part cDIFF f1 f2 * * part cDIFF f2 f0 c==> c/\ cSUBSET f0 f1 cSUBSET f1 f2 cSUBSET * * part cUNION * * part cDIFF f2 f1 * * part cDIFF f1 f2 * * part cDIFF f2 f0
+- (~ (c x)), ((c x) /\ (~ (s x))) |- ((~ F) ==> F)
+T c==> c~ * f0 f1 c==> c/\ * f0 f1 c~ * f2 f1 c==> c~ cF cF
++ (i x), ((!x. ((i x) ==> (s x))) /\ (!x. ((s x) ==> (c x)))), (((c x) /\ (~ (s x))) \/ ((s x) /\ (~ (c x)))) |- F
+T c==> * f0 f1 c==> c/\ ! c==> * f0 b0 * f2 b0 ! c==> * f2 b0 * f3 b0 c==> c\/ c/\ * f3 f1 c~ * f2 f1 c/\ * f2 f1 c~ * f3 f1 cF
+- ((i SUBSET s) /\ (s SUBSET c)), (((i SUBSET s) /\ (s SUBSET c)) ==> (((c DIFF s) UNION (s DIFF c)) SUBSET (c DIFF i))) |- ((((i SUBSET s) /\ (s SUBSET c)) ==> (((c DIFF s) UNION (s DIFF c)) SUBSET (c DIFF i))) /\ (((c DIFF s) UNION (s DIFF c)) SUBSET (c DIFF i)))
+T c==> c/\ cSUBSET f0 f1 cSUBSET f1 f2 c==> c==> c/\ cSUBSET f0 f1 cSUBSET f1 f2 cSUBSET * * part cUNION * * part cDIFF f2 f1 * * part cDIFF f1 f2 * * part cDIFF f2 f0 c/\ c==> c/\ cSUBSET f0 f1 cSUBSET f1 f2 cSUBSET * * part cUNION * * part cDIFF f2 f1 * * part cDIFF f1 f2 * * part cDIFF f2 f0 cSUBSET * * part cUNION * * part cDIFF f2 f1 * * part cDIFF f1 f2 * * part cDIFF f2 f0
++ (~ (c x)), ((c x) /\ (~ (s x))) |- (((c x) /\ (~ (s x))) /\ F)
+T c==> c~ * f0 f1 c==> c/\ * f0 f1 c~ * f2 f1 c/\ c/\ * f0 f1 c~ * f2 f1 cF
+- |- (((!s. (!t. ((negligible ((s DIFF t) UNION (t DIFF s))) ==> ((measure s) = (measure t))))) ==> (!s. (!t. ((negligible ((s DIFF t) UNION (t DIFF s))) ==> ((measure s) = (measure t)))))) = (!s. (!t. ((negligible ((s DIFF t) UNION (t DIFF s))) ==> ((measure s) = (measure t))))))
+T c= c==> ! ! c==> cnegligible * * part cUNION * * part cDIFF b0 b1 * * part cDIFF b1 b0 c= cmeasure b0 cmeasure b1 ! ! c==> cnegligible * * part cUNION * * part cDIFF b0 b1 * * part cDIFF b1 b0 c= cmeasure b0 cmeasure b1 ! ! c==> cnegligible * * part cUNION * * part cDIFF b0 b1 * * part cDIFF b1 b0 c= cmeasure b0 cmeasure b1
+- (~ (s x)), ((s x) /\ (~ (c x))) |- ((~ (s x)) /\ (s x))
+T c==> c~ * f0 f1 c==> c/\ * f0 f1 c~ * f2 f1 c/\ c~ * f0 f1 * f0 f1
++ |- (((convex ((voronoi_open s) v)) ==> ((negligible (frontier ((voronoi_open s) v))) = T)) = ((negligible (frontier ((voronoi_open s) v))) = T))
+T c= c==> cconvex * * part cvoronoi_open f0 f1 c= cnegligible * part cfrontier * * part cvoronoi_open f0 f1 cT c= cnegligible * part cfrontier * * part cvoronoi_open f0 f1 cT
+- |- ((!c. (!s. (((!x. ((i x) ==> (s x))) /\ (!x. ((s x) ==> (c x)))) ==> (!x. ((((c x) /\ (~ (s x))) \/ ((s x) /\ (~ (c x)))) ==> ((c x) /\ (~ (i x)))))))) = T)
+T c= ! ! c==> c/\ ! c==> * f0 b2 * b1 b2 ! c==> * b1 b2 * b0 b2 ! c==> c\/ c/\ * b0 b2 c~ * b1 b2 c/\ * b1 b2 c~ * b0 b2 c/\ * b0 b2 c~ * f0 b2 cT
++ ((\s. ((negligible s) /\ (t SUBSET s))) s) |- (((\s. ((negligible s) /\ (t SUBSET s))) s) /\ ((!s. (!t. (((negligible s) /\ (t SUBSET s)) ==> (negligible t)))) ==> (negligible t)))
+T c==> * / c/\ cnegligible b0 cSUBSET f0 b0 f1 c/\ * / c/\ cnegligible b0 cSUBSET f0 b0 f1 c==> ! ! c==> c/\ cnegligible b0 cSUBSET b1 b0 cnegligible b1 cnegligible f0
++ ((\s. ((negligible s) /\ (t SUBSET s))) s) |- ((negligible s) /\ (t SUBSET s))
+T c==> * / c/\ cnegligible b0 cSUBSET f0 b0 f1 c/\ cnegligible f1 cSUBSET f0 f1
+- (!s. (!t. ((negligible ((s DIFF t) UNION (t DIFF s))) ==> ((measure s) = (measure t))))) |- (((negligible ((s DIFF t) UNION (t DIFF s))) ==> ((measure s) = (measure t))) = T)
+T c==> ! ! c==> cnegligible * * part cUNION * * part cDIFF b0 b1 * * part cDIFF b1 b0 c= cmeasure b0 cmeasure b1 c= c==> cnegligible * * part cUNION * * part cDIFF f0 f1 * * part cDIFF f1 f0 c= cmeasure f0 cmeasure f1 cT
++ |- (((voronoi_closed S) v) = (closure ((voronoi_open S) v)))
+T c= * * part cvoronoi_closed f0 f1 * part cclosure * * part cvoronoi_open f0 f1
++ |- (((!v. (convex ((voronoi_open s) v))) ==> ((\v. (convex ((voronoi_open s) v))) v)) = ((\v. (convex ((voronoi_open s) v))) v))
+T c= c==> ! cconvex * * part cvoronoi_open f0 b0 * / cconvex * * part cvoronoi_open f0 b0 f1 * / cconvex * * part cvoronoi_open f0 b0 f1
+- |- (((t1 \/ t2) \/ t3) = (t1 \/ (t2 \/ t3)))
+T c= c\/ c\/ f0 f1 f2 c\/ f0 c\/ f1 f2
+- (!s. (!t. ((negligible ((s DIFF t) UNION (t DIFF s))) ==> ((measure s) = (measure t))))) |- ((!s. (!t. ((negligible ((s DIFF t) UNION (t DIFF s))) ==> ((measure s) = (measure t))))) /\ (!s. (!t. ((negligible ((s DIFF t) UNION (t DIFF s))) ==> ((measure s) = (measure t))))))
+T c==> ! ! c==> cnegligible * * part cUNION * * part cDIFF b0 b1 * * part cDIFF b1 b0 c= cmeasure b0 cmeasure b1 c/\ ! ! c==> cnegligible * * part cUNION * * part cDIFF b0 b1 * * part cDIFF b1 b0 c= cmeasure b0 cmeasure b1 ! ! c==> cnegligible * * part cUNION * * part cDIFF b0 b1 * * part cDIFF b1 b0 c= cmeasure b0 cmeasure b1
++ |- ((s SUBSET (closure s)) = T)
+T c= cSUBSET f0 * part cclosure f0 cT
++ (!s. (!t. (((negligible s) /\ (t SUBSET s)) ==> (negligible t)))) |- ((\s. (!t. (((negligible s) /\ (t SUBSET s)) ==> (negligible t)))) s)
+T c==> ! ! c==> c/\ cnegligible b0 cSUBSET b1 b0 cnegligible b1 * / ! c==> c/\ cnegligible b0 cSUBSET b1 b0 cnegligible b1 f0
++ (convex s) |- ((convex s) /\ ((negligible (frontier s)) = T))
+T c==> cconvex f0 c/\ cconvex f0 c= cnegligible * part cfrontier f0 cT
+- (((~ (((!x. ((i x) ==> (s x))) /\ (!x. ((s x) ==> (c x)))) ==> (!x. ((((c x) /\ (~ (s x))) \/ ((s x) /\ (~ (c x)))) ==> ((c x) /\ (~ (i x))))))) ==> F) ==> ((~ (((!x. ((i x) ==> (s x))) /\ (!x. ((s x) ==> (c x)))) ==> (!x. ((((c x) /\ (~ (s x))) \/ ((s x) /\ (~ (c x)))) ==> ((c x) /\ (~ (i x))))))) ==> F)) |- ((((~ (((!x. ((i x) ==> (s x))) /\ (!x. ((s x) ==> (c x)))) ==> (!x. ((((c x) /\ (~ (s x))) \/ ((s x) /\ (~ (c x)))) ==> ((c x) /\ (~ (i x))))))) ==> F) ==> ((~ (((!x. ((i x) ==> (s x))) /\ (!x. ((s x) ==> (c x)))) ==> (!x. ((((c x) /\ (~ (s x))) \/ ((s x) /\ (~ (c x)))) ==> ((c x) /\ (~ (i x))))))) ==> F)) /\ (((~ (((!x. ((i x) ==> (s x))) /\ (!x. ((s x) ==> (c x)))) ==> (!x. ((((c x) /\ (~ (s x))) \/ ((s x) /\ (~ (c x)))) ==> ((c x) /\ (~ (i x))))))) ==> F) ==> ((~ (((!x. ((i x) ==> (s x))) /\ (!x. ((s x) ==> (c x)))) ==> (!x. ((((c x) /\ (~ (s x))) \/ ((s x) /\ (~ (c x)))) ==> ((c x) /\ (~ (i x))))))) ==> F)))
+T c==> c==> c==> c~ c==> c/\ ! c==> * f0 b0 * f1 b0 ! c==> * f1 b0 * f2 b0 ! c==> c\/ c/\ * f2 b0 c~ * f1 b0 c/\ * f1 b0 c~ * f2 b0 c/\ * f2 b0 c~ * f0 b0 cF c==> c~ c==> c/\ ! c==> * f0 b0 * f1 b0 ! c==> * f1 b0 * f2 b0 ! c==> c\/ c/\ * f2 b0 c~ * f1 b0 c/\ * f1 b0 c~ * f2 b0 c/\ * f2 b0 c~ * f0 b0 cF c/\ c==> c==> c~ c==> c/\ ! c==> * f0 b0 * f1 b0 ! c==> * f1 b0 * f2 b0 ! c==> c\/ c/\ * f2 b0 c~ * f1 b0 c/\ * f1 b0 c~ * f2 b0 c/\ * f2 b0 c~ * f0 b0 cF c==> c~ c==> c/\ ! c==> * f0 b0 * f1 b0 ! c==> * f1 b0 * f2 b0 ! c==> c\/ c/\ * f2 b0 c~ * f1 b0 c/\ * f1 b0 c~ * f2 b0 c/\ * f2 b0 c~ * f0 b0 cF c==> c==> c~ c==> c/\ ! c==> * f0 b0 * f1 b0 ! c==> * f1 b0 * f2 b0 ! c==> c\/ c/\ * f2 b0 c~ * f1 b0 c/\ * f1 b0 c~ * f2 b0 c/\ * f2 b0 c~ * f0 b0 cF c==> c~ c==> c/\ ! c==> * f0 b0 * f1 b0 ! c==> * f1 b0 * f2 b0 ! c==> c\/ c/\ * f2 b0 c~ * f1 b0 c/\ * f1 b0 c~ * f2 b0 c/\ * f2 b0 c~ * f0 b0 cF
++ |- ((convex ((voronoi_open s) v)) = T)
+T c= cconvex * * part cvoronoi_open f0 f1 cT
+- (~ (i x)), (i x) |- ((~ (i x)) /\ (i x))
+T c==> c~ * f0 f1 c==> * f0 f1 c/\ c~ * f0 f1 * f0 f1
+- |- ((!x. (P \/ (Q x))) = (P \/ (!x. (Q x))))
+T c= ! c\/ f0 * f1 b0 c\/ f0 ! * f1 b0
+- ((~ (((!x. ((i x) ==> (s x))) /\ (!x. ((s x) ==> (c x)))) ==> (!x. ((((c x) /\ (~ (s x))) \/ ((s x) /\ (~ (c x)))) ==> ((c x) /\ (~ (i x))))))) ==> F) |- ((((~ (((!x. ((i x) ==> (s x))) /\ (!x. ((s x) ==> (c x)))) ==> (!x. ((((c x) /\ (~ (s x))) \/ ((s x) /\ (~ (c x)))) ==> ((c x) /\ (~ (i x))))))) ==> F) ==> ((~ (((!x. ((i x) ==> (s x))) /\ (!x. ((s x) ==> (c x)))) ==> (!x. ((((c x) /\ (~ (s x))) \/ ((s x) /\ (~ (c x)))) ==> ((c x) /\ (~ (i x))))))) ==> F)) ==> ((~ (((!x. ((i x) ==> (s x))) /\ (!x. ((s x) ==> (c x)))) ==> (!x. ((((c x) /\ (~ (s x))) \/ ((s x) /\ (~ (c x)))) ==> ((c x) /\ (~ (i x))))))) ==> F))
+T c==> c==> c~ c==> c/\ ! c==> * f0 b0 * f1 b0 ! c==> * f1 b0 * f2 b0 ! c==> c\/ c/\ * f2 b0 c~ * f1 b0 c/\ * f1 b0 c~ * f2 b0 c/\ * f2 b0 c~ * f0 b0 cF c==> c==> c==> c~ c==> c/\ ! c==> * f0 b0 * f1 b0 ! c==> * f1 b0 * f2 b0 ! c==> c\/ c/\ * f2 b0 c~ * f1 b0 c/\ * f1 b0 c~ * f2 b0 c/\ * f2 b0 c~ * f0 b0 cF c==> c~ c==> c/\ ! c==> * f0 b0 * f1 b0 ! c==> * f1 b0 * f2 b0 ! c==> c\/ c/\ * f2 b0 c~ * f1 b0 c/\ * f1 b0 c~ * f2 b0 c/\ * f2 b0 c~ * f0 b0 cF c==> c~ c==> c/\ ! c==> * f0 b0 * f1 b0 ! c==> * f1 b0 * f2 b0 ! c==> c\/ c/\ * f2 b0 c~ * f1 b0 c/\ * f1 b0 c~ * f2 b0 c/\ * f2 b0 c~ * f0 b0 cF
+- |- (((!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))) ==> ((\t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))) t3)) = ((\t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))) t3))
+T c= c==> ! c= c\/ f0 c\/ f1 b0 c\/ c\/ f0 f1 b0 * / c= c\/ f0 c\/ f1 b0 c\/ c\/ f0 f1 b0 f2 * / c= c\/ f0 c\/ f1 b0 c\/ c\/ f0 f1 b0 f2
+- |- ((t /\ t) = t)
+T c= c/\ f0 f0 f0
+- (!s. (!t. ((negligible ((s DIFF t) UNION (t DIFF s))) ==> ((measure s) = (measure t))))) |- ((\s. (!t. ((negligible ((s DIFF t) UNION (t DIFF s))) ==> ((measure s) = (measure t))))) s)
+T c==> ! ! c==> cnegligible * * part cUNION * * part cDIFF b0 b1 * * part cDIFF b1 b0 c= cmeasure b0 cmeasure b1 * / ! c==> cnegligible * * part cUNION * * part cDIFF b0 b1 * * part cDIFF b1 b0 c= cmeasure b0 cmeasure b1 f0
+- (!s. (!t. ((negligible ((s DIFF t) UNION (t DIFF s))) ==> ((measure s) = (measure t))))), (negligible ((s DIFF t) UNION (t DIFF s))) |- ((!s. (!t. ((negligible ((s DIFF t) UNION (t DIFF s))) ==> ((measure s) = (measure t))))) /\ ((measure s) = (measure t)))
+T c==> ! ! c==> cnegligible * * part cUNION * * part cDIFF b0 b1 * * part cDIFF b1 b0 c= cmeasure b0 cmeasure b1 c==> cnegligible * * part cUNION * * part cDIFF f0 f1 * * part cDIFF f1 f0 c/\ ! ! c==> cnegligible * * part cUNION * * part cDIFF b0 b1 * * part cDIFF b1 b0 c= cmeasure b0 cmeasure b1 c= cmeasure f0 cmeasure f1
+- |- ((\c. (!s. ((~ (((!x. ((i x) ==> (s x))) /\ (!x. ((s x) ==> (c x)))) ==> (!x. ((((c x) /\ (~ (s x))) \/ ((s x) /\ (~ (c x)))) ==> ((c x) /\ (~ (i x))))))) ==> F))) c)
+T * / ! c==> c~ c==> c/\ ! c==> * f0 b2 * b1 b2 ! c==> * b1 b2 * b0 b2 ! c==> c\/ c/\ * b0 b2 c~ * b1 b2 c/\ * b1 b2 c~ * b0 b2 c/\ * b0 b2 c~ * f0 b2 cF f1
+- (!s. (!t. ((negligible ((s DIFF t) UNION (t DIFF s))) ==> ((measure s) = (measure t))))) |- ((\t. ((negligible ((s DIFF t) UNION (t DIFF s))) ==> ((measure s) = (measure t)))) t)
+T c==> ! ! c==> cnegligible * * part cUNION * * part cDIFF b0 b1 * * part cDIFF b1 b0 c= cmeasure b0 cmeasure b1 * / c==> cnegligible * * part cUNION * * part cDIFF f0 b0 * * part cDIFF b0 f0 c= cmeasure f0 cmeasure b0 f1
+- (i x), ((!x. ((i x) ==> (s x))) /\ (!x. ((s x) ==> (c x)))), ((c x) /\ (~ (s x))) |- ((~ F) ==> F)
+T c==> * f0 f1 c==> c/\ ! c==> * f0 b0 * f2 b0 ! c==> * f2 b0 * f3 b0 c==> c/\ * f3 f1 c~ * f2 f1 c==> c~ cF cF
+- |- ((!x. (P x)) = ((P T) /\ (P F)))
+T c= ! * f0 b0 c/\ * f0 cT * f0 cF
+- |- (((!t1. (!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))))) ==> ((\t1. (!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))))) t1)) = ((\t1. (!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))))) t1))
+T c= c==> ! ! ! c= c\/ b0 c\/ b1 b2 c\/ c\/ b0 b1 b2 * / ! ! c= c\/ b0 c\/ b1 b2 c\/ c\/ b0 b1 b2 f0 * / ! ! c= c\/ b0 c\/ b1 b2 c\/ c\/ b0 b1 b2 f0
+- |- (((!s. ((~ (((!x. ((i x) ==> (s x))) /\ (!x. ((s x) ==> (c x)))) ==> (!x. ((((c x) /\ (~ (s x))) \/ ((s x) /\ (~ (c x)))) ==> ((c x) /\ (~ (i x))))))) ==> F)) ==> ((\s. ((~ (((!x. ((i x) ==> (s x))) /\ (!x. ((s x) ==> (c x)))) ==> (!x. ((((c x) /\ (~ (s x))) \/ ((s x) /\ (~ (c x)))) ==> ((c x) /\ (~ (i x))))))) ==> F)) s)) = ((\s. ((~ (((!x. ((i x) ==> (s x))) /\ (!x. ((s x) ==> (c x)))) ==> (!x. ((((c x) /\ (~ (s x))) \/ ((s x) /\ (~ (c x)))) ==> ((c x) /\ (~ (i x))))))) ==> F)) s))
+T c= c==> ! c==> c~ c==> c/\ ! c==> * f0 b1 * b0 b1 ! c==> * b0 b1 * f1 b1 ! c==> c\/ c/\ * f1 b1 c~ * b0 b1 c/\ * b0 b1 c~ * f1 b1 c/\ * f1 b1 c~ * f0 b1 cF * / c==> c~ c==> c/\ ! c==> * f0 b1 * b0 b1 ! c==> * b0 b1 * f1 b1 ! c==> c\/ c/\ * f1 b1 c~ * b0 b1 c/\ * b0 b1 c~ * f1 b1 c/\ * f1 b1 c~ * f0 b1 cF f2 * / c==> c~ c==> c/\ ! c==> * f0 b1 * b0 b1 ! c==> * b0 b1 * f1 b1 ! c==> c\/ c/\ * f1 b1 c~ * b0 b1 c/\ * b0 b1 c~ * f1 b1 c/\ * f1 b1 c~ * f0 b1 cF f2
+- (i x) |- ((~ (i x)) ==> (i x))
+T c==> * f0 f1 c==> c~ * f0 f1 * f0 f1
+- |- ((\s. ((~ (((!x. ((i x) ==> (s x))) /\ (!x. ((s x) ==> (c x)))) ==> (!x. ((((c x) /\ (~ (s x))) \/ ((s x) /\ (~ (c x)))) ==> ((c x) /\ (~ (i x))))))) ==> F)) s)
+T * / c==> c~ c==> c/\ ! c==> * f0 b1 * b0 b1 ! c==> * b0 b1 * f1 b1 ! c==> c\/ c/\ * f1 b1 c~ * b0 b1 c/\ * b0 b1 c~ * f1 b1 c/\ * f1 b1 c~ * f0 b1 cF f2
+- ((i SUBSET s) /\ (s SUBSET c)), (((i SUBSET s) /\ (s SUBSET c)) ==> (((c DIFF s) UNION (s DIFF c)) SUBSET (c DIFF i))) |- (((i SUBSET s) /\ (s SUBSET c)) /\ (((c DIFF s) UNION (s DIFF c)) SUBSET (c DIFF i)))
+T c==> c/\ cSUBSET f0 f1 cSUBSET f1 f2 c==> c==> c/\ cSUBSET f0 f1 cSUBSET f1 f2 cSUBSET * * part cUNION * * part cDIFF f2 f1 * * part cDIFF f1 f2 * * part cDIFF f2 f0 c/\ c/\ cSUBSET f0 f1 cSUBSET f1 f2 cSUBSET * * part cUNION * * part cDIFF f2 f1 * * part cDIFF f1 f2 * * part cDIFF f2 f0
+- |- ((!s. (((!x. ((i x) ==> (s x))) /\ (!x. ((s x) ==> (c x)))) ==> (!x. ((((c x) /\ (~ (s x))) \/ ((s x) /\ (~ (c x)))) ==> ((c x) /\ (~ (i x))))))) = T)
+T c= ! c==> c/\ ! c==> * f0 b1 * b0 b1 ! c==> * b0 b1 * f1 b1 ! c==> c\/ c/\ * f1 b1 c~ * b0 b1 c/\ * b0 b1 c~ * f1 b1 c/\ * f1 b1 c~ * f0 b1 cT
+- (((i SUBSET s) /\ (s SUBSET c)) ==> (((c DIFF s) UNION (s DIFF c)) SUBSET (c DIFF i))) |- ((((i SUBSET s) /\ (s SUBSET c)) ==> (((c DIFF s) UNION (s DIFF c)) SUBSET (c DIFF i))) /\ (((i SUBSET s) /\ (s SUBSET c)) ==> (((c DIFF s) UNION (s DIFF c)) SUBSET (c DIFF i))))
+T c==> c==> c/\ cSUBSET f0 f1 cSUBSET f1 f2 cSUBSET * * part cUNION * * part cDIFF f2 f1 * * part cDIFF f1 f2 * * part cDIFF f2 f0 c/\ c==> c/\ cSUBSET f0 f1 cSUBSET f1 f2 cSUBSET * * part cUNION * * part cDIFF f2 f1 * * part cDIFF f1 f2 * * part cDIFF f2 f0 c==> c/\ cSUBSET f0 f1 cSUBSET f1 f2 cSUBSET * * part cUNION * * part cDIFF f2 f1 * * part cDIFF f1 f2 * * part cDIFF f2 f0
+- ((s x) /\ (~ (c x))) |- ((~ (s x)) ==> (s x))
+T c==> c/\ * f0 f1 c~ * f2 f1 c==> c~ * f0 f1 * f0 f1
+- |- ((((!x. ((i x) ==> (s x))) /\ (!x. ((s x) ==> (c x)))) ==> (!x. ((((c x) /\ (~ (s x))) \/ ((s x) /\ (~ (c x)))) ==> ((c x) /\ (~ (i x)))))) = T)
+T c= c==> c/\ ! c==> * f0 b0 * f1 b0 ! c==> * f1 b0 * f2 b0 ! c==> c\/ c/\ * f2 b0 c~ * f1 b0 c/\ * f1 b0 c~ * f2 b0 c/\ * f2 b0 c~ * f0 b0 cT
+- |- ((!i. (!c. (!s. (((!x. ((i x) ==> (s x))) /\ (!x. ((s x) ==> (c x)))) ==> (!x. ((((c x) /\ (~ (s x))) \/ ((s x) /\ (~ (c x)))) ==> ((c x) /\ (~ (i x))))))))) = (!i. (!c. (!s. ((~ (((!x. ((i x) ==> (s x))) /\ (!x. ((s x) ==> (c x)))) ==> (!x. ((((c x) /\ (~ (s x))) \/ ((s x) /\ (~ (c x)))) ==> ((c x) /\ (~ (i x))))))) ==> F)))))
+T c= ! ! ! c==> c/\ ! c==> * b0 b3 * b2 b3 ! c==> * b2 b3 * b1 b3 ! c==> c\/ c/\ * b1 b3 c~ * b2 b3 c/\ * b2 b3 c~ * b1 b3 c/\ * b1 b3 c~ * b0 b3 ! ! ! c==> c~ c==> c/\ ! c==> * b0 b3 * b2 b3 ! c==> * b2 b3 * b1 b3 ! c==> c\/ c/\ * b1 b3 c~ * b2 b3 c/\ * b2 b3 c~ * b1 b3 c/\ * b1 b3 c~ * b0 b3 cF

@@ -1,0 +1,66 @@
+N Hypermap_iso.iso_simple_imp
+C |- (!f. (!G. (!H. (((hyp_iso f) (H , G)) ==> ((simple_hypermap G) ==> (simple_hypermap H))))))
+T c==> chyp_iso f0 c, f1 f2 c==> csimple_hypermap f2 csimple_hypermap f1
+D TRUTH
+A |- T
+T cT
+D BOOL_CASES_AX
+A |- (!t. ((t = T) \/ (t = F)))
+T c\/ c= f0 cT c= f0 cF
+D EXTENSION
+A |- (!s. (!t. ((s = t) = (!x. ((x IN s) = (x IN t))))))
+T c= c= f0 f1 ! c= cIN b0 f0 cIN b0 f1
+D SUBSET
+A |- (!s. (!t. ((s SUBSET t) = (!x. ((x IN s) ==> (x IN t))))))
+T c= cSUBSET f0 f1 ! c==> cIN b0 f0 cIN b0 f1
+D IN_INTER
+A |- (!s. (!t. (!x. ((x IN (s INTER t)) = ((x IN s) /\ (x IN t))))))
+T c= cIN f0 * * part cINTER f1 f2 c/\ cIN f0 f1 cIN f0 f2
+D IN_SING
+A |- (!x. (!y. ((x IN (y INSERT EMPTY)) = (x = y))))
+T c= cIN f0 * * part cINSERT f1 part cEMPTY c= f0 f1
+D IN_IMAGE
+A |- (!y. (!s. (!f. ((y IN ((IMAGE f) s)) = (?x. ((y = (f x)) /\ (x IN s)))))))
+T c= cIN f0 * * part cIMAGE f1 f2 c? / c/\ c= f0 * f1 b0 cIN b0 f2
+D SING_SUBSET
+A |- (!s. (!x. (((x INSERT EMPTY) SUBSET s) = (x IN s))))
+T c= cSUBSET * * part cINSERT f0 part cEMPTY f1 cIN f0 f1
+D Hypermap.edge
+A |- (!H. (!x. (((edge H) x) = ((orbit_map (edge_map H)) x))))
+T c= * * part cedge f0 f1 * * part corbit_map * part cedge_map f0 f1
+D Hypermap.node
+A |- (!H. (!x. (((node H) x) = ((orbit_map (node_map H)) x))))
+T c= * * part cnode f0 f1 * * part corbit_map * part cnode_map f0 f1
+D Hypermap.face
+A |- (!H. (!x. (((face H) x) = ((orbit_map (face_map H)) x))))
+T c= * * part cface f0 f1 * * part corbit_map * part cface_map f0 f1
+D Hypermap.simple_hypermap
+A |- (!H. ((simple_hypermap H) = (!x. ((x IN (dart H)) ==> ((((node H) x) INTER ((face H) x)) = (x INSERT EMPTY))))))
+T c= csimple_hypermap f0 ! c==> cIN b0 * part cdart f0 c= * * part cINTER * * part cnode f0 b0 * * part cface f0 b0 * * part cINSERT b0 part cEMPTY
+D Hypermap.lemma_dart_invariant
+A |- (!H. (!x. ((x IN (dart H)) ==> ((((edge_map H) x) IN (dart H)) /\ ((((node_map H) x) IN (dart H)) /\ (((face_map H) x) IN (dart H)))))))
+T c==> cIN f0 * part cdart f1 c/\ cIN cedge_map f1 f0 * part cdart f1 c/\ cIN cnode_map f1 f0 * part cdart f1 cIN cface_map f1 f0 * part cdart f1
+D Hypermap.lemma_node_subset
+A |- (!H. (!x. ((x IN (dart H)) ==> (((node H) x) SUBSET (dart H)))))
+T c==> cIN f0 * part cdart f1 cSUBSET * * part cnode f1 f0 * part cdart f1
+D Hypermap.lemma_face_subset
+A |- (!H. (!x. ((x IN (dart H)) ==> (((face H) x) SUBSET (dart H)))))
+T c==> cIN f0 * part cdart f1 cSUBSET * * part cface f1 f0 * part cdart f1
+D Ssrbool.andbT
+A |- (!b. ((b /\ T) = b))
+T c= c/\ f0 cT f0
+D Hypermap_iso.hyp_iso
+A |- (!G. (!f. (!H. (((hyp_iso f) (H , G)) = ((((BIJ f) (dart H)) (dart G)) /\ (!x. ((x IN (dart H)) ==> ((((edge_map G) (f x)) = (f ((edge_map H) x))) /\ ((((node_map G) (f x)) = (f ((node_map H) x))) /\ (((face_map G) (f x)) = (f ((face_map H) x))))))))))))
+T c= chyp_iso f0 c, f1 f2 c/\ cBIJ f0 * part cdart f1 * part cdart f2 ! c==> cIN b0 * part cdart f1 c/\ c= cedge_map f2 * f0 b0 * f0 cedge_map f1 b0 c/\ c= cnode_map f2 * f0 b0 * f0 cnode_map f1 b0 c= cface_map f2 * f0 b0 * f0 cface_map f1 b0
+D Hypermap_iso.orbit_comm
+A |- (!s. (!g2. (!f. (!g1. ((!x. ((x IN s) ==> ((g1 x) IN s))) ==> ((!x. ((x IN s) ==> ((f (g1 x)) = (g2 (f x))))) ==> (!x. ((x IN s) ==> (((orbit_map g2) (f x)) = ((IMAGE f) ((orbit_map g1) x)))))))))))
+T c==> ! c==> cIN b0 f0 cIN * f1 b0 f0 c==> ! c==> cIN b0 f0 c= * f2 * f1 b0 * f3 * f2 b0 ! c==> cIN b0 f0 c= * * part corbit_map f3 * f2 b0 * * part cIMAGE f2 * * part corbit_map f1 b0
+D Hypermap_iso.image_inter_inj_gen
+A |- (!u. (!f. ((!x. (!y. (((x IN u) /\ ((y IN u) /\ ((f x) = (f y)))) ==> (x = y)))) ==> (!s. (!t. (((s SUBSET u) /\ (t SUBSET u)) ==> (((IMAGE f) (s INTER t)) = (((IMAGE f) s) INTER ((IMAGE f) t)))))))))
+T c==> ! ! c==> c/\ cIN b0 f0 c/\ cIN b1 f0 c= * f1 b0 * f1 b1 c= b0 b1 ! ! c==> c/\ cSUBSET b0 f0 cSUBSET b1 f0 c= * * part cIMAGE f1 * * part cINTER b0 b1 * * part cINTER * * part cIMAGE f1 b0 * * part cIMAGE f1 b1
+D Hypermap_iso.image_set_inj_gen
+A |- (!u. (!f. ((!x. (!y. (((x IN u) /\ ((y IN u) /\ ((f x) = (f y)))) ==> (x = y)))) ==> (!s. (!t. (((s SUBSET u) /\ ((t SUBSET u) /\ (((IMAGE f) s) = ((IMAGE f) t)))) ==> (s = t)))))))
+T c==> ! ! c==> c/\ cIN b0 f0 c/\ cIN b1 f0 c= * f1 b0 * f1 b1 c= b0 b1 ! ! c==> c/\ cSUBSET b0 f0 c/\ cSUBSET b1 f0 c= * * part cIMAGE f1 b0 * * part cIMAGE f1 b1 c= b0 b1
+D Hypermap_iso.bij_alt
+A |- (!f. (!s. (!t. ((((BIJ f) s) t) = ((!x. ((x IN s) ==> ((f x) IN t))) /\ ((!x. (!y. (((x IN s) /\ ((y IN s) /\ ((f x) = (f y)))) ==> (x = y)))) /\ (!y. ((y IN t) ==> (?x. ((x IN s) /\ ((f x) = y)))))))))))
+T c= cBIJ f0 f1 f2 c/\ ! c==> cIN b0 f1 cIN * f0 b0 f2 c/\ ! ! c==> c/\ cIN b0 f1 c/\ cIN b1 f1 c= * f0 b0 * f0 b1 c= b0 b1 ! c==> cIN b0 f2 c? / c/\ cIN b1 f1 c= * f0 b1 b0

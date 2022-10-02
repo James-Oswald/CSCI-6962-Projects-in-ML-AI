@@ -1,0 +1,129 @@
+N Ohcgkfu.uniq_append_betwn
+C |- (((uniq r) /\ (((MEM z) r) /\ (((MEM y) r) /\ (~ (z = y))))) ==> (uniq ((APPEND ((CONS z) NIL)) ((APPEND (((betwn r) z) y)) ((CONS y) NIL)))))
+T c==> c/\ cuniq f0 c/\ cMEM f1 f0 c/\ cMEM f2 f0 c~ c= f1 f2 cuniq cAPPEND cCONS f1 cNIL cAPPEND cbetwn f0 f1 f2 cCONS f2 cNIL
+D TRUTH
+A |- T
+T cT
+D MEM_APPEND
+A |- (!x. (!l1. (!l2. (((MEM x) ((APPEND l1) l2)) = (((MEM x) l1) \/ ((MEM x) l2))))))
+T c= cMEM f0 cAPPEND f1 f2 c\/ cMEM f0 f1 cMEM f0 f2
+D Seq.mem_seq1
+A |- (!x. (!y. (((MEM x) ((CONS y) NIL)) = (x = y))))
+T c= cMEM f0 cCONS f1 cNIL c= f0 f1
+D Seq.hasPn
+A |- (!a. (!s. ((!x. (((MEM x) s) ==> (~ (a x)))) = (~ ((has a) s)))))
+T c= ! c==> cMEM b0 f0 c~ * f1 b0 c~ chas f1 f0
+D Seq.cat_uniq
+A |- (!s1. (!s2. ((uniq ((cat s1) s2)) = ((uniq s1) /\ ((~ ((has (\x. ((MEM x) s1))) s2)) /\ (uniq s2))))))
+T c= cuniq ccat f0 f1 c/\ cuniq f0 c/\ c~ chas / cMEM b0 f0 f1 cuniq f1
+D Seq2.APPEND_cat
+A |- (APPEND = cat)
+T c= part cAPPEND part ccat
+D Tame_list.not_betwn1
+A |- (!x. (!z. (!s. (((uniq s) /\ ((MEM z) s)) ==> (~ ((MEM x) (((betwn s) x) z)))))))
+T c==> c/\ cuniq f0 cMEM f1 f0 c~ cMEM f2 cbetwn f0 f2 f1
+D Tame_list.not_betwn2
+A |- (!x. (!z. (!s. ((uniq s) ==> (~ ((MEM z) (((betwn s) x) z)))))))
+T c==> cuniq f0 c~ cMEM f1 cbetwn f0 f2 f1
+D Ohcgkfu.uniq_sing
+A |- (uniq ((CONS x) NIL))
+T cuniq cCONS f0 cNIL
+D Ohcgkfu.uniq_betwn
+A |- (!r. (((uniq r) /\ (((MEM z) r) /\ (((MEM y) r) /\ (~ (z = y))))) ==> (uniq (((betwn r) z) y))))
+T c==> c/\ cuniq f0 c/\ cMEM f1 f0 c/\ cMEM f2 f0 c~ c= f1 f2 cuniq cbetwn f0 f1 f2
+- (uniq r), ((MEM y) (((betwn r) z) y)) |- (((MEM y) (((betwn r) z) y)) /\ F)
+T c==> cuniq f0 c==> cMEM f1 cbetwn f0 f2 f1 c/\ cMEM f1 cbetwn f0 f2 f1 cF
++ (~ (z = y)), (uniq r), ((MEM y) r), ((MEM z) r) |- ((uniq (((betwn r) z) y)) /\ (!x. ((x = y) ==> (~ ((MEM x) (((betwn r) z) y))))))
+T c==> c~ c= f0 f1 c==> cuniq f2 c==> cMEM f1 f2 c==> cMEM f0 f2 c/\ cuniq cbetwn f2 f0 f1 ! c==> c= b0 f1 c~ cMEM b0 cbetwn f2 f0 f1
++ |- (((!s1. (!s2. ((uniq ((cat s1) s2)) = ((uniq s1) /\ ((~ ((has (\x. ((MEM x) s1))) s2)) /\ (uniq s2)))))) ==> ((\s1. (!s2. ((uniq ((cat s1) s2)) = ((uniq s1) /\ ((~ ((has (\x. ((MEM x) s1))) s2)) /\ (uniq s2)))))) s1)) = ((\s1. (!s2. ((uniq ((cat s1) s2)) = ((uniq s1) /\ ((~ ((has (\x. ((MEM x) s1))) s2)) /\ (uniq s2)))))) s1))
+T c= c==> ! ! c= cuniq ccat b0 b1 c/\ cuniq b0 c/\ c~ chas / cMEM b2 b0 b1 cuniq b1 * / ! c= cuniq ccat b0 b1 c/\ cuniq b0 c/\ c~ chas / cMEM b2 b0 b1 cuniq b1 f0 * / ! c= cuniq ccat b0 b1 c/\ cuniq b0 c/\ c~ chas / cMEM b2 b0 b1 cuniq b1 f0
++ |- ((\x. (!z. (!s. (((uniq s) /\ ((MEM z) s)) ==> (~ ((MEM x) (((betwn s) x) z))))))) x)
+T * / ! ! c==> c/\ cuniq b2 cMEM b1 b2 c~ cMEM b0 cbetwn b2 b0 b1 f0
++ (~ (z = y)), (uniq r), ((MEM x) ((cat (((betwn r) z) y)) ((CONS y) NIL))), ((MEM y) r) |- (~ (x = z))
+T c==> c~ c= f0 f1 c==> cuniq f2 c==> cMEM f3 ccat cbetwn f2 f0 f1 cCONS f1 cNIL c==> cMEM f1 f2 c~ c= f3 f0
++ |- ((t /\ T) = t)
+T c= c/\ f0 cT f0
++ |- (((!x. (!l1. (!l2. (((MEM x) ((APPEND l1) l2)) = (((MEM x) l1) \/ ((MEM x) l2)))))) ==> ((\x. (!l1. (!l2. (((MEM x) ((APPEND l1) l2)) = (((MEM x) l1) \/ ((MEM x) l2)))))) x)) = ((\x. (!l1. (!l2. (((MEM x) ((APPEND l1) l2)) = (((MEM x) l1) \/ ((MEM x) l2)))))) x))
+T c= c==> ! ! ! c= cMEM b0 cAPPEND b1 b2 c\/ cMEM b0 b1 cMEM b0 b2 * / ! ! c= cMEM b0 cAPPEND b1 b2 c\/ cMEM b0 b1 cMEM b0 b2 f0 * / ! ! c= cMEM b0 cAPPEND b1 b2 c\/ cMEM b0 b1 cMEM b0 b2 f0
++ (uniq r) |- (((MEM y) (((betwn r) z) y)) = F)
+T c==> cuniq f0 c= cMEM f1 cbetwn f0 f2 f1 cF
+- (!r. (((uniq r) /\ (((MEM z) r) /\ (((MEM y) r) /\ (~ (z = y))))) ==> (uniq (((betwn r) z) y)))), ((uniq r) /\ (((MEM z) r) /\ (((MEM y) r) /\ (~ (z = y))))) |- ((!r. (((uniq r) /\ (((MEM z) r) /\ (((MEM y) r) /\ (~ (z = y))))) ==> (uniq (((betwn r) z) y)))) /\ (uniq (((betwn r) z) y)))
+T c==> ! c==> c/\ cuniq b0 c/\ cMEM f0 b0 c/\ cMEM f1 b0 c~ c= f0 f1 cuniq cbetwn b0 f0 f1 c==> c/\ cuniq f2 c/\ cMEM f0 f2 c/\ cMEM f1 f2 c~ c= f0 f1 c/\ ! c==> c/\ cuniq b0 c/\ cMEM f0 b0 c/\ cMEM f1 b0 c~ c= f0 f1 cuniq cbetwn b0 f0 f1 cuniq cbetwn f2 f0 f1
++ (~ (z = y)), (uniq r), ((MEM y) r), ((MEM z) r) |- ((!x. ((x = y) ==> (~ ((MEM x) (((betwn r) z) y))))) = ((uniq (((betwn r) z) y)) /\ (!x. ((x = y) ==> (~ ((MEM x) (((betwn r) z) y)))))))
+T c==> c~ c= f0 f1 c==> cuniq f2 c==> cMEM f1 f2 c==> cMEM f0 f2 c= ! c==> c= b0 f1 c~ cMEM b0 cbetwn f2 f0 f1 c/\ cuniq cbetwn f2 f0 f1 ! c==> c= b0 f1 c~ cMEM b0 cbetwn f2 f0 f1
++ (~ (z = y)), (uniq r), ((MEM y) r), ((MEM z) r) |- ((!x. (((MEM x) ((cat (((betwn r) z) y)) ((CONS y) NIL))) ==> (~ (x = z)))) /\ ((uniq (((betwn r) z) y)) /\ (!x. ((x = y) ==> (~ ((MEM x) (((betwn r) z) y)))))))
+T c==> c~ c= f0 f1 c==> cuniq f2 c==> cMEM f1 f2 c==> cMEM f0 f2 c/\ ! c==> cMEM b0 ccat cbetwn f2 f0 f1 cCONS f1 cNIL c~ c= b0 f0 c/\ cuniq cbetwn f2 f0 f1 ! c==> c= b0 f1 c~ cMEM b0 cbetwn f2 f0 f1
+- ((uniq r) /\ (((MEM z) r) /\ (((MEM y) r) /\ (~ (z = y))))) |- ((!r. (((uniq r) /\ (((MEM z) r) /\ (((MEM y) r) /\ (~ (z = y))))) ==> (uniq (((betwn r) z) y)))) ==> (uniq (((betwn r) z) y)))
+T c==> c/\ cuniq f0 c/\ cMEM f1 f0 c/\ cMEM f2 f0 c~ c= f1 f2 c==> ! c==> c/\ cuniq b0 c/\ cMEM f1 b0 c/\ cMEM f2 b0 c~ c= f1 f2 cuniq cbetwn b0 f1 f2 cuniq cbetwn f0 f1 f2
++ (uniq r) |- (T = (((MEM y) (((betwn r) z) y)) ==> F))
+T c==> cuniq f0 c= cT c==> cMEM f1 cbetwn f0 f2 f1 cF
++ |- (((!l1. (!l2. (((MEM x) ((APPEND l1) l2)) = (((MEM x) l1) \/ ((MEM x) l2))))) ==> ((\l1. (!l2. (((MEM x) ((APPEND l1) l2)) = (((MEM x) l1) \/ ((MEM x) l2))))) l1)) = ((\l1. (!l2. (((MEM x) ((APPEND l1) l2)) = (((MEM x) l1) \/ ((MEM x) l2))))) l1))
+T c= c==> ! ! c= cMEM f0 cAPPEND b0 b1 c\/ cMEM f0 b0 cMEM f0 b1 * / ! c= cMEM f0 cAPPEND b0 b1 c\/ cMEM f0 b0 cMEM f0 b1 f1 * / ! c= cMEM f0 cAPPEND b0 b1 c\/ cMEM f0 b0 cMEM f0 b1 f1
++ |- ((\x. (!z. (!s. ((uniq s) ==> (~ ((MEM z) (((betwn s) x) z))))))) x)
+T * / ! ! c==> cuniq b2 c~ cMEM b1 cbetwn b2 b0 b1 f0
++ (~ (z = y)), (uniq r), ((MEM y) r) |- (((MEM x) ((cat (((betwn r) z) y)) ((CONS y) NIL))) ==> (~ (x = z)))
+T c==> c~ c= f0 f1 c==> cuniq f2 c==> cMEM f1 f2 c==> cMEM f3 ccat cbetwn f2 f0 f1 cCONS f1 cNIL c~ c= f3 f0
++ |- (((!s2. ((uniq ((cat s1) s2)) = ((uniq s1) /\ ((~ ((has (\x. ((MEM x) s1))) s2)) /\ (uniq s2))))) ==> ((\s2. ((uniq ((cat s1) s2)) = ((uniq s1) /\ ((~ ((has (\x. ((MEM x) s1))) s2)) /\ (uniq s2))))) s2)) = ((\s2. ((uniq ((cat s1) s2)) = ((uniq s1) /\ ((~ ((has (\x. ((MEM x) s1))) s2)) /\ (uniq s2))))) s2))
+T c= c==> ! c= cuniq ccat f0 b0 c/\ cuniq f0 c/\ c~ chas / cMEM b1 f0 b0 cuniq b0 * / c= cuniq ccat f0 b0 c/\ cuniq f0 c/\ c~ chas / cMEM b1 f0 b0 cuniq b0 f1 * / c= cuniq ccat f0 b0 c/\ cuniq f0 c/\ c~ chas / cMEM b1 f0 b0 cuniq b0 f1
+- |- ((t ==> t) = T)
+T c= c==> f0 f0 cT
++ |- (((!s. ((~ ((has a) s)) = (!x. (((MEM x) s) ==> (~ (a x)))))) ==> ((\s. ((~ ((has a) s)) = (!x. (((MEM x) s) ==> (~ (a x)))))) s)) = ((\s. ((~ ((has a) s)) = (!x. (((MEM x) s) ==> (~ (a x)))))) s))
+T c= c==> ! c= c~ chas f0 b0 ! c==> cMEM b1 b0 c~ * f0 b1 * / c= c~ chas f0 b0 ! c==> cMEM b1 b0 c~ * f0 b1 f1 * / c= c~ chas f0 b0 ! c==> cMEM b1 b0 c~ * f0 b1 f1
+- |- ((t \/ t) = t)
+T c= c\/ f0 f0 f0
++ (~ (z = y)), (uniq r), ((MEM x) ((cat (((betwn r) z) y)) ((CONS y) NIL))), ((MEM y) r) |- ((x = z) ==> F)
+T c==> c~ c= f0 f1 c==> cuniq f2 c==> cMEM f3 ccat cbetwn f2 f0 f1 cCONS f1 cNIL c==> cMEM f1 f2 c==> c= f3 f0 cF
++ |- ((\z. (!s. (((uniq s) /\ ((MEM z) s)) ==> (~ ((MEM x) (((betwn s) x) z)))))) z)
+T * / ! c==> c/\ cuniq b1 cMEM b0 b1 c~ cMEM f0 cbetwn b1 f0 b0 f1
++ ((uniq r) /\ (((MEM z) r) /\ (((MEM y) r) /\ (~ (z = y))))) |- (((uniq r) /\ (((MEM z) r) /\ (((MEM y) r) /\ (~ (z = y))))) /\ ((!x. (((MEM x) ((cat (((betwn r) z) y)) ((CONS y) NIL))) ==> (~ (x = z)))) /\ ((uniq (((betwn r) z) y)) /\ (!x. ((x = y) ==> (~ ((MEM x) (((betwn r) z) y))))))))
+T c==> c/\ cuniq f0 c/\ cMEM f1 f0 c/\ cMEM f2 f0 c~ c= f1 f2 c/\ c/\ cuniq f0 c/\ cMEM f1 f0 c/\ cMEM f2 f0 c~ c= f1 f2 c/\ ! c==> cMEM b0 ccat cbetwn f0 f1 f2 cCONS f2 cNIL c~ c= b0 f1 c/\ cuniq cbetwn f0 f1 f2 ! c==> c= b0 f2 c~ cMEM b0 cbetwn f0 f1 f2
+- (!r. (((uniq r) /\ (((MEM z) r) /\ (((MEM y) r) /\ (~ (z = y))))) ==> (uniq (((betwn r) z) y)))) |- ((((uniq r) /\ (((MEM z) r) /\ (((MEM y) r) /\ (~ (z = y))))) ==> (uniq (((betwn r) z) y))) = T)
+T c==> ! c==> c/\ cuniq b0 c/\ cMEM f0 b0 c/\ cMEM f1 b0 c~ c= f0 f1 cuniq cbetwn b0 f0 f1 c= c==> c/\ cuniq f2 c/\ cMEM f0 f2 c/\ cMEM f1 f2 c~ c= f0 f1 cuniq cbetwn f2 f0 f1 cT
++ |- ((\r. (((uniq r) /\ (((MEM z) r) /\ (((MEM y) r) /\ (~ (z = y))))) ==> (uniq (((betwn r) z) y)))) r)
+T * / c==> c/\ cuniq b0 c/\ cMEM f0 b0 c/\ cMEM f1 b0 c~ c= f0 f1 cuniq cbetwn b0 f0 f1 f2
+- |- (((x = x) ==> p) = p)
+T c= c==> c= f0 f0 f1 f1
+- |- ((!x. t) = t)
+T c= ! f0 f0
++ |- ((\z. (!s. ((uniq s) ==> (~ ((MEM z) (((betwn s) x) z)))))) z)
+T * / ! c==> cuniq b1 c~ cMEM b0 cbetwn b1 f0 b0 f1
++ |- ((t ==> F) = (~ t))
+T c= c==> f0 cF c~ f0
++ |- (((!s. (((uniq s) /\ ((MEM z) s)) ==> (~ ((MEM x) (((betwn s) x) z))))) ==> ((\s. (((uniq s) /\ ((MEM z) s)) ==> (~ ((MEM x) (((betwn s) x) z))))) s)) = ((\s. (((uniq s) /\ ((MEM z) s)) ==> (~ ((MEM x) (((betwn s) x) z))))) s))
+T c= c==> ! c==> c/\ cuniq b0 cMEM f0 b0 c~ cMEM f1 cbetwn b0 f1 f0 * / c==> c/\ cuniq b0 cMEM f0 b0 c~ cMEM f1 cbetwn b0 f1 f0 f2 * / c==> c/\ cuniq b0 cMEM f0 b0 c~ cMEM f1 cbetwn b0 f1 f0 f2
++ (uniq r), ((uniq r) /\ (((MEM z) r) /\ (((MEM y) r) /\ (~ (z = y))))) |- ((!x. (((MEM x) ((cat (((betwn r) z) y)) ((CONS y) NIL))) ==> (~ (x = z)))) /\ ((uniq (((betwn r) z) y)) /\ (!x. ((x = y) ==> (~ ((MEM x) (((betwn r) z) y)))))))
+T c==> cuniq f0 c==> c/\ cuniq f0 c/\ cMEM f1 f0 c/\ cMEM f2 f0 c~ c= f1 f2 c/\ ! c==> cMEM b0 ccat cbetwn f0 f1 f2 cCONS f2 cNIL c~ c= b0 f1 c/\ cuniq cbetwn f0 f1 f2 ! c==> c= b0 f2 c~ cMEM b0 cbetwn f0 f1 f2
++ |- ((\x. (!y. (((MEM x) ((CONS y) NIL)) = (x = y)))) x)
+T * / ! c= cMEM b0 cCONS b1 cNIL c= b0 b1 f0
+- (~ (z = y)) |- (((~ (y = z)) ==> ((y = z) = F)) = ((y = z) = F))
+T c==> c~ c= f0 f1 c= c==> c~ c= f1 f0 c= c= f1 f0 cF c= c= f1 f0 cF
+- |- ((x = x) = T)
+T c= c= f0 f0 cT
+- (y = z) |- (z = y)
+T c==> c= f0 f1 c= f1 f0
+- |- (((!r. (((uniq r) /\ (((MEM z) r) /\ (((MEM y) r) /\ (~ (z = y))))) ==> (uniq (((betwn r) z) y)))) ==> (!r. (((uniq r) /\ (((MEM z) r) /\ (((MEM y) r) /\ (~ (z = y))))) ==> (uniq (((betwn r) z) y))))) = (!r. (((uniq r) /\ (((MEM z) r) /\ (((MEM y) r) /\ (~ (z = y))))) ==> (uniq (((betwn r) z) y)))))
+T c= c==> ! c==> c/\ cuniq b0 c/\ cMEM f0 b0 c/\ cMEM f1 b0 c~ c= f0 f1 cuniq cbetwn b0 f0 f1 ! c==> c/\ cuniq b0 c/\ cMEM f0 b0 c/\ cMEM f1 b0 c~ c= f0 f1 cuniq cbetwn b0 f0 f1 ! c==> c/\ cuniq b0 c/\ cMEM f0 b0 c/\ cMEM f1 b0 c~ c= f0 f1 cuniq cbetwn b0 f0 f1
+- (!r. (((uniq r) /\ (((MEM z) r) /\ (((MEM y) r) /\ (~ (z = y))))) ==> (uniq (((betwn r) z) y)))) |- ((\r. (((uniq r) /\ (((MEM z) r) /\ (((MEM y) r) /\ (~ (z = y))))) ==> (uniq (((betwn r) z) y)))) r)
+T c==> ! c==> c/\ cuniq b0 c/\ cMEM f0 b0 c/\ cMEM f1 b0 c~ c= f0 f1 cuniq cbetwn b0 f0 f1 * / c==> c/\ cuniq b0 c/\ cMEM f0 b0 c/\ cMEM f1 b0 c~ c= f0 f1 cuniq cbetwn b0 f0 f1 f2
+- |- ((!r. (((uniq r) /\ (((MEM z) r) /\ (((MEM y) r) /\ (~ (z = y))))) ==> (uniq (((betwn r) z) y)))) ==> (!r. (((uniq r) /\ (((MEM z) r) /\ (((MEM y) r) /\ (~ (z = y))))) ==> (uniq (((betwn r) z) y)))))
+T c==> ! c==> c/\ cuniq b0 c/\ cMEM f0 b0 c/\ cMEM f1 b0 c~ c= f0 f1 cuniq cbetwn b0 f0 f1 ! c==> c/\ cuniq b0 c/\ cMEM f0 b0 c/\ cMEM f1 b0 c~ c= f0 f1 cuniq cbetwn b0 f0 f1
+- (!r. (((uniq r) /\ (((MEM z) r) /\ (((MEM y) r) /\ (~ (z = y))))) ==> (uniq (((betwn r) z) y)))) |- ((!r. (((uniq r) /\ (((MEM z) r) /\ (((MEM y) r) /\ (~ (z = y))))) ==> (uniq (((betwn r) z) y)))) /\ (!r. (((uniq r) /\ (((MEM z) r) /\ (((MEM y) r) /\ (~ (z = y))))) ==> (uniq (((betwn r) z) y)))))
+T c==> ! c==> c/\ cuniq b0 c/\ cMEM f0 b0 c/\ cMEM f1 b0 c~ c= f0 f1 cuniq cbetwn b0 f0 f1 c/\ ! c==> c/\ cuniq b0 c/\ cMEM f0 b0 c/\ cMEM f1 b0 c~ c= f0 f1 cuniq cbetwn b0 f0 f1 ! c==> c/\ cuniq b0 c/\ cMEM f0 b0 c/\ cMEM f1 b0 c~ c= f0 f1 cuniq cbetwn b0 f0 f1
+- |- ((t /\ t) = t)
+T c= c/\ f0 f0 f0
+- (~ (z = y)) |- (~ (y = z))
+T c==> c~ c= f0 f1 c~ c= f1 f0
+- (uniq r) |- (T = (uniq r))
+T c==> cuniq f0 c= cT cuniq f0
+- (~ (z = y)) |- ((y = z) = F)
+T c==> c~ c= f0 f1 c= c= f1 f0 cF
+- ((MEM y) (((betwn r) z) y)) |- (((MEM y) (((betwn r) z) y)) = T)
+T c==> cMEM f0 cbetwn f1 f2 f0 c= cMEM f0 cbetwn f1 f2 f0 cT
+- |- (((\x. (f x)) y) = (f y))
+T c= * / * f0 b0 f1 * f0 f1
+- (!r. (((uniq r) /\ (((MEM z) r) /\ (((MEM y) r) /\ (~ (z = y))))) ==> (uniq (((betwn r) z) y)))), ((uniq r) /\ (((MEM z) r) /\ (((MEM y) r) /\ (~ (z = y))))) |- (((uniq r) /\ (((MEM z) r) /\ (((MEM y) r) /\ (~ (z = y))))) /\ (uniq (((betwn r) z) y)))
+T c==> ! c==> c/\ cuniq b0 c/\ cMEM f0 b0 c/\ cMEM f1 b0 c~ c= f0 f1 cuniq cbetwn b0 f0 f1 c==> c/\ cuniq f2 c/\ cMEM f0 f2 c/\ cMEM f1 f2 c~ c= f0 f1 c/\ c/\ cuniq f2 c/\ cMEM f0 f2 c/\ cMEM f1 f2 c~ c= f0 f1 cuniq cbetwn f2 f0 f1
+- ((MEM x) ((cat (((betwn r) z) y)) ((CONS y) NIL))) |- (((MEM x) ((cat (((betwn r) z) y)) ((CONS y) NIL))) = T)
+T c==> cMEM f0 ccat cbetwn f1 f2 f3 cCONS f3 cNIL c= cMEM f0 ccat cbetwn f1 f2 f3 cCONS f3 cNIL cT
+- (!r. (((uniq r) /\ (((MEM z) r) /\ (((MEM y) r) /\ (~ (z = y))))) ==> (uniq (((betwn r) z) y)))), ((uniq r) /\ (((MEM z) r) /\ (((MEM y) r) /\ (~ (z = y))))) |- (uniq (((betwn r) z) y))
+T c==> ! c==> c/\ cuniq b0 c/\ cMEM f0 b0 c/\ cMEM f1 b0 c~ c= f0 f1 cuniq cbetwn b0 f0 f1 c==> c/\ cuniq f2 c/\ cMEM f0 f2 c/\ cMEM f1 f2 c~ c= f0 f1 cuniq cbetwn f2 f0 f1

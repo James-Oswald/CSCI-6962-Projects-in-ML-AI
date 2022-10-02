@@ -1,0 +1,434 @@
+N COUNTABLE_DELETE
+C |- (!x. (!s. ((COUNTABLE (s DELETE x)) = (COUNTABLE s))))
+T c= cCOUNTABLE * * part cDELETE f0 f1 cCOUNTABLE f0
+D TRUTH
+A |- T
+T cT
+D EXCLUDED_MIDDLE
+A |- (!t. (t \/ (~ t)))
+T c\/ f0 c~ f0
+D BOOL_CASES_AX
+A |- (!t. ((t = T) \/ (t = F)))
+T c\/ c= f0 cT c= f0 cF
+D NOT_CLAUSES
+A |- ((!t. ((~ (~ t)) = t)) /\ (((~ T) = F) /\ ((~ F) = T)))
+T c/\ ! c= c~ c~ b0 b0 c/\ c= c~ cT cF c= c~ cF cT
+D IN
+A |- (!P. (!x. ((x IN P) = (P x))))
+T c= cIN f0 f1 * f1 f0
+D EXTENSION
+A |- (!s. (!t. ((s = t) = (!x. ((x IN s) = (x IN t))))))
+T c= c= f0 f1 ! c= cIN b0 f0 cIN b0 f1
+D IN_INSERT
+A |- (!x. (!y. (!s. ((x IN (y INSERT s)) = ((x = y) \/ (x IN s))))))
+T c= cIN f0 * * part cINSERT f1 f2 c\/ c= f0 f1 cIN f0 f2
+D IN_DELETE
+A |- (!s. (!x. (!y. ((x IN (s DELETE y)) = ((x IN s) /\ (~ (x = y)))))))
+T c= cIN f0 * * part cDELETE f1 f2 c/\ cIN f0 f1 c~ c= f0 f2
+D COUNTABLE_INSERT
+A |- (!x. (!s. ((COUNTABLE (x INSERT s)) = (COUNTABLE s))))
+T c= cCOUNTABLE * * part cINSERT f0 f1 cCOUNTABLE f1
++ ((~ (x IN s)) ==> ((COUNTABLE (s DELETE x)) = (COUNTABLE s))), ((x IN s) ==> ((COUNTABLE (s DELETE x)) = (COUNTABLE s))) |- ((COUNTABLE (s DELETE x)) = (COUNTABLE s))
+T c==> c==> c~ cIN f0 f1 c= cCOUNTABLE * * part cDELETE f1 f0 cCOUNTABLE f1 c==> c==> cIN f0 f1 c= cCOUNTABLE * * part cDELETE f1 f0 cCOUNTABLE f1 c= cCOUNTABLE * * part cDELETE f1 f0 cCOUNTABLE f1
++ |- ((\x. (!s. ((COUNTABLE (x INSERT s)) = (COUNTABLE s)))) x)
+T * / ! c= cCOUNTABLE * * part cINSERT b0 b1 cCOUNTABLE b1 f0
++ (!x. (!y. (!z. (((x = y) /\ (y = z)) ==> (x = z))))), (?y. ((x = y) /\ (y = z))) |- ((?y. ((x = y) /\ (y = z))) /\ (x = z))
+T c==> ! ! ! c==> c/\ c= b0 b1 c= b1 b2 c= b0 b2 c==> c? / c/\ c= f0 b0 c= b0 f1 c/\ c? / c/\ c= f0 b0 c= b0 f1 c= f0 f1
+- |- ((\t1. (!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))))) t1)
+T * / ! ! c= c\/ b0 c\/ b1 b2 c\/ c\/ b0 b1 b2 f0
+- |- ((~ (x = x)) ==> (x = x))
+T c==> c~ c= f0 f0 c= f0 f0
++ (((x' = x) \/ ((s x') /\ (~ (x' = x)))) /\ (~ (s x'))) |- ((s x') ==> F)
+T c==> c/\ c\/ c= f0 f1 c/\ * f2 f0 c~ c= f0 f1 c~ * f2 f0 c==> * f2 f0 cF
++ |- ((((COUNTABLE (s DELETE x)) = (COUNTABLE (x INSERT (s DELETE x)))) /\ ((COUNTABLE (x INSERT (s DELETE x))) = (COUNTABLE s))) = ((\y. (((COUNTABLE (s DELETE x)) = y) /\ (y = (COUNTABLE s)))) (COUNTABLE (x INSERT (s DELETE x)))))
+T c= c/\ c= cCOUNTABLE * * part cDELETE f0 f1 cCOUNTABLE * * part cINSERT f1 * * part cDELETE f0 f1 c= cCOUNTABLE * * part cINSERT f1 * * part cDELETE f0 f1 cCOUNTABLE f0 * / c/\ c= cCOUNTABLE * * part cDELETE f0 f1 b0 c= b0 cCOUNTABLE f0 cCOUNTABLE * * part cINSERT f1 * * part cDELETE f0 f1
++ (~ (s x')), (((~ (s x')) \/ (x' = x)) /\ (s x')) |- ((~ (s x')) /\ F)
+T c==> c~ * f0 f1 c==> c/\ c\/ c~ * f0 f1 c= f1 f2 * f0 f1 c/\ c~ * f0 f1 cF
++ (~ (s x')), (((~ (x' = x)) /\ ((~ (s x')) \/ (x' = x))) /\ (s x')) |- F
+T c==> c~ * f0 f1 c==> c/\ c/\ c~ c= f1 f2 c\/ c~ * f0 f1 c= f1 f2 * f0 f1 cF
++ ((x = y) /\ (y = z)) |- (((x = y) /\ (y = z)) /\ ((!x. (!y. (!z. (((x = y) /\ (y = z)) ==> (x = z))))) ==> (x = z)))
+T c==> c/\ c= f0 f1 c= f1 f2 c/\ c/\ c= f0 f1 c= f1 f2 c==> ! ! ! c==> c/\ c= b0 b1 c= b1 b2 c= b0 b2 c= f0 f2
++ (~ (((s x') /\ (~ (x' = x))) = (s x'))), ((((s x') /\ (~ (x' = x))) /\ (~ (s x'))) ==> F), ((((~ (s x')) \/ (x' = x)) /\ (s x')) ==> F) |- F
+T c==> c~ c= c/\ * f0 f1 c~ c= f1 f2 * f0 f1 c==> c==> c/\ c/\ * f0 f1 c~ c= f1 f2 c~ * f0 f1 cF c==> c==> c/\ c\/ c~ * f0 f1 c= f1 f2 * f0 f1 cF cF
++ |- ((~ (x IN s)) ==> (!x'. ((x' IN (s DELETE x)) = (x' IN s))))
+T c==> c~ cIN f0 f1 ! c= cIN b0 * * part cDELETE f1 f0 cIN b0 f1
+- (~ (s x')), (((s x') /\ (~ (x' = x))) /\ (~ (s x'))) |- ((~ (s x')) /\ (s x'))
+T c==> c~ * f0 f1 c==> c/\ c/\ * f0 f1 c~ c= f1 f2 c~ * f0 f1 c/\ c~ * f0 f1 * f0 f1
++ (((~ (x' = x)) /\ ((~ (s x')) \/ (x' = x))) /\ (s x')) |- (((s x') ==> F) = F)
+T c==> c/\ c/\ c~ c= f0 f1 c\/ c~ * f2 f0 c= f0 f1 * f2 f0 c= c==> * f2 f0 cF cF
++ |- ((x IN s) \/ (~ (x IN s)))
+T c\/ cIN f0 f1 c~ cIN f0 f1
++ |- ((?y. ((x = y) /\ (y = z))) ==> (x = z))
+T c==> c? / c/\ c= f0 b0 c= b0 f1 c= f0 f1
++ (x IN s) |- (((?y. (((COUNTABLE (s DELETE x)) = y) /\ (y = (COUNTABLE s)))) ==> ((COUNTABLE (s DELETE x)) = (COUNTABLE s))) = ((COUNTABLE (s DELETE x)) = (COUNTABLE s)))
+T c==> cIN f0 f1 c= c==> c? / c/\ c= cCOUNTABLE * * part cDELETE f1 f0 b0 c= b0 cCOUNTABLE f1 c= cCOUNTABLE * * part cDELETE f1 f0 cCOUNTABLE f1 c= cCOUNTABLE * * part cDELETE f1 f0 cCOUNTABLE f1
++ (((~ (x' = x)) /\ ((~ (s x')) \/ (x' = x))) /\ (s x')) |- ((x' = x) ==> F)
+T c==> c/\ c/\ c~ c= f0 f1 c\/ c~ * f2 f0 c= f0 f1 * f2 f0 c==> c= f0 f1 cF
++ (x' = x), (((~ (x' = x)) /\ ((~ (s x')) \/ (x' = x))) /\ (s x')) |- F
+T c==> c= f0 f1 c==> c/\ c/\ c~ c= f0 f1 c\/ c~ * f2 f0 c= f0 f1 * f2 f0 cF
++ |- (((!s. ((COUNTABLE (x INSERT s)) = (COUNTABLE s))) ==> ((\s. ((COUNTABLE (x INSERT s)) = (COUNTABLE s))) s)) = ((\s. ((COUNTABLE (x INSERT s)) = (COUNTABLE s))) s))
+T c= c==> ! c= cCOUNTABLE * * part cINSERT f0 b0 cCOUNTABLE b0 * / c= cCOUNTABLE * * part cINSERT f0 b0 cCOUNTABLE b0 f1 * / c= cCOUNTABLE * * part cINSERT f0 b0 cCOUNTABLE b0 f1
++ (((s x') /\ (~ (x' = x))) /\ (~ (s x'))) |- ((s x') ==> F)
+T c==> c/\ c/\ * f0 f1 c~ c= f1 f2 c~ * f0 f1 c==> * f0 f1 cF
+- |- ((t ==> t) = T)
+T c= c==> f0 f0 cT
++ |- ((((~ (x' = x)) /\ ((~ (s x')) \/ (x' = x))) /\ (s x')) ==> F)
+T c==> c/\ c/\ c~ c= f0 f1 c\/ c~ * f2 f0 c= f0 f1 * f2 f0 cF
+- |- ((t \/ t) = t)
+T c= c\/ f0 f0 f0
++ (~ (s x)), (~ (((s x') /\ (~ (x' = x))) = (s x'))) |- ((~ (((s x') /\ (~ (x' = x))) = (s x'))) /\ F)
+T c==> c~ * f0 f1 c==> c~ c= c/\ * f0 f2 c~ c= f2 f1 * f0 f2 c/\ c~ c= c/\ * f0 f2 c~ c= f2 f1 * f0 f2 cF
++ (!x. (!y. (!z. (((x = y) /\ (y = z)) ==> (x = z))))) |- (!z. ((?y. ((x = y) /\ (y = z))) ==> (x = z)))
+T c==> ! ! ! c==> c/\ c= b0 b1 c= b1 b2 c= b0 b2 ! c==> c? / c/\ c= f0 b1 c= b1 b0 c= f0 b0
+- |- ((!x. ((s x) ==> (!x'. (((x' = x) \/ ((s x') /\ (~ (x' = x)))) = (s x'))))) = T)
+T c= ! c==> * f0 b0 ! c= c\/ c= b1 b0 c/\ * f0 b1 c~ c= b1 b0 * f0 b1 cT
+- (~ F), (~ (s x')), (((~ (s x')) \/ (x' = x)) /\ (s x')) |- ((~ F) /\ F)
+T c==> c~ cF c==> c~ * f0 f1 c==> c/\ c\/ c~ * f0 f1 c= f1 f2 * f0 f1 c/\ c~ cF cF
++ |- (((COUNTABLE (s DELETE x)) = (COUNTABLE s)) = T)
+T c= c= cCOUNTABLE * * part cDELETE f0 f1 cCOUNTABLE f0 cT
++ (((~ (s x')) \/ (x' = x)) /\ (s x')) |- ((~ (s x')) ==> F)
+T c==> c/\ c\/ c~ * f0 f1 c= f1 f2 * f0 f1 c==> c~ * f0 f1 cF
+- |- ((\t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))) t3)
+T * / c= c\/ f0 c\/ f1 b0 c\/ c\/ f0 f1 b0 f2
+- |- (((~ ((s x) ==> (!x'. (((x' = x) \/ ((s x') /\ (~ (x' = x)))) = (s x'))))) ==> F) ==> ((~ ((s x) ==> (!x'. (((x' = x) \/ ((s x') /\ (~ (x' = x)))) = (s x'))))) ==> F))
+T c==> c==> c~ c==> * f0 f1 ! c= c\/ c= b0 f1 c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF c==> c~ c==> * f0 f1 ! c= c\/ c= b0 f1 c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF
+- |- (((!x. ((~ ((~ (s x)) ==> (!x'. (((s x') /\ (~ (x' = x))) = (s x'))))) ==> F)) ==> ((\x. ((~ ((~ (s x)) ==> (!x'. (((s x') /\ (~ (x' = x))) = (s x'))))) ==> F)) x)) = ((\x. ((~ ((~ (s x)) ==> (!x'. (((s x') /\ (~ (x' = x))) = (s x'))))) ==> F)) x))
+T c= c==> ! c==> c~ c==> c~ * f0 b0 ! c= c/\ * f0 b1 c~ c= b1 b0 * f0 b1 cF * / c==> c~ c==> c~ * f0 b0 ! c= c/\ * f0 b1 c~ c= b1 b0 * f0 b1 cF f1 * / c==> c~ c==> c~ * f0 b0 ! c= c/\ * f0 b1 c~ c= b1 b0 * f0 b1 cF f1
+- |- (((~ p) ==> p) = p)
+T c= c==> c~ f0 f0 f0
+- (x' = x), (((~ (x' = x)) /\ ((~ (s x')) \/ (x' = x))) /\ (s x')) |- ((~ F) ==> F)
+T c==> c= f0 f1 c==> c/\ c/\ c~ c= f0 f1 c\/ c~ * f2 f0 c= f0 f1 * f2 f0 c==> c~ cF cF
+- |- ((!x. t) = t)
+T c= ! f0 f0
++ |- (((!t. (t \/ (~ t))) ==> ((\t. (t \/ (~ t))) (x IN s))) = ((\t. (t \/ (~ t))) (x IN s)))
+T c= c==> ! c\/ b0 c~ b0 * / c\/ b0 c~ b0 cIN f0 f1 * / c\/ b0 c~ b0 cIN f0 f1
+- (~ F), (x' = x), (((~ (x' = x)) /\ ((~ (s x')) \/ (x' = x))) /\ (s x')) |- ((~ F) /\ F)
+T c==> c~ cF c==> c= f0 f1 c==> c/\ c/\ c~ c= f0 f1 c\/ c~ * f2 f0 c= f0 f1 * f2 f0 c/\ c~ cF cF
++ (~ (((x' = x) \/ ((s x') /\ (~ (x' = x)))) = (s x'))) |- ((((x' = x) \/ ((s x') /\ (~ (x' = x)))) /\ (~ (s x'))) \/ (((~ (x' = x)) /\ ((~ (s x')) \/ (x' = x))) /\ (s x')))
+T c==> c~ c= c\/ c= f0 f1 c/\ * f2 f0 c~ c= f0 f1 * f2 f0 c\/ c/\ c\/ c= f0 f1 c/\ * f2 f0 c~ c= f0 f1 c~ * f2 f0 c/\ c/\ c~ c= f0 f1 c\/ c~ * f2 f0 c= f0 f1 * f2 f0
+- ((~ ((~ (s x)) ==> (!x'. (((s x') /\ (~ (x' = x))) = (s x'))))) ==> F), (((~ ((~ (s x)) ==> (!x'. (((s x') /\ (~ (x' = x))) = (s x'))))) ==> F) ==> ((~ ((~ (s x)) ==> (!x'. (((s x') /\ (~ (x' = x))) = (s x'))))) ==> F)) |- (((~ ((~ (s x)) ==> (!x'. (((s x') /\ (~ (x' = x))) = (s x'))))) ==> F) /\ ((~ ((~ (s x)) ==> (!x'. (((s x') /\ (~ (x' = x))) = (s x'))))) ==> F))
+T c==> c==> c~ c==> c~ * f0 f1 ! c= c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF c==> c==> c==> c~ c==> c~ * f0 f1 ! c= c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF c==> c~ c==> c~ * f0 f1 ! c= c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF c/\ c==> c~ c==> c~ * f0 f1 ! c= c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF c==> c~ c==> c~ * f0 f1 ! c= c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF
+- (x' = x) |- ((s x) = (s x))
+T c==> c= f0 f1 c= * f2 f1 * f2 f1
++ (!x. (!y. (!z. (((x = y) /\ (y = z)) ==> (x = z))))), ((x = y) /\ (y = z)) |- (x = z)
+T c==> ! ! ! c==> c/\ c= b0 b1 c= b1 b2 c= b0 b2 c==> c/\ c= f0 f1 c= f1 f2 c= f0 f2
+- ((~ ((~ (s x)) ==> (!x'. (((s x') /\ (~ (x' = x))) = (s x'))))) ==> F), (((~ ((~ (s x)) ==> (!x'. (((s x') /\ (~ (x' = x))) = (s x'))))) ==> F) ==> ((~ ((~ (s x)) ==> (!x'. (((s x') /\ (~ (x' = x))) = (s x'))))) ==> F)) |- ((((~ ((~ (s x)) ==> (!x'. (((s x') /\ (~ (x' = x))) = (s x'))))) ==> F) ==> ((~ ((~ (s x)) ==> (!x'. (((s x') /\ (~ (x' = x))) = (s x'))))) ==> F)) /\ ((~ ((~ (s x)) ==> (!x'. (((s x') /\ (~ (x' = x))) = (s x'))))) ==> F))
+T c==> c==> c~ c==> c~ * f0 f1 ! c= c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF c==> c==> c==> c~ c==> c~ * f0 f1 ! c= c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF c==> c~ c==> c~ * f0 f1 ! c= c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF c/\ c==> c==> c~ c==> c~ * f0 f1 ! c= c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF c==> c~ c==> c~ * f0 f1 ! c= c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF c==> c~ c==> c~ * f0 f1 ! c= c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF
+- |- ((t ==> F) = (~ t))
+T c= c==> f0 cF c~ f0
++ (((~ (x' = x)) /\ ((~ (s x')) \/ (x' = x))) /\ (s x')) |- ((((~ (x' = x)) /\ ((~ (s x')) \/ (x' = x))) /\ (s x')) /\ F)
+T c==> c/\ c/\ c~ c= f0 f1 c\/ c~ * f2 f0 c= f0 f1 * f2 f0 c/\ c/\ c/\ c~ c= f0 f1 c\/ c~ * f2 f0 c= f0 f1 * f2 f0 cF
+- |- ((((~ ((s x) ==> (!x'. (((x' = x) \/ ((s x') /\ (~ (x' = x)))) = (s x'))))) ==> F) ==> ((~ ((s x) ==> (!x'. (((x' = x) \/ ((s x') /\ (~ (x' = x)))) = (s x'))))) ==> F)) = ((~ ((s x) ==> (!x'. (((x' = x) \/ ((s x') /\ (~ (x' = x)))) = (s x'))))) ==> F))
+T c= c==> c==> c~ c==> * f0 f1 ! c= c\/ c= b0 f1 c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF c==> c~ c==> * f0 f1 ! c= c\/ c= b0 f1 c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF c==> c~ c==> * f0 f1 ! c= c\/ c= b0 f1 c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF
++ |- (((~ (((s x') /\ (~ (x' = x))) = (s x'))) ==> F) = (((s x') /\ (~ (x' = x))) = (s x')))
+T c= c==> c~ c= c/\ * f0 f1 c~ c= f1 f2 * f0 f1 cF c= c/\ * f0 f1 c~ c= f1 f2 * f0 f1
++ |- (p = ((~ p) ==> F))
+T c= f0 c==> c~ f0 cF
+- |- (((~ ((s x) ==> (!x'. (((x' = x) \/ ((s x') /\ (~ (x' = x)))) = (s x'))))) ==> F) = ((s x) ==> (!x'. (((x' = x) \/ ((s x') /\ (~ (x' = x)))) = (s x')))))
+T c= c==> c~ c==> * f0 f1 ! c= c\/ c= b0 f1 c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF c==> * f0 f1 ! c= c\/ c= b0 f1 c/\ * f0 b0 c~ c= b0 f1 * f0 b0
+- (x IN s) |- ((x IN s) = T)
+T c==> cIN f0 f1 c= cIN f0 f1 cT
+- (~ (s x')), (((~ (x' = x)) /\ ((~ (s x')) \/ (x' = x))) /\ (s x')) |- ((~ (s x')) /\ (s x'))
+T c==> c~ * f0 f1 c==> c/\ c/\ c~ c= f1 f2 c\/ c~ * f0 f1 c= f1 f2 * f0 f1 c/\ c~ * f0 f1 * f0 f1
++ (!x. (!y. (!z. (((x = y) /\ (y = z)) ==> (x = z))))), ((x = y) /\ (y = z)) |- ((!x. (!y. (!z. (((x = y) /\ (y = z)) ==> (x = z))))) /\ (x = z))
+T c==> ! ! ! c==> c/\ c= b0 b1 c= b1 b2 c= b0 b2 c==> c/\ c= f0 f1 c= f1 f2 c/\ ! ! ! c==> c/\ c= b0 b1 c= b1 b2 c= b0 b2 c= f0 f2
++ (~ (((x' = x) \/ ((s x') /\ (~ (x' = x)))) = (s x'))), (s x) |- F
+T c==> c~ c= c\/ c= f0 f1 c/\ * f2 f0 c~ c= f0 f1 * f2 f0 c==> * f2 f1 cF
++ (!x. (!y. (!z. (((x = y) /\ (y = z)) ==> (x = z))))) |- ((\x. (!y. (!z. (((x = y) /\ (y = z)) ==> (x = z))))) x)
+T c==> ! ! ! c==> c/\ c= b0 b1 c= b1 b2 c= b0 b2 * / ! ! c==> c/\ c= b0 b1 c= b1 b2 c= b0 b2 f0
++ |- ((((s x') /\ (~ (x' = x))) /\ (~ (s x'))) ==> F)
+T c==> c/\ c/\ * f0 f1 c~ c= f1 f2 c~ * f0 f1 cF
++ (!x. (!y. (!z. (((x = y) /\ (y = z)) ==> (x = z))))) |- ((!z. ((?y. ((x = y) /\ (y = z))) ==> (x = z))) = T)
+T c==> ! ! ! c==> c/\ c= b0 b1 c= b1 b2 c= b0 b2 c= ! c==> c? / c/\ c= f0 b1 c= b1 b0 c= f0 b0 cT
++ |- (((!x. (!s. ((COUNTABLE (x INSERT s)) = (COUNTABLE s)))) ==> ((\x. (!s. ((COUNTABLE (x INSERT s)) = (COUNTABLE s)))) x)) = ((\x. (!s. ((COUNTABLE (x INSERT s)) = (COUNTABLE s)))) x))
+T c= c==> ! ! c= cCOUNTABLE * * part cINSERT b0 b1 cCOUNTABLE b1 * / ! c= cCOUNTABLE * * part cINSERT b0 b1 cCOUNTABLE b1 f0 * / ! c= cCOUNTABLE * * part cINSERT b0 b1 cCOUNTABLE b1 f0
+- ((~ ((s x) ==> (!x'. (((x' = x) \/ ((s x') /\ (~ (x' = x)))) = (s x'))))) ==> F), (((~ ((s x) ==> (!x'. (((x' = x) \/ ((s x') /\ (~ (x' = x)))) = (s x'))))) ==> F) ==> ((~ ((s x) ==> (!x'. (((x' = x) \/ ((s x') /\ (~ (x' = x)))) = (s x'))))) ==> F)) |- (((~ ((s x) ==> (!x'. (((x' = x) \/ ((s x') /\ (~ (x' = x)))) = (s x'))))) ==> F) /\ ((~ ((s x) ==> (!x'. (((x' = x) \/ ((s x') /\ (~ (x' = x)))) = (s x'))))) ==> F))
+T c==> c==> c~ c==> * f0 f1 ! c= c\/ c= b0 f1 c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF c==> c==> c==> c~ c==> * f0 f1 ! c= c\/ c= b0 f1 c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF c==> c~ c==> * f0 f1 ! c= c\/ c= b0 f1 c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF c/\ c==> c~ c==> * f0 f1 ! c= c\/ c= b0 f1 c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF c==> c~ c==> * f0 f1 ! c= c\/ c= b0 f1 c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF
+- (~ ((s x) ==> (!x'. (((x' = x) \/ ((s x') /\ (~ (x' = x)))) = (s x'))))) |- F
+T c==> c~ c==> * f0 f1 ! c= c\/ c= b0 f1 c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF
++ |- (((!x. (!y. (!z. (((x = y) /\ (y = z)) ==> (x = z))))) ==> (!x. (!z. ((?y. ((x = y) /\ (y = z))) ==> (x = z))))) = (!x. (!z. ((?y. ((x = y) /\ (y = z))) ==> (x = z)))))
+T c= c==> ! ! ! c==> c/\ c= b0 b1 c= b1 b2 c= b0 b2 ! ! c==> c? / c/\ c= b0 b2 c= b2 b1 c= b0 b1 ! ! c==> c? / c/\ c= b0 b2 c= b2 b1 c= b0 b1
+- |- ((\s. (!x. ((~ ((~ (s x)) ==> (!x'. (((s x') /\ (~ (x' = x))) = (s x'))))) ==> F))) s)
+T * / ! c==> c~ c==> c~ * b0 b1 ! c= c/\ * b0 b2 c~ c= b2 b1 * b0 b2 cF f0
++ (!x. (!y. (!z. (((x = y) /\ (y = z)) ==> (x = z))))) |- (!z. (((x = y) /\ (y = z)) ==> (x = z)))
+T c==> ! ! ! c==> c/\ c= b0 b1 c= b1 b2 c= b0 b2 ! c==> c/\ c= f0 f1 c= f1 b0 c= f0 b0
+- |- (((((~ ((~ (s x)) ==> (!x'. (((s x') /\ (~ (x' = x))) = (s x'))))) ==> F) ==> ((~ ((~ (s x)) ==> (!x'. (((s x') /\ (~ (x' = x))) = (s x'))))) ==> F)) ==> (((~ ((~ (s x)) ==> (!x'. (((s x') /\ (~ (x' = x))) = (s x'))))) ==> F) ==> ((~ ((~ (s x)) ==> (!x'. (((s x') /\ (~ (x' = x))) = (s x'))))) ==> F))) = (((~ ((~ (s x)) ==> (!x'. (((s x') /\ (~ (x' = x))) = (s x'))))) ==> F) ==> ((~ ((~ (s x)) ==> (!x'. (((s x') /\ (~ (x' = x))) = (s x'))))) ==> F)))
+T c= c==> c==> c==> c~ c==> c~ * f0 f1 ! c= c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF c==> c~ c==> c~ * f0 f1 ! c= c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF c==> c==> c~ c==> c~ * f0 f1 ! c= c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF c==> c~ c==> c~ * f0 f1 ! c= c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF c==> c==> c~ c==> c~ * f0 f1 ! c= c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF c==> c~ c==> c~ * f0 f1 ! c= c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF
+- |- ((!x. ((~ (s x)) ==> (!x'. (((s x') /\ (~ (x' = x))) = (s x'))))) = T)
+T c= ! c==> c~ * f0 b0 ! c= c/\ * f0 b1 c~ c= b1 b0 * f0 b1 cT
++ (s x), (((x' = x) \/ ((s x') /\ (~ (x' = x)))) /\ (~ (s x'))), (((s x') /\ (~ (x' = x))) ==> F) |- F
+T c==> * f0 f1 c==> c/\ c\/ c= f2 f1 c/\ * f0 f2 c~ c= f2 f1 c~ * f0 f2 c==> c==> c/\ * f0 f2 c~ c= f2 f1 cF cF
+- |- ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))
+T c= c\/ f0 c\/ f1 f2 c\/ c\/ f0 f1 f2
++ (~ (s x)) |- ((~ (((s x') /\ (~ (x' = x))) = (s x'))) ==> F)
+T c==> c~ * f0 f1 c==> c~ c= c/\ * f0 f2 c~ c= f2 f1 * f0 f2 cF
++ |- (((!x'. (((\y. ((x = y) /\ (y = z))) x') ==> ((!x. (!y. (!z. (((x = y) /\ (y = z)) ==> (x = z))))) ==> (x = z)))) ==> ((?y. ((x = y) /\ (y = z))) ==> ((!x. (!y. (!z. (((x = y) /\ (y = z)) ==> (x = z))))) ==> (x = z)))) = ((?y. ((x = y) /\ (y = z))) ==> ((!x. (!y. (!z. (((x = y) /\ (y = z)) ==> (x = z))))) ==> (x = z))))
+T c= c==> ! c==> * / c/\ c= f0 b1 c= b1 f1 b0 c==> ! ! ! c==> c/\ c= b1 b2 c= b2 b3 c= b1 b3 c= f0 f1 c==> c? / c/\ c= f0 b0 c= b0 f1 c==> ! ! ! c==> c/\ c= b0 b1 c= b1 b2 c= b0 b2 c= f0 f1 c==> c? / c/\ c= f0 b0 c= b0 f1 c==> ! ! ! c==> c/\ c= b0 b1 c= b1 b2 c= b0 b2 c= f0 f1
++ (x' = x), (((~ (x' = x)) /\ ((~ (s x')) \/ (x' = x))) /\ (s x')) |- ((x = x) ==> F)
+T c==> c= f0 f1 c==> c/\ c/\ c~ c= f0 f1 c\/ c~ * f2 f0 c= f0 f1 * f2 f0 c==> c= f1 f1 cF
+- (~ F), (((s x') /\ (~ (x' = x))) /\ (~ (s x'))) |- ((~ F) /\ F)
+T c==> c~ cF c==> c/\ c/\ * f0 f1 c~ c= f1 f2 c~ * f0 f1 c/\ c~ cF cF
++ |- (((s x) ==> (!x'. (((x' = x) \/ ((s x') /\ (~ (x' = x)))) = (s x')))) = ((x IN s) ==> (!x'. ((x' IN (x INSERT (s DELETE x))) = (x' IN s)))))
+T c= c==> * f0 f1 ! c= c\/ c= b0 f1 c/\ * f0 b0 c~ c= b0 f1 * f0 b0 c==> cIN f1 f0 ! c= cIN b0 * * part cINSERT f1 * * part cDELETE f0 f1 cIN b0 f0
+- (((s x') /\ (~ (x' = x))) /\ (~ (s x'))) |- ((~ (s x')) ==> (s x'))
+T c==> c/\ c/\ * f0 f1 c~ c= f1 f2 c~ * f0 f1 c==> c~ * f0 f1 * f0 f1
++ (~ (s x)), (((~ (s x')) \/ (x' = x)) /\ (s x')) |- ((x' = x) ==> F)
+T c==> c~ * f0 f1 c==> c/\ c\/ c~ * f0 f2 c= f2 f1 * f0 f2 c==> c= f2 f1 cF
+- |- ((!s. (!x. ((~ (s x)) ==> (!x'. (((s x') /\ (~ (x' = x))) = (s x')))))) = (!s. (!x. ((~ ((~ (s x)) ==> (!x'. (((s x') /\ (~ (x' = x))) = (s x'))))) ==> F))))
+T c= ! ! c==> c~ * b0 b1 ! c= c/\ * b0 b2 c~ c= b2 b1 * b0 b2 ! ! c==> c~ c==> c~ * b0 b1 ! c= c/\ * b0 b2 c~ c= b2 b1 * b0 b2 cF
+- (~ ((~ (s x)) ==> (!x'. (((s x') /\ (~ (x' = x))) = (s x'))))) |- ((~ ((~ (s x)) ==> (!x'. (((s x') /\ (~ (x' = x))) = (s x'))))) /\ F)
+T c==> c~ c==> c~ * f0 f1 ! c= c/\ * f0 b0 c~ c= b0 f1 * f0 b0 c/\ c~ c==> c~ * f0 f1 ! c= c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF
++ (((s x') /\ (~ (x' = x))) /\ (~ (s x'))) |- (s x')
+T c==> c/\ c/\ * f0 f1 c~ c= f1 f2 c~ * f0 f1 * f0 f1
++ (~ (s x')) |- ((s x') ==> F)
+T c==> c~ * f0 f1 c==> * f0 f1 cF
+- (((~ (s x')) \/ (x' = x)) /\ (s x')) |- ((~ (s x')) ==> (s x'))
+T c==> c/\ c\/ c~ * f0 f1 c= f1 f2 * f0 f1 c==> c~ * f0 f1 * f0 f1
+- (~ F), (~ (s x)), (x' = x), (((~ (s x')) \/ (x' = x)) /\ (s x')) |- ((~ F) /\ F)
+T c==> c~ cF c==> c~ * f0 f1 c==> c= f2 f1 c==> c/\ c\/ c~ * f0 f2 c= f2 f1 * f0 f2 c/\ c~ cF cF
++ |- (T = ((COUNTABLE (s DELETE x)) = (COUNTABLE (x INSERT (s DELETE x)))))
+T c= cT c= cCOUNTABLE * * part cDELETE f0 f1 cCOUNTABLE * * part cINSERT f1 * * part cDELETE f0 f1
++ |- ((\z. ((?y. ((x = y) /\ (y = z))) ==> (x = z))) z)
+T * / c==> c? / c/\ c= f0 b1 c= b1 b0 c= f0 b0 f1
++ (~ (((s x') /\ (~ (x' = x))) = (s x'))) |- ((((s x') /\ (~ (x' = x))) /\ (~ (s x'))) \/ (((~ (s x')) \/ (x' = x)) /\ (s x')))
+T c==> c~ c= c/\ * f0 f1 c~ c= f1 f2 * f0 f1 c\/ c/\ c/\ * f0 f1 c~ c= f1 f2 c~ * f0 f1 c/\ c\/ c~ * f0 f1 c= f1 f2 * f0 f1
+- |- ((\s. (!x. ((~ ((s x) ==> (!x'. (((x' = x) \/ ((s x') /\ (~ (x' = x)))) = (s x'))))) ==> F))) s)
+T * / ! c==> c~ c==> * b0 b1 ! c= c\/ c= b2 b1 c/\ * b0 b2 c~ c= b2 b1 * b0 b2 cF f0
++ |- (((x IN s) ==> (!x'. ((x' IN (x INSERT (s DELETE x))) = (x' IN s)))) = ((x IN s) ==> ((x INSERT (s DELETE x)) = s)))
+T c= c==> cIN f0 f1 ! c= cIN b0 * * part cINSERT f0 * * part cDELETE f1 f0 cIN b0 f1 c==> cIN f0 f1 c= * * part cINSERT f0 * * part cDELETE f1 f0 f1
+- |- ((_131917 = _131918) ==> ((s _131918) \/ (~ (s _131917))))
+T c==> c= f0 f1 c\/ * f2 f1 c~ * f2 f0
++ (((~ (x' = x)) /\ ((~ (s x')) \/ (x' = x))) /\ (s x')) |- (~ (x' = x))
+T c==> c/\ c/\ c~ c= f0 f1 c\/ c~ * f2 f0 c= f0 f1 * f2 f0 c~ c= f0 f1
+- |- ((\t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3)))) t2)
+T * / ! c= c\/ f0 c\/ b0 b1 c\/ c\/ f0 b0 b1 f1
++ (x IN s) |- (?y. (((COUNTABLE (s DELETE x)) = y) /\ (y = (COUNTABLE s))))
+T c==> cIN f0 f1 c? / c/\ c= cCOUNTABLE * * part cDELETE f1 f0 b0 c= b0 cCOUNTABLE f1
+- (~ (s x')), (((~ (s x')) \/ (x' = x)) /\ (s x')) |- ((~ F) ==> F)
+T c==> c~ * f0 f1 c==> c/\ c\/ c~ * f0 f1 c= f1 f2 * f0 f1 c==> c~ cF cF
+- |- (((~ ((~ (s x)) ==> (!x'. (((s x') /\ (~ (x' = x))) = (s x'))))) ==> F) = ((~ (s x)) ==> (!x'. (((s x') /\ (~ (x' = x))) = (s x')))))
+T c= c==> c~ c==> c~ * f0 f1 ! c= c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF c==> c~ * f0 f1 ! c= c/\ * f0 b0 c~ c= b0 f1 * f0 b0
++ (!x. (!y. (!z. (((x = y) /\ (y = z)) ==> (x = z))))) |- ((!x. (!y. (!z. (((x = y) /\ (y = z)) ==> (x = z))))) /\ (!x. (!z. ((?y. ((x = y) /\ (y = z))) ==> (x = z)))))
+T c==> ! ! ! c==> c/\ c= b0 b1 c= b1 b2 c= b0 b2 c/\ ! ! ! c==> c/\ c= b0 b1 c= b1 b2 c= b0 b2 ! ! c==> c? / c/\ c= b0 b2 c= b2 b1 c= b0 b1
++ |- ((COUNTABLE (s DELETE x)) = (COUNTABLE (x INSERT (s DELETE x))))
+T c= cCOUNTABLE * * part cDELETE f0 f1 cCOUNTABLE * * part cINSERT f1 * * part cDELETE f0 f1
++ |- (((x = x) ==> F) = F)
+T c= c==> c= f0 f0 cF cF
+- (((~ ((~ (s x)) ==> (!x'. (((s x') /\ (~ (x' = x))) = (s x'))))) ==> F) ==> ((~ ((~ (s x)) ==> (!x'. (((s x') /\ (~ (x' = x))) = (s x'))))) ==> F)) |- ((((~ ((~ (s x)) ==> (!x'. (((s x') /\ (~ (x' = x))) = (s x'))))) ==> F) ==> ((~ ((~ (s x)) ==> (!x'. (((s x') /\ (~ (x' = x))) = (s x'))))) ==> F)) /\ (((~ ((~ (s x)) ==> (!x'. (((s x') /\ (~ (x' = x))) = (s x'))))) ==> F) ==> ((~ ((~ (s x)) ==> (!x'. (((s x') /\ (~ (x' = x))) = (s x'))))) ==> F)))
+T c==> c==> c==> c~ c==> c~ * f0 f1 ! c= c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF c==> c~ c==> c~ * f0 f1 ! c= c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF c/\ c==> c==> c~ c==> c~ * f0 f1 ! c= c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF c==> c~ c==> c~ * f0 f1 ! c= c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF c==> c==> c~ c==> c~ * f0 f1 ! c= c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF c==> c~ c==> c~ * f0 f1 ! c= c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF
++ (s x) |- (((x' = x) \/ ((s x') /\ (~ (x' = x)))) = (s x'))
+T c==> * f0 f1 c= c\/ c= f2 f1 c/\ * f0 f2 c~ c= f2 f1 * f0 f2
++ (~ (s x)) |- (((s x') /\ (~ (x' = x))) = (s x'))
+T c==> c~ * f0 f1 c= c/\ * f0 f2 c~ c= f2 f1 * f0 f2
+- (x IN s) |- (F = (~ (x IN s)))
+T c==> cIN f0 f1 c= cF c~ cIN f0 f1
++ (s x), (x' = x), (((x' = x) \/ ((s x') /\ (~ (x' = x)))) /\ (~ (s x'))) |- F
+T c==> * f0 f1 c==> c= f2 f1 c==> c/\ c\/ c= f2 f1 c/\ * f0 f2 c~ c= f2 f1 c~ * f0 f2 cF
++ (~ (((x' = x) \/ ((s x') /\ (~ (x' = x)))) = (s x'))), ((((~ (x' = x)) /\ ((~ (s x')) \/ (x' = x))) /\ (s x')) ==> F), ((((x' = x) \/ ((s x') /\ (~ (x' = x)))) /\ (~ (s x'))) ==> F) |- F
+T c==> c~ c= c\/ c= f0 f1 c/\ * f2 f0 c~ c= f0 f1 * f2 f0 c==> c==> c/\ c/\ c~ c= f0 f1 c\/ c~ * f2 f0 c= f0 f1 * f2 f0 cF c==> c==> c/\ c\/ c= f0 f1 c/\ * f2 f0 c~ c= f0 f1 c~ * f2 f0 cF cF
+- |- (((!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3)))) ==> ((\t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3)))) t2)) = ((\t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3)))) t2))
+T c= c==> ! ! c= c\/ f0 c\/ b0 b1 c\/ c\/ f0 b0 b1 * / ! c= c\/ f0 c\/ b0 b1 c\/ c\/ f0 b0 b1 f1 * / ! c= c\/ f0 c\/ b0 b1 c\/ c\/ f0 b0 b1 f1
++ |- ((!s. ((COUNTABLE (s DELETE x)) = (COUNTABLE s))) = T)
+T c= ! c= cCOUNTABLE * * part cDELETE b0 f0 cCOUNTABLE b0 cT
++ |- ((\x. (!z. ((?y. ((x = y) /\ (y = z))) ==> (x = z)))) x)
+T * / ! c==> c? / c/\ c= b0 b2 c= b2 b1 c= b0 b1 f0
++ (x IN s) |- ((\y. (((COUNTABLE (s DELETE x)) = y) /\ (y = (COUNTABLE s)))) (COUNTABLE (x INSERT (s DELETE x))))
+T c==> cIN f0 f1 * / c/\ c= cCOUNTABLE * * part cDELETE f1 f0 b0 c= b0 cCOUNTABLE f1 cCOUNTABLE * * part cINSERT f0 * * part cDELETE f1 f0
+- ((~ ((s x) ==> (!x'. (((x' = x) \/ ((s x') /\ (~ (x' = x)))) = (s x'))))) ==> F), (((~ ((s x) ==> (!x'. (((x' = x) \/ ((s x') /\ (~ (x' = x)))) = (s x'))))) ==> F) ==> ((~ ((s x) ==> (!x'. (((x' = x) \/ ((s x') /\ (~ (x' = x)))) = (s x'))))) ==> F)) |- ((((~ ((s x) ==> (!x'. (((x' = x) \/ ((s x') /\ (~ (x' = x)))) = (s x'))))) ==> F) ==> ((~ ((s x) ==> (!x'. (((x' = x) \/ ((s x') /\ (~ (x' = x)))) = (s x'))))) ==> F)) /\ ((~ ((s x) ==> (!x'. (((x' = x) \/ ((s x') /\ (~ (x' = x)))) = (s x'))))) ==> F))
+T c==> c==> c~ c==> * f0 f1 ! c= c\/ c= b0 f1 c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF c==> c==> c==> c~ c==> * f0 f1 ! c= c\/ c= b0 f1 c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF c==> c~ c==> * f0 f1 ! c= c\/ c= b0 f1 c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF c/\ c==> c==> c~ c==> * f0 f1 ! c= c\/ c= b0 f1 c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF c==> c~ c==> * f0 f1 ! c= c\/ c= b0 f1 c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF c==> c~ c==> * f0 f1 ! c= c\/ c= b0 f1 c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF
+- (x' = x), (((~ (x' = x)) /\ ((~ (s x')) \/ (x' = x))) /\ (s x')) |- (s x)
+T c==> c= f0 f1 c==> c/\ c/\ c~ c= f0 f1 c\/ c~ * f2 f0 c= f0 f1 * f2 f0 * f2 f1
++ (~ (s x)) |- ((((~ (s x')) \/ (x' = x)) /\ (s x')) ==> F)
+T c==> c~ * f0 f1 c==> c/\ c\/ c~ * f0 f2 c= f2 f1 * f0 f2 cF
++ (!x. (!y. (!z. (((x = y) /\ (y = z)) ==> (x = z))))) |- ((\y. (!z. (((x = y) /\ (y = z)) ==> (x = z)))) y)
+T c==> ! ! ! c==> c/\ c= b0 b1 c= b1 b2 c= b0 b2 * / ! c==> c/\ c= f0 b0 c= b0 b1 c= f0 b1 f1
++ |- ((x = x) = T)
+T c= c= f0 f0 cT
++ (((x' = x) \/ ((s x') /\ (~ (x' = x)))) /\ (~ (s x'))), ((x' = x) ==> F), (((s x') /\ (~ (x' = x))) ==> F) |- F
+T c==> c/\ c\/ c= f0 f1 c/\ * f2 f0 c~ c= f0 f1 c~ * f2 f0 c==> c==> c= f0 f1 cF c==> c==> c/\ * f2 f0 c~ c= f0 f1 cF cF
+- ((~ ((~ (s x)) ==> (!x'. (((s x') /\ (~ (x' = x))) = (s x'))))) ==> F) |- ((((~ ((~ (s x)) ==> (!x'. (((s x') /\ (~ (x' = x))) = (s x'))))) ==> F) ==> ((~ ((~ (s x)) ==> (!x'. (((s x') /\ (~ (x' = x))) = (s x'))))) ==> F)) ==> ((~ ((~ (s x)) ==> (!x'. (((s x') /\ (~ (x' = x))) = (s x'))))) ==> F))
+T c==> c==> c~ c==> c~ * f0 f1 ! c= c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF c==> c==> c==> c~ c==> c~ * f0 f1 ! c= c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF c==> c~ c==> c~ * f0 f1 ! c= c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF c==> c~ c==> c~ * f0 f1 ! c= c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF
++ (?y. ((x = y) /\ (y = z))) |- ((!x. (!y. (!z. (((x = y) /\ (y = z)) ==> (x = z))))) ==> (x = z))
+T c==> c? / c/\ c= f0 b0 c= b0 f1 c==> ! ! ! c==> c/\ c= b0 b1 c= b1 b2 c= b0 b2 c= f0 f1
++ (!x. (!y. (!z. (((x = y) /\ (y = z)) ==> (x = z))))) |- (!y. (!z. (((x = y) /\ (y = z)) ==> (x = z))))
+T c==> ! ! ! c==> c/\ c= b0 b1 c= b1 b2 c= b0 b2 ! ! c==> c/\ c= f0 b0 c= b0 b1 c= f0 b1
+- |- ((a ==> b) = ((~ a) \/ b))
+T c= c==> f0 f1 c\/ c~ f0 f1
+- ((s x') /\ (~ (x' = x))), (((x' = x) \/ ((s x') /\ (~ (x' = x)))) /\ (~ (s x'))) |- ((~ F) ==> F)
+T c==> c/\ * f0 f1 c~ c= f1 f2 c==> c/\ c\/ c= f1 f2 c/\ * f0 f1 c~ c= f1 f2 c~ * f0 f1 c==> c~ cF cF
++ (x' = x), (((~ (x' = x)) /\ ((~ (s x')) \/ (x' = x))) /\ (s x')) |- ((x' = x) /\ F)
+T c==> c= f0 f1 c==> c/\ c/\ c~ c= f0 f1 c\/ c~ * f2 f0 c= f0 f1 * f2 f0 c/\ c= f0 f1 cF
++ (x IN s) |- ((x IN s) /\ ((COUNTABLE (s DELETE x)) = (COUNTABLE s)))
+T c==> cIN f0 f1 c/\ cIN f0 f1 c= cCOUNTABLE * * part cDELETE f1 f0 cCOUNTABLE f1
++ (s x), (((x' = x) \/ ((s x') /\ (~ (x' = x)))) /\ (~ (s x'))) |- ((((x' = x) \/ ((s x') /\ (~ (x' = x)))) /\ (~ (s x'))) /\ F)
+T c==> * f0 f1 c==> c/\ c\/ c= f2 f1 c/\ * f0 f2 c~ c= f2 f1 c~ * f0 f2 c/\ c/\ c\/ c= f2 f1 c/\ * f0 f2 c~ c= f2 f1 c~ * f0 f2 cF
+- (((s x') /\ (~ (x' = x))) /\ (~ (s x'))) |- (~ (x' = x))
+T c==> c/\ c/\ * f0 f1 c~ c= f1 f2 c~ * f0 f1 c~ c= f1 f2
+- (~ F), (~ (s x')), (((~ (x' = x)) /\ ((~ (s x')) \/ (x' = x))) /\ (s x')) |- ((~ F) /\ F)
+T c==> c~ cF c==> c~ * f0 f1 c==> c/\ c/\ c~ c= f1 f2 c\/ c~ * f0 f1 c= f1 f2 * f0 f1 c/\ c~ cF cF
+- (~ ((s x) ==> (!x'. (((x' = x) \/ ((s x') /\ (~ (x' = x)))) = (s x'))))) |- ((~ ((s x) ==> (!x'. (((x' = x) \/ ((s x') /\ (~ (x' = x)))) = (s x'))))) /\ F)
+T c==> c~ c==> * f0 f1 ! c= c\/ c= b0 f1 c/\ * f0 b0 c~ c= b0 f1 * f0 b0 c/\ c~ c==> * f0 f1 ! c= c\/ c= b0 f1 c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF
++ (x' = x), (((x' = x) \/ ((s x') /\ (~ (x' = x)))) /\ (~ (s x'))) |- (~ (s x))
+T c==> c= f0 f1 c==> c/\ c\/ c= f0 f1 c/\ * f2 f0 c~ c= f0 f1 c~ * f2 f0 c~ * f2 f1
+- (~ (x IN s)) |- ((x IN s) = F)
+T c==> c~ cIN f0 f1 c= cIN f0 f1 cF
++ (x' = x), (((~ (s x')) \/ (x' = x)) /\ (s x')) |- (((s x) ==> F) = F)
+T c==> c= f0 f1 c==> c/\ c\/ c~ * f2 f0 c= f0 f1 * f2 f0 c= c==> * f2 f1 cF cF
++ |- (!y. (((\y. ((x = y) /\ (y = z))) y) ==> ((!x. (!y. (!z. (((x = y) /\ (y = z)) ==> (x = z))))) ==> (x = z))))
+T c==> * / c/\ c= f0 b0 c= b0 f1 f2 c==> ! ! ! c==> c/\ c= b0 b1 c= b1 b2 c= b0 b2 c= f0 f1
+- (~ (s x)), (x' = x), (((~ (s x')) \/ (x' = x)) /\ (s x')) |- ((~ F) ==> F)
+T c==> c~ * f0 f1 c==> c= f2 f1 c==> c/\ c\/ c~ * f0 f2 c= f2 f1 * f0 f2 c==> c~ cF cF
++ ((\y. ((x = y) /\ (y = z))) y) |- (((\y. ((x = y) /\ (y = z))) y) /\ ((!x. (!y. (!z. (((x = y) /\ (y = z)) ==> (x = z))))) ==> (x = z)))
+T c==> * / c/\ c= f0 b0 c= b0 f1 f2 c/\ * / c/\ c= f0 b0 c= b0 f1 f2 c==> ! ! ! c==> c/\ c= b0 b1 c= b1 b2 c= b0 b2 c= f0 f1
++ |- ((x IN s) ==> (!x'. ((x' IN (x INSERT (s DELETE x))) = (x' IN s))))
+T c==> cIN f0 f1 ! c= cIN b0 * * part cINSERT f0 * * part cDELETE f1 f0 cIN b0 f1
+- |- (((!s. (!x. ((~ ((~ (s x)) ==> (!x'. (((s x') /\ (~ (x' = x))) = (s x'))))) ==> F))) ==> ((\s. (!x. ((~ ((~ (s x)) ==> (!x'. (((s x') /\ (~ (x' = x))) = (s x'))))) ==> F))) s)) = ((\s. (!x. ((~ ((~ (s x)) ==> (!x'. (((s x') /\ (~ (x' = x))) = (s x'))))) ==> F))) s))
+T c= c==> ! ! c==> c~ c==> c~ * b0 b1 ! c= c/\ * b0 b2 c~ c= b2 b1 * b0 b2 cF * / ! c==> c~ c==> c~ * b0 b1 ! c= c/\ * b0 b2 c~ c= b2 b1 * b0 b2 cF f0 * / ! c==> c~ c==> c~ * b0 b1 ! c= c/\ * b0 b2 c~ c= b2 b1 * b0 b2 cF f0
+- (~ (x IN s)) |- (T = (~ (x IN s)))
+T c==> c~ cIN f0 f1 c= cT c~ cIN f0 f1
++ (s x), (((x' = x) \/ ((s x') /\ (~ (x' = x)))) /\ (~ (s x'))) |- ((x' = x) ==> F)
+T c==> * f0 f1 c==> c/\ c\/ c= f2 f1 c/\ * f0 f2 c~ c= f2 f1 c~ * f0 f2 c==> c= f2 f1 cF
+- (_131917 = _131918) |- ((_131917 = _131918) /\ ((s _131918) \/ (~ (s _131917))))
+T c==> c= f0 f1 c/\ c= f0 f1 c\/ * f2 f1 c~ * f2 f0
++ (!x. (!y. (!z. (((x = y) /\ (y = z)) ==> (x = z))))) |- (((!z. (((x = y) /\ (y = z)) ==> (x = z))) ==> ((\z. (((x = y) /\ (y = z)) ==> (x = z))) z)) = ((\z. (((x = y) /\ (y = z)) ==> (x = z))) z))
+T c==> ! ! ! c==> c/\ c= b0 b1 c= b1 b2 c= b0 b2 c= c==> ! c==> c/\ c= f0 f1 c= f1 b0 c= f0 b0 * / c==> c/\ c= f0 f1 c= f1 b0 c= f0 b0 f2 * / c==> c/\ c= f0 f1 c= f1 b0 c= f0 b0 f2
+- (x' = x) |- (F = F)
+T c==> c= f0 f1 c= cF cF
++ ((\y. ((x = y) /\ (y = z))) y) |- ((((x = y) /\ (y = z)) ==> ((!x. (!y. (!z. (((x = y) /\ (y = z)) ==> (x = z))))) ==> (x = z))) = ((!x. (!y. (!z. (((x = y) /\ (y = z)) ==> (x = z))))) ==> (x = z)))
+T c==> * / c/\ c= f0 b0 c= b0 f1 f2 c= c==> c/\ c= f0 f2 c= f2 f1 c==> ! ! ! c==> c/\ c= b0 b1 c= b1 b2 c= b0 b2 c= f0 f1 c==> ! ! ! c==> c/\ c= b0 b1 c= b1 b2 c= b0 b2 c= f0 f1
+- |- ((((~ ((~ (s x)) ==> (!x'. (((s x') /\ (~ (x' = x))) = (s x'))))) ==> F) ==> ((~ ((~ (s x)) ==> (!x'. (((s x') /\ (~ (x' = x))) = (s x'))))) ==> F)) ==> (((~ ((~ (s x)) ==> (!x'. (((s x') /\ (~ (x' = x))) = (s x'))))) ==> F) ==> ((~ ((~ (s x)) ==> (!x'. (((s x') /\ (~ (x' = x))) = (s x'))))) ==> F)))
+T c==> c==> c==> c~ c==> c~ * f0 f1 ! c= c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF c==> c~ c==> c~ * f0 f1 ! c= c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF c==> c==> c~ c==> c~ * f0 f1 ! c= c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF c==> c~ c==> c~ * f0 f1 ! c= c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF
++ (s x), (x' = x), (((x' = x) \/ ((s x') /\ (~ (x' = x)))) /\ (~ (s x'))) |- ((x' = x) /\ F)
+T c==> * f0 f1 c==> c= f2 f1 c==> c/\ c\/ c= f2 f1 c/\ * f0 f2 c~ c= f2 f1 c~ * f0 f2 c/\ c= f2 f1 cF
+- (~ (s x')), (((~ (x' = x)) /\ ((~ (s x')) \/ (x' = x))) /\ (s x')) |- ((~ F) ==> F)
+T c==> c~ * f0 f1 c==> c/\ c/\ c~ c= f1 f2 c\/ c~ * f0 f1 c= f1 f2 * f0 f1 c==> c~ cF cF
++ |- ((\t. (t \/ (~ t))) (x IN s))
+T * / c\/ b0 c~ b0 cIN f0 f1
+- (~ F), ((s x') /\ (~ (x' = x))), (((x' = x) \/ ((s x') /\ (~ (x' = x)))) /\ (~ (s x'))) |- ((~ F) /\ F)
+T c==> c~ cF c==> c/\ * f0 f1 c~ c= f1 f2 c==> c/\ c\/ c= f1 f2 c/\ * f0 f1 c~ c= f1 f2 c~ * f0 f1 c/\ c~ cF cF
+- |- (((t1 \/ t2) \/ t3) = (t1 \/ (t2 \/ t3)))
+T c= c\/ c\/ f0 f1 f2 c\/ f0 c\/ f1 f2
++ (x IN s) |- (((COUNTABLE (s DELETE x)) = (COUNTABLE (x INSERT (s DELETE x)))) /\ ((COUNTABLE (x INSERT (s DELETE x))) = (COUNTABLE s)))
+T c==> cIN f0 f1 c/\ c= cCOUNTABLE * * part cDELETE f1 f0 cCOUNTABLE * * part cINSERT f0 * * part cDELETE f1 f0 c= cCOUNTABLE * * part cINSERT f0 * * part cDELETE f1 f0 cCOUNTABLE f1
+- |- ((!s. (!x. ((s x) ==> (!x'. (((x' = x) \/ ((s x') /\ (~ (x' = x)))) = (s x')))))) = (!s. (!x. ((~ ((s x) ==> (!x'. (((x' = x) \/ ((s x') /\ (~ (x' = x)))) = (s x'))))) ==> F))))
+T c= ! ! c==> * b0 b1 ! c= c\/ c= b2 b1 c/\ * b0 b2 c~ c= b2 b1 * b0 b2 ! ! c==> c~ c==> * b0 b1 ! c= c\/ c= b2 b1 c/\ * b0 b2 c~ c= b2 b1 * b0 b2 cF
++ (~ (((x' = x) \/ ((s x') /\ (~ (x' = x)))) = (s x'))), (s x), ((((~ (x' = x)) /\ ((~ (s x')) \/ (x' = x))) /\ (s x')) ==> F) |- F
+T c==> c~ c= c\/ c= f0 f1 c/\ * f2 f0 c~ c= f0 f1 * f2 f0 c==> * f2 f1 c==> c==> c/\ c/\ c~ c= f0 f1 c\/ c~ * f2 f0 c= f0 f1 * f2 f0 cF cF
++ |- (((~ (s x)) ==> (!x'. (((s x') /\ (~ (x' = x))) = (s x')))) = ((~ (x IN s)) ==> (!x'. ((x' IN (s DELETE x)) = (x' IN s)))))
+T c= c==> c~ * f0 f1 ! c= c/\ * f0 b0 c~ c= b0 f1 * f0 b0 c==> c~ cIN f1 f0 ! c= cIN b0 * * part cDELETE f0 f1 cIN b0 f0
++ |- (((~ (x IN s)) ==> (!x'. ((x' IN (s DELETE x)) = (x' IN s)))) = ((~ (x IN s)) ==> ((s DELETE x) = s)))
+T c= c==> c~ cIN f0 f1 ! c= cIN b0 * * part cDELETE f1 f0 cIN b0 f1 c==> c~ cIN f0 f1 c= * * part cDELETE f1 f0 f1
+- ((~ ((~ (s x)) ==> (!x'. (((s x') /\ (~ (x' = x))) = (s x'))))) ==> F) |- (((~ ((~ (s x)) ==> (!x'. (((s x') /\ (~ (x' = x))) = (s x'))))) ==> F) /\ ((~ ((~ (s x)) ==> (!x'. (((s x') /\ (~ (x' = x))) = (s x'))))) ==> F))
+T c==> c==> c~ c==> c~ * f0 f1 ! c= c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF c/\ c==> c~ c==> c~ * f0 f1 ! c= c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF c==> c~ c==> c~ * f0 f1 ! c= c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF
+- |- (((!s. (!x. ((~ ((s x) ==> (!x'. (((x' = x) \/ ((s x') /\ (~ (x' = x)))) = (s x'))))) ==> F))) ==> ((\s. (!x. ((~ ((s x) ==> (!x'. (((x' = x) \/ ((s x') /\ (~ (x' = x)))) = (s x'))))) ==> F))) s)) = ((\s. (!x. ((~ ((s x) ==> (!x'. (((x' = x) \/ ((s x') /\ (~ (x' = x)))) = (s x'))))) ==> F))) s))
+T c= c==> ! ! c==> c~ c==> * b0 b1 ! c= c\/ c= b2 b1 c/\ * b0 b2 c~ c= b2 b1 * b0 b2 cF * / ! c==> c~ c==> * b0 b1 ! c= c\/ c= b2 b1 c/\ * b0 b2 c~ c= b2 b1 * b0 b2 cF f0 * / ! c==> c~ c==> * b0 b1 ! c= c\/ c= b2 b1 c/\ * b0 b2 c~ c= b2 b1 * b0 b2 cF f0
+- |- (((!x. ((~ ((s x) ==> (!x'. (((x' = x) \/ ((s x') /\ (~ (x' = x)))) = (s x'))))) ==> F)) ==> ((\x. ((~ ((s x) ==> (!x'. (((x' = x) \/ ((s x') /\ (~ (x' = x)))) = (s x'))))) ==> F)) x)) = ((\x. ((~ ((s x) ==> (!x'. (((x' = x) \/ ((s x') /\ (~ (x' = x)))) = (s x'))))) ==> F)) x))
+T c= c==> ! c==> c~ c==> * f0 b0 ! c= c\/ c= b1 b0 c/\ * f0 b1 c~ c= b1 b0 * f0 b1 cF * / c==> c~ c==> * f0 b0 ! c= c\/ c= b1 b0 c/\ * f0 b1 c~ c= b1 b0 * f0 b1 cF f1 * / c==> c~ c==> * f0 b0 ! c= c\/ c= b1 b0 c/\ * f0 b1 c~ c= b1 b0 * f0 b1 cF f1
++ |- ((((\y. ((x = y) /\ (y = z))) y) ==> ((!x. (!y. (!z. (((x = y) /\ (y = z)) ==> (x = z))))) ==> (x = z))) = T)
+T c= c==> * / c/\ c= f0 b0 c= b0 f1 f2 c==> ! ! ! c==> c/\ c= b0 b1 c= b1 b2 c= b0 b2 c= f0 f1 cT
+- (((s x') /\ (~ (x' = x))) /\ (~ (s x'))) |- ((~ F) ==> F)
+T c==> c/\ c/\ * f0 f1 c~ c= f1 f2 c~ * f0 f1 c==> c~ cF cF
+- (~ (s x')), ((s x') /\ (~ (x' = x))) |- ((~ (s x')) /\ (s x'))
+T c==> c~ * f0 f1 c==> c/\ * f0 f1 c~ c= f1 f2 c/\ c~ * f0 f1 * f0 f1
++ (((s x') /\ (~ (x' = x))) /\ (~ (s x'))) |- ((((s x') /\ (~ (x' = x))) /\ (~ (s x'))) /\ F)
+T c==> c/\ c/\ * f0 f1 c~ c= f1 f2 c~ * f0 f1 c/\ c/\ c/\ * f0 f1 c~ c= f1 f2 c~ * f0 f1 cF
++ ((s x') /\ (~ (x' = x))), (((x' = x) \/ ((s x') /\ (~ (x' = x)))) /\ (~ (s x'))) |- (((s x') /\ (~ (x' = x))) /\ F)
+T c==> c/\ * f0 f1 c~ c= f1 f2 c==> c/\ c\/ c= f1 f2 c/\ * f0 f1 c~ c= f1 f2 c~ * f0 f1 c/\ c/\ * f0 f1 c~ c= f1 f2 cF
+- (~ (s x)), (s x) |- ((~ (s x)) /\ (s x))
+T c==> c~ * f0 f1 c==> * f0 f1 c/\ c~ * f0 f1 * f0 f1
++ |- (((x = y) /\ (y = z)) ==> ((!x. (!y. (!z. (((x = y) /\ (y = z)) ==> (x = z))))) ==> (x = z)))
+T c==> c/\ c= f0 f1 c= f1 f2 c==> ! ! ! c==> c/\ c= b0 b1 c= b1 b2 c= b0 b2 c= f0 f2
++ (((x' = x) \/ ((s x') /\ (~ (x' = x)))) /\ (~ (s x'))) |- (((s x') /\ (~ (x' = x))) ==> F)
+T c==> c/\ c\/ c= f0 f1 c/\ * f2 f0 c~ c= f0 f1 c~ * f2 f0 c==> c/\ * f2 f0 c~ c= f0 f1 cF
+- (~ (x IN s)) |- (T = ((COUNTABLE (s DELETE x)) = (COUNTABLE s)))
+T c==> c~ cIN f0 f1 c= cT c= cCOUNTABLE * * part cDELETE f1 f0 cCOUNTABLE f1
++ ((s x') /\ (~ (x' = x))), (((x' = x) \/ ((s x') /\ (~ (x' = x)))) /\ (~ (s x'))) |- F
+T c==> c/\ * f0 f1 c~ c= f1 f2 c==> c/\ c\/ c= f1 f2 c/\ * f0 f1 c~ c= f1 f2 c~ * f0 f1 cF
+- |- (((~ ((~ (s x)) ==> (!x'. (((s x') /\ (~ (x' = x))) = (s x'))))) ==> F) ==> ((~ ((~ (s x)) ==> (!x'. (((s x') /\ (~ (x' = x))) = (s x'))))) ==> F))
+T c==> c==> c~ c==> c~ * f0 f1 ! c= c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF c==> c~ c==> c~ * f0 f1 ! c= c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF
+- (~ (s x)), (x' = x), (((~ (s x')) \/ (x' = x)) /\ (s x')) |- ((~ (s x)) /\ (s x))
+T c==> c~ * f0 f1 c==> c= f2 f1 c==> c/\ c\/ c~ * f0 f2 c= f2 f1 * f0 f2 c/\ c~ * f0 f1 * f0 f1
+- (~ (x IN s)) |- ((~ (x IN s)) /\ ((s DELETE x) = s))
+T c==> c~ cIN f0 f1 c/\ c~ cIN f0 f1 c= * * part cDELETE f1 f0 f1
++ (((~ (x' = x)) /\ ((~ (s x')) \/ (x' = x))) /\ (s x')) |- ((~ (s x')) ==> F)
+T c==> c/\ c/\ c~ c= f0 f1 c\/ c~ * f2 f0 c= f0 f1 * f2 f0 c==> c~ * f2 f0 cF
+- |- (((!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))) ==> ((\t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))) t3)) = ((\t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))) t3))
+T c= c==> ! c= c\/ f0 c\/ f1 b0 c\/ c\/ f0 f1 b0 * / c= c\/ f0 c\/ f1 b0 c\/ c\/ f0 f1 b0 f2 * / c= c\/ f0 c\/ f1 b0 c\/ c\/ f0 f1 b0 f2
++ |- (((!z. ((?y. ((x = y) /\ (y = z))) ==> (x = z))) ==> ((\z. ((?y. ((x = y) /\ (y = z))) ==> (x = z))) z)) = ((\z. ((?y. ((x = y) /\ (y = z))) ==> (x = z))) z))
+T c= c==> ! c==> c? / c/\ c= f0 b1 c= b1 b0 c= f0 b0 * / c==> c? / c/\ c= f0 b1 c= b1 b0 c= f0 b0 f1 * / c==> c? / c/\ c= f0 b1 c= b1 b0 c= f0 b0 f1
++ (x' = x), (((x' = x) \/ ((s x') /\ (~ (x' = x)))) /\ (~ (s x'))) |- ((s x) ==> F)
+T c==> c= f0 f1 c==> c/\ c\/ c= f0 f1 c/\ * f2 f0 c~ c= f0 f1 c~ * f2 f0 c==> * f2 f1 cF
+- |- ((t /\ t) = t)
+T c= c/\ f0 f0 f0
++ |- ((~ (x IN s)) ==> ((COUNTABLE (s DELETE x)) = (COUNTABLE s)))
+T c==> c~ cIN f0 f1 c= cCOUNTABLE * * part cDELETE f1 f0 cCOUNTABLE f1
+- |- ((a = b) ==> (b \/ (~ a)))
+T c==> c= f0 f1 c\/ f1 c~ f0
++ (((~ (x' = x)) /\ ((~ (s x')) \/ (x' = x))) /\ (s x')) |- ((~ (s x')) \/ (x' = x))
+T c==> c/\ c/\ c~ c= f0 f1 c\/ c~ * f2 f0 c= f0 f1 * f2 f0 c\/ c~ * f2 f0 c= f0 f1
++ (~ (((x' = x) \/ ((s x') /\ (~ (x' = x)))) = (s x'))), (s x) |- ((~ (((x' = x) \/ ((s x') /\ (~ (x' = x)))) = (s x'))) /\ F)
+T c==> c~ c= c\/ c= f0 f1 c/\ * f2 f0 c~ c= f0 f1 * f2 f0 c==> * f2 f1 c/\ c~ c= c\/ c= f0 f1 c/\ * f2 f0 c~ c= f0 f1 * f2 f0 cF
++ |- ((x IN s) ==> ((COUNTABLE (s DELETE x)) = (COUNTABLE s)))
+T c==> cIN f0 f1 c= cCOUNTABLE * * part cDELETE f1 f0 cCOUNTABLE f1
++ (x' = x), (((~ (s x')) \/ (x' = x)) /\ (s x')) |- (s x)
+T c==> c= f0 f1 c==> c/\ c\/ c~ * f2 f0 c= f0 f1 * f2 f0 * f2 f1
++ ((s x') /\ (~ (x' = x))) |- (((s x') ==> F) = F)
+T c==> c/\ * f0 f1 c~ c= f1 f2 c= c==> * f0 f1 cF cF
+- |- ((~ T) = F)
+T c= c~ cT cF
+- ((~ ((s x) ==> (!x'. (((x' = x) \/ ((s x') /\ (~ (x' = x)))) = (s x'))))) ==> F) |- ((((~ ((s x) ==> (!x'. (((x' = x) \/ ((s x') /\ (~ (x' = x)))) = (s x'))))) ==> F) ==> ((~ ((s x) ==> (!x'. (((x' = x) \/ ((s x') /\ (~ (x' = x)))) = (s x'))))) ==> F)) ==> ((~ ((s x) ==> (!x'. (((x' = x) \/ ((s x') /\ (~ (x' = x)))) = (s x'))))) ==> F))
+T c==> c==> c~ c==> * f0 f1 ! c= c\/ c= b0 f1 c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF c==> c==> c==> c~ c==> * f0 f1 ! c= c\/ c= b0 f1 c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF c==> c~ c==> * f0 f1 ! c= c\/ c= b0 f1 c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF c==> c~ c==> * f0 f1 ! c= c\/ c= b0 f1 c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF
++ ((\y. ((x = y) /\ (y = z))) y) |- ((x = y) /\ (y = z))
+T c==> * / c/\ c= f0 b0 c= b0 f1 f2 c/\ c= f0 f2 c= f2 f1
++ (~ (s x')), (((~ (s x')) \/ (x' = x)) /\ (s x')) |- F
+T c==> c~ * f0 f1 c==> c/\ c\/ c~ * f0 f1 c= f1 f2 * f0 f1 cF
+- |- ((((~ ((s x) ==> (!x'. (((x' = x) \/ ((s x') /\ (~ (x' = x)))) = (s x'))))) ==> F) ==> ((~ ((s x) ==> (!x'. (((x' = x) \/ ((s x') /\ (~ (x' = x)))) = (s x'))))) ==> F)) ==> (((~ ((s x) ==> (!x'. (((x' = x) \/ ((s x') /\ (~ (x' = x)))) = (s x'))))) ==> F) ==> ((~ ((s x) ==> (!x'. (((x' = x) \/ ((s x') /\ (~ (x' = x)))) = (s x'))))) ==> F)))
+T c==> c==> c==> c~ c==> * f0 f1 ! c= c\/ c= b0 f1 c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF c==> c~ c==> * f0 f1 ! c= c\/ c= b0 f1 c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF c==> c==> c~ c==> * f0 f1 ! c= c\/ c= b0 f1 c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF c==> c~ c==> * f0 f1 ! c= c\/ c= b0 f1 c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF
+- (s x), (x' = x), (((x' = x) \/ ((s x') /\ (~ (x' = x)))) /\ (~ (s x'))) |- ((~ F) ==> F)
+T c==> * f0 f1 c==> c= f2 f1 c==> c/\ c\/ c= f2 f1 c/\ * f0 f2 c~ c= f2 f1 c~ * f0 f2 c==> c~ cF cF
+- (x' = x), (((~ (s x')) \/ (x' = x)) /\ (s x')) |- ((~ (s x)) ==> (s x))
+T c==> c= f0 f1 c==> c/\ c\/ c~ * f2 f0 c= f0 f1 * f2 f0 c==> c~ * f2 f1 * f2 f1
+- (x' = x) |- ((~ (s x)) = (~ (s x)))
+T c==> c= f0 f1 c= c~ * f2 f1 c~ * f2 f1
+- |- ((\x. ((~ ((~ (s x)) ==> (!x'. (((s x') /\ (~ (x' = x))) = (s x'))))) ==> F)) x)
+T * / c==> c~ c==> c~ * f0 b0 ! c= c/\ * f0 b1 c~ c= b1 b0 * f0 b1 cF f1
+- |- ((((~ ((~ (s x)) ==> (!x'. (((s x') /\ (~ (x' = x))) = (s x'))))) ==> F) ==> ((~ ((~ (s x)) ==> (!x'. (((s x') /\ (~ (x' = x))) = (s x'))))) ==> F)) = ((~ ((~ (s x)) ==> (!x'. (((s x') /\ (~ (x' = x))) = (s x'))))) ==> F))
+T c= c==> c==> c~ c==> c~ * f0 f1 ! c= c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF c==> c~ c==> c~ * f0 f1 ! c= c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF c==> c~ c==> c~ * f0 f1 ! c= c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF
+- (((~ (x' = x)) /\ ((~ (s x')) \/ (x' = x))) /\ (s x')) |- ((~ (s x')) ==> (s x'))
+T c==> c/\ c/\ c~ c= f0 f1 c\/ c~ * f2 f0 c= f0 f1 * f2 f0 c==> c~ * f2 f0 * f2 f0
+- |- ((~ F) = T)
+T c= c~ cF cT
+- ((~ ((s x) ==> (!x'. (((x' = x) \/ ((s x') /\ (~ (x' = x)))) = (s x'))))) ==> F) |- (((~ ((s x) ==> (!x'. (((x' = x) \/ ((s x') /\ (~ (x' = x)))) = (s x'))))) ==> F) /\ ((~ ((s x) ==> (!x'. (((x' = x) \/ ((s x') /\ (~ (x' = x)))) = (s x'))))) ==> F))
+T c==> c==> c~ c==> * f0 f1 ! c= c\/ c= b0 f1 c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF c/\ c==> c~ c==> * f0 f1 ! c= c\/ c= b0 f1 c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF c==> c~ c==> * f0 f1 ! c= c\/ c= b0 f1 c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF
+- |- ((!x'. (P x')) = ((P T) /\ (P F)))
+T c= ! * f0 b0 c/\ * f0 cT * f0 cF
+- |- (((!t1. (!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))))) ==> ((\t1. (!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))))) t1)) = ((\t1. (!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))))) t1))
+T c= c==> ! ! ! c= c\/ b0 c\/ b1 b2 c\/ c\/ b0 b1 b2 * / ! ! c= c\/ b0 c\/ b1 b2 c\/ c\/ b0 b1 b2 f0 * / ! ! c= c\/ b0 c\/ b1 b2 c\/ c\/ b0 b1 b2 f0
+- |- ((~ (~ t)) = t)
+T c= c~ c~ f0 f0
+- |- (((((~ ((s x) ==> (!x'. (((x' = x) \/ ((s x') /\ (~ (x' = x)))) = (s x'))))) ==> F) ==> ((~ ((s x) ==> (!x'. (((x' = x) \/ ((s x') /\ (~ (x' = x)))) = (s x'))))) ==> F)) ==> (((~ ((s x) ==> (!x'. (((x' = x) \/ ((s x') /\ (~ (x' = x)))) = (s x'))))) ==> F) ==> ((~ ((s x) ==> (!x'. (((x' = x) \/ ((s x') /\ (~ (x' = x)))) = (s x'))))) ==> F))) = (((~ ((s x) ==> (!x'. (((x' = x) \/ ((s x') /\ (~ (x' = x)))) = (s x'))))) ==> F) ==> ((~ ((s x) ==> (!x'. (((x' = x) \/ ((s x') /\ (~ (x' = x)))) = (s x'))))) ==> F)))
+T c= c==> c==> c==> c~ c==> * f0 f1 ! c= c\/ c= b0 f1 c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF c==> c~ c==> * f0 f1 ! c= c\/ c= b0 f1 c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF c==> c==> c~ c==> * f0 f1 ! c= c\/ c= b0 f1 c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF c==> c~ c==> * f0 f1 ! c= c\/ c= b0 f1 c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF c==> c==> c~ c==> * f0 f1 ! c= c\/ c= b0 f1 c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF c==> c~ c==> * f0 f1 ! c= c\/ c= b0 f1 c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF
+- ((s x') /\ (~ (x' = x))) |- ((~ (s x')) ==> (s x'))
+T c==> c/\ * f0 f1 c~ c= f1 f2 c==> c~ * f0 f1 * f0 f1
+- (s x) |- ((~ (s x)) ==> (s x))
+T c==> * f0 f1 c==> c~ * f0 f1 * f0 f1
+- (~ F), (s x), (x' = x), (((x' = x) \/ ((s x') /\ (~ (x' = x)))) /\ (~ (s x'))) |- ((~ F) /\ F)
+T c==> c~ cF c==> * f0 f1 c==> c= f2 f1 c==> c/\ c\/ c= f2 f1 c/\ * f0 f2 c~ c= f2 f1 c~ * f0 f2 c/\ c~ cF cF
+- (~ (s x')), (((~ (s x')) \/ (x' = x)) /\ (s x')) |- ((~ (s x')) /\ (s x'))
+T c==> c~ * f0 f1 c==> c/\ c\/ c~ * f0 f1 c= f1 f2 * f0 f1 c/\ c~ * f0 f1 * f0 f1
+- (((~ ((s x) ==> (!x'. (((x' = x) \/ ((s x') /\ (~ (x' = x)))) = (s x'))))) ==> F) ==> ((~ ((s x) ==> (!x'. (((x' = x) \/ ((s x') /\ (~ (x' = x)))) = (s x'))))) ==> F)) |- ((((~ ((s x) ==> (!x'. (((x' = x) \/ ((s x') /\ (~ (x' = x)))) = (s x'))))) ==> F) ==> ((~ ((s x) ==> (!x'. (((x' = x) \/ ((s x') /\ (~ (x' = x)))) = (s x'))))) ==> F)) /\ (((~ ((s x) ==> (!x'. (((x' = x) \/ ((s x') /\ (~ (x' = x)))) = (s x'))))) ==> F) ==> ((~ ((s x) ==> (!x'. (((x' = x) \/ ((s x') /\ (~ (x' = x)))) = (s x'))))) ==> F)))
+T c==> c==> c==> c~ c==> * f0 f1 ! c= c\/ c= b0 f1 c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF c==> c~ c==> * f0 f1 ! c= c\/ c= b0 f1 c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF c/\ c==> c==> c~ c==> * f0 f1 ! c= c\/ c= b0 f1 c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF c==> c~ c==> * f0 f1 ! c= c\/ c= b0 f1 c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF c==> c==> c~ c==> * f0 f1 ! c= c\/ c= b0 f1 c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF c==> c~ c==> * f0 f1 ! c= c\/ c= b0 f1 c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF
+- (~ ((~ (s x)) ==> (!x'. (((s x') /\ (~ (x' = x))) = (s x'))))) |- F
+T c==> c~ c==> c~ * f0 f1 ! c= c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF
+- (_131917 = _131918) |- ((((s _131917) = (s _131918)) ==> ((s _131918) \/ (~ (s _131917)))) = ((s _131918) \/ (~ (s _131917))))
+T c==> c= f0 f1 c= c==> c= * f2 f0 * f2 f1 c\/ * f2 f1 c~ * f2 f0 c\/ * f2 f1 c~ * f2 f0
+- (~ (x = x)) |- ((~ (x = x)) /\ (x = x))
+T c==> c~ c= f0 f0 c/\ c~ c= f0 f0 c= f0 f0
+- |- ((~ (_131917 = _131918)) \/ ((s _131918) \/ (~ (s _131917))))
+T c\/ c~ c= f0 f1 c\/ * f2 f1 c~ * f2 f0
+- |- ((\x. ((~ ((s x) ==> (!x'. (((x' = x) \/ ((s x') /\ (~ (x' = x)))) = (s x'))))) ==> F)) x)
+T * / c==> c~ c==> * f0 b0 ! c= c\/ c= b1 b0 c/\ * f0 b1 c~ c= b1 b0 * f0 b1 cF f1
+- |- (((~ (s x)) ==> (!x'. (((s x') /\ (~ (x' = x))) = (s x')))) = T)
+T c= c==> c~ * f0 f1 ! c= c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cT
+- |- (((s x) ==> (!x'. (((x' = x) \/ ((s x') /\ (~ (x' = x)))) = (s x')))) = T)
+T c= c==> * f0 f1 ! c= c\/ c= b0 f1 c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cT

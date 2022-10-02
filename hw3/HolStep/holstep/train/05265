@@ -1,0 +1,394 @@
+N List_hypermap.uniq_sublist_unique
+C |- (!l1. (!l2. (!L. (!x. (((uniq (flatten L)) /\ (((MEM l1) L) /\ (((MEM l2) L) /\ (((MEM x) l1) /\ ((MEM x) l2))))) ==> (l1 = l2))))))
+T c==> c/\ cuniq cflatten f0 c/\ cMEM f1 f0 c/\ cMEM f2 f0 c/\ cMEM f3 f1 cMEM f3 f2 c= f1 f2
+D TRUTH
+A |- T
+T cT
+D list_INDUCT
+A |- (!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x))))
+T c==> c/\ * f0 cNIL ! ! c==> * f0 b1 * f0 cCONS b0 b1 ! * f0 b0
+D MEM
+A |- ((((MEM x) NIL) = F) /\ (((MEM x) ((CONS h) t)) = ((x = h) \/ ((MEM x) t))))
+T c/\ c= cMEM f0 cNIL cF c= cMEM f0 cCONS f1 f2 c\/ c= f0 f1 cMEM f0 f2
+D Ssrbool.contraR
+A |- (!c. (!b. (((~ c) ==> b) ==> ((~ b) ==> c))))
+T c==> c==> c~ f0 f1 c==> c~ f1 f0
+D Ssrbool.andbT
+A |- (!b. ((b /\ T) = b))
+T c= c/\ f0 cT f0
+D Seq.hasP
+A |- (!a. (!s. ((?x. (((MEM x) s) /\ (a x))) = ((has a) s))))
+T c= c? / c/\ cMEM b0 f0 * f1 b0 chas f1 f0
+D Seq.cat_uniq
+A |- (!s1. (!s2. ((uniq ((cat s1) s2)) = ((uniq s1) /\ ((~ ((has (\x. ((MEM x) s1))) s2)) /\ (uniq s2))))))
+T c= cuniq ccat f0 f1 c/\ cuniq f0 c/\ c~ chas / cMEM b0 f0 f1 cuniq f1
+D Seq.flatten_cons
+A |- (!s. (!ss. ((flatten ((CONS s) ss)) = ((cat s) (flatten ss)))))
+T c= cflatten cCONS f0 f1 ccat f0 cflatten f1
+D Seq2.mem_flatten
+A |- (!x. (!L. (((MEM x) (flatten L)) = (?l. (((MEM l) L) /\ ((MEM x) l))))))
+T c= cMEM f0 cflatten f1 c? / c/\ cMEM b0 f1 cMEM f0 b0
++ |- (T = (((uniq (flatten NIL)) /\ (F /\ (F /\ (((MEM x) l1) /\ ((MEM x) l2))))) ==> (l1 = l2)))
+T c= cT c==> c/\ cuniq cflatten cNIL c/\ cF c/\ cF c/\ cMEM f0 f1 cMEM f0 f2 c= f1 f2
++ |- (((((uniq (flatten t)) /\ (((MEM l1) t) /\ (((MEM l2) t) /\ (((MEM x) l1) /\ ((MEM x) l2))))) ==> (l1 = l2)) ==> (((uniq (flatten ((CONS h) t))) /\ (((MEM l1) ((CONS h) t)) /\ (((MEM l2) ((CONS h) t)) /\ (((MEM x) l1) /\ ((MEM x) l2))))) ==> (l1 = l2))) = T)
+T c= c==> c==> c/\ cuniq cflatten f0 c/\ cMEM f1 f0 c/\ cMEM f2 f0 c/\ cMEM f3 f1 cMEM f3 f2 c= f1 f2 c==> c/\ cuniq cflatten cCONS f4 f0 c/\ cMEM f1 cCONS f4 f0 c/\ cMEM f2 cCONS f4 f0 c/\ cMEM f3 f1 cMEM f3 f2 c= f1 f2 cT
++ |- (((!s1. (!s2. ((uniq ((cat s1) s2)) = ((uniq s1) /\ ((~ ((has (\x. ((MEM x) s1))) s2)) /\ (uniq s2)))))) ==> ((\s1. (!s2. ((uniq ((cat s1) s2)) = ((uniq s1) /\ ((~ ((has (\x. ((MEM x) s1))) s2)) /\ (uniq s2)))))) s1)) = ((\s1. (!s2. ((uniq ((cat s1) s2)) = ((uniq s1) /\ ((~ ((has (\x. ((MEM x) s1))) s2)) /\ (uniq s2)))))) s1))
+T c= c==> ! ! c= cuniq ccat b0 b1 c/\ cuniq b0 c/\ c~ chas / cMEM b2 b0 b1 cuniq b1 * / ! c= cuniq ccat b0 b1 c/\ cuniq b0 c/\ c~ chas / cMEM b2 b0 b1 cuniq b1 f0 * / ! c= cuniq ccat b0 b1 c/\ cuniq b0 c/\ c~ chas / cMEM b2 b0 b1 cuniq b1 f0
+- (~ ((has (\x. ((MEM x) h))) (flatten t))), (uniq (flatten t)), (((l2 = h) \/ ((MEM l2) t)) /\ (((MEM x) l1) /\ ((MEM x) l2))), (((uniq (flatten t)) /\ (((MEM l1) t) /\ (((MEM l2) t) /\ (((MEM x) l1) /\ ((MEM x) l2))))) ==> (l1 = l2)), ((l1 = h) \/ ((MEM l1) t)) |- ((((l2 = h) \/ ((MEM l2) t)) /\ (((MEM x) l1) /\ ((MEM x) l2))) /\ (l1 = l2))
+T c==> c~ chas / cMEM b0 f0 cflatten f1 c==> cuniq cflatten f1 c==> c/\ c\/ c= f2 f0 cMEM f2 f1 c/\ cMEM f3 f4 cMEM f3 f2 c==> c==> c/\ cuniq cflatten f1 c/\ cMEM f4 f1 c/\ cMEM f2 f1 c/\ cMEM f3 f4 cMEM f3 f2 c= f4 f2 c==> c\/ c= f4 f0 cMEM f4 f1 c/\ c/\ c\/ c= f2 f0 cMEM f2 f1 c/\ cMEM f3 f4 cMEM f3 f2 c= f4 f2
++ (((uniq (flatten t)) /\ (((MEM l1) t) /\ (((MEM l2) t) /\ (((MEM x) l1) /\ ((MEM x) l2))))) ==> (l1 = l2)) |- (((uniq ((cat h) (flatten t))) /\ (((l1 = h) \/ ((MEM l1) t)) /\ (((l2 = h) \/ ((MEM l2) t)) /\ (((MEM x) l1) /\ ((MEM x) l2))))) ==> (l1 = l2))
+T c==> c==> c/\ cuniq cflatten f0 c/\ cMEM f1 f0 c/\ cMEM f2 f0 c/\ cMEM f3 f1 cMEM f3 f2 c= f1 f2 c==> c/\ cuniq ccat f4 cflatten f0 c/\ c\/ c= f1 f4 cMEM f1 f0 c/\ c\/ c= f2 f4 cMEM f2 f0 c/\ cMEM f3 f1 cMEM f3 f2 c= f1 f2
++ |- ((\L. (((MEM x) (flatten L)) = (?l. (((MEM l) L) /\ ((MEM x) l))))) L)
+T * / c= cMEM f0 cflatten b0 c? / c/\ cMEM b1 b0 cMEM f0 b1 f1
++ (~ ((has (\x. ((MEM x) h))) (flatten t))), (uniq (flatten t)), (((uniq (flatten t)) /\ (((MEM l1) t) /\ (((MEM l2) t) /\ (((MEM x) l1) /\ ((MEM x) l2))))) ==> (l1 = l2)), ((MEM x) l1), ((MEM x) l2), ((MEM l1) t) |- (((MEM l1) t) /\ (((l2 = h) \/ ((MEM l2) t)) ==> (l1 = l2)))
+T c==> c~ chas / cMEM b0 f0 cflatten f1 c==> cuniq cflatten f1 c==> c==> c/\ cuniq cflatten f1 c/\ cMEM f2 f1 c/\ cMEM f3 f1 c/\ cMEM f4 f2 cMEM f4 f3 c= f2 f3 c==> cMEM f4 f2 c==> cMEM f4 f3 c==> cMEM f2 f1 c/\ cMEM f2 f1 c==> c\/ c= f3 f0 cMEM f3 f1 c= f2 f3
++ ((MEM x) l1), ((MEM x) l2), ((MEM l2) t) |- ((?l. (((MEM l) t) /\ ((MEM x) l))) /\ ((MEM x) l1))
+T c==> cMEM f0 f1 c==> cMEM f0 f2 c==> cMEM f2 f3 c/\ c? / c/\ cMEM b0 f3 cMEM f0 b0 cMEM f0 f1
++ |- ((((uniq (flatten ((CONS h) t))) /\ (((l1 = h) \/ ((MEM l1) t)) /\ (((MEM l2) ((CONS h) t)) /\ (((MEM x) l1) /\ ((MEM x) l2))))) ==> (l1 = l2)) = (((uniq (flatten ((CONS h) t))) /\ (((MEM l1) ((CONS h) t)) /\ (((MEM l2) ((CONS h) t)) /\ (((MEM x) l1) /\ ((MEM x) l2))))) ==> (l1 = l2)))
+T c= c==> c/\ cuniq cflatten cCONS f0 f1 c/\ c\/ c= f2 f0 cMEM f2 f1 c/\ cMEM f3 cCONS f0 f1 c/\ cMEM f4 f2 cMEM f4 f3 c= f2 f3 c==> c/\ cuniq cflatten cCONS f0 f1 c/\ cMEM f2 cCONS f0 f1 c/\ cMEM f3 cCONS f0 f1 c/\ cMEM f4 f2 cMEM f4 f3 c= f2 f3
+- |- (((!t. ((((MEM x) NIL) = F) /\ (((MEM x) ((CONS h) t)) = ((x = h) \/ ((MEM x) t))))) ==> ((\t. ((((MEM x) NIL) = F) /\ (((MEM x) ((CONS h) t)) = ((x = h) \/ ((MEM x) t))))) t)) = ((\t. ((((MEM x) NIL) = F) /\ (((MEM x) ((CONS h) t)) = ((x = h) \/ ((MEM x) t))))) t))
+T c= c==> ! c/\ c= cMEM f0 cNIL cF c= cMEM f0 cCONS f1 b0 c\/ c= f0 f1 cMEM f0 b0 * / c/\ c= cMEM f0 cNIL cF c= cMEM f0 cCONS f1 b0 c\/ c= f0 f1 cMEM f0 b0 f2 * / c/\ c= cMEM f0 cNIL cF c= cMEM f0 cCONS f1 b0 c\/ c= f0 f1 cMEM f0 b0 f2
+- ((!x. (P ==> (Q x))) = (P ==> (!x. (Q x)))) |- ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))
+T c==> c= ! c==> f0 * f1 b0 c==> f0 ! * f1 b0 c= c==> f0 ! * f1 b0 ! c==> f0 * f1 b0
++ (L = L1) |- ((((uniq (flatten L1)) /\ (((MEM l1) L1) /\ (((MEM l2) L1) /\ (((MEM x) l1) /\ ((MEM x) l2))))) ==> (l1 = l2)) = (((uniq (flatten L1)) /\ (((MEM l1) L1) /\ (((MEM l2) L) /\ (((MEM x) l1) /\ ((MEM x) l2))))) ==> (l1 = l2)))
+T c==> c= f0 f1 c= c==> c/\ cuniq cflatten f1 c/\ cMEM f2 f1 c/\ cMEM f3 f1 c/\ cMEM f4 f2 cMEM f4 f3 c= f2 f3 c==> c/\ cuniq cflatten f1 c/\ cMEM f2 f1 c/\ cMEM f3 f0 c/\ cMEM f4 f2 cMEM f4 f3 c= f2 f3
++ |- (((!s. (((has a) s) = (?x. (((MEM x) s) /\ (a x))))) ==> ((\s. (((has a) s) = (?x. (((MEM x) s) /\ (a x))))) s)) = ((\s. (((has a) s) = (?x. (((MEM x) s) /\ (a x))))) s))
+T c= c==> ! c= chas f0 b0 c? / c/\ cMEM b1 b0 * f0 b1 * / c= chas f0 b0 c? / c/\ cMEM b1 b0 * f0 b1 f1 * / c= chas f0 b0 c? / c/\ cMEM b1 b0 * f0 b1 f1
+- (L = L1) |- ((((uniq (flatten L1)) /\ (((MEM l1) L1) /\ (((MEM l2) L1) /\ (((MEM x) l1) /\ ((MEM x) l2))))) ==> (l1 = l2)) = (((uniq (flatten L)) /\ (((MEM l1) L) /\ (((MEM l2) L) /\ (((MEM x) l1) /\ ((MEM x) l2))))) ==> (l1 = l2)))
+T c==> c= f0 f1 c= c==> c/\ cuniq cflatten f1 c/\ cMEM f2 f1 c/\ cMEM f3 f1 c/\ cMEM f4 f2 cMEM f4 f3 c= f2 f3 c==> c/\ cuniq cflatten f0 c/\ cMEM f2 f0 c/\ cMEM f3 f0 c/\ cMEM f4 f2 cMEM f4 f3 c= f2 f3
++ |- ((((((uniq (flatten NIL)) /\ (((MEM l1) NIL) /\ (((MEM l2) NIL) /\ (((MEM x) l1) /\ ((MEM x) l2))))) ==> (l1 = l2)) /\ (!a0. (!a1. ((((uniq (flatten a1)) /\ (((MEM l1) a1) /\ (((MEM l2) a1) /\ (((MEM x) l1) /\ ((MEM x) l2))))) ==> (l1 = l2)) ==> (((uniq (flatten ((CONS a0) a1))) /\ (((MEM l1) ((CONS a0) a1)) /\ (((MEM l2) ((CONS a0) a1)) /\ (((MEM x) l1) /\ ((MEM x) l2))))) ==> (l1 = l2)))))) ==> (!L. (((uniq (flatten L)) /\ (((MEM l1) L) /\ (((MEM l2) L) /\ (((MEM x) l1) /\ ((MEM x) l2))))) ==> (l1 = l2)))) = (!L. (((uniq (flatten L)) /\ (((MEM l1) L) /\ (((MEM l2) L) /\ (((MEM x) l1) /\ ((MEM x) l2))))) ==> (l1 = l2))))
+T c= c==> c/\ c==> c/\ cuniq cflatten cNIL c/\ cMEM f0 cNIL c/\ cMEM f1 cNIL c/\ cMEM f2 f0 cMEM f2 f1 c= f0 f1 ! ! c==> c==> c/\ cuniq cflatten b1 c/\ cMEM f0 b1 c/\ cMEM f1 b1 c/\ cMEM f2 f0 cMEM f2 f1 c= f0 f1 c==> c/\ cuniq cflatten cCONS b0 b1 c/\ cMEM f0 cCONS b0 b1 c/\ cMEM f1 cCONS b0 b1 c/\ cMEM f2 f0 cMEM f2 f1 c= f0 f1 ! c==> c/\ cuniq cflatten b0 c/\ cMEM f0 b0 c/\ cMEM f1 b0 c/\ cMEM f2 f0 cMEM f2 f1 c= f0 f1 ! c==> c/\ cuniq cflatten b0 c/\ cMEM f0 b0 c/\ cMEM f1 b0 c/\ cMEM f2 f0 cMEM f2 f1 c= f0 f1
+- |- ((\P. (!Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x)))))) P)
+T * / ! c= c==> b0 ! * b1 b2 ! c==> b0 * b1 b2 f0
++ (~ ((has (\x. ((MEM x) h))) (flatten t))), (l1 = h), ((MEM x) l1), ((MEM x) l2) |- (((MEM l2) t) ==> (l1 = l2))
+T c==> c~ chas / cMEM b0 f0 cflatten f1 c==> c= f2 f0 c==> cMEM f3 f2 c==> cMEM f3 f4 c==> cMEM f4 f1 c= f2 f4
++ (l1 = h), ((MEM x) l1), ((MEM x) l2), ((MEM l2) t) |- ((?l. (((MEM l) t) /\ ((MEM x) l))) /\ ((MEM x) h))
+T c==> c= f0 f1 c==> cMEM f2 f0 c==> cMEM f2 f3 c==> cMEM f3 f4 c/\ c? / c/\ cMEM b0 f4 cMEM f2 b0 cMEM f2 f1
++ |- ((\L. (((uniq (flatten L)) /\ (((MEM l1) L) /\ (((MEM l2) L) /\ (((MEM x) l1) /\ ((MEM x) l2))))) ==> (l1 = l2))) L1)
+T * / c==> c/\ cuniq cflatten b0 c/\ cMEM f0 b0 c/\ cMEM f1 b0 c/\ cMEM f2 f0 cMEM f2 f1 c= f0 f1 f3
++ (uniq (flatten t)) |- ((uniq (flatten t)) = T)
+T c==> cuniq cflatten f0 c= cuniq cflatten f0 cT
+- (L = L1) |- ((flatten ((filter (\l. (~ (l = NIL)))) L1)) = (flatten L))
+T c==> c= f0 f1 c= cflatten cfilter / c~ c= b0 cNIL f1 cflatten f0
++ ((?x. (((MEM x) s) /\ (a x))) = ((has a) s)) |- (((has a) s) = (?x. (((MEM x) s) /\ (a x))))
+T c==> c= c? / c/\ cMEM b0 f0 * f1 b0 chas f1 f0 c= chas f1 f0 c? / c/\ cMEM b0 f0 * f1 b0
++ (l1 = h), ((MEM x) l1), ((MEM x) l2), ((MEM l2) t) |- ((((~ (l1 = l2)) ==> ((has (\x. ((MEM x) h))) (flatten t))) ==> ((~ ((has (\x. ((MEM x) h))) (flatten t))) ==> (l1 = l2))) = ((~ ((has (\x. ((MEM x) h))) (flatten t))) ==> (l1 = l2)))
+T c==> c= f0 f1 c==> cMEM f2 f0 c==> cMEM f2 f3 c==> cMEM f3 f4 c= c==> c==> c~ c= f0 f3 chas / cMEM b0 f1 cflatten f4 c==> c~ chas / cMEM b0 f1 cflatten f4 c= f0 f3 c==> c~ chas / cMEM b0 f1 cflatten f4 c= f0 f3
++ (!c. (!b. (((~ c) ==> b) ==> ((~ b) ==> c)))), (l2 = h), ((MEM x) l1), ((MEM x) l2), ((MEM l1) t) |- ((~ ((has (\x. ((MEM x) h))) (flatten t))) ==> (l1 = l2))
+T c==> ! ! c==> c==> c~ b0 b1 c==> c~ b1 b0 c==> c= f0 f1 c==> cMEM f2 f3 c==> cMEM f2 f0 c==> cMEM f3 f4 c==> c~ chas / cMEM b0 f1 cflatten f4 c= f3 f0
++ (l2 = h), ((MEM x) l1), ((MEM x) l2), ((MEM l1) t) |- (?x. (((MEM x) (flatten t)) /\ ((\x. ((MEM x) h)) x)))
+T c==> c= f0 f1 c==> cMEM f2 f3 c==> cMEM f2 f0 c==> cMEM f3 f4 c? / c/\ cMEM b0 cflatten f4 * / cMEM b1 f1 b0
++ |- (((has a) s) = (?x. (((MEM x) s) /\ (a x))))
+T c= chas f0 f1 c? / c/\ cMEM b0 f1 * f0 b0
++ |- ((\P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))) P)
+T * / c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 f0
+- (~ ((has (\x. ((MEM x) h))) (flatten t))), (uniq (flatten t)), (((uniq (flatten t)) /\ (((MEM l1) t) /\ (((MEM l2) t) /\ (((MEM x) l1) /\ ((MEM x) l2))))) ==> (l1 = l2)) |- (((l1 = h) \/ ((MEM l1) t)) ==> ((((l2 = h) \/ ((MEM l2) t)) /\ (((MEM x) l1) /\ ((MEM x) l2))) ==> (l1 = l2)))
+T c==> c~ chas / cMEM b0 f0 cflatten f1 c==> cuniq cflatten f1 c==> c==> c/\ cuniq cflatten f1 c/\ cMEM f2 f1 c/\ cMEM f3 f1 c/\ cMEM f4 f2 cMEM f4 f3 c= f2 f3 c==> c\/ c= f2 f0 cMEM f2 f1 c==> c/\ c\/ c= f3 f0 cMEM f3 f1 c/\ cMEM f4 f2 cMEM f4 f3 c= f2 f3
+- ((~ c) ==> b) |- ((!c. (!b. (((~ c) ==> b) ==> ((~ b) ==> c)))) ==> ((~ b) ==> c))
+T c==> c==> c~ f0 f1 c==> ! ! c==> c==> c~ b0 b1 c==> c~ b1 b0 c==> c~ f1 f0
+- |- (((flatten ((filter (\l. (~ (l = NIL)))) L)) = (flatten L)) = T)
+T c= c= cflatten cfilter / c~ c= b0 cNIL f0 cflatten f0 cT
++ |- (((!s2. ((uniq ((cat s1) s2)) = ((uniq s1) /\ ((~ ((has (\x. ((MEM x) s1))) s2)) /\ (uniq s2))))) ==> ((\s2. ((uniq ((cat s1) s2)) = ((uniq s1) /\ ((~ ((has (\x. ((MEM x) s1))) s2)) /\ (uniq s2))))) s2)) = ((\s2. ((uniq ((cat s1) s2)) = ((uniq s1) /\ ((~ ((has (\x. ((MEM x) s1))) s2)) /\ (uniq s2))))) s2))
+T c= c==> ! c= cuniq ccat f0 b0 c/\ cuniq f0 c/\ c~ chas / cMEM b1 f0 b0 cuniq b0 * / c= cuniq ccat f0 b0 c/\ cuniq f0 c/\ c~ chas / cMEM b1 f0 b0 cuniq b0 f1 * / c= cuniq ccat f0 b0 c/\ cuniq f0 c/\ c~ chas / cMEM b1 f0 b0 cuniq b0 f1
++ (!c. (!b. (((~ c) ==> b) ==> ((~ b) ==> c)))) |- (((!b. (((~ c) ==> b) ==> ((~ b) ==> c))) ==> ((\b. (((~ c) ==> b) ==> ((~ b) ==> c))) b)) = ((\b. (((~ c) ==> b) ==> ((~ b) ==> c))) b))
+T c==> ! ! c==> c==> c~ b0 b1 c==> c~ b1 b0 c= c==> ! c==> c==> c~ f0 b0 c==> c~ b0 f0 * / c==> c==> c~ f0 b0 c==> c~ b0 f0 f1 * / c==> c==> c~ f0 b0 c==> c~ b0 f0 f1
++ |- (((uniq (flatten NIL)) /\ (F /\ (((MEM l2) NIL) /\ (((MEM x) l1) /\ ((MEM x) l2))))) ==> (l1 = l2))
+T c==> c/\ cuniq cflatten cNIL c/\ cF c/\ cMEM f0 cNIL c/\ cMEM f1 f2 cMEM f1 f0 c= f2 f0
+- |- ((t ==> t) = T)
+T c= c==> f0 f0 cT
+- |- ((t \/ t) = t)
+T c= c\/ f0 f0 f0
++ (l1 = h), (l2 = h) |- (T = (l1 = l2))
+T c==> c= f0 f1 c==> c= f2 f1 c= cT c= f0 f2
++ (~ ((has (\x. ((MEM x) h))) (flatten t))), (((MEM l2) t) ==> (l1 = l2)), ((l2 = h) \/ ((MEM l2) t)), ((MEM x) l1), ((MEM x) l2), ((MEM l1) t) |- (l1 = l2)
+T c==> c~ chas / cMEM b0 f0 cflatten f1 c==> c==> cMEM f2 f1 c= f3 f2 c==> c\/ c= f2 f0 cMEM f2 f1 c==> cMEM f4 f3 c==> cMEM f4 f2 c==> cMEM f3 f1 c= f3 f2
++ ((MEM x) l1), ((MEM l1) t) |- ((\l. (((MEM l) t) /\ ((MEM x) l))) l1)
+T c==> cMEM f0 f1 c==> cMEM f1 f2 * / c/\ cMEM b0 f2 cMEM f0 b0 f1
++ (~ ((has (\x. ((MEM x) h))) (flatten t))), (l2 = h), ((MEM x) l1), ((MEM x) l2), ((MEM l1) t) |- (l1 = l2)
+T c==> c~ chas / cMEM b0 f0 cflatten f1 c==> c= f2 f0 c==> cMEM f3 f4 c==> cMEM f3 f2 c==> cMEM f4 f1 c= f4 f2
+- (~ ((has (\x. ((MEM x) h))) (flatten t))), (uniq (flatten t)), (((uniq (flatten t)) /\ (((MEM l1) t) /\ (((MEM l2) t) /\ (((MEM x) l1) /\ ((MEM x) l2))))) ==> (l1 = l2)), ((MEM x) l1), ((MEM x) l2) |- (((l1 = h) \/ ((MEM l1) t)) ==> (((l2 = h) \/ ((MEM l2) t)) ==> (l1 = l2)))
+T c==> c~ chas / cMEM b0 f0 cflatten f1 c==> cuniq cflatten f1 c==> c==> c/\ cuniq cflatten f1 c/\ cMEM f2 f1 c/\ cMEM f3 f1 c/\ cMEM f4 f2 cMEM f4 f3 c= f2 f3 c==> cMEM f4 f2 c==> cMEM f4 f3 c==> c\/ c= f2 f0 cMEM f2 f1 c==> c\/ c= f3 f0 cMEM f3 f1 c= f2 f3
+- |- ((\x. (!t. ((((MEM x) NIL) = F) /\ (((MEM x) ((CONS h) t)) = ((x = h) \/ ((MEM x) t)))))) x)
+T * / ! c/\ c= cMEM b0 cNIL cF c= cMEM b0 cCONS f0 b1 c\/ c= b0 f0 cMEM b0 b1 f1
+- (~ ((has (\x. ((MEM x) h))) (flatten t))), (uniq (flatten t)), (((uniq (flatten t)) /\ (((MEM l1) t) /\ (((MEM l2) t) /\ (((MEM x) l1) /\ ((MEM x) l2))))) ==> (l1 = l2)), ((l1 = h) \/ ((MEM l1) t)), ((l2 = h) \/ ((MEM l2) t)), ((MEM x) l1) |- (((MEM x) l1) /\ (((MEM x) l2) ==> (l1 = l2)))
+T c==> c~ chas / cMEM b0 f0 cflatten f1 c==> cuniq cflatten f1 c==> c==> c/\ cuniq cflatten f1 c/\ cMEM f2 f1 c/\ cMEM f3 f1 c/\ cMEM f4 f2 cMEM f4 f3 c= f2 f3 c==> c\/ c= f2 f0 cMEM f2 f1 c==> c\/ c= f3 f0 cMEM f3 f1 c==> cMEM f4 f2 c/\ cMEM f4 f2 c==> cMEM f4 f3 c= f2 f3
++ |- ((?x. (((MEM x) (flatten t)) /\ ((\x. ((MEM x) h)) x))) = ((has (\x. ((MEM x) h))) (flatten t)))
+T c= c? / c/\ cMEM b0 cflatten f0 * / cMEM b1 f1 b0 chas / cMEM b0 f1 cflatten f0
++ (l1 = h), ((MEM x) l1), ((MEM x) l2), ((MEM l2) t) |- ((~ ((has (\x. ((MEM x) h))) (flatten t))) ==> (l1 = l2))
+T c==> c= f0 f1 c==> cMEM f2 f0 c==> cMEM f2 f3 c==> cMEM f3 f4 c==> c~ chas / cMEM b0 f1 cflatten f4 c= f0 f3
+- ((uniq h) /\ ((~ ((has (\x. ((MEM x) h))) (flatten t))) /\ (uniq (flatten t)))), (((uniq (flatten t)) /\ (((MEM l1) t) /\ (((MEM l2) t) /\ (((MEM x) l1) /\ ((MEM x) l2))))) ==> (l1 = l2)) |- (((uniq h) /\ ((~ ((has (\x. ((MEM x) h))) (flatten t))) /\ (uniq (flatten t)))) /\ ((((l1 = h) \/ ((MEM l1) t)) /\ (((l2 = h) \/ ((MEM l2) t)) /\ (((MEM x) l1) /\ ((MEM x) l2)))) ==> (l1 = l2)))
+T c==> c/\ cuniq f0 c/\ c~ chas / cMEM b0 f0 cflatten f1 cuniq cflatten f1 c==> c==> c/\ cuniq cflatten f1 c/\ cMEM f2 f1 c/\ cMEM f3 f1 c/\ cMEM f4 f2 cMEM f4 f3 c= f2 f3 c/\ c/\ cuniq f0 c/\ c~ chas / cMEM b0 f0 cflatten f1 cuniq cflatten f1 c==> c/\ c\/ c= f2 f0 cMEM f2 f1 c/\ c\/ c= f3 f0 cMEM f3 f1 c/\ cMEM f4 f2 cMEM f4 f3 c= f2 f3
++ (~ ((has (\x. ((MEM x) h))) (flatten t))), ((MEM x) l1), ((MEM x) l2) |- ((l1 = h) ==> (((l2 = h) \/ ((MEM l2) t)) ==> (l1 = l2)))
+T c==> c~ chas / cMEM b0 f0 cflatten f1 c==> cMEM f2 f3 c==> cMEM f2 f4 c==> c= f3 f0 c==> c\/ c= f4 f0 cMEM f4 f1 c= f3 f4
++ (~ ((has (\x. ((MEM x) h))) (flatten t))), (l1 = h), ((MEM x) l1), ((MEM x) l2), ((MEM l2) t) |- (((MEM l2) t) /\ (l1 = l2))
+T c==> c~ chas / cMEM b0 f0 cflatten f1 c==> c= f2 f0 c==> cMEM f3 f2 c==> cMEM f3 f4 c==> cMEM f4 f1 c/\ cMEM f4 f1 c= f2 f4
+- |- (!L1. (((\L1. (L = L1)) L1) ==> (?L1. (L = L1))))
+T c==> * / c= f0 b0 f1 c? / c= f0 b0
++ (~ (l1 = l2)), (l1 = h), ((MEM x) l1), ((MEM x) l2), ((MEM l2) t) |- ((~ (l1 = l2)) /\ ((has (\x. ((MEM x) h))) (flatten t)))
+T c==> c~ c= f0 f1 c==> c= f0 f2 c==> cMEM f3 f0 c==> cMEM f3 f1 c==> cMEM f1 f4 c/\ c~ c= f0 f1 chas / cMEM b0 f2 cflatten f4
++ |- ((!x. (((uniq (flatten L)) /\ (((MEM l1) L) /\ (((MEM l2) L) /\ (((MEM x) l1) /\ ((MEM x) l2))))) ==> (l1 = l2))) = T)
+T c= ! c==> c/\ cuniq cflatten f0 c/\ cMEM f1 f0 c/\ cMEM f2 f0 c/\ cMEM b0 f1 cMEM b0 f2 c= f1 f2 cT
++ (((uniq (flatten t)) /\ (((MEM l1) t) /\ (((MEM l2) t) /\ (((MEM x) l1) /\ ((MEM x) l2))))) ==> (l1 = l2)) |- ((((uniq h) /\ ((~ ((has (\x. ((MEM x) h))) (flatten t))) /\ (uniq (flatten t)))) /\ (((l1 = h) \/ ((MEM l1) t)) /\ (((l2 = h) \/ ((MEM l2) t)) /\ (((MEM x) l1) /\ ((MEM x) l2))))) ==> (l1 = l2))
+T c==> c==> c/\ cuniq cflatten f0 c/\ cMEM f1 f0 c/\ cMEM f2 f0 c/\ cMEM f3 f1 cMEM f3 f2 c= f1 f2 c==> c/\ c/\ cuniq f4 c/\ c~ chas / cMEM b0 f4 cflatten f0 cuniq cflatten f0 c/\ c\/ c= f1 f4 cMEM f1 f0 c/\ c\/ c= f2 f4 cMEM f2 f0 c/\ cMEM f3 f1 cMEM f3 f2 c= f1 f2
++ (l1 = l2) |- ((l1 = l2) /\ (l1 = l2))
+T c==> c= f0 f1 c/\ c= f0 f1 c= f0 f1
++ |- ((\L1. (L = L1)) L)
+T * / c= f0 b0 f0
++ |- (!L1. (((\L1. (L = L1)) L1) ==> (((uniq (flatten L)) /\ (((MEM l1) L) /\ (((MEM l2) L) /\ (((MEM x) l1) /\ ((MEM x) l2))))) ==> (l1 = l2))))
+T c==> * / c= f0 b0 f1 c==> c/\ cuniq cflatten f0 c/\ cMEM f2 f0 c/\ cMEM f3 f0 c/\ cMEM f4 f2 cMEM f4 f3 c= f2 f3
++ (((uniq (flatten t)) /\ (((MEM l1) t) /\ (((MEM l2) t) /\ (((MEM x) l1) /\ ((MEM x) l2))))) ==> (l1 = l2)) |- (((uniq (flatten ((CONS h) t))) /\ (((l1 = h) \/ ((MEM l1) t)) /\ (((MEM l2) ((CONS h) t)) /\ (((MEM x) l1) /\ ((MEM x) l2))))) ==> (l1 = l2))
+T c==> c==> c/\ cuniq cflatten f0 c/\ cMEM f1 f0 c/\ cMEM f2 f0 c/\ cMEM f3 f1 cMEM f3 f2 c= f1 f2 c==> c/\ cuniq cflatten cCONS f4 f0 c/\ c\/ c= f1 f4 cMEM f1 f0 c/\ cMEM f2 cCONS f4 f0 c/\ cMEM f3 f1 cMEM f3 f2 c= f1 f2
++ (~ ((has (\x. ((MEM x) h))) (flatten t))), (uniq (flatten t)), (((l1 = h) \/ ((MEM l1) t)) /\ (((l2 = h) \/ ((MEM l2) t)) /\ (((MEM x) l1) /\ ((MEM x) l2)))), (((uniq (flatten t)) /\ (((MEM l1) t) /\ (((MEM l2) t) /\ (((MEM x) l1) /\ ((MEM x) l2))))) ==> (l1 = l2)) |- (l1 = l2)
+T c==> c~ chas / cMEM b0 f0 cflatten f1 c==> cuniq cflatten f1 c==> c/\ c\/ c= f2 f0 cMEM f2 f1 c/\ c\/ c= f3 f0 cMEM f3 f1 c/\ cMEM f4 f2 cMEM f4 f3 c==> c==> c/\ cuniq cflatten f1 c/\ cMEM f2 f1 c/\ cMEM f3 f1 c/\ cMEM f4 f2 cMEM f4 f3 c= f2 f3 c= f2 f3
++ (~ (l1 = l2)), (l2 = h), ((MEM x) l1), ((MEM x) l2), ((MEM l1) t) |- ((~ (l1 = l2)) /\ ((has (\x. ((MEM x) h))) (flatten t)))
+T c==> c~ c= f0 f1 c==> c= f1 f2 c==> cMEM f3 f0 c==> cMEM f3 f1 c==> cMEM f0 f4 c/\ c~ c= f0 f1 chas / cMEM b0 f2 cflatten f4
++ |- (((?l. (((MEM l) t) /\ ((MEM x) l))) /\ ((MEM x) h)) = (((MEM x) (flatten t)) /\ ((MEM x) h)))
+T c= c/\ c? / c/\ cMEM b0 f0 cMEM f1 b0 cMEM f1 f2 c/\ cMEM f1 cflatten f0 cMEM f1 f2
++ (uniq (flatten t)), ((MEM x) l1), ((MEM x) l2), ((MEM l1) t), ((MEM l2) t) |- ((((uniq (flatten t)) /\ (((MEM l1) t) /\ (((MEM l2) t) /\ (((MEM x) l1) /\ ((MEM x) l2))))) ==> (l1 = l2)) ==> (l1 = l2))
+T c==> cuniq cflatten f0 c==> cMEM f1 f2 c==> cMEM f1 f3 c==> cMEM f2 f0 c==> cMEM f3 f0 c==> c==> c/\ cuniq cflatten f0 c/\ cMEM f2 f0 c/\ cMEM f3 f0 c/\ cMEM f1 f2 cMEM f1 f3 c= f2 f3 c= f2 f3
+- |- ((?x. t) = t)
+T c= c? / f0 f0
+- |- ((\t. ((((MEM x) NIL) = F) /\ (((MEM x) ((CONS h) t)) = ((x = h) \/ ((MEM x) t))))) t)
+T * / c/\ c= cMEM f0 cNIL cF c= cMEM f0 cCONS f1 b0 c\/ c= f0 f1 cMEM f0 b0 f2
+- (L = L1) |- ((L = L1) /\ ((flatten ((filter (\l. (~ (l = NIL)))) L)) = (flatten L)))
+T c==> c= f0 f1 c/\ c= f0 f1 c= cflatten cfilter / c~ c= b0 cNIL f0 cflatten f0
+- (!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))), ((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) |- ((!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))) /\ (!x. (P x)))
+T c==> ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 c==> c/\ * f0 cNIL ! ! c==> * f0 b1 * f0 cCONS b0 b1 c/\ ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 ! * f0 b0
+- (~ ((has (\x. ((MEM x) h))) (flatten t))), (uniq (flatten t)), (((uniq (flatten t)) /\ (((MEM l1) t) /\ (((MEM l2) t) /\ (((MEM x) l1) /\ ((MEM x) l2))))) ==> (l1 = l2)), ((l1 = h) \/ ((MEM l1) t)) |- (((l2 = h) \/ ((MEM l2) t)) ==> ((((MEM x) l1) /\ ((MEM x) l2)) ==> (l1 = l2)))
+T c==> c~ chas / cMEM b0 f0 cflatten f1 c==> cuniq cflatten f1 c==> c==> c/\ cuniq cflatten f1 c/\ cMEM f2 f1 c/\ cMEM f3 f1 c/\ cMEM f4 f2 cMEM f4 f3 c= f2 f3 c==> c\/ c= f2 f0 cMEM f2 f1 c==> c\/ c= f3 f0 cMEM f3 f1 c==> c/\ cMEM f4 f2 cMEM f4 f3 c= f2 f3
++ (~ ((has (\x. ((MEM x) h))) (flatten t))), ((MEM x) l1), ((MEM x) l2), ((MEM l1) t) |- ((l2 = h) ==> (l1 = l2))
+T c==> c~ chas / cMEM b0 f0 cflatten f1 c==> cMEM f2 f3 c==> cMEM f2 f4 c==> cMEM f3 f1 c==> c= f4 f0 c= f3 f4
++ (uniq h), (((uniq (flatten t)) /\ (((MEM l1) t) /\ (((MEM l2) t) /\ (((MEM x) l1) /\ ((MEM x) l2))))) ==> (l1 = l2)) |- ((uniq h) /\ (((~ ((has (\x. ((MEM x) h))) (flatten t))) /\ (uniq (flatten t))) ==> ((((l1 = h) \/ ((MEM l1) t)) /\ (((l2 = h) \/ ((MEM l2) t)) /\ (((MEM x) l1) /\ ((MEM x) l2)))) ==> (l1 = l2))))
+T c==> cuniq f0 c==> c==> c/\ cuniq cflatten f1 c/\ cMEM f2 f1 c/\ cMEM f3 f1 c/\ cMEM f4 f2 cMEM f4 f3 c= f2 f3 c/\ cuniq f0 c==> c/\ c~ chas / cMEM b0 f0 cflatten f1 cuniq cflatten f1 c==> c/\ c\/ c= f2 f0 cMEM f2 f1 c/\ c\/ c= f3 f0 cMEM f3 f1 c/\ cMEM f4 f2 cMEM f4 f3 c= f2 f3
+- (!c. (!b. (((~ c) ==> b) ==> ((~ b) ==> c)))) |- ((\b. (!c. (((~ c) ==> b) ==> ((~ b) ==> c)))) b)
+T c==> ! ! c==> c==> c~ b0 b1 c==> c~ b1 b0 * / ! c==> c==> c~ b1 b0 c==> c~ b0 b1 f0
++ (~ ((has (\x. ((MEM x) h))) (flatten t))), (uniq (flatten t)), (((l1 = h) \/ ((MEM l1) t)) /\ (((l2 = h) \/ ((MEM l2) t)) /\ (((MEM x) l1) /\ ((MEM x) l2)))), (((uniq (flatten t)) /\ (((MEM l1) t) /\ (((MEM l2) t) /\ (((MEM x) l1) /\ ((MEM x) l2))))) ==> (l1 = l2)) |- ((((l1 = h) \/ ((MEM l1) t)) /\ (((l2 = h) \/ ((MEM l2) t)) /\ (((MEM x) l1) /\ ((MEM x) l2)))) /\ (l1 = l2))
+T c==> c~ chas / cMEM b0 f0 cflatten f1 c==> cuniq cflatten f1 c==> c/\ c\/ c= f2 f0 cMEM f2 f1 c/\ c\/ c= f3 f0 cMEM f3 f1 c/\ cMEM f4 f2 cMEM f4 f3 c==> c==> c/\ cuniq cflatten f1 c/\ cMEM f2 f1 c/\ cMEM f3 f1 c/\ cMEM f4 f2 cMEM f4 f3 c= f2 f3 c/\ c/\ c\/ c= f2 f0 cMEM f2 f1 c/\ c\/ c= f3 f0 cMEM f3 f1 c/\ cMEM f4 f2 cMEM f4 f3 c= f2 f3
++ (l1 = h), ((MEM x) l1), ((MEM x) l2), ((MEM l2) t) |- (?x. (((MEM x) (flatten t)) /\ ((MEM x) h)))
+T c==> c= f0 f1 c==> cMEM f2 f0 c==> cMEM f2 f3 c==> cMEM f3 f4 c? / c/\ cMEM b0 cflatten f4 cMEM b0 f1
+- |- (!L1. (((\L1. (L = L1)) L1) ==> ((flatten ((filter (\l. (~ (l = NIL)))) L)) = (flatten L))))
+T c==> * / c= f0 b0 f1 c= cflatten cfilter / c~ c= b0 cNIL f0 cflatten f0
++ |- (((!L. (((uniq (flatten L)) /\ (((MEM l1) L) /\ (((MEM l2) L) /\ (((MEM x) l1) /\ ((MEM x) l2))))) ==> (l1 = l2))) ==> ((\L. (((uniq (flatten L)) /\ (((MEM l1) L) /\ (((MEM l2) L) /\ (((MEM x) l1) /\ ((MEM x) l2))))) ==> (l1 = l2))) L1)) = ((\L. (((uniq (flatten L)) /\ (((MEM l1) L) /\ (((MEM l2) L) /\ (((MEM x) l1) /\ ((MEM x) l2))))) ==> (l1 = l2))) L1))
+T c= c==> ! c==> c/\ cuniq cflatten b0 c/\ cMEM f0 b0 c/\ cMEM f1 b0 c/\ cMEM f2 f0 cMEM f2 f1 c= f0 f1 * / c==> c/\ cuniq cflatten b0 c/\ cMEM f0 b0 c/\ cMEM f1 b0 c/\ cMEM f2 f0 cMEM f2 f1 c= f0 f1 f3 * / c==> c/\ cuniq cflatten b0 c/\ cMEM f0 b0 c/\ cMEM f1 b0 c/\ cMEM f2 f0 cMEM f2 f1 c= f0 f1 f3
++ |- ((((uniq ((cat h) (flatten t))) /\ (((l1 = h) \/ ((MEM l1) t)) /\ (((l2 = h) \/ ((MEM l2) t)) /\ (((MEM x) l1) /\ ((MEM x) l2))))) ==> (l1 = l2)) = (((uniq (flatten ((CONS h) t))) /\ (((l1 = h) \/ ((MEM l1) t)) /\ (((l2 = h) \/ ((MEM l2) t)) /\ (((MEM x) l1) /\ ((MEM x) l2))))) ==> (l1 = l2)))
+T c= c==> c/\ cuniq ccat f0 cflatten f1 c/\ c\/ c= f2 f0 cMEM f2 f1 c/\ c\/ c= f3 f0 cMEM f3 f1 c/\ cMEM f4 f2 cMEM f4 f3 c= f2 f3 c==> c/\ cuniq cflatten cCONS f0 f1 c/\ c\/ c= f2 f0 cMEM f2 f1 c/\ c\/ c= f3 f0 cMEM f3 f1 c/\ cMEM f4 f2 cMEM f4 f3 c= f2 f3
++ |- ((L = L1) ==> (((uniq (flatten L)) /\ (((MEM l1) L) /\ (((MEM l2) L) /\ (((MEM x) l1) /\ ((MEM x) l2))))) ==> (l1 = l2)))
+T c==> c= f0 f1 c==> c/\ cuniq cflatten f0 c/\ cMEM f2 f0 c/\ cMEM f3 f0 c/\ cMEM f4 f2 cMEM f4 f3 c= f2 f3
++ |- (((MEM x) ((CONS h) t)) = ((x = h) \/ ((MEM x) t)))
+T c= cMEM f0 cCONS f1 f2 c\/ c= f0 f1 cMEM f0 f2
++ |- (((!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))) ==> ((\P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))) P)) = ((\P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))) P))
+T c= c==> ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 * / c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 f0 * / c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 f0
++ ((~ ((has (\x. ((MEM x) h))) (flatten t))) /\ (uniq (flatten t))), (((uniq (flatten t)) /\ (((MEM l1) t) /\ (((MEM l2) t) /\ (((MEM x) l1) /\ ((MEM x) l2))))) ==> (l1 = l2)) |- (((~ ((has (\x. ((MEM x) h))) (flatten t))) /\ (uniq (flatten t))) /\ ((((l1 = h) \/ ((MEM l1) t)) /\ (((l2 = h) \/ ((MEM l2) t)) /\ (((MEM x) l1) /\ ((MEM x) l2)))) ==> (l1 = l2)))
+T c==> c/\ c~ chas / cMEM b0 f0 cflatten f1 cuniq cflatten f1 c==> c==> c/\ cuniq cflatten f1 c/\ cMEM f2 f1 c/\ cMEM f3 f1 c/\ cMEM f4 f2 cMEM f4 f3 c= f2 f3 c/\ c/\ c~ chas / cMEM b0 f0 cflatten f1 cuniq cflatten f1 c==> c/\ c\/ c= f2 f0 cMEM f2 f1 c/\ c\/ c= f3 f0 cMEM f3 f1 c/\ cMEM f4 f2 cMEM f4 f3 c= f2 f3
++ (l2 = h), ((MEM x) l1), ((MEM x) l2), ((MEM l1) t) |- (?x. (((MEM x) (flatten t)) /\ ((MEM x) h)))
+T c==> c= f0 f1 c==> cMEM f2 f3 c==> cMEM f2 f0 c==> cMEM f3 f4 c? / c/\ cMEM b0 cflatten f4 cMEM b0 f1
+- (!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))), ((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) |- (!x. (P x))
+T c==> ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 c==> c/\ * f0 cNIL ! ! c==> * f0 b1 * f0 cCONS b0 b1 ! * f0 b0
+- |- (((!x. (((\L1. (L = L1)) x) ==> ((flatten ((filter (\l. (~ (l = NIL)))) L)) = (flatten L)))) ==> ((?L1. (L = L1)) ==> ((flatten ((filter (\l. (~ (l = NIL)))) L)) = (flatten L)))) = ((?L1. (L = L1)) ==> ((flatten ((filter (\l. (~ (l = NIL)))) L)) = (flatten L))))
+T c= c==> ! c==> * / c= f0 b1 b0 c= cflatten cfilter / c~ c= b1 cNIL f0 cflatten f0 c==> c? / c= f0 b0 c= cflatten cfilter / c~ c= b0 cNIL f0 cflatten f0 c==> c? / c= f0 b0 c= cflatten cfilter / c~ c= b0 cNIL f0 cflatten f0
++ (uniq h), (((uniq (flatten t)) /\ (((MEM l1) t) /\ (((MEM l2) t) /\ (((MEM x) l1) /\ ((MEM x) l2))))) ==> (l1 = l2)) |- (((~ ((has (\x. ((MEM x) h))) (flatten t))) /\ (uniq (flatten t))) ==> ((((l1 = h) \/ ((MEM l1) t)) /\ (((l2 = h) \/ ((MEM l2) t)) /\ (((MEM x) l1) /\ ((MEM x) l2)))) ==> (l1 = l2)))
+T c==> cuniq f0 c==> c==> c/\ cuniq cflatten f1 c/\ cMEM f2 f1 c/\ cMEM f3 f1 c/\ cMEM f4 f2 cMEM f4 f3 c= f2 f3 c==> c/\ c~ chas / cMEM b0 f0 cflatten f1 cuniq cflatten f1 c==> c/\ c\/ c= f2 f0 cMEM f2 f1 c/\ c\/ c= f3 f0 cMEM f3 f1 c/\ cMEM f4 f2 cMEM f4 f3 c= f2 f3
+- (!c. (!b. (((~ c) ==> b) ==> ((~ b) ==> c)))) |- (!c. (((~ c) ==> b) ==> ((~ b) ==> c)))
+T c==> ! ! c==> c==> c~ b0 b1 c==> c~ b1 b0 ! c==> c==> c~ b0 f0 c==> c~ f0 b0
++ (l1 = h), ((MEM x) l1), ((MEM x) l2), ((MEM l2) t) |- (((MEM x) (flatten t)) /\ ((MEM x) h))
+T c==> c= f0 f1 c==> cMEM f2 f0 c==> cMEM f2 f3 c==> cMEM f3 f4 c/\ cMEM f2 cflatten f4 cMEM f2 f1
+- |- ((!c. (!b. (((~ c) ==> b) ==> ((~ b) ==> c)))) ==> (!b. (!c. (((~ c) ==> b) ==> ((~ b) ==> c)))))
+T c==> ! ! c==> c==> c~ b0 b1 c==> c~ b1 b0 ! ! c==> c==> c~ b1 b0 c==> c~ b0 b1
++ |- (((((uniq (flatten NIL)) /\ (((MEM l1) NIL) /\ (((MEM l2) NIL) /\ (((MEM x) l1) /\ ((MEM x) l2))))) ==> (l1 = l2)) /\ (!a0. (!a1. ((((uniq (flatten a1)) /\ (((MEM l1) a1) /\ (((MEM l2) a1) /\ (((MEM x) l1) /\ ((MEM x) l2))))) ==> (l1 = l2)) ==> (((uniq (flatten ((CONS a0) a1))) /\ (((MEM l1) ((CONS a0) a1)) /\ (((MEM l2) ((CONS a0) a1)) /\ (((MEM x) l1) /\ ((MEM x) l2))))) ==> (l1 = l2)))))) ==> (!L. (((uniq (flatten L)) /\ (((MEM l1) L) /\ (((MEM l2) L) /\ (((MEM x) l1) /\ ((MEM x) l2))))) ==> (l1 = l2))))
+T c==> c/\ c==> c/\ cuniq cflatten cNIL c/\ cMEM f0 cNIL c/\ cMEM f1 cNIL c/\ cMEM f2 f0 cMEM f2 f1 c= f0 f1 ! ! c==> c==> c/\ cuniq cflatten b1 c/\ cMEM f0 b1 c/\ cMEM f1 b1 c/\ cMEM f2 f0 cMEM f2 f1 c= f0 f1 c==> c/\ cuniq cflatten cCONS b0 b1 c/\ cMEM f0 cCONS b0 b1 c/\ cMEM f1 cCONS b0 b1 c/\ cMEM f2 f0 cMEM f2 f1 c= f0 f1 ! c==> c/\ cuniq cflatten b0 c/\ cMEM f0 b0 c/\ cMEM f1 b0 c/\ cMEM f2 f0 cMEM f2 f1 c= f0 f1
+- |- (((!h. (!x. (!t. ((((MEM x) NIL) = F) /\ (((MEM x) ((CONS h) t)) = ((x = h) \/ ((MEM x) t))))))) ==> ((\h. (!x. (!t. ((((MEM x) NIL) = F) /\ (((MEM x) ((CONS h) t)) = ((x = h) \/ ((MEM x) t))))))) h)) = ((\h. (!x. (!t. ((((MEM x) NIL) = F) /\ (((MEM x) ((CONS h) t)) = ((x = h) \/ ((MEM x) t))))))) h))
+T c= c==> ! ! ! c/\ c= cMEM b1 cNIL cF c= cMEM b1 cCONS b0 b2 c\/ c= b1 b0 cMEM b1 b2 * / ! ! c/\ c= cMEM b1 cNIL cF c= cMEM b1 cCONS b0 b2 c\/ c= b1 b0 cMEM b1 b2 f0 * / ! ! c/\ c= cMEM b1 cNIL cF c= cMEM b1 cCONS b0 b2 c\/ c= b1 b0 cMEM b1 b2 f0
++ ((uniq h) /\ ((~ ((has (\x. ((MEM x) h))) (flatten t))) /\ (uniq (flatten t)))), (((uniq h) /\ ((~ ((has (\x. ((MEM x) h))) (flatten t))) /\ (uniq (flatten t)))) /\ (((l1 = h) \/ ((MEM l1) t)) /\ (((l2 = h) \/ ((MEM l2) t)) /\ (((MEM x) l1) /\ ((MEM x) l2))))), (((uniq (flatten t)) /\ (((MEM l1) t) /\ (((MEM l2) t) /\ (((MEM x) l1) /\ ((MEM x) l2))))) ==> (l1 = l2)) |- (l1 = l2)
+T c==> c/\ cuniq f0 c/\ c~ chas / cMEM b0 f0 cflatten f1 cuniq cflatten f1 c==> c/\ c/\ cuniq f0 c/\ c~ chas / cMEM b0 f0 cflatten f1 cuniq cflatten f1 c/\ c\/ c= f2 f0 cMEM f2 f1 c/\ c\/ c= f3 f0 cMEM f3 f1 c/\ cMEM f4 f2 cMEM f4 f3 c==> c==> c/\ cuniq cflatten f1 c/\ cMEM f2 f1 c/\ cMEM f3 f1 c/\ cMEM f4 f2 cMEM f4 f3 c= f2 f3 c= f2 f3
+- (!c. (!b. (((~ c) ==> b) ==> ((~ b) ==> c)))), ((~ c) ==> b) |- ((!c. (!b. (((~ c) ==> b) ==> ((~ b) ==> c)))) /\ ((~ b) ==> c))
+T c==> ! ! c==> c==> c~ b0 b1 c==> c~ b1 b0 c==> c==> c~ f0 f1 c/\ ! ! c==> c==> c~ b0 b1 c==> c~ b1 b0 c==> c~ f1 f0
++ (((has a) s) = (?x. (((MEM x) s) /\ (a x)))) |- ((?x. (((MEM x) s) /\ (a x))) = ((has a) s))
+T c==> c= chas f0 f1 c? / c/\ cMEM b0 f1 * f0 b0 c= c? / c/\ cMEM b0 f1 * f0 b0 chas f0 f1
+- (!c. (!b. (((~ c) ==> b) ==> ((~ b) ==> c)))) |- ((((~ c) ==> b) ==> ((~ b) ==> c)) = T)
+T c==> ! ! c==> c==> c~ b0 b1 c==> c~ b1 b0 c= c==> c==> c~ f0 f1 c==> c~ f1 f0 cT
+- |- (((?L1. (L = L1)) ==> ((flatten ((filter (\l. (~ (l = NIL)))) L)) = (flatten L))) = ((flatten ((filter (\l. (~ (l = NIL)))) L)) = (flatten L)))
+T c= c==> c? / c= f0 b0 c= cflatten cfilter / c~ c= b0 cNIL f0 cflatten f0 c= cflatten cfilter / c~ c= b0 cNIL f0 cflatten f0
+- (!c. (!b. (((~ c) ==> b) ==> ((~ b) ==> c)))) |- (((!b. (!c. (((~ c) ==> b) ==> ((~ b) ==> c)))) ==> ((\b. (!c. (((~ c) ==> b) ==> ((~ b) ==> c)))) b)) = ((\b. (!c. (((~ c) ==> b) ==> ((~ b) ==> c)))) b))
+T c==> ! ! c==> c==> c~ b0 b1 c==> c~ b1 b0 c= c==> ! ! c==> c==> c~ b1 b0 c==> c~ b0 b1 * / ! c==> c==> c~ b1 b0 c==> c~ b0 b1 f0 * / ! c==> c==> c~ b1 b0 c==> c~ b0 b1 f0
++ |- ((\x. (!L. (((MEM x) (flatten L)) = (?l. (((MEM l) L) /\ ((MEM x) l)))))) x)
+T * / ! c= cMEM b0 cflatten b1 c? / c/\ cMEM b2 b1 cMEM b0 b2 f0
++ (L = L1) |- (((uniq (flatten L1)) /\ (((MEM l1) L1) /\ (((MEM l2) L) /\ (((MEM x) l1) /\ ((MEM x) l2))))) ==> (l1 = l2))
+T c==> c= f0 f1 c==> c/\ cuniq cflatten f1 c/\ cMEM f2 f1 c/\ cMEM f3 f0 c/\ cMEM f4 f2 cMEM f4 f3 c= f2 f3
+- ((uniq (flatten t)) /\ (((MEM l1) t) /\ (((MEM l2) t) /\ (((MEM x) l1) /\ ((MEM x) l2))))), (((uniq (flatten t)) /\ (((MEM l1) t) /\ (((MEM l2) t) /\ (((MEM x) l1) /\ ((MEM x) l2))))) ==> (l1 = l2)) |- (((uniq (flatten t)) /\ (((MEM l1) t) /\ (((MEM l2) t) /\ (((MEM x) l1) /\ ((MEM x) l2))))) /\ (l1 = l2))
+T c==> c/\ cuniq cflatten f0 c/\ cMEM f1 f0 c/\ cMEM f2 f0 c/\ cMEM f3 f1 cMEM f3 f2 c==> c==> c/\ cuniq cflatten f0 c/\ cMEM f1 f0 c/\ cMEM f2 f0 c/\ cMEM f3 f1 cMEM f3 f2 c= f1 f2 c/\ c/\ cuniq cflatten f0 c/\ cMEM f1 f0 c/\ cMEM f2 f0 c/\ cMEM f3 f1 cMEM f3 f2 c= f1 f2
++ |- (((((uniq h) /\ ((~ ((has (\x. ((MEM x) h))) (flatten t))) /\ (uniq (flatten t)))) /\ (((l1 = h) \/ ((MEM l1) t)) /\ (((l2 = h) \/ ((MEM l2) t)) /\ (((MEM x) l1) /\ ((MEM x) l2))))) ==> (l1 = l2)) = (((uniq ((cat h) (flatten t))) /\ (((l1 = h) \/ ((MEM l1) t)) /\ (((l2 = h) \/ ((MEM l2) t)) /\ (((MEM x) l1) /\ ((MEM x) l2))))) ==> (l1 = l2)))
+T c= c==> c/\ c/\ cuniq f0 c/\ c~ chas / cMEM b0 f0 cflatten f1 cuniq cflatten f1 c/\ c\/ c= f2 f0 cMEM f2 f1 c/\ c\/ c= f3 f0 cMEM f3 f1 c/\ cMEM f4 f2 cMEM f4 f3 c= f2 f3 c==> c/\ cuniq ccat f0 cflatten f1 c/\ c\/ c= f2 f0 cMEM f2 f1 c/\ c\/ c= f3 f0 cMEM f3 f1 c/\ cMEM f4 f2 cMEM f4 f3 c= f2 f3
+- |- ((L = L1) = ((\L1. (L = L1)) L1))
+T c= c= f0 f1 * / c= f0 b0 f1
++ |- (((!x. (((\L1. (L = L1)) x) ==> (((uniq (flatten L)) /\ (((MEM l1) L) /\ (((MEM l2) L) /\ (((MEM x) l1) /\ ((MEM x) l2))))) ==> (l1 = l2)))) ==> ((?L1. (L = L1)) ==> (((uniq (flatten L)) /\ (((MEM l1) L) /\ (((MEM l2) L) /\ (((MEM x) l1) /\ ((MEM x) l2))))) ==> (l1 = l2)))) = ((?L1. (L = L1)) ==> (((uniq (flatten L)) /\ (((MEM l1) L) /\ (((MEM l2) L) /\ (((MEM x) l1) /\ ((MEM x) l2))))) ==> (l1 = l2))))
+T c= c==> ! c==> * / c= f0 b1 b0 c==> c/\ cuniq cflatten f0 c/\ cMEM f1 f0 c/\ cMEM f2 f0 c/\ cMEM f3 f1 cMEM f3 f2 c= f1 f2 c==> c? / c= f0 b0 c==> c/\ cuniq cflatten f0 c/\ cMEM f1 f0 c/\ cMEM f2 f0 c/\ cMEM f3 f1 cMEM f3 f2 c= f1 f2 c==> c? / c= f0 b0 c==> c/\ cuniq cflatten f0 c/\ cMEM f1 f0 c/\ cMEM f2 f0 c/\ cMEM f3 f1 cMEM f3 f2 c= f1 f2
++ (L = L1) |- (((uniq (flatten L1)) /\ (((MEM l1) L) /\ (((MEM l2) L) /\ (((MEM x) l1) /\ ((MEM x) l2))))) ==> (l1 = l2))
+T c==> c= f0 f1 c==> c/\ cuniq cflatten f1 c/\ cMEM f2 f0 c/\ cMEM f3 f0 c/\ cMEM f4 f2 cMEM f4 f3 c= f2 f3
++ (~ ((has (\x. ((MEM x) h))) (flatten t))), ((~ ((has (\x. ((MEM x) h))) (flatten t))) /\ (uniq (flatten t))), (((uniq (flatten t)) /\ (((MEM l1) t) /\ (((MEM l2) t) /\ (((MEM x) l1) /\ ((MEM x) l2))))) ==> (l1 = l2)) |- ((((l1 = h) \/ ((MEM l1) t)) /\ (((l2 = h) \/ ((MEM l2) t)) /\ (((MEM x) l1) /\ ((MEM x) l2)))) ==> (l1 = l2))
+T c==> c~ chas / cMEM b0 f0 cflatten f1 c==> c/\ c~ chas / cMEM b0 f0 cflatten f1 cuniq cflatten f1 c==> c==> c/\ cuniq cflatten f1 c/\ cMEM f2 f1 c/\ cMEM f3 f1 c/\ cMEM f4 f2 cMEM f4 f3 c= f2 f3 c==> c/\ c\/ c= f2 f0 cMEM f2 f1 c/\ c\/ c= f3 f0 cMEM f3 f1 c/\ cMEM f4 f2 cMEM f4 f3 c= f2 f3
++ (!c. (!b. (((~ c) ==> b) ==> ((~ b) ==> c)))), (l1 = h), ((MEM x) l1), ((MEM x) l2), ((MEM l2) t) |- ((!c. (!b. (((~ c) ==> b) ==> ((~ b) ==> c)))) /\ ((~ ((has (\x. ((MEM x) h))) (flatten t))) ==> (l1 = l2)))
+T c==> ! ! c==> c==> c~ b0 b1 c==> c~ b1 b0 c==> c= f0 f1 c==> cMEM f2 f0 c==> cMEM f2 f3 c==> cMEM f3 f4 c/\ ! ! c==> c==> c~ b0 b1 c==> c~ b1 b0 c==> c~ chas / cMEM b0 f1 cflatten f4 c= f0 f3
+- |- (((!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))) ==> (!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x))))) = (!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))))
+T c= c==> ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1
++ |- (((!s. (!ss. ((flatten ((CONS s) ss)) = ((cat s) (flatten ss))))) ==> ((\s. (!ss. ((flatten ((CONS s) ss)) = ((cat s) (flatten ss))))) s)) = ((\s. (!ss. ((flatten ((CONS s) ss)) = ((cat s) (flatten ss))))) s))
+T c= c==> ! ! c= cflatten cCONS b0 b1 ccat b0 cflatten b1 * / ! c= cflatten cCONS b0 b1 ccat b0 cflatten b1 f0 * / ! c= cflatten cCONS b0 b1 ccat b0 cflatten b1 f0
+- (!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))), ((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) |- (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) /\ (!x. (P x)))
+T c==> ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 c==> c/\ * f0 cNIL ! ! c==> * f0 b1 * f0 cCONS b0 b1 c/\ c/\ * f0 cNIL ! ! c==> * f0 b1 * f0 cCONS b0 b1 ! * f0 b0
++ |- ((((uniq (flatten NIL)) /\ (F /\ (F /\ (((MEM x) l1) /\ ((MEM x) l2))))) ==> (l1 = l2)) = (((uniq (flatten NIL)) /\ (F /\ (((MEM l2) NIL) /\ (((MEM x) l1) /\ ((MEM x) l2))))) ==> (l1 = l2)))
+T c= c==> c/\ cuniq cflatten cNIL c/\ cF c/\ cF c/\ cMEM f0 f1 cMEM f0 f2 c= f1 f2 c==> c/\ cuniq cflatten cNIL c/\ cF c/\ cMEM f2 cNIL c/\ cMEM f0 f1 cMEM f0 f2 c= f1 f2
++ (~ ((has (\x. ((MEM x) h))) (flatten t))), (l1 = h), ((MEM x) l1), ((MEM x) l2) |- ((l1 = h) /\ (((l2 = h) \/ ((MEM l2) t)) ==> (l1 = l2)))
+T c==> c~ chas / cMEM b0 f0 cflatten f1 c==> c= f2 f0 c==> cMEM f3 f2 c==> cMEM f3 f4 c/\ c= f2 f0 c==> c\/ c= f4 f0 cMEM f4 f1 c= f2 f4
+- ((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) |- ((!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))) ==> (!x. (P x)))
+T c==> c/\ * f0 cNIL ! ! c==> * f0 b1 * f0 cCONS b0 b1 c==> ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 ! * f0 b0
++ (((uniq (flatten t)) /\ (((MEM l1) t) /\ (((MEM l2) t) /\ (((MEM x) l1) /\ ((MEM x) l2))))) ==> (l1 = l2)) |- (((~ ((has (\x. ((MEM x) h))) (flatten t))) /\ (uniq (flatten t))) ==> ((((l1 = h) \/ ((MEM l1) t)) /\ (((l2 = h) \/ ((MEM l2) t)) /\ (((MEM x) l1) /\ ((MEM x) l2)))) ==> (l1 = l2)))
+T c==> c==> c/\ cuniq cflatten f0 c/\ cMEM f1 f0 c/\ cMEM f2 f0 c/\ cMEM f3 f1 cMEM f3 f2 c= f1 f2 c==> c/\ c~ chas / cMEM b0 f4 cflatten f0 cuniq cflatten f0 c==> c/\ c\/ c= f1 f4 cMEM f1 f0 c/\ c\/ c= f2 f4 cMEM f2 f0 c/\ cMEM f3 f1 cMEM f3 f2 c= f1 f2
++ (l2 = h), ((MEM x) l1), ((MEM x) l2), ((MEM l1) t) |- ((((~ (l1 = l2)) ==> ((has (\x. ((MEM x) h))) (flatten t))) ==> ((~ ((has (\x. ((MEM x) h))) (flatten t))) ==> (l1 = l2))) = ((~ ((has (\x. ((MEM x) h))) (flatten t))) ==> (l1 = l2)))
+T c==> c= f0 f1 c==> cMEM f2 f3 c==> cMEM f2 f0 c==> cMEM f3 f4 c= c==> c==> c~ c= f3 f0 chas / cMEM b0 f1 cflatten f4 c==> c~ chas / cMEM b0 f1 cflatten f4 c= f3 f0 c==> c~ chas / cMEM b0 f1 cflatten f4 c= f3 f0
++ (uniq (flatten t)), ((MEM x) l1), ((MEM x) l2), ((MEM l1) t), ((MEM l2) t) |- (((((uniq (flatten t)) /\ (((MEM l1) t) /\ (((MEM l2) t) /\ (((MEM x) l1) /\ ((MEM x) l2))))) /\ ((l1 = l2) ==> (l1 = l2))) ==> ((((uniq (flatten t)) /\ (((MEM l1) t) /\ (((MEM l2) t) /\ (((MEM x) l1) /\ ((MEM x) l2))))) ==> (l1 = l2)) ==> (l1 = l2))) = ((((uniq (flatten t)) /\ (((MEM l1) t) /\ (((MEM l2) t) /\ (((MEM x) l1) /\ ((MEM x) l2))))) ==> (l1 = l2)) ==> (l1 = l2)))
+T c==> cuniq cflatten f0 c==> cMEM f1 f2 c==> cMEM f1 f3 c==> cMEM f2 f0 c==> cMEM f3 f0 c= c==> c/\ c/\ cuniq cflatten f0 c/\ cMEM f2 f0 c/\ cMEM f3 f0 c/\ cMEM f1 f2 cMEM f1 f3 c==> c= f2 f3 c= f2 f3 c==> c==> c/\ cuniq cflatten f0 c/\ cMEM f2 f0 c/\ cMEM f3 f0 c/\ cMEM f1 f2 cMEM f1 f3 c= f2 f3 c= f2 f3 c==> c==> c/\ cuniq cflatten f0 c/\ cMEM f2 f0 c/\ cMEM f3 f0 c/\ cMEM f1 f2 cMEM f1 f3 c= f2 f3 c= f2 f3
++ (l1 = h), ((MEM x) l1), ((MEM x) l2), ((MEM l2) t) |- ((~ (l1 = l2)) ==> ((has (\x. ((MEM x) h))) (flatten t)))
+T c==> c= f0 f1 c==> cMEM f2 f0 c==> cMEM f2 f3 c==> cMEM f3 f4 c==> c~ c= f0 f3 chas / cMEM b0 f1 cflatten f4
++ |- ((?x. (((MEM x) (flatten t)) /\ ((MEM x) h))) = (?x. (((MEM x) (flatten t)) /\ ((\x. ((MEM x) h)) x))))
+T c= c? / c/\ cMEM b0 cflatten f0 cMEM b0 f1 c? / c/\ cMEM b0 cflatten f0 * / cMEM b1 f1 b0
++ ((MEM x) l1), ((MEM x) l2), ((MEM l1) t) |- ((?l. (((MEM l) t) /\ ((MEM x) l))) /\ ((MEM x) l2))
+T c==> cMEM f0 f1 c==> cMEM f0 f2 c==> cMEM f1 f3 c/\ c? / c/\ cMEM b0 f3 cMEM f0 b0 cMEM f0 f2
++ (uniq h), ((~ ((has (\x. ((MEM x) h))) (flatten t))) /\ (uniq (flatten t))), (((uniq (flatten t)) /\ (((MEM l1) t) /\ (((MEM l2) t) /\ (((MEM x) l1) /\ ((MEM x) l2))))) ==> (l1 = l2)) |- ((((l1 = h) \/ ((MEM l1) t)) /\ (((l2 = h) \/ ((MEM l2) t)) /\ (((MEM x) l1) /\ ((MEM x) l2)))) ==> (l1 = l2))
+T c==> cuniq f0 c==> c/\ c~ chas / cMEM b0 f0 cflatten f1 cuniq cflatten f1 c==> c==> c/\ cuniq cflatten f1 c/\ cMEM f2 f1 c/\ cMEM f3 f1 c/\ cMEM f4 f2 cMEM f4 f3 c= f2 f3 c==> c/\ c\/ c= f2 f0 cMEM f2 f1 c/\ c\/ c= f3 f0 cMEM f3 f1 c/\ cMEM f4 f2 cMEM f4 f3 c= f2 f3
++ (uniq (flatten t)), ((MEM x) l1), ((MEM x) l2), ((MEM l1) t), ((MEM l2) t) |- (((uniq (flatten t)) /\ (((MEM l1) t) /\ (((MEM l2) t) /\ (((MEM x) l1) /\ ((MEM x) l2))))) /\ ((l1 = l2) ==> (l1 = l2)))
+T c==> cuniq cflatten f0 c==> cMEM f1 f2 c==> cMEM f1 f3 c==> cMEM f2 f0 c==> cMEM f3 f0 c/\ c/\ cuniq cflatten f0 c/\ cMEM f2 f0 c/\ cMEM f3 f0 c/\ cMEM f1 f2 cMEM f1 f3 c==> c= f2 f3 c= f2 f3
++ ((MEM x) l1), ((MEM l1) t) |- (((MEM l1) t) /\ ((MEM x) l1))
+T c==> cMEM f0 f1 c==> cMEM f1 f2 c/\ cMEM f1 f2 cMEM f0 f1
++ (l1 = h), ((MEM x) l1), ((MEM x) l2), ((MEM l2) t) |- ((has (\x. ((MEM x) h))) (flatten t))
+T c==> c= f0 f1 c==> cMEM f2 f0 c==> cMEM f2 f3 c==> cMEM f3 f4 chas / cMEM b0 f1 cflatten f4
+- (~ ((has (\x. ((MEM x) h))) (flatten t))) |- (((has (\x. ((MEM x) h))) (flatten t)) = F)
+T c==> c~ chas / cMEM b0 f0 cflatten f1 c= chas / cMEM b0 f0 cflatten f1 cF
++ (!c. (!b. (((~ c) ==> b) ==> ((~ b) ==> c)))) |- ((\b. (((~ c) ==> b) ==> ((~ b) ==> c))) b)
+T c==> ! ! c==> c==> c~ b0 b1 c==> c~ b1 b0 * / c==> c==> c~ f0 b0 c==> c~ b0 f0 f1
++ ((uniq h) /\ ((~ ((has (\x. ((MEM x) h))) (flatten t))) /\ (uniq (flatten t)))), (((l1 = h) \/ ((MEM l1) t)) /\ (((l2 = h) \/ ((MEM l2) t)) /\ (((MEM x) l1) /\ ((MEM x) l2)))), (((uniq (flatten t)) /\ (((MEM l1) t) /\ (((MEM l2) t) /\ (((MEM x) l1) /\ ((MEM x) l2))))) ==> (l1 = l2)) |- (l1 = l2)
+T c==> c/\ cuniq f0 c/\ c~ chas / cMEM b0 f0 cflatten f1 cuniq cflatten f1 c==> c/\ c\/ c= f2 f0 cMEM f2 f1 c/\ c\/ c= f3 f0 cMEM f3 f1 c/\ cMEM f4 f2 cMEM f4 f3 c==> c==> c/\ cuniq cflatten f1 c/\ cMEM f2 f1 c/\ cMEM f3 f1 c/\ cMEM f4 f2 cMEM f4 f3 c= f2 f3 c= f2 f3
+- |- ((?L1. (L = L1)) ==> (?L1. (L = L1)))
+T c==> c? / c= f0 b0 c? / c= f0 b0
++ |- (!a0. (!a1. ((((uniq (flatten a1)) /\ (((MEM l1) a1) /\ (((MEM l2) a1) /\ (((MEM x) l1) /\ ((MEM x) l2))))) ==> (l1 = l2)) ==> (((uniq (flatten ((CONS a0) a1))) /\ (((MEM l1) ((CONS a0) a1)) /\ (((MEM l2) ((CONS a0) a1)) /\ (((MEM x) l1) /\ ((MEM x) l2))))) ==> (l1 = l2)))))
+T c==> c==> c/\ cuniq cflatten f0 c/\ cMEM f1 f0 c/\ cMEM f2 f0 c/\ cMEM f3 f1 cMEM f3 f2 c= f1 f2 c==> c/\ cuniq cflatten cCONS f4 f0 c/\ cMEM f1 cCONS f4 f0 c/\ cMEM f2 cCONS f4 f0 c/\ cMEM f3 f1 cMEM f3 f2 c= f1 f2
++ |- ((x = x) = T)
+T c= c= f0 f0 cT
++ (l2 = h), ((MEM x) l1), ((MEM x) l2), ((MEM l1) t) |- ((~ (l1 = l2)) ==> ((has (\x. ((MEM x) h))) (flatten t)))
+T c==> c= f0 f1 c==> cMEM f2 f3 c==> cMEM f2 f0 c==> cMEM f3 f4 c==> c~ c= f3 f0 chas / cMEM b0 f1 cflatten f4
++ (~ ((has (\x. ((MEM x) h))) (flatten t))), (uniq (flatten t)), (((uniq (flatten t)) /\ (((MEM l1) t) /\ (((MEM l2) t) /\ (((MEM x) l1) /\ ((MEM x) l2))))) ==> (l1 = l2)), ((l2 = h) \/ ((MEM l2) t)), ((MEM x) l1), ((MEM x) l2), ((MEM l1) t) |- (((l2 = h) \/ ((MEM l2) t)) /\ (l1 = l2))
+T c==> c~ chas / cMEM b0 f0 cflatten f1 c==> cuniq cflatten f1 c==> c==> c/\ cuniq cflatten f1 c/\ cMEM f2 f1 c/\ cMEM f3 f1 c/\ cMEM f4 f2 cMEM f4 f3 c= f2 f3 c==> c\/ c= f3 f0 cMEM f3 f1 c==> cMEM f4 f2 c==> cMEM f4 f3 c==> cMEM f2 f1 c/\ c\/ c= f3 f0 cMEM f3 f1 c= f2 f3
+- |- ((\Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))) Q)
+T * / c= c==> f0 ! * b0 b1 ! c==> f0 * b0 b1 f1
+- |- (((!L. ((flatten ((filter (\l. (~ (l = NIL)))) L)) = (flatten L))) ==> ((\L. ((flatten ((filter (\l. (~ (l = NIL)))) L)) = (flatten L))) L1)) = ((\L. ((flatten ((filter (\l. (~ (l = NIL)))) L)) = (flatten L))) L1))
+T c= c==> ! c= cflatten cfilter / c~ c= b1 cNIL b0 cflatten b0 * / c= cflatten cfilter / c~ c= b1 cNIL b0 cflatten b0 f0 * / c= cflatten cfilter / c~ c= b1 cNIL b0 cflatten b0 f0
++ (l1 = h), (((MEM l2) t) ==> (l1 = l2)), ((l2 = h) \/ ((MEM l2) t)) |- (l1 = l2)
+T c==> c= f0 f1 c==> c==> cMEM f2 f3 c= f0 f2 c==> c\/ c= f2 f1 cMEM f2 f3 c= f0 f2
+- (!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))) |- ((\P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))) P)
+T c==> ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 * / c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 f0
++ |- ((!l2. (!L. (!x. (((uniq (flatten L)) /\ (((MEM l1) L) /\ (((MEM l2) L) /\ (((MEM x) l1) /\ ((MEM x) l2))))) ==> (l1 = l2))))) = T)
+T c= ! ! ! c==> c/\ cuniq cflatten b1 c/\ cMEM f0 b1 c/\ cMEM b0 b1 c/\ cMEM b2 f0 cMEM b2 b0 c= f0 b0 cT
+- (~ ((has (\x. ((MEM x) h))) (flatten t))), (uniq (flatten t)), (((uniq (flatten t)) /\ (((MEM l1) t) /\ (((MEM l2) t) /\ (((MEM x) l1) /\ ((MEM x) l2))))) ==> (l1 = l2)) |- ((uniq (flatten t)) /\ ((((l1 = h) \/ ((MEM l1) t)) /\ (((l2 = h) \/ ((MEM l2) t)) /\ (((MEM x) l1) /\ ((MEM x) l2)))) ==> (l1 = l2)))
+T c==> c~ chas / cMEM b0 f0 cflatten f1 c==> cuniq cflatten f1 c==> c==> c/\ cuniq cflatten f1 c/\ cMEM f2 f1 c/\ cMEM f3 f1 c/\ cMEM f4 f2 cMEM f4 f3 c= f2 f3 c/\ cuniq cflatten f1 c==> c/\ c\/ c= f2 f0 cMEM f2 f1 c/\ c\/ c= f3 f0 cMEM f3 f1 c/\ cMEM f4 f2 cMEM f4 f3 c= f2 f3
++ |- (((!a. (!s. (((has a) s) = (?x. (((MEM x) s) /\ (a x)))))) ==> ((\a. (!s. (((has a) s) = (?x. (((MEM x) s) /\ (a x)))))) a)) = ((\a. (!s. (((has a) s) = (?x. (((MEM x) s) /\ (a x)))))) a))
+T c= c==> ! ! c= chas b0 b1 c? / c/\ cMEM b2 b1 * b0 b2 * / ! c= chas b0 b1 c? / c/\ cMEM b2 b1 * b0 b2 f0 * / ! c= chas b0 b1 c? / c/\ cMEM b2 b1 * b0 b2 f0
++ |- (((uniq (flatten NIL)) /\ (F /\ (F /\ (((MEM x) l1) /\ ((MEM x) l2))))) ==> (l1 = l2))
+T c==> c/\ cuniq cflatten cNIL c/\ cF c/\ cF c/\ cMEM f0 f1 cMEM f0 f2 c= f1 f2
++ |- ((((uniq (flatten ((CONS h) t))) /\ (((l1 = h) \/ ((MEM l1) t)) /\ (((l2 = h) \/ ((MEM l2) t)) /\ (((MEM x) l1) /\ ((MEM x) l2))))) ==> (l1 = l2)) = (((uniq (flatten ((CONS h) t))) /\ (((l1 = h) \/ ((MEM l1) t)) /\ (((MEM l2) ((CONS h) t)) /\ (((MEM x) l1) /\ ((MEM x) l2))))) ==> (l1 = l2)))
+T c= c==> c/\ cuniq cflatten cCONS f0 f1 c/\ c\/ c= f2 f0 cMEM f2 f1 c/\ c\/ c= f3 f0 cMEM f3 f1 c/\ cMEM f4 f2 cMEM f4 f3 c= f2 f3 c==> c/\ cuniq cflatten cCONS f0 f1 c/\ c\/ c= f2 f0 cMEM f2 f1 c/\ cMEM f3 cCONS f0 f1 c/\ cMEM f4 f2 cMEM f4 f3 c= f2 f3
+- (((uniq (flatten t)) /\ (((MEM l1) t) /\ (((MEM l2) t) /\ (((MEM x) l1) /\ ((MEM x) l2))))) ==> (l1 = l2)) |- (((uniq h) /\ ((~ ((has (\x. ((MEM x) h))) (flatten t))) /\ (uniq (flatten t)))) ==> ((((l1 = h) \/ ((MEM l1) t)) /\ (((l2 = h) \/ ((MEM l2) t)) /\ (((MEM x) l1) /\ ((MEM x) l2)))) ==> (l1 = l2)))
+T c==> c==> c/\ cuniq cflatten f0 c/\ cMEM f1 f0 c/\ cMEM f2 f0 c/\ cMEM f3 f1 cMEM f3 f2 c= f1 f2 c==> c/\ cuniq f4 c/\ c~ chas / cMEM b0 f4 cflatten f0 cuniq cflatten f0 c==> c/\ c\/ c= f1 f4 cMEM f1 f0 c/\ c\/ c= f2 f4 cMEM f2 f0 c/\ cMEM f3 f1 cMEM f3 f2 c= f1 f2
++ (uniq (flatten t)), (((uniq (flatten t)) /\ (((MEM l1) t) /\ (((MEM l2) t) /\ (((MEM x) l1) /\ ((MEM x) l2))))) ==> (l1 = l2)), ((MEM x) l1), ((MEM x) l2), ((MEM l1) t), ((MEM l2) t) |- (((MEM l2) t) /\ (l1 = l2))
+T c==> cuniq cflatten f0 c==> c==> c/\ cuniq cflatten f0 c/\ cMEM f1 f0 c/\ cMEM f2 f0 c/\ cMEM f3 f1 cMEM f3 f2 c= f1 f2 c==> cMEM f3 f1 c==> cMEM f3 f2 c==> cMEM f1 f0 c==> cMEM f2 f0 c/\ cMEM f2 f0 c= f1 f2
+- ((\L1. (L = L1)) L1) |- (((L = L1) ==> (?L1. (L = L1))) = (?L1. (L = L1)))
+T c==> * / c= f0 b0 f1 c= c==> c= f0 f1 c? / c= f0 b0 c? / c= f0 b0
+- |- ((!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))) ==> (!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))))
+T c==> ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1
+- (~ ((has (\x. ((MEM x) h))) (flatten t))), (uniq (flatten t)), (((MEM x) l1) /\ ((MEM x) l2)), (((uniq (flatten t)) /\ (((MEM l1) t) /\ (((MEM l2) t) /\ (((MEM x) l1) /\ ((MEM x) l2))))) ==> (l1 = l2)), ((l1 = h) \/ ((MEM l1) t)), ((l2 = h) \/ ((MEM l2) t)) |- ((((MEM x) l1) /\ ((MEM x) l2)) /\ (l1 = l2))
+T c==> c~ chas / cMEM b0 f0 cflatten f1 c==> cuniq cflatten f1 c==> c/\ cMEM f2 f3 cMEM f2 f4 c==> c==> c/\ cuniq cflatten f1 c/\ cMEM f3 f1 c/\ cMEM f4 f1 c/\ cMEM f2 f3 cMEM f2 f4 c= f3 f4 c==> c\/ c= f3 f0 cMEM f3 f1 c==> c\/ c= f4 f0 cMEM f4 f1 c/\ c/\ cMEM f2 f3 cMEM f2 f4 c= f3 f4
+- |- (((!P. (!Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x)))))) ==> ((\P. (!Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x)))))) P)) = ((\P. (!Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x)))))) P))
+T c= c==> ! ! c= c==> b0 ! * b1 b2 ! c==> b0 * b1 b2 * / ! c= c==> b0 ! * b1 b2 ! c==> b0 * b1 b2 f0 * / ! c= c==> b0 ! * b1 b2 ! c==> b0 * b1 b2 f0
+- (~ ((has (\x. ((MEM x) h))) (flatten t))), (((uniq (flatten t)) /\ (((MEM l1) t) /\ (((MEM l2) t) /\ (((MEM x) l1) /\ ((MEM x) l2))))) ==> (l1 = l2)) |- ((uniq (flatten t)) ==> ((((l1 = h) \/ ((MEM l1) t)) /\ (((l2 = h) \/ ((MEM l2) t)) /\ (((MEM x) l1) /\ ((MEM x) l2)))) ==> (l1 = l2)))
+T c==> c~ chas / cMEM b0 f0 cflatten f1 c==> c==> c/\ cuniq cflatten f1 c/\ cMEM f2 f1 c/\ cMEM f3 f1 c/\ cMEM f4 f2 cMEM f4 f3 c= f2 f3 c==> cuniq cflatten f1 c==> c/\ c\/ c= f2 f0 cMEM f2 f1 c/\ c\/ c= f3 f0 cMEM f3 f1 c/\ cMEM f4 f2 cMEM f4 f3 c= f2 f3
+- ((\L1. (L = L1)) L1) |- (((L = L1) ==> ((flatten ((filter (\l. (~ (l = NIL)))) L)) = (flatten L))) = ((flatten ((filter (\l. (~ (l = NIL)))) L)) = (flatten L)))
+T c==> * / c= f0 b0 f1 c= c==> c= f0 f1 c= cflatten cfilter / c~ c= b0 cNIL f0 cflatten f0 c= cflatten cfilter / c~ c= b0 cNIL f0 cflatten f0
+- (~ ((has (\x. ((MEM x) h))) (flatten t))), (uniq (flatten t)), (((uniq (flatten t)) /\ (((MEM l1) t) /\ (((MEM l2) t) /\ (((MEM x) l1) /\ ((MEM x) l2))))) ==> (l1 = l2)), ((l1 = h) \/ ((MEM l1) t)), ((l2 = h) \/ ((MEM l2) t)), ((MEM x) l1), ((MEM x) l2) |- (((MEM x) l2) /\ (l1 = l2))
+T c==> c~ chas / cMEM b0 f0 cflatten f1 c==> cuniq cflatten f1 c==> c==> c/\ cuniq cflatten f1 c/\ cMEM f2 f1 c/\ cMEM f3 f1 c/\ cMEM f4 f2 cMEM f4 f3 c= f2 f3 c==> c\/ c= f2 f0 cMEM f2 f1 c==> c\/ c= f3 f0 cMEM f3 f1 c==> cMEM f4 f2 c==> cMEM f4 f3 c/\ cMEM f4 f3 c= f2 f3
+- (L = L1) |- ((L = L1) /\ (?L1. (L = L1)))
+T c==> c= f0 f1 c/\ c= f0 f1 c? / c= f0 b0
+- ((\L1. (L = L1)) L1) |- (((\L1. (L = L1)) L1) /\ (?L1. (L = L1)))
+T c==> * / c= f0 b0 f1 c/\ * / c= f0 b0 f1 c? / c= f0 b0
+- (((uniq (flatten t)) /\ (((MEM l1) t) /\ (((MEM l2) t) /\ (((MEM x) l1) /\ ((MEM x) l2))))) ==> (l1 = l2)) |- ((((uniq (flatten t)) /\ (((MEM l1) t) /\ (((MEM l2) t) /\ (((MEM x) l1) /\ ((MEM x) l2))))) ==> (l1 = l2)) = T)
+T c==> c==> c/\ cuniq cflatten f0 c/\ cMEM f1 f0 c/\ cMEM f2 f0 c/\ cMEM f3 f1 cMEM f3 f2 c= f1 f2 c= c==> c/\ cuniq cflatten f0 c/\ cMEM f1 f0 c/\ cMEM f2 f0 c/\ cMEM f3 f1 cMEM f3 f2 c= f1 f2 cT
+- (((uniq (flatten t)) /\ (((MEM l1) t) /\ (((MEM l2) t) /\ (((MEM x) l1) /\ ((MEM x) l2))))) ==> (l1 = l2)) |- ((~ ((has (\x. ((MEM x) h))) (flatten t))) ==> ((uniq (flatten t)) ==> ((((l1 = h) \/ ((MEM l1) t)) /\ (((l2 = h) \/ ((MEM l2) t)) /\ (((MEM x) l1) /\ ((MEM x) l2)))) ==> (l1 = l2))))
+T c==> c==> c/\ cuniq cflatten f0 c/\ cMEM f1 f0 c/\ cMEM f2 f0 c/\ cMEM f3 f1 cMEM f3 f2 c= f1 f2 c==> c~ chas / cMEM b0 f4 cflatten f0 c==> cuniq cflatten f0 c==> c/\ c\/ c= f1 f4 cMEM f1 f0 c/\ c\/ c= f2 f4 cMEM f2 f0 c/\ cMEM f3 f1 cMEM f3 f2 c= f1 f2
+- (~ ((has (\x. ((MEM x) h))) (flatten t))), (uniq (flatten t)), (((uniq (flatten t)) /\ (((MEM l1) t) /\ (((MEM l2) t) /\ (((MEM x) l1) /\ ((MEM x) l2))))) ==> (l1 = l2)), ((l1 = h) \/ ((MEM l1) t)) |- (((l1 = h) \/ ((MEM l1) t)) /\ ((((l2 = h) \/ ((MEM l2) t)) /\ (((MEM x) l1) /\ ((MEM x) l2))) ==> (l1 = l2)))
+T c==> c~ chas / cMEM b0 f0 cflatten f1 c==> cuniq cflatten f1 c==> c==> c/\ cuniq cflatten f1 c/\ cMEM f2 f1 c/\ cMEM f3 f1 c/\ cMEM f4 f2 cMEM f4 f3 c= f2 f3 c==> c\/ c= f2 f0 cMEM f2 f1 c/\ c\/ c= f2 f0 cMEM f2 f1 c==> c/\ c\/ c= f3 f0 cMEM f3 f1 c/\ cMEM f4 f2 cMEM f4 f3 c= f2 f3
+- ((\L1. (L = L1)) L1) |- (((\L1. (L = L1)) L1) /\ ((flatten ((filter (\l. (~ (l = NIL)))) L)) = (flatten L)))
+T c==> * / c= f0 b0 f1 c/\ * / c= f0 b0 f1 c= cflatten cfilter / c~ c= b0 cNIL f0 cflatten f0
+- |- ((flatten ((filter (\l. (~ (l = NIL)))) L)) = (flatten L))
+T c= cflatten cfilter / c~ c= b0 cNIL f0 cflatten f0
+- |- ((?L1. (L = L1)) ==> ((flatten ((filter (\l. (~ (l = NIL)))) L)) = (flatten L)))
+T c==> c? / c= f0 b0 c= cflatten cfilter / c~ c= b0 cNIL f0 cflatten f0
+- (L = L1) |- ((flatten ((filter (\l. (~ (l = NIL)))) L1)) = (flatten L1))
+T c==> c= f0 f1 c= cflatten cfilter / c~ c= b0 cNIL f1 cflatten f1
+- |- (((!x. (((\L1. (L = L1)) x) ==> (?L1. (L = L1)))) ==> ((?L1. (L = L1)) ==> (?L1. (L = L1)))) = ((?L1. (L = L1)) ==> (?L1. (L = L1))))
+T c= c==> ! c==> * / c= f0 b1 b0 c? / c= f0 b1 c==> c? / c= f0 b0 c? / c= f0 b0 c==> c? / c= f0 b0 c? / c= f0 b0
+- ((uniq (flatten t)) /\ (((MEM l1) t) /\ (((MEM l2) t) /\ (((MEM x) l1) /\ ((MEM x) l2))))), (((uniq (flatten t)) /\ (((MEM l1) t) /\ (((MEM l2) t) /\ (((MEM x) l1) /\ ((MEM x) l2))))) ==> (l1 = l2)) |- (l1 = l2)
+T c==> c/\ cuniq cflatten f0 c/\ cMEM f1 f0 c/\ cMEM f2 f0 c/\ cMEM f3 f1 cMEM f3 f2 c==> c==> c/\ cuniq cflatten f0 c/\ cMEM f1 f0 c/\ cMEM f2 f0 c/\ cMEM f3 f1 cMEM f3 f2 c= f1 f2 c= f1 f2
+- |- ((t /\ t) = t)
+T c= c/\ f0 f0 f0
+- (!c. (!b. (((~ c) ==> b) ==> ((~ b) ==> c)))), ((~ c) ==> b) |- (((~ c) ==> b) /\ ((~ b) ==> c))
+T c==> ! ! c==> c==> c~ b0 b1 c==> c~ b1 b0 c==> c==> c~ f0 f1 c/\ c==> c~ f0 f1 c==> c~ f1 f0
+- (!c. (!b. (((~ c) ==> b) ==> ((~ b) ==> c)))) |- ((!c. (!b. (((~ c) ==> b) ==> ((~ b) ==> c)))) /\ (!b. (!c. (((~ c) ==> b) ==> ((~ b) ==> c)))))
+T c==> ! ! c==> c==> c~ b0 b1 c==> c~ b1 b0 c/\ ! ! c==> c==> c~ b0 b1 c==> c~ b1 b0 ! ! c==> c==> c~ b1 b0 c==> c~ b0 b1
+- |- ((L = L1) ==> (?L1. (L = L1)))
+T c==> c= f0 f1 c? / c= f0 b0
+- |- ((\h. (!x. (!t. ((((MEM x) NIL) = F) /\ (((MEM x) ((CONS h) t)) = ((x = h) \/ ((MEM x) t))))))) h)
+T * / ! ! c/\ c= cMEM b1 cNIL cF c= cMEM b1 cCONS b0 b2 c\/ c= b1 b0 cMEM b1 b2 f0
+- (~ ((has (\x. ((MEM x) h))) (flatten t))), (uniq (flatten t)), (((uniq (flatten t)) /\ (((MEM l1) t) /\ (((MEM l2) t) /\ (((MEM x) l1) /\ ((MEM x) l2))))) ==> (l1 = l2)), ((l1 = h) \/ ((MEM l1) t)), ((l2 = h) \/ ((MEM l2) t)) |- (((l2 = h) \/ ((MEM l2) t)) /\ ((((MEM x) l1) /\ ((MEM x) l2)) ==> (l1 = l2)))
+T c==> c~ chas / cMEM b0 f0 cflatten f1 c==> cuniq cflatten f1 c==> c==> c/\ cuniq cflatten f1 c/\ cMEM f2 f1 c/\ cMEM f3 f1 c/\ cMEM f4 f2 cMEM f4 f3 c= f2 f3 c==> c\/ c= f2 f0 cMEM f2 f1 c==> c\/ c= f3 f0 cMEM f3 f1 c/\ c\/ c= f3 f0 cMEM f3 f1 c==> c/\ cMEM f4 f2 cMEM f4 f3 c= f2 f3
+- (l1 = l2) |- ((l2 = l2) = (l1 = l2))
+T c==> c= f0 f1 c= c= f1 f1 c= f0 f1
+- ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x)))) |- ((!x. (P ==> (Q x))) = (P ==> (!x. (Q x))))
+T c==> c= c==> f0 ! * f1 b0 ! c==> f0 * f1 b0 c= ! c==> f0 * f1 b0 c==> f0 ! * f1 b0
+- (!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))) |- ((((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x))) = T)
+T c==> ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 c= c==> c/\ * f0 cNIL ! ! c==> * f0 b1 * f0 cCONS b0 b1 ! * f0 b0 cT
+- (l1 = h) |- ((h = l2) = (l1 = l2))
+T c==> c= f0 f1 c= c= f1 f2 c= f0 f2
+- |- ((((\L1. (L = L1)) L1) ==> ((flatten ((filter (\l. (~ (l = NIL)))) L)) = (flatten L))) = T)
+T c= c==> * / c= f0 b0 f1 c= cflatten cfilter / c~ c= b0 cNIL f0 cflatten f0 cT
+- (L = L1) |- ((\L1. (L = L1)) L1)
+T c==> c= f0 f1 * / c= f0 b0 f1
+- (!c. (!b. (((~ c) ==> b) ==> ((~ b) ==> c)))) |- ((!c. (((~ c) ==> b) ==> ((~ b) ==> c))) = T)
+T c==> ! ! c==> c==> c~ b0 b1 c==> c~ b1 b0 c= ! c==> c==> c~ b0 f0 c==> c~ f0 b0 cT
+- |- (T = (l2 = l2))
+T c= cT c= f0 f0
+- |- ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))
+T c= c==> f0 ! * f1 b0 ! c==> f0 * f1 b0
+- (uniq h) |- ((uniq h) = T)
+T c==> cuniq f0 c= cuniq f0 cT
+- (!c. (!b. (((~ c) ==> b) ==> ((~ b) ==> c)))) |- (((!c. (((~ c) ==> b) ==> ((~ b) ==> c))) ==> ((\c. (((~ c) ==> b) ==> ((~ b) ==> c))) c)) = ((\c. (((~ c) ==> b) ==> ((~ b) ==> c))) c))
+T c==> ! ! c==> c==> c~ b0 b1 c==> c~ b1 b0 c= c==> ! c==> c==> c~ b0 f0 c==> c~ f0 b0 * / c==> c==> c~ b0 f0 c==> c~ f0 b0 f1 * / c==> c==> c~ b0 f0 c==> c~ f0 b0 f1
+- |- ((\L. ((flatten ((filter (\l. (~ (l = NIL)))) L)) = (flatten L))) L1)
+T * / c= cflatten cfilter / c~ c= b1 cNIL b0 cflatten b0 f0
+- |- ((L = L1) ==> ((flatten ((filter (\l. (~ (l = NIL)))) L)) = (flatten L)))
+T c==> c= f0 f1 c= cflatten cfilter / c~ c= b0 cNIL f0 cflatten f0
+- |- (((\x. (f x)) y) = (f y))
+T c= * / * f0 b0 f1 * f0 f1
+- (!c. (!b. (((~ c) ==> b) ==> ((~ b) ==> c)))) |- ((\c. (((~ c) ==> b) ==> ((~ b) ==> c))) c)
+T c==> ! ! c==> c==> c~ b0 b1 c==> c~ b1 b0 * / c==> c==> c~ b0 f0 c==> c~ f0 b0 f1
+- (L = L1) |- (((uniq (flatten L1)) /\ (((MEM l1) L1) /\ (((MEM l2) L1) /\ (((MEM x) l1) /\ ((MEM x) l2))))) ==> (l1 = l2))
+T c==> c= f0 f1 c==> c/\ cuniq cflatten f1 c/\ cMEM f2 f1 c/\ cMEM f3 f1 c/\ cMEM f4 f2 cMEM f4 f3 c= f2 f3
+- |- (((!Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))) ==> ((\Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))) Q)) = ((\Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))) Q))
+T c= c==> ! c= c==> f0 ! * b0 b1 ! c==> f0 * b0 b1 * / c= c==> f0 ! * b0 b1 ! c==> f0 * b0 b1 f1 * / c= c==> f0 ! * b0 b1 ! c==> f0 * b0 b1 f1
+- |- ((((\L1. (L = L1)) L1) ==> (?L1. (L = L1))) = T)
+T c= c==> * / c= f0 b0 f1 c? / c= f0 b0 cT
+- |- (((!x. (!t. ((((MEM x) NIL) = F) /\ (((MEM x) ((CONS h) t)) = ((x = h) \/ ((MEM x) t)))))) ==> ((\x. (!t. ((((MEM x) NIL) = F) /\ (((MEM x) ((CONS h) t)) = ((x = h) \/ ((MEM x) t)))))) x)) = ((\x. (!t. ((((MEM x) NIL) = F) /\ (((MEM x) ((CONS h) t)) = ((x = h) \/ ((MEM x) t)))))) x))
+T c= c==> ! ! c/\ c= cMEM b0 cNIL cF c= cMEM b0 cCONS f0 b1 c\/ c= b0 f0 cMEM b0 b1 * / ! c/\ c= cMEM b0 cNIL cF c= cMEM b0 cCONS f0 b1 c\/ c= b0 f0 cMEM b0 b1 f1 * / ! c/\ c= cMEM b0 cNIL cF c= cMEM b0 cCONS f0 b1 c\/ c= b0 f0 cMEM b0 b1 f1
+- (l2 = h) |- ((l1 = h) = (l1 = l2))
+T c==> c= f0 f1 c= c= f2 f1 c= f2 f0
+- (!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))) |- ((!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))) /\ (!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))))
+T c==> ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 c/\ ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1
+- (~ ((has (\x. ((MEM x) h))) (flatten t))), (((uniq (flatten t)) /\ (((MEM l1) t) /\ (((MEM l2) t) /\ (((MEM x) l1) /\ ((MEM x) l2))))) ==> (l1 = l2)) |- ((~ ((has (\x. ((MEM x) h))) (flatten t))) /\ ((uniq (flatten t)) ==> ((((l1 = h) \/ ((MEM l1) t)) /\ (((l2 = h) \/ ((MEM l2) t)) /\ (((MEM x) l1) /\ ((MEM x) l2)))) ==> (l1 = l2))))
+T c==> c~ chas / cMEM b0 f0 cflatten f1 c==> c==> c/\ cuniq cflatten f1 c/\ cMEM f2 f1 c/\ cMEM f3 f1 c/\ cMEM f4 f2 cMEM f4 f3 c= f2 f3 c/\ c~ chas / cMEM b0 f0 cflatten f1 c==> cuniq cflatten f1 c==> c/\ c\/ c= f2 f0 cMEM f2 f1 c/\ c\/ c= f3 f0 cMEM f3 f1 c/\ cMEM f4 f2 cMEM f4 f3 c= f2 f3
+- (~ ((has (\x. ((MEM x) h))) (flatten t))), (uniq (flatten t)), (((uniq (flatten t)) /\ (((MEM l1) t) /\ (((MEM l2) t) /\ (((MEM x) l1) /\ ((MEM x) l2))))) ==> (l1 = l2)), ((l1 = h) \/ ((MEM l1) t)), ((MEM x) l1), ((MEM x) l2) |- (((l1 = h) \/ ((MEM l1) t)) /\ (((l2 = h) \/ ((MEM l2) t)) ==> (l1 = l2)))
+T c==> c~ chas / cMEM b0 f0 cflatten f1 c==> cuniq cflatten f1 c==> c==> c/\ cuniq cflatten f1 c/\ cMEM f2 f1 c/\ cMEM f3 f1 c/\ cMEM f4 f2 cMEM f4 f3 c= f2 f3 c==> c\/ c= f2 f0 cMEM f2 f1 c==> cMEM f4 f2 c==> cMEM f4 f3 c/\ c\/ c= f2 f0 cMEM f2 f1 c==> c\/ c= f3 f0 cMEM f3 f1 c= f2 f3

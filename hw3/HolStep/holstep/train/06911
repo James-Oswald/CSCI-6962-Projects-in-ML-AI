@@ -1,0 +1,387 @@
+N Tame_list.MEM2_replace
+C |- (!x. (!f. (!xs. (!g. ((((MEM f) g) /\ ((MEM x) xs)) ==> ((MEM x) (((replace f) xs) g)))))))
+T c==> c/\ cMEM f0 f1 cMEM f2 f3 cMEM f2 creplace f0 f3 f1
+D TRUTH
+A |- T
+T cT
+D BOOL_CASES_AX
+A |- (!t. ((t = T) \/ (t = F)))
+T c\/ c= f0 cT c= f0 cF
+D NOT_CLAUSES
+A |- ((!t. ((~ (~ t)) = t)) /\ (((~ T) = F) /\ ((~ F) = T)))
+T c/\ ! c= c~ c~ b0 b0 c/\ c= c~ cT cF c= c~ cF cT
+D COND_ELIM_THM
+A |- ((P (((COND c) x) y)) = ((c ==> (P x)) /\ ((~ c) ==> (P y))))
+T c= * f0 cCOND f1 f2 f3 c/\ c==> f1 * f0 f2 c==> c~ f1 * f0 f3
+D list_INDUCT
+A |- (!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x))))
+T c==> c/\ * f0 cNIL ! ! c==> * f0 b1 * f0 cCONS b0 b1 ! * f0 b0
+D MEM
+A |- ((((MEM x) NIL) = F) /\ (((MEM x) ((CONS h) t)) = ((x = h) \/ ((MEM x) t))))
+T c/\ c= cMEM f0 cNIL cF c= cMEM f0 cCONS f1 f2 c\/ c= f0 f1 cMEM f0 f2
+D MEM_APPEND
+A |- (!x. (!l1. (!l2. (((MEM x) ((APPEND l1) l2)) = (((MEM x) l1) \/ ((MEM x) l2))))))
+T c= cMEM f0 cAPPEND f1 f2 c\/ cMEM f0 f1 cMEM f0 f2
+D Tame_defs.replace
+A |- (((((replace x) ys) NIL) = NIL) /\ ((((replace x) ys) ((CONS z) zs)) = (((COND (z = x)) ((APPEND ys) zs)) ((CONS z) (((replace x) ys) zs)))))
+T c/\ c= creplace f0 f1 cNIL cNIL c= creplace f0 f1 cCONS f2 f3 cCOND c= f2 f0 cAPPEND f1 f3 cCONS f2 creplace f0 f1 f3
++ (~ (((MEM x) xs) \/ ((MEM x) t))), ((MEM x) xs) |- ((~ (((MEM x) xs) \/ ((MEM x) t))) /\ F)
+T c==> c~ c\/ cMEM f0 f1 cMEM f0 f2 c==> cMEM f0 f1 c/\ c~ c\/ cMEM f0 f1 cMEM f0 f2 cF
++ |- (((!x. (!l1. (!l2. (((MEM x) ((APPEND l1) l2)) = (((MEM x) l1) \/ ((MEM x) l2)))))) ==> ((\x. (!l1. (!l2. (((MEM x) ((APPEND l1) l2)) = (((MEM x) l1) \/ ((MEM x) l2)))))) x)) = ((\x. (!l1. (!l2. (((MEM x) ((APPEND l1) l2)) = (((MEM x) l1) \/ ((MEM x) l2)))))) x))
+T c= c==> ! ! ! c= cMEM b0 cAPPEND b1 b2 c\/ cMEM b0 b1 cMEM b0 b2 * / ! ! c= cMEM b0 cAPPEND b1 b2 c\/ cMEM b0 b1 cMEM b0 b2 f0 * / ! ! c= cMEM b0 cAPPEND b1 b2 c\/ cMEM b0 b1 cMEM b0 b2 f0
+- |- ((((~ (((MEM x) xs) ==> (((MEM x) xs) \/ ((MEM x) t)))) ==> F) ==> ((~ (((MEM x) xs) ==> (((MEM x) xs) \/ ((MEM x) t)))) ==> F)) = ((~ (((MEM x) xs) ==> (((MEM x) xs) \/ ((MEM x) t)))) ==> F))
+T c= c==> c==> c~ c==> cMEM f0 f1 c\/ cMEM f0 f1 cMEM f0 f2 cF c==> c~ c==> cMEM f0 f1 c\/ cMEM f0 f1 cMEM f0 f2 cF c==> c~ c==> cMEM f0 f1 c\/ cMEM f0 f1 cMEM f0 f2 cF
++ |- ((((((MEM f) NIL) /\ ((MEM x) xs)) ==> ((MEM x) (((replace f) xs) NIL))) /\ (!h. (!t. (((((MEM f) t) /\ ((MEM x) xs)) ==> ((MEM x) (((replace f) xs) t))) ==> ((((MEM f) ((CONS h) t)) /\ ((MEM x) xs)) ==> ((MEM x) (((replace f) xs) ((CONS h) t)))))))) ==> (!g. ((((MEM f) g) /\ ((MEM x) xs)) ==> ((MEM x) (((replace f) xs) g)))))
+T c==> c/\ c==> c/\ cMEM f0 cNIL cMEM f1 f2 cMEM f1 creplace f0 f2 cNIL ! ! c==> c==> c/\ cMEM f0 b1 cMEM f1 f2 cMEM f1 creplace f0 f2 b1 c==> c/\ cMEM f0 cCONS b0 b1 cMEM f1 f2 cMEM f1 creplace f0 f2 cCONS b0 b1 ! c==> c/\ cMEM f0 b0 cMEM f1 f2 cMEM f1 creplace f0 f2 b0
+- (~ (h = f)), (~ ((((MEM f) t) /\ ((MEM x) xs)) ==> ((x = h) \/ ((MEM x) (((replace f) xs) t))))), ((((MEM f) t) /\ ((MEM x) xs)) ==> ((MEM x) (((replace f) xs) t))) |- ((~ ((((MEM f) t) /\ ((MEM x) xs)) ==> ((x = h) \/ ((MEM x) (((replace f) xs) t))))) /\ F)
+T c==> c~ c= f0 f1 c==> c~ c==> c/\ cMEM f1 f2 cMEM f3 f4 c\/ c= f3 f0 cMEM f3 creplace f1 f4 f2 c==> c==> c/\ cMEM f1 f2 cMEM f3 f4 cMEM f3 creplace f1 f4 f2 c/\ c~ c==> c/\ cMEM f1 f2 cMEM f3 f4 c\/ c= f3 f0 cMEM f3 creplace f1 f4 f2 cF
+- (((((MEM f) t) /\ ((MEM x) xs)) ==> ((MEM x) (((replace f) xs) t))) ==> ((~ (h = f)) ==> ((~ ((((MEM f) t) /\ ((MEM x) xs)) ==> ((x = h) \/ ((MEM x) (((replace f) xs) t))))) ==> F))), ((((((MEM f) t) /\ ((MEM x) xs)) ==> ((MEM x) (((replace f) xs) t))) ==> ((~ (h = f)) ==> ((~ ((((MEM f) t) /\ ((MEM x) xs)) ==> ((x = h) \/ ((MEM x) (((replace f) xs) t))))) ==> F))) ==> (((((MEM f) t) /\ ((MEM x) xs)) ==> ((MEM x) (((replace f) xs) t))) ==> ((~ (h = f)) ==> ((~ ((((MEM f) t) /\ ((MEM x) xs)) ==> ((x = h) \/ ((MEM x) (((replace f) xs) t))))) ==> F)))) |- ((((((MEM f) t) /\ ((MEM x) xs)) ==> ((MEM x) (((replace f) xs) t))) ==> ((~ (h = f)) ==> ((~ ((((MEM f) t) /\ ((MEM x) xs)) ==> ((x = h) \/ ((MEM x) (((replace f) xs) t))))) ==> F))) /\ (((((MEM f) t) /\ ((MEM x) xs)) ==> ((MEM x) (((replace f) xs) t))) ==> ((~ (h = f)) ==> ((~ ((((MEM f) t) /\ ((MEM x) xs)) ==> ((x = h) \/ ((MEM x) (((replace f) xs) t))))) ==> F))))
+T c==> c==> c==> c/\ cMEM f0 f1 cMEM f2 f3 cMEM f2 creplace f0 f3 f1 c==> c~ c= f4 f0 c==> c~ c==> c/\ cMEM f0 f1 cMEM f2 f3 c\/ c= f2 f4 cMEM f2 creplace f0 f3 f1 cF c==> c==> c==> c==> c/\ cMEM f0 f1 cMEM f2 f3 cMEM f2 creplace f0 f3 f1 c==> c~ c= f4 f0 c==> c~ c==> c/\ cMEM f0 f1 cMEM f2 f3 c\/ c= f2 f4 cMEM f2 creplace f0 f3 f1 cF c==> c==> c/\ cMEM f0 f1 cMEM f2 f3 cMEM f2 creplace f0 f3 f1 c==> c~ c= f4 f0 c==> c~ c==> c/\ cMEM f0 f1 cMEM f2 f3 c\/ c= f2 f4 cMEM f2 creplace f0 f3 f1 cF c/\ c==> c==> c/\ cMEM f0 f1 cMEM f2 f3 cMEM f2 creplace f0 f3 f1 c==> c~ c= f4 f0 c==> c~ c==> c/\ cMEM f0 f1 cMEM f2 f3 c\/ c= f2 f4 cMEM f2 creplace f0 f3 f1 cF c==> c==> c/\ cMEM f0 f1 cMEM f2 f3 cMEM f2 creplace f0 f3 f1 c==> c~ c= f4 f0 c==> c~ c==> c/\ cMEM f0 f1 cMEM f2 f3 c\/ c= f2 f4 cMEM f2 creplace f0 f3 f1 cF
+- |- ((\t1. (!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))))) t1)
+T * / ! ! c= c\/ b0 c\/ b1 b2 c\/ c\/ b0 b1 b2 f0
++ |- ((!h. (!t. (((((MEM f) t) /\ ((MEM x) xs)) ==> ((MEM x) (((replace f) xs) t))) ==> ((((MEM f) ((CONS h) t)) /\ ((MEM x) xs)) ==> ((MEM x) (((replace f) xs) ((CONS h) t))))))) = (((((MEM f) NIL) /\ ((MEM x) xs)) ==> ((MEM x) (((replace f) xs) NIL))) /\ (!h. (!t. (((((MEM f) t) /\ ((MEM x) xs)) ==> ((MEM x) (((replace f) xs) t))) ==> ((((MEM f) ((CONS h) t)) /\ ((MEM x) xs)) ==> ((MEM x) (((replace f) xs) ((CONS h) t)))))))))
+T c= ! ! c==> c==> c/\ cMEM f0 b1 cMEM f1 f2 cMEM f1 creplace f0 f2 b1 c==> c/\ cMEM f0 cCONS b0 b1 cMEM f1 f2 cMEM f1 creplace f0 f2 cCONS b0 b1 c/\ c==> c/\ cMEM f0 cNIL cMEM f1 f2 cMEM f1 creplace f0 f2 cNIL ! ! c==> c==> c/\ cMEM f0 b1 cMEM f1 f2 cMEM f1 creplace f0 f2 b1 c==> c/\ cMEM f0 cCONS b0 b1 cMEM f1 f2 cMEM f1 creplace f0 f2 cCONS b0 b1
+- (~ ((MEM x) (((replace f) xs) t))), ((MEM x) (((replace f) xs) t)) |- ((~ ((MEM x) (((replace f) xs) t))) /\ ((MEM x) (((replace f) xs) t)))
+T c==> c~ cMEM f0 creplace f1 f2 f3 c==> cMEM f0 creplace f1 f2 f3 c/\ c~ cMEM f0 creplace f1 f2 f3 cMEM f0 creplace f1 f2 f3
+- |- ((~ (_10071490 = _10071493)) \/ ((~ (_10071491 = _10071494)) \/ ((~ (_10071492 = _10071495)) \/ ((((replace _10071490) _10071491) _10071492) = (((replace _10071493) _10071494) _10071495)))))
+T c\/ c~ c= f0 f1 c\/ c~ c= f2 f3 c\/ c~ c= f4 f5 c= creplace f0 f2 f4 creplace f1 f3 f5
+- |- (((~ (((MEM x) xs) ==> (((MEM x) xs) \/ ((MEM x) t)))) ==> F) = (((MEM x) xs) ==> (((MEM x) xs) \/ ((MEM x) t))))
+T c= c==> c~ c==> cMEM f0 f1 c\/ cMEM f0 f1 cMEM f0 f2 cF c==> cMEM f0 f1 c\/ cMEM f0 f1 cMEM f0 f2
++ |- ((h = f) ==> ((((f = h) \/ ((MEM f) t)) /\ ((MEM x) xs)) ==> ((MEM x) ((APPEND xs) t))))
+T c==> c= f0 f1 c==> c/\ c\/ c= f1 f0 cMEM f1 f2 cMEM f3 f4 cMEM f3 cAPPEND f4 f2
++ |- (((!l1. (!l2. (((MEM x) ((APPEND l1) l2)) = (((MEM x) l1) \/ ((MEM x) l2))))) ==> ((\l1. (!l2. (((MEM x) ((APPEND l1) l2)) = (((MEM x) l1) \/ ((MEM x) l2))))) l1)) = ((\l1. (!l2. (((MEM x) ((APPEND l1) l2)) = (((MEM x) l1) \/ ((MEM x) l2))))) l1))
+T c= c==> ! ! c= cMEM f0 cAPPEND b0 b1 c\/ cMEM f0 b0 cMEM f0 b1 * / ! c= cMEM f0 cAPPEND b0 b1 c\/ cMEM f0 b0 cMEM f0 b1 f1 * / ! c= cMEM f0 cAPPEND b0 b1 c\/ cMEM f0 b0 cMEM f0 b1 f1
++ |- ((((MEM x) xs) ==> (((MEM x) xs) \/ ((MEM x) t))) = (((MEM x) xs) ==> ((MEM x) ((APPEND xs) t))))
+T c= c==> cMEM f0 f1 c\/ cMEM f0 f1 cMEM f0 f2 c==> cMEM f0 f1 cMEM f0 cAPPEND f1 f2
++ |- (((((f = h) \/ ((MEM f) t)) /\ ((MEM x) xs)) ==> ((MEM x) (((COND (h = f)) ((APPEND xs) t)) ((CONS h) (((replace f) xs) t))))) = ((((MEM f) ((CONS h) t)) /\ ((MEM x) xs)) ==> ((MEM x) (((replace f) xs) ((CONS h) t)))))
+T c= c==> c/\ c\/ c= f0 f1 cMEM f0 f2 cMEM f3 f4 cMEM f3 cCOND c= f1 f0 cAPPEND f4 f2 cCONS f1 creplace f0 f4 f2 c==> c/\ cMEM f0 cCONS f1 f2 cMEM f3 f4 cMEM f3 creplace f0 f4 cCONS f1 f2
++ |- (!t. (!xs. (!f. (!x. (!h. (((((MEM f) t) /\ ((MEM x) xs)) ==> ((MEM x) (((replace f) xs) t))) ==> ((~ (h = f)) ==> ((((MEM f) t) /\ ((MEM x) xs)) ==> ((x = h) \/ ((MEM x) (((replace f) xs) t)))))))))))
+T c==> c==> c/\ cMEM f0 f1 cMEM f2 f3 cMEM f2 creplace f0 f3 f1 c==> c~ c= f4 f0 c==> c/\ cMEM f0 f1 cMEM f2 f3 c\/ c= f2 f4 cMEM f2 creplace f0 f3 f1
+- (((~ (((MEM x) xs) ==> (((MEM x) xs) \/ ((MEM x) t)))) ==> F) ==> ((~ (((MEM x) xs) ==> (((MEM x) xs) \/ ((MEM x) t)))) ==> F)) |- ((((~ (((MEM x) xs) ==> (((MEM x) xs) \/ ((MEM x) t)))) ==> F) ==> ((~ (((MEM x) xs) ==> (((MEM x) xs) \/ ((MEM x) t)))) ==> F)) /\ (((~ (((MEM x) xs) ==> (((MEM x) xs) \/ ((MEM x) t)))) ==> F) ==> ((~ (((MEM x) xs) ==> (((MEM x) xs) \/ ((MEM x) t)))) ==> F)))
+T c==> c==> c==> c~ c==> cMEM f0 f1 c\/ cMEM f0 f1 cMEM f0 f2 cF c==> c~ c==> cMEM f0 f1 c\/ cMEM f0 f1 cMEM f0 f2 cF c/\ c==> c==> c~ c==> cMEM f0 f1 c\/ cMEM f0 f1 cMEM f0 f2 cF c==> c~ c==> cMEM f0 f1 c\/ cMEM f0 f1 cMEM f0 f2 cF c==> c==> c~ c==> cMEM f0 f1 c\/ cMEM f0 f1 cMEM f0 f2 cF c==> c~ c==> cMEM f0 f1 c\/ cMEM f0 f1 cMEM f0 f2 cF
+- (((((MEM f) t) /\ ((MEM x) xs)) ==> ((MEM x) (((replace f) xs) t))) ==> ((~ (h = f)) ==> ((~ ((((MEM f) t) /\ ((MEM x) xs)) ==> ((x = h) \/ ((MEM x) (((replace f) xs) t))))) ==> F))) |- (((((((MEM f) t) /\ ((MEM x) xs)) ==> ((MEM x) (((replace f) xs) t))) ==> ((~ (h = f)) ==> ((~ ((((MEM f) t) /\ ((MEM x) xs)) ==> ((x = h) \/ ((MEM x) (((replace f) xs) t))))) ==> F))) ==> (((((MEM f) t) /\ ((MEM x) xs)) ==> ((MEM x) (((replace f) xs) t))) ==> ((~ (h = f)) ==> ((~ ((((MEM f) t) /\ ((MEM x) xs)) ==> ((x = h) \/ ((MEM x) (((replace f) xs) t))))) ==> F)))) ==> (((((MEM f) t) /\ ((MEM x) xs)) ==> ((MEM x) (((replace f) xs) t))) ==> ((~ (h = f)) ==> ((~ ((((MEM f) t) /\ ((MEM x) xs)) ==> ((x = h) \/ ((MEM x) (((replace f) xs) t))))) ==> F))))
+T c==> c==> c==> c/\ cMEM f0 f1 cMEM f2 f3 cMEM f2 creplace f0 f3 f1 c==> c~ c= f4 f0 c==> c~ c==> c/\ cMEM f0 f1 cMEM f2 f3 c\/ c= f2 f4 cMEM f2 creplace f0 f3 f1 cF c==> c==> c==> c==> c/\ cMEM f0 f1 cMEM f2 f3 cMEM f2 creplace f0 f3 f1 c==> c~ c= f4 f0 c==> c~ c==> c/\ cMEM f0 f1 cMEM f2 f3 c\/ c= f2 f4 cMEM f2 creplace f0 f3 f1 cF c==> c==> c/\ cMEM f0 f1 cMEM f2 f3 cMEM f2 creplace f0 f3 f1 c==> c~ c= f4 f0 c==> c~ c==> c/\ cMEM f0 f1 cMEM f2 f3 c\/ c= f2 f4 cMEM f2 creplace f0 f3 f1 cF c==> c==> c/\ cMEM f0 f1 cMEM f2 f3 cMEM f2 creplace f0 f3 f1 c==> c~ c= f4 f0 c==> c~ c==> c/\ cMEM f0 f1 cMEM f2 f3 c\/ c= f2 f4 cMEM f2 creplace f0 f3 f1 cF
+- (~ F), (~ ((x = h) \/ ((MEM x) (((replace f) xs) t)))), ((MEM x) (((replace f) xs) t)) |- ((~ F) /\ F)
+T c==> c~ cF c==> c~ c\/ c= f0 f1 cMEM f0 creplace f2 f3 f4 c==> cMEM f0 creplace f2 f3 f4 c/\ c~ cF cF
+- |- ((!xs. (((MEM x) xs) ==> (((MEM x) xs) \/ ((MEM x) t)))) = T)
+T c= ! c==> cMEM f0 b0 c\/ cMEM f0 b0 cMEM f0 f1 cT
+- |- ((t ==> t) = T)
+T c= c==> f0 f0 cT
+- |- ((t \/ t) = t)
+T c= c\/ f0 f0 f0
+- (~ ((MEM f) t)), (((MEM f) t) /\ ((MEM x) xs)) |- ((~ ((MEM f) t)) /\ ((MEM f) t))
+T c==> c~ cMEM f0 f1 c==> c/\ cMEM f0 f1 cMEM f2 f3 c/\ c~ cMEM f0 f1 cMEM f0 f1
++ |- ((((((MEM f) t) /\ ((MEM x) xs)) ==> ((MEM x) (((replace f) xs) t))) ==> ((((MEM f) ((CONS h) t)) /\ ((MEM x) xs)) ==> ((MEM x) (((replace f) xs) ((CONS h) t))))) = T)
+T c= c==> c==> c/\ cMEM f0 f1 cMEM f2 f3 cMEM f2 creplace f0 f3 f1 c==> c/\ cMEM f0 cCONS f4 f1 cMEM f2 f3 cMEM f2 creplace f0 f3 cCONS f4 f1 cT
++ (~ ((x = h) \/ ((MEM x) (((replace f) xs) t)))) |- ((~ (x = h)) /\ (~ ((MEM x) (((replace f) xs) t))))
+T c==> c~ c\/ c= f0 f1 cMEM f0 creplace f2 f3 f4 c/\ c~ c= f0 f1 c~ cMEM f0 creplace f2 f3 f4
+- |- ((\t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))) t3)
+T * / c= c\/ f0 c\/ f1 b0 c\/ c\/ f0 f1 b0 f2
+- |- (((!t. (!x. (!xs. ((~ (((MEM x) xs) ==> (((MEM x) xs) \/ ((MEM x) t)))) ==> F)))) ==> ((\t. (!x. (!xs. ((~ (((MEM x) xs) ==> (((MEM x) xs) \/ ((MEM x) t)))) ==> F)))) t)) = ((\t. (!x. (!xs. ((~ (((MEM x) xs) ==> (((MEM x) xs) \/ ((MEM x) t)))) ==> F)))) t))
+T c= c==> ! ! ! c==> c~ c==> cMEM b1 b2 c\/ cMEM b1 b2 cMEM b1 b0 cF * / ! ! c==> c~ c==> cMEM b1 b2 c\/ cMEM b1 b2 cMEM b1 b0 cF f0 * / ! ! c==> c~ c==> cMEM b1 b2 c\/ cMEM b1 b2 cMEM b1 b0 cF f0
+- |- (((~ p) ==> p) = p)
+T c= c==> c~ f0 f0 f0
++ |- (((((((MEM f) NIL) /\ ((MEM x) xs)) ==> ((MEM x) (((replace f) xs) NIL))) /\ (!h. (!t. (((((MEM f) t) /\ ((MEM x) xs)) ==> ((MEM x) (((replace f) xs) t))) ==> ((((MEM f) ((CONS h) t)) /\ ((MEM x) xs)) ==> ((MEM x) (((replace f) xs) ((CONS h) t)))))))) ==> (!g. ((((MEM f) g) /\ ((MEM x) xs)) ==> ((MEM x) (((replace f) xs) g))))) = (!g. ((((MEM f) g) /\ ((MEM x) xs)) ==> ((MEM x) (((replace f) xs) g)))))
+T c= c==> c/\ c==> c/\ cMEM f0 cNIL cMEM f1 f2 cMEM f1 creplace f0 f2 cNIL ! ! c==> c==> c/\ cMEM f0 b1 cMEM f1 f2 cMEM f1 creplace f0 f2 b1 c==> c/\ cMEM f0 cCONS b0 b1 cMEM f1 f2 cMEM f1 creplace f0 f2 cCONS b0 b1 ! c==> c/\ cMEM f0 b0 cMEM f1 f2 cMEM f1 creplace f0 f2 b0 ! c==> c/\ cMEM f0 b0 cMEM f1 f2 cMEM f1 creplace f0 f2 b0
+- ((~ (((MEM x) xs) ==> (((MEM x) xs) \/ ((MEM x) t)))) ==> F) |- ((((~ (((MEM x) xs) ==> (((MEM x) xs) \/ ((MEM x) t)))) ==> F) ==> ((~ (((MEM x) xs) ==> (((MEM x) xs) \/ ((MEM x) t)))) ==> F)) ==> ((~ (((MEM x) xs) ==> (((MEM x) xs) \/ ((MEM x) t)))) ==> F))
+T c==> c==> c~ c==> cMEM f0 f1 c\/ cMEM f0 f1 cMEM f0 f2 cF c==> c==> c==> c~ c==> cMEM f0 f1 c\/ cMEM f0 f1 cMEM f0 f2 cF c==> c~ c==> cMEM f0 f1 c\/ cMEM f0 f1 cMEM f0 f2 cF c==> c~ c==> cMEM f0 f1 c\/ cMEM f0 f1 cMEM f0 f2 cF
+- |- ((!h. t) = t)
+T c= ! f0 f0
++ (h = f) |- ((h = f) /\ ((((f = h) \/ ((MEM f) t)) /\ ((MEM x) xs)) ==> ((MEM x) ((APPEND xs) t))))
+T c==> c= f0 f1 c/\ c= f0 f1 c==> c/\ c\/ c= f1 f0 cMEM f1 f2 cMEM f3 f4 cMEM f3 cAPPEND f4 f2
+- |- ((((((((MEM f) t) /\ ((MEM x) xs)) ==> ((MEM x) (((replace f) xs) t))) ==> ((~ (h = f)) ==> ((~ ((((MEM f) t) /\ ((MEM x) xs)) ==> ((x = h) \/ ((MEM x) (((replace f) xs) t))))) ==> F))) ==> (((((MEM f) t) /\ ((MEM x) xs)) ==> ((MEM x) (((replace f) xs) t))) ==> ((~ (h = f)) ==> ((~ ((((MEM f) t) /\ ((MEM x) xs)) ==> ((x = h) \/ ((MEM x) (((replace f) xs) t))))) ==> F)))) ==> ((((((MEM f) t) /\ ((MEM x) xs)) ==> ((MEM x) (((replace f) xs) t))) ==> ((~ (h = f)) ==> ((~ ((((MEM f) t) /\ ((MEM x) xs)) ==> ((x = h) \/ ((MEM x) (((replace f) xs) t))))) ==> F))) ==> (((((MEM f) t) /\ ((MEM x) xs)) ==> ((MEM x) (((replace f) xs) t))) ==> ((~ (h = f)) ==> ((~ ((((MEM f) t) /\ ((MEM x) xs)) ==> ((x = h) \/ ((MEM x) (((replace f) xs) t))))) ==> F))))) = ((((((MEM f) t) /\ ((MEM x) xs)) ==> ((MEM x) (((replace f) xs) t))) ==> ((~ (h = f)) ==> ((~ ((((MEM f) t) /\ ((MEM x) xs)) ==> ((x = h) \/ ((MEM x) (((replace f) xs) t))))) ==> F))) ==> (((((MEM f) t) /\ ((MEM x) xs)) ==> ((MEM x) (((replace f) xs) t))) ==> ((~ (h = f)) ==> ((~ ((((MEM f) t) /\ ((MEM x) xs)) ==> ((x = h) \/ ((MEM x) (((replace f) xs) t))))) ==> F)))))
+T c= c==> c==> c==> c==> c/\ cMEM f0 f1 cMEM f2 f3 cMEM f2 creplace f0 f3 f1 c==> c~ c= f4 f0 c==> c~ c==> c/\ cMEM f0 f1 cMEM f2 f3 c\/ c= f2 f4 cMEM f2 creplace f0 f3 f1 cF c==> c==> c/\ cMEM f0 f1 cMEM f2 f3 cMEM f2 creplace f0 f3 f1 c==> c~ c= f4 f0 c==> c~ c==> c/\ cMEM f0 f1 cMEM f2 f3 c\/ c= f2 f4 cMEM f2 creplace f0 f3 f1 cF c==> c==> c==> c/\ cMEM f0 f1 cMEM f2 f3 cMEM f2 creplace f0 f3 f1 c==> c~ c= f4 f0 c==> c~ c==> c/\ cMEM f0 f1 cMEM f2 f3 c\/ c= f2 f4 cMEM f2 creplace f0 f3 f1 cF c==> c==> c/\ cMEM f0 f1 cMEM f2 f3 cMEM f2 creplace f0 f3 f1 c==> c~ c= f4 f0 c==> c~ c==> c/\ cMEM f0 f1 cMEM f2 f3 c\/ c= f2 f4 cMEM f2 creplace f0 f3 f1 cF c==> c==> c==> c/\ cMEM f0 f1 cMEM f2 f3 cMEM f2 creplace f0 f3 f1 c==> c~ c= f4 f0 c==> c~ c==> c/\ cMEM f0 f1 cMEM f2 f3 c\/ c= f2 f4 cMEM f2 creplace f0 f3 f1 cF c==> c==> c/\ cMEM f0 f1 cMEM f2 f3 cMEM f2 creplace f0 f3 f1 c==> c~ c= f4 f0 c==> c~ c==> c/\ cMEM f0 f1 cMEM f2 f3 c\/ c= f2 f4 cMEM f2 creplace f0 f3 f1 cF
++ (~ ((MEM f) t)), (((MEM f) t) /\ ((MEM x) xs)) |- ((~ ((MEM f) t)) /\ F)
+T c==> c~ cMEM f0 f1 c==> c/\ cMEM f0 f1 cMEM f2 f3 c/\ c~ cMEM f0 f1 cF
++ (((MEM f) t) /\ ((MEM x) xs)), ((((MEM f) t) /\ ((MEM x) xs)) ==> ((MEM x) (((replace f) xs) t))) |- ((((MEM f) t) /\ ((MEM x) xs)) /\ ((x = h) \/ ((MEM x) (((replace f) xs) t))))
+T c==> c/\ cMEM f0 f1 cMEM f2 f3 c==> c==> c/\ cMEM f0 f1 cMEM f2 f3 cMEM f2 creplace f0 f3 f1 c/\ c/\ cMEM f0 f1 cMEM f2 f3 c\/ c= f2 f4 cMEM f2 creplace f0 f3 f1
+- |- ((t ==> F) = (~ t))
+T c= c==> f0 cF c~ f0
++ |- (((!x. (!h. (((((MEM f) t) /\ ((MEM x) xs)) ==> ((MEM x) (((replace f) xs) t))) ==> ((~ (h = f)) ==> ((~ ((((MEM f) t) /\ ((MEM x) xs)) ==> ((x = h) \/ ((MEM x) (((replace f) xs) t))))) ==> F))))) ==> ((\x. (!h. (((((MEM f) t) /\ ((MEM x) xs)) ==> ((MEM x) (((replace f) xs) t))) ==> ((~ (h = f)) ==> ((~ ((((MEM f) t) /\ ((MEM x) xs)) ==> ((x = h) \/ ((MEM x) (((replace f) xs) t))))) ==> F))))) x)) = ((\x. (!h. (((((MEM f) t) /\ ((MEM x) xs)) ==> ((MEM x) (((replace f) xs) t))) ==> ((~ (h = f)) ==> ((~ ((((MEM f) t) /\ ((MEM x) xs)) ==> ((x = h) \/ ((MEM x) (((replace f) xs) t))))) ==> F))))) x))
+T c= c==> ! ! c==> c==> c/\ cMEM f0 f1 cMEM b0 f2 cMEM b0 creplace f0 f2 f1 c==> c~ c= b1 f0 c==> c~ c==> c/\ cMEM f0 f1 cMEM b0 f2 c\/ c= b0 b1 cMEM b0 creplace f0 f2 f1 cF * / ! c==> c==> c/\ cMEM f0 f1 cMEM b0 f2 cMEM b0 creplace f0 f2 f1 c==> c~ c= b1 f0 c==> c~ c==> c/\ cMEM f0 f1 cMEM b0 f2 c\/ c= b0 b1 cMEM b0 creplace f0 f2 f1 cF f3 * / ! c==> c==> c/\ cMEM f0 f1 cMEM b0 f2 cMEM b0 creplace f0 f2 f1 c==> c~ c= b1 f0 c==> c~ c==> c/\ cMEM f0 f1 cMEM b0 f2 c\/ c= b0 b1 cMEM b0 creplace f0 f2 f1 cF f3
++ (~ ((MEM x) xs)), (((MEM f) t) /\ ((MEM x) xs)) |- ((~ ((MEM x) xs)) /\ F)
+T c==> c~ cMEM f0 f1 c==> c/\ cMEM f2 f3 cMEM f0 f1 c/\ c~ cMEM f0 f1 cF
++ |- (((!xs. (!f. (!x. (!h. (((((MEM f) t) /\ ((MEM x) xs)) ==> ((MEM x) (((replace f) xs) t))) ==> ((~ (h = f)) ==> ((~ ((((MEM f) t) /\ ((MEM x) xs)) ==> ((x = h) \/ ((MEM x) (((replace f) xs) t))))) ==> F))))))) ==> ((\xs. (!f. (!x. (!h. (((((MEM f) t) /\ ((MEM x) xs)) ==> ((MEM x) (((replace f) xs) t))) ==> ((~ (h = f)) ==> ((~ ((((MEM f) t) /\ ((MEM x) xs)) ==> ((x = h) \/ ((MEM x) (((replace f) xs) t))))) ==> F))))))) xs)) = ((\xs. (!f. (!x. (!h. (((((MEM f) t) /\ ((MEM x) xs)) ==> ((MEM x) (((replace f) xs) t))) ==> ((~ (h = f)) ==> ((~ ((((MEM f) t) /\ ((MEM x) xs)) ==> ((x = h) \/ ((MEM x) (((replace f) xs) t))))) ==> F))))))) xs))
+T c= c==> ! ! ! ! c==> c==> c/\ cMEM b1 f0 cMEM b2 b0 cMEM b2 creplace b1 b0 f0 c==> c~ c= b3 b1 c==> c~ c==> c/\ cMEM b1 f0 cMEM b2 b0 c\/ c= b2 b3 cMEM b2 creplace b1 b0 f0 cF * / ! ! ! c==> c==> c/\ cMEM b1 f0 cMEM b2 b0 cMEM b2 creplace b1 b0 f0 c==> c~ c= b3 b1 c==> c~ c==> c/\ cMEM b1 f0 cMEM b2 b0 c\/ c= b2 b3 cMEM b2 creplace b1 b0 f0 cF f1 * / ! ! ! c==> c==> c/\ cMEM b1 f0 cMEM b2 b0 cMEM b2 creplace b1 b0 f0 c==> c~ c= b3 b1 c==> c~ c==> c/\ cMEM b1 f0 cMEM b2 b0 c\/ c= b2 b3 cMEM b2 creplace b1 b0 f0 cF f1
++ |- (p = ((~ p) ==> F))
+T c= f0 c==> c~ f0 cF
++ ((MEM x) xs) |- ((~ (((MEM x) xs) \/ ((MEM x) t))) ==> F)
+T c==> cMEM f0 f1 c==> c~ c\/ cMEM f0 f1 cMEM f0 f2 cF
+- (~ F), (~ ((MEM x) xs)), (((MEM f) t) /\ ((MEM x) xs)) |- ((~ F) /\ F)
+T c==> c~ cF c==> c~ cMEM f0 f1 c==> c/\ cMEM f2 f3 cMEM f0 f1 c/\ c~ cF cF
++ (((MEM f) t) /\ ((MEM x) xs)) |- ((~ ((MEM f) t)) ==> F)
+T c==> c/\ cMEM f0 f1 cMEM f2 f3 c==> c~ cMEM f0 f1 cF
++ |- (((~ ((x = h) \/ ((MEM x) (((replace f) xs) t)))) ==> F) = ((x = h) \/ ((MEM x) (((replace f) xs) t))))
+T c= c==> c~ c\/ c= f0 f1 cMEM f0 creplace f2 f3 f4 cF c\/ c= f0 f1 cMEM f0 creplace f2 f3 f4
+- (_10071486 = _10071488), (_10071487 = _10071489) |- ((_10071487 = _10071489) /\ (((MEM _10071488) _10071489) \/ (~ ((MEM _10071486) _10071487))))
+T c==> c= f0 f1 c==> c= f2 f3 c/\ c= f2 f3 c\/ cMEM f1 f3 c~ cMEM f0 f2
++ |- (((MEM x) ((CONS h) t)) = ((x = h) \/ ((MEM x) t)))
+T c= cMEM f0 cCONS f1 f2 c\/ c= f0 f1 cMEM f0 f2
+- (_10071490 = _10071493), (_10071491 = _10071494) |- ((_10071491 = _10071494) /\ ((~ (_10071492 = _10071495)) \/ ((((replace _10071490) _10071491) _10071492) = (((replace _10071493) _10071494) _10071495))))
+T c==> c= f0 f1 c==> c= f2 f3 c/\ c= f2 f3 c\/ c~ c= f4 f5 c= creplace f0 f2 f4 creplace f1 f3 f5
++ ((((MEM f) t) /\ ((MEM x) xs)) ==> ((MEM x) (((replace f) xs) t))), (((~ ((MEM f) t)) \/ (~ ((MEM x) xs))) ==> F), (((MEM x) (((replace f) xs) t)) ==> F) |- F
+T c==> c==> c/\ cMEM f0 f1 cMEM f2 f3 cMEM f2 creplace f0 f3 f1 c==> c==> c\/ c~ cMEM f0 f1 c~ cMEM f2 f3 cF c==> c==> cMEM f2 creplace f0 f3 f1 cF cF
+- |- ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))
+T c= c\/ f0 c\/ f1 f2 c\/ c\/ f0 f1 f2
+- (_10071490 = _10071493) |- ((_10071491 = _10071494) ==> ((~ (_10071492 = _10071495)) \/ ((((replace _10071490) _10071491) _10071492) = (((replace _10071493) _10071494) _10071495))))
+T c==> c= f0 f1 c==> c= f2 f3 c\/ c~ c= f4 f5 c= creplace f0 f2 f4 creplace f1 f3 f5
+- (_10071486 = _10071488) |- ((_10071486 = _10071488) /\ ((~ (_10071487 = _10071489)) \/ (((MEM _10071488) _10071489) \/ (~ ((MEM _10071486) _10071487)))))
+T c==> c= f0 f1 c/\ c= f0 f1 c\/ c~ c= f2 f3 c\/ cMEM f1 f3 c~ cMEM f0 f2
+- (h = f) |- ((h = f) = T)
+T c==> c= f0 f1 c= c= f0 f1 cT
++ |- ((((replace x) ys) ((CONS z) zs)) = (((COND (z = x)) ((APPEND ys) zs)) ((CONS z) (((replace x) ys) zs))))
+T c= creplace f0 f1 cCONS f2 f3 cCOND c= f2 f0 cAPPEND f1 f3 cCONS f2 creplace f0 f1 f3
+- |- ((_10071486 = _10071488) ==> ((~ (_10071487 = _10071489)) \/ (((MEM _10071488) _10071489) \/ (~ ((MEM _10071486) _10071487)))))
+T c==> c= f0 f1 c\/ c~ c= f2 f3 c\/ cMEM f1 f3 c~ cMEM f0 f2
+- |- ((((~ (((MEM x) xs) ==> (((MEM x) xs) \/ ((MEM x) t)))) ==> F) ==> ((~ (((MEM x) xs) ==> (((MEM x) xs) \/ ((MEM x) t)))) ==> F)) ==> (((~ (((MEM x) xs) ==> (((MEM x) xs) \/ ((MEM x) t)))) ==> F) ==> ((~ (((MEM x) xs) ==> (((MEM x) xs) \/ ((MEM x) t)))) ==> F)))
+T c==> c==> c==> c~ c==> cMEM f0 f1 c\/ cMEM f0 f1 cMEM f0 f2 cF c==> c~ c==> cMEM f0 f1 c\/ cMEM f0 f1 cMEM f0 f2 cF c==> c==> c~ c==> cMEM f0 f1 c\/ cMEM f0 f1 cMEM f0 f2 cF c==> c~ c==> cMEM f0 f1 c\/ cMEM f0 f1 cMEM f0 f2 cF
++ (~ ((MEM x) xs)) |- (((MEM x) xs) ==> F)
+T c==> c~ cMEM f0 f1 c==> cMEM f0 f1 cF
++ |- ((!t. (((((MEM f) t) /\ ((MEM x) xs)) ==> ((MEM x) (((replace f) xs) t))) ==> ((((MEM f) ((CONS h) t)) /\ ((MEM x) xs)) ==> ((MEM x) (((replace f) xs) ((CONS h) t)))))) = T)
+T c= ! c==> c==> c/\ cMEM f0 b0 cMEM f1 f2 cMEM f1 creplace f0 f2 b0 c==> c/\ cMEM f0 cCONS f3 b0 cMEM f1 f2 cMEM f1 creplace f0 f2 cCONS f3 b0 cT
+- |- (((~ (((MEM x) xs) ==> (((MEM x) xs) \/ ((MEM x) t)))) ==> F) ==> ((~ (((MEM x) xs) ==> (((MEM x) xs) \/ ((MEM x) t)))) ==> F))
+T c==> c==> c~ c==> cMEM f0 f1 c\/ cMEM f0 f1 cMEM f0 f2 cF c==> c~ c==> cMEM f0 f1 c\/ cMEM f0 f1 cMEM f0 f2 cF
++ |- ((!x. (!h. (((((MEM f) t) /\ ((MEM x) xs)) ==> ((MEM x) (((replace f) xs) t))) ==> ((~ (h = f)) ==> ((((MEM f) t) /\ ((MEM x) xs)) ==> ((x = h) \/ ((MEM x) (((replace f) xs) t)))))))) = T)
+T c= ! ! c==> c==> c/\ cMEM f0 f1 cMEM b0 f2 cMEM b0 creplace f0 f2 f1 c==> c~ c= b1 f0 c==> c/\ cMEM f0 f1 cMEM b0 f2 c\/ c= b0 b1 cMEM b0 creplace f0 f2 f1 cT
++ (~ (h = f)) |- (((~ (f = h)) ==> ((f = h) = F)) = ((f = h) = F))
+T c==> c~ c= f0 f1 c= c==> c~ c= f1 f0 c= c= f1 f0 cF c= c= f1 f0 cF
++ ((((MEM f) t) /\ ((MEM x) xs)) ==> ((MEM x) (((replace f) xs) t))) |- ((((MEM f) t) /\ ((MEM x) xs)) ==> ((x = h) \/ ((MEM x) (((replace f) xs) t))))
+T c==> c==> c/\ cMEM f0 f1 cMEM f2 f3 cMEM f2 creplace f0 f3 f1 c==> c/\ cMEM f0 f1 cMEM f2 f3 c\/ c= f2 f4 cMEM f2 creplace f0 f3 f1
+- (~ (h = f)), (~ ((((MEM f) t) /\ ((MEM x) xs)) ==> ((x = h) \/ ((MEM x) (((replace f) xs) t))))), ((((MEM f) t) /\ ((MEM x) xs)) ==> ((MEM x) (((replace f) xs) t))) |- F
+T c==> c~ c= f0 f1 c==> c~ c==> c/\ cMEM f1 f2 cMEM f3 f4 c\/ c= f3 f0 cMEM f3 creplace f1 f4 f2 c==> c==> c/\ cMEM f1 f2 cMEM f3 f4 cMEM f3 creplace f1 f4 f2 cF
+- |- ((\xs. ((~ (((MEM x) xs) ==> (((MEM x) xs) \/ ((MEM x) t)))) ==> F)) xs)
+T * / c==> c~ c==> cMEM f0 b0 c\/ cMEM f0 b0 cMEM f0 f1 cF f2
+- (~ (h = f)) |- ((h = f) = F)
+T c==> c~ c= f0 f1 c= c= f0 f1 cF
+- (~ (((MEM x) xs) ==> (((MEM x) xs) \/ ((MEM x) t)))) |- ((~ (((MEM x) xs) ==> (((MEM x) xs) \/ ((MEM x) t)))) /\ F)
+T c==> c~ c==> cMEM f0 f1 c\/ cMEM f0 f1 cMEM f0 f2 c/\ c~ c==> cMEM f0 f1 c\/ cMEM f0 f1 cMEM f0 f2 cF
+- |- ((\t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3)))) t2)
+T * / ! c= c\/ f0 c\/ b0 b1 c\/ c\/ f0 b0 b1 f1
+- |- ((((replace x) ys) NIL) = NIL)
+T c= creplace f0 f1 cNIL cNIL
++ (~ ((MEM x) xs)), (((MEM f) t) /\ ((MEM x) xs)) |- F
+T c==> c~ cMEM f0 f1 c==> c/\ cMEM f2 f3 cMEM f0 f1 cF
++ (((MEM f) t) /\ ((MEM x) xs)) |- ((~ ((MEM x) xs)) ==> F)
+T c==> c/\ cMEM f0 f1 cMEM f2 f3 c==> c~ cMEM f2 f3 cF
++ (~ (((MEM x) xs) \/ ((MEM x) t))) |- (~ ((MEM x) xs))
+T c==> c~ c\/ cMEM f0 f1 cMEM f0 f2 c~ cMEM f0 f1
++ |- (!h. (!t. (((((MEM f) t) /\ ((MEM x) xs)) ==> ((MEM x) (((replace f) xs) t))) ==> ((((MEM f) ((CONS h) t)) /\ ((MEM x) xs)) ==> ((MEM x) (((replace f) xs) ((CONS h) t)))))))
+T c==> c==> c/\ cMEM f0 f1 cMEM f2 f3 cMEM f2 creplace f0 f3 f1 c==> c/\ cMEM f0 cCONS f4 f1 cMEM f2 f3 cMEM f2 creplace f0 f3 cCONS f4 f1
++ |- (T = ((((MEM f) NIL) /\ ((MEM x) xs)) ==> ((MEM x) (((replace f) xs) NIL))))
+T c= cT c==> c/\ cMEM f0 cNIL cMEM f1 f2 cMEM f1 creplace f0 f2 cNIL
++ (~ (((MEM x) xs) \/ ((MEM x) t))), ((MEM x) xs) |- F
+T c==> c~ c\/ cMEM f0 f1 cMEM f0 f2 c==> cMEM f0 f1 cF
++ (~ (((MEM x) xs) \/ ((MEM x) t))) |- ((~ ((MEM x) xs)) /\ (~ ((MEM x) t)))
+T c==> c~ c\/ cMEM f0 f1 cMEM f0 f2 c/\ c~ cMEM f0 f1 c~ cMEM f0 f2
++ |- ((!f. (!x. (!h. (((((MEM f) t) /\ ((MEM x) xs)) ==> ((MEM x) (((replace f) xs) t))) ==> ((~ (h = f)) ==> ((((MEM f) t) /\ ((MEM x) xs)) ==> ((x = h) \/ ((MEM x) (((replace f) xs) t))))))))) = T)
+T c= ! ! ! c==> c==> c/\ cMEM b0 f0 cMEM b1 f1 cMEM b1 creplace b0 f1 f0 c==> c~ c= b2 b0 c==> c/\ cMEM b0 f0 cMEM b1 f1 c\/ c= b1 b2 cMEM b1 creplace b0 f1 f0 cT
++ |- ((\l1. (!l2. (((MEM x) ((APPEND l1) l2)) = (((MEM x) l1) \/ ((MEM x) l2))))) l1)
+T * / ! c= cMEM f0 cAPPEND b0 b1 c\/ cMEM f0 b0 cMEM f0 b1 f1
+- (~ ((x = h) \/ ((MEM x) (((replace f) xs) t)))), ((MEM x) (((replace f) xs) t)) |- (((MEM x) (((replace f) xs) t)) /\ F)
+T c==> c~ c\/ c= f0 f1 cMEM f0 creplace f2 f3 f4 c==> cMEM f0 creplace f2 f3 f4 c/\ cMEM f0 creplace f2 f3 f4 cF
++ |- ((((((MEM f) t) /\ ((MEM x) xs)) ==> ((MEM x) (((replace f) xs) t))) ==> ((~ (h = f)) ==> ((((MEM f) t) /\ ((MEM x) xs)) ==> ((x = h) \/ ((MEM x) (((replace f) xs) t)))))) = T)
+T c= c==> c==> c/\ cMEM f0 f1 cMEM f2 f3 cMEM f2 creplace f0 f3 f1 c==> c~ c= f4 f0 c==> c/\ cMEM f0 f1 cMEM f2 f3 c\/ c= f2 f4 cMEM f2 creplace f0 f3 f1 cT
++ ((((MEM f) t) /\ ((MEM x) xs)) ==> ((MEM x) (((replace f) xs) t))) |- ((~ (h = f)) ==> ((~ ((((MEM f) t) /\ ((MEM x) xs)) ==> ((x = h) \/ ((MEM x) (((replace f) xs) t))))) ==> F))
+T c==> c==> c/\ cMEM f0 f1 cMEM f2 f3 cMEM f2 creplace f0 f3 f1 c==> c~ c= f4 f0 c==> c~ c==> c/\ cMEM f0 f1 cMEM f2 f3 c\/ c= f2 f4 cMEM f2 creplace f0 f3 f1 cF
+- |- (((!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3)))) ==> ((\t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3)))) t2)) = ((\t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3)))) t2))
+T c= c==> ! ! c= c\/ f0 c\/ b0 b1 c\/ c\/ f0 b0 b1 * / ! c= c\/ f0 c\/ b0 b1 c\/ c\/ f0 b0 b1 f1 * / ! c= c\/ f0 c\/ b0 b1 c\/ c\/ f0 b0 b1 f1
+- |- ((((COND (x = x)) y) z) = y)
+T c= cCOND c= f0 f0 f1 f2 f1
++ (((MEM f) t) /\ ((MEM x) xs)), ((~ ((MEM f) t)) \/ (~ ((MEM x) xs))) |- (((~ ((MEM f) t)) \/ (~ ((MEM x) xs))) /\ F)
+T c==> c/\ cMEM f0 f1 cMEM f2 f3 c==> c\/ c~ cMEM f0 f1 c~ cMEM f2 f3 c/\ c\/ c~ cMEM f0 f1 c~ cMEM f2 f3 cF
+- ((MEM x) (((replace f) xs) t)) |- ((~ ((MEM x) (((replace f) xs) t))) ==> ((MEM x) (((replace f) xs) t)))
+T c==> cMEM f0 creplace f1 f2 f3 c==> c~ cMEM f0 creplace f1 f2 f3 cMEM f0 creplace f1 f2 f3
+- |- ((((((MEM f) t) /\ ((MEM x) xs)) ==> ((MEM x) (((replace f) xs) t))) ==> ((~ (h = f)) ==> ((~ ((((MEM f) t) /\ ((MEM x) xs)) ==> ((x = h) \/ ((MEM x) (((replace f) xs) t))))) ==> F))) ==> (((((MEM f) t) /\ ((MEM x) xs)) ==> ((MEM x) (((replace f) xs) t))) ==> ((~ (h = f)) ==> ((~ ((((MEM f) t) /\ ((MEM x) xs)) ==> ((x = h) \/ ((MEM x) (((replace f) xs) t))))) ==> F))))
+T c==> c==> c==> c/\ cMEM f0 f1 cMEM f2 f3 cMEM f2 creplace f0 f3 f1 c==> c~ c= f4 f0 c==> c~ c==> c/\ cMEM f0 f1 cMEM f2 f3 c\/ c= f2 f4 cMEM f2 creplace f0 f3 f1 cF c==> c==> c/\ cMEM f0 f1 cMEM f2 f3 cMEM f2 creplace f0 f3 f1 c==> c~ c= f4 f0 c==> c~ c==> c/\ cMEM f0 f1 cMEM f2 f3 c\/ c= f2 f4 cMEM f2 creplace f0 f3 f1 cF
++ |- ((x = x) = T)
+T c= c= f0 f0 cT
+- (~ ((MEM x) xs)), (((MEM f) t) /\ ((MEM x) xs)) |- ((~ F) ==> F)
+T c==> c~ cMEM f0 f1 c==> c/\ cMEM f2 f3 cMEM f0 f1 c==> c~ cF cF
+- (~ (((MEM x) xs) ==> (((MEM x) xs) \/ ((MEM x) t)))) |- F
+T c==> c~ c==> cMEM f0 f1 c\/ cMEM f0 f1 cMEM f0 f2 cF
++ (f = h) |- (h = f)
+T c==> c= f0 f1 c= f1 f0
+- |- ((a ==> b) = ((~ a) \/ b))
+T c= c==> f0 f1 c\/ c~ f0 f1
+- ((MEM x) xs) |- ((~ ((MEM x) xs)) ==> ((MEM x) xs))
+T c==> cMEM f0 f1 c==> c~ cMEM f0 f1 cMEM f0 f1
+- ((~ (((MEM x) xs) ==> (((MEM x) xs) \/ ((MEM x) t)))) ==> F) |- (((~ (((MEM x) xs) ==> (((MEM x) xs) \/ ((MEM x) t)))) ==> F) /\ ((~ (((MEM x) xs) ==> (((MEM x) xs) \/ ((MEM x) t)))) ==> F))
+T c==> c==> c~ c==> cMEM f0 f1 c\/ cMEM f0 f1 cMEM f0 f2 cF c/\ c==> c~ c==> cMEM f0 f1 c\/ cMEM f0 f1 cMEM f0 f2 cF c==> c~ c==> cMEM f0 f1 c\/ cMEM f0 f1 cMEM f0 f2 cF
+- |- (((((~ (((MEM x) xs) ==> (((MEM x) xs) \/ ((MEM x) t)))) ==> F) ==> ((~ (((MEM x) xs) ==> (((MEM x) xs) \/ ((MEM x) t)))) ==> F)) ==> (((~ (((MEM x) xs) ==> (((MEM x) xs) \/ ((MEM x) t)))) ==> F) ==> ((~ (((MEM x) xs) ==> (((MEM x) xs) \/ ((MEM x) t)))) ==> F))) = (((~ (((MEM x) xs) ==> (((MEM x) xs) \/ ((MEM x) t)))) ==> F) ==> ((~ (((MEM x) xs) ==> (((MEM x) xs) \/ ((MEM x) t)))) ==> F)))
+T c= c==> c==> c==> c~ c==> cMEM f0 f1 c\/ cMEM f0 f1 cMEM f0 f2 cF c==> c~ c==> cMEM f0 f1 c\/ cMEM f0 f1 cMEM f0 f2 cF c==> c==> c~ c==> cMEM f0 f1 c\/ cMEM f0 f1 cMEM f0 f2 cF c==> c~ c==> cMEM f0 f1 c\/ cMEM f0 f1 cMEM f0 f2 cF c==> c==> c~ c==> cMEM f0 f1 c\/ cMEM f0 f1 cMEM f0 f2 cF c==> c~ c==> cMEM f0 f1 c\/ cMEM f0 f1 cMEM f0 f2 cF
+- (_10071490 = _10071493) |- ((_10071490 = _10071493) /\ ((~ (_10071491 = _10071494)) \/ ((~ (_10071492 = _10071495)) \/ ((((replace _10071490) _10071491) _10071492) = (((replace _10071493) _10071494) _10071495)))))
+T c==> c= f0 f1 c/\ c= f0 f1 c\/ c~ c= f2 f3 c\/ c~ c= f4 f5 c= creplace f0 f2 f4 creplace f1 f3 f5
+- (h = f) |- (((((f = h) \/ ((MEM f) t)) /\ ((MEM x) xs)) ==> ((MEM x) ((APPEND xs) t))) = ((((f = h) \/ ((MEM f) t)) /\ ((MEM x) xs)) ==> ((MEM x) ((APPEND xs) t))))
+T c==> c= f0 f1 c= c==> c/\ c\/ c= f1 f0 cMEM f1 f2 cMEM f3 f4 cMEM f3 cAPPEND f4 f2 c==> c/\ c\/ c= f1 f0 cMEM f1 f2 cMEM f3 f4 cMEM f3 cAPPEND f4 f2
++ |- ((\x. (!h. (((((MEM f) t) /\ ((MEM x) xs)) ==> ((MEM x) (((replace f) xs) t))) ==> ((~ (h = f)) ==> ((~ ((((MEM f) t) /\ ((MEM x) xs)) ==> ((x = h) \/ ((MEM x) (((replace f) xs) t))))) ==> F))))) x)
+T * / ! c==> c==> c/\ cMEM f0 f1 cMEM b0 f2 cMEM b0 creplace f0 f2 f1 c==> c~ c= b1 f0 c==> c~ c==> c/\ cMEM f0 f1 cMEM b0 f2 c\/ c= b0 b1 cMEM b0 creplace f0 f2 f1 cF f3
+- (~ ((MEM f) t)), (((MEM f) t) /\ ((MEM x) xs)) |- ((~ F) ==> F)
+T c==> c~ cMEM f0 f1 c==> c/\ cMEM f0 f1 cMEM f2 f3 c==> c~ cF cF
++ |- (((!h. (((((MEM f) t) /\ ((MEM x) xs)) ==> ((MEM x) (((replace f) xs) t))) ==> ((~ (h = f)) ==> ((~ ((((MEM f) t) /\ ((MEM x) xs)) ==> ((x = h) \/ ((MEM x) (((replace f) xs) t))))) ==> F)))) ==> ((\h. (((((MEM f) t) /\ ((MEM x) xs)) ==> ((MEM x) (((replace f) xs) t))) ==> ((~ (h = f)) ==> ((~ ((((MEM f) t) /\ ((MEM x) xs)) ==> ((x = h) \/ ((MEM x) (((replace f) xs) t))))) ==> F)))) h)) = ((\h. (((((MEM f) t) /\ ((MEM x) xs)) ==> ((MEM x) (((replace f) xs) t))) ==> ((~ (h = f)) ==> ((~ ((((MEM f) t) /\ ((MEM x) xs)) ==> ((x = h) \/ ((MEM x) (((replace f) xs) t))))) ==> F)))) h))
+T c= c==> ! c==> c==> c/\ cMEM f0 f1 cMEM f2 f3 cMEM f2 creplace f0 f3 f1 c==> c~ c= b0 f0 c==> c~ c==> c/\ cMEM f0 f1 cMEM f2 f3 c\/ c= f2 b0 cMEM f2 creplace f0 f3 f1 cF * / c==> c==> c/\ cMEM f0 f1 cMEM f2 f3 cMEM f2 creplace f0 f3 f1 c==> c~ c= b0 f0 c==> c~ c==> c/\ cMEM f0 f1 cMEM f2 f3 c\/ c= f2 b0 cMEM f2 creplace f0 f3 f1 cF f4 * / c==> c==> c/\ cMEM f0 f1 cMEM f2 f3 cMEM f2 creplace f0 f3 f1 c==> c~ c= b0 f0 c==> c~ c==> c/\ cMEM f0 f1 cMEM f2 f3 c\/ c= f2 b0 cMEM f2 creplace f0 f3 f1 cF f4
++ |- (((!l2. (((MEM x) ((APPEND l1) l2)) = (((MEM x) l1) \/ ((MEM x) l2)))) ==> ((\l2. (((MEM x) ((APPEND l1) l2)) = (((MEM x) l1) \/ ((MEM x) l2)))) l2)) = ((\l2. (((MEM x) ((APPEND l1) l2)) = (((MEM x) l1) \/ ((MEM x) l2)))) l2))
+T c= c==> ! c= cMEM f0 cAPPEND f1 b0 c\/ cMEM f0 f1 cMEM f0 b0 * / c= cMEM f0 cAPPEND f1 b0 c\/ cMEM f0 f1 cMEM f0 b0 f2 * / c= cMEM f0 cAPPEND f1 b0 c\/ cMEM f0 f1 cMEM f0 b0 f2
+- |- ((_10071490 = _10071493) ==> ((~ (_10071491 = _10071494)) \/ ((~ (_10071492 = _10071495)) \/ ((((replace _10071490) _10071491) _10071492) = (((replace _10071493) _10071494) _10071495)))))
+T c==> c= f0 f1 c\/ c~ c= f2 f3 c\/ c~ c= f4 f5 c= creplace f0 f2 f4 creplace f1 f3 f5
++ ((((MEM f) t) /\ ((MEM x) xs)) ==> ((MEM x) (((replace f) xs) t))) |- (((((MEM f) t) /\ ((MEM x) xs)) ==> ((MEM x) (((replace f) xs) t))) /\ ((~ (h = f)) ==> ((((MEM f) t) /\ ((MEM x) xs)) ==> ((x = h) \/ ((MEM x) (((replace f) xs) t))))))
+T c==> c==> c/\ cMEM f0 f1 cMEM f2 f3 cMEM f2 creplace f0 f3 f1 c/\ c==> c/\ cMEM f0 f1 cMEM f2 f3 cMEM f2 creplace f0 f3 f1 c==> c~ c= f4 f0 c==> c/\ cMEM f0 f1 cMEM f2 f3 c\/ c= f2 f4 cMEM f2 creplace f0 f3 f1
++ ((((MEM f) t) /\ ((MEM x) xs)) ==> ((MEM x) (((replace f) xs) t))) |- ((((f = h) \/ ((MEM f) t)) /\ ((MEM x) xs)) ==> ((MEM x) (((COND (h = f)) ((APPEND xs) t)) ((CONS h) (((replace f) xs) t)))))
+T c==> c==> c/\ cMEM f0 f1 cMEM f2 f3 cMEM f2 creplace f0 f3 f1 c==> c/\ c\/ c= f0 f4 cMEM f0 f1 cMEM f2 f3 cMEM f2 cCOND c= f4 f0 cAPPEND f3 f1 cCONS f4 creplace f0 f3 f1
+- |- ((!t. (!x. (!xs. (((MEM x) xs) ==> (((MEM x) xs) \/ ((MEM x) t)))))) = (!t. (!x. (!xs. ((~ (((MEM x) xs) ==> (((MEM x) xs) \/ ((MEM x) t)))) ==> F)))))
+T c= ! ! ! c==> cMEM b1 b2 c\/ cMEM b1 b2 cMEM b1 b0 ! ! ! c==> c~ c==> cMEM b1 b2 c\/ cMEM b1 b2 cMEM b1 b0 cF
++ |- (((((MEM f) NIL) /\ ((MEM x) xs)) ==> ((MEM x) (((replace f) xs) NIL))) /\ (!h. (!t. (((((MEM f) t) /\ ((MEM x) xs)) ==> ((MEM x) (((replace f) xs) t))) ==> ((((MEM f) ((CONS h) t)) /\ ((MEM x) xs)) ==> ((MEM x) (((replace f) xs) ((CONS h) t))))))))
+T c/\ c==> c/\ cMEM f0 cNIL cMEM f1 f2 cMEM f1 creplace f0 f2 cNIL ! ! c==> c==> c/\ cMEM f0 b1 cMEM f1 f2 cMEM f1 creplace f0 f2 b1 c==> c/\ cMEM f0 cCONS b0 b1 cMEM f1 f2 cMEM f1 creplace f0 f2 cCONS b0 b1
+- |- (((t1 \/ t2) \/ t3) = (t1 \/ (t2 \/ t3)))
+T c= c\/ c\/ f0 f1 f2 c\/ f0 c\/ f1 f2
++ |- ((\t. (!xs. (!f. (!x. (!h. (((((MEM f) t) /\ ((MEM x) xs)) ==> ((MEM x) (((replace f) xs) t))) ==> ((~ (h = f)) ==> ((~ ((((MEM f) t) /\ ((MEM x) xs)) ==> ((x = h) \/ ((MEM x) (((replace f) xs) t))))) ==> F)))))))) t)
+T * / ! ! ! ! c==> c==> c/\ cMEM b2 b0 cMEM b3 b1 cMEM b3 creplace b2 b1 b0 c==> c~ c= b4 b2 c==> c~ c==> c/\ cMEM b2 b0 cMEM b3 b1 c\/ c= b3 b4 cMEM b3 creplace b2 b1 b0 cF f0
++ |- (((!t. (!xs. (!f. (!x. (!h. (((((MEM f) t) /\ ((MEM x) xs)) ==> ((MEM x) (((replace f) xs) t))) ==> ((~ (h = f)) ==> ((~ ((((MEM f) t) /\ ((MEM x) xs)) ==> ((x = h) \/ ((MEM x) (((replace f) xs) t))))) ==> F)))))))) ==> ((\t. (!xs. (!f. (!x. (!h. (((((MEM f) t) /\ ((MEM x) xs)) ==> ((MEM x) (((replace f) xs) t))) ==> ((~ (h = f)) ==> ((~ ((((MEM f) t) /\ ((MEM x) xs)) ==> ((x = h) \/ ((MEM x) (((replace f) xs) t))))) ==> F)))))))) t)) = ((\t. (!xs. (!f. (!x. (!h. (((((MEM f) t) /\ ((MEM x) xs)) ==> ((MEM x) (((replace f) xs) t))) ==> ((~ (h = f)) ==> ((~ ((((MEM f) t) /\ ((MEM x) xs)) ==> ((x = h) \/ ((MEM x) (((replace f) xs) t))))) ==> F)))))))) t))
+T c= c==> ! ! ! ! ! c==> c==> c/\ cMEM b2 b0 cMEM b3 b1 cMEM b3 creplace b2 b1 b0 c==> c~ c= b4 b2 c==> c~ c==> c/\ cMEM b2 b0 cMEM b3 b1 c\/ c= b3 b4 cMEM b3 creplace b2 b1 b0 cF * / ! ! ! ! c==> c==> c/\ cMEM b2 b0 cMEM b3 b1 cMEM b3 creplace b2 b1 b0 c==> c~ c= b4 b2 c==> c~ c==> c/\ cMEM b2 b0 cMEM b3 b1 c\/ c= b3 b4 cMEM b3 creplace b2 b1 b0 cF f0 * / ! ! ! ! c==> c==> c/\ cMEM b2 b0 cMEM b3 b1 cMEM b3 creplace b2 b1 b0 c==> c~ c= b4 b2 c==> c~ c==> c/\ cMEM b2 b0 cMEM b3 b1 c\/ c= b3 b4 cMEM b3 creplace b2 b1 b0 cF f0
++ (~ ((MEM f) t)), (((MEM f) t) /\ ((MEM x) xs)) |- F
+T c==> c~ cMEM f0 f1 c==> c/\ cMEM f0 f1 cMEM f2 f3 cF
++ (~ ((x = h) \/ ((MEM x) (((replace f) xs) t)))) |- (~ ((MEM x) (((replace f) xs) t)))
+T c==> c~ c\/ c= f0 f1 cMEM f0 creplace f2 f3 f4 c~ cMEM f0 creplace f2 f3 f4
+- |- ((\t. (!x. (!xs. ((~ (((MEM x) xs) ==> (((MEM x) xs) \/ ((MEM x) t)))) ==> F)))) t)
+T * / ! ! c==> c~ c==> cMEM b1 b2 c\/ cMEM b1 b2 cMEM b1 b0 cF f0
++ (((MEM f) t) /\ ((MEM x) xs)) |- (((~ ((MEM f) t)) \/ (~ ((MEM x) xs))) ==> F)
+T c==> c/\ cMEM f0 f1 cMEM f2 f3 c==> c\/ c~ cMEM f0 f1 c~ cMEM f2 f3 cF
++ |- ((\xs. (!f. (!x. (!h. (((((MEM f) t) /\ ((MEM x) xs)) ==> ((MEM x) (((replace f) xs) t))) ==> ((~ (h = f)) ==> ((~ ((((MEM f) t) /\ ((MEM x) xs)) ==> ((x = h) \/ ((MEM x) (((replace f) xs) t))))) ==> F))))))) xs)
+T * / ! ! ! c==> c==> c/\ cMEM b1 f0 cMEM b2 b0 cMEM b2 creplace b1 b0 f0 c==> c~ c= b3 b1 c==> c~ c==> c/\ cMEM b1 f0 cMEM b2 b0 c\/ c= b2 b3 cMEM b2 creplace b1 b0 f0 cF f1
+- ((~ (((MEM x) xs) ==> (((MEM x) xs) \/ ((MEM x) t)))) ==> F), (((~ (((MEM x) xs) ==> (((MEM x) xs) \/ ((MEM x) t)))) ==> F) ==> ((~ (((MEM x) xs) ==> (((MEM x) xs) \/ ((MEM x) t)))) ==> F)) |- ((((~ (((MEM x) xs) ==> (((MEM x) xs) \/ ((MEM x) t)))) ==> F) ==> ((~ (((MEM x) xs) ==> (((MEM x) xs) \/ ((MEM x) t)))) ==> F)) /\ ((~ (((MEM x) xs) ==> (((MEM x) xs) \/ ((MEM x) t)))) ==> F))
+T c==> c==> c~ c==> cMEM f0 f1 c\/ cMEM f0 f1 cMEM f0 f2 cF c==> c==> c==> c~ c==> cMEM f0 f1 c\/ cMEM f0 f1 cMEM f0 f2 cF c==> c~ c==> cMEM f0 f1 c\/ cMEM f0 f1 cMEM f0 f2 cF c/\ c==> c==> c~ c==> cMEM f0 f1 c\/ cMEM f0 f1 cMEM f0 f2 cF c==> c~ c==> cMEM f0 f1 c\/ cMEM f0 f1 cMEM f0 f2 cF c==> c~ c==> cMEM f0 f1 c\/ cMEM f0 f1 cMEM f0 f2 cF
++ (~ (h = f)), ((((MEM f) t) /\ ((MEM x) xs)) ==> ((MEM x) (((replace f) xs) t))) |- ((~ (h = f)) /\ ((((MEM f) t) /\ ((MEM x) xs)) ==> ((x = h) \/ ((MEM x) (((replace f) xs) t)))))
+T c==> c~ c= f0 f1 c==> c==> c/\ cMEM f1 f2 cMEM f3 f4 cMEM f3 creplace f1 f4 f2 c/\ c~ c= f0 f1 c==> c/\ cMEM f1 f2 cMEM f3 f4 c\/ c= f3 f0 cMEM f3 creplace f1 f4 f2
+- (~ ((x = h) \/ ((MEM x) (((replace f) xs) t)))), ((MEM x) (((replace f) xs) t)) |- ((~ F) ==> F)
+T c==> c~ c\/ c= f0 f1 cMEM f0 creplace f2 f3 f4 c==> cMEM f0 creplace f2 f3 f4 c==> c~ cF cF
++ |- ((!t. (!xs. (!f. (!x. (!h. (((((MEM f) t) /\ ((MEM x) xs)) ==> ((MEM x) (((replace f) xs) t))) ==> ((~ (h = f)) ==> ((((MEM f) t) /\ ((MEM x) xs)) ==> ((x = h) \/ ((MEM x) (((replace f) xs) t))))))))))) = (!t. (!xs. (!f. (!x. (!h. (((((MEM f) t) /\ ((MEM x) xs)) ==> ((MEM x) (((replace f) xs) t))) ==> ((~ (h = f)) ==> ((~ ((((MEM f) t) /\ ((MEM x) xs)) ==> ((x = h) \/ ((MEM x) (((replace f) xs) t))))) ==> F)))))))))
+T c= ! ! ! ! ! c==> c==> c/\ cMEM b2 b0 cMEM b3 b1 cMEM b3 creplace b2 b1 b0 c==> c~ c= b4 b2 c==> c/\ cMEM b2 b0 cMEM b3 b1 c\/ c= b3 b4 cMEM b3 creplace b2 b1 b0 ! ! ! ! ! c==> c==> c/\ cMEM b2 b0 cMEM b3 b1 cMEM b3 creplace b2 b1 b0 c==> c~ c= b4 b2 c==> c~ c==> c/\ cMEM b2 b0 cMEM b3 b1 c\/ c= b3 b4 cMEM b3 creplace b2 b1 b0 cF
++ |- ((((h = f) ==> ((((f = h) \/ ((MEM f) t)) /\ ((MEM x) xs)) ==> ((MEM x) ((APPEND xs) t)))) /\ ((~ (h = f)) ==> ((((f = h) \/ ((MEM f) t)) /\ ((MEM x) xs)) ==> ((MEM x) ((CONS h) (((replace f) xs) t)))))) = ((((f = h) \/ ((MEM f) t)) /\ ((MEM x) xs)) ==> ((MEM x) (((COND (h = f)) ((APPEND xs) t)) ((CONS h) (((replace f) xs) t))))))
+T c= c/\ c==> c= f0 f1 c==> c/\ c\/ c= f1 f0 cMEM f1 f2 cMEM f3 f4 cMEM f3 cAPPEND f4 f2 c==> c~ c= f0 f1 c==> c/\ c\/ c= f1 f0 cMEM f1 f2 cMEM f3 f4 cMEM f3 cCONS f0 creplace f1 f4 f2 c==> c/\ c\/ c= f1 f0 cMEM f1 f2 cMEM f3 f4 cMEM f3 cCOND c= f0 f1 cAPPEND f4 f2 cCONS f0 creplace f1 f4 f2
+- |- (((((((MEM f) t) /\ ((MEM x) xs)) ==> ((MEM x) (((replace f) xs) t))) ==> ((~ (h = f)) ==> ((~ ((((MEM f) t) /\ ((MEM x) xs)) ==> ((x = h) \/ ((MEM x) (((replace f) xs) t))))) ==> F))) ==> (((((MEM f) t) /\ ((MEM x) xs)) ==> ((MEM x) (((replace f) xs) t))) ==> ((~ (h = f)) ==> ((~ ((((MEM f) t) /\ ((MEM x) xs)) ==> ((x = h) \/ ((MEM x) (((replace f) xs) t))))) ==> F)))) = (((((MEM f) t) /\ ((MEM x) xs)) ==> ((MEM x) (((replace f) xs) t))) ==> ((~ (h = f)) ==> ((~ ((((MEM f) t) /\ ((MEM x) xs)) ==> ((x = h) \/ ((MEM x) (((replace f) xs) t))))) ==> F))))
+T c= c==> c==> c==> c/\ cMEM f0 f1 cMEM f2 f3 cMEM f2 creplace f0 f3 f1 c==> c~ c= f4 f0 c==> c~ c==> c/\ cMEM f0 f1 cMEM f2 f3 c\/ c= f2 f4 cMEM f2 creplace f0 f3 f1 cF c==> c==> c/\ cMEM f0 f1 cMEM f2 f3 cMEM f2 creplace f0 f3 f1 c==> c~ c= f4 f0 c==> c~ c==> c/\ cMEM f0 f1 cMEM f2 f3 c\/ c= f2 f4 cMEM f2 creplace f0 f3 f1 cF c==> c==> c/\ cMEM f0 f1 cMEM f2 f3 cMEM f2 creplace f0 f3 f1 c==> c~ c= f4 f0 c==> c~ c==> c/\ cMEM f0 f1 cMEM f2 f3 c\/ c= f2 f4 cMEM f2 creplace f0 f3 f1 cF
++ |- ((T \/ t) = T)
+T c= c\/ cT f0 cT
++ |- (((!f. (!x. (!h. (((((MEM f) t) /\ ((MEM x) xs)) ==> ((MEM x) (((replace f) xs) t))) ==> ((~ (h = f)) ==> ((~ ((((MEM f) t) /\ ((MEM x) xs)) ==> ((x = h) \/ ((MEM x) (((replace f) xs) t))))) ==> F)))))) ==> ((\f. (!x. (!h. (((((MEM f) t) /\ ((MEM x) xs)) ==> ((MEM x) (((replace f) xs) t))) ==> ((~ (h = f)) ==> ((~ ((((MEM f) t) /\ ((MEM x) xs)) ==> ((x = h) \/ ((MEM x) (((replace f) xs) t))))) ==> F)))))) f)) = ((\f. (!x. (!h. (((((MEM f) t) /\ ((MEM x) xs)) ==> ((MEM x) (((replace f) xs) t))) ==> ((~ (h = f)) ==> ((~ ((((MEM f) t) /\ ((MEM x) xs)) ==> ((x = h) \/ ((MEM x) (((replace f) xs) t))))) ==> F)))))) f))
+T c= c==> ! ! ! c==> c==> c/\ cMEM b0 f0 cMEM b1 f1 cMEM b1 creplace b0 f1 f0 c==> c~ c= b2 b0 c==> c~ c==> c/\ cMEM b0 f0 cMEM b1 f1 c\/ c= b1 b2 cMEM b1 creplace b0 f1 f0 cF * / ! ! c==> c==> c/\ cMEM b0 f0 cMEM b1 f1 cMEM b1 creplace b0 f1 f0 c==> c~ c= b2 b0 c==> c~ c==> c/\ cMEM b0 f0 cMEM b1 f1 c\/ c= b1 b2 cMEM b1 creplace b0 f1 f0 cF f2 * / ! ! c==> c==> c/\ cMEM b0 f0 cMEM b1 f1 cMEM b1 creplace b0 f1 f0 c==> c~ c= b2 b0 c==> c~ c==> c/\ cMEM b0 f0 cMEM b1 f1 c\/ c= b1 b2 cMEM b1 creplace b0 f1 f0 cF f2
++ |- ((F ==> t) = T)
+T c= c==> cF f0 cT
++ ((((MEM f) t) /\ ((MEM x) xs)) ==> ((MEM x) (((replace f) xs) t))) |- (((h = f) ==> ((((f = h) \/ ((MEM f) t)) /\ ((MEM x) xs)) ==> ((MEM x) ((APPEND xs) t)))) /\ ((~ (h = f)) ==> ((((f = h) \/ ((MEM f) t)) /\ ((MEM x) xs)) ==> ((MEM x) ((CONS h) (((replace f) xs) t))))))
+T c==> c==> c/\ cMEM f0 f1 cMEM f2 f3 cMEM f2 creplace f0 f3 f1 c/\ c==> c= f4 f0 c==> c/\ c\/ c= f0 f4 cMEM f0 f1 cMEM f2 f3 cMEM f2 cAPPEND f3 f1 c==> c~ c= f4 f0 c==> c/\ c\/ c= f0 f4 cMEM f0 f1 cMEM f2 f3 cMEM f2 cCONS f4 creplace f0 f3 f1
+- |- (((!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))) ==> ((\t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))) t3)) = ((\t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))) t3))
+T c= c==> ! c= c\/ f0 c\/ f1 b0 c\/ c\/ f0 f1 b0 * / c= c\/ f0 c\/ f1 b0 c\/ c\/ f0 f1 b0 f2 * / c= c\/ f0 c\/ f1 b0 c\/ c\/ f0 f1 b0 f2
++ ((MEM x) xs) |- (((MEM x) xs) /\ (((MEM x) xs) \/ ((MEM x) t)))
+T c==> cMEM f0 f1 c/\ cMEM f0 f1 c\/ cMEM f0 f1 cMEM f0 f2
++ |- ((\x. (!l1. (!l2. (((MEM x) ((APPEND l1) l2)) = (((MEM x) l1) \/ ((MEM x) l2)))))) x)
+T * / ! ! c= cMEM b0 cAPPEND b1 b2 c\/ cMEM b0 b1 cMEM b0 b2 f0
++ ((((MEM f) t) /\ ((MEM x) xs)) ==> ((MEM x) (((replace f) xs) t))) |- (((~ ((MEM f) t)) \/ (~ ((MEM x) xs))) \/ ((MEM x) (((replace f) xs) t)))
+T c==> c==> c/\ cMEM f0 f1 cMEM f2 f3 cMEM f2 creplace f0 f3 f1 c\/ c\/ c~ cMEM f0 f1 c~ cMEM f2 f3 cMEM f2 creplace f0 f3 f1
+- |- ((t /\ t) = t)
+T c= c/\ f0 f0 f0
++ |- ((F /\ t) = F)
+T c= c/\ cF f0 cF
+- |- ((a = b) ==> (b \/ (~ a)))
+T c==> c= f0 f1 c\/ f1 c~ f0
+- (~ ((MEM x) xs)), (((MEM f) t) /\ ((MEM x) xs)) |- ((~ ((MEM x) xs)) /\ ((MEM x) xs))
+T c==> c~ cMEM f0 f1 c==> c/\ cMEM f2 f3 cMEM f0 f1 c/\ c~ cMEM f0 f1 cMEM f0 f1
++ |- ((!g. ((((MEM f) g) /\ ((MEM x) xs)) ==> ((MEM x) (((replace f) xs) g)))) = T)
+T c= ! c==> c/\ cMEM f0 b0 cMEM f1 f2 cMEM f1 creplace f0 f2 b0 cT
++ (~ ((x = h) \/ ((MEM x) (((replace f) xs) t)))), (((MEM f) t) /\ ((MEM x) xs)), ((((MEM f) t) /\ ((MEM x) xs)) ==> ((MEM x) (((replace f) xs) t))) |- ((~ ((x = h) \/ ((MEM x) (((replace f) xs) t)))) /\ F)
+T c==> c~ c\/ c= f0 f1 cMEM f0 creplace f2 f3 f4 c==> c/\ cMEM f2 f4 cMEM f0 f3 c==> c==> c/\ cMEM f2 f4 cMEM f0 f3 cMEM f0 creplace f2 f3 f4 c/\ c~ c\/ c= f0 f1 cMEM f0 creplace f2 f3 f4 cF
++ |- ((((MEM f) NIL) /\ ((MEM x) xs)) ==> ((MEM x) (((replace f) xs) NIL)))
+T c==> c/\ cMEM f0 cNIL cMEM f1 f2 cMEM f1 creplace f0 f2 cNIL
+- (((MEM f) t) /\ ((MEM x) xs)) |- ((~ ((MEM f) t)) ==> ((MEM f) t))
+T c==> c/\ cMEM f0 f1 cMEM f2 f3 c==> c~ cMEM f0 f1 cMEM f0 f1
+- (_10071486 = _10071488), (_10071487 = _10071489) |- (((((MEM _10071486) _10071487) = ((MEM _10071488) _10071489)) ==> (((MEM _10071488) _10071489) \/ (~ ((MEM _10071486) _10071487)))) = (((MEM _10071488) _10071489) \/ (~ ((MEM _10071486) _10071487))))
+T c==> c= f0 f1 c==> c= f2 f3 c= c==> c= cMEM f0 f2 cMEM f1 f3 c\/ cMEM f1 f3 c~ cMEM f0 f2 c\/ cMEM f1 f3 c~ cMEM f0 f2
++ (~ (h = f)) |- (((((MEM f) t) /\ ((MEM x) xs)) ==> ((x = h) \/ ((MEM x) (((replace f) xs) t)))) = ((((f = h) \/ ((MEM f) t)) /\ ((MEM x) xs)) ==> ((MEM x) ((CONS h) (((replace f) xs) t)))))
+T c==> c~ c= f0 f1 c= c==> c/\ cMEM f1 f2 cMEM f3 f4 c\/ c= f3 f0 cMEM f3 creplace f1 f4 f2 c==> c/\ c\/ c= f1 f0 cMEM f1 f2 cMEM f3 f4 cMEM f3 cCONS f0 creplace f1 f4 f2
+- |- ((~ (_10071486 = _10071488)) \/ ((~ (_10071487 = _10071489)) \/ (((MEM _10071488) _10071489) \/ (~ ((MEM _10071486) _10071487)))))
+T c\/ c~ c= f0 f1 c\/ c~ c= f2 f3 c\/ cMEM f1 f3 c~ cMEM f0 f2
++ |- ((!xs. (!g. ((((MEM f) g) /\ ((MEM x) xs)) ==> ((MEM x) (((replace f) xs) g))))) = T)
+T c= ! ! c==> c/\ cMEM f0 b1 cMEM f1 b0 cMEM f1 creplace f0 b0 b1 cT
++ (~ (h = f)) |- (~ (f = h))
+T c==> c~ c= f0 f1 c~ c= f1 f0
+- (_10071486 = _10071488) |- ((_10071487 = _10071489) ==> (((MEM _10071488) _10071489) \/ (~ ((MEM _10071486) _10071487))))
+T c==> c= f0 f1 c==> c= f2 f3 c\/ cMEM f1 f3 c~ cMEM f0 f2
+- |- ((((MEM x) xs) ==> (((MEM x) xs) \/ ((MEM x) t))) = T)
+T c= c==> cMEM f0 f1 c\/ cMEM f0 f1 cMEM f0 f2 cT
++ |- (((~ ((((MEM f) t) /\ ((MEM x) xs)) ==> ((x = h) \/ ((MEM x) (((replace f) xs) t))))) ==> F) = ((((MEM f) t) /\ ((MEM x) xs)) ==> ((x = h) \/ ((MEM x) (((replace f) xs) t)))))
+T c= c==> c~ c==> c/\ cMEM f0 f1 cMEM f2 f3 c\/ c= f2 f4 cMEM f2 creplace f0 f3 f1 cF c==> c/\ cMEM f0 f1 cMEM f2 f3 c\/ c= f2 f4 cMEM f2 creplace f0 f3 f1
++ (~ (h = f)), ((((MEM f) t) /\ ((MEM x) xs)) ==> ((MEM x) (((replace f) xs) t))) |- ((((f = h) \/ ((MEM f) t)) /\ ((MEM x) xs)) ==> ((MEM x) ((CONS h) (((replace f) xs) t))))
+T c==> c~ c= f0 f1 c==> c==> c/\ cMEM f1 f2 cMEM f3 f4 cMEM f3 creplace f1 f4 f2 c==> c/\ c\/ c= f1 f0 cMEM f1 f2 cMEM f3 f4 cMEM f3 cCONS f0 creplace f1 f4 f2
++ |- ((\l2. (((MEM x) ((APPEND l1) l2)) = (((MEM x) l1) \/ ((MEM x) l2)))) l2)
+T * / c= cMEM f0 cAPPEND f1 b0 c\/ cMEM f0 f1 cMEM f0 b0 f2
++ |- (((((f = h) \/ ((MEM f) t)) /\ ((MEM x) xs)) ==> ((MEM x) (((COND (h = f)) ((APPEND xs) t)) ((CONS h) (((replace f) xs) t))))) = (((h = f) ==> ((((f = h) \/ ((MEM f) t)) /\ ((MEM x) xs)) ==> ((MEM x) ((APPEND xs) t)))) /\ ((~ (h = f)) ==> ((((f = h) \/ ((MEM f) t)) /\ ((MEM x) xs)) ==> ((MEM x) ((CONS h) (((replace f) xs) t)))))))
+T c= c==> c/\ c\/ c= f0 f1 cMEM f0 f2 cMEM f3 f4 cMEM f3 cCOND c= f1 f0 cAPPEND f4 f2 cCONS f1 creplace f0 f4 f2 c/\ c==> c= f1 f0 c==> c/\ c\/ c= f0 f1 cMEM f0 f2 cMEM f3 f4 cMEM f3 cAPPEND f4 f2 c==> c~ c= f1 f0 c==> c/\ c\/ c= f0 f1 cMEM f0 f2 cMEM f3 f4 cMEM f3 cCONS f1 creplace f0 f4 f2
+- (~ F), (~ (((MEM x) xs) \/ ((MEM x) t))), ((MEM x) xs) |- ((~ F) /\ F)
+T c==> c~ cF c==> c~ c\/ cMEM f0 f1 cMEM f0 f2 c==> cMEM f0 f1 c/\ c~ cF cF
++ (h = f) |- ((((MEM x) xs) ==> ((MEM x) ((APPEND xs) t))) = ((((f = h) \/ ((MEM f) t)) /\ ((MEM x) xs)) ==> ((MEM x) ((APPEND xs) t))))
+T c==> c= f0 f1 c= c==> cMEM f2 f3 cMEM f2 cAPPEND f3 f4 c==> c/\ c\/ c= f1 f0 cMEM f1 f4 cMEM f2 f3 cMEM f2 cAPPEND f3 f4
++ ((((MEM f) t) /\ ((MEM x) xs)) ==> ((MEM x) (((replace f) xs) t))) |- ((~ (h = f)) ==> ((((f = h) \/ ((MEM f) t)) /\ ((MEM x) xs)) ==> ((MEM x) ((CONS h) (((replace f) xs) t)))))
+T c==> c==> c/\ cMEM f0 f1 cMEM f2 f3 cMEM f2 creplace f0 f3 f1 c==> c~ c= f4 f0 c==> c/\ c\/ c= f0 f4 cMEM f0 f1 cMEM f2 f3 cMEM f2 cCONS f4 creplace f0 f3 f1
+- (_10071490 = _10071493), (_10071491 = _10071494), (_10071492 = _10071495) |- ((_10071492 = _10071495) /\ ((((replace _10071490) _10071491) _10071492) = (((replace _10071493) _10071494) _10071495)))
+T c==> c= f0 f1 c==> c= f2 f3 c==> c= f4 f5 c/\ c= f4 f5 c= creplace f0 f2 f4 creplace f1 f3 f5
++ (~ (h = f)) |- ((f = h) = F)
+T c==> c~ c= f0 f1 c= c= f1 f0 cF
++ |- ((F \/ t) = t)
+T c= c\/ cF f0 f0
++ (~ (h = f)), ((((MEM f) t) /\ ((MEM x) xs)) ==> ((MEM x) (((replace f) xs) t))) |- ((~ ((((MEM f) t) /\ ((MEM x) xs)) ==> ((x = h) \/ ((MEM x) (((replace f) xs) t))))) ==> F)
+T c==> c~ c= f0 f1 c==> c==> c/\ cMEM f1 f2 cMEM f3 f4 cMEM f3 creplace f1 f4 f2 c==> c~ c==> c/\ cMEM f1 f2 cMEM f3 f4 c\/ c= f3 f0 cMEM f3 creplace f1 f4 f2 cF
+- |- (((!x. (!xs. ((~ (((MEM x) xs) ==> (((MEM x) xs) \/ ((MEM x) t)))) ==> F))) ==> ((\x. (!xs. ((~ (((MEM x) xs) ==> (((MEM x) xs) \/ ((MEM x) t)))) ==> F))) x)) = ((\x. (!xs. ((~ (((MEM x) xs) ==> (((MEM x) xs) \/ ((MEM x) t)))) ==> F))) x))
+T c= c==> ! ! c==> c~ c==> cMEM b0 b1 c\/ cMEM b0 b1 cMEM b0 f0 cF * / ! c==> c~ c==> cMEM b0 b1 c\/ cMEM b0 b1 cMEM b0 f0 cF f1 * / ! c==> c~ c==> cMEM b0 b1 c\/ cMEM b0 b1 cMEM b0 f0 cF f1
+- |- (((!xs. ((~ (((MEM x) xs) ==> (((MEM x) xs) \/ ((MEM x) t)))) ==> F)) ==> ((\xs. ((~ (((MEM x) xs) ==> (((MEM x) xs) \/ ((MEM x) t)))) ==> F)) xs)) = ((\xs. ((~ (((MEM x) xs) ==> (((MEM x) xs) \/ ((MEM x) t)))) ==> F)) xs))
+T c= c==> ! c==> c~ c==> cMEM f0 b0 c\/ cMEM f0 b0 cMEM f0 f1 cF * / c==> c~ c==> cMEM f0 b0 c\/ cMEM f0 b0 cMEM f0 f1 cF f2 * / c==> c~ c==> cMEM f0 b0 c\/ cMEM f0 b0 cMEM f0 f1 cF f2
++ (((MEM f) t) /\ ((MEM x) xs)), ((((MEM f) t) /\ ((MEM x) xs)) ==> ((MEM x) (((replace f) xs) t))), (((MEM x) (((replace f) xs) t)) ==> F) |- F
+T c==> c/\ cMEM f0 f1 cMEM f2 f3 c==> c==> c/\ cMEM f0 f1 cMEM f2 f3 cMEM f2 creplace f0 f3 f1 c==> c==> cMEM f2 creplace f0 f3 f1 cF cF
++ |- ((!xs. (!f. (!x. (!h. (((((MEM f) t) /\ ((MEM x) xs)) ==> ((MEM x) (((replace f) xs) t))) ==> ((~ (h = f)) ==> ((((MEM f) t) /\ ((MEM x) xs)) ==> ((x = h) \/ ((MEM x) (((replace f) xs) t)))))))))) = T)
+T c= ! ! ! ! c==> c==> c/\ cMEM b1 f0 cMEM b2 b0 cMEM b2 creplace b1 b0 f0 c==> c~ c= b3 b1 c==> c/\ cMEM b1 f0 cMEM b2 b0 c\/ c= b2 b3 cMEM b2 creplace b1 b0 f0 cT
++ |- ((!h. (((((MEM f) t) /\ ((MEM x) xs)) ==> ((MEM x) (((replace f) xs) t))) ==> ((~ (h = f)) ==> ((((MEM f) t) /\ ((MEM x) xs)) ==> ((x = h) \/ ((MEM x) (((replace f) xs) t))))))) = T)
+T c= ! c==> c==> c/\ cMEM f0 f1 cMEM f2 f3 cMEM f2 creplace f0 f3 f1 c==> c~ c= b0 f0 c==> c/\ cMEM f0 f1 cMEM f2 f3 c\/ c= f2 b0 cMEM f2 creplace f0 f3 f1 cT
+- ((((MEM f) t) /\ ((MEM x) xs)) ==> ((MEM x) (((replace f) xs) t))) |- (((((MEM f) t) /\ ((MEM x) xs)) ==> ((MEM x) (((replace f) xs) t))) = T)
+T c==> c==> c/\ cMEM f0 f1 cMEM f2 f3 cMEM f2 creplace f0 f3 f1 c= c==> c/\ cMEM f0 f1 cMEM f2 f3 cMEM f2 creplace f0 f3 f1 cT
++ (((MEM f) t) /\ ((MEM x) xs)), ((((MEM f) t) /\ ((MEM x) xs)) ==> ((MEM x) (((replace f) xs) t))) |- ((~ ((x = h) \/ ((MEM x) (((replace f) xs) t)))) ==> F)
+T c==> c/\ cMEM f0 f1 cMEM f2 f3 c==> c==> c/\ cMEM f0 f1 cMEM f2 f3 cMEM f2 creplace f0 f3 f1 c==> c~ c\/ c= f2 f4 cMEM f2 creplace f0 f3 f1 cF
++ (((MEM f) t) /\ ((MEM x) xs)) |- ((((MEM f) t) ==> F) = F)
+T c==> c/\ cMEM f0 f1 cMEM f2 f3 c= c==> cMEM f0 f1 cF cF
++ |- ((!f. (!xs. (!g. ((((MEM f) g) /\ ((MEM x) xs)) ==> ((MEM x) (((replace f) xs) g)))))) = T)
+T c= ! ! ! c==> c/\ cMEM b0 b2 cMEM f0 b1 cMEM f0 creplace b0 b1 b2 cT
+- |- ((!h. (P h)) = ((P T) /\ (P F)))
+T c= ! * f0 b0 c/\ * f0 cT * f0 cF
+- ((((((MEM f) t) /\ ((MEM x) xs)) ==> ((MEM x) (((replace f) xs) t))) ==> ((~ (h = f)) ==> ((~ ((((MEM f) t) /\ ((MEM x) xs)) ==> ((x = h) \/ ((MEM x) (((replace f) xs) t))))) ==> F))) ==> (((((MEM f) t) /\ ((MEM x) xs)) ==> ((MEM x) (((replace f) xs) t))) ==> ((~ (h = f)) ==> ((~ ((((MEM f) t) /\ ((MEM x) xs)) ==> ((x = h) \/ ((MEM x) (((replace f) xs) t))))) ==> F)))) |- (((((((MEM f) t) /\ ((MEM x) xs)) ==> ((MEM x) (((replace f) xs) t))) ==> ((~ (h = f)) ==> ((~ ((((MEM f) t) /\ ((MEM x) xs)) ==> ((x = h) \/ ((MEM x) (((replace f) xs) t))))) ==> F))) ==> (((((MEM f) t) /\ ((MEM x) xs)) ==> ((MEM x) (((replace f) xs) t))) ==> ((~ (h = f)) ==> ((~ ((((MEM f) t) /\ ((MEM x) xs)) ==> ((x = h) \/ ((MEM x) (((replace f) xs) t))))) ==> F)))) /\ ((((((MEM f) t) /\ ((MEM x) xs)) ==> ((MEM x) (((replace f) xs) t))) ==> ((~ (h = f)) ==> ((~ ((((MEM f) t) /\ ((MEM x) xs)) ==> ((x = h) \/ ((MEM x) (((replace f) xs) t))))) ==> F))) ==> (((((MEM f) t) /\ ((MEM x) xs)) ==> ((MEM x) (((replace f) xs) t))) ==> ((~ (h = f)) ==> ((~ ((((MEM f) t) /\ ((MEM x) xs)) ==> ((x = h) \/ ((MEM x) (((replace f) xs) t))))) ==> F)))))
+T c==> c==> c==> c==> c/\ cMEM f0 f1 cMEM f2 f3 cMEM f2 creplace f0 f3 f1 c==> c~ c= f4 f0 c==> c~ c==> c/\ cMEM f0 f1 cMEM f2 f3 c\/ c= f2 f4 cMEM f2 creplace f0 f3 f1 cF c==> c==> c/\ cMEM f0 f1 cMEM f2 f3 cMEM f2 creplace f0 f3 f1 c==> c~ c= f4 f0 c==> c~ c==> c/\ cMEM f0 f1 cMEM f2 f3 c\/ c= f2 f4 cMEM f2 creplace f0 f3 f1 cF c/\ c==> c==> c==> c/\ cMEM f0 f1 cMEM f2 f3 cMEM f2 creplace f0 f3 f1 c==> c~ c= f4 f0 c==> c~ c==> c/\ cMEM f0 f1 cMEM f2 f3 c\/ c= f2 f4 cMEM f2 creplace f0 f3 f1 cF c==> c==> c/\ cMEM f0 f1 cMEM f2 f3 cMEM f2 creplace f0 f3 f1 c==> c~ c= f4 f0 c==> c~ c==> c/\ cMEM f0 f1 cMEM f2 f3 c\/ c= f2 f4 cMEM f2 creplace f0 f3 f1 cF c==> c==> c==> c/\ cMEM f0 f1 cMEM f2 f3 cMEM f2 creplace f0 f3 f1 c==> c~ c= f4 f0 c==> c~ c==> c/\ cMEM f0 f1 cMEM f2 f3 c\/ c= f2 f4 cMEM f2 creplace f0 f3 f1 cF c==> c==> c/\ cMEM f0 f1 cMEM f2 f3 cMEM f2 creplace f0 f3 f1 c==> c~ c= f4 f0 c==> c~ c==> c/\ cMEM f0 f1 cMEM f2 f3 c\/ c= f2 f4 cMEM f2 creplace f0 f3 f1 cF
+- |- (((!t1. (!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))))) ==> ((\t1. (!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))))) t1)) = ((\t1. (!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))))) t1))
+T c= c==> ! ! ! c= c\/ b0 c\/ b1 b2 c\/ c\/ b0 b1 b2 * / ! ! c= c\/ b0 c\/ b1 b2 c\/ c\/ b0 b1 b2 f0 * / ! ! c= c\/ b0 c\/ b1 b2 c\/ c\/ b0 b1 b2 f0
+- (~ ((x = h) \/ ((MEM x) (((replace f) xs) t)))) |- (~ (x = h))
+T c==> c~ c\/ c= f0 f1 cMEM f0 creplace f2 f3 f4 c~ c= f0 f1
+- |- ((~ (~ t)) = t)
+T c= c~ c~ f0 f0
++ (((MEM f) t) /\ ((MEM x) xs)) |- ((((MEM x) xs) ==> F) = F)
+T c==> c/\ cMEM f0 f1 cMEM f2 f3 c= c==> cMEM f2 f3 cF cF
+- (~ (((MEM x) xs) \/ ((MEM x) t))) |- (~ ((MEM x) t))
+T c==> c~ c\/ cMEM f0 f1 cMEM f0 f2 c~ cMEM f0 f2
+- (_10071490 = _10071493), (_10071491 = _10071494) |- ((_10071492 = _10071495) ==> ((((replace _10071490) _10071491) _10071492) = (((replace _10071493) _10071494) _10071495)))
+T c==> c= f0 f1 c==> c= f2 f3 c==> c= f4 f5 c= creplace f0 f2 f4 creplace f1 f3 f5
++ (~ (h = f)), ((((MEM f) t) /\ ((MEM x) xs)) ==> ((MEM x) (((replace f) xs) t))) |- ((~ (h = f)) /\ ((((f = h) \/ ((MEM f) t)) /\ ((MEM x) xs)) ==> ((MEM x) ((CONS h) (((replace f) xs) t)))))
+T c==> c~ c= f0 f1 c==> c==> c/\ cMEM f1 f2 cMEM f3 f4 cMEM f3 creplace f1 f4 f2 c/\ c~ c= f0 f1 c==> c/\ c\/ c= f1 f0 cMEM f1 f2 cMEM f3 f4 cMEM f3 cCONS f0 creplace f1 f4 f2
+- (((((MEM f) t) /\ ((MEM x) xs)) ==> ((MEM x) (((replace f) xs) t))) ==> ((~ (h = f)) ==> ((~ ((((MEM f) t) /\ ((MEM x) xs)) ==> ((x = h) \/ ((MEM x) (((replace f) xs) t))))) ==> F))) |- ((((((MEM f) t) /\ ((MEM x) xs)) ==> ((MEM x) (((replace f) xs) t))) ==> ((~ (h = f)) ==> ((~ ((((MEM f) t) /\ ((MEM x) xs)) ==> ((x = h) \/ ((MEM x) (((replace f) xs) t))))) ==> F))) /\ (((((MEM f) t) /\ ((MEM x) xs)) ==> ((MEM x) (((replace f) xs) t))) ==> ((~ (h = f)) ==> ((~ ((((MEM f) t) /\ ((MEM x) xs)) ==> ((x = h) \/ ((MEM x) (((replace f) xs) t))))) ==> F))))
+T c==> c==> c==> c/\ cMEM f0 f1 cMEM f2 f3 cMEM f2 creplace f0 f3 f1 c==> c~ c= f4 f0 c==> c~ c==> c/\ cMEM f0 f1 cMEM f2 f3 c\/ c= f2 f4 cMEM f2 creplace f0 f3 f1 cF c/\ c==> c==> c/\ cMEM f0 f1 cMEM f2 f3 cMEM f2 creplace f0 f3 f1 c==> c~ c= f4 f0 c==> c~ c==> c/\ cMEM f0 f1 cMEM f2 f3 c\/ c= f2 f4 cMEM f2 creplace f0 f3 f1 cF c==> c==> c/\ cMEM f0 f1 cMEM f2 f3 cMEM f2 creplace f0 f3 f1 c==> c~ c= f4 f0 c==> c~ c==> c/\ cMEM f0 f1 cMEM f2 f3 c\/ c= f2 f4 cMEM f2 creplace f0 f3 f1 cF
+- ((~ (((MEM x) xs) ==> (((MEM x) xs) \/ ((MEM x) t)))) ==> F), (((~ (((MEM x) xs) ==> (((MEM x) xs) \/ ((MEM x) t)))) ==> F) ==> ((~ (((MEM x) xs) ==> (((MEM x) xs) \/ ((MEM x) t)))) ==> F)) |- (((~ (((MEM x) xs) ==> (((MEM x) xs) \/ ((MEM x) t)))) ==> F) /\ ((~ (((MEM x) xs) ==> (((MEM x) xs) \/ ((MEM x) t)))) ==> F))
+T c==> c==> c~ c==> cMEM f0 f1 c\/ cMEM f0 f1 cMEM f0 f2 cF c==> c==> c==> c~ c==> cMEM f0 f1 c\/ cMEM f0 f1 cMEM f0 f2 cF c==> c~ c==> cMEM f0 f1 c\/ cMEM f0 f1 cMEM f0 f2 cF c/\ c==> c~ c==> cMEM f0 f1 c\/ cMEM f0 f1 cMEM f0 f2 cF c==> c~ c==> cMEM f0 f1 c\/ cMEM f0 f1 cMEM f0 f2 cF
+- |- ((\x. (!xs. ((~ (((MEM x) xs) ==> (((MEM x) xs) \/ ((MEM x) t)))) ==> F))) x)
+T * / ! c==> c~ c==> cMEM b0 b1 c\/ cMEM b0 b1 cMEM b0 f0 cF f1
+- (((MEM f) t) /\ ((MEM x) xs)) |- ((~ ((MEM x) xs)) ==> ((MEM x) xs))
+T c==> c/\ cMEM f0 f1 cMEM f2 f3 c==> c~ cMEM f2 f3 cMEM f2 f3
+- (~ (h = f)) |- (((((f = h) \/ ((MEM f) t)) /\ ((MEM x) xs)) ==> ((MEM x) ((CONS h) (((replace f) xs) t)))) = ((((f = h) \/ ((MEM f) t)) /\ ((MEM x) xs)) ==> ((MEM x) ((CONS h) (((replace f) xs) t)))))
+T c==> c~ c= f0 f1 c= c==> c/\ c\/ c= f1 f0 cMEM f1 f2 cMEM f3 f4 cMEM f3 cCONS f0 creplace f1 f4 f2 c==> c/\ c\/ c= f1 f0 cMEM f1 f2 cMEM f3 f4 cMEM f3 cCONS f0 creplace f1 f4 f2
+- |- (((((((MEM f) t) /\ ((MEM x) xs)) ==> ((MEM x) (((replace f) xs) t))) ==> ((~ (h = f)) ==> ((~ ((((MEM f) t) /\ ((MEM x) xs)) ==> ((x = h) \/ ((MEM x) (((replace f) xs) t))))) ==> F))) ==> (((((MEM f) t) /\ ((MEM x) xs)) ==> ((MEM x) (((replace f) xs) t))) ==> ((~ (h = f)) ==> ((~ ((((MEM f) t) /\ ((MEM x) xs)) ==> ((x = h) \/ ((MEM x) (((replace f) xs) t))))) ==> F)))) ==> ((((((MEM f) t) /\ ((MEM x) xs)) ==> ((MEM x) (((replace f) xs) t))) ==> ((~ (h = f)) ==> ((~ ((((MEM f) t) /\ ((MEM x) xs)) ==> ((x = h) \/ ((MEM x) (((replace f) xs) t))))) ==> F))) ==> (((((MEM f) t) /\ ((MEM x) xs)) ==> ((MEM x) (((replace f) xs) t))) ==> ((~ (h = f)) ==> ((~ ((((MEM f) t) /\ ((MEM x) xs)) ==> ((x = h) \/ ((MEM x) (((replace f) xs) t))))) ==> F)))))
+T c==> c==> c==> c==> c/\ cMEM f0 f1 cMEM f2 f3 cMEM f2 creplace f0 f3 f1 c==> c~ c= f4 f0 c==> c~ c==> c/\ cMEM f0 f1 cMEM f2 f3 c\/ c= f2 f4 cMEM f2 creplace f0 f3 f1 cF c==> c==> c/\ cMEM f0 f1 cMEM f2 f3 cMEM f2 creplace f0 f3 f1 c==> c~ c= f4 f0 c==> c~ c==> c/\ cMEM f0 f1 cMEM f2 f3 c\/ c= f2 f4 cMEM f2 creplace f0 f3 f1 cF c==> c==> c==> c/\ cMEM f0 f1 cMEM f2 f3 cMEM f2 creplace f0 f3 f1 c==> c~ c= f4 f0 c==> c~ c==> c/\ cMEM f0 f1 cMEM f2 f3 c\/ c= f2 f4 cMEM f2 creplace f0 f3 f1 cF c==> c==> c/\ cMEM f0 f1 cMEM f2 f3 cMEM f2 creplace f0 f3 f1 c==> c~ c= f4 f0 c==> c~ c==> c/\ cMEM f0 f1 cMEM f2 f3 c\/ c= f2 f4 cMEM f2 creplace f0 f3 f1 cF
+- (~ ((MEM x) xs)), ((MEM x) xs) |- ((~ ((MEM x) xs)) /\ ((MEM x) xs))
+T c==> c~ cMEM f0 f1 c==> cMEM f0 f1 c/\ c~ cMEM f0 f1 cMEM f0 f1
+- (~ F), (~ ((MEM f) t)), (((MEM f) t) /\ ((MEM x) xs)) |- ((~ F) /\ F)
+T c==> c~ cF c==> c~ cMEM f0 f1 c==> c/\ cMEM f0 f1 cMEM f2 f3 c/\ c~ cF cF
+- (((((MEM f) t) /\ ((MEM x) xs)) ==> ((MEM x) (((replace f) xs) t))) ==> ((~ (h = f)) ==> ((~ ((((MEM f) t) /\ ((MEM x) xs)) ==> ((x = h) \/ ((MEM x) (((replace f) xs) t))))) ==> F))), ((((((MEM f) t) /\ ((MEM x) xs)) ==> ((MEM x) (((replace f) xs) t))) ==> ((~ (h = f)) ==> ((~ ((((MEM f) t) /\ ((MEM x) xs)) ==> ((x = h) \/ ((MEM x) (((replace f) xs) t))))) ==> F))) ==> (((((MEM f) t) /\ ((MEM x) xs)) ==> ((MEM x) (((replace f) xs) t))) ==> ((~ (h = f)) ==> ((~ ((((MEM f) t) /\ ((MEM x) xs)) ==> ((x = h) \/ ((MEM x) (((replace f) xs) t))))) ==> F)))) |- (((((((MEM f) t) /\ ((MEM x) xs)) ==> ((MEM x) (((replace f) xs) t))) ==> ((~ (h = f)) ==> ((~ ((((MEM f) t) /\ ((MEM x) xs)) ==> ((x = h) \/ ((MEM x) (((replace f) xs) t))))) ==> F))) ==> (((((MEM f) t) /\ ((MEM x) xs)) ==> ((MEM x) (((replace f) xs) t))) ==> ((~ (h = f)) ==> ((~ ((((MEM f) t) /\ ((MEM x) xs)) ==> ((x = h) \/ ((MEM x) (((replace f) xs) t))))) ==> F)))) /\ (((((MEM f) t) /\ ((MEM x) xs)) ==> ((MEM x) (((replace f) xs) t))) ==> ((~ (h = f)) ==> ((~ ((((MEM f) t) /\ ((MEM x) xs)) ==> ((x = h) \/ ((MEM x) (((replace f) xs) t))))) ==> F))))
+T c==> c==> c==> c/\ cMEM f0 f1 cMEM f2 f3 cMEM f2 creplace f0 f3 f1 c==> c~ c= f4 f0 c==> c~ c==> c/\ cMEM f0 f1 cMEM f2 f3 c\/ c= f2 f4 cMEM f2 creplace f0 f3 f1 cF c==> c==> c==> c==> c/\ cMEM f0 f1 cMEM f2 f3 cMEM f2 creplace f0 f3 f1 c==> c~ c= f4 f0 c==> c~ c==> c/\ cMEM f0 f1 cMEM f2 f3 c\/ c= f2 f4 cMEM f2 creplace f0 f3 f1 cF c==> c==> c/\ cMEM f0 f1 cMEM f2 f3 cMEM f2 creplace f0 f3 f1 c==> c~ c= f4 f0 c==> c~ c==> c/\ cMEM f0 f1 cMEM f2 f3 c\/ c= f2 f4 cMEM f2 creplace f0 f3 f1 cF c/\ c==> c==> c==> c/\ cMEM f0 f1 cMEM f2 f3 cMEM f2 creplace f0 f3 f1 c==> c~ c= f4 f0 c==> c~ c==> c/\ cMEM f0 f1 cMEM f2 f3 c\/ c= f2 f4 cMEM f2 creplace f0 f3 f1 cF c==> c==> c/\ cMEM f0 f1 cMEM f2 f3 cMEM f2 creplace f0 f3 f1 c==> c~ c= f4 f0 c==> c~ c==> c/\ cMEM f0 f1 cMEM f2 f3 c\/ c= f2 f4 cMEM f2 creplace f0 f3 f1 cF c==> c==> c/\ cMEM f0 f1 cMEM f2 f3 cMEM f2 creplace f0 f3 f1 c==> c~ c= f4 f0 c==> c~ c==> c/\ cMEM f0 f1 cMEM f2 f3 c\/ c= f2 f4 cMEM f2 creplace f0 f3 f1 cF
+- (~ (((MEM x) xs) \/ ((MEM x) t))), ((MEM x) xs) |- ((~ F) ==> F)
+T c==> c~ c\/ cMEM f0 f1 cMEM f0 f2 c==> cMEM f0 f1 c==> c~ cF cF
+- |- ((!x. (!xs. (((MEM x) xs) ==> (((MEM x) xs) \/ ((MEM x) t))))) = T)
+T c= ! ! c==> cMEM b0 b1 c\/ cMEM b0 b1 cMEM b0 f0 cT

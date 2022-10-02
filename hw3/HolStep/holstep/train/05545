@@ -1,0 +1,88 @@
+N Tame_list.replace_hd
+C |- (!b. (!f. ((~ (b = NIL)) ==> ((((replace (HD b)) f) b) = ((cat f) (TL b))))))
+T c==> c~ c= f0 cNIL c= creplace cHD f0 f1 f0 ccat f1 cTL f0
+D TRUTH
+A |- T
+T cT
+D COND_CLAUSES
+A |- (!t1. (!t2. (((((COND T) t1) t2) = t1) /\ ((((COND F) t1) t2) = t2))))
+T c/\ c= cCOND cT f0 f1 f0 c= cCOND cF f0 f1 f1
+D list_INDUCT
+A |- (!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x))))
+T c==> c/\ * f0 cNIL ! ! c==> * f0 b1 * f0 cCONS b0 b1 ! * f0 b0
+D HD
+A |- ((HD ((CONS h) t)) = h)
+T c= cHD cCONS f0 f1 f0
+D TL
+A |- ((TL ((CONS h) t)) = t)
+T c= cTL cCONS f0 f1 f1
+D Tame_defs.replace
+A |- (((((replace x) ys) NIL) = NIL) /\ ((((replace x) ys) ((CONS z) zs)) = (((COND (z = x)) ((APPEND ys) zs)) ((CONS z) (((replace x) ys) zs)))))
+T c/\ c= creplace f0 f1 cNIL cNIL c= creplace f0 f1 cCONS f2 f3 cCOND c= f2 f0 cAPPEND f1 f3 cCONS f2 creplace f0 f1 f3
+D Tame_list.APPEND_cat
+A |- (APPEND = cat)
+T c= part cAPPEND part ccat
+- |- ((REVERSE = rev) /\ ((!s. (!x0. ((~ (NIL = s)) ==> ((LAST s) = ((last x0) s))))) /\ ((APPEND = cat) /\ (ALL = all))))
+T c/\ c= part cREVERSE part crev c/\ ! ! c==> c~ c= cNIL b0 c= cLAST b0 clast b1 b0 c/\ c= part cAPPEND part ccat c= part cALL part call
+- |- ((FILTER = filter) /\ ((REVERSE = rev) /\ ((!s. (!x0. ((~ (NIL = s)) ==> ((LAST s) = ((last x0) s))))) /\ ((APPEND = cat) /\ (ALL = all)))))
+T c/\ c= part cFILTER part cfilter c/\ c= part cREVERSE part crev c/\ ! ! c==> c~ c= cNIL b0 c= cLAST b0 clast b1 b0 c/\ c= part cAPPEND part ccat c= part cALL part call
+- |- ((!s. (!x0. ((~ (NIL = s)) ==> ((LAST s) = ((last x0) s))))) /\ ((APPEND = cat) /\ (ALL = all)))
+T c/\ ! ! c==> c~ c= cNIL b0 c= cLAST b0 clast b1 b0 c/\ c= part cAPPEND part ccat c= part cALL part call
+- |- (MAP = map)
+T c= part cMAP part cmap
+- |- (LENGTH = sizel)
+T c= part cLENGTH part csizel
++ |- ((t ==> T) = T)
+T c= c==> f0 cT cT
+- |- ((t ==> t) = T)
+T c= c==> f0 f0 cT
+- |- ((\x0. ((~ (NIL = s)) ==> ((LAST s) = ((last x0) s)))) x0)
+T * / c==> c~ c= cNIL f0 c= cLAST f0 clast b0 f0 f1
+- |- ((~ (NIL = s)) ==> ((LAST s) = ((last x0) s)))
+T c==> c~ c= cNIL f0 c= cLAST f0 clast f1 f0
++ |- (!h. (!t. ((!f. ((~ (t = NIL)) ==> ((((replace (HD t)) f) t) = ((cat f) (TL t))))) ==> (!f. ((~ (((CONS h) t) = NIL)) ==> ((((replace (HD ((CONS h) t))) f) ((CONS h) t)) = ((cat f) (TL ((CONS h) t)))))))))
+T c==> ! c==> c~ c= f0 cNIL c= creplace cHD f0 b0 f0 ccat b0 cTL f0 ! c==> c~ c= cCONS f1 f0 cNIL c= creplace cHD cCONS f1 f0 b0 cCONS f1 f0 ccat b0 cTL cCONS f1 f0
++ |- ((!f. ((~ (NIL = NIL)) ==> ((((replace (HD NIL)) f) NIL) = ((cat f) (TL NIL))))) /\ (!h. (!t. ((!f. ((~ (t = NIL)) ==> ((((replace (HD t)) f) t) = ((cat f) (TL t))))) ==> (!f. ((~ (((CONS h) t) = NIL)) ==> ((((replace (HD ((CONS h) t))) f) ((CONS h) t)) = ((cat f) (TL ((CONS h) t))))))))))
+T c/\ ! c==> c~ c= cNIL cNIL c= creplace cHD cNIL b0 cNIL ccat b0 cTL cNIL ! ! c==> ! c==> c~ c= b1 cNIL c= creplace cHD b1 b2 b1 ccat b2 cTL b1 ! c==> c~ c= cCONS b0 b1 cNIL c= creplace cHD cCONS b0 b1 b2 cCONS b0 b1 ccat b2 cTL cCONS b0 b1
++ |- ((!f. t) = t)
+T c= ! f0 f0
++ |- ((((replace x) ys) ((CONS z) zs)) = (((COND (z = x)) ((APPEND ys) zs)) ((CONS z) (((replace x) ys) zs))))
+T c= creplace f0 f1 cCONS f2 f3 cCOND c= f2 f0 cAPPEND f1 f3 cCONS f2 creplace f0 f1 f3
++ |- (((!f. ((~ (NIL = NIL)) ==> ((((replace (HD NIL)) f) NIL) = ((cat f) (TL NIL))))) /\ (!h. (!t. ((!f. ((~ (t = NIL)) ==> ((((replace (HD t)) f) t) = ((cat f) (TL t))))) ==> (!f. ((~ (((CONS h) t) = NIL)) ==> ((((replace (HD ((CONS h) t))) f) ((CONS h) t)) = ((cat f) (TL ((CONS h) t)))))))))) ==> (!b. (!f. ((~ (b = NIL)) ==> ((((replace (HD b)) f) b) = ((cat f) (TL b)))))))
+T c==> c/\ ! c==> c~ c= cNIL cNIL c= creplace cHD cNIL b0 cNIL ccat b0 cTL cNIL ! ! c==> ! c==> c~ c= b1 cNIL c= creplace cHD b1 b2 b1 ccat b2 cTL b1 ! c==> c~ c= cCONS b0 b1 cNIL c= creplace cHD cCONS b0 b1 b2 cCONS b0 b1 ccat b2 cTL cCONS b0 b1 ! ! c==> c~ c= b0 cNIL c= creplace cHD b0 b1 b0 ccat b1 cTL b0
++ (!f. ((~ (t = NIL)) ==> ((((replace (HD t)) f) t) = ((cat f) (TL t))))) |- ((!f. ((~ (t = NIL)) ==> ((((replace (HD t)) f) t) = ((cat f) (TL t))))) /\ (!f. ((~ (((CONS h) t) = NIL)) ==> ((((replace (HD ((CONS h) t))) f) ((CONS h) t)) = ((cat f) (TL ((CONS h) t)))))))
+T c==> ! c==> c~ c= f0 cNIL c= creplace cHD f0 b0 f0 ccat b0 cTL f0 c/\ ! c==> c~ c= f0 cNIL c= creplace cHD f0 b0 f0 ccat b0 cTL f0 ! c==> c~ c= cCONS f1 f0 cNIL c= creplace cHD cCONS f1 f0 b0 cCONS f1 f0 ccat b0 cTL cCONS f1 f0
++ |- ((((replace x) ys) NIL) = NIL)
+T c= creplace f0 f1 cNIL cNIL
+- |- ((((COND (x = x)) y) z) = y)
+T c= cCOND c= f0 f0 f1 f2 f1
++ |- ((x = x) = T)
+T c= c= f0 f0 cT
++ |- ((((!f. ((~ (NIL = NIL)) ==> ((((replace (HD NIL)) f) NIL) = ((cat f) (TL NIL))))) /\ (!h. (!t. ((!f. ((~ (t = NIL)) ==> ((((replace (HD t)) f) t) = ((cat f) (TL t))))) ==> (!f. ((~ (((CONS h) t) = NIL)) ==> ((((replace (HD ((CONS h) t))) f) ((CONS h) t)) = ((cat f) (TL ((CONS h) t)))))))))) ==> (!b. (!f. ((~ (b = NIL)) ==> ((((replace (HD b)) f) b) = ((cat f) (TL b))))))) = (!b. (!f. ((~ (b = NIL)) ==> ((((replace (HD b)) f) b) = ((cat f) (TL b)))))))
+T c= c==> c/\ ! c==> c~ c= cNIL cNIL c= creplace cHD cNIL b0 cNIL ccat b0 cTL cNIL ! ! c==> ! c==> c~ c= b1 cNIL c= creplace cHD b1 b2 b1 ccat b2 cTL b1 ! c==> c~ c= cCONS b0 b1 cNIL c= creplace cHD cCONS b0 b1 b2 cCONS b0 b1 ccat b2 cTL cCONS b0 b1 ! ! c==> c~ c= b0 cNIL c= creplace cHD b0 b1 b0 ccat b1 cTL b0 ! ! c==> c~ c= b0 cNIL c= creplace cHD b0 b1 b0 ccat b1 cTL b0
+- |- (((!x0. ((~ (NIL = s)) ==> ((LAST s) = ((last x0) s)))) ==> ((\x0. ((~ (NIL = s)) ==> ((LAST s) = ((last x0) s)))) x0)) = ((\x0. ((~ (NIL = s)) ==> ((LAST s) = ((last x0) s)))) x0))
+T c= c==> ! c==> c~ c= cNIL f0 c= cLAST f0 clast b0 f0 * / c==> c~ c= cNIL f0 c= cLAST f0 clast b0 f0 f1 * / c==> c~ c= cNIL f0 c= cLAST f0 clast b0 f0 f1
++ |- (!f. ((~ (NIL = NIL)) ==> ((((replace (HD NIL)) f) NIL) = ((cat f) (TL NIL)))))
+T c==> c~ c= cNIL cNIL c= creplace cHD cNIL f0 cNIL ccat f0 cTL cNIL
++ |- (!f. ((~ (((CONS h) t) = NIL)) ==> ((((replace (HD ((CONS h) t))) f) ((CONS h) t)) = ((cat f) (TL ((CONS h) t))))))
+T c==> c~ c= cCONS f0 f1 cNIL c= creplace cHD cCONS f0 f1 f2 cCONS f0 f1 ccat f2 cTL cCONS f0 f1
+- |- (((!s. (!x0. ((~ (NIL = s)) ==> ((LAST s) = ((last x0) s))))) ==> ((\s. (!x0. ((~ (NIL = s)) ==> ((LAST s) = ((last x0) s))))) s)) = ((\s. (!x0. ((~ (NIL = s)) ==> ((LAST s) = ((last x0) s))))) s))
+T c= c==> ! ! c==> c~ c= cNIL b0 c= cLAST b0 clast b1 b0 * / ! c==> c~ c= cNIL b0 c= cLAST b0 clast b1 b0 f0 * / ! c==> c~ c= cNIL b0 c= cLAST b0 clast b1 b0 f0
++ |- ((F ==> t) = T)
+T c= c==> cF f0 cT
+- |- (((~ (NIL = s)) ==> ((LAST s) = ((last x0) s))) = T)
+T c= c==> c~ c= cNIL f0 c= cLAST f0 clast f1 f0 cT
+- |- ((LENGTH = sizel) /\ ((FILTER = filter) /\ ((REVERSE = rev) /\ ((!s. (!x0. ((~ (NIL = s)) ==> ((LAST s) = ((last x0) s))))) /\ ((APPEND = cat) /\ (ALL = all))))))
+T c/\ c= part cLENGTH part csizel c/\ c= part cFILTER part cfilter c/\ c= part cREVERSE part crev c/\ ! ! c==> c~ c= cNIL b0 c= cLAST b0 clast b1 b0 c/\ c= part cAPPEND part ccat c= part cALL part call
++ |- ((~ T) = F)
+T c= c~ cT cF
++ |- ((!t. ((!f. ((~ (t = NIL)) ==> ((((replace (HD t)) f) t) = ((cat f) (TL t))))) ==> (!f. ((~ (((CONS h) t) = NIL)) ==> ((((replace (HD ((CONS h) t))) f) ((CONS h) t)) = ((cat f) (TL ((CONS h) t)))))))) = T)
+T c= ! c==> ! c==> c~ c= b0 cNIL c= creplace cHD b0 b1 b0 ccat b1 cTL b0 ! c==> c~ c= cCONS f0 b0 cNIL c= creplace cHD cCONS f0 b0 b1 cCONS f0 b0 ccat b1 cTL cCONS f0 b0 cT
++ |- (T = (!f. ((~ (((CONS h) t) = NIL)) ==> ((((replace (HD ((CONS h) t))) f) ((CONS h) t)) = ((cat f) (TL ((CONS h) t)))))))
+T c= cT ! c==> c~ c= cCONS f0 f1 cNIL c= creplace cHD cCONS f0 f1 b0 cCONS f0 f1 ccat b0 cTL cCONS f0 f1
+- |- ((APPEND = cat) /\ (ALL = all))
+T c/\ c= part cAPPEND part ccat c= part cALL part call
+- |- (FILTER = filter)
+T c= part cFILTER part cfilter
+- |- ((\s. (!x0. ((~ (NIL = s)) ==> ((LAST s) = ((last x0) s))))) s)
+T * / ! c==> c~ c= cNIL b0 c= cLAST b0 clast b1 b0 f0

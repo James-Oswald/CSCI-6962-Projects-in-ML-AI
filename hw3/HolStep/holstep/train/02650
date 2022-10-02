@@ -1,0 +1,421 @@
+N Tame_list.cat_from
+C |- (!x. (!s. (((MEM x) s) ==> (?a. (?b. ((s = ((cat a) b)) /\ ((x = (LAST a)) /\ (~ (a = NIL)))))))))
+T c==> cMEM f0 f1 c? / c? / c/\ c= f1 ccat b0 b1 c/\ c= f0 cLAST b0 c~ c= b0 cNIL
+D TRUTH
+A |- T
+T cT
+D EXCLUDED_MIDDLE
+A |- (!t. (t \/ (~ t)))
+T c\/ f0 c~ f0
+D BOOL_CASES_AX
+A |- (!t. ((t = T) \/ (t = F)))
+T c\/ c= f0 cT c= f0 cF
+D NOT_CLAUSES
+A |- ((!t. ((~ (~ t)) = t)) /\ (((~ T) = F) /\ ((~ F) = T)))
+T c/\ ! c= c~ c~ b0 b0 c/\ c= c~ cT cF c= c~ cF cT
+D Seq.rev_cat
+A |- (!s. (!t. ((rev ((cat s) t)) = ((cat (rev t)) (rev s)))))
+T c= crev ccat f0 f1 ccat crev f1 crev f0
+D Seq.revK
+A |- (!s. ((rev (rev s)) = s))
+T c= crev crev f0 f0
+D Seq.mem_rev
+A |- (!s. (!x. (((MEM x) (rev s)) = ((MEM x) s))))
+T c= cMEM f0 crev f1 cMEM f0 f1
+D Tame_list.rev0
+A |- ((rev NIL) = NIL)
+T c= crev cNIL cNIL
+D Tame_list.cat_to
+A |- (!x. (!s. (((MEM x) s) ==> (?a. (?b. ((s = ((cat a) b)) /\ ((x = (HD b)) /\ (~ (b = NIL)))))))))
+T c==> cMEM f0 f1 c? / c? / c/\ c= f1 ccat b0 b1 c/\ c= f0 cHD b1 c~ c= b1 cNIL
+D Tame_list.LAST_rev
+A |- (!t. ((~ (t = NIL)) ==> ((LAST (rev t)) = (HD t))))
+T c==> c~ c= f0 cNIL c= cLAST crev f0 cHD f0
++ |- ((?b'. ((s = ((cat (rev b)) b')) /\ ((x = (LAST (rev b))) /\ (~ ((rev b) = NIL))))) = ((\a. (?b. ((s = ((cat a) b)) /\ ((x = (LAST a)) /\ (~ (a = NIL)))))) (rev b)))
+T c= c? / c/\ c= f0 ccat crev f1 b0 c/\ c= f2 cLAST crev f1 c~ c= crev f1 cNIL * / c? / c/\ c= f0 ccat b0 b1 c/\ c= f2 cLAST b0 c~ c= b0 cNIL crev f1
++ (~ (b = NIL)), (x = (HD b)), ((rev s) = ((cat a) b)), ((MEM x) s) |- ((~ ((rev b) = NIL)) /\ ((HD b) = (LAST (rev b))))
+T c==> c~ c= f0 cNIL c==> c= f1 cHD f0 c==> c= crev f2 ccat f3 f0 c==> cMEM f1 f2 c/\ c~ c= crev f0 cNIL c= cHD f0 cLAST crev f0
++ (~ (s = (rev ((cat a) b)))) |- ((s = (rev ((cat a) b))) ==> F)
+T c==> c~ c= f0 crev ccat f1 f2 c==> c= f0 crev ccat f1 f2 cF
++ |- ((\a. (!s. (!x. (((MEM x) s) ==> (((rev s) = ((cat a) b)) ==> ((x = (HD b)) ==> ((~ (b = NIL)) ==> ((~ (s = (rev ((cat a) b)))) ==> ((!s. ((rev (rev s)) = s)) ==> F))))))))) a)
+T * / ! ! c==> cMEM b2 b1 c==> c= crev b1 ccat b0 f0 c==> c= b2 cHD f0 c==> c~ c= f0 cNIL c==> c~ c= b1 crev ccat b0 f0 c==> ! c= crev crev b3 b3 cF f1
+- (!s. ((rev (rev s)) = s)), (~ (b = NIL)), ((rev NIL) = NIL), ((rev b) = NIL) |- ((~ F) ==> F)
+T c==> ! c= crev crev b0 b0 c==> c~ c= f0 cNIL c==> c= crev cNIL cNIL c==> c= crev f0 cNIL c==> c~ cF cF
+- (~ (b = NIL)) |- ((NIL = b) = F)
+T c==> c~ c= f0 cNIL c= c= cNIL f0 cF
++ |- ((x = (HD b)) ==> ((~ (b = NIL)) ==> (((rev b) = NIL) ==> ((!s. ((rev (rev s)) = s)) ==> (~ ((rev NIL) = NIL))))))
+T c==> c= f0 cHD f1 c==> c~ c= f1 cNIL c==> c= crev f1 cNIL c==> ! c= crev crev b0 b0 c~ c= crev cNIL cNIL
++ |- ((!b. (!x. (!a. (!s. (((MEM x) s) ==> (((rev s) = ((cat a) b)) ==> ((x = (HD b)) ==> ((~ (b = NIL)) ==> (((rev b) = NIL) ==> ((!s. ((rev (rev s)) = s)) ==> (~ ((rev NIL) = NIL)))))))))))) = (!b. (!x. (!a. (!s. (((MEM x) s) ==> (((rev s) = ((cat a) b)) ==> ((x = (HD b)) ==> ((~ (b = NIL)) ==> (((rev b) = NIL) ==> ((!s. ((rev (rev s)) = s)) ==> (((rev NIL) = NIL) ==> F))))))))))))
+T c= ! ! ! ! c==> cMEM b1 b3 c==> c= crev b3 ccat b2 b0 c==> c= b1 cHD b0 c==> c~ c= b0 cNIL c==> c= crev b0 cNIL c==> ! c= crev crev b4 b4 c~ c= crev cNIL cNIL ! ! ! ! c==> cMEM b1 b3 c==> c= crev b3 ccat b2 b0 c==> c= b1 cHD b0 c==> c~ c= b0 cNIL c==> c= crev b0 cNIL c==> ! c= crev crev b4 b4 c==> c= crev cNIL cNIL cF
+- ((((MEM x) s) ==> (((rev s) = ((cat a) b)) ==> ((x = (HD b)) ==> ((~ (b = NIL)) ==> ((~ (s = (rev ((cat a) b)))) ==> ((!s. ((rev (rev s)) = s)) ==> F)))))) ==> (((MEM x) s) ==> (((rev s) = ((cat a) b)) ==> ((x = (HD b)) ==> ((~ (b = NIL)) ==> ((~ (s = (rev ((cat a) b)))) ==> ((!s. ((rev (rev s)) = s)) ==> F))))))) |- (((((MEM x) s) ==> (((rev s) = ((cat a) b)) ==> ((x = (HD b)) ==> ((~ (b = NIL)) ==> ((~ (s = (rev ((cat a) b)))) ==> ((!s. ((rev (rev s)) = s)) ==> F)))))) ==> (((MEM x) s) ==> (((rev s) = ((cat a) b)) ==> ((x = (HD b)) ==> ((~ (b = NIL)) ==> ((~ (s = (rev ((cat a) b)))) ==> ((!s. ((rev (rev s)) = s)) ==> F))))))) /\ ((((MEM x) s) ==> (((rev s) = ((cat a) b)) ==> ((x = (HD b)) ==> ((~ (b = NIL)) ==> ((~ (s = (rev ((cat a) b)))) ==> ((!s. ((rev (rev s)) = s)) ==> F)))))) ==> (((MEM x) s) ==> (((rev s) = ((cat a) b)) ==> ((x = (HD b)) ==> ((~ (b = NIL)) ==> ((~ (s = (rev ((cat a) b)))) ==> ((!s. ((rev (rev s)) = s)) ==> F))))))))
+T c==> c==> c==> cMEM f0 f1 c==> c= crev f1 ccat f2 f3 c==> c= f0 cHD f3 c==> c~ c= f3 cNIL c==> c~ c= f1 crev ccat f2 f3 c==> ! c= crev crev b0 b0 cF c==> cMEM f0 f1 c==> c= crev f1 ccat f2 f3 c==> c= f0 cHD f3 c==> c~ c= f3 cNIL c==> c~ c= f1 crev ccat f2 f3 c==> ! c= crev crev b0 b0 cF c/\ c==> c==> cMEM f0 f1 c==> c= crev f1 ccat f2 f3 c==> c= f0 cHD f3 c==> c~ c= f3 cNIL c==> c~ c= f1 crev ccat f2 f3 c==> ! c= crev crev b0 b0 cF c==> cMEM f0 f1 c==> c= crev f1 ccat f2 f3 c==> c= f0 cHD f3 c==> c~ c= f3 cNIL c==> c~ c= f1 crev ccat f2 f3 c==> ! c= crev crev b0 b0 cF c==> c==> cMEM f0 f1 c==> c= crev f1 ccat f2 f3 c==> c= f0 cHD f3 c==> c~ c= f3 cNIL c==> c~ c= f1 crev ccat f2 f3 c==> ! c= crev crev b0 b0 cF c==> cMEM f0 f1 c==> c= crev f1 ccat f2 f3 c==> c= f0 cHD f3 c==> c~ c= f3 cNIL c==> c~ c= f1 crev ccat f2 f3 c==> ! c= crev crev b0 b0 cF
+- |- ((\t1. (!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))))) t1)
+T * / ! ! c= c\/ b0 c\/ b1 b2 c\/ c\/ b0 b1 b2 f0
++ ((MEM x) s) |- ((((MEM x) (rev s)) ==> (?a. (?b. (((rev s) = ((cat a) b)) /\ ((x = (HD b)) /\ (~ (b = NIL))))))) ==> (?a. (?b. ((s = ((cat a) b)) /\ ((x = (LAST a)) /\ (~ (a = NIL)))))))
+T c==> cMEM f0 f1 c==> c==> cMEM f0 crev f1 c? / c? / c/\ c= crev f1 ccat b0 b1 c/\ c= f0 cHD b1 c~ c= b1 cNIL c? / c? / c/\ c= f1 ccat b0 b1 c/\ c= f0 cLAST b0 c~ c= b0 cNIL
+- (x = (HD b)) |- (((rev s) = ((cat a) b)) = ((rev s) = ((cat a) b)))
+T c==> c= f0 cHD f1 c= c= crev f2 ccat f3 f1 c= crev f2 ccat f3 f1
++ |- ((a \/ b) = ((~ b) ==> a))
+T c= c\/ f0 f1 c==> c~ f1 f0
++ |- ((\x. (((MEM x) (rev s)) = ((MEM x) s))) x)
+T * / c= cMEM b0 crev f0 cMEM b0 f0 f1
++ |- ((!b. (!a. (!s. (!x. (((MEM x) s) ==> (((rev s) = ((cat a) b)) ==> ((x = (HD b)) ==> ((~ (b = NIL)) ==> ((~ (s = (rev ((cat a) b)))) ==> (~ (!s. ((rev (rev s)) = s)))))))))))) = (!b. (!a. (!s. (!x. (((MEM x) s) ==> (((rev s) = ((cat a) b)) ==> ((x = (HD b)) ==> ((~ (b = NIL)) ==> ((~ (s = (rev ((cat a) b)))) ==> ((!s. ((rev (rev s)) = s)) ==> F)))))))))))
+T c= ! ! ! ! c==> cMEM b3 b2 c==> c= crev b2 ccat b1 b0 c==> c= b3 cHD b0 c==> c~ c= b0 cNIL c==> c~ c= b2 crev ccat b1 b0 c~ ! c= crev crev b4 b4 ! ! ! ! c==> cMEM b3 b2 c==> c= crev b2 ccat b1 b0 c==> c= b3 cHD b0 c==> c~ c= b0 cNIL c==> c~ c= b2 crev ccat b1 b0 c==> ! c= crev crev b4 b4 cF
+- (((MEM x) s) ==> (((rev s) = ((cat a) b)) ==> ((x = (HD b)) ==> ((~ (b = NIL)) ==> ((~ (s = (rev ((cat a) b)))) ==> ((!s. ((rev (rev s)) = s)) ==> F)))))) |- (((((MEM x) s) ==> (((rev s) = ((cat a) b)) ==> ((x = (HD b)) ==> ((~ (b = NIL)) ==> ((~ (s = (rev ((cat a) b)))) ==> ((!s. ((rev (rev s)) = s)) ==> F)))))) ==> (((MEM x) s) ==> (((rev s) = ((cat a) b)) ==> ((x = (HD b)) ==> ((~ (b = NIL)) ==> ((~ (s = (rev ((cat a) b)))) ==> ((!s. ((rev (rev s)) = s)) ==> F))))))) ==> (((MEM x) s) ==> (((rev s) = ((cat a) b)) ==> ((x = (HD b)) ==> ((~ (b = NIL)) ==> ((~ (s = (rev ((cat a) b)))) ==> ((!s. ((rev (rev s)) = s)) ==> F)))))))
+T c==> c==> cMEM f0 f1 c==> c= crev f1 ccat f2 f3 c==> c= f0 cHD f3 c==> c~ c= f3 cNIL c==> c~ c= f1 crev ccat f2 f3 c==> ! c= crev crev b0 b0 cF c==> c==> c==> cMEM f0 f1 c==> c= crev f1 ccat f2 f3 c==> c= f0 cHD f3 c==> c~ c= f3 cNIL c==> c~ c= f1 crev ccat f2 f3 c==> ! c= crev crev b0 b0 cF c==> cMEM f0 f1 c==> c= crev f1 ccat f2 f3 c==> c= f0 cHD f3 c==> c~ c= f3 cNIL c==> c~ c= f1 crev ccat f2 f3 c==> ! c= crev crev b0 b0 cF c==> cMEM f0 f1 c==> c= crev f1 ccat f2 f3 c==> c= f0 cHD f3 c==> c~ c= f3 cNIL c==> c~ c= f1 crev ccat f2 f3 c==> ! c= crev crev b0 b0 cF
+- ((rev b) = NIL) |- (((rev (rev _10120224)) = _10120224) = ((rev (rev _10120224)) = _10120224))
+T c==> c= crev f0 cNIL c= c= crev crev f1 f1 c= crev crev f1 f1
++ |- (((!s. (!x. (((MEM x) (rev s)) = ((MEM x) s)))) ==> ((\s. (!x. (((MEM x) (rev s)) = ((MEM x) s)))) s)) = ((\s. (!x. (((MEM x) (rev s)) = ((MEM x) s)))) s))
+T c= c==> ! ! c= cMEM b1 crev b0 cMEM b1 b0 * / ! c= cMEM b1 crev b0 cMEM b1 b0 f0 * / ! c= cMEM b1 crev b0 cMEM b1 b0 f0
++ |- (((s = ((cat (rev b)) (rev a))) /\ ((x = (LAST (rev b))) /\ (~ ((rev b) = NIL)))) = ((\b'. ((s = ((cat (rev b)) b')) /\ ((x = (LAST (rev b))) /\ (~ ((rev b) = NIL))))) (rev a)))
+T c= c/\ c= f0 ccat crev f1 crev f2 c/\ c= f3 cLAST crev f1 c~ c= crev f1 cNIL * / c/\ c= f0 ccat crev f1 b0 c/\ c= f3 cLAST crev f1 c~ c= crev f1 cNIL crev f2
++ ((MEM x) s) |- (((MEM x) s) /\ (((rev s) = ((cat a) b)) ==> ((x = (HD b)) ==> ((~ (b = NIL)) ==> ((~ (s = (rev ((cat a) b)))) ==> (~ (!s. ((rev (rev s)) = s))))))))
+T c==> cMEM f0 f1 c/\ cMEM f0 f1 c==> c= crev f1 ccat f2 f3 c==> c= f0 cHD f3 c==> c~ c= f3 cNIL c==> c~ c= f1 crev ccat f2 f3 c~ ! c= crev crev b0 b0
+- (((MEM x) s) ==> (((rev s) = ((cat a) b)) ==> ((x = (HD b)) ==> ((~ (b = NIL)) ==> (((rev b) = NIL) ==> ((!s. ((rev (rev s)) = s)) ==> (((rev NIL) = NIL) ==> F))))))) |- (((((MEM x) s) ==> (((rev s) = ((cat a) b)) ==> ((x = (HD b)) ==> ((~ (b = NIL)) ==> (((rev b) = NIL) ==> ((!s. ((rev (rev s)) = s)) ==> (((rev NIL) = NIL) ==> F))))))) ==> (((MEM x) s) ==> (((rev s) = ((cat a) b)) ==> ((x = (HD b)) ==> ((~ (b = NIL)) ==> (((rev b) = NIL) ==> ((!s. ((rev (rev s)) = s)) ==> (((rev NIL) = NIL) ==> F)))))))) ==> (((MEM x) s) ==> (((rev s) = ((cat a) b)) ==> ((x = (HD b)) ==> ((~ (b = NIL)) ==> (((rev b) = NIL) ==> ((!s. ((rev (rev s)) = s)) ==> (((rev NIL) = NIL) ==> F))))))))
+T c==> c==> cMEM f0 f1 c==> c= crev f1 ccat f2 f3 c==> c= f0 cHD f3 c==> c~ c= f3 cNIL c==> c= crev f3 cNIL c==> ! c= crev crev b0 b0 c==> c= crev cNIL cNIL cF c==> c==> c==> cMEM f0 f1 c==> c= crev f1 ccat f2 f3 c==> c= f0 cHD f3 c==> c~ c= f3 cNIL c==> c= crev f3 cNIL c==> ! c= crev crev b0 b0 c==> c= crev cNIL cNIL cF c==> cMEM f0 f1 c==> c= crev f1 ccat f2 f3 c==> c= f0 cHD f3 c==> c~ c= f3 cNIL c==> c= crev f3 cNIL c==> ! c= crev crev b0 b0 c==> c= crev cNIL cNIL cF c==> cMEM f0 f1 c==> c= crev f1 ccat f2 f3 c==> c= f0 cHD f3 c==> c~ c= f3 cNIL c==> c= crev f3 cNIL c==> ! c= crev crev b0 b0 c==> c= crev cNIL cNIL cF
++ (!s. ((rev (rev s)) = s)), ((rev NIL) = NIL), ((rev b) = NIL) |- (b = (rev b))
+T c==> ! c= crev crev b0 b0 c==> c= crev cNIL cNIL c==> c= crev f0 cNIL c= f0 crev f0
+- (((MEM x) s) ==> (((rev s) = ((cat a) b)) ==> ((x = (HD b)) ==> ((~ (b = NIL)) ==> (((rev b) = NIL) ==> ((!s. ((rev (rev s)) = s)) ==> (((rev NIL) = NIL) ==> F))))))) |- ((((MEM x) s) ==> (((rev s) = ((cat a) b)) ==> ((x = (HD b)) ==> ((~ (b = NIL)) ==> (((rev b) = NIL) ==> ((!s. ((rev (rev s)) = s)) ==> (((rev NIL) = NIL) ==> F))))))) /\ (((MEM x) s) ==> (((rev s) = ((cat a) b)) ==> ((x = (HD b)) ==> ((~ (b = NIL)) ==> (((rev b) = NIL) ==> ((!s. ((rev (rev s)) = s)) ==> (((rev NIL) = NIL) ==> F))))))))
+T c==> c==> cMEM f0 f1 c==> c= crev f1 ccat f2 f3 c==> c= f0 cHD f3 c==> c~ c= f3 cNIL c==> c= crev f3 cNIL c==> ! c= crev crev b0 b0 c==> c= crev cNIL cNIL cF c/\ c==> cMEM f0 f1 c==> c= crev f1 ccat f2 f3 c==> c= f0 cHD f3 c==> c~ c= f3 cNIL c==> c= crev f3 cNIL c==> ! c= crev crev b0 b0 c==> c= crev cNIL cNIL cF c==> cMEM f0 f1 c==> c= crev f1 ccat f2 f3 c==> c= f0 cHD f3 c==> c~ c= f3 cNIL c==> c= crev f3 cNIL c==> ! c= crev crev b0 b0 c==> c= crev cNIL cNIL cF
++ (~ (b = NIL)), (x = (HD b)), ((rev b) = NIL), ((rev s) = ((cat a) b)), ((MEM x) s) |- ((!s. ((rev (rev s)) = s)) ==> (((rev NIL) = NIL) ==> F))
+T c==> c~ c= f0 cNIL c==> c= f1 cHD f0 c==> c= crev f0 cNIL c==> c= crev f2 ccat f3 f0 c==> cMEM f1 f2 c==> ! c= crev crev b0 b0 c==> c= crev cNIL cNIL cF
++ (~ (b = NIL)), (~ (s = (rev ((cat a) b)))), (x = (HD b)), ((rev s) = ((cat a) b)), ((MEM x) s) |- ((!s. ((rev (rev s)) = s)) ==> F)
+T c==> c~ c= f0 cNIL c==> c~ c= f1 crev ccat f2 f0 c==> c= f3 cHD f0 c==> c= crev f1 ccat f2 f0 c==> cMEM f3 f1 c==> ! c= crev crev b0 b0 cF
++ ((MEM x) s) |- (((?a. (?b. (((rev s) = ((cat a) b)) /\ ((x = (HD b)) /\ (~ (b = NIL)))))) ==> (?a. (?b. ((s = ((cat a) b)) /\ ((x = (LAST a)) /\ (~ (a = NIL))))))) = ((((MEM x) (rev s)) ==> (?a. (?b. (((rev s) = ((cat a) b)) /\ ((x = (HD b)) /\ (~ (b = NIL))))))) ==> (?a. (?b. ((s = ((cat a) b)) /\ ((x = (LAST a)) /\ (~ (a = NIL))))))))
+T c==> cMEM f0 f1 c= c==> c? / c? / c/\ c= crev f1 ccat b0 b1 c/\ c= f0 cHD b1 c~ c= b1 cNIL c? / c? / c/\ c= f1 ccat b0 b1 c/\ c= f0 cLAST b0 c~ c= b0 cNIL c==> c==> cMEM f0 crev f1 c? / c? / c/\ c= crev f1 ccat b0 b1 c/\ c= f0 cHD b1 c~ c= b1 cNIL c? / c? / c/\ c= f1 ccat b0 b1 c/\ c= f0 cLAST b0 c~ c= b0 cNIL
+- ((rev s) = ((cat a) b)) |- ((~ ((rev (rev s)) = (rev ((cat a) b)))) ==> ((rev (rev s)) = (rev ((cat a) b))))
+T c==> c= crev f0 ccat f1 f2 c==> c~ c= crev crev f0 crev ccat f1 f2 c= crev crev f0 crev ccat f1 f2
+- ((((MEM x) s) ==> (((rev s) = ((cat a) b)) ==> ((x = (HD b)) ==> ((~ (b = NIL)) ==> (((rev b) = NIL) ==> ((!s. ((rev (rev s)) = s)) ==> (((rev NIL) = NIL) ==> F))))))) ==> (((MEM x) s) ==> (((rev s) = ((cat a) b)) ==> ((x = (HD b)) ==> ((~ (b = NIL)) ==> (((rev b) = NIL) ==> ((!s. ((rev (rev s)) = s)) ==> (((rev NIL) = NIL) ==> F)))))))), (((MEM x) s) ==> (((rev s) = ((cat a) b)) ==> ((x = (HD b)) ==> ((~ (b = NIL)) ==> (((rev b) = NIL) ==> ((!s. ((rev (rev s)) = s)) ==> (((rev NIL) = NIL) ==> F))))))) |- ((((MEM x) s) ==> (((rev s) = ((cat a) b)) ==> ((x = (HD b)) ==> ((~ (b = NIL)) ==> (((rev b) = NIL) ==> ((!s. ((rev (rev s)) = s)) ==> (((rev NIL) = NIL) ==> F))))))) /\ (((MEM x) s) ==> (((rev s) = ((cat a) b)) ==> ((x = (HD b)) ==> ((~ (b = NIL)) ==> (((rev b) = NIL) ==> ((!s. ((rev (rev s)) = s)) ==> (((rev NIL) = NIL) ==> F))))))))
+T c==> c==> c==> cMEM f0 f1 c==> c= crev f1 ccat f2 f3 c==> c= f0 cHD f3 c==> c~ c= f3 cNIL c==> c= crev f3 cNIL c==> ! c= crev crev b0 b0 c==> c= crev cNIL cNIL cF c==> cMEM f0 f1 c==> c= crev f1 ccat f2 f3 c==> c= f0 cHD f3 c==> c~ c= f3 cNIL c==> c= crev f3 cNIL c==> ! c= crev crev b0 b0 c==> c= crev cNIL cNIL cF c==> c==> cMEM f0 f1 c==> c= crev f1 ccat f2 f3 c==> c= f0 cHD f3 c==> c~ c= f3 cNIL c==> c= crev f3 cNIL c==> ! c= crev crev b0 b0 c==> c= crev cNIL cNIL cF c/\ c==> cMEM f0 f1 c==> c= crev f1 ccat f2 f3 c==> c= f0 cHD f3 c==> c~ c= f3 cNIL c==> c= crev f3 cNIL c==> ! c= crev crev b0 b0 c==> c= crev cNIL cNIL cF c==> cMEM f0 f1 c==> c= crev f1 ccat f2 f3 c==> c= f0 cHD f3 c==> c~ c= f3 cNIL c==> c= crev f3 cNIL c==> ! c= crev crev b0 b0 c==> c= crev cNIL cNIL cF
++ |- ((\s. (((MEM x) s) ==> (?a. (?b. ((s = ((cat a) b)) /\ ((x = (HD b)) /\ (~ (b = NIL)))))))) (rev s))
+T * / c==> cMEM f0 b0 c? / c? / c/\ c= b0 ccat b1 b2 c/\ c= f0 cHD b2 c~ c= b2 cNIL crev f1
++ |- (((MEM x) (rev s)) ==> (?a. (?b. (((rev s) = ((cat a) b)) /\ ((x = (HD b)) /\ (~ (b = NIL)))))))
+T c==> cMEM f0 crev f1 c? / c? / c/\ c= crev f1 ccat b0 b1 c/\ c= f0 cHD b1 c~ c= b1 cNIL
++ |- (((~ (s = (rev ((cat a) b)))) ==> F) = (s = (rev ((cat a) b))))
+T c= c==> c~ c= f0 crev ccat f1 f2 cF c= f0 crev ccat f1 f2
+- (x = (HD b)) |- ((~ (b = (rev b))) = (~ (b = (rev b))))
+T c==> c= f0 cHD f1 c= c~ c= f1 crev f1 c~ c= f1 crev f1
++ (~ (b = NIL)), (x = (HD b)), ((rev s) = ((cat a) b)), ((MEM x) s) |- (?a. (?b. ((s = ((cat a) b)) /\ ((x = (LAST a)) /\ (~ (a = NIL))))))
+T c==> c~ c= f0 cNIL c==> c= f1 cHD f0 c==> c= crev f2 ccat f3 f0 c==> cMEM f1 f2 c? / c? / c/\ c= f2 ccat b0 b1 c/\ c= f1 cLAST b0 c~ c= b0 cNIL
++ ((MEM x) s) |- (!a. (((\a. (?b. (((rev s) = ((cat a) b)) /\ ((x = (HD b)) /\ (~ (b = NIL)))))) a) ==> (?a. (?b. ((s = ((cat a) b)) /\ ((x = (LAST a)) /\ (~ (a = NIL))))))))
+T c==> cMEM f0 f1 ! c==> * / c? / c/\ c= crev f1 ccat b1 b1 c/\ c= f0 cHD b1 c~ c= b1 cNIL b0 c? / c? / c/\ c= f1 ccat b1 b1 c/\ c= f0 cLAST b1 c~ c= b1 cNIL
+- (!s. ((rev (rev s)) = s)), (~ F), (~ (s = (rev ((cat a) b)))), ((rev s) = ((cat a) b)) |- ((~ F) /\ F)
+T c==> ! c= crev crev b0 b0 c==> c~ cF c==> c~ c= f0 crev ccat f1 f2 c==> c= crev f0 ccat f1 f2 c/\ c~ cF cF
+- |- ((t ==> t) = T)
+T c= c==> f0 f0 cT
+- (!s. ((rev (rev s)) = s)), (~ (b = (rev b))), ((rev NIL) = NIL), ((rev b) = NIL) |- ((~ (b = (rev b))) /\ (b = (rev b)))
+T c==> ! c= crev crev b0 b0 c==> c~ c= f0 crev f0 c==> c= crev cNIL cNIL c==> c= crev f0 cNIL c/\ c~ c= f0 crev f0 c= f0 crev f0
++ (~ (b = NIL)), (x = (HD b)), ((rev s) = ((cat a) b)), ((MEM x) s) |- ((~ (s = (rev ((cat a) b)))) ==> ((!s. ((rev (rev s)) = s)) ==> F))
+T c==> c~ c= f0 cNIL c==> c= f1 cHD f0 c==> c= crev f2 ccat f3 f0 c==> cMEM f1 f2 c==> c~ c= f2 crev ccat f3 f0 c==> ! c= crev crev b0 b0 cF
+- |- ((p \/ p) = p)
+T c= c\/ f0 f0 f0
+- ((rev b) = NIL) |- (F = F)
+T c==> c= crev f0 cNIL c= cF cF
+- |- ((~ (_10120255 = _10120256)) \/ ((rev _10120255) = (rev _10120256)))
+T c\/ c~ c= f0 f1 c= crev f0 crev f1
+- |- (((((MEM x) s) ==> (((rev s) = ((cat a) b)) ==> ((x = (HD b)) ==> ((~ (b = NIL)) ==> (((rev b) = NIL) ==> ((!s. ((rev (rev s)) = s)) ==> (((rev NIL) = NIL) ==> F))))))) ==> (((MEM x) s) ==> (((rev s) = ((cat a) b)) ==> ((x = (HD b)) ==> ((~ (b = NIL)) ==> (((rev b) = NIL) ==> ((!s. ((rev (rev s)) = s)) ==> (((rev NIL) = NIL) ==> F)))))))) ==> ((((MEM x) s) ==> (((rev s) = ((cat a) b)) ==> ((x = (HD b)) ==> ((~ (b = NIL)) ==> (((rev b) = NIL) ==> ((!s. ((rev (rev s)) = s)) ==> (((rev NIL) = NIL) ==> F))))))) ==> (((MEM x) s) ==> (((rev s) = ((cat a) b)) ==> ((x = (HD b)) ==> ((~ (b = NIL)) ==> (((rev b) = NIL) ==> ((!s. ((rev (rev s)) = s)) ==> (((rev NIL) = NIL) ==> F)))))))))
+T c==> c==> c==> cMEM f0 f1 c==> c= crev f1 ccat f2 f3 c==> c= f0 cHD f3 c==> c~ c= f3 cNIL c==> c= crev f3 cNIL c==> ! c= crev crev b0 b0 c==> c= crev cNIL cNIL cF c==> cMEM f0 f1 c==> c= crev f1 ccat f2 f3 c==> c= f0 cHD f3 c==> c~ c= f3 cNIL c==> c= crev f3 cNIL c==> ! c= crev crev b0 b0 c==> c= crev cNIL cNIL cF c==> c==> cMEM f0 f1 c==> c= crev f1 ccat f2 f3 c==> c= f0 cHD f3 c==> c~ c= f3 cNIL c==> c= crev f3 cNIL c==> ! c= crev crev b0 b0 c==> c= crev cNIL cNIL cF c==> cMEM f0 f1 c==> c= crev f1 ccat f2 f3 c==> c= f0 cHD f3 c==> c~ c= f3 cNIL c==> c= crev f3 cNIL c==> ! c= crev crev b0 b0 c==> c= crev cNIL cNIL cF
+- |- ((\t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))) t3)
+T * / c= c\/ f0 c\/ f1 b0 c\/ c\/ f0 f1 b0 f2
++ (~ (b = NIL)), (x = (HD b)), ((rev s) = ((cat a) b)), ((MEM x) s) |- ((((~ ((rev b) = NIL)) /\ ((HD b) = (LAST (rev b)))) ==> (((HD b) = (LAST (rev b))) /\ (~ ((rev b) = NIL)))) = (((HD b) = (LAST (rev b))) /\ (~ ((rev b) = NIL))))
+T c==> c~ c= f0 cNIL c==> c= f1 cHD f0 c==> c= crev f2 ccat f3 f0 c==> cMEM f1 f2 c= c==> c/\ c~ c= crev f0 cNIL c= cHD f0 cLAST crev f0 c/\ c= cHD f0 cLAST crev f0 c~ c= crev f0 cNIL c/\ c= cHD f0 cLAST crev f0 c~ c= crev f0 cNIL
++ (~ (b = NIL)), (x = (HD b)), ((rev s) = ((cat a) b)), ((MEM x) s) |- ((s = (rev ((cat a) b))) /\ (((HD b) = (LAST (rev b))) /\ (~ ((rev b) = NIL))))
+T c==> c~ c= f0 cNIL c==> c= f1 cHD f0 c==> c= crev f2 ccat f3 f0 c==> cMEM f1 f2 c/\ c= f2 crev ccat f3 f0 c/\ c= cHD f0 cLAST crev f0 c~ c= crev f0 cNIL
+- |- (((~ p) ==> p) = p)
+T c= c==> c~ f0 f0 f0
++ ((rev s) = ((cat a) b)), ((MEM x) s) |- ((x = (HD b)) ==> ((~ (b = NIL)) ==> ((~ (s = (rev ((cat a) b)))) ==> ((!s. ((rev (rev s)) = s)) ==> F))))
+T c==> c= crev f0 ccat f1 f2 c==> cMEM f3 f0 c==> c= f3 cHD f2 c==> c~ c= f2 cNIL c==> c~ c= f0 crev ccat f1 f2 c==> ! c= crev crev b0 b0 cF
+- (~ ((rev (rev b)) = (rev b))), ((rev NIL) = NIL), ((rev b) = NIL) |- ((~ ((rev (rev b)) = (rev b))) /\ ((rev (rev b)) = (rev b)))
+T c==> c~ c= crev crev f0 crev f0 c==> c= crev cNIL cNIL c==> c= crev f0 cNIL c/\ c~ c= crev crev f0 crev f0 c= crev crev f0 crev f0
+- (?a. (?b. (((rev s) = ((cat a) b)) /\ ((x = (HD b)) /\ (~ (b = NIL)))))), ((MEM x) s) |- ((?a. (?b. (((rev s) = ((cat a) b)) /\ ((x = (HD b)) /\ (~ (b = NIL)))))) /\ (?a. (?b. ((s = ((cat a) b)) /\ ((x = (LAST a)) /\ (~ (a = NIL)))))))
+T c==> c? / c? / c/\ c= crev f0 ccat b0 b1 c/\ c= f1 cHD b1 c~ c= b1 cNIL c==> cMEM f1 f0 c/\ c? / c? / c/\ c= crev f0 ccat b0 b1 c/\ c= f1 cHD b1 c~ c= b1 cNIL c? / c? / c/\ c= f0 ccat b0 b1 c/\ c= f1 cLAST b0 c~ c= b0 cNIL
+- |- ((!x. t) = t)
+T c= ! f0 f0
++ ((MEM x) s), ((\b. (((rev s) = ((cat a) b)) /\ ((x = (HD b)) /\ (~ (b = NIL))))) b) |- (((\b. (((rev s) = ((cat a) b)) /\ ((x = (HD b)) /\ (~ (b = NIL))))) b) /\ (?a. (?b. ((s = ((cat a) b)) /\ ((x = (LAST a)) /\ (~ (a = NIL)))))))
+T c==> cMEM f0 f1 c==> * / c/\ c= crev f1 ccat f2 b0 c/\ c= f0 cHD b0 c~ c= b0 cNIL f3 c/\ * / c/\ c= crev f1 ccat f2 b0 c/\ c= f0 cHD b0 c~ c= b0 cNIL f3 c? / c? / c/\ c= f1 ccat b0 b1 c/\ c= f0 cLAST b0 c~ c= b0 cNIL
+- |- (T = (((~ (_10120216 = _10120217)) \/ ((rev _10120216) = (rev _10120217))) = (((rev _10120216) = (rev _10120217)) \/ (~ (_10120216 = _10120217)))))
+T c= cT c= c\/ c~ c= f0 f1 c= crev f0 crev f1 c\/ c= crev f0 crev f1 c~ c= f0 f1
+- (?b. (((rev s) = ((cat a) b)) /\ ((x = (HD b)) /\ (~ (b = NIL))))), ((MEM x) s) |- ((?b. (((rev s) = ((cat a) b)) /\ ((x = (HD b)) /\ (~ (b = NIL))))) /\ (?a. (?b. ((s = ((cat a) b)) /\ ((x = (LAST a)) /\ (~ (a = NIL)))))))
+T c==> c? / c/\ c= crev f0 ccat f1 b0 c/\ c= f2 cHD b0 c~ c= b0 cNIL c==> cMEM f2 f0 c/\ c? / c/\ c= crev f0 ccat f1 b0 c/\ c= f2 cHD b0 c~ c= b0 cNIL c? / c? / c/\ c= f0 ccat b0 b1 c/\ c= f2 cLAST b0 c~ c= b0 cNIL
++ (~ (b = NIL)), ((rev b) = NIL) |- ((b = (rev b)) ==> F)
+T c==> c~ c= f0 cNIL c==> c= crev f0 cNIL c==> c= f0 crev f0 cF
++ (!s. ((rev (rev s)) = s)) |- ((\s. ((rev (rev s)) = s)) _10120224)
+T c==> ! c= crev crev b0 b0 * / c= crev crev b0 b0 f0
++ (~ (b = NIL)) |- ((~ (b = NIL)) /\ (((rev b) = NIL) ==> ((!s. ((rev (rev s)) = s)) ==> (~ ((rev NIL) = NIL)))))
+T c==> c~ c= f0 cNIL c/\ c~ c= f0 cNIL c==> c= crev f0 cNIL c==> ! c= crev crev b0 b0 c~ c= crev cNIL cNIL
++ |- ((\x. (!s. (((MEM x) s) ==> (?a. (?b. ((s = ((cat a) b)) /\ ((x = (HD b)) /\ (~ (b = NIL))))))))) x)
+T * / ! c==> cMEM b0 b1 c? / c? / c/\ c= b1 ccat b2 b3 c/\ c= b0 cHD b3 c~ c= b3 cNIL f0
++ |- ((t ==> F) = (~ t))
+T c= c==> f0 cF c~ f0
++ ((MEM x) s) |- ((?a. (?b. (((rev s) = ((cat a) b)) /\ ((x = (HD b)) /\ (~ (b = NIL)))))) ==> (?a. (?b. ((s = ((cat a) b)) /\ ((x = (LAST a)) /\ (~ (a = NIL)))))))
+T c==> cMEM f0 f1 c==> c? / c? / c/\ c= crev f1 ccat b0 b1 c/\ c= f0 cHD b1 c~ c= b1 cNIL c? / c? / c/\ c= f1 ccat b0 b1 c/\ c= f0 cLAST b0 c~ c= b0 cNIL
++ ((MEM x) s) |- (((\b. (((rev s) = ((cat a) b)) /\ ((x = (HD b)) /\ (~ (b = NIL))))) b) ==> (?a. (?b. ((s = ((cat a) b)) /\ ((x = (LAST a)) /\ (~ (a = NIL)))))))
+T c==> cMEM f0 f1 c==> * / c/\ c= crev f1 ccat f2 b0 c/\ c= f0 cHD b0 c~ c= b0 cNIL f3 c? / c? / c/\ c= f1 ccat b0 b1 c/\ c= f0 cLAST b0 c~ c= b0 cNIL
+- (!s. ((rev (rev s)) = s)), (~ F), (~ (b = NIL)), ((rev NIL) = NIL), ((rev b) = NIL) |- ((~ F) /\ F)
+T c==> ! c= crev crev b0 b0 c==> c~ cF c==> c~ c= f0 cNIL c==> c= crev cNIL cNIL c==> c= crev f0 cNIL c/\ c~ cF cF
+- ((rev b) = NIL) |- (((rev s) = ((cat a) b)) = ((rev s) = ((cat a) b)))
+T c==> c= crev f0 cNIL c= c= crev f1 ccat f2 f0 c= crev f1 ccat f2 f0
++ (!s. ((rev (rev s)) = s)), ((rev s) = ((cat a) b)) |- (((rev (rev s)) = s) /\ ((rev (rev s)) = (rev ((cat a) b))))
+T c==> ! c= crev crev b0 b0 c==> c= crev f0 ccat f1 f2 c/\ c= crev crev f0 f0 c= crev crev f0 crev ccat f1 f2
++ |- ((\s. (((MEM x) s) ==> (((rev s) = ((cat a) b)) ==> ((x = (HD b)) ==> ((~ (b = NIL)) ==> (((rev b) = NIL) ==> ((!s. ((rev (rev s)) = s)) ==> (((rev NIL) = NIL) ==> F)))))))) s)
+T * / c==> cMEM f0 b0 c==> c= crev b0 ccat f1 f2 c==> c= f0 cHD f2 c==> c~ c= f2 cNIL c==> c= crev f2 cNIL c==> ! c= crev crev b1 b1 c==> c= crev cNIL cNIL cF f3
++ (x = (HD b)), ((rev s) = ((cat a) b)) |- ((x = (HD b)) /\ ((~ (b = NIL)) ==> ((~ (s = (rev ((cat a) b)))) ==> (~ (!s. ((rev (rev s)) = s))))))
+T c==> c= f0 cHD f1 c==> c= crev f2 ccat f3 f1 c/\ c= f0 cHD f1 c==> c~ c= f1 cNIL c==> c~ c= f2 crev ccat f3 f1 c~ ! c= crev crev b0 b0
++ |- (p = ((~ p) ==> F))
+T c= f0 c==> c~ f0 cF
+- |- ((?b. t) = t)
+T c= c? / f0 f0
++ ((MEM x) s) |- (((\a. (?b. (((rev s) = ((cat a) b)) /\ ((x = (HD b)) /\ (~ (b = NIL)))))) a) ==> (?a. (?b. ((s = ((cat a) b)) /\ ((x = (LAST a)) /\ (~ (a = NIL)))))))
+T c==> cMEM f0 f1 c==> * / c? / c/\ c= crev f1 ccat b0 b1 c/\ c= f0 cHD b1 c~ c= b1 cNIL f2 c? / c? / c/\ c= f1 ccat b0 b1 c/\ c= f0 cLAST b0 c~ c= b0 cNIL
+- |- (((((MEM x) s) ==> (((rev s) = ((cat a) b)) ==> ((x = (HD b)) ==> ((~ (b = NIL)) ==> ((~ (s = (rev ((cat a) b)))) ==> ((!s. ((rev (rev s)) = s)) ==> F)))))) ==> (((MEM x) s) ==> (((rev s) = ((cat a) b)) ==> ((x = (HD b)) ==> ((~ (b = NIL)) ==> ((~ (s = (rev ((cat a) b)))) ==> ((!s. ((rev (rev s)) = s)) ==> F))))))) ==> ((((MEM x) s) ==> (((rev s) = ((cat a) b)) ==> ((x = (HD b)) ==> ((~ (b = NIL)) ==> ((~ (s = (rev ((cat a) b)))) ==> ((!s. ((rev (rev s)) = s)) ==> F)))))) ==> (((MEM x) s) ==> (((rev s) = ((cat a) b)) ==> ((x = (HD b)) ==> ((~ (b = NIL)) ==> ((~ (s = (rev ((cat a) b)))) ==> ((!s. ((rev (rev s)) = s)) ==> F))))))))
+T c==> c==> c==> cMEM f0 f1 c==> c= crev f1 ccat f2 f3 c==> c= f0 cHD f3 c==> c~ c= f3 cNIL c==> c~ c= f1 crev ccat f2 f3 c==> ! c= crev crev b0 b0 cF c==> cMEM f0 f1 c==> c= crev f1 ccat f2 f3 c==> c= f0 cHD f3 c==> c~ c= f3 cNIL c==> c~ c= f1 crev ccat f2 f3 c==> ! c= crev crev b0 b0 cF c==> c==> cMEM f0 f1 c==> c= crev f1 ccat f2 f3 c==> c= f0 cHD f3 c==> c~ c= f3 cNIL c==> c~ c= f1 crev ccat f2 f3 c==> ! c= crev crev b0 b0 cF c==> cMEM f0 f1 c==> c= crev f1 ccat f2 f3 c==> c= f0 cHD f3 c==> c~ c= f3 cNIL c==> c~ c= f1 crev ccat f2 f3 c==> ! c= crev crev b0 b0 cF
++ |- (((!t. (((cat (rev t)) (rev s)) = (rev ((cat s) t)))) ==> ((\t. (((cat (rev t)) (rev s)) = (rev ((cat s) t)))) t)) = ((\t. (((cat (rev t)) (rev s)) = (rev ((cat s) t)))) t))
+T c= c==> ! c= ccat crev b0 crev f0 crev ccat f0 b0 * / c= ccat crev b0 crev f0 crev ccat f0 b0 f1 * / c= ccat crev b0 crev f0 crev ccat f0 b0 f1
+- (_10120251 = _10120253), (_10120252 = _10120254) |- ((_10120252 = _10120254) /\ (((MEM _10120253) _10120254) \/ (~ ((MEM _10120251) _10120252))))
+T c==> c= f0 f1 c==> c= f2 f3 c/\ c= f2 f3 c\/ cMEM f1 f3 c~ cMEM f0 f2
++ ((rev s) = ((cat a) b)), ((x = (HD b)) /\ (~ (b = NIL))), ((MEM x) s) |- (?a. (?b. ((s = ((cat a) b)) /\ ((x = (LAST a)) /\ (~ (a = NIL))))))
+T c==> c= crev f0 ccat f1 f2 c==> c/\ c= f3 cHD f2 c~ c= f2 cNIL c==> cMEM f3 f0 c? / c? / c/\ c= f0 ccat b0 b1 c/\ c= f3 cLAST b0 c~ c= b0 cNIL
++ (((cat (rev t)) (rev s)) = (rev ((cat s) t))) |- ((rev ((cat s) t)) = ((cat (rev t)) (rev s)))
+T c==> c= ccat crev f0 crev f1 crev ccat f1 f0 c= crev ccat f1 f0 ccat crev f0 crev f1
+- |- ((_10120261 = _10120262) ==> ((HD _10120261) = (HD _10120262)))
+T c==> c= f0 f1 c= cHD f0 cHD f1
++ |- ((\s. (!x. (((MEM x) (rev s)) = ((MEM x) s)))) s)
+T * / ! c= cMEM b1 crev b0 cMEM b1 b0 f0
++ ((rev s) = ((cat a) b)), (((rev s) = ((cat a) b)) /\ ((x = (HD b)) /\ (~ (b = NIL)))), ((MEM x) s) |- (?a. (?b. ((s = ((cat a) b)) /\ ((x = (LAST a)) /\ (~ (a = NIL))))))
+T c==> c= crev f0 ccat f1 f2 c==> c/\ c= crev f0 ccat f1 f2 c/\ c= f3 cHD f2 c~ c= f2 cNIL c==> cMEM f3 f0 c? / c? / c/\ c= f0 ccat b0 b1 c/\ c= f3 cLAST b0 c~ c= b0 cNIL
+- |- (T = (((~ (x = y)) \/ ((~ (x = z)) \/ (y = z))) = ((y = z) \/ ((~ (x = y)) \/ (~ (x = z))))))
+T c= cT c= c\/ c~ c= f0 f1 c\/ c~ c= f0 f2 c= f1 f2 c\/ c= f1 f2 c\/ c~ c= f0 f1 c~ c= f0 f2
++ |- ((T ==> t) = t)
+T c= c==> cT f0 f0
+- |- ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))
+T c= c\/ f0 c\/ f1 f2 c\/ c\/ f0 f1 f2
++ (~ (b = NIL)), (x = (HD b)), ((rev b) = NIL), ((rev s) = ((cat a) b)), ((MEM x) s) |- (((rev NIL) = NIL) ==> F)
+T c==> c~ c= f0 cNIL c==> c= f1 cHD f0 c==> c= crev f0 cNIL c==> c= crev f2 ccat f3 f0 c==> cMEM f1 f2 c==> c= crev cNIL cNIL cF
++ (~ (b = NIL)), (x = (HD b)), ((rev s) = ((cat a) b)), ((MEM x) s) |- (((rev b) = NIL) ==> F)
+T c==> c~ c= f0 cNIL c==> c= f1 cHD f0 c==> c= crev f2 ccat f3 f0 c==> cMEM f1 f2 c==> c= crev f0 cNIL cF
+- (_10120251 = _10120253) |- ((_10120251 = _10120253) /\ ((~ (_10120252 = _10120254)) \/ (((MEM _10120253) _10120254) \/ (~ ((MEM _10120251) _10120252)))))
+T c==> c= f0 f1 c/\ c= f0 f1 c\/ c~ c= f2 f3 c\/ cMEM f1 f3 c~ cMEM f0 f2
+- |- ((_10120251 = _10120253) ==> ((~ (_10120252 = _10120254)) \/ (((MEM _10120253) _10120254) \/ (~ ((MEM _10120251) _10120252)))))
+T c==> c= f0 f1 c\/ c~ c= f2 f3 c\/ cMEM f1 f3 c~ cMEM f0 f2
++ |- ((\a. (!s. (((MEM x) s) ==> (((rev s) = ((cat a) b)) ==> ((x = (HD b)) ==> ((~ (b = NIL)) ==> (((rev b) = NIL) ==> ((!s. ((rev (rev s)) = s)) ==> (((rev NIL) = NIL) ==> F))))))))) a)
+T * / ! c==> cMEM f0 b1 c==> c= crev b1 ccat b0 f1 c==> c= f0 cHD f1 c==> c~ c= f1 cNIL c==> c= crev f1 cNIL c==> ! c= crev crev b2 b2 c==> c= crev cNIL cNIL cF f2
++ |- ((\b. (!x. (!a. (!s. (((MEM x) s) ==> (((rev s) = ((cat a) b)) ==> ((x = (HD b)) ==> ((~ (b = NIL)) ==> (((rev b) = NIL) ==> ((!s. ((rev (rev s)) = s)) ==> (((rev NIL) = NIL) ==> F))))))))))) b)
+T * / ! ! ! c==> cMEM b1 b3 c==> c= crev b3 ccat b2 b0 c==> c= b1 cHD b0 c==> c~ c= b0 cNIL c==> c= crev b0 cNIL c==> ! c= crev crev b4 b4 c==> c= crev cNIL cNIL cF f0
++ |- ((\b. (!a. (!s. (!x. (((MEM x) s) ==> (((rev s) = ((cat a) b)) ==> ((x = (HD b)) ==> ((~ (b = NIL)) ==> ((~ (s = (rev ((cat a) b)))) ==> ((!s. ((rev (rev s)) = s)) ==> F)))))))))) b)
+T * / ! ! ! c==> cMEM b3 b2 c==> c= crev b2 ccat b1 b0 c==> c= b3 cHD b0 c==> c~ c= b0 cNIL c==> c~ c= b2 crev ccat b1 b0 c==> ! c= crev crev b4 b4 cF f0
++ (x = (HD b)), ((rev s) = ((cat a) b)), ((MEM x) s) |- ((~ (b = NIL)) ==> ((~ (s = (rev ((cat a) b)))) ==> ((!s. ((rev (rev s)) = s)) ==> F)))
+T c==> c= f0 cHD f1 c==> c= crev f2 ccat f3 f1 c==> cMEM f0 f2 c==> c~ c= f1 cNIL c==> c~ c= f2 crev ccat f3 f1 c==> ! c= crev crev b0 b0 cF
++ |- (((!x. (((MEM x) s) ==> (((rev s) = ((cat a) b)) ==> ((x = (HD b)) ==> ((~ (b = NIL)) ==> ((~ (s = (rev ((cat a) b)))) ==> ((!s. ((rev (rev s)) = s)) ==> F))))))) ==> ((\x. (((MEM x) s) ==> (((rev s) = ((cat a) b)) ==> ((x = (HD b)) ==> ((~ (b = NIL)) ==> ((~ (s = (rev ((cat a) b)))) ==> ((!s. ((rev (rev s)) = s)) ==> F))))))) x)) = ((\x. (((MEM x) s) ==> (((rev s) = ((cat a) b)) ==> ((x = (HD b)) ==> ((~ (b = NIL)) ==> ((~ (s = (rev ((cat a) b)))) ==> ((!s. ((rev (rev s)) = s)) ==> F))))))) x))
+T c= c==> ! c==> cMEM b0 f0 c==> c= crev f0 ccat f1 f2 c==> c= b0 cHD f2 c==> c~ c= f2 cNIL c==> c~ c= f0 crev ccat f1 f2 c==> ! c= crev crev b1 b1 cF * / c==> cMEM b0 f0 c==> c= crev f0 ccat f1 f2 c==> c= b0 cHD f2 c==> c~ c= f2 cNIL c==> c~ c= f0 crev ccat f1 f2 c==> ! c= crev crev b1 b1 cF f3 * / c==> cMEM b0 f0 c==> c= crev f0 ccat f1 f2 c==> c= b0 cHD f2 c==> c~ c= f2 cNIL c==> c~ c= f0 crev ccat f1 f2 c==> ! c= crev crev b1 b1 cF f3
++ |- ((~ (b = NIL)) ==> (((rev b) = NIL) ==> ((!s. ((rev (rev s)) = s)) ==> (~ ((rev NIL) = NIL)))))
+T c==> c~ c= f0 cNIL c==> c= crev f0 cNIL c==> ! c= crev crev b0 b0 c~ c= crev cNIL cNIL
++ |- (!b. (!x. (!a. (!s. (((MEM x) s) ==> (((rev s) = ((cat a) b)) ==> ((x = (HD b)) ==> ((~ (b = NIL)) ==> (((rev b) = NIL) ==> ((!s. ((rev (rev s)) = s)) ==> (~ ((rev NIL) = NIL))))))))))))
+T c==> cMEM f0 f1 c==> c= crev f1 ccat f2 f3 c==> c= f0 cHD f3 c==> c~ c= f3 cNIL c==> c= crev f3 cNIL c==> ! c= crev crev b0 b0 c~ c= crev cNIL cNIL
+- |- ((((MEM x) s) ==> (((rev s) = ((cat a) b)) ==> ((x = (HD b)) ==> ((~ (b = NIL)) ==> ((~ (s = (rev ((cat a) b)))) ==> ((!s. ((rev (rev s)) = s)) ==> F)))))) ==> (((MEM x) s) ==> (((rev s) = ((cat a) b)) ==> ((x = (HD b)) ==> ((~ (b = NIL)) ==> ((~ (s = (rev ((cat a) b)))) ==> ((!s. ((rev (rev s)) = s)) ==> F)))))))
+T c==> c==> cMEM f0 f1 c==> c= crev f1 ccat f2 f3 c==> c= f0 cHD f3 c==> c~ c= f3 cNIL c==> c~ c= f1 crev ccat f2 f3 c==> ! c= crev crev b0 b0 cF c==> cMEM f0 f1 c==> c= crev f1 ccat f2 f3 c==> c= f0 cHD f3 c==> c~ c= f3 cNIL c==> c~ c= f1 crev ccat f2 f3 c==> ! c= crev crev b0 b0 cF
+- |- ((\t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3)))) t2)
+T * / ! c= c\/ f0 c\/ b0 b1 c\/ c\/ f0 b0 b1 f1
++ (((rev s) = ((cat a) b)) /\ ((x = (HD b)) /\ (~ (b = NIL)))), ((MEM x) s) |- ((((rev s) = ((cat a) b)) /\ ((x = (HD b)) /\ (~ (b = NIL)))) /\ (?a. (?b. ((s = ((cat a) b)) /\ ((x = (LAST a)) /\ (~ (a = NIL)))))))
+T c==> c/\ c= crev f0 ccat f1 f2 c/\ c= f3 cHD f2 c~ c= f2 cNIL c==> cMEM f3 f0 c/\ c/\ c= crev f0 ccat f1 f2 c/\ c= f3 cHD f2 c~ c= f2 cNIL c? / c? / c/\ c= f0 ccat b0 b1 c/\ c= f3 cLAST b0 c~ c= b0 cNIL
++ ((rev s) = ((cat a) b)) |- ((~ (b = NIL)) ==> ((~ (s = (rev ((cat a) b)))) ==> (~ (!s. ((rev (rev s)) = s)))))
+T c==> c= crev f0 ccat f1 f2 c==> c~ c= f2 cNIL c==> c~ c= f0 crev ccat f1 f2 c~ ! c= crev crev b0 b0
++ (~ (b = NIL)), (x = (HD b)), ((rev s) = ((cat a) b)), ((MEM x) s) |- ((((HD b) = (LAST (rev b))) /\ (~ ((rev b) = NIL))) = ((s = (rev ((cat a) b))) /\ (((HD b) = (LAST (rev b))) /\ (~ ((rev b) = NIL)))))
+T c==> c~ c= f0 cNIL c==> c= f1 cHD f0 c==> c= crev f2 ccat f3 f0 c==> cMEM f1 f2 c= c/\ c= cHD f0 cLAST crev f0 c~ c= crev f0 cNIL c/\ c= f2 crev ccat f3 f0 c/\ c= cHD f0 cLAST crev f0 c~ c= crev f0 cNIL
++ |- ((((MEM x) s) ==> (((rev s) = ((cat a) b)) ==> ((x = (HD b)) ==> ((~ (b = NIL)) ==> (((rev b) = NIL) ==> ((!s. ((rev (rev s)) = s)) ==> (~ ((rev NIL) = NIL)))))))) = T)
+T c= c==> cMEM f0 f1 c==> c= crev f1 ccat f2 f3 c==> c= f0 cHD f3 c==> c~ c= f3 cNIL c==> c= crev f3 cNIL c==> ! c= crev crev b0 b0 c~ c= crev cNIL cNIL cT
+- (!s. ((rev (rev s)) = s)), (~ (s = (rev ((cat a) b)))), ((rev s) = ((cat a) b)) |- ((~ F) ==> F)
+T c==> ! c= crev crev b0 b0 c==> c~ c= f0 crev ccat f1 f2 c==> c= crev f0 ccat f1 f2 c==> c~ cF cF
+- (~ (b = NIL)) |- (T = (~ (b = NIL)))
+T c==> c~ c= f0 cNIL c= cT c~ c= f0 cNIL
+- |- ((((((MEM x) s) ==> (((rev s) = ((cat a) b)) ==> ((x = (HD b)) ==> ((~ (b = NIL)) ==> (((rev b) = NIL) ==> ((!s. ((rev (rev s)) = s)) ==> (((rev NIL) = NIL) ==> F))))))) ==> (((MEM x) s) ==> (((rev s) = ((cat a) b)) ==> ((x = (HD b)) ==> ((~ (b = NIL)) ==> (((rev b) = NIL) ==> ((!s. ((rev (rev s)) = s)) ==> (((rev NIL) = NIL) ==> F)))))))) ==> ((((MEM x) s) ==> (((rev s) = ((cat a) b)) ==> ((x = (HD b)) ==> ((~ (b = NIL)) ==> (((rev b) = NIL) ==> ((!s. ((rev (rev s)) = s)) ==> (((rev NIL) = NIL) ==> F))))))) ==> (((MEM x) s) ==> (((rev s) = ((cat a) b)) ==> ((x = (HD b)) ==> ((~ (b = NIL)) ==> (((rev b) = NIL) ==> ((!s. ((rev (rev s)) = s)) ==> (((rev NIL) = NIL) ==> F))))))))) = ((((MEM x) s) ==> (((rev s) = ((cat a) b)) ==> ((x = (HD b)) ==> ((~ (b = NIL)) ==> (((rev b) = NIL) ==> ((!s. ((rev (rev s)) = s)) ==> (((rev NIL) = NIL) ==> F))))))) ==> (((MEM x) s) ==> (((rev s) = ((cat a) b)) ==> ((x = (HD b)) ==> ((~ (b = NIL)) ==> (((rev b) = NIL) ==> ((!s. ((rev (rev s)) = s)) ==> (((rev NIL) = NIL) ==> F)))))))))
+T c= c==> c==> c==> cMEM f0 f1 c==> c= crev f1 ccat f2 f3 c==> c= f0 cHD f3 c==> c~ c= f3 cNIL c==> c= crev f3 cNIL c==> ! c= crev crev b0 b0 c==> c= crev cNIL cNIL cF c==> cMEM f0 f1 c==> c= crev f1 ccat f2 f3 c==> c= f0 cHD f3 c==> c~ c= f3 cNIL c==> c= crev f3 cNIL c==> ! c= crev crev b0 b0 c==> c= crev cNIL cNIL cF c==> c==> cMEM f0 f1 c==> c= crev f1 ccat f2 f3 c==> c= f0 cHD f3 c==> c~ c= f3 cNIL c==> c= crev f3 cNIL c==> ! c= crev crev b0 b0 c==> c= crev cNIL cNIL cF c==> cMEM f0 f1 c==> c= crev f1 ccat f2 f3 c==> c= f0 cHD f3 c==> c~ c= f3 cNIL c==> c= crev f3 cNIL c==> ! c= crev crev b0 b0 c==> c= crev cNIL cNIL cF c==> c==> cMEM f0 f1 c==> c= crev f1 ccat f2 f3 c==> c= f0 cHD f3 c==> c~ c= f3 cNIL c==> c= crev f3 cNIL c==> ! c= crev crev b0 b0 c==> c= crev cNIL cNIL cF c==> cMEM f0 f1 c==> c= crev f1 ccat f2 f3 c==> c= f0 cHD f3 c==> c~ c= f3 cNIL c==> c= crev f3 cNIL c==> ! c= crev crev b0 b0 c==> c= crev cNIL cNIL cF
++ |- ((!a. (!s. (!x. (((MEM x) s) ==> (((rev s) = ((cat a) b)) ==> ((x = (HD b)) ==> ((~ (b = NIL)) ==> ((~ (s = (rev ((cat a) b)))) ==> (~ (!s. ((rev (rev s)) = s))))))))))) = T)
+T c= ! ! ! c==> cMEM b2 b1 c==> c= crev b1 ccat b0 f0 c==> c= b2 cHD f0 c==> c~ c= f0 cNIL c==> c~ c= b1 crev ccat b0 f0 c~ ! c= crev crev b3 b3 cT
++ |- (((!s. (!x. (((MEM x) s) ==> (((rev s) = ((cat a) b)) ==> ((x = (HD b)) ==> ((~ (b = NIL)) ==> ((~ (s = (rev ((cat a) b)))) ==> ((!s. ((rev (rev s)) = s)) ==> F)))))))) ==> ((\s. (!x. (((MEM x) s) ==> (((rev s) = ((cat a) b)) ==> ((x = (HD b)) ==> ((~ (b = NIL)) ==> ((~ (s = (rev ((cat a) b)))) ==> ((!s. ((rev (rev s)) = s)) ==> F)))))))) s)) = ((\s. (!x. (((MEM x) s) ==> (((rev s) = ((cat a) b)) ==> ((x = (HD b)) ==> ((~ (b = NIL)) ==> ((~ (s = (rev ((cat a) b)))) ==> ((!s. ((rev (rev s)) = s)) ==> F)))))))) s))
+T c= c==> ! ! c==> cMEM b1 b0 c==> c= crev b0 ccat f0 f1 c==> c= b1 cHD f1 c==> c~ c= f1 cNIL c==> c~ c= b0 crev ccat f0 f1 c==> ! c= crev crev b2 b2 cF * / ! c==> cMEM b1 b0 c==> c= crev b0 ccat f0 f1 c==> c= b1 cHD f1 c==> c~ c= f1 cNIL c==> c~ c= b0 crev ccat f0 f1 c==> ! c= crev crev b2 b2 cF f2 * / ! c==> cMEM b1 b0 c==> c= crev b0 ccat f0 f1 c==> c= b1 cHD f1 c==> c~ c= f1 cNIL c==> c~ c= b0 crev ccat f0 f1 c==> ! c= crev crev b2 b2 cF f2
+- ((((MEM x) s) ==> (((rev s) = ((cat a) b)) ==> ((x = (HD b)) ==> ((~ (b = NIL)) ==> (((rev b) = NIL) ==> ((!s. ((rev (rev s)) = s)) ==> (((rev NIL) = NIL) ==> F))))))) ==> (((MEM x) s) ==> (((rev s) = ((cat a) b)) ==> ((x = (HD b)) ==> ((~ (b = NIL)) ==> (((rev b) = NIL) ==> ((!s. ((rev (rev s)) = s)) ==> (((rev NIL) = NIL) ==> F)))))))) |- (((((MEM x) s) ==> (((rev s) = ((cat a) b)) ==> ((x = (HD b)) ==> ((~ (b = NIL)) ==> (((rev b) = NIL) ==> ((!s. ((rev (rev s)) = s)) ==> (((rev NIL) = NIL) ==> F))))))) ==> (((MEM x) s) ==> (((rev s) = ((cat a) b)) ==> ((x = (HD b)) ==> ((~ (b = NIL)) ==> (((rev b) = NIL) ==> ((!s. ((rev (rev s)) = s)) ==> (((rev NIL) = NIL) ==> F)))))))) /\ ((((MEM x) s) ==> (((rev s) = ((cat a) b)) ==> ((x = (HD b)) ==> ((~ (b = NIL)) ==> (((rev b) = NIL) ==> ((!s. ((rev (rev s)) = s)) ==> (((rev NIL) = NIL) ==> F))))))) ==> (((MEM x) s) ==> (((rev s) = ((cat a) b)) ==> ((x = (HD b)) ==> ((~ (b = NIL)) ==> (((rev b) = NIL) ==> ((!s. ((rev (rev s)) = s)) ==> (((rev NIL) = NIL) ==> F)))))))))
+T c==> c==> c==> cMEM f0 f1 c==> c= crev f1 ccat f2 f3 c==> c= f0 cHD f3 c==> c~ c= f3 cNIL c==> c= crev f3 cNIL c==> ! c= crev crev b0 b0 c==> c= crev cNIL cNIL cF c==> cMEM f0 f1 c==> c= crev f1 ccat f2 f3 c==> c= f0 cHD f3 c==> c~ c= f3 cNIL c==> c= crev f3 cNIL c==> ! c= crev crev b0 b0 c==> c= crev cNIL cNIL cF c/\ c==> c==> cMEM f0 f1 c==> c= crev f1 ccat f2 f3 c==> c= f0 cHD f3 c==> c~ c= f3 cNIL c==> c= crev f3 cNIL c==> ! c= crev crev b0 b0 c==> c= crev cNIL cNIL cF c==> cMEM f0 f1 c==> c= crev f1 ccat f2 f3 c==> c= f0 cHD f3 c==> c~ c= f3 cNIL c==> c= crev f3 cNIL c==> ! c= crev crev b0 b0 c==> c= crev cNIL cNIL cF c==> c==> cMEM f0 f1 c==> c= crev f1 ccat f2 f3 c==> c= f0 cHD f3 c==> c~ c= f3 cNIL c==> c= crev f3 cNIL c==> ! c= crev crev b0 b0 c==> c= crev cNIL cNIL cF c==> cMEM f0 f1 c==> c= crev f1 ccat f2 f3 c==> c= f0 cHD f3 c==> c~ c= f3 cNIL c==> c= crev f3 cNIL c==> ! c= crev crev b0 b0 c==> c= crev cNIL cNIL cF
++ (~ (b = NIL)), (~ (s = (rev ((cat a) b)))), (x = (HD b)), ((rev s) = ((cat a) b)), ((MEM x) s) |- F
+T c==> c~ c= f0 cNIL c==> c~ c= f1 crev ccat f2 f0 c==> c= f3 cHD f0 c==> c= crev f1 ccat f2 f0 c==> cMEM f3 f1 cF
+- ((((MEM x) s) ==> (((rev s) = ((cat a) b)) ==> ((x = (HD b)) ==> ((~ (b = NIL)) ==> ((~ (s = (rev ((cat a) b)))) ==> ((!s. ((rev (rev s)) = s)) ==> F)))))) ==> (((MEM x) s) ==> (((rev s) = ((cat a) b)) ==> ((x = (HD b)) ==> ((~ (b = NIL)) ==> ((~ (s = (rev ((cat a) b)))) ==> ((!s. ((rev (rev s)) = s)) ==> F))))))), (((MEM x) s) ==> (((rev s) = ((cat a) b)) ==> ((x = (HD b)) ==> ((~ (b = NIL)) ==> ((~ (s = (rev ((cat a) b)))) ==> ((!s. ((rev (rev s)) = s)) ==> F)))))) |- ((((MEM x) s) ==> (((rev s) = ((cat a) b)) ==> ((x = (HD b)) ==> ((~ (b = NIL)) ==> ((~ (s = (rev ((cat a) b)))) ==> ((!s. ((rev (rev s)) = s)) ==> F)))))) /\ (((MEM x) s) ==> (((rev s) = ((cat a) b)) ==> ((x = (HD b)) ==> ((~ (b = NIL)) ==> ((~ (s = (rev ((cat a) b)))) ==> ((!s. ((rev (rev s)) = s)) ==> F)))))))
+T c==> c==> c==> cMEM f0 f1 c==> c= crev f1 ccat f2 f3 c==> c= f0 cHD f3 c==> c~ c= f3 cNIL c==> c~ c= f1 crev ccat f2 f3 c==> ! c= crev crev b0 b0 cF c==> cMEM f0 f1 c==> c= crev f1 ccat f2 f3 c==> c= f0 cHD f3 c==> c~ c= f3 cNIL c==> c~ c= f1 crev ccat f2 f3 c==> ! c= crev crev b0 b0 cF c==> c==> cMEM f0 f1 c==> c= crev f1 ccat f2 f3 c==> c= f0 cHD f3 c==> c~ c= f3 cNIL c==> c~ c= f1 crev ccat f2 f3 c==> ! c= crev crev b0 b0 cF c/\ c==> cMEM f0 f1 c==> c= crev f1 ccat f2 f3 c==> c= f0 cHD f3 c==> c~ c= f3 cNIL c==> c~ c= f1 crev ccat f2 f3 c==> ! c= crev crev b0 b0 cF c==> cMEM f0 f1 c==> c= crev f1 ccat f2 f3 c==> c= f0 cHD f3 c==> c~ c= f3 cNIL c==> c~ c= f1 crev ccat f2 f3 c==> ! c= crev crev b0 b0 cF
++ |- (((rev s) = ((cat a) b)) ==> ((x = (HD b)) ==> ((~ (b = NIL)) ==> ((~ (s = (rev ((cat a) b)))) ==> (~ (!s. ((rev (rev s)) = s)))))))
+T c==> c= crev f0 ccat f1 f2 c==> c= f3 cHD f2 c==> c~ c= f2 cNIL c==> c~ c= f0 crev ccat f1 f2 c~ ! c= crev crev b0 b0
++ |- ((!x. (!a. (!s. (((MEM x) s) ==> (((rev s) = ((cat a) b)) ==> ((x = (HD b)) ==> ((~ (b = NIL)) ==> (((rev b) = NIL) ==> ((!s. ((rev (rev s)) = s)) ==> (~ ((rev NIL) = NIL))))))))))) = T)
+T c= ! ! ! c==> cMEM b0 b2 c==> c= crev b2 ccat b1 f0 c==> c= b0 cHD f0 c==> c~ c= f0 cNIL c==> c= crev f0 cNIL c==> ! c= crev crev b3 b3 c~ c= crev cNIL cNIL cT
+- |- (((!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3)))) ==> ((\t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3)))) t2)) = ((\t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3)))) t2))
+T c= c==> ! ! c= c\/ f0 c\/ b0 b1 c\/ c\/ f0 b0 b1 * / ! c= c\/ f0 c\/ b0 b1 c\/ c\/ f0 b0 b1 f1 * / ! c= c\/ f0 c\/ b0 b1 c\/ c\/ f0 b0 b1 f1
++ (x = (HD b)) |- ((x = (HD b)) /\ ((~ (b = NIL)) ==> (((rev b) = NIL) ==> ((!s. ((rev (rev s)) = s)) ==> (~ ((rev NIL) = NIL))))))
+T c==> c= f0 cHD f1 c/\ c= f0 cHD f1 c==> c~ c= f1 cNIL c==> c= crev f1 cNIL c==> ! c= crev crev b0 b0 c~ c= crev cNIL cNIL
+- (~ ((rev (rev s)) = (rev ((cat a) b)))), ((rev s) = ((cat a) b)) |- ((~ ((rev (rev s)) = (rev ((cat a) b)))) /\ ((rev (rev s)) = (rev ((cat a) b))))
+T c==> c~ c= crev crev f0 crev ccat f1 f2 c==> c= crev f0 ccat f1 f2 c/\ c~ c= crev crev f0 crev ccat f1 f2 c= crev crev f0 crev ccat f1 f2
+- (NIL = b) |- (b = NIL)
+T c==> c= cNIL f0 c= f0 cNIL
+- |- ((~ (_10120257 = _10120259)) \/ ((~ (_10120258 = _10120260)) \/ (((cat _10120257) _10120258) = ((cat _10120259) _10120260))))
+T c\/ c~ c= f0 f1 c\/ c~ c= f2 f3 c= ccat f0 f2 ccat f1 f3
++ ((rev s) = ((cat a) b)) |- (((rev s) = ((cat a) b)) /\ ((x = (HD b)) ==> ((~ (b = NIL)) ==> ((~ (s = (rev ((cat a) b)))) ==> (~ (!s. ((rev (rev s)) = s)))))))
+T c==> c= crev f0 ccat f1 f2 c/\ c= crev f0 ccat f1 f2 c==> c= f3 cHD f2 c==> c~ c= f2 cNIL c==> c~ c= f0 crev ccat f1 f2 c~ ! c= crev crev b0 b0
++ |- (((!s. (((MEM x) s) ==> (((rev s) = ((cat a) b)) ==> ((x = (HD b)) ==> ((~ (b = NIL)) ==> (((rev b) = NIL) ==> ((!s. ((rev (rev s)) = s)) ==> (((rev NIL) = NIL) ==> F)))))))) ==> ((\s. (((MEM x) s) ==> (((rev s) = ((cat a) b)) ==> ((x = (HD b)) ==> ((~ (b = NIL)) ==> (((rev b) = NIL) ==> ((!s. ((rev (rev s)) = s)) ==> (((rev NIL) = NIL) ==> F)))))))) s)) = ((\s. (((MEM x) s) ==> (((rev s) = ((cat a) b)) ==> ((x = (HD b)) ==> ((~ (b = NIL)) ==> (((rev b) = NIL) ==> ((!s. ((rev (rev s)) = s)) ==> (((rev NIL) = NIL) ==> F)))))))) s))
+T c= c==> ! c==> cMEM f0 b0 c==> c= crev b0 ccat f1 f2 c==> c= f0 cHD f2 c==> c~ c= f2 cNIL c==> c= crev f2 cNIL c==> ! c= crev crev b1 b1 c==> c= crev cNIL cNIL cF * / c==> cMEM f0 b0 c==> c= crev b0 ccat f1 f2 c==> c= f0 cHD f2 c==> c~ c= f2 cNIL c==> c= crev f2 cNIL c==> ! c= crev crev b1 b1 c==> c= crev cNIL cNIL cF f3 * / c==> cMEM f0 b0 c==> c= crev b0 ccat f1 f2 c==> c= f0 cHD f2 c==> c~ c= f2 cNIL c==> c= crev f2 cNIL c==> ! c= crev crev b1 b1 c==> c= crev cNIL cNIL cF f3
++ (~ (b = NIL)) |- ((HD b) = (LAST (rev b)))
+T c==> c~ c= f0 cNIL c= cHD f0 cLAST crev f0
++ (!s. ((rev (rev s)) = s)), (~ (b = NIL)), ((rev b) = NIL) |- (((rev NIL) = NIL) ==> F)
+T c==> ! c= crev crev b0 b0 c==> c~ c= f0 cNIL c==> c= crev f0 cNIL c==> c= crev cNIL cNIL cF
++ (~ (b = NIL)), (x = (HD b)), ((rev s) = ((cat a) b)), ((MEM x) s) |- ((~ (s = (rev ((cat a) b)))) ==> F)
+T c==> c~ c= f0 cNIL c==> c= f1 cHD f0 c==> c= crev f2 ccat f3 f0 c==> cMEM f1 f2 c==> c~ c= f2 crev ccat f3 f0 cF
++ |- (((!a. (!s. (((MEM x) s) ==> (((rev s) = ((cat a) b)) ==> ((x = (HD b)) ==> ((~ (b = NIL)) ==> (((rev b) = NIL) ==> ((!s. ((rev (rev s)) = s)) ==> (((rev NIL) = NIL) ==> F))))))))) ==> ((\a. (!s. (((MEM x) s) ==> (((rev s) = ((cat a) b)) ==> ((x = (HD b)) ==> ((~ (b = NIL)) ==> (((rev b) = NIL) ==> ((!s. ((rev (rev s)) = s)) ==> (((rev NIL) = NIL) ==> F))))))))) a)) = ((\a. (!s. (((MEM x) s) ==> (((rev s) = ((cat a) b)) ==> ((x = (HD b)) ==> ((~ (b = NIL)) ==> (((rev b) = NIL) ==> ((!s. ((rev (rev s)) = s)) ==> (((rev NIL) = NIL) ==> F))))))))) a))
+T c= c==> ! ! c==> cMEM f0 b1 c==> c= crev b1 ccat b0 f1 c==> c= f0 cHD f1 c==> c~ c= f1 cNIL c==> c= crev f1 cNIL c==> ! c= crev crev b2 b2 c==> c= crev cNIL cNIL cF * / ! c==> cMEM f0 b1 c==> c= crev b1 ccat b0 f1 c==> c= f0 cHD f1 c==> c~ c= f1 cNIL c==> c= crev f1 cNIL c==> ! c= crev crev b2 b2 c==> c= crev cNIL cNIL cF f2 * / ! c==> cMEM f0 b1 c==> c= crev b1 ccat b0 f1 c==> c= f0 cHD f1 c==> c~ c= f1 cNIL c==> c= crev f1 cNIL c==> ! c= crev crev b2 b2 c==> c= crev cNIL cNIL cF f2
++ ((rev s) = ((cat a) b)) |- (((rev s) = ((cat a) b)) /\ ((x = (HD b)) ==> ((~ (b = NIL)) ==> (((rev b) = NIL) ==> ((!s. ((rev (rev s)) = s)) ==> (~ ((rev NIL) = NIL)))))))
+T c==> c= crev f0 ccat f1 f2 c/\ c= crev f0 ccat f1 f2 c==> c= f3 cHD f2 c==> c~ c= f2 cNIL c==> c= crev f2 cNIL c==> ! c= crev crev b0 b0 c~ c= crev cNIL cNIL
++ |- ((x = x) = T)
+T c= c= f0 f0 cT
++ |- (((!x. (!s. (((MEM x) s) ==> (?a. (?b. ((s = ((cat a) b)) /\ ((x = (HD b)) /\ (~ (b = NIL))))))))) ==> ((\x. (!s. (((MEM x) s) ==> (?a. (?b. ((s = ((cat a) b)) /\ ((x = (HD b)) /\ (~ (b = NIL))))))))) x)) = ((\x. (!s. (((MEM x) s) ==> (?a. (?b. ((s = ((cat a) b)) /\ ((x = (HD b)) /\ (~ (b = NIL))))))))) x))
+T c= c==> ! ! c==> cMEM b0 b1 c? / c? / c/\ c= b1 ccat b2 b3 c/\ c= b0 cHD b3 c~ c= b3 cNIL * / ! c==> cMEM b0 b1 c? / c? / c/\ c= b1 ccat b2 b3 c/\ c= b0 cHD b3 c~ c= b3 cNIL f0 * / ! c==> cMEM b0 b1 c? / c? / c/\ c= b1 ccat b2 b3 c/\ c= b0 cHD b3 c~ c= b3 cNIL f0
++ |- ((p \/ (q \/ r)) = (q \/ (p \/ r)))
+T c= c\/ f0 c\/ f1 f2 c\/ f1 c\/ f0 f2
+- (~ (t = NIL)) |- ((~ (t = NIL)) /\ ((LAST (rev t)) = (HD t)))
+T c==> c~ c= f0 cNIL c/\ c~ c= f0 cNIL c= cLAST crev f0 cHD f0
++ (!s. ((rev (rev s)) = s)), (~ (s = (rev ((cat a) b)))), ((rev s) = ((cat a) b)) |- F
+T c==> ! c= crev crev b0 b0 c==> c~ c= f0 crev ccat f1 f2 c==> c= crev f0 ccat f1 f2 cF
++ (!s. ((rev (rev s)) = s)), (~ (s = (rev ((cat a) b)))), ((rev s) = ((cat a) b)) |- ((!s. ((rev (rev s)) = s)) /\ F)
+T c==> ! c= crev crev b0 b0 c==> c~ c= f0 crev ccat f1 f2 c==> c= crev f0 ccat f1 f2 c/\ ! c= crev crev b0 b0 cF
+- |- ((a ==> b) = ((~ a) \/ b))
+T c= c==> f0 f1 c\/ c~ f0 f1
+- (x = (HD b)), ((MEM x) s) |- ((MEM (HD b)) s)
+T c==> c= f0 cHD f1 c==> cMEM f0 f2 cMEM cHD f1 f2
++ ((rev s) = ((cat a) b)) |- ((rev (rev s)) = (rev ((cat a) b)))
+T c==> c= crev f0 ccat f1 f2 c= crev crev f0 crev ccat f1 f2
++ ((rev b) = NIL) |- (NIL = (rev b))
+T c==> c= crev f0 cNIL c= cNIL crev f0
++ (~ (b = NIL)), (x = (HD b)), ((rev s) = ((cat a) b)), ((MEM x) s) |- (?b'. ((s = ((cat (rev b)) b')) /\ ((x = (LAST (rev b))) /\ (~ ((rev b) = NIL)))))
+T c==> c~ c= f0 cNIL c==> c= f1 cHD f0 c==> c= crev f2 ccat f3 f0 c==> cMEM f1 f2 c? / c/\ c= f2 ccat crev f0 b0 c/\ c= f1 cLAST crev f0 c~ c= crev f0 cNIL
+- (~ (b = NIL)) |- (~ (NIL = b))
+T c==> c~ c= f0 cNIL c~ c= cNIL f0
++ (~ (b = NIL)), ((rev s) = ((cat a) b)) |- ((~ (b = NIL)) /\ ((~ (s = (rev ((cat a) b)))) ==> (~ (!s. ((rev (rev s)) = s)))))
+T c==> c~ c= f0 cNIL c==> c= crev f1 ccat f2 f0 c/\ c~ c= f0 cNIL c==> c~ c= f1 crev ccat f2 f0 c~ ! c= crev crev b0 b0
+- |- ((((MEM x) s) ==> (((rev s) = ((cat a) b)) ==> ((x = (HD b)) ==> ((~ (b = NIL)) ==> (((rev b) = NIL) ==> ((!s. ((rev (rev s)) = s)) ==> (((rev NIL) = NIL) ==> F))))))) ==> (((MEM x) s) ==> (((rev s) = ((cat a) b)) ==> ((x = (HD b)) ==> ((~ (b = NIL)) ==> (((rev b) = NIL) ==> ((!s. ((rev (rev s)) = s)) ==> (((rev NIL) = NIL) ==> F))))))))
+T c==> c==> cMEM f0 f1 c==> c= crev f1 ccat f2 f3 c==> c= f0 cHD f3 c==> c~ c= f3 cNIL c==> c= crev f3 cNIL c==> ! c= crev crev b0 b0 c==> c= crev cNIL cNIL cF c==> cMEM f0 f1 c==> c= crev f1 ccat f2 f3 c==> c= f0 cHD f3 c==> c~ c= f3 cNIL c==> c= crev f3 cNIL c==> ! c= crev crev b0 b0 c==> c= crev cNIL cNIL cF
++ |- ((p \/ q) = (q \/ p))
+T c= c\/ f0 f1 c\/ f1 f0
++ ((MEM x) s) |- (!b. (((\b. (((rev s) = ((cat a) b)) /\ ((x = (HD b)) /\ (~ (b = NIL))))) b) ==> (?a. (?b. ((s = ((cat a) b)) /\ ((x = (LAST a)) /\ (~ (a = NIL))))))))
+T c==> cMEM f0 f1 ! c==> * / c/\ c= crev f1 ccat f2 b1 c/\ c= f0 cHD b1 c~ c= b1 cNIL b0 c? / c? / c/\ c= f1 ccat b1 b2 c/\ c= f0 cLAST b1 c~ c= b1 cNIL
++ (~ (b = NIL)), (~ (s = (rev ((cat a) b)))), (x = (HD b)), ((rev s) = ((cat a) b)), ((MEM x) s) |- ((~ (s = (rev ((cat a) b)))) /\ F)
+T c==> c~ c= f0 cNIL c==> c~ c= f1 crev ccat f2 f0 c==> c= f3 cHD f0 c==> c= crev f1 ccat f2 f0 c==> cMEM f3 f1 c/\ c~ c= f1 crev ccat f2 f0 cF
+- |- ((p \/ (p \/ q)) = (p \/ q))
+T c= c\/ f0 c\/ f0 f1 c\/ f0 f1
++ |- (((!s. (((MEM x) s) ==> (?a. (?b. ((s = ((cat a) b)) /\ ((x = (HD b)) /\ (~ (b = NIL)))))))) ==> ((\s. (((MEM x) s) ==> (?a. (?b. ((s = ((cat a) b)) /\ ((x = (HD b)) /\ (~ (b = NIL)))))))) (rev s))) = ((\s. (((MEM x) s) ==> (?a. (?b. ((s = ((cat a) b)) /\ ((x = (HD b)) /\ (~ (b = NIL)))))))) (rev s)))
+T c= c==> ! c==> cMEM f0 b0 c? / c? / c/\ c= b0 ccat b1 b2 c/\ c= f0 cHD b2 c~ c= b2 cNIL * / c==> cMEM f0 b0 c? / c? / c/\ c= b0 ccat b1 b2 c/\ c= f0 cHD b2 c~ c= b2 cNIL crev f1 * / c==> cMEM f0 b0 c? / c? / c/\ c= b0 ccat b1 b2 c/\ c= f0 cHD b2 c~ c= b2 cNIL crev f1
++ (~ (b = NIL)), (x = (HD b)), ((rev s) = ((cat a) b)), ((MEM x) s) |- (s = (rev ((cat a) b)))
+T c==> c~ c= f0 cNIL c==> c= f1 cHD f0 c==> c= crev f2 ccat f3 f0 c==> cMEM f1 f2 c= f2 crev ccat f3 f0
++ (!s. ((rev (rev s)) = s)) |- (((rev (rev s)) = (rev ((cat a) b))) = (((rev (rev s)) = s) /\ ((rev (rev s)) = (rev ((cat a) b)))))
+T c==> ! c= crev crev b0 b0 c= c= crev crev f0 crev ccat f1 f2 c/\ c= crev crev f0 f0 c= crev crev f0 crev ccat f1 f2
+- (!s. ((rev (rev s)) = s)), (~ (s = (rev ((cat a) b)))), ((rev s) = ((cat a) b)) |- ((~ (s = (rev ((cat a) b)))) /\ (s = (rev ((cat a) b))))
+T c==> ! c= crev crev b0 b0 c==> c~ c= f0 crev ccat f1 f2 c==> c= crev f0 ccat f1 f2 c/\ c~ c= f0 crev ccat f1 f2 c= f0 crev ccat f1 f2
+- (_10120261 = _10120262) |- ((_10120261 = _10120262) /\ ((HD _10120261) = (HD _10120262)))
+T c==> c= f0 f1 c/\ c= f0 f1 c= cHD f0 cHD f1
++ (~ (b = NIL)), (x = (HD b)), ((rev s) = ((cat a) b)), ((MEM x) s) |- ((\a. (?b. ((s = ((cat a) b)) /\ ((x = (LAST a)) /\ (~ (a = NIL)))))) (rev b))
+T c==> c~ c= f0 cNIL c==> c= f1 cHD f0 c==> c= crev f2 ccat f3 f0 c==> cMEM f1 f2 * / c? / c/\ c= f2 ccat b0 b1 c/\ c= f1 cLAST b0 c~ c= b0 cNIL crev f0
++ |- (((!s. ((rev (rev s)) = s)) ==> (((rev NIL) = NIL) ==> F)) = (((rev NIL) = NIL) ==> F))
+T c= c==> ! c= crev crev b0 b0 c==> c= crev cNIL cNIL cF c==> c= crev cNIL cNIL cF
++ (~ (b = NIL)), ((rev b) = NIL) |- (~ (b = (rev b)))
+T c==> c~ c= f0 cNIL c==> c= crev f0 cNIL c~ c= f0 crev f0
++ (!s. ((rev (rev s)) = s)) |- (((rev (rev b)) = (rev b)) = (((rev (rev b)) = b) /\ ((rev (rev b)) = (rev b))))
+T c==> ! c= crev crev b0 b0 c= c= crev crev f0 crev f0 c/\ c= crev crev f0 f0 c= crev crev f0 crev f0
++ ((\a. (?b. (((rev s) = ((cat a) b)) /\ ((x = (HD b)) /\ (~ (b = NIL)))))) a) |- (?b. (((rev s) = ((cat a) b)) /\ ((x = (HD b)) /\ (~ (b = NIL)))))
+T c==> * / c? / c/\ c= crev f0 ccat b0 b1 c/\ c= f1 cHD b1 c~ c= b1 cNIL f2 c? / c/\ c= crev f0 ccat f2 b0 c/\ c= f1 cHD b0 c~ c= b0 cNIL
+- |- (((t1 \/ t2) \/ t3) = (t1 \/ (t2 \/ t3)))
+T c= c\/ c\/ f0 f1 f2 c\/ f0 c\/ f1 f2
++ |- ((~ (a \/ b)) = ((~ a) /\ (~ b)))
+T c= c~ c\/ f0 f1 c/\ c~ f0 c~ f1
++ ((MEM x) s) |- ((((rev s) = ((cat a) b)) /\ ((x = (HD b)) /\ (~ (b = NIL)))) ==> (?a. (?b. ((s = ((cat a) b)) /\ ((x = (LAST a)) /\ (~ (a = NIL)))))))
+T c==> cMEM f0 f1 c==> c/\ c= crev f1 ccat f2 f3 c/\ c= f0 cHD f3 c~ c= f3 cNIL c? / c? / c/\ c= f1 ccat b0 b1 c/\ c= f0 cLAST b0 c~ c= b0 cNIL
++ |- (((cat (rev t)) (rev s)) = (rev ((cat s) t)))
+T c= ccat crev f0 crev f1 crev ccat f1 f0
++ ((MEM x) s) |- ((((\a. (?b. (((rev s) = ((cat a) b)) /\ ((x = (HD b)) /\ (~ (b = NIL)))))) a) ==> (?a. (?b. ((s = ((cat a) b)) /\ ((x = (LAST a)) /\ (~ (a = NIL))))))) = T)
+T c==> cMEM f0 f1 c= c==> * / c? / c/\ c= crev f1 ccat b0 b1 c/\ c= f0 cHD b1 c~ c= b1 cNIL f2 c? / c? / c/\ c= f1 ccat b0 b1 c/\ c= f0 cLAST b0 c~ c= b0 cNIL cT
++ (~ (b = NIL)), (x = (HD b)), ((rev b) = NIL), ((rev s) = ((cat a) b)), ((MEM x) s) |- F
+T c==> c~ c= f0 cNIL c==> c= f1 cHD f0 c==> c= crev f0 cNIL c==> c= crev f2 ccat f3 f0 c==> cMEM f1 f2 cF
++ ((\b. (((rev s) = ((cat a) b)) /\ ((x = (HD b)) /\ (~ (b = NIL))))) b) |- (((((rev s) = ((cat a) b)) /\ ((x = (HD b)) /\ (~ (b = NIL)))) ==> (?a. (?b. ((s = ((cat a) b)) /\ ((x = (LAST a)) /\ (~ (a = NIL))))))) = (?a. (?b. ((s = ((cat a) b)) /\ ((x = (LAST a)) /\ (~ (a = NIL)))))))
+T c==> * / c/\ c= crev f0 ccat f1 b0 c/\ c= f2 cHD b0 c~ c= b0 cNIL f3 c= c==> c/\ c= crev f0 ccat f1 f3 c/\ c= f2 cHD f3 c~ c= f3 cNIL c? / c? / c/\ c= f0 ccat b0 b1 c/\ c= f2 cLAST b0 c~ c= b0 cNIL c? / c? / c/\ c= f0 ccat b0 b1 c/\ c= f2 cLAST b0 c~ c= b0 cNIL
+- (~ (b = NIL)) |- (((~ (NIL = b)) ==> ((NIL = b) = F)) = ((NIL = b) = F))
+T c==> c~ c= f0 cNIL c= c==> c~ c= cNIL f0 c= c= cNIL f0 cF c= c= cNIL f0 cF
+- (x = (HD b)) |- (((rev (rev _10120224)) = _10120224) = ((rev (rev _10120224)) = _10120224))
+T c==> c= f0 cHD f1 c= c= crev crev f2 f2 c= crev crev f2 f2
+- (!s. ((rev (rev s)) = s)), ((rev NIL) = NIL), ((rev b) = NIL) |- ((~ (b = (rev b))) ==> (b = (rev b)))
+T c==> ! c= crev crev b0 b0 c==> c= crev cNIL cNIL c==> c= crev f0 cNIL c==> c~ c= f0 crev f0 c= f0 crev f0
+- |- (((!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))) ==> ((\t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))) t3)) = ((\t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))) t3))
+T c= c==> ! c= c\/ f0 c\/ f1 b0 c\/ c\/ f0 f1 b0 * / c= c\/ f0 c\/ f1 b0 c\/ c\/ f0 f1 b0 f2 * / c= c\/ f0 c\/ f1 b0 c\/ c\/ f0 f1 b0 f2
+- |- (((((MEM x) s) ==> (((rev s) = ((cat a) b)) ==> ((x = (HD b)) ==> ((~ (b = NIL)) ==> (((rev b) = NIL) ==> ((!s. ((rev (rev s)) = s)) ==> (((rev NIL) = NIL) ==> F))))))) ==> (((MEM x) s) ==> (((rev s) = ((cat a) b)) ==> ((x = (HD b)) ==> ((~ (b = NIL)) ==> (((rev b) = NIL) ==> ((!s. ((rev (rev s)) = s)) ==> (((rev NIL) = NIL) ==> F)))))))) = (((MEM x) s) ==> (((rev s) = ((cat a) b)) ==> ((x = (HD b)) ==> ((~ (b = NIL)) ==> (((rev b) = NIL) ==> ((!s. ((rev (rev s)) = s)) ==> (((rev NIL) = NIL) ==> F))))))))
+T c= c==> c==> cMEM f0 f1 c==> c= crev f1 ccat f2 f3 c==> c= f0 cHD f3 c==> c~ c= f3 cNIL c==> c= crev f3 cNIL c==> ! c= crev crev b0 b0 c==> c= crev cNIL cNIL cF c==> cMEM f0 f1 c==> c= crev f1 ccat f2 f3 c==> c= f0 cHD f3 c==> c~ c= f3 cNIL c==> c= crev f3 cNIL c==> ! c= crev crev b0 b0 c==> c= crev cNIL cNIL cF c==> cMEM f0 f1 c==> c= crev f1 ccat f2 f3 c==> c= f0 cHD f3 c==> c~ c= f3 cNIL c==> c= crev f3 cNIL c==> ! c= crev crev b0 b0 c==> c= crev cNIL cNIL cF
+- |- ((t /\ t) = t)
+T c= c/\ f0 f0 f0
+- |- ((a = b) ==> (b \/ (~ a)))
+T c==> c= f0 f1 c\/ f1 c~ f0
+- ((rev b) = NIL) |- ((x = (HD b)) = (x = (HD b)))
+T c==> c= crev f0 cNIL c= c= f1 cHD f0 c= f1 cHD f0
+- (x = (HD b)) |- ((~ (b = NIL)) = (~ (b = NIL)))
+T c==> c= f0 cHD f1 c= c~ c= f1 cNIL c~ c= f1 cNIL
+- (_10120251 = _10120253), (_10120252 = _10120254) |- (((((MEM _10120251) _10120252) = ((MEM _10120253) _10120254)) ==> (((MEM _10120253) _10120254) \/ (~ ((MEM _10120251) _10120252)))) = (((MEM _10120253) _10120254) \/ (~ ((MEM _10120251) _10120252))))
+T c==> c= f0 f1 c==> c= f2 f3 c= c==> c= cMEM f0 f2 cMEM f1 f3 c\/ cMEM f1 f3 c~ cMEM f0 f2 c\/ cMEM f1 f3 c~ cMEM f0 f2
+- (_10120257 = _10120259), (_10120258 = _10120260) |- ((_10120258 = _10120260) /\ (((cat _10120257) _10120258) = ((cat _10120259) _10120260)))
+T c==> c= f0 f1 c==> c= f2 f3 c/\ c= f2 f3 c= ccat f0 f2 ccat f1 f3
+- |- ((~ (_10120251 = _10120253)) \/ ((~ (_10120252 = _10120254)) \/ (((MEM _10120253) _10120254) \/ (~ ((MEM _10120251) _10120252)))))
+T c\/ c~ c= f0 f1 c\/ c~ c= f2 f3 c\/ cMEM f1 f3 c~ cMEM f0 f2
+- (_10120251 = _10120253) |- ((_10120252 = _10120254) ==> (((MEM _10120253) _10120254) \/ (~ ((MEM _10120251) _10120252))))
+T c==> c= f0 f1 c==> c= f2 f3 c\/ cMEM f1 f3 c~ cMEM f0 f2
+- (!s. ((rev (rev s)) = s)) |- ((~ ((rev (rev b)) = b)) ==> ((rev (rev b)) = b))
+T c==> ! c= crev crev b0 b0 c==> c~ c= crev crev f0 f0 c= crev crev f0 f0
+- (~ (b = NIL)) |- ((b = NIL) = F)
+T c==> c~ c= f0 cNIL c= c= f0 cNIL cF
+- |- (((rev _10120216) = (rev _10120217)) \/ (~ (_10120216 = _10120217)))
+T c\/ c= crev f0 crev f1 c~ c= f0 f1
+- (x = (HD b)) |- (((MEM x) s) = ((MEM (HD b)) s))
+T c==> c= f0 cHD f1 c= cMEM f0 f2 cMEM cHD f1 f2
+- |- ((~ F) = T)
+T c= c~ cF cT
+- |- (((((MEM x) s) ==> (((rev s) = ((cat a) b)) ==> ((x = (HD b)) ==> ((~ (b = NIL)) ==> ((~ (s = (rev ((cat a) b)))) ==> ((!s. ((rev (rev s)) = s)) ==> F)))))) ==> (((MEM x) s) ==> (((rev s) = ((cat a) b)) ==> ((x = (HD b)) ==> ((~ (b = NIL)) ==> ((~ (s = (rev ((cat a) b)))) ==> ((!s. ((rev (rev s)) = s)) ==> F))))))) = (((MEM x) s) ==> (((rev s) = ((cat a) b)) ==> ((x = (HD b)) ==> ((~ (b = NIL)) ==> ((~ (s = (rev ((cat a) b)))) ==> ((!s. ((rev (rev s)) = s)) ==> F)))))))
+T c= c==> c==> cMEM f0 f1 c==> c= crev f1 ccat f2 f3 c==> c= f0 cHD f3 c==> c~ c= f3 cNIL c==> c~ c= f1 crev ccat f2 f3 c==> ! c= crev crev b0 b0 cF c==> cMEM f0 f1 c==> c= crev f1 ccat f2 f3 c==> c= f0 cHD f3 c==> c~ c= f3 cNIL c==> c~ c= f1 crev ccat f2 f3 c==> ! c= crev crev b0 b0 cF c==> cMEM f0 f1 c==> c= crev f1 ccat f2 f3 c==> c= f0 cHD f3 c==> c~ c= f3 cNIL c==> c~ c= f1 crev ccat f2 f3 c==> ! c= crev crev b0 b0 cF
+- (x = (HD b)) |- (F = F)
+T c==> c= f0 cHD f1 c= cF cF
+- (?b. (((rev s) = ((cat a) b)) /\ ((x = (HD b)) /\ (~ (b = NIL))))), ((MEM x) s) |- (?a. (?b. ((s = ((cat a) b)) /\ ((x = (LAST a)) /\ (~ (a = NIL))))))
+T c==> c? / c/\ c= crev f0 ccat f1 b0 c/\ c= f2 cHD b0 c~ c= b0 cNIL c==> cMEM f2 f0 c? / c? / c/\ c= f0 ccat b0 b1 c/\ c= f2 cLAST b0 c~ c= b0 cNIL
+- |- ((!x. (P x)) = ((P T) /\ (P F)))
+T c= ! * f0 b0 c/\ * f0 cT * f0 cF
+- ((((MEM x) s) ==> (((rev s) = ((cat a) b)) ==> ((x = (HD b)) ==> ((~ (b = NIL)) ==> ((~ (s = (rev ((cat a) b)))) ==> ((!s. ((rev (rev s)) = s)) ==> F)))))) ==> (((MEM x) s) ==> (((rev s) = ((cat a) b)) ==> ((x = (HD b)) ==> ((~ (b = NIL)) ==> ((~ (s = (rev ((cat a) b)))) ==> ((!s. ((rev (rev s)) = s)) ==> F))))))), (((MEM x) s) ==> (((rev s) = ((cat a) b)) ==> ((x = (HD b)) ==> ((~ (b = NIL)) ==> ((~ (s = (rev ((cat a) b)))) ==> ((!s. ((rev (rev s)) = s)) ==> F)))))) |- (((((MEM x) s) ==> (((rev s) = ((cat a) b)) ==> ((x = (HD b)) ==> ((~ (b = NIL)) ==> ((~ (s = (rev ((cat a) b)))) ==> ((!s. ((rev (rev s)) = s)) ==> F)))))) ==> (((MEM x) s) ==> (((rev s) = ((cat a) b)) ==> ((x = (HD b)) ==> ((~ (b = NIL)) ==> ((~ (s = (rev ((cat a) b)))) ==> ((!s. ((rev (rev s)) = s)) ==> F))))))) /\ (((MEM x) s) ==> (((rev s) = ((cat a) b)) ==> ((x = (HD b)) ==> ((~ (b = NIL)) ==> ((~ (s = (rev ((cat a) b)))) ==> ((!s. ((rev (rev s)) = s)) ==> F)))))))
+T c==> c==> c==> cMEM f0 f1 c==> c= crev f1 ccat f2 f3 c==> c= f0 cHD f3 c==> c~ c= f3 cNIL c==> c~ c= f1 crev ccat f2 f3 c==> ! c= crev crev b0 b0 cF c==> cMEM f0 f1 c==> c= crev f1 ccat f2 f3 c==> c= f0 cHD f3 c==> c~ c= f3 cNIL c==> c~ c= f1 crev ccat f2 f3 c==> ! c= crev crev b0 b0 cF c==> c==> cMEM f0 f1 c==> c= crev f1 ccat f2 f3 c==> c= f0 cHD f3 c==> c~ c= f3 cNIL c==> c~ c= f1 crev ccat f2 f3 c==> ! c= crev crev b0 b0 cF c/\ c==> c==> cMEM f0 f1 c==> c= crev f1 ccat f2 f3 c==> c= f0 cHD f3 c==> c~ c= f3 cNIL c==> c~ c= f1 crev ccat f2 f3 c==> ! c= crev crev b0 b0 cF c==> cMEM f0 f1 c==> c= crev f1 ccat f2 f3 c==> c= f0 cHD f3 c==> c~ c= f3 cNIL c==> c~ c= f1 crev ccat f2 f3 c==> ! c= crev crev b0 b0 cF c==> cMEM f0 f1 c==> c= crev f1 ccat f2 f3 c==> c= f0 cHD f3 c==> c~ c= f3 cNIL c==> c~ c= f1 crev ccat f2 f3 c==> ! c= crev crev b0 b0 cF
+- |- (((!t1. (!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))))) ==> ((\t1. (!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))))) t1)) = ((\t1. (!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))))) t1))
+T c= c==> ! ! ! c= c\/ b0 c\/ b1 b2 c\/ c\/ b0 b1 b2 * / ! ! c= c\/ b0 c\/ b1 b2 c\/ c\/ b0 b1 b2 f0 * / ! ! c= c\/ b0 c\/ b1 b2 c\/ c\/ b0 b1 b2 f0
+- (!s. ((rev (rev s)) = s)), (~ ((rev (rev b)) = b)) |- ((~ ((rev (rev b)) = b)) /\ ((rev (rev b)) = b))
+T c==> ! c= crev crev b0 b0 c==> c~ c= crev crev f0 f0 c/\ c~ c= crev crev f0 f0 c= crev crev f0 f0
+- (?a. (?b. (((rev s) = ((cat a) b)) /\ ((x = (HD b)) /\ (~ (b = NIL)))))), ((MEM x) s) |- (?a. (?b. ((s = ((cat a) b)) /\ ((x = (LAST a)) /\ (~ (a = NIL))))))
+T c==> c? / c? / c/\ c= crev f0 ccat b0 b1 c/\ c= f1 cHD b1 c~ c= b1 cNIL c==> cMEM f1 f0 c? / c? / c/\ c= f0 ccat b0 b1 c/\ c= f1 cLAST b0 c~ c= b0 cNIL
+- ((((MEM x) s) ==> (((rev s) = ((cat a) b)) ==> ((x = (HD b)) ==> ((~ (b = NIL)) ==> (((rev b) = NIL) ==> ((!s. ((rev (rev s)) = s)) ==> (((rev NIL) = NIL) ==> F))))))) ==> (((MEM x) s) ==> (((rev s) = ((cat a) b)) ==> ((x = (HD b)) ==> ((~ (b = NIL)) ==> (((rev b) = NIL) ==> ((!s. ((rev (rev s)) = s)) ==> (((rev NIL) = NIL) ==> F)))))))), (((MEM x) s) ==> (((rev s) = ((cat a) b)) ==> ((x = (HD b)) ==> ((~ (b = NIL)) ==> (((rev b) = NIL) ==> ((!s. ((rev (rev s)) = s)) ==> (((rev NIL) = NIL) ==> F))))))) |- (((((MEM x) s) ==> (((rev s) = ((cat a) b)) ==> ((x = (HD b)) ==> ((~ (b = NIL)) ==> (((rev b) = NIL) ==> ((!s. ((rev (rev s)) = s)) ==> (((rev NIL) = NIL) ==> F))))))) ==> (((MEM x) s) ==> (((rev s) = ((cat a) b)) ==> ((x = (HD b)) ==> ((~ (b = NIL)) ==> (((rev b) = NIL) ==> ((!s. ((rev (rev s)) = s)) ==> (((rev NIL) = NIL) ==> F)))))))) /\ (((MEM x) s) ==> (((rev s) = ((cat a) b)) ==> ((x = (HD b)) ==> ((~ (b = NIL)) ==> (((rev b) = NIL) ==> ((!s. ((rev (rev s)) = s)) ==> (((rev NIL) = NIL) ==> F))))))))
+T c==> c==> c==> cMEM f0 f1 c==> c= crev f1 ccat f2 f3 c==> c= f0 cHD f3 c==> c~ c= f3 cNIL c==> c= crev f3 cNIL c==> ! c= crev crev b0 b0 c==> c= crev cNIL cNIL cF c==> cMEM f0 f1 c==> c= crev f1 ccat f2 f3 c==> c= f0 cHD f3 c==> c~ c= f3 cNIL c==> c= crev f3 cNIL c==> ! c= crev crev b0 b0 c==> c= crev cNIL cNIL cF c==> c==> cMEM f0 f1 c==> c= crev f1 ccat f2 f3 c==> c= f0 cHD f3 c==> c~ c= f3 cNIL c==> c= crev f3 cNIL c==> ! c= crev crev b0 b0 c==> c= crev cNIL cNIL cF c/\ c==> c==> cMEM f0 f1 c==> c= crev f1 ccat f2 f3 c==> c= f0 cHD f3 c==> c~ c= f3 cNIL c==> c= crev f3 cNIL c==> ! c= crev crev b0 b0 c==> c= crev cNIL cNIL cF c==> cMEM f0 f1 c==> c= crev f1 ccat f2 f3 c==> c= f0 cHD f3 c==> c~ c= f3 cNIL c==> c= crev f3 cNIL c==> ! c= crev crev b0 b0 c==> c= crev cNIL cNIL cF c==> cMEM f0 f1 c==> c= crev f1 ccat f2 f3 c==> c= f0 cHD f3 c==> c~ c= f3 cNIL c==> c= crev f3 cNIL c==> ! c= crev crev b0 b0 c==> c= crev cNIL cNIL cF
+- |- ((~ (_10120261 = _10120262)) \/ ((HD _10120261) = (HD _10120262)))
+T c\/ c~ c= f0 f1 c= cHD f0 cHD f1
+- (x = (HD b)) |- ((~ (s = (rev ((cat a) b)))) = (~ (s = (rev ((cat a) b)))))
+T c==> c= f0 cHD f1 c= c~ c= f2 crev ccat f3 f1 c~ c= f2 crev ccat f3 f1
+- ((rev b) = NIL) |- (((MEM x) s) = ((MEM x) s))
+T c==> c= crev f0 cNIL c= cMEM f1 f2 cMEM f1 f2
+- ((rev NIL) = NIL), ((rev b) = NIL) |- ((~ ((rev (rev b)) = (rev b))) ==> ((rev (rev b)) = (rev b)))
+T c==> c= crev cNIL cNIL c==> c= crev f0 cNIL c==> c~ c= crev crev f0 crev f0 c= crev crev f0 crev f0
+- (((MEM x) s) ==> (((rev s) = ((cat a) b)) ==> ((x = (HD b)) ==> ((~ (b = NIL)) ==> ((~ (s = (rev ((cat a) b)))) ==> ((!s. ((rev (rev s)) = s)) ==> F)))))) |- ((((MEM x) s) ==> (((rev s) = ((cat a) b)) ==> ((x = (HD b)) ==> ((~ (b = NIL)) ==> ((~ (s = (rev ((cat a) b)))) ==> ((!s. ((rev (rev s)) = s)) ==> F)))))) /\ (((MEM x) s) ==> (((rev s) = ((cat a) b)) ==> ((x = (HD b)) ==> ((~ (b = NIL)) ==> ((~ (s = (rev ((cat a) b)))) ==> ((!s. ((rev (rev s)) = s)) ==> F)))))))
+T c==> c==> cMEM f0 f1 c==> c= crev f1 ccat f2 f3 c==> c= f0 cHD f3 c==> c~ c= f3 cNIL c==> c~ c= f1 crev ccat f2 f3 c==> ! c= crev crev b0 b0 cF c/\ c==> cMEM f0 f1 c==> c= crev f1 ccat f2 f3 c==> c= f0 cHD f3 c==> c~ c= f3 cNIL c==> c~ c= f1 crev ccat f2 f3 c==> ! c= crev crev b0 b0 cF c==> cMEM f0 f1 c==> c= crev f1 ccat f2 f3 c==> c= f0 cHD f3 c==> c~ c= f3 cNIL c==> c~ c= f1 crev ccat f2 f3 c==> ! c= crev crev b0 b0 cF
+- (x = (HD b)) |- (((rev (rev b)) = (rev b)) = ((rev (rev b)) = (rev b)))
+T c==> c= f0 cHD f1 c= c= crev crev f1 crev f1 c= crev crev f1 crev f1
+- (!s. ((rev (rev s)) = s)), ((rev s) = ((cat a) b)) |- ((~ (s = (rev ((cat a) b)))) ==> (s = (rev ((cat a) b))))
+T c==> ! c= crev crev b0 b0 c==> c= crev f0 ccat f1 f2 c==> c~ c= f0 crev ccat f1 f2 c= f0 crev ccat f1 f2
+- (_10120257 = _10120259) |- ((_10120258 = _10120260) ==> (((cat _10120257) _10120258) = ((cat _10120259) _10120260)))
+T c==> c= f0 f1 c==> c= f2 f3 c= ccat f0 f2 ccat f1 f3
+- (b = NIL) |- (NIL = b)
+T c==> c= f0 cNIL c= cNIL f0
+- (~ ((rev s) = ((cat a) b))), ((rev s) = ((cat a) b)) |- ((~ ((rev s) = ((cat a) b))) /\ ((rev s) = ((cat a) b)))
+T c==> c~ c= crev f0 ccat f1 f2 c==> c= crev f0 ccat f1 f2 c/\ c~ c= crev f0 ccat f1 f2 c= crev f0 ccat f1 f2
+- |- ((((((MEM x) s) ==> (((rev s) = ((cat a) b)) ==> ((x = (HD b)) ==> ((~ (b = NIL)) ==> ((~ (s = (rev ((cat a) b)))) ==> ((!s. ((rev (rev s)) = s)) ==> F)))))) ==> (((MEM x) s) ==> (((rev s) = ((cat a) b)) ==> ((x = (HD b)) ==> ((~ (b = NIL)) ==> ((~ (s = (rev ((cat a) b)))) ==> ((!s. ((rev (rev s)) = s)) ==> F))))))) ==> ((((MEM x) s) ==> (((rev s) = ((cat a) b)) ==> ((x = (HD b)) ==> ((~ (b = NIL)) ==> ((~ (s = (rev ((cat a) b)))) ==> ((!s. ((rev (rev s)) = s)) ==> F)))))) ==> (((MEM x) s) ==> (((rev s) = ((cat a) b)) ==> ((x = (HD b)) ==> ((~ (b = NIL)) ==> ((~ (s = (rev ((cat a) b)))) ==> ((!s. ((rev (rev s)) = s)) ==> F)))))))) = ((((MEM x) s) ==> (((rev s) = ((cat a) b)) ==> ((x = (HD b)) ==> ((~ (b = NIL)) ==> ((~ (s = (rev ((cat a) b)))) ==> ((!s. ((rev (rev s)) = s)) ==> F)))))) ==> (((MEM x) s) ==> (((rev s) = ((cat a) b)) ==> ((x = (HD b)) ==> ((~ (b = NIL)) ==> ((~ (s = (rev ((cat a) b)))) ==> ((!s. ((rev (rev s)) = s)) ==> F))))))))
+T c= c==> c==> c==> cMEM f0 f1 c==> c= crev f1 ccat f2 f3 c==> c= f0 cHD f3 c==> c~ c= f3 cNIL c==> c~ c= f1 crev ccat f2 f3 c==> ! c= crev crev b0 b0 cF c==> cMEM f0 f1 c==> c= crev f1 ccat f2 f3 c==> c= f0 cHD f3 c==> c~ c= f3 cNIL c==> c~ c= f1 crev ccat f2 f3 c==> ! c= crev crev b0 b0 cF c==> c==> cMEM f0 f1 c==> c= crev f1 ccat f2 f3 c==> c= f0 cHD f3 c==> c~ c= f3 cNIL c==> c~ c= f1 crev ccat f2 f3 c==> ! c= crev crev b0 b0 cF c==> cMEM f0 f1 c==> c= crev f1 ccat f2 f3 c==> c= f0 cHD f3 c==> c~ c= f3 cNIL c==> c~ c= f1 crev ccat f2 f3 c==> ! c= crev crev b0 b0 cF c==> c==> cMEM f0 f1 c==> c= crev f1 ccat f2 f3 c==> c= f0 cHD f3 c==> c~ c= f3 cNIL c==> c~ c= f1 crev ccat f2 f3 c==> ! c= crev crev b0 b0 cF c==> cMEM f0 f1 c==> c= crev f1 ccat f2 f3 c==> c= f0 cHD f3 c==> c~ c= f3 cNIL c==> c~ c= f1 crev ccat f2 f3 c==> ! c= crev crev b0 b0 cF
+- |- ((_10120257 = _10120259) ==> ((~ (_10120258 = _10120260)) \/ (((cat _10120257) _10120258) = ((cat _10120259) _10120260))))
+T c==> c= f0 f1 c\/ c~ c= f2 f3 c= ccat f0 f2 ccat f1 f3
+- ((rev s) = ((cat a) b)) |- ((~ ((rev s) = ((cat a) b))) ==> ((rev s) = ((cat a) b)))
+T c==> c= crev f0 ccat f1 f2 c==> c~ c= crev f0 ccat f1 f2 c= crev f0 ccat f1 f2
+- (_10120257 = _10120259) |- ((_10120257 = _10120259) /\ ((~ (_10120258 = _10120260)) \/ (((cat _10120257) _10120258) = ((cat _10120259) _10120260))))
+T c==> c= f0 f1 c/\ c= f0 f1 c\/ c~ c= f2 f3 c= ccat f0 f2 ccat f1 f3

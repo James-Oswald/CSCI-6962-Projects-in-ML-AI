@@ -1,0 +1,39 @@
+N MATCH_SEQPATTERN
+C |- (((_MATCH x) ((_SEQPATTERN r) s)) = (((COND (?y. ((r x) y))) ((_MATCH x) r)) ((_MATCH x) s)))
+T c= c_MATCH f0 * * part c_SEQPATTERN f1 f2 cCOND c? / * * f1 f0 b0 c_MATCH f0 f1 c_MATCH f0 f2
+D TRUTH
+A |- T
+T cT
+D ETA_AX
+A |- (!t. ((\x. (t x)) = t))
+T c= / * f0 b0 f0
+D SELECT_AX
+A |- (!P. (!x. ((P x) ==> (P (@ P)))))
+T c==> * f0 f1 * f0 c@ f0
+D BOOL_CASES_AX
+A |- (!t. ((t = T) \/ (t = F)))
+T c\/ c= f0 cT c= f0 cF
+D NOT_CLAUSES
+A |- ((!t. ((~ (~ t)) = t)) /\ (((~ T) = F) /\ ((~ F) = T)))
+T c/\ ! c= c~ c~ b0 b0 c/\ c= c~ cT cF c= c~ cF cT
+D NOT_EXISTS_THM
+A |- (!P. ((~ (?x. (P x))) = (!x. (~ (P x)))))
+T c= c~ c? / * f0 b0 ! c~ * f0 b0
+D NOT_FORALL_THM
+A |- (!P. ((~ (!x. (P x))) = (?x. (~ (P x)))))
+T c= c~ ! * f0 b0 c? / c~ * f0 b0
+D COND_CLAUSES
+A |- (!t1. (!t2. (((((COND T) t1) t2) = t1) /\ ((((COND F) t1) t2) = t2))))
+T c/\ c= cCOND cT f0 f1 f0 c= cCOND cF f0 f1 f1
+D I_THM
+A |- (!x. ((I x) = x))
+T c= cI f0 f0
+D _SEQPATTERN
+A |- (_SEQPATTERN = (\r. (\s. (\x. (((COND (?y. ((r x) y))) (r x)) (s x))))))
+T c= part c_SEQPATTERN / / / * * * part cCOND c? / * * b0 b2 b3 * b0 b2 * b1 b2
+D _MATCH
+A |- (_MATCH = (\e. (\r. (((COND (?! (r e))) (@ (r e))) (@z. F)))))
+T c= part c_MATCH / / cCOND c?! * b1 b0 c@ * b1 b0 c@ / cF
+D _FUNCTION
+A |- (_FUNCTION = (\r. (\x. (((COND (?! (r x))) (@ (r x))) (@z. F)))))
+T c= part c_FUNCTION / / cCOND c?! * b0 b1 c@ * b0 b1 c@ / cF

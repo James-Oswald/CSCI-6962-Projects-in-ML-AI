@@ -1,0 +1,382 @@
+N Tame_list.mem_minimal_el
+C |- (!f. (!xs. ((~ (xs = NIL)) ==> ((MEM ((minimal_el f) xs)) xs))))
+T c==> c~ c= f0 cNIL cMEM cminimal_el f1 f0 f0
+D TRUTH
+A |- T
+T cT
+D BOOL_CASES_AX
+A |- (!t. ((t = T) \/ (t = F)))
+T c\/ c= f0 cT c= f0 cF
+D NOT_CLAUSES
+A |- ((!t. ((~ (~ t)) = t)) /\ (((~ T) = F) /\ ((~ F) = T)))
+T c/\ ! c= c~ c~ b0 b0 c/\ c= c~ cT cF c= c~ cF cT
+D COND_ELIM_THM
+A |- ((P (((COND c) x) y)) = ((c ==> (P x)) /\ ((~ c) ==> (P y))))
+T c= * f0 cCOND f1 f2 f3 c/\ c==> f1 * f0 f2 c==> c~ f1 * f0 f3
+D LET_DEF
+A |- (!f. (!x. (((LET f) x) = (f x))))
+T c= cLET f0 f1 * f0 f1
+D LET_END_DEF
+A |- (!t. ((LET_END t) = t))
+T c= cLET_END f0 f0
+D list_INDUCT
+A |- (!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x))))
+T c==> c/\ * f0 cNIL ! ! c==> * f0 b1 * f0 cCONS b0 b1 ! * f0 b0
+D MEM
+A |- ((((MEM x) NIL) = F) /\ (((MEM x) ((CONS h) t)) = ((x = h) \/ ((MEM x) t))))
+T c/\ c= cMEM f0 cNIL cF c= cMEM f0 cCONS f1 f2 c\/ c= f0 f1 cMEM f0 f2
+D Tame_defs.minimal_el
+A |- ((((minimal_el f) NIL) = (CHOICE UNIV)) /\ (((minimal_el f) ((CONS x) xs)) = (((COND (xs = NIL)) x) ((LET (\m. (LET_END (((COND ((f x) <= (f m))) x) m)))) ((minimal_el f) xs)))))
+T c/\ c= cminimal_el f0 cNIL cCHOICE part cUNIV c= cminimal_el f0 cCONS f1 f2 cCOND c= f2 cNIL f1 cLET / cLET_END cCOND c<= * f0 f1 * f0 b0 f1 b0 cminimal_el f0 f2
++ (~ (t = NIL)), ((~ (t = NIL)) ==> ((MEM ((minimal_el f) t)) t)) |- ((~ (t = NIL)) /\ ((~ ((f h) <= (f ((minimal_el f) t)))) ==> ((~ (((CONS h) t) = NIL)) ==> ((((minimal_el f) t) = h) \/ ((MEM ((minimal_el f) t)) t)))))
+T c==> c~ c= f0 cNIL c==> c==> c~ c= f0 cNIL cMEM cminimal_el f1 f0 f0 c/\ c~ c= f0 cNIL c==> c~ c<= * f1 f2 * f1 cminimal_el f1 f0 c==> c~ c= cCONS f2 f0 cNIL c\/ c= cminimal_el f1 f0 f2 cMEM cminimal_el f1 f0 f0
++ |- ((\h. (((~ (t = NIL)) ==> ((MEM ((minimal_el f) t)) t)) ==> ((~ (t = NIL)) ==> ((~ ((f h) <= (f ((minimal_el f) t)))) ==> ((~ ((~ (((CONS h) t) = NIL)) ==> ((((minimal_el f) t) = h) \/ ((MEM ((minimal_el f) t)) t)))) ==> F))))) h)
+T * / c==> c==> c~ c= f0 cNIL cMEM cminimal_el f1 f0 f0 c==> c~ c= f0 cNIL c==> c~ c<= * f1 b0 * f1 cminimal_el f1 f0 c==> c~ c==> c~ c= cCONS b0 f0 cNIL c\/ c= cminimal_el f1 f0 b0 cMEM cminimal_el f1 f0 f0 cF f2
+- |- ((~ (NIL = NIL)) ==> (NIL = NIL))
+T c==> c~ c= cNIL cNIL c= cNIL cNIL
++ |- (((~ (((CONS h) t) = NIL)) ==> ((MEM (((COND ((f h) <= (f ((minimal_el f) t)))) h) ((minimal_el f) t))) ((CONS h) t))) = ((((f h) <= (f ((minimal_el f) t))) ==> ((~ (((CONS h) t) = NIL)) ==> ((MEM h) ((CONS h) t)))) /\ ((~ ((f h) <= (f ((minimal_el f) t)))) ==> ((~ (((CONS h) t) = NIL)) ==> ((MEM ((minimal_el f) t)) ((CONS h) t))))))
+T c= c==> c~ c= cCONS f0 f1 cNIL cMEM cCOND c<= * f2 f0 * f2 cminimal_el f2 f1 f0 cminimal_el f2 f1 cCONS f0 f1 c/\ c==> c<= * f2 f0 * f2 cminimal_el f2 f1 c==> c~ c= cCONS f0 f1 cNIL cMEM f0 cCONS f0 f1 c==> c~ c<= * f2 f0 * f2 cminimal_el f2 f1 c==> c~ c= cCONS f0 f1 cNIL cMEM cminimal_el f2 f1 cCONS f0 f1
++ |- ((\x. (((LET f) x) = (f x))) x)
+T * / c= cLET f0 b0 * f0 b0 f1
+- |- ((\t1. (!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))))) t1)
+T * / ! ! c= c\/ b0 c\/ b1 b2 c\/ c\/ b0 b1 b2 f0
+- (~ ((((minimal_el f) t) = h) \/ ((MEM ((minimal_el f) t)) t))), (t = NIL) |- (~ (((minimal_el f) NIL) = h))
+T c==> c~ c\/ c= cminimal_el f0 f1 f2 cMEM cminimal_el f0 f1 f1 c==> c= f1 cNIL c~ c= cminimal_el f0 cNIL f2
++ |- (((!x. (((LET f) x) = (f x))) ==> ((\x. (((LET f) x) = (f x))) x)) = ((\x. (((LET f) x) = (f x))) x))
+T c= c==> ! c= cLET f0 b0 * f0 b0 * / c= cLET f0 b0 * f0 b0 f1 * / c= cLET f0 b0 * f0 b0 f1
++ (~ (t = NIL)), (~ (((CONS h) t) = NIL)), ((~ (t = NIL)) ==> ((MEM ((minimal_el f) t)) t)) |- ((~ (((CONS h) t) = NIL)) /\ ((((minimal_el f) t) = h) \/ ((MEM ((minimal_el f) t)) t)))
+T c==> c~ c= f0 cNIL c==> c~ c= cCONS f1 f0 cNIL c==> c==> c~ c= f0 cNIL cMEM cminimal_el f2 f0 f0 c/\ c~ c= cCONS f1 f0 cNIL c\/ c= cminimal_el f2 f0 f1 cMEM cminimal_el f2 f0 f0
++ ((~ (t = NIL)) ==> ((MEM ((minimal_el f) t)) t)) |- (((~ (t = NIL)) ==> ((MEM ((minimal_el f) t)) t)) /\ ((~ (t = NIL)) ==> ((~ ((f h) <= (f ((minimal_el f) t)))) ==> ((~ (((CONS h) t) = NIL)) ==> ((((minimal_el f) t) = h) \/ ((MEM ((minimal_el f) t)) t))))))
+T c==> c==> c~ c= f0 cNIL cMEM cminimal_el f1 f0 f0 c/\ c==> c~ c= f0 cNIL cMEM cminimal_el f1 f0 f0 c==> c~ c= f0 cNIL c==> c~ c<= * f1 f2 * f1 cminimal_el f1 f0 c==> c~ c= cCONS f2 f0 cNIL c\/ c= cminimal_el f1 f0 f2 cMEM cminimal_el f1 f0 f0
+- (t = NIL) |- ((~ (((minimal_el f) t) = h)) = (~ (((minimal_el f) NIL) = h)))
+T c==> c= f0 cNIL c= c~ c= cminimal_el f1 f0 f2 c~ c= cminimal_el f1 cNIL f2
++ |- ((t ==> T) = T)
+T c= c==> f0 cT cT
++ |- ((t = NIL) ==> ((~ (((CONS h) t) = NIL)) ==> ((MEM h) ((CONS h) t))))
+T c==> c= f0 cNIL c==> c~ c= cCONS f1 f0 cNIL cMEM f1 cCONS f1 f0
+- (~ ((((minimal_el f) t) = h) \/ ((MEM ((minimal_el f) t)) t))), ((MEM ((minimal_el f) t)) t) |- (((MEM ((minimal_el f) t)) t) /\ F)
+T c==> c~ c\/ c= cminimal_el f0 f1 f2 cMEM cminimal_el f0 f1 f1 c==> cMEM cminimal_el f0 f1 f1 c/\ cMEM cminimal_el f0 f1 f1 cF
+- |- (((((~ (t = NIL)) ==> ((MEM ((minimal_el f) t)) t)) ==> ((~ (t = NIL)) ==> ((~ ((f h) <= (f ((minimal_el f) t)))) ==> ((~ ((~ (((CONS h) t) = NIL)) ==> ((((minimal_el f) t) = h) \/ ((MEM ((minimal_el f) t)) t)))) ==> F)))) ==> (((~ (t = NIL)) ==> ((MEM ((minimal_el f) t)) t)) ==> ((~ (t = NIL)) ==> ((~ ((f h) <= (f ((minimal_el f) t)))) ==> ((~ ((~ (((CONS h) t) = NIL)) ==> ((((minimal_el f) t) = h) \/ ((MEM ((minimal_el f) t)) t)))) ==> F))))) ==> ((((~ (t = NIL)) ==> ((MEM ((minimal_el f) t)) t)) ==> ((~ (t = NIL)) ==> ((~ ((f h) <= (f ((minimal_el f) t)))) ==> ((~ ((~ (((CONS h) t) = NIL)) ==> ((((minimal_el f) t) = h) \/ ((MEM ((minimal_el f) t)) t)))) ==> F)))) ==> (((~ (t = NIL)) ==> ((MEM ((minimal_el f) t)) t)) ==> ((~ (t = NIL)) ==> ((~ ((f h) <= (f ((minimal_el f) t)))) ==> ((~ ((~ (((CONS h) t) = NIL)) ==> ((((minimal_el f) t) = h) \/ ((MEM ((minimal_el f) t)) t)))) ==> F))))))
+T c==> c==> c==> c==> c~ c= f0 cNIL cMEM cminimal_el f1 f0 f0 c==> c~ c= f0 cNIL c==> c~ c<= * f1 f2 * f1 cminimal_el f1 f0 c==> c~ c==> c~ c= cCONS f2 f0 cNIL c\/ c= cminimal_el f1 f0 f2 cMEM cminimal_el f1 f0 f0 cF c==> c==> c~ c= f0 cNIL cMEM cminimal_el f1 f0 f0 c==> c~ c= f0 cNIL c==> c~ c<= * f1 f2 * f1 cminimal_el f1 f0 c==> c~ c==> c~ c= cCONS f2 f0 cNIL c\/ c= cminimal_el f1 f0 f2 cMEM cminimal_el f1 f0 f0 cF c==> c==> c==> c~ c= f0 cNIL cMEM cminimal_el f1 f0 f0 c==> c~ c= f0 cNIL c==> c~ c<= * f1 f2 * f1 cminimal_el f1 f0 c==> c~ c==> c~ c= cCONS f2 f0 cNIL c\/ c= cminimal_el f1 f0 f2 cMEM cminimal_el f1 f0 f0 cF c==> c==> c~ c= f0 cNIL cMEM cminimal_el f1 f0 f0 c==> c~ c= f0 cNIL c==> c~ c<= * f1 f2 * f1 cminimal_el f1 f0 c==> c~ c==> c~ c= cCONS f2 f0 cNIL c\/ c= cminimal_el f1 f0 f2 cMEM cminimal_el f1 f0 f0 cF
+- (~ ((f h) <= (f ((minimal_el f) t)))) |- (((f h) <= (f ((minimal_el f) t))) = F)
+T c==> c~ c<= * f0 f1 * f0 cminimal_el f0 f2 c= c<= * f0 f1 * f0 cminimal_el f0 f2 cF
+- |- ((t ==> t) = T)
+T c= c==> f0 f0 cT
+- ((MEM ((minimal_el f) t)) t) |- ((~ ((MEM ((minimal_el f) t)) t)) ==> ((MEM ((minimal_el f) t)) t))
+T c==> cMEM cminimal_el f0 f1 f1 c==> c~ cMEM cminimal_el f0 f1 f1 cMEM cminimal_el f0 f1 f1
+- |- ((t \/ t) = t)
+T c= c\/ f0 f0 f0
++ |- (((NIL = NIL) ==> F) = F)
+T c= c==> c= cNIL cNIL cF cF
+- |- ((\t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))) t3)
+T * / c= c\/ f0 c\/ f1 b0 c\/ c\/ f0 f1 b0 f2
+- (~ ((MEM ((minimal_el f) t)) t)), ((MEM ((minimal_el f) t)) t) |- ((~ ((MEM ((minimal_el f) t)) t)) /\ ((MEM ((minimal_el f) t)) t))
+T c==> c~ cMEM cminimal_el f0 f1 f1 c==> cMEM cminimal_el f0 f1 f1 c/\ c~ cMEM cminimal_el f0 f1 f1 cMEM cminimal_el f0 f1 f1
+- |- (((~ p) ==> p) = p)
+T c= c==> c~ f0 f0 f0
+- (t = NIL) |- (((~ (((CONS h) t) = NIL)) ==> ((MEM h) ((CONS h) t))) = ((~ (((CONS h) t) = NIL)) ==> ((MEM h) ((CONS h) t))))
+T c==> c= f0 cNIL c= c==> c~ c= cCONS f1 f0 cNIL cMEM f1 cCONS f1 f0 c==> c~ c= cCONS f1 f0 cNIL cMEM f1 cCONS f1 f0
+- |- ((!h. t) = t)
+T c= ! f0 f0
++ |- ((\f. (!x. (((LET f) x) = (f x)))) f)
+T * / ! c= cLET b0 b1 * b0 b1 f0
++ |- (((!t. ((LET_END t) = t)) ==> ((\t. ((LET_END t) = t)) t)) = ((\t. ((LET_END t) = t)) t))
+T c= c==> ! c= cLET_END b0 b0 * / c= cLET_END b0 b0 f0 * / c= cLET_END b0 b0 f0
+- ((f h) <= (f ((minimal_el f) t))) |- (((~ (((CONS h) t) = NIL)) ==> ((MEM h) ((CONS h) t))) = ((~ (((CONS h) t) = NIL)) ==> ((MEM h) ((CONS h) t))))
+T c==> c<= * f0 f1 * f0 cminimal_el f0 f2 c= c==> c~ c= cCONS f1 f2 cNIL cMEM f1 cCONS f1 f2 c==> c~ c= cCONS f1 f2 cNIL cMEM f1 cCONS f1 f2
+- |- ((f x) = ((I f) x))
+T c= * f0 f1 cI f0 f1
+- |- ((t ==> F) = (~ t))
+T c= c==> f0 cF c~ f0
+- (~ ((((minimal_el f) t) = h) \/ ((MEM ((minimal_el f) t)) t))), (t = NIL) |- (~ ((MEM ((minimal_el f) NIL)) NIL))
+T c==> c~ c\/ c= cminimal_el f0 f1 f2 cMEM cminimal_el f0 f1 f1 c==> c= f1 cNIL c~ cMEM cminimal_el f0 cNIL cNIL
++ (~ (t = NIL)), ((~ (t = NIL)) ==> ((MEM ((minimal_el f) t)) t)) |- ((~ (((CONS h) t) = NIL)) ==> ((((minimal_el f) t) = h) \/ ((MEM ((minimal_el f) t)) t)))
+T c==> c~ c= f0 cNIL c==> c==> c~ c= f0 cNIL cMEM cminimal_el f1 f0 f0 c==> c~ c= cCONS f2 f0 cNIL c\/ c= cminimal_el f1 f0 f2 cMEM cminimal_el f1 f0 f0
++ (~ (t = NIL)), (~ ((f h) <= (f ((minimal_el f) t)))), ((~ (t = NIL)) ==> ((MEM ((minimal_el f) t)) t)) |- ((~ (((CONS h) t) = NIL)) ==> ((((minimal_el f) t) = h) \/ ((MEM ((minimal_el f) t)) t)))
+T c==> c~ c= f0 cNIL c==> c~ c<= * f1 f2 * f1 cminimal_el f1 f0 c==> c==> c~ c= f0 cNIL cMEM cminimal_el f1 f0 f0 c==> c~ c= cCONS f2 f0 cNIL c\/ c= cminimal_el f1 f0 f2 cMEM cminimal_el f1 f0 f0
++ |- (p = ((~ p) ==> F))
+T c= f0 c==> c~ f0 cF
+- (_10072020 = _10072022), (_10072021 = _10072023) |- ((_10072021 = _10072023) /\ (((MEM _10072022) _10072023) \/ (~ ((MEM _10072020) _10072021))))
+T c==> c= f0 f1 c==> c= f2 f3 c/\ c= f2 f3 c\/ cMEM f1 f3 c~ cMEM f0 f2
+- (~ F), (~ ((((minimal_el f) t) = h) \/ ((MEM ((minimal_el f) t)) t))), ((MEM ((minimal_el f) t)) t) |- ((~ F) /\ F)
+T c==> c~ cF c==> c~ c\/ c= cminimal_el f0 f1 f2 cMEM cminimal_el f0 f1 f1 c==> cMEM cminimal_el f0 f1 f1 c/\ c~ cF cF
++ |- (((!t. (!f. (!h. (((~ (t = NIL)) ==> ((MEM ((minimal_el f) t)) t)) ==> ((~ (t = NIL)) ==> ((~ ((f h) <= (f ((minimal_el f) t)))) ==> ((~ ((~ (((CONS h) t) = NIL)) ==> ((((minimal_el f) t) = h) \/ ((MEM ((minimal_el f) t)) t)))) ==> F))))))) ==> ((\t. (!f. (!h. (((~ (t = NIL)) ==> ((MEM ((minimal_el f) t)) t)) ==> ((~ (t = NIL)) ==> ((~ ((f h) <= (f ((minimal_el f) t)))) ==> ((~ ((~ (((CONS h) t) = NIL)) ==> ((((minimal_el f) t) = h) \/ ((MEM ((minimal_el f) t)) t)))) ==> F))))))) t)) = ((\t. (!f. (!h. (((~ (t = NIL)) ==> ((MEM ((minimal_el f) t)) t)) ==> ((~ (t = NIL)) ==> ((~ ((f h) <= (f ((minimal_el f) t)))) ==> ((~ ((~ (((CONS h) t) = NIL)) ==> ((((minimal_el f) t) = h) \/ ((MEM ((minimal_el f) t)) t)))) ==> F))))))) t))
+T c= c==> ! ! ! c==> c==> c~ c= b0 cNIL cMEM cminimal_el b1 b0 b0 c==> c~ c= b0 cNIL c==> c~ c<= * b1 b2 * b1 cminimal_el b1 b0 c==> c~ c==> c~ c= cCONS b2 b0 cNIL c\/ c= cminimal_el b1 b0 b2 cMEM cminimal_el b1 b0 b0 cF * / ! ! c==> c==> c~ c= b0 cNIL cMEM cminimal_el b1 b0 b0 c==> c~ c= b0 cNIL c==> c~ c<= * b1 b2 * b1 cminimal_el b1 b0 c==> c~ c==> c~ c= cCONS b2 b0 cNIL c\/ c= cminimal_el b1 b0 b2 cMEM cminimal_el b1 b0 b0 cF f0 * / ! ! c==> c==> c~ c= b0 cNIL cMEM cminimal_el b1 b0 b0 c==> c~ c= b0 cNIL c==> c~ c<= * b1 b2 * b1 cminimal_el b1 b0 c==> c~ c==> c~ c= cCONS b2 b0 cNIL c\/ c= cminimal_el b1 b0 b2 cMEM cminimal_el b1 b0 b0 cF f0
++ |- (((MEM x) ((CONS h) t)) = ((x = h) \/ ((MEM x) t)))
+T c= cMEM f0 cCONS f1 f2 c\/ c= f0 f1 cMEM f0 f2
++ |- ((((~ (NIL = NIL)) ==> ((MEM ((minimal_el f) NIL)) NIL)) /\ (!h. (!t. (((~ (t = NIL)) ==> ((MEM ((minimal_el f) t)) t)) ==> ((~ (((CONS h) t) = NIL)) ==> ((MEM ((minimal_el f) ((CONS h) t))) ((CONS h) t))))))) ==> (!xs. ((~ (xs = NIL)) ==> ((MEM ((minimal_el f) xs)) xs))))
+T c==> c/\ c==> c~ c= cNIL cNIL cMEM cminimal_el f0 cNIL cNIL ! ! c==> c==> c~ c= b1 cNIL cMEM cminimal_el f0 b1 b1 c==> c~ c= cCONS b0 b1 cNIL cMEM cminimal_el f0 cCONS b0 b1 cCONS b0 b1 ! c==> c~ c= b0 cNIL cMEM cminimal_el f0 b0 b0
+- |- ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))
+T c= c\/ f0 c\/ f1 f2 c\/ c\/ f0 f1 f2
+- |- ((~ (_10072028 = _10072030)) \/ ((~ (_10072029 = _10072031)) \/ (((CONS _10072028) _10072029) = ((CONS _10072030) _10072031))))
+T c\/ c~ c= f0 f1 c\/ c~ c= f2 f3 c= cCONS f0 f2 cCONS f1 f3
+- (_10072020 = _10072022) |- ((_10072020 = _10072022) /\ ((~ (_10072021 = _10072023)) \/ (((MEM _10072022) _10072023) \/ (~ ((MEM _10072020) _10072021)))))
+T c==> c= f0 f1 c/\ c= f0 f1 c\/ c~ c= f2 f3 c\/ cMEM f1 f3 c~ cMEM f0 f2
+- ((f h) <= (f ((minimal_el f) t))) |- (((f h) <= (f ((minimal_el f) t))) = T)
+T c==> c<= * f0 f1 * f0 cminimal_el f0 f2 c= c<= * f0 f1 * f0 cminimal_el f0 f2 cT
+- |- ((_10072020 = _10072022) ==> ((~ (_10072021 = _10072023)) \/ (((MEM _10072022) _10072023) \/ (~ ((MEM _10072020) _10072021)))))
+T c==> c= f0 f1 c\/ c~ c= f2 f3 c\/ cMEM f1 f3 c~ cMEM f0 f2
++ (~ ((((minimal_el f) t) = h) \/ ((MEM ((minimal_el f) t)) t))) |- (~ ((MEM ((minimal_el f) t)) t))
+T c==> c~ c\/ c= cminimal_el f0 f1 f2 cMEM cminimal_el f0 f1 f1 c~ cMEM cminimal_el f0 f1 f1
++ |- ((((~ (t = NIL)) ==> ((MEM ((minimal_el f) t)) t)) ==> ((~ (((CONS h) t) = NIL)) ==> ((MEM ((minimal_el f) ((CONS h) t))) ((CONS h) t)))) = T)
+T c= c==> c==> c~ c= f0 cNIL cMEM cminimal_el f1 f0 f0 c==> c~ c= cCONS f2 f0 cNIL cMEM cminimal_el f1 cCONS f2 f0 cCONS f2 f0 cT
++ (~ (t = NIL)), (~ ((f h) <= (f ((minimal_el f) t)))), ((~ (t = NIL)) ==> ((MEM ((minimal_el f) t)) t)) |- ((~ ((f h) <= (f ((minimal_el f) t)))) /\ ((~ (((CONS h) t) = NIL)) ==> ((MEM ((minimal_el f) t)) ((CONS h) t))))
+T c==> c~ c= f0 cNIL c==> c~ c<= * f1 f2 * f1 cminimal_el f1 f0 c==> c==> c~ c= f0 cNIL cMEM cminimal_el f1 f0 f0 c/\ c~ c<= * f1 f2 * f1 cminimal_el f1 f0 c==> c~ c= cCONS f2 f0 cNIL cMEM cminimal_el f1 f0 cCONS f2 f0
++ (~ (t = NIL)), ((~ (t = NIL)) ==> ((MEM ((minimal_el f) t)) t)) |- ((~ (((CONS h) t) = NIL)) ==> ((MEM (((COND ((f h) <= (f ((minimal_el f) t)))) h) ((minimal_el f) t))) ((CONS h) t)))
+T c==> c~ c= f0 cNIL c==> c==> c~ c= f0 cNIL cMEM cminimal_el f1 f0 f0 c==> c~ c= cCONS f2 f0 cNIL cMEM cCOND c<= * f1 f2 * f1 cminimal_el f1 f0 f2 cminimal_el f1 f0 cCONS f2 f0
++ (t = NIL) |- ((~ (t = NIL)) = (~ (NIL = NIL)))
+T c==> c= f0 cNIL c= c~ c= f0 cNIL c~ c= cNIL cNIL
+- (((~ (t = NIL)) ==> ((MEM ((minimal_el f) t)) t)) ==> ((~ (t = NIL)) ==> ((~ ((f h) <= (f ((minimal_el f) t)))) ==> ((~ ((~ (((CONS h) t) = NIL)) ==> ((((minimal_el f) t) = h) \/ ((MEM ((minimal_el f) t)) t)))) ==> F)))) |- ((((~ (t = NIL)) ==> ((MEM ((minimal_el f) t)) t)) ==> ((~ (t = NIL)) ==> ((~ ((f h) <= (f ((minimal_el f) t)))) ==> ((~ ((~ (((CONS h) t) = NIL)) ==> ((((minimal_el f) t) = h) \/ ((MEM ((minimal_el f) t)) t)))) ==> F)))) /\ (((~ (t = NIL)) ==> ((MEM ((minimal_el f) t)) t)) ==> ((~ (t = NIL)) ==> ((~ ((f h) <= (f ((minimal_el f) t)))) ==> ((~ ((~ (((CONS h) t) = NIL)) ==> ((((minimal_el f) t) = h) \/ ((MEM ((minimal_el f) t)) t)))) ==> F)))))
+T c==> c==> c==> c~ c= f0 cNIL cMEM cminimal_el f1 f0 f0 c==> c~ c= f0 cNIL c==> c~ c<= * f1 f2 * f1 cminimal_el f1 f0 c==> c~ c==> c~ c= cCONS f2 f0 cNIL c\/ c= cminimal_el f1 f0 f2 cMEM cminimal_el f1 f0 f0 cF c/\ c==> c==> c~ c= f0 cNIL cMEM cminimal_el f1 f0 f0 c==> c~ c= f0 cNIL c==> c~ c<= * f1 f2 * f1 cminimal_el f1 f0 c==> c~ c==> c~ c= cCONS f2 f0 cNIL c\/ c= cminimal_el f1 f0 f2 cMEM cminimal_el f1 f0 f0 cF c==> c==> c~ c= f0 cNIL cMEM cminimal_el f1 f0 f0 c==> c~ c= f0 cNIL c==> c~ c<= * f1 f2 * f1 cminimal_el f1 f0 c==> c~ c==> c~ c= cCONS f2 f0 cNIL c\/ c= cminimal_el f1 f0 f2 cMEM cminimal_el f1 f0 f0 cF
++ (~ (t = NIL)), ((~ (t = NIL)) ==> ((MEM ((minimal_el f) t)) t)), (((MEM ((minimal_el f) t)) t) ==> F) |- F
+T c==> c~ c= f0 cNIL c==> c==> c~ c= f0 cNIL cMEM cminimal_el f1 f0 f0 c==> c==> cMEM cminimal_el f1 f0 f0 cF cF
+- |- ((\t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3)))) t2)
+T * / ! c= c\/ f0 c\/ b0 b1 c\/ c\/ f0 b0 b1 f1
++ |- (((~ (t = NIL)) ==> ((~ (((CONS h) t) = NIL)) ==> ((MEM ((LET (\m. (LET_END (((COND ((f h) <= (f m))) h) m)))) ((minimal_el f) t))) ((CONS h) t)))) = (((t = NIL) ==> ((~ (((CONS h) t) = NIL)) ==> ((MEM h) ((CONS h) t)))) /\ ((~ (t = NIL)) ==> ((~ (((CONS h) t) = NIL)) ==> ((MEM ((LET (\m. (LET_END (((COND ((f h) <= (f m))) h) m)))) ((minimal_el f) t))) ((CONS h) t))))))
+T c= c==> c~ c= f0 cNIL c==> c~ c= cCONS f1 f0 cNIL cMEM cLET / cLET_END cCOND c<= * f2 f1 * f2 b0 f1 b0 cminimal_el f2 f0 cCONS f1 f0 c/\ c==> c= f0 cNIL c==> c~ c= cCONS f1 f0 cNIL cMEM f1 cCONS f1 f0 c==> c~ c= f0 cNIL c==> c~ c= cCONS f1 f0 cNIL cMEM cLET / cLET_END cCOND c<= * f2 f1 * f2 b0 f1 b0 cminimal_el f2 f0 cCONS f1 f0
+- |- ((~ (_10072032 = _10072034)) \/ ((~ (_10072033 = _10072035)) \/ (((minimal_el _10072032) _10072033) = ((minimal_el _10072034) _10072035))))
+T c\/ c~ c= f0 f1 c\/ c~ c= f2 f3 c= cminimal_el f0 f2 cminimal_el f1 f3
+- (((~ (t = NIL)) ==> ((MEM ((minimal_el f) t)) t)) ==> ((~ (t = NIL)) ==> ((~ ((f h) <= (f ((minimal_el f) t)))) ==> ((~ ((~ (((CONS h) t) = NIL)) ==> ((((minimal_el f) t) = h) \/ ((MEM ((minimal_el f) t)) t)))) ==> F)))) |- (((((~ (t = NIL)) ==> ((MEM ((minimal_el f) t)) t)) ==> ((~ (t = NIL)) ==> ((~ ((f h) <= (f ((minimal_el f) t)))) ==> ((~ ((~ (((CONS h) t) = NIL)) ==> ((((minimal_el f) t) = h) \/ ((MEM ((minimal_el f) t)) t)))) ==> F)))) ==> (((~ (t = NIL)) ==> ((MEM ((minimal_el f) t)) t)) ==> ((~ (t = NIL)) ==> ((~ ((f h) <= (f ((minimal_el f) t)))) ==> ((~ ((~ (((CONS h) t) = NIL)) ==> ((((minimal_el f) t) = h) \/ ((MEM ((minimal_el f) t)) t)))) ==> F))))) ==> (((~ (t = NIL)) ==> ((MEM ((minimal_el f) t)) t)) ==> ((~ (t = NIL)) ==> ((~ ((f h) <= (f ((minimal_el f) t)))) ==> ((~ ((~ (((CONS h) t) = NIL)) ==> ((((minimal_el f) t) = h) \/ ((MEM ((minimal_el f) t)) t)))) ==> F)))))
+T c==> c==> c==> c~ c= f0 cNIL cMEM cminimal_el f1 f0 f0 c==> c~ c= f0 cNIL c==> c~ c<= * f1 f2 * f1 cminimal_el f1 f0 c==> c~ c==> c~ c= cCONS f2 f0 cNIL c\/ c= cminimal_el f1 f0 f2 cMEM cminimal_el f1 f0 f0 cF c==> c==> c==> c==> c~ c= f0 cNIL cMEM cminimal_el f1 f0 f0 c==> c~ c= f0 cNIL c==> c~ c<= * f1 f2 * f1 cminimal_el f1 f0 c==> c~ c==> c~ c= cCONS f2 f0 cNIL c\/ c= cminimal_el f1 f0 f2 cMEM cminimal_el f1 f0 f0 cF c==> c==> c~ c= f0 cNIL cMEM cminimal_el f1 f0 f0 c==> c~ c= f0 cNIL c==> c~ c<= * f1 f2 * f1 cminimal_el f1 f0 c==> c~ c==> c~ c= cCONS f2 f0 cNIL c\/ c= cminimal_el f1 f0 f2 cMEM cminimal_el f1 f0 f0 cF c==> c==> c~ c= f0 cNIL cMEM cminimal_el f1 f0 f0 c==> c~ c= f0 cNIL c==> c~ c<= * f1 f2 * f1 cminimal_el f1 f0 c==> c~ c==> c~ c= cCONS f2 f0 cNIL c\/ c= cminimal_el f1 f0 f2 cMEM cminimal_el f1 f0 f0 cF
++ |- ((!f. (!h. (((~ (t = NIL)) ==> ((MEM ((minimal_el f) t)) t)) ==> ((~ (t = NIL)) ==> ((~ ((f h) <= (f ((minimal_el f) t)))) ==> ((~ (((CONS h) t) = NIL)) ==> ((((minimal_el f) t) = h) \/ ((MEM ((minimal_el f) t)) t)))))))) = T)
+T c= ! ! c==> c==> c~ c= f0 cNIL cMEM cminimal_el b0 f0 f0 c==> c~ c= f0 cNIL c==> c~ c<= * b0 b1 * b0 cminimal_el b0 f0 c==> c~ c= cCONS b1 f0 cNIL c\/ c= cminimal_el b0 f0 b1 cMEM cminimal_el b0 f0 f0 cT
++ |- (((~ (((CONS h) t) = NIL)) ==> ((MEM (((COND (t = NIL)) h) ((LET (\m. (LET_END (((COND ((f h) <= (f m))) h) m)))) ((minimal_el f) t)))) ((CONS h) t))) = ((~ (((CONS h) t) = NIL)) ==> ((MEM ((minimal_el f) ((CONS h) t))) ((CONS h) t))))
+T c= c==> c~ c= cCONS f0 f1 cNIL cMEM cCOND c= f1 cNIL f0 cLET / cLET_END cCOND c<= * f2 f0 * f2 b0 f0 b0 cminimal_el f2 f1 cCONS f0 f1 c==> c~ c= cCONS f0 f1 cNIL cMEM cminimal_el f2 cCONS f0 f1 cCONS f0 f1
+- (t = NIL) |- ((~ (((CONS h) t) = NIL)) = (~ (((CONS h) NIL) = NIL)))
+T c==> c= f0 cNIL c= c~ c= cCONS f1 f0 cNIL c~ c= cCONS f1 cNIL cNIL
+- (t = NIL) |- ((~ (((I f) h) <= ((I f) ((minimal_el f) t)))) = (~ (((I f) h) <= ((I f) ((minimal_el f) NIL)))))
+T c==> c= f0 cNIL c= c~ c<= cI f1 f2 cI f1 cminimal_el f1 f0 c~ c<= cI f1 f2 cI f1 cminimal_el f1 cNIL
++ |- (((!f. (!x. (((LET f) x) = (f x)))) ==> ((\f. (!x. (((LET f) x) = (f x)))) f)) = ((\f. (!x. (((LET f) x) = (f x)))) f))
+T c= c==> ! ! c= cLET b0 b1 * b0 b1 * / ! c= cLET b0 b1 * b0 b1 f0 * / ! c= cLET b0 b1 * b0 b1 f0
++ (~ (t = NIL)), ((~ (t = NIL)) ==> ((MEM ((minimal_el f) t)) t)) |- ((((minimal_el f) t) = h) \/ ((MEM ((minimal_el f) t)) t))
+T c==> c~ c= f0 cNIL c==> c==> c~ c= f0 cNIL cMEM cminimal_el f1 f0 f0 c\/ c= cminimal_el f1 f0 f2 cMEM cminimal_el f1 f0 f0
++ ((~ (t = NIL)) ==> ((MEM ((minimal_el f) t)) t)) |- ((~ (((CONS h) t) = NIL)) ==> ((MEM (((COND (t = NIL)) h) ((LET (\m. (LET_END (((COND ((f h) <= (f m))) h) m)))) ((minimal_el f) t)))) ((CONS h) t)))
+T c==> c==> c~ c= f0 cNIL cMEM cminimal_el f1 f0 f0 c==> c~ c= cCONS f2 f0 cNIL cMEM cCOND c= f0 cNIL f2 cLET / cLET_END cCOND c<= * f1 f2 * f1 b0 f2 b0 cminimal_el f1 f0 cCONS f2 f0
++ (~ (t = NIL)), ((~ (t = NIL)) ==> ((MEM ((minimal_el f) t)) t)) |- ((~ (t = NIL)) /\ ((~ (((CONS h) t) = NIL)) ==> ((MEM ((LET (\m. (LET_END (((COND ((f h) <= (f m))) h) m)))) ((minimal_el f) t))) ((CONS h) t))))
+T c==> c~ c= f0 cNIL c==> c==> c~ c= f0 cNIL cMEM cminimal_el f1 f0 f0 c/\ c~ c= f0 cNIL c==> c~ c= cCONS f2 f0 cNIL cMEM cLET / cLET_END cCOND c<= * f1 f2 * f1 b0 f2 b0 cminimal_el f1 f0 cCONS f2 f0
+- |- (((!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3)))) ==> ((\t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3)))) t2)) = ((\t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3)))) t2))
+T c= c==> ! ! c= c\/ f0 c\/ b0 b1 c\/ c\/ f0 b0 b1 * / ! c= c\/ f0 c\/ b0 b1 c\/ c\/ f0 b0 b1 f1 * / ! c= c\/ f0 c\/ b0 b1 c\/ c\/ f0 b0 b1 f1
+- |- ((((COND (x = x)) y) z) = y)
+T c= cCOND c= f0 f0 f1 f2 f1
+- |- ((_10072032 = _10072034) ==> ((~ (_10072033 = _10072035)) \/ (((minimal_el _10072032) _10072033) = ((minimal_el _10072034) _10072035))))
+T c==> c= f0 f1 c\/ c~ c= f2 f3 c= cminimal_el f0 f2 cminimal_el f1 f3
++ |- (((~ ((((minimal_el f) t) = h) \/ ((MEM ((minimal_el f) t)) t))) ==> F) = ((((minimal_el f) t) = h) \/ ((MEM ((minimal_el f) t)) t)))
+T c= c==> c~ c\/ c= cminimal_el f0 f1 f2 cMEM cminimal_el f0 f1 f1 cF c\/ c= cminimal_el f0 f1 f2 cMEM cminimal_el f0 f1 f1
++ (~ ((((minimal_el f) t) = h) \/ ((MEM ((minimal_el f) t)) t))) |- ((~ (((minimal_el f) t) = h)) /\ (~ ((MEM ((minimal_el f) t)) t)))
+T c==> c~ c\/ c= cminimal_el f0 f1 f2 cMEM cminimal_el f0 f1 f1 c/\ c~ c= cminimal_el f0 f1 f2 c~ cMEM cminimal_el f0 f1 f1
++ (~ (t = NIL)), ((~ (t = NIL)) ==> ((MEM ((minimal_el f) t)) t)) |- ((~ ((f h) <= (f ((minimal_el f) t)))) ==> ((~ (((CONS h) t) = NIL)) ==> ((MEM ((minimal_el f) t)) ((CONS h) t))))
+T c==> c~ c= f0 cNIL c==> c==> c~ c= f0 cNIL cMEM cminimal_el f1 f0 f0 c==> c~ c<= * f1 f2 * f1 cminimal_el f1 f0 c==> c~ c= cCONS f2 f0 cNIL cMEM cminimal_el f1 f0 cCONS f2 f0
++ |- ((x = x) = T)
+T c= c= f0 f0 cT
++ (~ (t = NIL)) |- ((t = NIL) ==> F)
+T c==> c~ c= f0 cNIL c==> c= f0 cNIL cF
+- (_10072028 = _10072030) |- ((_10072029 = _10072031) ==> (((CONS _10072028) _10072029) = ((CONS _10072030) _10072031)))
+T c==> c= f0 f1 c==> c= f2 f3 c= cCONS f0 f2 cCONS f1 f3
+- (~ (t = NIL)), (t = NIL) |- ((~ F) ==> F)
+T c==> c~ c= f0 cNIL c==> c= f0 cNIL c==> c~ cF cF
+- |- ((a ==> b) = ((~ a) \/ b))
+T c= c==> f0 f1 c\/ c~ f0 f1
++ (~ (t = NIL)), ((~ (t = NIL)) ==> ((MEM ((minimal_el f) t)) t)) |- ((((f h) <= (f ((minimal_el f) t))) ==> ((~ (((CONS h) t) = NIL)) ==> ((MEM h) ((CONS h) t)))) /\ ((~ ((f h) <= (f ((minimal_el f) t)))) ==> ((~ (((CONS h) t) = NIL)) ==> ((MEM ((minimal_el f) t)) ((CONS h) t)))))
+T c==> c~ c= f0 cNIL c==> c==> c~ c= f0 cNIL cMEM cminimal_el f1 f0 f0 c/\ c==> c<= * f1 f2 * f1 cminimal_el f1 f0 c==> c~ c= cCONS f2 f0 cNIL cMEM f2 cCONS f2 f0 c==> c~ c<= * f1 f2 * f1 cminimal_el f1 f0 c==> c~ c= cCONS f2 f0 cNIL cMEM cminimal_el f1 f0 cCONS f2 f0
+- (~ (((CONS h) t) = NIL)), (t = NIL) |- (~ (((CONS h) NIL) = NIL))
+T c==> c~ c= cCONS f0 f1 cNIL c==> c= f1 cNIL c~ c= cCONS f0 cNIL cNIL
++ (~ (t = NIL)), (~ ((((minimal_el f) t) = h) \/ ((MEM ((minimal_el f) t)) t))), ((~ (t = NIL)) ==> ((MEM ((minimal_el f) t)) t)) |- ((~ ((((minimal_el f) t) = h) \/ ((MEM ((minimal_el f) t)) t))) /\ F)
+T c==> c~ c= f0 cNIL c==> c~ c\/ c= cminimal_el f1 f0 f2 cMEM cminimal_el f1 f0 f0 c==> c==> c~ c= f0 cNIL cMEM cminimal_el f1 f0 f0 c/\ c~ c\/ c= cminimal_el f1 f0 f2 cMEM cminimal_el f1 f0 f0 cF
+- (~ F), (~ (t = NIL)), (t = NIL) |- ((~ F) /\ F)
+T c==> c~ cF c==> c~ c= f0 cNIL c==> c= f0 cNIL c/\ c~ cF cF
++ ((~ (t = NIL)) ==> ((MEM ((minimal_el f) t)) t)) |- (((~ (t = NIL)) ==> ((MEM ((minimal_el f) t)) t)) /\ ((~ (((CONS h) t) = NIL)) ==> ((MEM ((minimal_el f) ((CONS h) t))) ((CONS h) t))))
+T c==> c==> c~ c= f0 cNIL cMEM cminimal_el f1 f0 f0 c/\ c==> c~ c= f0 cNIL cMEM cminimal_el f1 f0 f0 c==> c~ c= cCONS f2 f0 cNIL cMEM cminimal_el f1 cCONS f2 f0 cCONS f2 f0
+- |- ((_10072037 = _10072039) ==> ((~ (_10072036 = _10072038)) \/ (((I _10072036) _10072037) = ((I _10072038) _10072039))))
+T c==> c= f0 f1 c\/ c~ c= f2 f3 c= cI f2 f0 cI f3 f1
++ (~ (t = NIL)), (t = NIL) |- ((NIL = NIL) ==> F)
+T c==> c~ c= f0 cNIL c==> c= f0 cNIL c==> c= cNIL cNIL cF
+- |- ((((((~ (t = NIL)) ==> ((MEM ((minimal_el f) t)) t)) ==> ((~ (t = NIL)) ==> ((~ ((f h) <= (f ((minimal_el f) t)))) ==> ((~ ((~ (((CONS h) t) = NIL)) ==> ((((minimal_el f) t) = h) \/ ((MEM ((minimal_el f) t)) t)))) ==> F)))) ==> (((~ (t = NIL)) ==> ((MEM ((minimal_el f) t)) t)) ==> ((~ (t = NIL)) ==> ((~ ((f h) <= (f ((minimal_el f) t)))) ==> ((~ ((~ (((CONS h) t) = NIL)) ==> ((((minimal_el f) t) = h) \/ ((MEM ((minimal_el f) t)) t)))) ==> F))))) ==> ((((~ (t = NIL)) ==> ((MEM ((minimal_el f) t)) t)) ==> ((~ (t = NIL)) ==> ((~ ((f h) <= (f ((minimal_el f) t)))) ==> ((~ ((~ (((CONS h) t) = NIL)) ==> ((((minimal_el f) t) = h) \/ ((MEM ((minimal_el f) t)) t)))) ==> F)))) ==> (((~ (t = NIL)) ==> ((MEM ((minimal_el f) t)) t)) ==> ((~ (t = NIL)) ==> ((~ ((f h) <= (f ((minimal_el f) t)))) ==> ((~ ((~ (((CONS h) t) = NIL)) ==> ((((minimal_el f) t) = h) \/ ((MEM ((minimal_el f) t)) t)))) ==> F)))))) = ((((~ (t = NIL)) ==> ((MEM ((minimal_el f) t)) t)) ==> ((~ (t = NIL)) ==> ((~ ((f h) <= (f ((minimal_el f) t)))) ==> ((~ ((~ (((CONS h) t) = NIL)) ==> ((((minimal_el f) t) = h) \/ ((MEM ((minimal_el f) t)) t)))) ==> F)))) ==> (((~ (t = NIL)) ==> ((MEM ((minimal_el f) t)) t)) ==> ((~ (t = NIL)) ==> ((~ ((f h) <= (f ((minimal_el f) t)))) ==> ((~ ((~ (((CONS h) t) = NIL)) ==> ((((minimal_el f) t) = h) \/ ((MEM ((minimal_el f) t)) t)))) ==> F))))))
+T c= c==> c==> c==> c==> c~ c= f0 cNIL cMEM cminimal_el f1 f0 f0 c==> c~ c= f0 cNIL c==> c~ c<= * f1 f2 * f1 cminimal_el f1 f0 c==> c~ c==> c~ c= cCONS f2 f0 cNIL c\/ c= cminimal_el f1 f0 f2 cMEM cminimal_el f1 f0 f0 cF c==> c==> c~ c= f0 cNIL cMEM cminimal_el f1 f0 f0 c==> c~ c= f0 cNIL c==> c~ c<= * f1 f2 * f1 cminimal_el f1 f0 c==> c~ c==> c~ c= cCONS f2 f0 cNIL c\/ c= cminimal_el f1 f0 f2 cMEM cminimal_el f1 f0 f0 cF c==> c==> c==> c~ c= f0 cNIL cMEM cminimal_el f1 f0 f0 c==> c~ c= f0 cNIL c==> c~ c<= * f1 f2 * f1 cminimal_el f1 f0 c==> c~ c==> c~ c= cCONS f2 f0 cNIL c\/ c= cminimal_el f1 f0 f2 cMEM cminimal_el f1 f0 f0 cF c==> c==> c~ c= f0 cNIL cMEM cminimal_el f1 f0 f0 c==> c~ c= f0 cNIL c==> c~ c<= * f1 f2 * f1 cminimal_el f1 f0 c==> c~ c==> c~ c= cCONS f2 f0 cNIL c\/ c= cminimal_el f1 f0 f2 cMEM cminimal_el f1 f0 f0 cF c==> c==> c==> c~ c= f0 cNIL cMEM cminimal_el f1 f0 f0 c==> c~ c= f0 cNIL c==> c~ c<= * f1 f2 * f1 cminimal_el f1 f0 c==> c~ c==> c~ c= cCONS f2 f0 cNIL c\/ c= cminimal_el f1 f0 f2 cMEM cminimal_el f1 f0 f0 cF c==> c==> c~ c= f0 cNIL cMEM cminimal_el f1 f0 f0 c==> c~ c= f0 cNIL c==> c~ c<= * f1 f2 * f1 cminimal_el f1 f0 c==> c~ c==> c~ c= cCONS f2 f0 cNIL c\/ c= cminimal_el f1 f0 f2 cMEM cminimal_el f1 f0 f0 cF
++ (~ (t = NIL)), ((~ (t = NIL)) ==> ((MEM ((minimal_el f) t)) t)) |- ((~ ((f h) <= (f ((minimal_el f) t)))) ==> ((~ (((CONS h) t) = NIL)) ==> ((((minimal_el f) t) = h) \/ ((MEM ((minimal_el f) t)) t))))
+T c==> c~ c= f0 cNIL c==> c==> c~ c= f0 cNIL cMEM cminimal_el f1 f0 f0 c==> c~ c<= * f1 f2 * f1 cminimal_el f1 f0 c==> c~ c= cCONS f2 f0 cNIL c\/ c= cminimal_el f1 f0 f2 cMEM cminimal_el f1 f0 f0
+- |- (((minimal_el f) NIL) = (CHOICE UNIV))
+T c= cminimal_el f0 cNIL cCHOICE part cUNIV
+- (_10072037 = _10072039), (_10072036 = _10072038) |- ((_10072036 = _10072038) /\ (((I _10072036) _10072037) = ((I _10072038) _10072039)))
+T c==> c= f0 f1 c==> c= f2 f3 c/\ c= f2 f3 c= cI f2 f0 cI f3 f1
+- (_10072024 = _10072026) |- ((_10072024 = _10072026) /\ ((~ (_10072025 = _10072027)) \/ ((_10072026 <= _10072027) \/ (~ (_10072024 <= _10072025)))))
+T c==> c= f0 f1 c/\ c= f0 f1 c\/ c~ c= f2 f3 c\/ c<= f1 f3 c~ c<= f0 f2
++ (t = NIL) |- ((t = NIL) /\ ((~ (((CONS h) t) = NIL)) ==> ((MEM h) ((CONS h) t))))
+T c==> c= f0 cNIL c/\ c= f0 cNIL c==> c~ c= cCONS f1 f0 cNIL cMEM f1 cCONS f1 f0
++ ((~ (t = NIL)) ==> ((MEM ((minimal_el f) t)) t)) |- ((t = NIL) \/ ((MEM ((minimal_el f) t)) t))
+T c==> c==> c~ c= f0 cNIL cMEM cminimal_el f1 f0 f0 c\/ c= f0 cNIL cMEM cminimal_el f1 f0 f0
++ |- ((((~ (t = NIL)) ==> ((MEM ((minimal_el f) t)) t)) ==> ((~ (t = NIL)) ==> ((~ ((f h) <= (f ((minimal_el f) t)))) ==> ((~ (((CONS h) t) = NIL)) ==> ((((minimal_el f) t) = h) \/ ((MEM ((minimal_el f) t)) t)))))) = T)
+T c= c==> c==> c~ c= f0 cNIL cMEM cminimal_el f1 f0 f0 c==> c~ c= f0 cNIL c==> c~ c<= * f1 f2 * f1 cminimal_el f1 f0 c==> c~ c= cCONS f2 f0 cNIL c\/ c= cminimal_el f1 f0 f2 cMEM cminimal_el f1 f0 f0 cT
++ |- ((!xs. ((~ (xs = NIL)) ==> ((MEM ((minimal_el f) xs)) xs))) = T)
+T c= ! c==> c~ c= b0 cNIL cMEM cminimal_el f0 b0 b0 cT
+- ((((~ (t = NIL)) ==> ((MEM ((minimal_el f) t)) t)) ==> ((~ (t = NIL)) ==> ((~ ((f h) <= (f ((minimal_el f) t)))) ==> ((~ ((~ (((CONS h) t) = NIL)) ==> ((((minimal_el f) t) = h) \/ ((MEM ((minimal_el f) t)) t)))) ==> F)))) ==> (((~ (t = NIL)) ==> ((MEM ((minimal_el f) t)) t)) ==> ((~ (t = NIL)) ==> ((~ ((f h) <= (f ((minimal_el f) t)))) ==> ((~ ((~ (((CONS h) t) = NIL)) ==> ((((minimal_el f) t) = h) \/ ((MEM ((minimal_el f) t)) t)))) ==> F))))) |- (((((~ (t = NIL)) ==> ((MEM ((minimal_el f) t)) t)) ==> ((~ (t = NIL)) ==> ((~ ((f h) <= (f ((minimal_el f) t)))) ==> ((~ ((~ (((CONS h) t) = NIL)) ==> ((((minimal_el f) t) = h) \/ ((MEM ((minimal_el f) t)) t)))) ==> F)))) ==> (((~ (t = NIL)) ==> ((MEM ((minimal_el f) t)) t)) ==> ((~ (t = NIL)) ==> ((~ ((f h) <= (f ((minimal_el f) t)))) ==> ((~ ((~ (((CONS h) t) = NIL)) ==> ((((minimal_el f) t) = h) \/ ((MEM ((minimal_el f) t)) t)))) ==> F))))) /\ ((((~ (t = NIL)) ==> ((MEM ((minimal_el f) t)) t)) ==> ((~ (t = NIL)) ==> ((~ ((f h) <= (f ((minimal_el f) t)))) ==> ((~ ((~ (((CONS h) t) = NIL)) ==> ((((minimal_el f) t) = h) \/ ((MEM ((minimal_el f) t)) t)))) ==> F)))) ==> (((~ (t = NIL)) ==> ((MEM ((minimal_el f) t)) t)) ==> ((~ (t = NIL)) ==> ((~ ((f h) <= (f ((minimal_el f) t)))) ==> ((~ ((~ (((CONS h) t) = NIL)) ==> ((((minimal_el f) t) = h) \/ ((MEM ((minimal_el f) t)) t)))) ==> F))))))
+T c==> c==> c==> c==> c~ c= f0 cNIL cMEM cminimal_el f1 f0 f0 c==> c~ c= f0 cNIL c==> c~ c<= * f1 f2 * f1 cminimal_el f1 f0 c==> c~ c==> c~ c= cCONS f2 f0 cNIL c\/ c= cminimal_el f1 f0 f2 cMEM cminimal_el f1 f0 f0 cF c==> c==> c~ c= f0 cNIL cMEM cminimal_el f1 f0 f0 c==> c~ c= f0 cNIL c==> c~ c<= * f1 f2 * f1 cminimal_el f1 f0 c==> c~ c==> c~ c= cCONS f2 f0 cNIL c\/ c= cminimal_el f1 f0 f2 cMEM cminimal_el f1 f0 f0 cF c/\ c==> c==> c==> c~ c= f0 cNIL cMEM cminimal_el f1 f0 f0 c==> c~ c= f0 cNIL c==> c~ c<= * f1 f2 * f1 cminimal_el f1 f0 c==> c~ c==> c~ c= cCONS f2 f0 cNIL c\/ c= cminimal_el f1 f0 f2 cMEM cminimal_el f1 f0 f0 cF c==> c==> c~ c= f0 cNIL cMEM cminimal_el f1 f0 f0 c==> c~ c= f0 cNIL c==> c~ c<= * f1 f2 * f1 cminimal_el f1 f0 c==> c~ c==> c~ c= cCONS f2 f0 cNIL c\/ c= cminimal_el f1 f0 f2 cMEM cminimal_el f1 f0 f0 cF c==> c==> c==> c~ c= f0 cNIL cMEM cminimal_el f1 f0 f0 c==> c~ c= f0 cNIL c==> c~ c<= * f1 f2 * f1 cminimal_el f1 f0 c==> c~ c==> c~ c= cCONS f2 f0 cNIL c\/ c= cminimal_el f1 f0 f2 cMEM cminimal_el f1 f0 f0 cF c==> c==> c~ c= f0 cNIL cMEM cminimal_el f1 f0 f0 c==> c~ c= f0 cNIL c==> c~ c<= * f1 f2 * f1 cminimal_el f1 f0 c==> c~ c==> c~ c= cCONS f2 f0 cNIL c\/ c= cminimal_el f1 f0 f2 cMEM cminimal_el f1 f0 f0 cF
++ |- (((!h. (((~ (t = NIL)) ==> ((MEM ((minimal_el f) t)) t)) ==> ((~ (t = NIL)) ==> ((~ ((f h) <= (f ((minimal_el f) t)))) ==> ((~ ((~ (((CONS h) t) = NIL)) ==> ((((minimal_el f) t) = h) \/ ((MEM ((minimal_el f) t)) t)))) ==> F))))) ==> ((\h. (((~ (t = NIL)) ==> ((MEM ((minimal_el f) t)) t)) ==> ((~ (t = NIL)) ==> ((~ ((f h) <= (f ((minimal_el f) t)))) ==> ((~ ((~ (((CONS h) t) = NIL)) ==> ((((minimal_el f) t) = h) \/ ((MEM ((minimal_el f) t)) t)))) ==> F))))) h)) = ((\h. (((~ (t = NIL)) ==> ((MEM ((minimal_el f) t)) t)) ==> ((~ (t = NIL)) ==> ((~ ((f h) <= (f ((minimal_el f) t)))) ==> ((~ ((~ (((CONS h) t) = NIL)) ==> ((((minimal_el f) t) = h) \/ ((MEM ((minimal_el f) t)) t)))) ==> F))))) h))
+T c= c==> ! c==> c==> c~ c= f0 cNIL cMEM cminimal_el f1 f0 f0 c==> c~ c= f0 cNIL c==> c~ c<= * f1 b0 * f1 cminimal_el f1 f0 c==> c~ c==> c~ c= cCONS b0 f0 cNIL c\/ c= cminimal_el f1 f0 b0 cMEM cminimal_el f1 f0 f0 cF * / c==> c==> c~ c= f0 cNIL cMEM cminimal_el f1 f0 f0 c==> c~ c= f0 cNIL c==> c~ c<= * f1 b0 * f1 cminimal_el f1 f0 c==> c~ c==> c~ c= cCONS b0 f0 cNIL c\/ c= cminimal_el f1 f0 b0 cMEM cminimal_el f1 f0 f0 cF f2 * / c==> c==> c~ c= f0 cNIL cMEM cminimal_el f1 f0 f0 c==> c~ c= f0 cNIL c==> c~ c<= * f1 b0 * f1 cminimal_el f1 f0 c==> c~ c==> c~ c= cCONS b0 f0 cNIL c\/ c= cminimal_el f1 f0 b0 cMEM cminimal_el f1 f0 f0 cF f2
+- (t = NIL) |- (F = F)
+T c==> c= f0 cNIL c= cF cF
+- |- (((t1 \/ t2) \/ t3) = (t1 \/ (t2 \/ t3)))
+T c= c\/ c\/ f0 f1 f2 c\/ f0 c\/ f1 f2
++ |- (((minimal_el f) ((CONS x) xs)) = (((COND (xs = NIL)) x) ((LET (\m. (LET_END (((COND ((f x) <= (f m))) x) m)))) ((minimal_el f) xs))))
+T c= cminimal_el f0 cCONS f1 f2 cCOND c= f2 cNIL f1 cLET / cLET_END cCOND c<= * f0 f1 * f0 b0 f1 b0 cminimal_el f0 f2
++ (~ (t = NIL)), (~ ((f h) <= (f ((minimal_el f) t)))), ((~ (t = NIL)) ==> ((MEM ((minimal_el f) t)) t)) |- ((~ ((f h) <= (f ((minimal_el f) t)))) /\ ((~ (((CONS h) t) = NIL)) ==> ((((minimal_el f) t) = h) \/ ((MEM ((minimal_el f) t)) t))))
+T c==> c~ c= f0 cNIL c==> c~ c<= * f1 f2 * f1 cminimal_el f1 f0 c==> c==> c~ c= f0 cNIL cMEM cminimal_el f1 f0 f0 c/\ c~ c<= * f1 f2 * f1 cminimal_el f1 f0 c==> c~ c= cCONS f2 f0 cNIL c\/ c= cminimal_el f1 f0 f2 cMEM cminimal_el f1 f0 f0
++ (~ (t = NIL)), (~ ((((minimal_el f) t) = h) \/ ((MEM ((minimal_el f) t)) t))), ((~ (t = NIL)) ==> ((MEM ((minimal_el f) t)) t)) |- F
+T c==> c~ c= f0 cNIL c==> c~ c\/ c= cminimal_el f1 f0 f2 cMEM cminimal_el f1 f0 f0 c==> c==> c~ c= f0 cNIL cMEM cminimal_el f1 f0 f0 cF
+- (_10072032 = _10072034) |- ((_10072032 = _10072034) /\ ((~ (_10072033 = _10072035)) \/ (((minimal_el _10072032) _10072033) = ((minimal_el _10072034) _10072035))))
+T c==> c= f0 f1 c/\ c= f0 f1 c\/ c~ c= f2 f3 c= cminimal_el f0 f2 cminimal_el f1 f3
++ (~ (t = NIL)), ((~ (t = NIL)) ==> ((MEM ((minimal_el f) t)) t)) |- ((~ ((f h) <= (f ((minimal_el f) t)))) ==> ((~ ((~ (((CONS h) t) = NIL)) ==> ((((minimal_el f) t) = h) \/ ((MEM ((minimal_el f) t)) t)))) ==> F))
+T c==> c~ c= f0 cNIL c==> c==> c~ c= f0 cNIL cMEM cminimal_el f1 f0 f0 c==> c~ c<= * f1 f2 * f1 cminimal_el f1 f0 c==> c~ c==> c~ c= cCONS f2 f0 cNIL c\/ c= cminimal_el f1 f0 f2 cMEM cminimal_el f1 f0 f0 cF
+- |- ((~ (_10072037 = _10072039)) \/ ((~ (_10072036 = _10072038)) \/ (((I _10072036) _10072037) = ((I _10072038) _10072039))))
+T c\/ c~ c= f0 f1 c\/ c~ c= f2 f3 c= cI f2 f0 cI f3 f1
++ |- (!h. (!t. (((~ (t = NIL)) ==> ((MEM ((minimal_el f) t)) t)) ==> ((~ (((CONS h) t) = NIL)) ==> ((MEM ((minimal_el f) ((CONS h) t))) ((CONS h) t))))))
+T c==> c==> c~ c= f0 cNIL cMEM cminimal_el f1 f0 f0 c==> c~ c= cCONS f2 f0 cNIL cMEM cminimal_el f1 cCONS f2 f0 cCONS f2 f0
+- (~ (t = NIL)), (~ ((~ (((CONS h) t) = NIL)) ==> ((((minimal_el f) t) = h) \/ ((MEM ((minimal_el f) t)) t)))), (~ ((f h) <= (f ((minimal_el f) t)))), ((~ (t = NIL)) ==> ((MEM ((minimal_el f) t)) t)) |- ((~ ((~ (((CONS h) t) = NIL)) ==> ((((minimal_el f) t) = h) \/ ((MEM ((minimal_el f) t)) t)))) /\ F)
+T c==> c~ c= f0 cNIL c==> c~ c==> c~ c= cCONS f1 f0 cNIL c\/ c= cminimal_el f2 f0 f1 cMEM cminimal_el f2 f0 f0 c==> c~ c<= * f2 f1 * f2 cminimal_el f2 f0 c==> c==> c~ c= f0 cNIL cMEM cminimal_el f2 f0 f0 c/\ c~ c==> c~ c= cCONS f1 f0 cNIL c\/ c= cminimal_el f2 f0 f1 cMEM cminimal_el f2 f0 f0 cF
++ |- ((!t. (((~ (t = NIL)) ==> ((MEM ((minimal_el f) t)) t)) ==> ((~ (((CONS h) t) = NIL)) ==> ((MEM ((minimal_el f) ((CONS h) t))) ((CONS h) t))))) = T)
+T c= ! c==> c==> c~ c= b0 cNIL cMEM cminimal_el f0 b0 b0 c==> c~ c= cCONS f1 b0 cNIL cMEM cminimal_el f0 cCONS f1 b0 cCONS f1 b0 cT
++ |- ((((t = NIL) ==> ((~ (((CONS h) t) = NIL)) ==> ((MEM h) ((CONS h) t)))) /\ ((~ (t = NIL)) ==> ((~ (((CONS h) t) = NIL)) ==> ((MEM ((LET (\m. (LET_END (((COND ((f h) <= (f m))) h) m)))) ((minimal_el f) t))) ((CONS h) t))))) = ((~ (((CONS h) t) = NIL)) ==> ((MEM (((COND (t = NIL)) h) ((LET (\m. (LET_END (((COND ((f h) <= (f m))) h) m)))) ((minimal_el f) t)))) ((CONS h) t))))
+T c= c/\ c==> c= f0 cNIL c==> c~ c= cCONS f1 f0 cNIL cMEM f1 cCONS f1 f0 c==> c~ c= f0 cNIL c==> c~ c= cCONS f1 f0 cNIL cMEM cLET / cLET_END cCOND c<= * f2 f1 * f2 b0 f1 b0 cminimal_el f2 f0 cCONS f1 f0 c==> c~ c= cCONS f1 f0 cNIL cMEM cCOND c= f0 cNIL f1 cLET / cLET_END cCOND c<= * f2 f1 * f2 b0 f1 b0 cminimal_el f2 f0 cCONS f1 f0
++ |- (T = ((~ (NIL = NIL)) ==> ((MEM ((minimal_el f) NIL)) NIL)))
+T c= cT c==> c~ c= cNIL cNIL cMEM cminimal_el f0 cNIL cNIL
+- (~ ((((minimal_el f) t) = h) \/ ((MEM ((minimal_el f) t)) t))) |- (~ (((minimal_el f) t) = h))
+T c==> c~ c\/ c= cminimal_el f0 f1 f2 cMEM cminimal_el f0 f1 f1 c~ c= cminimal_el f0 f1 f2
++ |- ((T \/ t) = T)
+T c= c\/ cT f0 cT
+- |- ((((~ (t = NIL)) ==> ((MEM ((minimal_el f) t)) t)) ==> ((~ (t = NIL)) ==> ((~ ((f h) <= (f ((minimal_el f) t)))) ==> ((~ ((~ (((CONS h) t) = NIL)) ==> ((((minimal_el f) t) = h) \/ ((MEM ((minimal_el f) t)) t)))) ==> F)))) ==> (((~ (t = NIL)) ==> ((MEM ((minimal_el f) t)) t)) ==> ((~ (t = NIL)) ==> ((~ ((f h) <= (f ((minimal_el f) t)))) ==> ((~ ((~ (((CONS h) t) = NIL)) ==> ((((minimal_el f) t) = h) \/ ((MEM ((minimal_el f) t)) t)))) ==> F)))))
+T c==> c==> c==> c~ c= f0 cNIL cMEM cminimal_el f1 f0 f0 c==> c~ c= f0 cNIL c==> c~ c<= * f1 f2 * f1 cminimal_el f1 f0 c==> c~ c==> c~ c= cCONS f2 f0 cNIL c\/ c= cminimal_el f1 f0 f2 cMEM cminimal_el f1 f0 f0 cF c==> c==> c~ c= f0 cNIL cMEM cminimal_el f1 f0 f0 c==> c~ c= f0 cNIL c==> c~ c<= * f1 f2 * f1 cminimal_el f1 f0 c==> c~ c==> c~ c= cCONS f2 f0 cNIL c\/ c= cminimal_el f1 f0 f2 cMEM cminimal_el f1 f0 f0 cF
++ |- ((F ==> t) = T)
+T c= c==> cF f0 cT
++ (~ (t = NIL)), (t = NIL) |- (~ (NIL = NIL))
+T c==> c~ c= f0 cNIL c==> c= f0 cNIL c~ c= cNIL cNIL
+- |- (((!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))) ==> ((\t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))) t3)) = ((\t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))) t3))
+T c= c==> ! c= c\/ f0 c\/ f1 b0 c\/ c\/ f0 f1 b0 * / c= c\/ f0 c\/ f1 b0 c\/ c\/ f0 f1 b0 f2 * / c= c\/ f0 c\/ f1 b0 c\/ c\/ f0 f1 b0 f2
++ ((f h) <= (f ((minimal_el f) t))) |- (((f h) <= (f ((minimal_el f) t))) /\ ((~ (((CONS h) t) = NIL)) ==> ((MEM h) ((CONS h) t))))
+T c==> c<= * f0 f1 * f0 cminimal_el f0 f2 c/\ c<= * f0 f1 * f0 cminimal_el f0 f2 c==> c~ c= cCONS f1 f2 cNIL cMEM f1 cCONS f1 f2
++ ((~ (t = NIL)) ==> ((MEM ((minimal_el f) t)) t)) |- ((~ (t = NIL)) ==> ((~ ((f h) <= (f ((minimal_el f) t)))) ==> ((~ ((~ (((CONS h) t) = NIL)) ==> ((((minimal_el f) t) = h) \/ ((MEM ((minimal_el f) t)) t)))) ==> F)))
+T c==> c==> c~ c= f0 cNIL cMEM cminimal_el f1 f0 f0 c==> c~ c= f0 cNIL c==> c~ c<= * f1 f2 * f1 cminimal_el f1 f0 c==> c~ c==> c~ c= cCONS f2 f0 cNIL c\/ c= cminimal_el f1 f0 f2 cMEM cminimal_el f1 f0 f0 cF
+- |- ((a = b) ==> (b \/ (~ a)))
+T c==> c= f0 f1 c\/ f1 c~ f0
++ (~ (t = NIL)), (~ ((f h) <= (f ((minimal_el f) t)))), ((~ (t = NIL)) ==> ((MEM ((minimal_el f) t)) t)) |- ((~ ((~ (((CONS h) t) = NIL)) ==> ((((minimal_el f) t) = h) \/ ((MEM ((minimal_el f) t)) t)))) ==> F)
+T c==> c~ c= f0 cNIL c==> c~ c<= * f1 f2 * f1 cminimal_el f1 f0 c==> c==> c~ c= f0 cNIL cMEM cminimal_el f1 f0 f0 c==> c~ c==> c~ c= cCONS f2 f0 cNIL c\/ c= cminimal_el f1 f0 f2 cMEM cminimal_el f1 f0 f0 cF
+- (_10072024 = _10072026) |- ((_10072025 = _10072027) ==> ((_10072026 <= _10072027) \/ (~ (_10072024 <= _10072025))))
+T c==> c= f0 f1 c==> c= f2 f3 c\/ c<= f1 f3 c~ c<= f0 f2
+- (~ ((f h) <= (f ((minimal_el f) t)))) |- (~ (((I f) h) <= ((I f) ((minimal_el f) t))))
+T c==> c~ c<= * f0 f1 * f0 cminimal_el f0 f2 c~ c<= cI f0 f1 cI f0 cminimal_el f0 f2
++ |- ((~ (((CONS h) t) = NIL)) ==> ((MEM h) ((CONS h) t)))
+T c==> c~ c= cCONS f0 f1 cNIL cMEM f0 cCONS f0 f1
+- (_10072028 = _10072030) |- ((_10072028 = _10072030) /\ ((~ (_10072029 = _10072031)) \/ (((CONS _10072028) _10072029) = ((CONS _10072030) _10072031))))
+T c==> c= f0 f1 c/\ c= f0 f1 c\/ c~ c= f2 f3 c= cCONS f0 f2 cCONS f1 f3
+- (_10072020 = _10072022), (_10072021 = _10072023) |- (((((MEM _10072020) _10072021) = ((MEM _10072022) _10072023)) ==> (((MEM _10072022) _10072023) \/ (~ ((MEM _10072020) _10072021)))) = (((MEM _10072022) _10072023) \/ (~ ((MEM _10072020) _10072021))))
+T c==> c= f0 f1 c==> c= f2 f3 c= c==> c= cMEM f0 f2 cMEM f1 f3 c\/ cMEM f1 f3 c~ cMEM f0 f2 c\/ cMEM f1 f3 c~ cMEM f0 f2
++ |- ((\f. (!h. (((~ (t = NIL)) ==> ((MEM ((minimal_el f) t)) t)) ==> ((~ (t = NIL)) ==> ((~ ((f h) <= (f ((minimal_el f) t)))) ==> ((~ ((~ (((CONS h) t) = NIL)) ==> ((((minimal_el f) t) = h) \/ ((MEM ((minimal_el f) t)) t)))) ==> F)))))) f)
+T * / ! c==> c==> c~ c= f0 cNIL cMEM cminimal_el b0 f0 f0 c==> c~ c= f0 cNIL c==> c~ c<= * b0 b1 * b0 cminimal_el b0 f0 c==> c~ c==> c~ c= cCONS b1 f0 cNIL c\/ c= cminimal_el b0 f0 b1 cMEM cminimal_el b0 f0 f0 cF f1
++ (~ (t = NIL)), (~ ((f h) <= (f ((minimal_el f) t)))), ((~ (t = NIL)) ==> ((MEM ((minimal_el f) t)) t)) |- ((~ (((CONS h) t) = NIL)) ==> ((MEM ((minimal_el f) t)) ((CONS h) t)))
+T c==> c~ c= f0 cNIL c==> c~ c<= * f1 f2 * f1 cminimal_el f1 f0 c==> c==> c~ c= f0 cNIL cMEM cminimal_el f1 f0 f0 c==> c~ c= cCONS f2 f0 cNIL cMEM cminimal_el f1 f0 cCONS f2 f0
+- |- ((~ (_10072020 = _10072022)) \/ ((~ (_10072021 = _10072023)) \/ (((MEM _10072022) _10072023) \/ (~ ((MEM _10072020) _10072021)))))
+T c\/ c~ c= f0 f1 c\/ c~ c= f2 f3 c\/ cMEM f1 f3 c~ cMEM f0 f2
++ |- (T = ((~ (((CONS h) t) = NIL)) ==> ((MEM h) ((CONS h) t))))
+T c= cT c==> c~ c= cCONS f0 f1 cNIL cMEM f0 cCONS f0 f1
++ |- (((~ ((f h) <= (f ((minimal_el f) t)))) ==> ((~ (((CONS h) t) = NIL)) ==> ((MEM ((minimal_el f) t)) ((CONS h) t)))) = ((((f h) <= (f ((minimal_el f) t))) ==> ((~ (((CONS h) t) = NIL)) ==> ((MEM h) ((CONS h) t)))) /\ ((~ ((f h) <= (f ((minimal_el f) t)))) ==> ((~ (((CONS h) t) = NIL)) ==> ((MEM ((minimal_el f) t)) ((CONS h) t))))))
+T c= c==> c~ c<= * f0 f1 * f0 cminimal_el f0 f2 c==> c~ c= cCONS f1 f2 cNIL cMEM cminimal_el f0 f2 cCONS f1 f2 c/\ c==> c<= * f0 f1 * f0 cminimal_el f0 f2 c==> c~ c= cCONS f1 f2 cNIL cMEM f1 cCONS f1 f2 c==> c~ c<= * f0 f1 * f0 cminimal_el f0 f2 c==> c~ c= cCONS f1 f2 cNIL cMEM cminimal_el f0 f2 cCONS f1 f2
++ |- ((~ T) = F)
+T c= c~ cT cF
+- (_10072020 = _10072022) |- ((_10072021 = _10072023) ==> (((MEM _10072022) _10072023) \/ (~ ((MEM _10072020) _10072021))))
+T c==> c= f0 f1 c==> c= f2 f3 c\/ cMEM f1 f3 c~ cMEM f0 f2
+- (~ (t = NIL)) |- ((t = NIL) = F)
+T c==> c~ c= f0 cNIL c= c= f0 cNIL cF
+- (_10072024 = _10072026), (_10072025 = _10072027) |- ((_10072025 = _10072027) /\ ((_10072026 <= _10072027) \/ (~ (_10072024 <= _10072025))))
+T c==> c= f0 f1 c==> c= f2 f3 c/\ c= f2 f3 c\/ c<= f1 f3 c~ c<= f0 f2
++ |- (((~ ((~ (((CONS h) t) = NIL)) ==> ((((minimal_el f) t) = h) \/ ((MEM ((minimal_el f) t)) t)))) ==> F) = ((~ (((CONS h) t) = NIL)) ==> ((((minimal_el f) t) = h) \/ ((MEM ((minimal_el f) t)) t))))
+T c= c==> c~ c==> c~ c= cCONS f0 f1 cNIL c\/ c= cminimal_el f2 f1 f0 cMEM cminimal_el f2 f1 f1 cF c==> c~ c= cCONS f0 f1 cNIL c\/ c= cminimal_el f2 f1 f0 cMEM cminimal_el f2 f1 f1
+- (_10072028 = _10072030), (_10072029 = _10072031) |- ((_10072029 = _10072031) /\ (((CONS _10072028) _10072029) = ((CONS _10072030) _10072031)))
+T c==> c= f0 f1 c==> c= f2 f3 c/\ c= f2 f3 c= cCONS f0 f2 cCONS f1 f3
++ |- ((!t. (!f. (!h. (((~ (t = NIL)) ==> ((MEM ((minimal_el f) t)) t)) ==> ((~ (t = NIL)) ==> ((~ ((f h) <= (f ((minimal_el f) t)))) ==> ((~ (((CONS h) t) = NIL)) ==> ((((minimal_el f) t) = h) \/ ((MEM ((minimal_el f) t)) t))))))))) = (!t. (!f. (!h. (((~ (t = NIL)) ==> ((MEM ((minimal_el f) t)) t)) ==> ((~ (t = NIL)) ==> ((~ ((f h) <= (f ((minimal_el f) t)))) ==> ((~ ((~ (((CONS h) t) = NIL)) ==> ((((minimal_el f) t) = h) \/ ((MEM ((minimal_el f) t)) t)))) ==> F))))))))
+T c= ! ! ! c==> c==> c~ c= b0 cNIL cMEM cminimal_el b1 b0 b0 c==> c~ c= b0 cNIL c==> c~ c<= * b1 b2 * b1 cminimal_el b1 b0 c==> c~ c= cCONS b2 b0 cNIL c\/ c= cminimal_el b1 b0 b2 cMEM cminimal_el b1 b0 b0 ! ! ! c==> c==> c~ c= b0 cNIL cMEM cminimal_el b1 b0 b0 c==> c~ c= b0 cNIL c==> c~ c<= * b1 b2 * b1 cminimal_el b1 b0 c==> c~ c==> c~ c= cCONS b2 b0 cNIL c\/ c= cminimal_el b1 b0 b2 cMEM cminimal_el b1 b0 b0 cF
++ (~ (t = NIL)), (t = NIL) |- ((t = NIL) /\ F)
+T c==> c~ c= f0 cNIL c==> c= f0 cNIL c/\ c= f0 cNIL cF
++ ((~ (t = NIL)) ==> ((MEM ((minimal_el f) t)) t)) |- ((~ (t = NIL)) ==> ((~ (((CONS h) t) = NIL)) ==> ((MEM ((LET (\m. (LET_END (((COND ((f h) <= (f m))) h) m)))) ((minimal_el f) t))) ((CONS h) t))))
+T c==> c==> c~ c= f0 cNIL cMEM cminimal_el f1 f0 f0 c==> c~ c= f0 cNIL c==> c~ c= cCONS f2 f0 cNIL cMEM cLET / cLET_END cCOND c<= * f1 f2 * f1 b0 f2 b0 cminimal_el f1 f0 cCONS f2 f0
++ (~ (t = NIL)), ((~ (t = NIL)) ==> ((MEM ((minimal_el f) t)) t)) |- ((~ ((((minimal_el f) t) = h) \/ ((MEM ((minimal_el f) t)) t))) ==> F)
+T c==> c~ c= f0 cNIL c==> c==> c~ c= f0 cNIL cMEM cminimal_el f1 f0 f0 c==> c~ c\/ c= cminimal_el f1 f0 f2 cMEM cminimal_el f1 f0 f0 cF
++ |- (!t. (!f. (!h. (((~ (t = NIL)) ==> ((MEM ((minimal_el f) t)) t)) ==> ((~ (t = NIL)) ==> ((~ ((f h) <= (f ((minimal_el f) t)))) ==> ((~ (((CONS h) t) = NIL)) ==> ((((minimal_el f) t) = h) \/ ((MEM ((minimal_el f) t)) t)))))))))
+T c==> c==> c~ c= f0 cNIL cMEM cminimal_el f1 f0 f0 c==> c~ c= f0 cNIL c==> c~ c<= * f1 f2 * f1 cminimal_el f1 f0 c==> c~ c= cCONS f2 f0 cNIL c\/ c= cminimal_el f1 f0 f2 cMEM cminimal_el f1 f0 f0
++ |- ((~ (NIL = NIL)) ==> ((MEM ((minimal_el f) NIL)) NIL))
+T c==> c~ c= cNIL cNIL cMEM cminimal_el f0 cNIL cNIL
+- |- ((!h. (P h)) = ((P T) /\ (P F)))
+T c= ! * f0 b0 c/\ * f0 cT * f0 cF
++ |- ((!h. (!t. (((~ (t = NIL)) ==> ((MEM ((minimal_el f) t)) t)) ==> ((~ (((CONS h) t) = NIL)) ==> ((MEM ((minimal_el f) ((CONS h) t))) ((CONS h) t)))))) = (((~ (NIL = NIL)) ==> ((MEM ((minimal_el f) NIL)) NIL)) /\ (!h. (!t. (((~ (t = NIL)) ==> ((MEM ((minimal_el f) t)) t)) ==> ((~ (((CONS h) t) = NIL)) ==> ((MEM ((minimal_el f) ((CONS h) t))) ((CONS h) t))))))))
+T c= ! ! c==> c==> c~ c= b1 cNIL cMEM cminimal_el f0 b1 b1 c==> c~ c= cCONS b0 b1 cNIL cMEM cminimal_el f0 cCONS b0 b1 cCONS b0 b1 c/\ c==> c~ c= cNIL cNIL cMEM cminimal_el f0 cNIL cNIL ! ! c==> c==> c~ c= b1 cNIL cMEM cminimal_el f0 b1 b1 c==> c~ c= cCONS b0 b1 cNIL cMEM cminimal_el f0 cCONS b0 b1 cCONS b0 b1
+- (_10072024 = _10072026), (_10072025 = _10072027) |- ((((_10072024 <= _10072025) = (_10072026 <= _10072027)) ==> ((_10072026 <= _10072027) \/ (~ (_10072024 <= _10072025)))) = ((_10072026 <= _10072027) \/ (~ (_10072024 <= _10072025))))
+T c==> c= f0 f1 c==> c= f2 f3 c= c==> c= c<= f0 f2 c<= f1 f3 c\/ c<= f1 f3 c~ c<= f0 f2 c\/ c<= f1 f3 c~ c<= f0 f2
+- |- (((!t1. (!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))))) ==> ((\t1. (!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))))) t1)) = ((\t1. (!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))))) t1))
+T c= c==> ! ! ! c= c\/ b0 c\/ b1 b2 c\/ c\/ b0 b1 b2 * / ! ! c= c\/ b0 c\/ b1 b2 c\/ c\/ b0 b1 b2 f0 * / ! ! c= c\/ b0 c\/ b1 b2 c\/ c\/ b0 b1 b2 f0
+- (_10072037 = _10072039) |- ((_10072036 = _10072038) ==> (((I _10072036) _10072037) = ((I _10072038) _10072039)))
+T c==> c= f0 f1 c==> c= f2 f3 c= cI f2 f0 cI f3 f1
+- (~ ((f h) <= (f ((minimal_el f) t)))), (t = NIL) |- (~ (((I f) h) <= ((I f) ((minimal_el f) NIL))))
+T c==> c~ c<= * f0 f1 * f0 cminimal_el f0 f2 c==> c= f2 cNIL c~ c<= cI f0 f1 cI f0 cminimal_el f0 cNIL
+- (t = NIL) |- ((t = NIL) = T)
+T c==> c= f0 cNIL c= c= f0 cNIL cT
+- |- ((~ (~ t)) = t)
+T c= c~ c~ f0 f0
+- (_10072032 = _10072034), (_10072033 = _10072035) |- ((_10072033 = _10072035) /\ (((minimal_el _10072032) _10072033) = ((minimal_el _10072034) _10072035)))
+T c==> c= f0 f1 c==> c= f2 f3 c/\ c= f2 f3 c= cminimal_el f0 f2 cminimal_el f1 f3
++ |- ((!h. (((~ (t = NIL)) ==> ((MEM ((minimal_el f) t)) t)) ==> ((~ (t = NIL)) ==> ((~ ((f h) <= (f ((minimal_el f) t)))) ==> ((~ (((CONS h) t) = NIL)) ==> ((((minimal_el f) t) = h) \/ ((MEM ((minimal_el f) t)) t))))))) = T)
+T c= ! c==> c==> c~ c= f0 cNIL cMEM cminimal_el f1 f0 f0 c==> c~ c= f0 cNIL c==> c~ c<= * f1 b0 * f1 cminimal_el f1 f0 c==> c~ c= cCONS b0 f0 cNIL c\/ c= cminimal_el f1 f0 b0 cMEM cminimal_el f1 f0 f0 cT
+- (_10072032 = _10072034) |- ((_10072033 = _10072035) ==> (((minimal_el _10072032) _10072033) = ((minimal_el _10072034) _10072035)))
+T c==> c= f0 f1 c==> c= f2 f3 c= cminimal_el f0 f2 cminimal_el f1 f3
++ |- (((~ (NIL = NIL)) ==> ((MEM ((minimal_el f) NIL)) NIL)) /\ (!h. (!t. (((~ (t = NIL)) ==> ((MEM ((minimal_el f) t)) t)) ==> ((~ (((CONS h) t) = NIL)) ==> ((MEM ((minimal_el f) ((CONS h) t))) ((CONS h) t)))))))
+T c/\ c==> c~ c= cNIL cNIL cMEM cminimal_el f0 cNIL cNIL ! ! c==> c==> c~ c= b1 cNIL cMEM cminimal_el f0 b1 b1 c==> c~ c= cCONS b0 b1 cNIL cMEM cminimal_el f0 cCONS b0 b1 cCONS b0 b1
+- (((~ (t = NIL)) ==> ((MEM ((minimal_el f) t)) t)) ==> ((~ (t = NIL)) ==> ((~ ((f h) <= (f ((minimal_el f) t)))) ==> ((~ ((~ (((CONS h) t) = NIL)) ==> ((((minimal_el f) t) = h) \/ ((MEM ((minimal_el f) t)) t)))) ==> F)))), ((((~ (t = NIL)) ==> ((MEM ((minimal_el f) t)) t)) ==> ((~ (t = NIL)) ==> ((~ ((f h) <= (f ((minimal_el f) t)))) ==> ((~ ((~ (((CONS h) t) = NIL)) ==> ((((minimal_el f) t) = h) \/ ((MEM ((minimal_el f) t)) t)))) ==> F)))) ==> (((~ (t = NIL)) ==> ((MEM ((minimal_el f) t)) t)) ==> ((~ (t = NIL)) ==> ((~ ((f h) <= (f ((minimal_el f) t)))) ==> ((~ ((~ (((CONS h) t) = NIL)) ==> ((((minimal_el f) t) = h) \/ ((MEM ((minimal_el f) t)) t)))) ==> F))))) |- (((((~ (t = NIL)) ==> ((MEM ((minimal_el f) t)) t)) ==> ((~ (t = NIL)) ==> ((~ ((f h) <= (f ((minimal_el f) t)))) ==> ((~ ((~ (((CONS h) t) = NIL)) ==> ((((minimal_el f) t) = h) \/ ((MEM ((minimal_el f) t)) t)))) ==> F)))) ==> (((~ (t = NIL)) ==> ((MEM ((minimal_el f) t)) t)) ==> ((~ (t = NIL)) ==> ((~ ((f h) <= (f ((minimal_el f) t)))) ==> ((~ ((~ (((CONS h) t) = NIL)) ==> ((((minimal_el f) t) = h) \/ ((MEM ((minimal_el f) t)) t)))) ==> F))))) /\ (((~ (t = NIL)) ==> ((MEM ((minimal_el f) t)) t)) ==> ((~ (t = NIL)) ==> ((~ ((f h) <= (f ((minimal_el f) t)))) ==> ((~ ((~ (((CONS h) t) = NIL)) ==> ((((minimal_el f) t) = h) \/ ((MEM ((minimal_el f) t)) t)))) ==> F)))))
+T c==> c==> c==> c~ c= f0 cNIL cMEM cminimal_el f1 f0 f0 c==> c~ c= f0 cNIL c==> c~ c<= * f1 f2 * f1 cminimal_el f1 f0 c==> c~ c==> c~ c= cCONS f2 f0 cNIL c\/ c= cminimal_el f1 f0 f2 cMEM cminimal_el f1 f0 f0 cF c==> c==> c==> c==> c~ c= f0 cNIL cMEM cminimal_el f1 f0 f0 c==> c~ c= f0 cNIL c==> c~ c<= * f1 f2 * f1 cminimal_el f1 f0 c==> c~ c==> c~ c= cCONS f2 f0 cNIL c\/ c= cminimal_el f1 f0 f2 cMEM cminimal_el f1 f0 f0 cF c==> c==> c~ c= f0 cNIL cMEM cminimal_el f1 f0 f0 c==> c~ c= f0 cNIL c==> c~ c<= * f1 f2 * f1 cminimal_el f1 f0 c==> c~ c==> c~ c= cCONS f2 f0 cNIL c\/ c= cminimal_el f1 f0 f2 cMEM cminimal_el f1 f0 f0 cF c/\ c==> c==> c==> c~ c= f0 cNIL cMEM cminimal_el f1 f0 f0 c==> c~ c= f0 cNIL c==> c~ c<= * f1 f2 * f1 cminimal_el f1 f0 c==> c~ c==> c~ c= cCONS f2 f0 cNIL c\/ c= cminimal_el f1 f0 f2 cMEM cminimal_el f1 f0 f0 cF c==> c==> c~ c= f0 cNIL cMEM cminimal_el f1 f0 f0 c==> c~ c= f0 cNIL c==> c~ c<= * f1 f2 * f1 cminimal_el f1 f0 c==> c~ c==> c~ c= cCONS f2 f0 cNIL c\/ c= cminimal_el f1 f0 f2 cMEM cminimal_el f1 f0 f0 cF c==> c==> c~ c= f0 cNIL cMEM cminimal_el f1 f0 f0 c==> c~ c= f0 cNIL c==> c~ c<= * f1 f2 * f1 cminimal_el f1 f0 c==> c~ c==> c~ c= cCONS f2 f0 cNIL c\/ c= cminimal_el f1 f0 f2 cMEM cminimal_el f1 f0 f0 cF
+- |- (((((~ (t = NIL)) ==> ((MEM ((minimal_el f) t)) t)) ==> ((~ (t = NIL)) ==> ((~ ((f h) <= (f ((minimal_el f) t)))) ==> ((~ ((~ (((CONS h) t) = NIL)) ==> ((((minimal_el f) t) = h) \/ ((MEM ((minimal_el f) t)) t)))) ==> F)))) ==> (((~ (t = NIL)) ==> ((MEM ((minimal_el f) t)) t)) ==> ((~ (t = NIL)) ==> ((~ ((f h) <= (f ((minimal_el f) t)))) ==> ((~ ((~ (((CONS h) t) = NIL)) ==> ((((minimal_el f) t) = h) \/ ((MEM ((minimal_el f) t)) t)))) ==> F))))) = (((~ (t = NIL)) ==> ((MEM ((minimal_el f) t)) t)) ==> ((~ (t = NIL)) ==> ((~ ((f h) <= (f ((minimal_el f) t)))) ==> ((~ ((~ (((CONS h) t) = NIL)) ==> ((((minimal_el f) t) = h) \/ ((MEM ((minimal_el f) t)) t)))) ==> F)))))
+T c= c==> c==> c==> c~ c= f0 cNIL cMEM cminimal_el f1 f0 f0 c==> c~ c= f0 cNIL c==> c~ c<= * f1 f2 * f1 cminimal_el f1 f0 c==> c~ c==> c~ c= cCONS f2 f0 cNIL c\/ c= cminimal_el f1 f0 f2 cMEM cminimal_el f1 f0 f0 cF c==> c==> c~ c= f0 cNIL cMEM cminimal_el f1 f0 f0 c==> c~ c= f0 cNIL c==> c~ c<= * f1 f2 * f1 cminimal_el f1 f0 c==> c~ c==> c~ c= cCONS f2 f0 cNIL c\/ c= cminimal_el f1 f0 f2 cMEM cminimal_el f1 f0 f0 cF c==> c==> c~ c= f0 cNIL cMEM cminimal_el f1 f0 f0 c==> c~ c= f0 cNIL c==> c~ c<= * f1 f2 * f1 cminimal_el f1 f0 c==> c~ c==> c~ c= cCONS f2 f0 cNIL c\/ c= cminimal_el f1 f0 f2 cMEM cminimal_el f1 f0 f0 cF
+- (((~ (t = NIL)) ==> ((MEM ((minimal_el f) t)) t)) ==> ((~ (t = NIL)) ==> ((~ ((f h) <= (f ((minimal_el f) t)))) ==> ((~ ((~ (((CONS h) t) = NIL)) ==> ((((minimal_el f) t) = h) \/ ((MEM ((minimal_el f) t)) t)))) ==> F)))), ((((~ (t = NIL)) ==> ((MEM ((minimal_el f) t)) t)) ==> ((~ (t = NIL)) ==> ((~ ((f h) <= (f ((minimal_el f) t)))) ==> ((~ ((~ (((CONS h) t) = NIL)) ==> ((((minimal_el f) t) = h) \/ ((MEM ((minimal_el f) t)) t)))) ==> F)))) ==> (((~ (t = NIL)) ==> ((MEM ((minimal_el f) t)) t)) ==> ((~ (t = NIL)) ==> ((~ ((f h) <= (f ((minimal_el f) t)))) ==> ((~ ((~ (((CONS h) t) = NIL)) ==> ((((minimal_el f) t) = h) \/ ((MEM ((minimal_el f) t)) t)))) ==> F))))) |- ((((~ (t = NIL)) ==> ((MEM ((minimal_el f) t)) t)) ==> ((~ (t = NIL)) ==> ((~ ((f h) <= (f ((minimal_el f) t)))) ==> ((~ ((~ (((CONS h) t) = NIL)) ==> ((((minimal_el f) t) = h) \/ ((MEM ((minimal_el f) t)) t)))) ==> F)))) /\ (((~ (t = NIL)) ==> ((MEM ((minimal_el f) t)) t)) ==> ((~ (t = NIL)) ==> ((~ ((f h) <= (f ((minimal_el f) t)))) ==> ((~ ((~ (((CONS h) t) = NIL)) ==> ((((minimal_el f) t) = h) \/ ((MEM ((minimal_el f) t)) t)))) ==> F)))))
+T c==> c==> c==> c~ c= f0 cNIL cMEM cminimal_el f1 f0 f0 c==> c~ c= f0 cNIL c==> c~ c<= * f1 f2 * f1 cminimal_el f1 f0 c==> c~ c==> c~ c= cCONS f2 f0 cNIL c\/ c= cminimal_el f1 f0 f2 cMEM cminimal_el f1 f0 f0 cF c==> c==> c==> c==> c~ c= f0 cNIL cMEM cminimal_el f1 f0 f0 c==> c~ c= f0 cNIL c==> c~ c<= * f1 f2 * f1 cminimal_el f1 f0 c==> c~ c==> c~ c= cCONS f2 f0 cNIL c\/ c= cminimal_el f1 f0 f2 cMEM cminimal_el f1 f0 f0 cF c==> c==> c~ c= f0 cNIL cMEM cminimal_el f1 f0 f0 c==> c~ c= f0 cNIL c==> c~ c<= * f1 f2 * f1 cminimal_el f1 f0 c==> c~ c==> c~ c= cCONS f2 f0 cNIL c\/ c= cminimal_el f1 f0 f2 cMEM cminimal_el f1 f0 f0 cF c/\ c==> c==> c~ c= f0 cNIL cMEM cminimal_el f1 f0 f0 c==> c~ c= f0 cNIL c==> c~ c<= * f1 f2 * f1 cminimal_el f1 f0 c==> c~ c==> c~ c= cCONS f2 f0 cNIL c\/ c= cminimal_el f1 f0 f2 cMEM cminimal_el f1 f0 f0 cF c==> c==> c~ c= f0 cNIL cMEM cminimal_el f1 f0 f0 c==> c~ c= f0 cNIL c==> c~ c<= * f1 f2 * f1 cminimal_el f1 f0 c==> c~ c==> c~ c= cCONS f2 f0 cNIL c\/ c= cminimal_el f1 f0 f2 cMEM cminimal_el f1 f0 f0 cF
+- |- (((\m. (f m)) y) = (f y))
+T c= * / * f0 b0 f1 * f0 f1
+- |- ((_10072024 = _10072026) ==> ((~ (_10072025 = _10072027)) \/ ((_10072026 <= _10072027) \/ (~ (_10072024 <= _10072025)))))
+T c==> c= f0 f1 c\/ c~ c= f2 f3 c\/ c<= f1 f3 c~ c<= f0 f2
++ |- (((!f. (!h. (((~ (t = NIL)) ==> ((MEM ((minimal_el f) t)) t)) ==> ((~ (t = NIL)) ==> ((~ ((f h) <= (f ((minimal_el f) t)))) ==> ((~ ((~ (((CONS h) t) = NIL)) ==> ((((minimal_el f) t) = h) \/ ((MEM ((minimal_el f) t)) t)))) ==> F)))))) ==> ((\f. (!h. (((~ (t = NIL)) ==> ((MEM ((minimal_el f) t)) t)) ==> ((~ (t = NIL)) ==> ((~ ((f h) <= (f ((minimal_el f) t)))) ==> ((~ ((~ (((CONS h) t) = NIL)) ==> ((((minimal_el f) t) = h) \/ ((MEM ((minimal_el f) t)) t)))) ==> F)))))) f)) = ((\f. (!h. (((~ (t = NIL)) ==> ((MEM ((minimal_el f) t)) t)) ==> ((~ (t = NIL)) ==> ((~ ((f h) <= (f ((minimal_el f) t)))) ==> ((~ ((~ (((CONS h) t) = NIL)) ==> ((((minimal_el f) t) = h) \/ ((MEM ((minimal_el f) t)) t)))) ==> F)))))) f))
+T c= c==> ! ! c==> c==> c~ c= f0 cNIL cMEM cminimal_el b0 f0 f0 c==> c~ c= f0 cNIL c==> c~ c<= * b0 b1 * b0 cminimal_el b0 f0 c==> c~ c==> c~ c= cCONS b1 f0 cNIL c\/ c= cminimal_el b0 f0 b1 cMEM cminimal_el b0 f0 f0 cF * / ! c==> c==> c~ c= f0 cNIL cMEM cminimal_el b0 f0 f0 c==> c~ c= f0 cNIL c==> c~ c<= * b0 b1 * b0 cminimal_el b0 f0 c==> c~ c==> c~ c= cCONS b1 f0 cNIL c\/ c= cminimal_el b0 f0 b1 cMEM cminimal_el b0 f0 f0 cF f1 * / ! c==> c==> c~ c= f0 cNIL cMEM cminimal_el b0 f0 f0 c==> c~ c= f0 cNIL c==> c~ c<= * b0 b1 * b0 cminimal_el b0 f0 c==> c~ c==> c~ c= cCONS b1 f0 cNIL c\/ c= cminimal_el b0 f0 b1 cMEM cminimal_el b0 f0 f0 cF f1
++ |- (((((~ (NIL = NIL)) ==> ((MEM ((minimal_el f) NIL)) NIL)) /\ (!h. (!t. (((~ (t = NIL)) ==> ((MEM ((minimal_el f) t)) t)) ==> ((~ (((CONS h) t) = NIL)) ==> ((MEM ((minimal_el f) ((CONS h) t))) ((CONS h) t))))))) ==> (!xs. ((~ (xs = NIL)) ==> ((MEM ((minimal_el f) xs)) xs)))) = (!xs. ((~ (xs = NIL)) ==> ((MEM ((minimal_el f) xs)) xs))))
+T c= c==> c/\ c==> c~ c= cNIL cNIL cMEM cminimal_el f0 cNIL cNIL ! ! c==> c==> c~ c= b1 cNIL cMEM cminimal_el f0 b1 b1 c==> c~ c= cCONS b0 b1 cNIL cMEM cminimal_el f0 cCONS b0 b1 cCONS b0 b1 ! c==> c~ c= b0 cNIL cMEM cminimal_el f0 b0 b0 ! c==> c~ c= b0 cNIL cMEM cminimal_el f0 b0 b0
+- |- ((_10072028 = _10072030) ==> ((~ (_10072029 = _10072031)) \/ (((CONS _10072028) _10072029) = ((CONS _10072030) _10072031))))
+T c==> c= f0 f1 c\/ c~ c= f2 f3 c= cCONS f0 f2 cCONS f1 f3
++ |- ((\t. (!f. (!h. (((~ (t = NIL)) ==> ((MEM ((minimal_el f) t)) t)) ==> ((~ (t = NIL)) ==> ((~ ((f h) <= (f ((minimal_el f) t)))) ==> ((~ ((~ (((CONS h) t) = NIL)) ==> ((((minimal_el f) t) = h) \/ ((MEM ((minimal_el f) t)) t)))) ==> F))))))) t)
+T * / ! ! c==> c==> c~ c= b0 cNIL cMEM cminimal_el b1 b0 b0 c==> c~ c= b0 cNIL c==> c~ c<= * b1 b2 * b1 cminimal_el b1 b0 c==> c~ c==> c~ c= cCONS b2 b0 cNIL c\/ c= cminimal_el b1 b0 b2 cMEM cminimal_el b1 b0 b0 cF f0
++ |- ((\t. ((LET_END t) = t)) t)
+T * / c= cLET_END b0 b0 f0
+- (~ ((f h) <= (f ((minimal_el f) t)))) |- (((~ (((CONS h) t) = NIL)) ==> ((MEM ((minimal_el f) t)) ((CONS h) t))) = ((~ (((CONS h) t) = NIL)) ==> ((MEM ((minimal_el f) t)) ((CONS h) t))))
+T c==> c~ c<= * f0 f1 * f0 cminimal_el f0 f2 c= c==> c~ c= cCONS f1 f2 cNIL cMEM cminimal_el f0 f2 cCONS f1 f2 c==> c~ c= cCONS f1 f2 cNIL cMEM cminimal_el f0 f2 cCONS f1 f2
++ |- (((~ (((CONS h) t) = NIL)) ==> ((((minimal_el f) t) = h) \/ ((MEM ((minimal_el f) t)) t))) = ((~ (((CONS h) t) = NIL)) ==> ((MEM ((minimal_el f) t)) ((CONS h) t))))
+T c= c==> c~ c= cCONS f0 f1 cNIL c\/ c= cminimal_el f2 f1 f0 cMEM cminimal_el f2 f1 f1 c==> c~ c= cCONS f0 f1 cNIL cMEM cminimal_el f2 f1 cCONS f0 f1
+- (~ (NIL = NIL)) |- ((~ (NIL = NIL)) /\ (NIL = NIL))
+T c==> c~ c= cNIL cNIL c/\ c~ c= cNIL cNIL c= cNIL cNIL
++ |- ((~ p) = (p ==> F))
+T c= c~ f0 c==> f0 cF
+- |- (((MEM x) NIL) = F)
+T c= cMEM f0 cNIL cF
++ |- (((((f h) <= (f ((minimal_el f) t))) ==> ((~ (((CONS h) t) = NIL)) ==> ((MEM h) ((CONS h) t)))) /\ ((~ ((f h) <= (f ((minimal_el f) t)))) ==> ((~ (((CONS h) t) = NIL)) ==> ((MEM ((minimal_el f) t)) ((CONS h) t))))) = ((~ (((CONS h) t) = NIL)) ==> ((MEM (((COND ((f h) <= (f ((minimal_el f) t)))) h) ((minimal_el f) t))) ((CONS h) t))))
+T c= c/\ c==> c<= * f0 f1 * f0 cminimal_el f0 f2 c==> c~ c= cCONS f1 f2 cNIL cMEM f1 cCONS f1 f2 c==> c~ c<= * f0 f1 * f0 cminimal_el f0 f2 c==> c~ c= cCONS f1 f2 cNIL cMEM cminimal_el f0 f2 cCONS f1 f2 c==> c~ c= cCONS f1 f2 cNIL cMEM cCOND c<= * f0 f1 * f0 cminimal_el f0 f2 f1 cminimal_el f0 f2 cCONS f1 f2
++ |- (((~ (((CONS h) t) = NIL)) ==> ((MEM (((COND ((f h) <= (f ((minimal_el f) t)))) h) ((minimal_el f) t))) ((CONS h) t))) = ((~ (((CONS h) t) = NIL)) ==> ((MEM ((LET (\m. (LET_END (((COND ((f h) <= (f m))) h) m)))) ((minimal_el f) t))) ((CONS h) t))))
+T c= c==> c~ c= cCONS f0 f1 cNIL cMEM cCOND c<= * f2 f0 * f2 cminimal_el f2 f1 f0 cminimal_el f2 f1 cCONS f0 f1 c==> c~ c= cCONS f0 f1 cNIL cMEM cLET / cLET_END cCOND c<= * f2 f0 * f2 b0 f0 b0 cminimal_el f2 f1 cCONS f0 f1
++ |- (((f h) <= (f ((minimal_el f) t))) ==> ((~ (((CONS h) t) = NIL)) ==> ((MEM h) ((CONS h) t))))
+T c==> c<= * f0 f1 * f0 cminimal_el f0 f2 c==> c~ c= cCONS f1 f2 cNIL cMEM f1 cCONS f1 f2
++ ((~ (t = NIL)) ==> ((MEM ((minimal_el f) t)) t)), ((t = NIL) ==> F), (((MEM ((minimal_el f) t)) t) ==> F) |- F
+T c==> c==> c~ c= f0 cNIL cMEM cminimal_el f1 f0 f0 c==> c==> c= f0 cNIL cF c==> c==> cMEM cminimal_el f1 f0 f0 cF cF
+- (~ (t = NIL)), (~ ((~ (((CONS h) t) = NIL)) ==> ((((minimal_el f) t) = h) \/ ((MEM ((minimal_el f) t)) t)))), (~ ((f h) <= (f ((minimal_el f) t)))), ((~ (t = NIL)) ==> ((MEM ((minimal_el f) t)) t)) |- F
+T c==> c~ c= f0 cNIL c==> c~ c==> c~ c= cCONS f1 f0 cNIL c\/ c= cminimal_el f2 f0 f1 cMEM cminimal_el f2 f0 f0 c==> c~ c<= * f2 f1 * f2 cminimal_el f2 f0 c==> c==> c~ c= f0 cNIL cMEM cminimal_el f2 f0 f0 cF
+- |- ((~ (_10072024 = _10072026)) \/ ((~ (_10072025 = _10072027)) \/ ((_10072026 <= _10072027) \/ (~ (_10072024 <= _10072025)))))
+T c\/ c~ c= f0 f1 c\/ c~ c= f2 f3 c\/ c<= f1 f3 c~ c<= f0 f2
+- (~ (t = NIL)) |- (((~ (((CONS h) t) = NIL)) ==> ((MEM ((LET (\m. (LET_END (((COND ((f h) <= (f m))) h) m)))) ((minimal_el f) t))) ((CONS h) t))) = ((~ (((CONS h) t) = NIL)) ==> ((MEM ((LET (\m. (LET_END (((COND ((f h) <= (f m))) h) m)))) ((minimal_el f) t))) ((CONS h) t))))
+T c==> c~ c= f0 cNIL c= c==> c~ c= cCONS f1 f0 cNIL cMEM cLET / cLET_END cCOND c<= * f2 f1 * f2 b0 f1 b0 cminimal_el f2 f0 cCONS f1 f0 c==> c~ c= cCONS f1 f0 cNIL cMEM cLET / cLET_END cCOND c<= * f2 f1 * f2 b0 f1 b0 cminimal_el f2 f0 cCONS f1 f0
+- (~ ((((minimal_el f) t) = h) \/ ((MEM ((minimal_el f) t)) t))), ((MEM ((minimal_el f) t)) t) |- ((~ F) ==> F)
+T c==> c~ c\/ c= cminimal_el f0 f1 f2 cMEM cminimal_el f0 f1 f1 c==> cMEM cminimal_el f0 f1 f1 c==> c~ cF cF
+- (t = NIL) |- ((~ ((MEM ((minimal_el f) t)) t)) = (~ ((MEM ((minimal_el f) NIL)) NIL)))
+T c==> c= f0 cNIL c= c~ cMEM cminimal_el f1 f0 f0 c~ cMEM cminimal_el f1 cNIL cNIL
++ ((~ (t = NIL)) ==> ((MEM ((minimal_el f) t)) t)) |- (((t = NIL) ==> ((~ (((CONS h) t) = NIL)) ==> ((MEM h) ((CONS h) t)))) /\ ((~ (t = NIL)) ==> ((~ (((CONS h) t) = NIL)) ==> ((MEM ((LET (\m. (LET_END (((COND ((f h) <= (f m))) h) m)))) ((minimal_el f) t))) ((CONS h) t)))))
+T c==> c==> c~ c= f0 cNIL cMEM cminimal_el f1 f0 f0 c/\ c==> c= f0 cNIL c==> c~ c= cCONS f2 f0 cNIL cMEM f2 cCONS f2 f0 c==> c~ c= f0 cNIL c==> c~ c= cCONS f2 f0 cNIL cMEM cLET / cLET_END cCOND c<= * f1 f2 * f1 b0 f2 b0 cminimal_el f1 f0 cCONS f2 f0
++ |- (((~ (((CONS h) t) = NIL)) ==> ((MEM (((COND (t = NIL)) h) ((LET (\m. (LET_END (((COND ((f h) <= (f m))) h) m)))) ((minimal_el f) t)))) ((CONS h) t))) = (((t = NIL) ==> ((~ (((CONS h) t) = NIL)) ==> ((MEM h) ((CONS h) t)))) /\ ((~ (t = NIL)) ==> ((~ (((CONS h) t) = NIL)) ==> ((MEM ((LET (\m. (LET_END (((COND ((f h) <= (f m))) h) m)))) ((minimal_el f) t))) ((CONS h) t))))))
+T c= c==> c~ c= cCONS f0 f1 cNIL cMEM cCOND c= f1 cNIL f0 cLET / cLET_END cCOND c<= * f2 f0 * f2 b0 f0 b0 cminimal_el f2 f1 cCONS f0 f1 c/\ c==> c= f1 cNIL c==> c~ c= cCONS f0 f1 cNIL cMEM f0 cCONS f0 f1 c==> c~ c= f1 cNIL c==> c~ c= cCONS f0 f1 cNIL cMEM cLET / cLET_END cCOND c<= * f2 f0 * f2 b0 f0 b0 cminimal_el f2 f1 cCONS f0 f1
+- (_10072037 = _10072039) |- ((_10072037 = _10072039) /\ ((~ (_10072036 = _10072038)) \/ (((I _10072036) _10072037) = ((I _10072038) _10072039))))
+T c==> c= f0 f1 c/\ c= f0 f1 c\/ c~ c= f2 f3 c= cI f2 f0 cI f3 f1

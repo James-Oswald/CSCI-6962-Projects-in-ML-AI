@@ -1,0 +1,270 @@
+N Reduction4.last_ifbetwn
+C |- (!s. (!x. (!y. ((((MEM y) s) /\ ((MEM x) s)) ==> ((LAST ((CONS x) (((ifbetwn s) x) y))) = y)))))
+T c==> c/\ cMEM f0 f1 cMEM f2 f1 c= cLAST cCONS f2 cifbetwn f1 f2 f0 f0
+D TRUTH
+A |- T
+T cT
+D BOOL_CASES_AX
+A |- (!t. ((t = T) \/ (t = F)))
+T c\/ c= f0 cT c= f0 cF
+D NOT_CLAUSES
+A |- ((!t. ((~ (~ t)) = t)) /\ (((~ T) = F) /\ ((~ F) = T)))
+T c/\ ! c= c~ c~ b0 b0 c/\ c= c~ cT cF c= c~ cF cT
+D COND_CLAUSES
+A |- (!t1. (!t2. (((((COND T) t1) t2) = t1) /\ ((((COND F) t1) t2) = t2))))
+T c/\ c= cCOND cT f0 f1 f0 c= cCOND cF f0 f1 f1
+D COND_ELIM_THM
+A |- ((P (((COND c) x) y)) = ((c ==> (P x)) /\ ((~ c) ==> (P y))))
+T c= * f0 cCOND f1 f2 f3 c/\ c==> f1 * f0 f2 c==> c~ f1 * f0 f3
+D LAST
+A |- ((LAST ((CONS h) t)) = (((COND (t = NIL)) h) (LAST t)))
+T c= cLAST cCONS f0 f1 cCOND c= f1 cNIL f0 cLAST f1
+D Reduction4.ifbetwn
+A |- (!s. (!x. (!y. ((((ifbetwn s) x) y) = (((COND (((MEM x) s) /\ (((MEM y) s) /\ (~ (x = y))))) ((rcons (((betwn s) x) y)) y)) NIL)))))
+T c= cifbetwn f0 f1 f2 cCOND c/\ cMEM f1 f0 c/\ cMEM f2 f0 c~ c= f1 f2 crcons cbetwn f0 f1 f2 f2 cNIL
+D Tame_list.rcons_nonnil
+A |- (!s. (!x. (~ (((rcons s) x) = NIL))))
+T c~ c= crcons f0 f1 cNIL
+D Tame_list.LAST_rcons
+A |- (!t. (!h. ((LAST ((rcons t) h)) = h)))
+T c= cLAST crcons f0 f1 f1
++ (~ (((MEM x) s) /\ (((MEM y) s) /\ (~ (x = y))))), ((~ ((MEM x) s)) ==> F), (((~ ((MEM y) s)) \/ (x = y)) ==> F) |- F
+T c==> c~ c/\ cMEM f0 f1 c/\ cMEM f2 f1 c~ c= f0 f2 c==> c==> c~ cMEM f0 f1 cF c==> c==> c\/ c~ cMEM f2 f1 c= f0 f2 cF cF
+- (((MEM x) s) /\ (((MEM y) s) /\ (~ (x = y)))) |- ((x = y) = F)
+T c==> c/\ cMEM f0 f1 c/\ cMEM f2 f1 c~ c= f0 f2 c= c= f0 f2 cF
++ |- (((!x. (~ (((rcons s) x) = NIL))) ==> ((\x. (~ (((rcons s) x) = NIL))) x)) = ((\x. (~ (((rcons s) x) = NIL))) x))
+T c= c==> ! c~ c= crcons f0 b0 cNIL * / c~ c= crcons f0 b0 cNIL f1 * / c~ c= crcons f0 b0 cNIL f1
++ ((MEM x) s), ((MEM y) s) |- (((((MEM x) s) /\ (((MEM y) s) /\ (~ (x = y)))) ==> ((LAST ((CONS x) ((rcons (((betwn s) x) y)) y))) = y)) /\ ((~ (((MEM x) s) /\ (((MEM y) s) /\ (~ (x = y))))) ==> ((LAST ((CONS x) NIL)) = y)))
+T c==> cMEM f0 f1 c==> cMEM f2 f1 c/\ c==> c/\ cMEM f0 f1 c/\ cMEM f2 f1 c~ c= f0 f2 c= cLAST cCONS f0 crcons cbetwn f1 f0 f2 f2 f2 c==> c~ c/\ cMEM f0 f1 c/\ cMEM f2 f1 c~ c= f0 f2 c= cLAST cCONS f0 cNIL f2
+- |- ((\t1. (!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))))) t1)
+T * / ! ! c= c\/ b0 c\/ b1 b2 c\/ c\/ b0 b1 b2 f0
+- |- ((~ (y = y)) ==> (y = y))
+T c==> c~ c= f0 f0 c= f0 f0
++ |- (((!t. (!h. ((LAST ((rcons t) h)) = h))) ==> ((\t. (!h. ((LAST ((rcons t) h)) = h))) t)) = ((\t. (!h. ((LAST ((rcons t) h)) = h))) t))
+T c= c==> ! ! c= cLAST crcons b0 b1 b1 * / ! c= cLAST crcons b0 b1 b1 f0 * / ! c= cLAST crcons b0 b1 b1 f0
+- |- (((~ (NIL = ((rcons s) x))) ==> ((NIL = ((rcons s) x)) = F)) = ((NIL = ((rcons s) x)) = F))
+T c= c==> c~ c= cNIL crcons f0 f1 c= c= cNIL crcons f0 f1 cF c= c= cNIL crcons f0 f1 cF
+- (((MEM x) s) /\ (((MEM y) s) /\ (~ (x = y)))) |- (((~ (x = y)) ==> ((x = y) = F)) = ((x = y) = F))
+T c==> c/\ cMEM f0 f1 c/\ cMEM f2 f1 c~ c= f0 f2 c= c==> c~ c= f0 f2 c= c= f0 f2 cF c= c= f0 f2 cF
++ |- (((~ (((rcons s) x) = NIL)) ==> ((((rcons s) x) = NIL) = F)) = ((((rcons s) x) = NIL) = F))
+T c= c==> c~ c= crcons f0 f1 cNIL c= c= crcons f0 f1 cNIL cF c= c= crcons f0 f1 cNIL cF
++ |- ((!x. (!y. ((((MEM y) s) /\ ((MEM x) s)) ==> ((LAST ((CONS x) (((ifbetwn s) x) y))) = y)))) = T)
+T c= ! ! c==> c/\ cMEM b1 f0 cMEM b0 f0 c= cLAST cCONS b0 cifbetwn f0 b0 b1 b1 cT
+- (~ (((MEM x) s) /\ (((MEM y) s) /\ (~ (x = y))))) |- ((((MEM x) s) /\ (((MEM y) s) /\ (~ (x = y)))) = F)
+T c==> c~ c/\ cMEM f0 f1 c/\ cMEM f2 f1 c~ c= f0 f2 c= c/\ cMEM f0 f1 c/\ cMEM f2 f1 c~ c= f0 f2 cF
+- |- ((t ==> t) = T)
+T c= c==> f0 f0 cT
++ (~ (x = y)), (x = y) |- ((y = y) ==> F)
+T c==> c~ c= f0 f1 c==> c= f0 f1 c==> c= f1 f1 cF
+- |- ((\y. (!x. (!s. (((MEM y) s) ==> (((MEM x) s) ==> ((~ (((MEM x) s) /\ (((MEM y) s) /\ (~ (x = y))))) ==> ((~ (x = y)) ==> F))))))) y)
+T * / ! ! c==> cMEM b0 b2 c==> cMEM b1 b2 c==> c~ c/\ cMEM b1 b2 c/\ cMEM b0 b2 c~ c= b1 b0 c==> c~ c= b1 b0 cF f0
+- |- ((\t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))) t3)
+T * / c= c\/ f0 c\/ f1 b0 c\/ c\/ f0 f1 b0 f2
++ (~ (x = y)), (~ (((MEM x) s) /\ (((MEM y) s) /\ (~ (x = y))))), ((MEM x) s), ((MEM y) s) |- ((~ (x = y)) /\ F)
+T c==> c~ c= f0 f1 c==> c~ c/\ cMEM f0 f2 c/\ cMEM f1 f2 c~ c= f0 f1 c==> cMEM f0 f2 c==> cMEM f1 f2 c/\ c~ c= f0 f1 cF
++ (~ (x = y)), (x = y) |- ((x = y) /\ F)
+T c==> c~ c= f0 f1 c==> c= f0 f1 c/\ c= f0 f1 cF
+- (((MEM x) s) /\ (((MEM y) s) /\ (~ (x = y)))) |- (((MEM x) s) = T)
+T c==> c/\ cMEM f0 f1 c/\ cMEM f2 f1 c~ c= f0 f2 c= cMEM f0 f1 cT
+- |- (((~ p) ==> p) = p)
+T c= c==> c~ f0 f0 f0
+- |- ((!s. t) = t)
+T c= ! f0 f0
+- |- (((((MEM y) s) ==> (((MEM x) s) ==> ((~ (((MEM x) s) /\ (((MEM y) s) /\ (~ (x = y))))) ==> ((~ (x = y)) ==> F)))) ==> (((MEM y) s) ==> (((MEM x) s) ==> ((~ (((MEM x) s) /\ (((MEM y) s) /\ (~ (x = y))))) ==> ((~ (x = y)) ==> F))))) = (((MEM y) s) ==> (((MEM x) s) ==> ((~ (((MEM x) s) /\ (((MEM y) s) /\ (~ (x = y))))) ==> ((~ (x = y)) ==> F)))))
+T c= c==> c==> cMEM f0 f1 c==> cMEM f2 f1 c==> c~ c/\ cMEM f2 f1 c/\ cMEM f0 f1 c~ c= f2 f0 c==> c~ c= f2 f0 cF c==> cMEM f0 f1 c==> cMEM f2 f1 c==> c~ c/\ cMEM f2 f1 c/\ cMEM f0 f1 c~ c= f2 f0 c==> c~ c= f2 f0 cF c==> cMEM f0 f1 c==> cMEM f2 f1 c==> c~ c/\ cMEM f2 f1 c/\ cMEM f0 f1 c~ c= f2 f0 c==> c~ c= f2 f0 cF
+- |- (T = ((LAST ((CONS x) ((rcons (((betwn s) x) y)) y))) = y))
+T c= cT c= cLAST cCONS f0 crcons cbetwn f1 f0 f2 f2 f2
+- |- ((t ==> F) = (~ t))
+T c= c==> f0 cF c~ f0
++ |- (((!h. ((LAST ((rcons t) h)) = h)) ==> ((\h. ((LAST ((rcons t) h)) = h)) h)) = ((\h. ((LAST ((rcons t) h)) = h)) h))
+T c= c==> ! c= cLAST crcons f0 b0 b0 * / c= cLAST crcons f0 b0 b0 f1 * / c= cLAST crcons f0 b0 b0 f1
++ (~ (((MEM x) s) /\ (((MEM y) s) /\ (~ (x = y))))), ((MEM x) s), ((MEM y) s) |- (x = y)
+T c==> c~ c/\ cMEM f0 f1 c/\ cMEM f2 f1 c~ c= f0 f2 c==> cMEM f0 f1 c==> cMEM f2 f1 c= f0 f2
++ |- (p = ((~ p) ==> F))
+T c= f0 c==> c~ f0 cF
+- (((MEM y) s) ==> (((MEM x) s) ==> ((~ (((MEM x) s) /\ (((MEM y) s) /\ (~ (x = y))))) ==> ((~ (x = y)) ==> F)))) |- (((((MEM y) s) ==> (((MEM x) s) ==> ((~ (((MEM x) s) /\ (((MEM y) s) /\ (~ (x = y))))) ==> ((~ (x = y)) ==> F)))) ==> (((MEM y) s) ==> (((MEM x) s) ==> ((~ (((MEM x) s) /\ (((MEM y) s) /\ (~ (x = y))))) ==> ((~ (x = y)) ==> F))))) ==> (((MEM y) s) ==> (((MEM x) s) ==> ((~ (((MEM x) s) /\ (((MEM y) s) /\ (~ (x = y))))) ==> ((~ (x = y)) ==> F)))))
+T c==> c==> cMEM f0 f1 c==> cMEM f2 f1 c==> c~ c/\ cMEM f2 f1 c/\ cMEM f0 f1 c~ c= f2 f0 c==> c~ c= f2 f0 cF c==> c==> c==> cMEM f0 f1 c==> cMEM f2 f1 c==> c~ c/\ cMEM f2 f1 c/\ cMEM f0 f1 c~ c= f2 f0 c==> c~ c= f2 f0 cF c==> cMEM f0 f1 c==> cMEM f2 f1 c==> c~ c/\ cMEM f2 f1 c/\ cMEM f0 f1 c~ c= f2 f0 c==> c~ c= f2 f0 cF c==> cMEM f0 f1 c==> cMEM f2 f1 c==> c~ c/\ cMEM f2 f1 c/\ cMEM f0 f1 c~ c= f2 f0 c==> c~ c= f2 f0 cF
++ |- (((((MEM y) s) /\ ((MEM x) s)) ==> ((LAST ((CONS x) (((ifbetwn s) x) y))) = y)) = T)
+T c= c==> c/\ cMEM f0 f1 cMEM f2 f1 c= cLAST cCONS f2 cifbetwn f1 f2 f0 f0 cT
+- (_11249877 = _11249879), (_11249878 = _11249880) |- ((_11249878 = _11249880) /\ (((MEM _11249879) _11249880) \/ (~ ((MEM _11249877) _11249878))))
+T c==> c= f0 f1 c==> c= f2 f3 c/\ c= f2 f3 c\/ cMEM f1 f3 c~ cMEM f0 f2
++ (~ (((MEM x) s) /\ (((MEM y) s) /\ (~ (x = y))))), ((MEM x) s), ((MEM y) s) |- ((~ (((MEM x) s) /\ (((MEM y) s) /\ (~ (x = y))))) /\ ((LAST ((CONS x) NIL)) = y))
+T c==> c~ c/\ cMEM f0 f1 c/\ cMEM f2 f1 c~ c= f0 f2 c==> cMEM f0 f1 c==> cMEM f2 f1 c/\ c~ c/\ cMEM f0 f1 c/\ cMEM f2 f1 c~ c= f0 f2 c= cLAST cCONS f0 cNIL f2
++ |- (((~ (((MEM x) s) /\ (((MEM y) s) /\ (~ (x = y))))) ==> ((LAST ((CONS x) NIL)) = y)) = (((((MEM x) s) /\ (((MEM y) s) /\ (~ (x = y)))) ==> ((LAST ((CONS x) ((rcons (((betwn s) x) y)) y))) = y)) /\ ((~ (((MEM x) s) /\ (((MEM y) s) /\ (~ (x = y))))) ==> ((LAST ((CONS x) NIL)) = y))))
+T c= c==> c~ c/\ cMEM f0 f1 c/\ cMEM f2 f1 c~ c= f0 f2 c= cLAST cCONS f0 cNIL f2 c/\ c==> c/\ cMEM f0 f1 c/\ cMEM f2 f1 c~ c= f0 f2 c= cLAST cCONS f0 crcons cbetwn f1 f0 f2 f2 f2 c==> c~ c/\ cMEM f0 f1 c/\ cMEM f2 f1 c~ c= f0 f2 c= cLAST cCONS f0 cNIL f2
+- |- ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))
+T c= c\/ f0 c\/ f1 f2 c\/ c\/ f0 f1 f2
+- ((((MEM y) s) ==> (((MEM x) s) ==> ((~ (((MEM x) s) /\ (((MEM y) s) /\ (~ (x = y))))) ==> ((~ (x = y)) ==> F)))) ==> (((MEM y) s) ==> (((MEM x) s) ==> ((~ (((MEM x) s) /\ (((MEM y) s) /\ (~ (x = y))))) ==> ((~ (x = y)) ==> F))))), (((MEM y) s) ==> (((MEM x) s) ==> ((~ (((MEM x) s) /\ (((MEM y) s) /\ (~ (x = y))))) ==> ((~ (x = y)) ==> F)))) |- (((((MEM y) s) ==> (((MEM x) s) ==> ((~ (((MEM x) s) /\ (((MEM y) s) /\ (~ (x = y))))) ==> ((~ (x = y)) ==> F)))) ==> (((MEM y) s) ==> (((MEM x) s) ==> ((~ (((MEM x) s) /\ (((MEM y) s) /\ (~ (x = y))))) ==> ((~ (x = y)) ==> F))))) /\ (((MEM y) s) ==> (((MEM x) s) ==> ((~ (((MEM x) s) /\ (((MEM y) s) /\ (~ (x = y))))) ==> ((~ (x = y)) ==> F)))))
+T c==> c==> c==> cMEM f0 f1 c==> cMEM f2 f1 c==> c~ c/\ cMEM f2 f1 c/\ cMEM f0 f1 c~ c= f2 f0 c==> c~ c= f2 f0 cF c==> cMEM f0 f1 c==> cMEM f2 f1 c==> c~ c/\ cMEM f2 f1 c/\ cMEM f0 f1 c~ c= f2 f0 c==> c~ c= f2 f0 cF c==> c==> cMEM f0 f1 c==> cMEM f2 f1 c==> c~ c/\ cMEM f2 f1 c/\ cMEM f0 f1 c~ c= f2 f0 c==> c~ c= f2 f0 cF c/\ c==> c==> cMEM f0 f1 c==> cMEM f2 f1 c==> c~ c/\ cMEM f2 f1 c/\ cMEM f0 f1 c~ c= f2 f0 c==> c~ c= f2 f0 cF c==> cMEM f0 f1 c==> cMEM f2 f1 c==> c~ c/\ cMEM f2 f1 c/\ cMEM f0 f1 c~ c= f2 f0 c==> c~ c= f2 f0 cF c==> cMEM f0 f1 c==> cMEM f2 f1 c==> c~ c/\ cMEM f2 f1 c/\ cMEM f0 f1 c~ c= f2 f0 c==> c~ c= f2 f0 cF
++ (~ (((MEM x) s) /\ (((MEM y) s) /\ (~ (x = y))))), ((MEM x) s), ((MEM y) s) |- ((~ (x = y)) ==> F)
+T c==> c~ c/\ cMEM f0 f1 c/\ cMEM f2 f1 c~ c= f0 f2 c==> cMEM f0 f1 c==> cMEM f2 f1 c==> c~ c= f0 f2 cF
++ |- (((~ (x = y)) ==> F) = (x = y))
+T c= c==> c~ c= f0 f1 cF c= f0 f1
+- (_11249877 = _11249879) |- ((_11249877 = _11249879) /\ ((~ (_11249878 = _11249880)) \/ (((MEM _11249879) _11249880) \/ (~ ((MEM _11249877) _11249878)))))
+T c==> c= f0 f1 c/\ c= f0 f1 c\/ c~ c= f2 f3 c\/ cMEM f1 f3 c~ cMEM f0 f2
+- |- ((_11249877 = _11249879) ==> ((~ (_11249878 = _11249880)) \/ (((MEM _11249879) _11249880) \/ (~ ((MEM _11249877) _11249878)))))
+T c==> c= f0 f1 c\/ c~ c= f2 f3 c\/ cMEM f1 f3 c~ cMEM f0 f2
++ (~ ((MEM y) s)), ((MEM y) s) |- F
+T c==> c~ cMEM f0 f1 c==> cMEM f0 f1 cF
++ (~ ((MEM x) s)), ((MEM x) s) |- ((~ ((MEM x) s)) /\ F)
+T c==> c~ cMEM f0 f1 c==> cMEM f0 f1 c/\ c~ cMEM f0 f1 cF
+- (~ F), (~ ((MEM y) s)), ((MEM y) s) |- ((~ F) /\ F)
+T c==> c~ cF c==> c~ cMEM f0 f1 c==> cMEM f0 f1 c/\ c~ cF cF
+- (~ F), (~ (x = y)), (x = y) |- ((~ F) /\ F)
+T c==> c~ cF c==> c~ c= f0 f1 c==> c= f0 f1 c/\ c~ cF cF
++ |- ((\s. (!x. (!y. ((((ifbetwn s) x) y) = (((COND (((MEM x) s) /\ (((MEM y) s) /\ (~ (x = y))))) ((rcons (((betwn s) x) y)) y)) NIL))))) s)
+T * / ! ! c= cifbetwn b0 b1 b2 cCOND c/\ cMEM b1 b0 c/\ cMEM b2 b0 c~ c= b1 b2 crcons cbetwn b0 b1 b2 b2 cNIL f0
+- |- ((\t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3)))) t2)
+T * / ! c= c\/ f0 c\/ b0 b1 c\/ c\/ f0 b0 b1 f1
+- |- (((((MEM y) s) ==> (((MEM x) s) ==> ((~ (((MEM x) s) /\ (((MEM y) s) /\ (~ (x = y))))) ==> ((~ (x = y)) ==> F)))) ==> (((MEM y) s) ==> (((MEM x) s) ==> ((~ (((MEM x) s) /\ (((MEM y) s) /\ (~ (x = y))))) ==> ((~ (x = y)) ==> F))))) ==> ((((MEM y) s) ==> (((MEM x) s) ==> ((~ (((MEM x) s) /\ (((MEM y) s) /\ (~ (x = y))))) ==> ((~ (x = y)) ==> F)))) ==> (((MEM y) s) ==> (((MEM x) s) ==> ((~ (((MEM x) s) /\ (((MEM y) s) /\ (~ (x = y))))) ==> ((~ (x = y)) ==> F))))))
+T c==> c==> c==> cMEM f0 f1 c==> cMEM f2 f1 c==> c~ c/\ cMEM f2 f1 c/\ cMEM f0 f1 c~ c= f2 f0 c==> c~ c= f2 f0 cF c==> cMEM f0 f1 c==> cMEM f2 f1 c==> c~ c/\ cMEM f2 f1 c/\ cMEM f0 f1 c~ c= f2 f0 c==> c~ c= f2 f0 cF c==> c==> cMEM f0 f1 c==> cMEM f2 f1 c==> c~ c/\ cMEM f2 f1 c/\ cMEM f0 f1 c~ c= f2 f0 c==> c~ c= f2 f0 cF c==> cMEM f0 f1 c==> cMEM f2 f1 c==> c~ c/\ cMEM f2 f1 c/\ cMEM f0 f1 c~ c= f2 f0 c==> c~ c= f2 f0 cF
++ |- (((y = y) ==> F) = F)
+T c= c==> c= f0 f0 cF cF
++ (((MEM x) s) /\ (((MEM y) s) /\ (~ (x = y)))) |- ((((MEM x) s) /\ (((MEM y) s) /\ (~ (x = y)))) /\ ((LAST ((CONS x) ((rcons (((betwn s) x) y)) y))) = y))
+T c==> c/\ cMEM f0 f1 c/\ cMEM f2 f1 c~ c= f0 f2 c/\ c/\ cMEM f0 f1 c/\ cMEM f2 f1 c~ c= f0 f2 c= cLAST cCONS f0 crcons cbetwn f1 f0 f2 f2 f2
+- |- ((NIL = ((rcons s) x)) = F)
+T c= c= cNIL crcons f0 f1 cF
+- (x = y) |- (((MEM x) s) = ((MEM y) s))
+T c==> c= f0 f1 c= cMEM f0 f2 cMEM f1 f2
+- ((MEM x) s), ((MEM y) s) |- (((MEM x) s) /\ ((~ (((MEM x) s) /\ (((MEM y) s) /\ (~ (x = y))))) ==> (x = y)))
+T c==> cMEM f0 f1 c==> cMEM f2 f1 c/\ cMEM f0 f1 c==> c~ c/\ cMEM f0 f1 c/\ cMEM f2 f1 c~ c= f0 f2 c= f0 f2
++ |- ((((rcons s) x) = NIL) = F)
+T c= c= crcons f0 f1 cNIL cF
++ (~ (x = y)), (~ (((MEM x) s) /\ (((MEM y) s) /\ (~ (x = y))))), ((MEM x) s), ((MEM y) s) |- F
+T c==> c~ c= f0 f1 c==> c~ c/\ cMEM f0 f2 c/\ cMEM f1 f2 c~ c= f0 f1 c==> cMEM f0 f2 c==> cMEM f1 f2 cF
+- (((MEM x) s) /\ (((MEM y) s) /\ (~ (x = y)))) |- ((MEM y) s)
+T c==> c/\ cMEM f0 f1 c/\ cMEM f2 f1 c~ c= f0 f2 cMEM f2 f1
+- |- (((!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3)))) ==> ((\t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3)))) t2)) = ((\t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3)))) t2))
+T c= c==> ! ! c= c\/ f0 c\/ b0 b1 c\/ c\/ f0 b0 b1 * / ! c= c\/ f0 c\/ b0 b1 c\/ c\/ f0 b0 b1 f1 * / ! c= c\/ f0 c\/ b0 b1 c\/ c\/ f0 b0 b1 f1
+- (x = y), ((MEM x) s) |- ((MEM y) s)
+T c==> c= f0 f1 c==> cMEM f0 f2 cMEM f1 f2
+- (~ (((MEM x) s) /\ (((MEM y) s) /\ (~ (x = y))))), ((MEM x) s), ((MEM y) s) |- ((~ (((MEM x) s) /\ (((MEM y) s) /\ (~ (x = y))))) /\ (x = y))
+T c==> c~ c/\ cMEM f0 f1 c/\ cMEM f2 f1 c~ c= f0 f2 c==> cMEM f0 f1 c==> cMEM f2 f1 c/\ c~ c/\ cMEM f0 f1 c/\ cMEM f2 f1 c~ c= f0 f2 c= f0 f2
++ |- ((((COND (x = x)) y) z) = y)
+T c= cCOND c= f0 f0 f1 f2 f1
++ |- ((!y. ((((MEM y) s) /\ ((MEM x) s)) ==> ((LAST ((CONS x) (((ifbetwn s) x) y))) = y))) = T)
+T c= ! c==> c/\ cMEM b0 f0 cMEM f1 f0 c= cLAST cCONS f1 cifbetwn f0 f1 b0 b0 cT
+- |- ((x = x) = T)
+T c= c= f0 f0 cT
++ ((MEM x) s), ((MEM y) s) |- ((LAST ((CONS x) (((ifbetwn s) x) y))) = y)
+T c==> cMEM f0 f1 c==> cMEM f2 f1 c= cLAST cCONS f0 cifbetwn f1 f0 f2 f2
+- (y = x) |- (x = y)
+T c==> c= f0 f1 c= f1 f0
+- |- ((a ==> b) = ((~ a) \/ b))
+T c= c==> f0 f1 c\/ c~ f0 f1
+- ((MEM y) s) |- ((~ ((MEM y) s)) ==> ((MEM y) s))
+T c==> cMEM f0 f1 c==> c~ cMEM f0 f1 cMEM f0 f1
+- (((rcons s) x) = NIL) |- (NIL = ((rcons s) x))
+T c==> c= crcons f0 f1 cNIL c= cNIL crcons f0 f1
+- (((MEM x) s) /\ (((MEM y) s) /\ (~ (x = y)))) |- (~ (y = x))
+T c==> c/\ cMEM f0 f1 c/\ cMEM f2 f1 c~ c= f0 f2 c~ c= f2 f0
++ |- ((\y. ((((ifbetwn s) x) y) = (((COND (((MEM x) s) /\ (((MEM y) s) /\ (~ (x = y))))) ((rcons (((betwn s) x) y)) y)) NIL))) y)
+T * / c= cifbetwn f0 f1 b0 cCOND c/\ cMEM f1 f0 c/\ cMEM b0 f0 c~ c= f1 b0 crcons cbetwn f0 f1 b0 b0 cNIL f2
++ (((MEM y) s) /\ ((MEM x) s)) |- ((((MEM y) s) /\ ((MEM x) s)) /\ ((LAST ((CONS x) (((ifbetwn s) x) y))) = y))
+T c==> c/\ cMEM f0 f1 cMEM f2 f1 c/\ c/\ cMEM f0 f1 cMEM f2 f1 c= cLAST cCONS f2 cifbetwn f1 f2 f0 f0
++ |- ((\s. (!x. (~ (((rcons s) x) = NIL)))) s)
+T * / ! c~ c= crcons b0 b1 cNIL f0
+- |- ((((MEM y) s) ==> (((MEM x) s) ==> ((~ (((MEM x) s) /\ (((MEM y) s) /\ (~ (x = y))))) ==> (x = y)))) = T)
+T c= c==> cMEM f0 f1 c==> cMEM f2 f1 c==> c~ c/\ cMEM f2 f1 c/\ cMEM f0 f1 c~ c= f2 f0 c= f2 f0 cT
+- (x = y) |- (F = F)
+T c==> c= f0 f1 c= cF cF
+- (((MEM x) s) /\ (((MEM y) s) /\ (~ (x = y)))) |- (((MEM y) s) = T)
+T c==> c/\ cMEM f0 f1 c/\ cMEM f2 f1 c~ c= f0 f2 c= cMEM f2 f1 cT
+- |- (((t1 \/ t2) \/ t3) = (t1 \/ (t2 \/ t3)))
+T c= c\/ c\/ f0 f1 f2 c\/ f0 c\/ f1 f2
+- |- ((\s. (((MEM y) s) ==> (((MEM x) s) ==> ((~ (((MEM x) s) /\ (((MEM y) s) /\ (~ (x = y))))) ==> ((~ (x = y)) ==> F))))) s)
+T * / c==> cMEM f0 b0 c==> cMEM f1 b0 c==> c~ c/\ cMEM f1 b0 c/\ cMEM f0 b0 c~ c= f1 f0 c==> c~ c= f1 f0 cF f2
+- ((MEM y) s) |- (((MEM x) s) ==> ((~ (((MEM x) s) /\ (((MEM y) s) /\ (~ (x = y))))) ==> ((~ (x = y)) ==> F)))
+T c==> cMEM f0 f1 c==> cMEM f2 f1 c==> c~ c/\ cMEM f2 f1 c/\ cMEM f0 f1 c~ c= f2 f0 c==> c~ c= f2 f0 cF
++ |- ((((COND F) t1) t2) = t2)
+T c= cCOND cF f0 f1 f1
+- |- ((((MEM y) s) ==> (((MEM x) s) ==> ((~ (((MEM x) s) /\ (((MEM y) s) /\ (~ (x = y))))) ==> ((~ (x = y)) ==> F)))) ==> (((MEM y) s) ==> (((MEM x) s) ==> ((~ (((MEM x) s) /\ (((MEM y) s) /\ (~ (x = y))))) ==> ((~ (x = y)) ==> F)))))
+T c==> c==> cMEM f0 f1 c==> cMEM f2 f1 c==> c~ c/\ cMEM f2 f1 c/\ cMEM f0 f1 c~ c= f2 f0 c==> c~ c= f2 f0 cF c==> cMEM f0 f1 c==> cMEM f2 f1 c==> c~ c/\ cMEM f2 f1 c/\ cMEM f0 f1 c~ c= f2 f0 c==> c~ c= f2 f0 cF
++ |- (((!y. ((((ifbetwn s) x) y) = (((COND (((MEM x) s) /\ (((MEM y) s) /\ (~ (x = y))))) ((rcons (((betwn s) x) y)) y)) NIL))) ==> ((\y. ((((ifbetwn s) x) y) = (((COND (((MEM x) s) /\ (((MEM y) s) /\ (~ (x = y))))) ((rcons (((betwn s) x) y)) y)) NIL))) y)) = ((\y. ((((ifbetwn s) x) y) = (((COND (((MEM x) s) /\ (((MEM y) s) /\ (~ (x = y))))) ((rcons (((betwn s) x) y)) y)) NIL))) y))
+T c= c==> ! c= cifbetwn f0 f1 b0 cCOND c/\ cMEM f1 f0 c/\ cMEM b0 f0 c~ c= f1 b0 crcons cbetwn f0 f1 b0 b0 cNIL * / c= cifbetwn f0 f1 b0 cCOND c/\ cMEM f1 f0 c/\ cMEM b0 f0 c~ c= f1 b0 crcons cbetwn f0 f1 b0 b0 cNIL f2 * / c= cifbetwn f0 f1 b0 cCOND c/\ cMEM f1 f0 c/\ cMEM b0 f0 c~ c= f1 b0 crcons cbetwn f0 f1 b0 b0 cNIL f2
++ |- ((\t. (!h. ((LAST ((rcons t) h)) = h))) t)
+T * / ! c= cLAST crcons b0 b1 b1 f0
+- |- (((!x. (!s. (((MEM y) s) ==> (((MEM x) s) ==> ((~ (((MEM x) s) /\ (((MEM y) s) /\ (~ (x = y))))) ==> ((~ (x = y)) ==> F)))))) ==> ((\x. (!s. (((MEM y) s) ==> (((MEM x) s) ==> ((~ (((MEM x) s) /\ (((MEM y) s) /\ (~ (x = y))))) ==> ((~ (x = y)) ==> F)))))) x)) = ((\x. (!s. (((MEM y) s) ==> (((MEM x) s) ==> ((~ (((MEM x) s) /\ (((MEM y) s) /\ (~ (x = y))))) ==> ((~ (x = y)) ==> F)))))) x))
+T c= c==> ! ! c==> cMEM f0 b1 c==> cMEM b0 b1 c==> c~ c/\ cMEM b0 b1 c/\ cMEM f0 b1 c~ c= b0 f0 c==> c~ c= b0 f0 cF * / ! c==> cMEM f0 b1 c==> cMEM b0 b1 c==> c~ c/\ cMEM b0 b1 c/\ cMEM f0 b1 c~ c= b0 f0 c==> c~ c= b0 f0 cF f1 * / ! c==> cMEM f0 b1 c==> cMEM b0 b1 c==> c~ c/\ cMEM b0 b1 c/\ cMEM f0 b1 c~ c= b0 f0 c==> c~ c= b0 f0 cF f1
+- (((MEM x) s) /\ (((MEM y) s) /\ (~ (x = y)))) |- ((((MEM x) s) /\ (((MEM y) s) /\ (~ (x = y)))) = T)
+T c==> c/\ cMEM f0 f1 c/\ cMEM f2 f1 c~ c= f0 f2 c= c/\ cMEM f0 f1 c/\ cMEM f2 f1 c~ c= f0 f2 cT
+- (((MEM x) s) /\ (((MEM y) s) /\ (~ (x = y)))) |- (~ (x = y))
+T c==> c/\ cMEM f0 f1 c/\ cMEM f2 f1 c~ c= f0 f2 c~ c= f0 f2
++ (~ (((MEM x) s) /\ (((MEM y) s) /\ (~ (x = y))))), (((~ ((MEM y) s)) \/ (x = y)) ==> F), ((MEM x) s) |- F
+T c==> c~ c/\ cMEM f0 f1 c/\ cMEM f2 f1 c~ c= f0 f2 c==> c==> c\/ c~ cMEM f2 f1 c= f0 f2 cF c==> cMEM f0 f1 cF
+- ((MEM x) s), ((MEM y) s) |- ((~ (((MEM x) s) /\ (((MEM y) s) /\ (~ (x = y))))) ==> (x = y))
+T c==> cMEM f0 f1 c==> cMEM f2 f1 c==> c~ c/\ cMEM f0 f1 c/\ cMEM f2 f1 c~ c= f0 f2 c= f0 f2
+- (NIL = ((rcons s) x)) |- (((rcons s) x) = NIL)
+T c==> c= cNIL crcons f0 f1 c= crcons f0 f1 cNIL
++ |- ((x = y) = ((LAST ((CONS x) NIL)) = y))
+T c= c= f0 f1 c= cLAST cCONS f0 cNIL f1
+- |- (((!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))) ==> ((\t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))) t3)) = ((\t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))) t3))
+T c= c==> ! c= c\/ f0 c\/ f1 b0 c\/ c\/ f0 f1 b0 * / c= c\/ f0 c\/ f1 b0 c\/ c\/ f0 f1 b0 f2 * / c= c\/ f0 c\/ f1 b0 c\/ c\/ f0 f1 b0 f2
++ (~ (x = y)) |- ((x = y) ==> F)
+T c==> c~ c= f0 f1 c==> c= f0 f1 cF
++ ((x = y) ==> F), ((~ ((MEM y) s)) \/ (x = y)), ((MEM y) s) |- F
+T c==> c==> c= f0 f1 cF c==> c\/ c~ cMEM f1 f2 c= f0 f1 c==> cMEM f1 f2 cF
+- |- ((t /\ t) = t)
+T c= c/\ f0 f0 f0
+- |- ((a = b) ==> (b \/ (~ a)))
+T c==> c= f0 f1 c\/ f1 c~ f0
++ (((MEM y) s) /\ ((MEM x) s)), ((MEM y) s) |- ((LAST ((CONS x) (((ifbetwn s) x) y))) = y)
+T c==> c/\ cMEM f0 f1 cMEM f2 f1 c==> cMEM f0 f1 c= cLAST cCONS f2 cifbetwn f1 f2 f0 f0
++ |- ((\h. ((LAST ((rcons t) h)) = h)) h)
+T * / c= cLAST crcons f0 b0 b0 f1
+- (~ ((MEM y) s)), ((MEM y) s) |- ((~ F) ==> F)
+T c==> c~ cMEM f0 f1 c==> cMEM f0 f1 c==> c~ cF cF
+- (_11249877 = _11249879), (_11249878 = _11249880) |- (((((MEM _11249877) _11249878) = ((MEM _11249879) _11249880)) ==> (((MEM _11249879) _11249880) \/ (~ ((MEM _11249877) _11249878)))) = (((MEM _11249879) _11249880) \/ (~ ((MEM _11249877) _11249878))))
+T c==> c= f0 f1 c==> c= f2 f3 c= c==> c= cMEM f0 f2 cMEM f1 f3 c\/ cMEM f1 f3 c~ cMEM f0 f2 c\/ cMEM f1 f3 c~ cMEM f0 f2
+- (~ (((MEM x) s) /\ (((MEM y) s) /\ (~ (x = y))))) |- (((LAST ((CONS x) NIL)) = y) = ((LAST ((CONS x) NIL)) = y))
+T c==> c~ c/\ cMEM f0 f1 c/\ cMEM f2 f1 c~ c= f0 f2 c= c= cLAST cCONS f0 cNIL f2 c= cLAST cCONS f0 cNIL f2
+- |- ((~ (_11249877 = _11249879)) \/ ((~ (_11249878 = _11249880)) \/ (((MEM _11249879) _11249880) \/ (~ ((MEM _11249877) _11249878)))))
+T c\/ c~ c= f0 f1 c\/ c~ c= f2 f3 c\/ cMEM f1 f3 c~ cMEM f0 f2
++ |- ((((((MEM x) s) /\ (((MEM y) s) /\ (~ (x = y)))) ==> ((LAST ((CONS x) ((rcons (((betwn s) x) y)) y))) = y)) /\ ((~ (((MEM x) s) /\ (((MEM y) s) /\ (~ (x = y))))) ==> ((LAST ((CONS x) NIL)) = y))) = ((LAST ((CONS x) (((COND (((MEM x) s) /\ (((MEM y) s) /\ (~ (x = y))))) ((rcons (((betwn s) x) y)) y)) NIL))) = y))
+T c= c/\ c==> c/\ cMEM f0 f1 c/\ cMEM f2 f1 c~ c= f0 f2 c= cLAST cCONS f0 crcons cbetwn f1 f0 f2 f2 f2 c==> c~ c/\ cMEM f0 f1 c/\ cMEM f2 f1 c~ c= f0 f2 c= cLAST cCONS f0 cNIL f2 c= cLAST cCONS f0 cCOND c/\ cMEM f0 f1 c/\ cMEM f2 f1 c~ c= f0 f2 crcons cbetwn f1 f0 f2 f2 cNIL f2
+- (_11249877 = _11249879) |- ((_11249878 = _11249880) ==> (((MEM _11249879) _11249880) \/ (~ ((MEM _11249877) _11249878))))
+T c==> c= f0 f1 c==> c= f2 f3 c\/ cMEM f1 f3 c~ cMEM f0 f2
++ ((MEM x) s), ((MEM y) s) |- ((LAST ((CONS x) (((COND (((MEM x) s) /\ (((MEM y) s) /\ (~ (x = y))))) ((rcons (((betwn s) x) y)) y)) NIL))) = y)
+T c==> cMEM f0 f1 c==> cMEM f2 f1 c= cLAST cCONS f0 cCOND c/\ cMEM f0 f1 c/\ cMEM f2 f1 c~ c= f0 f2 crcons cbetwn f1 f0 f2 f2 cNIL f2
+- (((MEM y) s) ==> (((MEM x) s) ==> ((~ (((MEM x) s) /\ (((MEM y) s) /\ (~ (x = y))))) ==> ((~ (x = y)) ==> F)))) |- ((((MEM y) s) ==> (((MEM x) s) ==> ((~ (((MEM x) s) /\ (((MEM y) s) /\ (~ (x = y))))) ==> ((~ (x = y)) ==> F)))) /\ (((MEM y) s) ==> (((MEM x) s) ==> ((~ (((MEM x) s) /\ (((MEM y) s) /\ (~ (x = y))))) ==> ((~ (x = y)) ==> F)))))
+T c==> c==> cMEM f0 f1 c==> cMEM f2 f1 c==> c~ c/\ cMEM f2 f1 c/\ cMEM f0 f1 c~ c= f2 f0 c==> c~ c= f2 f0 cF c/\ c==> cMEM f0 f1 c==> cMEM f2 f1 c==> c~ c/\ cMEM f2 f1 c/\ cMEM f0 f1 c~ c= f2 f0 c==> c~ c= f2 f0 cF c==> cMEM f0 f1 c==> cMEM f2 f1 c==> c~ c/\ cMEM f2 f1 c/\ cMEM f0 f1 c~ c= f2 f0 c==> c~ c= f2 f0 cF
++ (x = y) |- ((~ (x = y)) = (~ (y = y)))
+T c==> c= f0 f1 c= c~ c= f0 f1 c~ c= f1 f1
+- |- ((!x. (!s. (((MEM y) s) ==> (((MEM x) s) ==> ((~ (((MEM x) s) /\ (((MEM y) s) /\ (~ (x = y))))) ==> (x = y)))))) = T)
+T c= ! ! c==> cMEM f0 b1 c==> cMEM b0 b1 c==> c~ c/\ cMEM b0 b1 c/\ cMEM f0 b1 c~ c= b0 f0 c= b0 f0 cT
++ (~ (((MEM x) s) /\ (((MEM y) s) /\ (~ (x = y))))), ((MEM x) s), ((MEM y) s) |- ((LAST ((CONS x) NIL)) = y)
+T c==> c~ c/\ cMEM f0 f1 c/\ cMEM f2 f1 c~ c= f0 f2 c==> cMEM f0 f1 c==> cMEM f2 f1 c= cLAST cCONS f0 cNIL f2
++ (~ (x = y)), ((~ ((MEM y) s)) \/ (x = y)), ((MEM y) s) |- F
+T c==> c~ c= f0 f1 c==> c\/ c~ cMEM f1 f2 c= f0 f1 c==> cMEM f1 f2 cF
++ |- (((LAST ((CONS x) (((COND (((MEM x) s) /\ (((MEM y) s) /\ (~ (x = y))))) ((rcons (((betwn s) x) y)) y)) NIL))) = y) = ((LAST ((CONS x) (((ifbetwn s) x) y))) = y))
+T c= c= cLAST cCONS f0 cCOND c/\ cMEM f0 f1 c/\ cMEM f2 f1 c~ c= f0 f2 crcons cbetwn f1 f0 f2 f2 cNIL f2 c= cLAST cCONS f0 cifbetwn f1 f0 f2 f2
++ (~ (((MEM x) s) /\ (((MEM y) s) /\ (~ (x = y))))) |- ((~ ((MEM x) s)) \/ ((~ ((MEM y) s)) \/ (x = y)))
+T c==> c~ c/\ cMEM f0 f1 c/\ cMEM f2 f1 c~ c= f0 f2 c\/ c~ cMEM f0 f1 c\/ c~ cMEM f2 f1 c= f0 f2
++ |- ((((MEM x) s) /\ (((MEM y) s) /\ (~ (x = y)))) ==> ((LAST ((CONS x) ((rcons (((betwn s) x) y)) y))) = y))
+T c==> c/\ cMEM f0 f1 c/\ cMEM f2 f1 c~ c= f0 f2 c= cLAST cCONS f0 crcons cbetwn f1 f0 f2 f2 f2
++ |- ((~ (~ t)) = t)
+T c= c~ c~ f0 f0
++ (~ (x = y)), ((MEM y) s) |- (((~ ((MEM y) s)) \/ (x = y)) ==> F)
+T c==> c~ c= f0 f1 c==> cMEM f1 f2 c==> c\/ c~ cMEM f1 f2 c= f0 f1 cF
++ |- (((LAST ((CONS x) (((COND (((MEM x) s) /\ (((MEM y) s) /\ (~ (x = y))))) ((rcons (((betwn s) x) y)) y)) NIL))) = y) = (((((MEM x) s) /\ (((MEM y) s) /\ (~ (x = y)))) ==> ((LAST ((CONS x) ((rcons (((betwn s) x) y)) y))) = y)) /\ ((~ (((MEM x) s) /\ (((MEM y) s) /\ (~ (x = y))))) ==> ((LAST ((CONS x) NIL)) = y))))
+T c= c= cLAST cCONS f0 cCOND c/\ cMEM f0 f1 c/\ cMEM f2 f1 c~ c= f0 f2 crcons cbetwn f1 f0 f2 f2 cNIL f2 c/\ c==> c/\ cMEM f0 f1 c/\ cMEM f2 f1 c~ c= f0 f2 c= cLAST cCONS f0 crcons cbetwn f1 f0 f2 f2 f2 c==> c~ c/\ cMEM f0 f1 c/\ cMEM f2 f1 c~ c= f0 f2 c= cLAST cCONS f0 cNIL f2
++ |- ((\x. (~ (((rcons s) x) = NIL))) x)
+T * / c~ c= crcons f0 b0 cNIL f1
++ (~ (x = y)), (x = y) |- (~ (y = y))
+T c==> c~ c= f0 f1 c==> c= f0 f1 c~ c= f1 f1
++ |- ((~ p) = (p ==> F))
+T c= c~ f0 c==> f0 cF
++ |- (((!s. (!x. (!y. ((((ifbetwn s) x) y) = (((COND (((MEM x) s) /\ (((MEM y) s) /\ (~ (x = y))))) ((rcons (((betwn s) x) y)) y)) NIL))))) ==> ((\s. (!x. (!y. ((((ifbetwn s) x) y) = (((COND (((MEM x) s) /\ (((MEM y) s) /\ (~ (x = y))))) ((rcons (((betwn s) x) y)) y)) NIL))))) s)) = ((\s. (!x. (!y. ((((ifbetwn s) x) y) = (((COND (((MEM x) s) /\ (((MEM y) s) /\ (~ (x = y))))) ((rcons (((betwn s) x) y)) y)) NIL))))) s))
+T c= c==> ! ! ! c= cifbetwn b0 b1 b2 cCOND c/\ cMEM b1 b0 c/\ cMEM b2 b0 c~ c= b1 b2 crcons cbetwn b0 b1 b2 b2 cNIL * / ! ! c= cifbetwn b0 b1 b2 cCOND c/\ cMEM b1 b0 c/\ cMEM b2 b0 c~ c= b1 b2 crcons cbetwn b0 b1 b2 b2 cNIL f0 * / ! ! c= cifbetwn b0 b1 b2 cCOND c/\ cMEM b1 b0 c/\ cMEM b2 b0 c~ c= b1 b2 crcons cbetwn b0 b1 b2 b2 cNIL f0
++ ((MEM x) s) |- ((~ ((MEM x) s)) ==> F)
+T c==> cMEM f0 f1 c==> c~ cMEM f0 f1 cF
++ ((MEM x) s), ((MEM y) s) |- ((~ (((MEM x) s) /\ (((MEM y) s) /\ (~ (x = y))))) ==> ((LAST ((CONS x) NIL)) = y))
+T c==> cMEM f0 f1 c==> cMEM f2 f1 c==> c~ c/\ cMEM f0 f1 c/\ cMEM f2 f1 c~ c= f0 f2 c= cLAST cCONS f0 cNIL f2
++ |- (((!s. (!x. (~ (((rcons s) x) = NIL)))) ==> ((\s. (!x. (~ (((rcons s) x) = NIL)))) s)) = ((\s. (!x. (~ (((rcons s) x) = NIL)))) s))
+T c= c==> ! ! c~ c= crcons b0 b1 cNIL * / ! c~ c= crcons b0 b1 cNIL f0 * / ! c~ c= crcons b0 b1 cNIL f0
++ |- ((\x. (!y. ((((ifbetwn s) x) y) = (((COND (((MEM x) s) /\ (((MEM y) s) /\ (~ (x = y))))) ((rcons (((betwn s) x) y)) y)) NIL)))) x)
+T * / ! c= cifbetwn f0 b0 b1 cCOND c/\ cMEM b0 f0 c/\ cMEM b1 f0 c~ c= b0 b1 crcons cbetwn f0 b0 b1 b1 cNIL f1
++ |- (((!x. (!y. ((((ifbetwn s) x) y) = (((COND (((MEM x) s) /\ (((MEM y) s) /\ (~ (x = y))))) ((rcons (((betwn s) x) y)) y)) NIL)))) ==> ((\x. (!y. ((((ifbetwn s) x) y) = (((COND (((MEM x) s) /\ (((MEM y) s) /\ (~ (x = y))))) ((rcons (((betwn s) x) y)) y)) NIL)))) x)) = ((\x. (!y. ((((ifbetwn s) x) y) = (((COND (((MEM x) s) /\ (((MEM y) s) /\ (~ (x = y))))) ((rcons (((betwn s) x) y)) y)) NIL)))) x))
+T c= c==> ! ! c= cifbetwn f0 b0 b1 cCOND c/\ cMEM b0 f0 c/\ cMEM b1 f0 c~ c= b0 b1 crcons cbetwn f0 b0 b1 b1 cNIL * / ! c= cifbetwn f0 b0 b1 cCOND c/\ cMEM b0 f0 c/\ cMEM b1 f0 c~ c= b0 b1 crcons cbetwn f0 b0 b1 b1 cNIL f1 * / ! c= cifbetwn f0 b0 b1 cCOND c/\ cMEM b0 f0 c/\ cMEM b1 f0 c~ c= b0 b1 crcons cbetwn f0 b0 b1 b1 cNIL f1
++ (~ (x = y)), ((~ ((MEM y) s)) \/ (x = y)), ((MEM y) s) |- (((~ ((MEM y) s)) \/ (x = y)) /\ F)
+T c==> c~ c= f0 f1 c==> c\/ c~ cMEM f1 f2 c= f0 f1 c==> cMEM f1 f2 c/\ c\/ c~ cMEM f1 f2 c= f0 f1 cF

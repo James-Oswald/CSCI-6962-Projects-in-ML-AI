@@ -1,0 +1,319 @@
+N Aq8.next_cat_betwn_same
+C |- (((uniq r) /\ (((MEM y) r) /\ (((MEM z) r) /\ ((~ (y = z)) /\ (((MEM a) s) /\ ((((APPEND ((CONS z) NIL)) ((APPEND (((betwn r) z) y)) ((CONS y) NIL))) = s) /\ (~ (a = y)))))))) ==> (((next_el s) a) = ((next_el r) a)))
+T c==> c/\ cuniq f0 c/\ cMEM f1 f0 c/\ cMEM f2 f0 c/\ c~ c= f1 f2 c/\ cMEM f3 f4 c/\ c= cAPPEND cCONS f2 cNIL cAPPEND cbetwn f0 f2 f1 cCONS f1 cNIL f4 c~ c= f3 f1 c= cnext_el f4 f3 cnext_el f0 f3
+D TRUTH
+A |- T
+T cT
+D COND_CLAUSES
+A |- (!t1. (!t2. (((((COND T) t1) t2) = t1) /\ ((((COND F) t1) t2) = t2))))
+T c/\ c= cCOND cT f0 f1 f0 c= cCOND cF f0 f1 f1
+D HD
+A |- ((HD ((CONS h) t)) = h)
+T c= cHD cCONS f0 f1 f0
+D LAST
+A |- ((LAST ((CONS h) t)) = (((COND (t = NIL)) h) (LAST t)))
+T c= cLAST cCONS f0 f1 cCOND c= f1 cNIL f0 cLAST f1
+D LAST_CLAUSES
+A |- (((LAST ((CONS h) NIL)) = h) /\ ((LAST ((CONS h) ((CONS k) t))) = (LAST ((CONS k) t))))
+T c/\ c= cLAST cCONS f0 cNIL f0 c= cLAST cCONS f0 cCONS f1 f2 cLAST cCONS f1 f2
+D MEM_APPEND
+A |- (!x. (!l1. (!l2. (((MEM x) ((APPEND l1) l2)) = (((MEM x) l1) \/ ((MEM x) l2))))))
+T c= cMEM f0 cAPPEND f1 f2 c\/ cMEM f0 f1 cMEM f0 f2
+D APPEND_EQ_NIL
+A |- (!l. (!m. ((((APPEND l) m) = NIL) = ((l = NIL) /\ (m = NIL)))))
+T c= c= cAPPEND f0 f1 cNIL c/\ c= f0 cNIL c= f1 cNIL
+D LAST_APPEND
+A |- (!p. (!q. ((LAST ((APPEND p) q)) = (((COND (q = NIL)) (LAST p)) (LAST q)))))
+T c= cLAST cAPPEND f0 f1 cCOND c= f1 cNIL cLAST f0 cLAST f1
+D HD_APPEND
+A |- (!l. (!m. ((HD ((APPEND l) m)) = (((COND (l = NIL)) (HD m)) (HD l)))))
+T c= cHD cAPPEND f0 f1 cCOND c= f0 cNIL cHD f1 cHD f0
+D Nkezbfc_local.lemma
+A |- (!A. (A \/ (~ A)))
+T c\/ f0 c~ f0
+D Seq.mem_seq1
+A |- (!x. (!y. (((MEM x) ((CONS y) NIL)) = (x = y))))
+T c= cMEM f0 cCONS f1 cNIL c= f0 f1
+D Seq.cat_uniq
+A |- (!s1. (!s2. ((uniq ((cat s1) s2)) = ((uniq s1) /\ ((~ ((has (\x. ((MEM x) s1))) s2)) /\ (uniq s2))))))
+T c= cuniq ccat f0 f1 c/\ cuniq f0 c/\ c~ chas / cMEM b0 f0 f1 cuniq f1
+D Seq2.APPEND_cat
+A |- (APPEND = cat)
+T c= part cAPPEND part ccat
+D Tame_list.next_el_cat1
+A |- (!s. (!t. (((uniq s) /\ (((MEM x) s) /\ (~ (x = (LAST s))))) ==> (((next_el ((cat s) t)) x) = ((next_el s) x)))))
+T c==> c/\ cuniq f0 c/\ cMEM f1 f0 c~ c= f1 cLAST f0 c= cnext_el ccat f0 f2 f1 cnext_el f0 f1
+D Tame_list.next_el_cat2
+A |- (!s. (!t. (((uniq ((cat s) t)) /\ (((MEM x) t) /\ (~ (x = (LAST t))))) ==> (((next_el ((cat s) t)) x) = ((next_el t) x)))))
+T c==> c/\ cuniq ccat f0 f1 c/\ cMEM f2 f1 c~ c= f2 cLAST f1 c= cnext_el ccat f0 f1 f2 cnext_el f1 f2
+D Tame_list.next_el_cat_last1
+A |- (!s. (!t. (((uniq ((cat s) t)) /\ ((~ (t = NIL)) /\ (~ (s = NIL)))) ==> (((next_el ((cat s) t)) (LAST s)) = (HD t)))))
+T c==> c/\ cuniq ccat f0 f1 c/\ c~ c= f1 cNIL c~ c= f0 cNIL c= cnext_el ccat f0 f1 cLAST f0 cHD f1
+D Dangeyj.mem_imp_not_nil
+A |- (!s. (!x. (((MEM x) s) ==> (~ (s = NIL)))))
+T c==> cMEM f0 f1 c~ c= f1 cNIL
+D Dangeyj.HD_BETWN2
+A |- (!r. (!r1. (!r2. ((((MEM r1) r) /\ (((MEM r2) r) /\ ((~ (r1 = r2)) /\ ((uniq r) /\ (~ ((((betwn r) r1) r2) = NIL)))))) ==> ((HD (((betwn r) r1) r2)) = ((next_el r) r1))))))
+T c==> c/\ cMEM f0 f1 c/\ cMEM f2 f1 c/\ c~ c= f0 f2 c/\ cuniq f1 c~ c= cbetwn f1 f0 f2 cNIL c= cHD cbetwn f1 f0 f2 cnext_el f1 f0
+D Ohcgkfu.uniq_append_betwn
+A |- (((uniq r) /\ (((MEM z) r) /\ (((MEM y) r) /\ (~ (z = y))))) ==> (uniq ((APPEND ((CONS z) NIL)) ((APPEND (((betwn r) z) y)) ((CONS y) NIL)))))
+T c==> c/\ cuniq f0 c/\ cMEM f1 f0 c/\ cMEM f2 f0 c~ c= f1 f2 cuniq cAPPEND cCONS f1 cNIL cAPPEND cbetwn f0 f1 f2 cCONS f2 cNIL
+D Ohcgkfu.sing_not_nil
+A |- (~ (((CONS x) NIL) = NIL))
+T c~ c= cCONS f0 cNIL cNIL
+D Ncvibwu.next_el_betwn_same
+A |- (!f. (((~ (y = z)) /\ (((MEM y) f) /\ (((MEM z) f) /\ (((MEM d) (((betwn f) y) z)) /\ (((MEM ((next_el f) d)) (((betwn f) y) z)) /\ (uniq f)))))) ==> (((next_el (((betwn f) y) z)) d) = ((next_el f) d))))
+T c==> c/\ c~ c= f0 f1 c/\ cMEM f0 f2 c/\ cMEM f1 f2 c/\ cMEM f3 cbetwn f2 f0 f1 c/\ cMEM cnext_el f2 f3 cbetwn f2 f0 f1 cuniq f2 c= cnext_el cbetwn f2 f0 f1 f3 cnext_el f2 f3
+D Aq23.next_last_betwn
+A |- ((((MEM y) r) /\ (((MEM z) r) /\ ((uniq r) /\ ((~ (y = z)) /\ (~ ((((betwn r) y) z) = NIL)))))) ==> (((next_el r) (LAST (((betwn r) y) z))) = z))
+T c==> c/\ cMEM f0 f1 c/\ cMEM f2 f1 c/\ cuniq f1 c/\ c~ c= f0 f2 c~ c= cbetwn f1 f0 f2 cNIL c= cnext_el f1 cLAST cbetwn f1 f0 f2 f2
+D Aq4.betwn_eq_nil
+A |- (!r. ((((((betwn r) y) z) = NIL) /\ (((MEM y) r) /\ (((MEM z) r) /\ ((~ (y = z)) /\ (uniq r))))) ==> (((next_el r) y) = z)))
+T c==> c/\ c= cbetwn f0 f1 f2 cNIL c/\ cMEM f1 f0 c/\ cMEM f2 f0 c/\ c~ c= f1 f2 cuniq f0 c= cnext_el f0 f1 f2
+D Aq4.EQ_MEM_NEXT_EL_LAST
+A |- (((~ (y = z)) /\ (((MEM y) f) /\ (((MEM z) f) /\ (((MEM d) (((betwn f) y) z)) /\ (uniq f))))) ==> (((MEM ((next_el f) d)) (((betwn f) y) z)) = (~ ((LAST (((betwn f) y) z)) = d))))
+T c==> c/\ c~ c= f0 f1 c/\ cMEM f0 f2 c/\ cMEM f1 f2 c/\ cMEM f3 cbetwn f2 f0 f1 cuniq f2 c= cMEM cnext_el f2 f3 cbetwn f2 f0 f1 c~ c= cLAST cbetwn f2 f0 f1 f3
++ (~ (y = z)), (~ ((LAST (((betwn r) z) y)) = a)), (uniq r), (uniq (((betwn r) z) y)), ((MEM a) (((betwn r) z) y)), ((MEM y) r), ((MEM z) r) |- (((next_el ((cat (((betwn r) z) y)) ((CONS y) NIL))) a) = ((next_el r) a))
+T c==> c~ c= f0 f1 c==> c~ c= cLAST cbetwn f2 f1 f0 f3 c==> cuniq f2 c==> cuniq cbetwn f2 f1 f0 c==> cMEM f3 cbetwn f2 f1 f0 c==> cMEM f0 f2 c==> cMEM f1 f2 c= cnext_el ccat cbetwn f2 f1 f0 cCONS f0 cNIL f3 cnext_el f2 f3
++ |- (((!s1. (!s2. ((uniq ((cat s1) s2)) = ((uniq s1) /\ ((~ ((has (\x. ((MEM x) s1))) s2)) /\ (uniq s2)))))) ==> ((\s1. (!s2. ((uniq ((cat s1) s2)) = ((uniq s1) /\ ((~ ((has (\x. ((MEM x) s1))) s2)) /\ (uniq s2)))))) s1)) = ((\s1. (!s2. ((uniq ((cat s1) s2)) = ((uniq s1) /\ ((~ ((has (\x. ((MEM x) s1))) s2)) /\ (uniq s2)))))) s1))
+T c= c==> ! ! c= cuniq ccat b0 b1 c/\ cuniq b0 c/\ c~ chas / cMEM b2 b0 b1 cuniq b1 * / ! c= cuniq ccat b0 b1 c/\ cuniq b0 c/\ c~ chas / cMEM b2 b0 b1 cuniq b1 f0 * / ! c= cuniq ccat b0 b1 c/\ cuniq b0 c/\ c~ chas / cMEM b2 b0 b1 cuniq b1 f0
++ (~ (y = z)), (uniq r), ((MEM a) (((betwn r) z) y)), ((MEM y) r), ((MEM z) r), ((MEM ((next_el r) a)) (((betwn r) z) y)) |- ((((~ (z = y)) /\ (((MEM z) r) /\ (((MEM y) r) /\ (((MEM a) (((betwn r) z) y)) /\ (((MEM ((next_el r) a)) (((betwn r) z) y)) /\ (uniq r)))))) ==> (((next_el (((betwn r) z) y)) a) = ((next_el r) a))) ==> (((next_el (((betwn r) z) y)) a) = ((next_el r) a)))
+T c==> c~ c= f0 f1 c==> cuniq f2 c==> cMEM f3 cbetwn f2 f1 f0 c==> cMEM f0 f2 c==> cMEM f1 f2 c==> cMEM cnext_el f2 f3 cbetwn f2 f1 f0 c==> c==> c/\ c~ c= f1 f0 c/\ cMEM f1 f2 c/\ cMEM f0 f2 c/\ cMEM f3 cbetwn f2 f1 f0 c/\ cMEM cnext_el f2 f3 cbetwn f2 f1 f0 cuniq f2 c= cnext_el cbetwn f2 f1 f0 f3 cnext_el f2 f3 c= cnext_el cbetwn f2 f1 f0 f3 cnext_el f2 f3
++ (~ ((LAST (((betwn r) z) y)) = a)) |- (~ (a = (LAST (((betwn r) z) y))))
+T c==> c~ c= cLAST cbetwn f0 f1 f2 f3 c~ c= f3 cLAST cbetwn f0 f1 f2
++ |- (((!x. (!l1. (!l2. (((MEM x) ((APPEND l1) l2)) = (((MEM x) l1) \/ ((MEM x) l2)))))) ==> ((\x. (!l1. (!l2. (((MEM x) ((APPEND l1) l2)) = (((MEM x) l1) \/ ((MEM x) l2)))))) x)) = ((\x. (!l1. (!l2. (((MEM x) ((APPEND l1) l2)) = (((MEM x) l1) \/ ((MEM x) l2)))))) x))
+T c= c==> ! ! ! c= cMEM b0 cAPPEND b1 b2 c\/ cMEM b0 b1 cMEM b0 b2 * / ! ! c= cMEM b0 cAPPEND b1 b2 c\/ cMEM b0 b1 cMEM b0 b2 f0 * / ! ! c= cMEM b0 cAPPEND b1 b2 c\/ cMEM b0 b1 cMEM b0 b2 f0
++ |- ((t \/ F) = t)
+T c= c\/ f0 cF f0
++ |- (((uniq ((cat (((betwn r) z) y)) ((CONS y) NIL))) /\ ((~ (((CONS y) NIL) = NIL)) /\ (~ ((((betwn r) z) y) = NIL)))) ==> (((next_el ((cat (((betwn r) z) y)) ((CONS y) NIL))) (LAST (((betwn r) z) y))) = (HD ((CONS y) NIL))))
+T c==> c/\ cuniq ccat cbetwn f0 f1 f2 cCONS f2 cNIL c/\ c~ c= cCONS f2 cNIL cNIL c~ c= cbetwn f0 f1 f2 cNIL c= cnext_el ccat cbetwn f0 f1 f2 cCONS f2 cNIL cLAST cbetwn f0 f1 f2 cHD cCONS f2 cNIL
++ |- (((MEM a) (((betwn r) z) y)) ==> (~ ((((betwn r) z) y) = NIL)))
+T c==> cMEM f0 cbetwn f1 f2 f3 c~ c= cbetwn f1 f2 f3 cNIL
++ (((next_el s) a) = ((next_el ((APPEND (((betwn r) z) y)) ((CONS y) NIL))) a)) |- ((((next_el ((APPEND (((betwn r) z) y)) ((CONS y) NIL))) a) = ((next_el r) a)) = (((next_el s) a) = ((next_el r) a)))
+T c==> c= cnext_el f0 f1 cnext_el cAPPEND cbetwn f2 f3 f4 cCONS f4 cNIL f1 c= c= cnext_el cAPPEND cbetwn f2 f3 f4 cCONS f4 cNIL f1 cnext_el f2 f1 c= cnext_el f0 f1 cnext_el f2 f1
+- (~ (y = z)), (uniq r), (uniq s), (((APPEND ((CONS z) NIL)) ((APPEND (((betwn r) z) y)) ((CONS y) NIL))) = s), ((MEM a) (((betwn r) z) y)), ((MEM y) r), ((MEM z) r) |- (((MEM a) (((betwn r) z) y)) /\ ((((next_el s) a) = ((next_el ((APPEND (((betwn r) z) y)) ((CONS y) NIL))) a)) ==> (((LAST (((betwn r) z) y)) = a) ==> (((next_el ((APPEND (((betwn r) z) y)) ((CONS y) NIL))) a) = ((next_el r) a)))))
+T c==> c~ c= f0 f1 c==> cuniq f2 c==> cuniq f3 c==> c= cAPPEND cCONS f1 cNIL cAPPEND cbetwn f2 f1 f0 cCONS f0 cNIL f3 c==> cMEM f4 cbetwn f2 f1 f0 c==> cMEM f0 f2 c==> cMEM f1 f2 c/\ cMEM f4 cbetwn f2 f1 f0 c==> c= cnext_el f3 f4 cnext_el cAPPEND cbetwn f2 f1 f0 cCONS f0 cNIL f4 c==> c= cLAST cbetwn f2 f1 f0 f4 c= cnext_el cAPPEND cbetwn f2 f1 f0 cCONS f0 cNIL f4 cnext_el f2 f4
++ (~ (y = z)), (uniq r), (((((betwn r) z) y) = NIL) \/ (~ ((((betwn r) z) y) = NIL))), ((MEM y) r), ((MEM z) r) |- ((((((betwn r) z) y) = NIL) \/ (~ ((((betwn r) z) y) = NIL))) /\ ((((COND ((((betwn r) z) y) = NIL)) (HD ((CONS y) NIL))) (HD (((betwn r) z) y))) = ((next_el r) z)))
+T c==> c~ c= f0 f1 c==> cuniq f2 c==> c\/ c= cbetwn f2 f1 f0 cNIL c~ c= cbetwn f2 f1 f0 cNIL c==> cMEM f0 f2 c==> cMEM f1 f2 c/\ c\/ c= cbetwn f2 f1 f0 cNIL c~ c= cbetwn f2 f1 f0 cNIL c= cCOND c= cbetwn f2 f1 f0 cNIL cHD cCONS f0 cNIL cHD cbetwn f2 f1 f0 cnext_el f2 f1
+- (~ (y = z)), (~ ((LAST (((betwn r) z) y)) = a)), (uniq r), (uniq s), (((next_el s) a) = ((next_el ((APPEND (((betwn r) z) y)) ((CONS y) NIL))) a)), (((APPEND ((CONS z) NIL)) ((APPEND (((betwn r) z) y)) ((CONS y) NIL))) = s), ((MEM a) (((betwn r) z) y)), ((MEM y) r), ((MEM z) r) |- (((next_el ((APPEND (((betwn r) z) y)) ((CONS y) NIL))) a) = ((next_el r) a))
+T c==> c~ c= f0 f1 c==> c~ c= cLAST cbetwn f2 f1 f0 f3 c==> cuniq f2 c==> cuniq f4 c==> c= cnext_el f4 f3 cnext_el cAPPEND cbetwn f2 f1 f0 cCONS f0 cNIL f3 c==> c= cAPPEND cCONS f1 cNIL cAPPEND cbetwn f2 f1 f0 cCONS f0 cNIL f4 c==> cMEM f3 cbetwn f2 f1 f0 c==> cMEM f0 f2 c==> cMEM f1 f2 c= cnext_el cAPPEND cbetwn f2 f1 f0 cCONS f0 cNIL f3 cnext_el f2 f3
+- |- ((\t1. (!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))))) t1)
+T * / ! ! c= c\/ b0 c\/ b1 b2 c\/ c\/ b0 b1 b2 f0
++ |- (((uniq ((cat ((CONS z) NIL)) ((APPEND (((betwn r) z) y)) ((CONS y) NIL)))) /\ (((MEM a) ((APPEND (((betwn r) z) y)) ((CONS y) NIL))) /\ (~ (a = (LAST ((APPEND (((betwn r) z) y)) ((CONS y) NIL))))))) ==> (((next_el ((cat ((CONS z) NIL)) ((APPEND (((betwn r) z) y)) ((CONS y) NIL)))) a) = ((next_el ((APPEND (((betwn r) z) y)) ((CONS y) NIL))) a)))
+T c==> c/\ cuniq ccat cCONS f0 cNIL cAPPEND cbetwn f1 f0 f2 cCONS f2 cNIL c/\ cMEM f3 cAPPEND cbetwn f1 f0 f2 cCONS f2 cNIL c~ c= f3 cLAST cAPPEND cbetwn f1 f0 f2 cCONS f2 cNIL c= cnext_el ccat cCONS f0 cNIL cAPPEND cbetwn f1 f0 f2 cCONS f2 cNIL f3 cnext_el cAPPEND cbetwn f1 f0 f2 cCONS f2 cNIL f3
++ |- ((\y. (!z. (!d. (!f. (((~ (y = z)) /\ (((MEM y) f) /\ (((MEM z) f) /\ (((MEM d) (((betwn f) y) z)) /\ (((MEM ((next_el f) d)) (((betwn f) y) z)) /\ (uniq f)))))) ==> (((next_el (((betwn f) y) z)) d) = ((next_el f) d))))))) z)
+T * / ! ! ! c==> c/\ c~ c= b0 b1 c/\ cMEM b0 b3 c/\ cMEM b1 b3 c/\ cMEM b2 cbetwn b3 b0 b1 c/\ cMEM cnext_el b3 b2 cbetwn b3 b0 b1 cuniq b3 c= cnext_el cbetwn b3 b0 b1 b2 cnext_el b3 b2 f0
++ |- (((!r1. (!r2. ((((MEM r1) r) /\ (((MEM r2) r) /\ ((~ (r1 = r2)) /\ ((uniq r) /\ (~ ((((betwn r) r1) r2) = NIL)))))) ==> ((HD (((betwn r) r1) r2)) = ((next_el r) r1))))) ==> ((\r1. (!r2. ((((MEM r1) r) /\ (((MEM r2) r) /\ ((~ (r1 = r2)) /\ ((uniq r) /\ (~ ((((betwn r) r1) r2) = NIL)))))) ==> ((HD (((betwn r) r1) r2)) = ((next_el r) r1))))) z)) = ((\r1. (!r2. ((((MEM r1) r) /\ (((MEM r2) r) /\ ((~ (r1 = r2)) /\ ((uniq r) /\ (~ ((((betwn r) r1) r2) = NIL)))))) ==> ((HD (((betwn r) r1) r2)) = ((next_el r) r1))))) z))
+T c= c==> ! ! c==> c/\ cMEM b0 f0 c/\ cMEM b1 f0 c/\ c~ c= b0 b1 c/\ cuniq f0 c~ c= cbetwn f0 b0 b1 cNIL c= cHD cbetwn f0 b0 b1 cnext_el f0 b0 * / ! c==> c/\ cMEM b0 f0 c/\ cMEM b1 f0 c/\ c~ c= b0 b1 c/\ cuniq f0 c~ c= cbetwn f0 b0 b1 cNIL c= cHD cbetwn f0 b0 b1 cnext_el f0 b0 f1 * / ! c==> c/\ cMEM b0 f0 c/\ cMEM b1 f0 c/\ c~ c= b0 b1 c/\ cuniq f0 c~ c= cbetwn f0 b0 b1 cNIL c= cHD cbetwn f0 b0 b1 cnext_el f0 b0 f1
++ (uniq s), (((APPEND ((CONS z) NIL)) ((APPEND (((betwn r) z) y)) ((CONS y) NIL))) = s) |- (((((next_el s) z) = (((COND ((((betwn r) z) y) = NIL)) (HD ((CONS y) NIL))) (HD (((betwn r) z) y)))) ==> (((next_el s) z) = ((next_el r) z))) = ((((uniq ((cat ((CONS z) NIL)) ((APPEND (((betwn r) z) y)) ((CONS y) NIL)))) /\ ((~ (((APPEND (((betwn r) z) y)) ((CONS y) NIL)) = NIL)) /\ (~ (((CONS z) NIL) = NIL)))) ==> (((next_el ((cat ((CONS z) NIL)) ((APPEND (((betwn r) z) y)) ((CONS y) NIL)))) (LAST ((CONS z) NIL))) = (HD ((APPEND (((betwn r) z) y)) ((CONS y) NIL))))) ==> (((next_el s) z) = ((next_el r) z))))
+T c==> cuniq f0 c==> c= cAPPEND cCONS f1 cNIL cAPPEND cbetwn f2 f1 f3 cCONS f3 cNIL f0 c= c==> c= cnext_el f0 f1 cCOND c= cbetwn f2 f1 f3 cNIL cHD cCONS f3 cNIL cHD cbetwn f2 f1 f3 c= cnext_el f0 f1 cnext_el f2 f1 c==> c==> c/\ cuniq ccat cCONS f1 cNIL cAPPEND cbetwn f2 f1 f3 cCONS f3 cNIL c/\ c~ c= cAPPEND cbetwn f2 f1 f3 cCONS f3 cNIL cNIL c~ c= cCONS f1 cNIL cNIL c= cnext_el ccat cCONS f1 cNIL cAPPEND cbetwn f2 f1 f3 cCONS f3 cNIL cLAST cCONS f1 cNIL cHD cAPPEND cbetwn f2 f1 f3 cCONS f3 cNIL c= cnext_el f0 f1 cnext_el f2 f1
++ |- (((!r. (!r1. (!r2. ((((MEM r1) r) /\ (((MEM r2) r) /\ ((~ (r1 = r2)) /\ ((uniq r) /\ (~ ((((betwn r) r1) r2) = NIL)))))) ==> ((HD (((betwn r) r1) r2)) = ((next_el r) r1)))))) ==> ((\r. (!r1. (!r2. ((((MEM r1) r) /\ (((MEM r2) r) /\ ((~ (r1 = r2)) /\ ((uniq r) /\ (~ ((((betwn r) r1) r2) = NIL)))))) ==> ((HD (((betwn r) r1) r2)) = ((next_el r) r1)))))) r)) = ((\r. (!r1. (!r2. ((((MEM r1) r) /\ (((MEM r2) r) /\ ((~ (r1 = r2)) /\ ((uniq r) /\ (~ ((((betwn r) r1) r2) = NIL)))))) ==> ((HD (((betwn r) r1) r2)) = ((next_el r) r1)))))) r))
+T c= c==> ! ! ! c==> c/\ cMEM b1 b0 c/\ cMEM b2 b0 c/\ c~ c= b1 b2 c/\ cuniq b0 c~ c= cbetwn b0 b1 b2 cNIL c= cHD cbetwn b0 b1 b2 cnext_el b0 b1 * / ! ! c==> c/\ cMEM b1 b0 c/\ cMEM b2 b0 c/\ c~ c= b1 b2 c/\ cuniq b0 c~ c= cbetwn b0 b1 b2 cNIL c= cHD cbetwn b0 b1 b2 cnext_el b0 b1 f0 * / ! ! c==> c/\ cMEM b1 b0 c/\ cMEM b2 b0 c/\ c~ c= b1 b2 c/\ cuniq b0 c~ c= cbetwn b0 b1 b2 cNIL c= cHD cbetwn b0 b1 b2 cnext_el b0 b1 f0
++ (~ (a = y)), (~ (y = z)), (uniq r), (((APPEND ((CONS z) NIL)) ((APPEND (((betwn r) z) y)) ((CONS y) NIL))) = s), ((MEM a) s), ((MEM y) r), ((MEM z) r) |- ((((uniq r) /\ (((MEM z) r) /\ (((MEM y) r) /\ (~ (z = y))))) ==> (uniq ((APPEND ((CONS z) NIL)) ((APPEND (((betwn r) z) y)) ((CONS y) NIL))))) ==> (((next_el s) a) = ((next_el r) a)))
+T c==> c~ c= f0 f1 c==> c~ c= f1 f2 c==> cuniq f3 c==> c= cAPPEND cCONS f2 cNIL cAPPEND cbetwn f3 f2 f1 cCONS f1 cNIL f4 c==> cMEM f0 f4 c==> cMEM f1 f3 c==> cMEM f2 f3 c==> c==> c/\ cuniq f3 c/\ cMEM f2 f3 c/\ cMEM f1 f3 c~ c= f2 f1 cuniq cAPPEND cCONS f2 cNIL cAPPEND cbetwn f3 f2 f1 cCONS f1 cNIL c= cnext_el f4 f0 cnext_el f3 f0
++ (~ (y = z)), (uniq r), ((LAST (((betwn r) z) y)) = a), ((~ ((has (\x. ((MEM x) ((CONS z) NIL)))) ((cat (((betwn r) z) y)) ((CONS y) NIL)))) /\ ((uniq (((betwn r) z) y)) /\ ((~ ((has (\x. ((MEM x) (((betwn r) z) y)))) ((CONS y) NIL))) /\ (uniq ((CONS y) NIL))))), ((MEM a) (((betwn r) z) y)), ((MEM y) r), ((MEM z) r) |- (((next_el ((cat (((betwn r) z) y)) ((CONS y) NIL))) a) = ((next_el r) a))
+T c==> c~ c= f0 f1 c==> cuniq f2 c==> c= cLAST cbetwn f2 f1 f0 f3 c==> c/\ c~ chas / cMEM b0 cCONS f1 cNIL ccat cbetwn f2 f1 f0 cCONS f0 cNIL c/\ cuniq cbetwn f2 f1 f0 c/\ c~ chas / cMEM b0 cbetwn f2 f1 f0 cCONS f0 cNIL cuniq cCONS f0 cNIL c==> cMEM f3 cbetwn f2 f1 f0 c==> cMEM f0 f2 c==> cMEM f1 f2 c= cnext_el ccat cbetwn f2 f1 f0 cCONS f0 cNIL f3 cnext_el f2 f3
++ (~ (y = z)), (uniq r), (uniq s), (((next_el s) a) = ((next_el ((APPEND (((betwn r) z) y)) ((CONS y) NIL))) a)), (((APPEND ((CONS z) NIL)) ((APPEND (((betwn r) z) y)) ((CONS y) NIL))) = s), ((MEM a) (((betwn r) z) y)), ((MEM y) r), ((MEM z) r) |- (((next_el ((APPEND (((betwn r) z) y)) ((CONS y) NIL))) a) = ((next_el r) a))
+T c==> c~ c= f0 f1 c==> cuniq f2 c==> cuniq f3 c==> c= cnext_el f3 f4 cnext_el cAPPEND cbetwn f2 f1 f0 cCONS f0 cNIL f4 c==> c= cAPPEND cCONS f1 cNIL cAPPEND cbetwn f2 f1 f0 cCONS f0 cNIL f3 c==> cMEM f4 cbetwn f2 f1 f0 c==> cMEM f0 f2 c==> cMEM f1 f2 c= cnext_el cAPPEND cbetwn f2 f1 f0 cCONS f0 cNIL f4 cnext_el f2 f4
+- (~ ((((betwn r) z) y) = NIL)) |- ((NIL = (((betwn r) z) y)) = F)
+T c==> c~ c= cbetwn f0 f1 f2 cNIL c= c= cNIL cbetwn f0 f1 f2 cF
++ (~ (y = z)), (~ ((has (\x. ((MEM x) (((betwn r) z) y)))) ((CONS y) NIL))), (uniq r), (uniq (((betwn r) z) y)), ((LAST (((betwn r) z) y)) = a), ((~ ((has (\x. ((MEM x) (((betwn r) z) y)))) ((CONS y) NIL))) /\ (uniq ((CONS y) NIL))), ((MEM a) (((betwn r) z) y)), ((MEM y) r), ((MEM z) r) |- (((next_el ((cat (((betwn r) z) y)) ((CONS y) NIL))) a) = ((next_el r) a))
+T c==> c~ c= f0 f1 c==> c~ chas / cMEM b0 cbetwn f2 f1 f0 cCONS f0 cNIL c==> cuniq f2 c==> cuniq cbetwn f2 f1 f0 c==> c= cLAST cbetwn f2 f1 f0 f3 c==> c/\ c~ chas / cMEM b0 cbetwn f2 f1 f0 cCONS f0 cNIL cuniq cCONS f0 cNIL c==> cMEM f3 cbetwn f2 f1 f0 c==> cMEM f0 f2 c==> cMEM f1 f2 c= cnext_el ccat cbetwn f2 f1 f0 cCONS f0 cNIL f3 cnext_el f2 f3
++ (~ (y = z)), (uniq r), (uniq s), (((APPEND ((CONS z) NIL)) ((APPEND (((betwn r) z) y)) ((CONS y) NIL))) = s), ((MEM y) r), ((MEM z) r) |- ((a = z) ==> (((next_el s) a) = ((next_el r) a)))
+T c==> c~ c= f0 f1 c==> cuniq f2 c==> cuniq f3 c==> c= cAPPEND cCONS f1 cNIL cAPPEND cbetwn f2 f1 f0 cCONS f0 cNIL f3 c==> cMEM f0 f2 c==> cMEM f1 f2 c==> c= f4 f1 c= cnext_el f3 f4 cnext_el f2 f4
++ (~ (y = z)), (~ ((LAST (((betwn r) z) y)) = a)), (uniq r), ((~ ((has (\x. ((MEM x) ((CONS z) NIL)))) ((cat (((betwn r) z) y)) ((CONS y) NIL)))) /\ ((uniq (((betwn r) z) y)) /\ ((~ ((has (\x. ((MEM x) (((betwn r) z) y)))) ((CONS y) NIL))) /\ (uniq ((CONS y) NIL))))), ((MEM a) (((betwn r) z) y)), ((MEM y) r), ((MEM z) r) |- (((next_el ((cat (((betwn r) z) y)) ((CONS y) NIL))) a) = ((next_el r) a))
+T c==> c~ c= f0 f1 c==> c~ c= cLAST cbetwn f2 f1 f0 f3 c==> cuniq f2 c==> c/\ c~ chas / cMEM b0 cCONS f1 cNIL ccat cbetwn f2 f1 f0 cCONS f0 cNIL c/\ cuniq cbetwn f2 f1 f0 c/\ c~ chas / cMEM b0 cbetwn f2 f1 f0 cCONS f0 cNIL cuniq cCONS f0 cNIL c==> cMEM f3 cbetwn f2 f1 f0 c==> cMEM f0 f2 c==> cMEM f1 f2 c= cnext_el ccat cbetwn f2 f1 f0 cCONS f0 cNIL f3 cnext_el f2 f3
++ (~ (a = y)), (~ (y = z)), (uniq r), (uniq s), (((APPEND ((CONS z) NIL)) ((APPEND (((betwn r) z) y)) ((CONS y) NIL))) = s), ((a = z) \/ ((MEM a) (((betwn r) z) y))), ((MEM y) r), ((MEM z) r) |- (((a = z) \/ ((MEM a) (((betwn r) z) y))) /\ (((next_el s) a) = ((next_el r) a)))
+T c==> c~ c= f0 f1 c==> c~ c= f1 f2 c==> cuniq f3 c==> cuniq f4 c==> c= cAPPEND cCONS f2 cNIL cAPPEND cbetwn f3 f2 f1 cCONS f1 cNIL f4 c==> c\/ c= f0 f2 cMEM f0 cbetwn f3 f2 f1 c==> cMEM f1 f3 c==> cMEM f2 f3 c/\ c\/ c= f0 f2 cMEM f0 cbetwn f3 f2 f1 c= cnext_el f4 f0 cnext_el f3 f0
++ (uniq (((betwn r) z) y)) |- ((uniq (((betwn r) z) y)) = T)
+T c==> cuniq cbetwn f0 f1 f2 c= cuniq cbetwn f0 f1 f2 cT
++ (~ (y = z)), (uniq r), (uniq s), (((APPEND ((CONS z) NIL)) ((APPEND (((betwn r) z) y)) ((CONS y) NIL))) = s), (((MEM a) (((betwn r) z) y)) ==> (((next_el s) a) = ((next_el r) a))), ((a = z) \/ ((MEM a) (((betwn r) z) y))), ((MEM y) r), ((MEM z) r) |- (((next_el s) a) = ((next_el r) a))
+T c==> c~ c= f0 f1 c==> cuniq f2 c==> cuniq f3 c==> c= cAPPEND cCONS f1 cNIL cAPPEND cbetwn f2 f1 f0 cCONS f0 cNIL f3 c==> c==> cMEM f4 cbetwn f2 f1 f0 c= cnext_el f3 f4 cnext_el f2 f4 c==> c\/ c= f4 f1 cMEM f4 cbetwn f2 f1 f0 c==> cMEM f0 f2 c==> cMEM f1 f2 c= cnext_el f3 f4 cnext_el f2 f4
++ (~ (y = z)), (~ ((LAST (((betwn r) z) y)) = a)), (uniq r), ((MEM a) (((betwn r) z) y)), ((MEM y) r), ((MEM z) r) |- ((uniq ((APPEND ((CONS z) NIL)) ((APPEND (((betwn r) z) y)) ((CONS y) NIL)))) ==> (((next_el ((APPEND (((betwn r) z) y)) ((CONS y) NIL))) a) = ((next_el r) a)))
+T c==> c~ c= f0 f1 c==> c~ c= cLAST cbetwn f2 f1 f0 f3 c==> cuniq f2 c==> cMEM f3 cbetwn f2 f1 f0 c==> cMEM f0 f2 c==> cMEM f1 f2 c==> cuniq cAPPEND cCONS f1 cNIL cAPPEND cbetwn f2 f1 f0 cCONS f0 cNIL c= cnext_el cAPPEND cbetwn f2 f1 f0 cCONS f0 cNIL f3 cnext_el f2 f3
++ (~ (y = z)), (uniq r), (uniq (((betwn r) z) y)), ((LAST (((betwn r) z) y)) = a), ((~ ((has (\x. ((MEM x) (((betwn r) z) y)))) ((CONS y) NIL))) /\ (uniq ((CONS y) NIL))), ((MEM a) (((betwn r) z) y)), ((MEM y) r), ((MEM z) r) |- (((next_el ((cat (((betwn r) z) y)) ((CONS y) NIL))) a) = ((next_el r) a))
+T c==> c~ c= f0 f1 c==> cuniq f2 c==> cuniq cbetwn f2 f1 f0 c==> c= cLAST cbetwn f2 f1 f0 f3 c==> c/\ c~ chas / cMEM b0 cbetwn f2 f1 f0 cCONS f0 cNIL cuniq cCONS f0 cNIL c==> cMEM f3 cbetwn f2 f1 f0 c==> cMEM f0 f2 c==> cMEM f1 f2 c= cnext_el ccat cbetwn f2 f1 f0 cCONS f0 cNIL f3 cnext_el f2 f3
+- (~ (y = z)), (uniq r), (((APPEND ((CONS z) NIL)) ((APPEND (((betwn r) z) y)) ((CONS y) NIL))) = s), ((MEM a) s), ((MEM y) r), ((MEM z) r) |- ((((APPEND ((CONS z) NIL)) ((APPEND (((betwn r) z) y)) ((CONS y) NIL))) = s) /\ ((~ (a = y)) ==> ((uniq s) ==> (((next_el s) a) = ((next_el r) a)))))
+T c==> c~ c= f0 f1 c==> cuniq f2 c==> c= cAPPEND cCONS f1 cNIL cAPPEND cbetwn f2 f1 f0 cCONS f0 cNIL f3 c==> cMEM f4 f3 c==> cMEM f0 f2 c==> cMEM f1 f2 c/\ c= cAPPEND cCONS f1 cNIL cAPPEND cbetwn f2 f1 f0 cCONS f0 cNIL f3 c==> c~ c= f4 f0 c==> cuniq f3 c= cnext_el f3 f4 cnext_el f2 f4
++ (~ (y = z)), (~ ((LAST (((betwn r) z) y)) = a)), (uniq r), ((uniq (((betwn r) z) y)) /\ ((~ ((has (\x. ((MEM x) (((betwn r) z) y)))) ((CONS y) NIL))) /\ (uniq ((CONS y) NIL)))), ((MEM a) (((betwn r) z) y)), ((MEM y) r), ((MEM z) r) |- (((next_el ((cat (((betwn r) z) y)) ((CONS y) NIL))) a) = ((next_el r) a))
+T c==> c~ c= f0 f1 c==> c~ c= cLAST cbetwn f2 f1 f0 f3 c==> cuniq f2 c==> c/\ cuniq cbetwn f2 f1 f0 c/\ c~ chas / cMEM b0 cbetwn f2 f1 f0 cCONS f0 cNIL cuniq cCONS f0 cNIL c==> cMEM f3 cbetwn f2 f1 f0 c==> cMEM f0 f2 c==> cMEM f1 f2 c= cnext_el ccat cbetwn f2 f1 f0 cCONS f0 cNIL f3 cnext_el f2 f3
++ (~ (y = z)), (~ ((has (\x. ((MEM x) (((betwn r) z) y)))) ((CONS y) NIL))), (uniq r), (uniq ((CONS y) NIL)), (uniq (((betwn r) z) y)), ((LAST (((betwn r) z) y)) = a), ((MEM a) (((betwn r) z) y)), ((MEM y) r), ((MEM z) r) |- (((next_el ((cat (((betwn r) z) y)) ((CONS y) NIL))) a) = ((next_el r) a))
+T c==> c~ c= f0 f1 c==> c~ chas / cMEM b0 cbetwn f2 f1 f0 cCONS f0 cNIL c==> cuniq f2 c==> cuniq cCONS f0 cNIL c==> cuniq cbetwn f2 f1 f0 c==> c= cLAST cbetwn f2 f1 f0 f3 c==> cMEM f3 cbetwn f2 f1 f0 c==> cMEM f0 f2 c==> cMEM f1 f2 c= cnext_el ccat cbetwn f2 f1 f0 cCONS f0 cNIL f3 cnext_el f2 f3
++ (~ (y = z)), (uniq r), ((LAST (((betwn r) z) y)) = a), ((uniq ((CONS z) NIL)) /\ ((~ ((has (\x. ((MEM x) ((CONS z) NIL)))) ((cat (((betwn r) z) y)) ((CONS y) NIL)))) /\ ((uniq (((betwn r) z) y)) /\ ((~ ((has (\x. ((MEM x) (((betwn r) z) y)))) ((CONS y) NIL))) /\ (uniq ((CONS y) NIL)))))), ((MEM a) (((betwn r) z) y)), ((MEM y) r), ((MEM z) r) |- (((next_el ((cat (((betwn r) z) y)) ((CONS y) NIL))) a) = ((next_el r) a))
+T c==> c~ c= f0 f1 c==> cuniq f2 c==> c= cLAST cbetwn f2 f1 f0 f3 c==> c/\ cuniq cCONS f1 cNIL c/\ c~ chas / cMEM b0 cCONS f1 cNIL ccat cbetwn f2 f1 f0 cCONS f0 cNIL c/\ cuniq cbetwn f2 f1 f0 c/\ c~ chas / cMEM b0 cbetwn f2 f1 f0 cCONS f0 cNIL cuniq cCONS f0 cNIL c==> cMEM f3 cbetwn f2 f1 f0 c==> cMEM f0 f2 c==> cMEM f1 f2 c= cnext_el ccat cbetwn f2 f1 f0 cCONS f0 cNIL f3 cnext_el f2 f3
++ |- (((!l1. (!l2. (((MEM x) ((APPEND l1) l2)) = (((MEM x) l1) \/ ((MEM x) l2))))) ==> ((\l1. (!l2. (((MEM x) ((APPEND l1) l2)) = (((MEM x) l1) \/ ((MEM x) l2))))) l1)) = ((\l1. (!l2. (((MEM x) ((APPEND l1) l2)) = (((MEM x) l1) \/ ((MEM x) l2))))) l1))
+T c= c==> ! ! c= cMEM f0 cAPPEND b0 b1 c\/ cMEM f0 b0 cMEM f0 b1 * / ! c= cMEM f0 cAPPEND b0 b1 c\/ cMEM f0 b0 cMEM f0 b1 f1 * / ! c= cMEM f0 cAPPEND b0 b1 c\/ cMEM f0 b0 cMEM f0 b1 f1
++ |- (((!s. (!t. (((uniq s) /\ (((MEM a) s) /\ (~ (a = (LAST s))))) ==> (((next_el ((cat s) t)) a) = ((next_el s) a))))) ==> ((\s. (!t. (((uniq s) /\ (((MEM a) s) /\ (~ (a = (LAST s))))) ==> (((next_el ((cat s) t)) a) = ((next_el s) a))))) (((betwn r) z) y))) = ((\s. (!t. (((uniq s) /\ (((MEM a) s) /\ (~ (a = (LAST s))))) ==> (((next_el ((cat s) t)) a) = ((next_el s) a))))) (((betwn r) z) y)))
+T c= c==> ! ! c==> c/\ cuniq b0 c/\ cMEM f0 b0 c~ c= f0 cLAST b0 c= cnext_el ccat b0 b1 f0 cnext_el b0 f0 * / ! c==> c/\ cuniq b0 c/\ cMEM f0 b0 c~ c= f0 cLAST b0 c= cnext_el ccat b0 b1 f0 cnext_el b0 f0 cbetwn f1 f2 f3 * / ! c==> c/\ cuniq b0 c/\ cMEM f0 b0 c~ c= f0 cLAST b0 c= cnext_el ccat b0 b1 f0 cnext_el b0 f0 cbetwn f1 f2 f3
++ |- (((!r. (!z. (!y. (((uniq r) /\ (((MEM z) r) /\ (((MEM y) r) /\ (~ (z = y))))) ==> (uniq ((APPEND ((CONS z) NIL)) ((APPEND (((betwn r) z) y)) ((CONS y) NIL)))))))) ==> ((\r. (!z. (!y. (((uniq r) /\ (((MEM z) r) /\ (((MEM y) r) /\ (~ (z = y))))) ==> (uniq ((APPEND ((CONS z) NIL)) ((APPEND (((betwn r) z) y)) ((CONS y) NIL)))))))) r)) = ((\r. (!z. (!y. (((uniq r) /\ (((MEM z) r) /\ (((MEM y) r) /\ (~ (z = y))))) ==> (uniq ((APPEND ((CONS z) NIL)) ((APPEND (((betwn r) z) y)) ((CONS y) NIL)))))))) r))
+T c= c==> ! ! ! c==> c/\ cuniq b0 c/\ cMEM b1 b0 c/\ cMEM b2 b0 c~ c= b1 b2 cuniq cAPPEND cCONS b1 cNIL cAPPEND cbetwn b0 b1 b2 cCONS b2 cNIL * / ! ! c==> c/\ cuniq b0 c/\ cMEM b1 b0 c/\ cMEM b2 b0 c~ c= b1 b2 cuniq cAPPEND cCONS b1 cNIL cAPPEND cbetwn b0 b1 b2 cCONS b2 cNIL f0 * / ! ! c==> c/\ cuniq b0 c/\ cMEM b1 b0 c/\ cMEM b2 b0 c~ c= b1 b2 cuniq cAPPEND cCONS b1 cNIL cAPPEND cbetwn b0 b1 b2 cCONS b2 cNIL f0
++ |- (((!x. (!s. (!t. (((uniq s) /\ (((MEM x) s) /\ (~ (x = (LAST s))))) ==> (((next_el ((cat s) t)) x) = ((next_el s) x)))))) ==> ((\x. (!s. (!t. (((uniq s) /\ (((MEM x) s) /\ (~ (x = (LAST s))))) ==> (((next_el ((cat s) t)) x) = ((next_el s) x)))))) a)) = ((\x. (!s. (!t. (((uniq s) /\ (((MEM x) s) /\ (~ (x = (LAST s))))) ==> (((next_el ((cat s) t)) x) = ((next_el s) x)))))) a))
+T c= c==> ! ! ! c==> c/\ cuniq b1 c/\ cMEM b0 b1 c~ c= b0 cLAST b1 c= cnext_el ccat b1 b2 b0 cnext_el b1 b0 * / ! ! c==> c/\ cuniq b1 c/\ cMEM b0 b1 c~ c= b0 cLAST b1 c= cnext_el ccat b1 b2 b0 cnext_el b1 b0 f0 * / ! ! c==> c/\ cuniq b1 c/\ cMEM b0 b1 c~ c= b0 cLAST b1 c= cnext_el ccat b1 b2 b0 cnext_el b1 b0 f0
++ |- ((\l. (!m. ((((APPEND l) m) = NIL) = ((l = NIL) /\ (m = NIL))))) l)
+T * / ! c= c= cAPPEND b0 b1 cNIL c/\ c= b0 cNIL c= b1 cNIL f0
+- (~ (a = y)), (~ (y = z)), (uniq r), (((APPEND ((CONS z) NIL)) ((APPEND (((betwn r) z) y)) ((CONS y) NIL))) = s), ((MEM a) s), ((MEM y) r), ((MEM z) r) |- ((~ (a = y)) /\ ((uniq s) ==> (((next_el s) a) = ((next_el r) a))))
+T c==> c~ c= f0 f1 c==> c~ c= f1 f2 c==> cuniq f3 c==> c= cAPPEND cCONS f2 cNIL cAPPEND cbetwn f3 f2 f1 cCONS f1 cNIL f4 c==> cMEM f0 f4 c==> cMEM f1 f3 c==> cMEM f2 f3 c/\ c~ c= f0 f1 c==> cuniq f4 c= cnext_el f4 f0 cnext_el f3 f0
++ (~ (y = z)), (~ ((has (\x. ((MEM x) (((betwn r) z) y)))) ((CONS y) NIL))), (uniq r), (uniq ((CONS y) NIL)), (uniq (((betwn r) z) y)), ((LAST (((betwn r) z) y)) = a), ((MEM a) (((betwn r) z) y)), ((MEM y) r), ((MEM z) r) |- ((((MEM a) (((betwn r) z) y)) ==> (~ ((((betwn r) z) y) = NIL))) ==> (((next_el ((APPEND (((betwn r) z) y)) ((CONS y) NIL))) a) = ((next_el r) a)))
+T c==> c~ c= f0 f1 c==> c~ chas / cMEM b0 cbetwn f2 f1 f0 cCONS f0 cNIL c==> cuniq f2 c==> cuniq cCONS f0 cNIL c==> cuniq cbetwn f2 f1 f0 c==> c= cLAST cbetwn f2 f1 f0 f3 c==> cMEM f3 cbetwn f2 f1 f0 c==> cMEM f0 f2 c==> cMEM f1 f2 c==> c==> cMEM f3 cbetwn f2 f1 f0 c~ c= cbetwn f2 f1 f0 cNIL c= cnext_el cAPPEND cbetwn f2 f1 f0 cCONS f0 cNIL f3 cnext_el f2 f3
++ (~ (y = z)), (uniq r), (uniq s), (((next_el s) a) = ((next_el ((APPEND (((betwn r) z) y)) ((CONS y) NIL))) a)), (((APPEND ((CONS z) NIL)) ((APPEND (((betwn r) z) y)) ((CONS y) NIL))) = s), ((MEM a) (((betwn r) z) y)), ((MEM y) r), ((MEM z) r) |- ((~ ((LAST (((betwn r) z) y)) = a)) ==> (((next_el ((APPEND (((betwn r) z) y)) ((CONS y) NIL))) a) = ((next_el r) a)))
+T c==> c~ c= f0 f1 c==> cuniq f2 c==> cuniq f3 c==> c= cnext_el f3 f4 cnext_el cAPPEND cbetwn f2 f1 f0 cCONS f0 cNIL f4 c==> c= cAPPEND cCONS f1 cNIL cAPPEND cbetwn f2 f1 f0 cCONS f0 cNIL f3 c==> cMEM f4 cbetwn f2 f1 f0 c==> cMEM f0 f2 c==> cMEM f1 f2 c==> c~ c= cLAST cbetwn f2 f1 f0 f4 c= cnext_el cAPPEND cbetwn f2 f1 f0 cCONS f0 cNIL f4 cnext_el f2 f4
+- |- ((NIL = ((CONS x) NIL)) = F)
+T c= c= cNIL cCONS f0 cNIL cF
++ |- (((!z. (!y. (((uniq r) /\ (((MEM z) r) /\ (((MEM y) r) /\ (~ (z = y))))) ==> (uniq ((APPEND ((CONS z) NIL)) ((APPEND (((betwn r) z) y)) ((CONS y) NIL))))))) ==> ((\z. (!y. (((uniq r) /\ (((MEM z) r) /\ (((MEM y) r) /\ (~ (z = y))))) ==> (uniq ((APPEND ((CONS z) NIL)) ((APPEND (((betwn r) z) y)) ((CONS y) NIL))))))) z)) = ((\z. (!y. (((uniq r) /\ (((MEM z) r) /\ (((MEM y) r) /\ (~ (z = y))))) ==> (uniq ((APPEND ((CONS z) NIL)) ((APPEND (((betwn r) z) y)) ((CONS y) NIL))))))) z))
+T c= c==> ! ! c==> c/\ cuniq f0 c/\ cMEM b0 f0 c/\ cMEM b1 f0 c~ c= b0 b1 cuniq cAPPEND cCONS b0 cNIL cAPPEND cbetwn f0 b0 b1 cCONS b1 cNIL * / ! c==> c/\ cuniq f0 c/\ cMEM b0 f0 c/\ cMEM b1 f0 c~ c= b0 b1 cuniq cAPPEND cCONS b0 cNIL cAPPEND cbetwn f0 b0 b1 cCONS b1 cNIL f1 * / ! c==> c/\ cuniq f0 c/\ cMEM b0 f0 c/\ cMEM b1 f0 c~ c= b0 b1 cuniq cAPPEND cCONS b0 cNIL cAPPEND cbetwn f0 b0 b1 cCONS b1 cNIL f1
++ (~ (a = y)), (~ (y = z)), (uniq r), (uniq s), (((APPEND ((CONS z) NIL)) ((APPEND (((betwn r) z) y)) ((CONS y) NIL))) = s), ((MEM y) r), ((MEM z) r) |- (((MEM a) s) ==> (((next_el s) a) = ((next_el r) a)))
+T c==> c~ c= f0 f1 c==> c~ c= f1 f2 c==> cuniq f3 c==> cuniq f4 c==> c= cAPPEND cCONS f2 cNIL cAPPEND cbetwn f3 f2 f1 cCONS f1 cNIL f4 c==> cMEM f1 f3 c==> cMEM f2 f3 c==> cMEM f0 f4 c= cnext_el f4 f0 cnext_el f3 f0
++ |- ((\y. (!z. (!r. ((((((betwn r) y) z) = NIL) /\ (((MEM y) r) /\ (((MEM z) r) /\ ((~ (y = z)) /\ (uniq r))))) ==> (((next_el r) y) = z))))) z)
+T * / ! ! c==> c/\ c= cbetwn b2 b0 b1 cNIL c/\ cMEM b0 b2 c/\ cMEM b1 b2 c/\ c~ c= b0 b1 cuniq b2 c= cnext_el b2 b0 b1 f0
+- |- (T = ((~ (!A. (A \/ (~ A)))) ==> F))
+T c= cT c==> c~ ! c\/ b0 c~ b0 cF
+- |- (((~ (!A. (A \/ (~ A)))) ==> F) ==> ((~ (!A. (A \/ (~ A)))) ==> F))
+T c==> c==> c~ ! c\/ b0 c~ b0 cF c==> c~ ! c\/ b0 c~ b0 cF
++ (uniq r), (((MEM y) r) /\ (((MEM z) r) /\ ((~ (y = z)) /\ (((MEM a) s) /\ ((((APPEND ((CONS z) NIL)) ((APPEND (((betwn r) z) y)) ((CONS y) NIL))) = s) /\ (~ (a = y))))))) |- (((next_el s) a) = ((next_el r) a))
+T c==> cuniq f0 c==> c/\ cMEM f1 f0 c/\ cMEM f2 f0 c/\ c~ c= f1 f2 c/\ cMEM f3 f4 c/\ c= cAPPEND cCONS f2 cNIL cAPPEND cbetwn f0 f2 f1 cCONS f1 cNIL f4 c~ c= f3 f1 c= cnext_el f4 f3 cnext_el f0 f3
++ |- (((!s2. ((uniq ((cat s1) s2)) = ((uniq s1) /\ ((~ ((has (\x. ((MEM x) s1))) s2)) /\ (uniq s2))))) ==> ((\s2. ((uniq ((cat s1) s2)) = ((uniq s1) /\ ((~ ((has (\x. ((MEM x) s1))) s2)) /\ (uniq s2))))) s2)) = ((\s2. ((uniq ((cat s1) s2)) = ((uniq s1) /\ ((~ ((has (\x. ((MEM x) s1))) s2)) /\ (uniq s2))))) s2))
+T c= c==> ! c= cuniq ccat f0 b0 c/\ cuniq f0 c/\ c~ chas / cMEM b1 f0 b0 cuniq b0 * / c= cuniq ccat f0 b0 c/\ cuniq f0 c/\ c~ chas / cMEM b1 f0 b0 cuniq b0 f1 * / c= cuniq ccat f0 b0 c/\ cuniq f0 c/\ c~ chas / cMEM b1 f0 b0 cuniq b0 f1
++ |- ((t ==> t) = T)
+T c= c==> f0 f0 cT
++ |- ((\m. ((((APPEND l) m) = NIL) = ((l = NIL) /\ (m = NIL)))) m)
+T * / c= c= cAPPEND f0 b0 cNIL c/\ c= f0 cNIL c= b0 cNIL f1
+- |- ((t \/ t) = t)
+T c= c\/ f0 f0 f0
++ |- ((\x. (!s. (!t. (((uniq s) /\ (((MEM x) s) /\ (~ (x = (LAST s))))) ==> (((next_el ((cat s) t)) x) = ((next_el s) x)))))) a)
+T * / ! ! c==> c/\ cuniq b1 c/\ cMEM b0 b1 c~ c= b0 cLAST b1 c= cnext_el ccat b1 b2 b0 cnext_el b1 b0 f0
++ ((LAST (((betwn r) z) y)) = a) |- (a = (LAST (((betwn r) z) y)))
+T c==> c= cLAST cbetwn f0 f1 f2 f3 c= f3 cLAST cbetwn f0 f1 f2
+- |- ((!A'. (A' \/ (~ A))) = ((!A. A) \/ (~ A)))
+T c= ! c\/ b0 c~ f0 c\/ ! b0 c~ f0
++ |- ((\d. (((~ (z = y)) /\ (((MEM z) r) /\ (((MEM y) r) /\ (((MEM d) (((betwn r) z) y)) /\ (uniq r))))) ==> (((MEM ((next_el r) d)) (((betwn r) z) y)) = (~ ((LAST (((betwn r) z) y)) = d))))) a)
+T * / c==> c/\ c~ c= f0 f1 c/\ cMEM f0 f2 c/\ cMEM f1 f2 c/\ cMEM b0 cbetwn f2 f0 f1 cuniq f2 c= cMEM cnext_el f2 b0 cbetwn f2 f0 f1 c~ c= cLAST cbetwn f2 f0 f1 b0 f3
++ |- ((!s. (!t. (((uniq s) /\ (((MEM x) s) /\ (~ (x = (LAST s))))) ==> (((next_el ((cat s) t)) x) = ((next_el s) x))))) = T)
+T c= ! ! c==> c/\ cuniq b0 c/\ cMEM f0 b0 c~ c= f0 cLAST b0 c= cnext_el ccat b0 b1 f0 cnext_el b0 f0 cT
++ (~ (y = z)), (uniq r), (uniq s), (((APPEND ((CONS z) NIL)) ((APPEND (((betwn r) z) y)) ((CONS y) NIL))) = s), ((MEM a) (((betwn r) z) y)), ((MEM y) r), ((MEM z) r) |- ((((next_el s) a) = ((next_el ((APPEND (((betwn r) z) y)) ((CONS y) NIL))) a)) ==> ((~ ((LAST (((betwn r) z) y)) = a)) ==> (((next_el ((APPEND (((betwn r) z) y)) ((CONS y) NIL))) a) = ((next_el r) a))))
+T c==> c~ c= f0 f1 c==> cuniq f2 c==> cuniq f3 c==> c= cAPPEND cCONS f1 cNIL cAPPEND cbetwn f2 f1 f0 cCONS f0 cNIL f3 c==> cMEM f4 cbetwn f2 f1 f0 c==> cMEM f0 f2 c==> cMEM f1 f2 c==> c= cnext_el f3 f4 cnext_el cAPPEND cbetwn f2 f1 f0 cCONS f0 cNIL f4 c==> c~ c= cLAST cbetwn f2 f1 f0 f4 c= cnext_el cAPPEND cbetwn f2 f1 f0 cCONS f0 cNIL f4 cnext_el f2 f4
+- |- ((\t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))) t3)
+T * / c= c\/ f0 c\/ f1 b0 c\/ c\/ f0 f1 b0 f2
++ (~ (a = y)), (~ (y = z)), (uniq r), (uniq s), (((APPEND ((CONS z) NIL)) ((APPEND (((betwn r) z) y)) ((CONS y) NIL))) = s), ((MEM y) r), ((MEM z) r) |- (((MEM a) (((betwn r) z) y)) ==> (((next_el s) a) = ((next_el r) a)))
+T c==> c~ c= f0 f1 c==> c~ c= f1 f2 c==> cuniq f3 c==> cuniq f4 c==> c= cAPPEND cCONS f2 cNIL cAPPEND cbetwn f3 f2 f1 cCONS f1 cNIL f4 c==> cMEM f1 f3 c==> cMEM f2 f3 c==> cMEM f0 cbetwn f3 f2 f1 c= cnext_el f4 f0 cnext_el f3 f0
++ |- ((!y. (!z. (!d. (((~ (y = z)) /\ (((MEM y) f) /\ (((MEM z) f) /\ (((MEM d) (((betwn f) y) z)) /\ (uniq f))))) ==> (((MEM ((next_el f) d)) (((betwn f) y) z)) = (~ ((LAST (((betwn f) y) z)) = d))))))) = T)
+T c= ! ! ! c==> c/\ c~ c= b0 b1 c/\ cMEM b0 f0 c/\ cMEM b1 f0 c/\ cMEM b2 cbetwn f0 b0 b1 cuniq f0 c= cMEM cnext_el f0 b2 cbetwn f0 b0 b1 c~ c= cLAST cbetwn f0 b0 b1 b2 cT
++ (~ (y = z)), (~ ((LAST (((betwn r) z) y)) = a)), (uniq r), (uniq (((betwn r) z) y)), ((MEM a) (((betwn r) z) y)), ((MEM y) r), ((MEM z) r) |- (((next_el ((APPEND (((betwn r) z) y)) ((CONS y) NIL))) a) = ((next_el r) a))
+T c==> c~ c= f0 f1 c==> c~ c= cLAST cbetwn f2 f1 f0 f3 c==> cuniq f2 c==> cuniq cbetwn f2 f1 f0 c==> cMEM f3 cbetwn f2 f1 f0 c==> cMEM f0 f2 c==> cMEM f1 f2 c= cnext_el cAPPEND cbetwn f2 f1 f0 cCONS f0 cNIL f3 cnext_el f2 f3
++ (uniq r), (((MEM y) r) /\ (((MEM z) r) /\ ((~ (y = z)) /\ (((MEM a) s) /\ ((((APPEND ((CONS z) NIL)) ((APPEND (((betwn r) z) y)) ((CONS y) NIL))) = s) /\ (~ (a = y))))))), ((MEM y) r) |- (((next_el s) a) = ((next_el r) a))
+T c==> cuniq f0 c==> c/\ cMEM f1 f0 c/\ cMEM f2 f0 c/\ c~ c= f1 f2 c/\ cMEM f3 f4 c/\ c= cAPPEND cCONS f2 cNIL cAPPEND cbetwn f0 f2 f1 cCONS f1 cNIL f4 c~ c= f3 f1 c==> cMEM f1 f0 c= cnext_el f4 f3 cnext_el f0 f3
++ |- (((!m. ((HD ((APPEND l) m)) = (((COND (l = NIL)) (HD m)) (HD l)))) ==> ((\m. ((HD ((APPEND l) m)) = (((COND (l = NIL)) (HD m)) (HD l)))) m)) = ((\m. ((HD ((APPEND l) m)) = (((COND (l = NIL)) (HD m)) (HD l)))) m))
+T c= c==> ! c= cHD cAPPEND f0 b0 cCOND c= f0 cNIL cHD b0 cHD f0 * / c= cHD cAPPEND f0 b0 cCOND c= f0 cNIL cHD b0 cHD f0 f1 * / c= cHD cAPPEND f0 b0 cCOND c= f0 cNIL cHD b0 cHD f0 f1
++ (~ (y = z)), (~ ((((betwn r) z) y) = NIL)), (uniq r), ((MEM y) r), ((MEM z) r) |- (T = (((((MEM z) r) /\ (((MEM y) r) /\ ((~ (z = y)) /\ ((uniq r) /\ (~ ((((betwn r) z) y) = NIL)))))) ==> ((HD (((betwn r) z) y)) = ((next_el r) z))) ==> ((HD (((betwn r) z) y)) = ((next_el r) z))))
+T c==> c~ c= f0 f1 c==> c~ c= cbetwn f2 f1 f0 cNIL c==> cuniq f2 c==> cMEM f0 f2 c==> cMEM f1 f2 c= cT c==> c==> c/\ cMEM f1 f2 c/\ cMEM f0 f2 c/\ c~ c= f1 f0 c/\ cuniq f2 c~ c= cbetwn f2 f1 f0 cNIL c= cHD cbetwn f2 f1 f0 cnext_el f2 f1 c= cHD cbetwn f2 f1 f0 cnext_el f2 f1
++ |- (((!y. (!z. (!d. (!f. (((~ (y = z)) /\ (((MEM y) f) /\ (((MEM z) f) /\ (((MEM d) (((betwn f) y) z)) /\ (((MEM ((next_el f) d)) (((betwn f) y) z)) /\ (uniq f)))))) ==> (((next_el (((betwn f) y) z)) d) = ((next_el f) d))))))) ==> ((\y. (!z. (!d. (!f. (((~ (y = z)) /\ (((MEM y) f) /\ (((MEM z) f) /\ (((MEM d) (((betwn f) y) z)) /\ (((MEM ((next_el f) d)) (((betwn f) y) z)) /\ (uniq f)))))) ==> (((next_el (((betwn f) y) z)) d) = ((next_el f) d))))))) z)) = ((\y. (!z. (!d. (!f. (((~ (y = z)) /\ (((MEM y) f) /\ (((MEM z) f) /\ (((MEM d) (((betwn f) y) z)) /\ (((MEM ((next_el f) d)) (((betwn f) y) z)) /\ (uniq f)))))) ==> (((next_el (((betwn f) y) z)) d) = ((next_el f) d))))))) z))
+T c= c==> ! ! ! ! c==> c/\ c~ c= b0 b1 c/\ cMEM b0 b3 c/\ cMEM b1 b3 c/\ cMEM b2 cbetwn b3 b0 b1 c/\ cMEM cnext_el b3 b2 cbetwn b3 b0 b1 cuniq b3 c= cnext_el cbetwn b3 b0 b1 b2 cnext_el b3 b2 * / ! ! ! c==> c/\ c~ c= b0 b1 c/\ cMEM b0 b3 c/\ cMEM b1 b3 c/\ cMEM b2 cbetwn b3 b0 b1 c/\ cMEM cnext_el b3 b2 cbetwn b3 b0 b1 cuniq b3 c= cnext_el cbetwn b3 b0 b1 b2 cnext_el b3 b2 f0 * / ! ! ! c==> c/\ c~ c= b0 b1 c/\ cMEM b0 b3 c/\ cMEM b1 b3 c/\ cMEM b2 cbetwn b3 b0 b1 c/\ cMEM cnext_el b3 b2 cbetwn b3 b0 b1 cuniq b3 c= cnext_el cbetwn b3 b0 b1 b2 cnext_el b3 b2 f0
++ |- (((((~ (z = y)) /\ (((MEM z) r) /\ (((MEM y) r) /\ (((MEM a) (((betwn r) z) y)) /\ (((MEM ((next_el r) a)) (((betwn r) z) y)) /\ (uniq r)))))) ==> (((next_el (((betwn r) z) y)) a) = ((next_el r) a))) ==> (((next_el (((betwn r) z) y)) a) = ((next_el r) a))) = (((next_el (((betwn r) z) y)) a) = ((next_el r) a)))
+T c= c==> c==> c/\ c~ c= f0 f1 c/\ cMEM f0 f2 c/\ cMEM f1 f2 c/\ cMEM f3 cbetwn f2 f0 f1 c/\ cMEM cnext_el f2 f3 cbetwn f2 f0 f1 cuniq f2 c= cnext_el cbetwn f2 f0 f1 f3 cnext_el f2 f3 c= cnext_el cbetwn f2 f0 f1 f3 cnext_el f2 f3 c= cnext_el cbetwn f2 f0 f1 f3 cnext_el f2 f3
+- |- (((x = x) ==> p) = p)
+T c= c==> c= f0 f0 f1 f1
++ (~ (y = z)), (uniq r), (uniq s), (((APPEND ((CONS z) NIL)) ((APPEND (((betwn r) z) y)) ((CONS y) NIL))) = s), ((MEM y) r), ((MEM z) r) |- ((((uniq ((cat ((CONS z) NIL)) ((APPEND (((betwn r) z) y)) ((CONS y) NIL)))) /\ ((~ (((APPEND (((betwn r) z) y)) ((CONS y) NIL)) = NIL)) /\ (~ (((CONS z) NIL) = NIL)))) ==> (((next_el ((cat ((CONS z) NIL)) ((APPEND (((betwn r) z) y)) ((CONS y) NIL)))) (LAST ((CONS z) NIL))) = (HD ((APPEND (((betwn r) z) y)) ((CONS y) NIL))))) ==> (((next_el s) z) = ((next_el r) z)))
+T c==> c~ c= f0 f1 c==> cuniq f2 c==> cuniq f3 c==> c= cAPPEND cCONS f1 cNIL cAPPEND cbetwn f2 f1 f0 cCONS f0 cNIL f3 c==> cMEM f0 f2 c==> cMEM f1 f2 c==> c==> c/\ cuniq ccat cCONS f1 cNIL cAPPEND cbetwn f2 f1 f0 cCONS f0 cNIL c/\ c~ c= cAPPEND cbetwn f2 f1 f0 cCONS f0 cNIL cNIL c~ c= cCONS f1 cNIL cNIL c= cnext_el ccat cCONS f1 cNIL cAPPEND cbetwn f2 f1 f0 cCONS f0 cNIL cLAST cCONS f1 cNIL cHD cAPPEND cbetwn f2 f1 f0 cCONS f0 cNIL c= cnext_el f3 f1 cnext_el f2 f1
++ (~ (y = z)), (uniq r), (uniq s), ((LAST (((betwn r) z) y)) = a), (((APPEND ((CONS z) NIL)) ((APPEND (((betwn r) z) y)) ((CONS y) NIL))) = s), ((MEM a) (((betwn r) z) y)), ((MEM y) r), ((MEM z) r) |- (((next_el ((APPEND (((betwn r) z) y)) ((CONS y) NIL))) a) = ((next_el r) a))
+T c==> c~ c= f0 f1 c==> cuniq f2 c==> cuniq f3 c==> c= cLAST cbetwn f2 f1 f0 f4 c==> c= cAPPEND cCONS f1 cNIL cAPPEND cbetwn f2 f1 f0 cCONS f0 cNIL f3 c==> cMEM f4 cbetwn f2 f1 f0 c==> cMEM f0 f2 c==> cMEM f1 f2 c= cnext_el cAPPEND cbetwn f2 f1 f0 cCONS f0 cNIL f4 cnext_el f2 f4
+- |- ((!A. t) = t)
+T c= ! f0 f0
++ (~ ((((betwn r) z) y) = NIL)), (~ ((has (\x. ((MEM x) (((betwn r) z) y)))) ((CONS y) NIL))), (uniq ((CONS y) NIL)), (uniq (((betwn r) z) y)), ((LAST (((betwn r) z) y)) = a) |- (((((next_el ((APPEND (((betwn r) z) y)) ((CONS y) NIL))) a) = y) ==> (((next_el ((APPEND (((betwn r) z) y)) ((CONS y) NIL))) a) = ((next_el r) a))) = ((((uniq ((cat (((betwn r) z) y)) ((CONS y) NIL))) /\ ((~ (((CONS y) NIL) = NIL)) /\ (~ ((((betwn r) z) y) = NIL)))) ==> (((next_el ((cat (((betwn r) z) y)) ((CONS y) NIL))) (LAST (((betwn r) z) y))) = (HD ((CONS y) NIL)))) ==> (((next_el ((APPEND (((betwn r) z) y)) ((CONS y) NIL))) a) = ((next_el r) a))))
+T c==> c~ c= cbetwn f0 f1 f2 cNIL c==> c~ chas / cMEM b0 cbetwn f0 f1 f2 cCONS f2 cNIL c==> cuniq cCONS f2 cNIL c==> cuniq cbetwn f0 f1 f2 c==> c= cLAST cbetwn f0 f1 f2 f3 c= c==> c= cnext_el cAPPEND cbetwn f0 f1 f2 cCONS f2 cNIL f3 f2 c= cnext_el cAPPEND cbetwn f0 f1 f2 cCONS f2 cNIL f3 cnext_el f0 f3 c==> c==> c/\ cuniq ccat cbetwn f0 f1 f2 cCONS f2 cNIL c/\ c~ c= cCONS f2 cNIL cNIL c~ c= cbetwn f0 f1 f2 cNIL c= cnext_el ccat cbetwn f0 f1 f2 cCONS f2 cNIL cLAST cbetwn f0 f1 f2 cHD cCONS f2 cNIL c= cnext_el cAPPEND cbetwn f0 f1 f2 cCONS f2 cNIL f3 cnext_el f0 f3
++ (~ (a = y)), (~ (y = z)), (uniq r), (((APPEND ((CONS z) NIL)) ((APPEND (((betwn r) z) y)) ((CONS y) NIL))) = s), ((MEM a) s), ((MEM y) r), ((MEM z) r) |- (((next_el s) a) = ((next_el r) a))
+T c==> c~ c= f0 f1 c==> c~ c= f1 f2 c==> cuniq f3 c==> c= cAPPEND cCONS f2 cNIL cAPPEND cbetwn f3 f2 f1 cCONS f1 cNIL f4 c==> cMEM f0 f4 c==> cMEM f1 f3 c==> cMEM f2 f3 c= cnext_el f4 f0 cnext_el f3 f0
++ |- (((!y. (!z. (!r. ((((((betwn r) y) z) = NIL) /\ (((MEM y) r) /\ (((MEM z) r) /\ ((~ (y = z)) /\ (uniq r))))) ==> (((next_el r) y) = z))))) ==> ((\y. (!z. (!r. ((((((betwn r) y) z) = NIL) /\ (((MEM y) r) /\ (((MEM z) r) /\ ((~ (y = z)) /\ (uniq r))))) ==> (((next_el r) y) = z))))) z)) = ((\y. (!z. (!r. ((((((betwn r) y) z) = NIL) /\ (((MEM y) r) /\ (((MEM z) r) /\ ((~ (y = z)) /\ (uniq r))))) ==> (((next_el r) y) = z))))) z))
+T c= c==> ! ! ! c==> c/\ c= cbetwn b2 b0 b1 cNIL c/\ cMEM b0 b2 c/\ cMEM b1 b2 c/\ c~ c= b0 b1 cuniq b2 c= cnext_el b2 b0 b1 * / ! ! c==> c/\ c= cbetwn b2 b0 b1 cNIL c/\ cMEM b0 b2 c/\ cMEM b1 b2 c/\ c~ c= b0 b1 cuniq b2 c= cnext_el b2 b0 b1 f0 * / ! ! c==> c/\ c= cbetwn b2 b0 b1 cNIL c/\ cMEM b0 b2 c/\ cMEM b1 b2 c/\ c~ c= b0 b1 cuniq b2 c= cnext_el b2 b0 b1 f0
+- |- ((t ==> F) = (~ t))
+T c= c==> f0 cF c~ f0
+- (~ ((has (\x. ((MEM x) ((CONS z) NIL)))) ((cat (((betwn r) z) y)) ((CONS y) NIL)))) |- (((has (\x. ((MEM x) ((CONS z) NIL)))) ((cat (((betwn r) z) y)) ((CONS y) NIL))) = F)
+T c==> c~ chas / cMEM b0 cCONS f0 cNIL ccat cbetwn f1 f0 f2 cCONS f2 cNIL c= chas / cMEM b0 cCONS f0 cNIL ccat cbetwn f1 f0 f2 cCONS f2 cNIL cF
+- (~ ((((betwn r) z) y) = NIL)) |- (((~ (NIL = (((betwn r) z) y))) ==> ((NIL = (((betwn r) z) y)) = F)) = ((NIL = (((betwn r) z) y)) = F))
+T c==> c~ c= cbetwn f0 f1 f2 cNIL c= c==> c~ c= cNIL cbetwn f0 f1 f2 c= c= cNIL cbetwn f0 f1 f2 cF c= c= cNIL cbetwn f0 f1 f2 cF
+- |- (p = ((~ p) ==> F))
+T c= f0 c==> c~ f0 cF
+- (~ (y = z)), (uniq r), (uniq s), ((LAST (((betwn r) z) y)) = a), (((next_el s) a) = ((next_el ((APPEND (((betwn r) z) y)) ((CONS y) NIL))) a)), (((APPEND ((CONS z) NIL)) ((APPEND (((betwn r) z) y)) ((CONS y) NIL))) = s), ((MEM a) (((betwn r) z) y)), ((MEM y) r), ((MEM z) r) |- (((next_el ((APPEND (((betwn r) z) y)) ((CONS y) NIL))) a) = ((next_el r) a))
+T c==> c~ c= f0 f1 c==> cuniq f2 c==> cuniq f3 c==> c= cLAST cbetwn f2 f1 f0 f4 c==> c= cnext_el f3 f4 cnext_el cAPPEND cbetwn f2 f1 f0 cCONS f0 cNIL f4 c==> c= cAPPEND cCONS f1 cNIL cAPPEND cbetwn f2 f1 f0 cCONS f0 cNIL f3 c==> cMEM f4 cbetwn f2 f1 f0 c==> cMEM f0 f2 c==> cMEM f1 f2 c= cnext_el cAPPEND cbetwn f2 f1 f0 cCONS f0 cNIL f4 cnext_el f2 f4
+- (~ ((((betwn r) z) y) = NIL)) |- (~ (NIL = (((betwn r) z) y)))
+T c==> c~ c= cbetwn f0 f1 f2 cNIL c~ c= cNIL cbetwn f0 f1 f2
+- |- ((!A. (A \/ (~ A))) = ((T \/ (~ T)) /\ (F \/ (~ F))))
+T c= ! c\/ b0 c~ b0 c/\ c\/ cT c~ cT c\/ cF c~ cF
+- (~ (y = z)), (uniq r), (uniq s), (((APPEND ((CONS z) NIL)) ((APPEND (((betwn r) z) y)) ((CONS y) NIL))) = s), ((MEM y) r), ((MEM z) r) |- (((MEM a) (((betwn r) z) y)) ==> ((((next_el s) a) = ((next_el ((APPEND (((betwn r) z) y)) ((CONS y) NIL))) a)) ==> (((LAST (((betwn r) z) y)) = a) ==> (((next_el ((APPEND (((betwn r) z) y)) ((CONS y) NIL))) a) = ((next_el r) a)))))
+T c==> c~ c= f0 f1 c==> cuniq f2 c==> cuniq f3 c==> c= cAPPEND cCONS f1 cNIL cAPPEND cbetwn f2 f1 f0 cCONS f0 cNIL f3 c==> cMEM f0 f2 c==> cMEM f1 f2 c==> cMEM f4 cbetwn f2 f1 f0 c==> c= cnext_el f3 f4 cnext_el cAPPEND cbetwn f2 f1 f0 cCONS f0 cNIL f4 c==> c= cLAST cbetwn f2 f1 f0 f4 c= cnext_el cAPPEND cbetwn f2 f1 f0 cCONS f0 cNIL f4 cnext_el f2 f4
+- |- ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))
+T c= c\/ f0 c\/ f1 f2 c\/ c\/ f0 f1 f2
+- |- ((LAST ((CONS h) ((CONS k) t))) = (LAST ((CONS k) t)))
+T c= cLAST cCONS f0 cCONS f1 f2 cLAST cCONS f1 f2
+- (~ (!A. (A \/ (~ A)))) |- F
+T c==> c~ ! c\/ b0 c~ b0 cF
+- |- ((\t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3)))) t2)
+T * / ! c= c\/ f0 c\/ b0 b1 c\/ c\/ f0 b0 b1 f1
+- |- ((!A. ((P A) \/ Q)) = ((!A. (P A)) \/ Q))
+T c= ! c\/ * f0 b0 f1 c\/ ! * f0 b0 f1
+- |- ((((~ (!A. (A \/ (~ A)))) ==> F) ==> ((~ (!A. (A \/ (~ A)))) ==> F)) = ((~ (!A. (A \/ (~ A)))) ==> F))
+T c= c==> c==> c~ ! c\/ b0 c~ b0 cF c==> c~ ! c\/ b0 c~ b0 cF c==> c~ ! c\/ b0 c~ b0 cF
+- |- ((((~ (!A. (A \/ (~ A)))) ==> F) ==> ((~ (!A. (A \/ (~ A)))) ==> F)) ==> (((~ (!A. (A \/ (~ A)))) ==> F) ==> ((~ (!A. (A \/ (~ A)))) ==> F)))
+T c==> c==> c==> c~ ! c\/ b0 c~ b0 cF c==> c~ ! c\/ b0 c~ b0 cF c==> c==> c~ ! c\/ b0 c~ b0 cF c==> c~ ! c\/ b0 c~ b0 cF
+- ((~ (!A. (A \/ (~ A)))) ==> F), (((~ (!A. (A \/ (~ A)))) ==> F) ==> ((~ (!A. (A \/ (~ A)))) ==> F)) |- (((~ (!A. (A \/ (~ A)))) ==> F) /\ ((~ (!A. (A \/ (~ A)))) ==> F))
+T c==> c==> c~ ! c\/ b0 c~ b0 cF c==> c==> c==> c~ ! c\/ b0 c~ b0 cF c==> c~ ! c\/ b0 c~ b0 cF c/\ c==> c~ ! c\/ b0 c~ b0 cF c==> c~ ! c\/ b0 c~ b0 cF
+- (NIL = ((CONS x) NIL)) |- (((CONS x) NIL) = NIL)
+T c==> c= cNIL cCONS f0 cNIL c= cCONS f0 cNIL cNIL
+- |- (((!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3)))) ==> ((\t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3)))) t2)) = ((\t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3)))) t2))
+T c= c==> ! ! c= c\/ f0 c\/ b0 b1 c\/ c\/ f0 b0 b1 * / ! c= c\/ f0 c\/ b0 b1 c\/ c\/ f0 b0 b1 f1 * / ! c= c\/ f0 c\/ b0 b1 c\/ c\/ f0 b0 b1 f1
+- |- (~ (NIL = ((CONS x) NIL)))
+T c~ c= cNIL cCONS f0 cNIL
+- |- (((~ (NIL = ((CONS x) NIL))) ==> ((NIL = ((CONS x) NIL)) = F)) = ((NIL = ((CONS x) NIL)) = F))
+T c= c==> c~ c= cNIL cCONS f0 cNIL c= c= cNIL cCONS f0 cNIL cF c= c= cNIL cCONS f0 cNIL cF
+- (~ (y = z)), (uniq r), ((MEM a) s), ((MEM y) r), ((MEM z) r) |- ((((APPEND ((CONS z) NIL)) ((APPEND (((betwn r) z) y)) ((CONS y) NIL))) = s) ==> ((~ (a = y)) ==> ((uniq s) ==> (((next_el s) a) = ((next_el r) a)))))
+T c==> c~ c= f0 f1 c==> cuniq f2 c==> cMEM f3 f4 c==> cMEM f0 f2 c==> cMEM f1 f2 c==> c= cAPPEND cCONS f1 cNIL cAPPEND cbetwn f2 f1 f0 cCONS f0 cNIL f4 c==> c~ c= f3 f0 c==> cuniq f4 c= cnext_el f4 f3 cnext_el f2 f3
+- (~ (!A. (A \/ (~ A)))) |- ((~ (!A. (A \/ (~ A)))) /\ F)
+T c==> c~ ! c\/ b0 c~ b0 c/\ c~ ! c\/ b0 c~ b0 cF
+- (((~ (!A. (A \/ (~ A)))) ==> F) ==> ((~ (!A. (A \/ (~ A)))) ==> F)) |- ((((~ (!A. (A \/ (~ A)))) ==> F) ==> ((~ (!A. (A \/ (~ A)))) ==> F)) /\ (((~ (!A. (A \/ (~ A)))) ==> F) ==> ((~ (!A. (A \/ (~ A)))) ==> F)))
+T c==> c==> c==> c~ ! c\/ b0 c~ b0 cF c==> c~ ! c\/ b0 c~ b0 cF c/\ c==> c==> c~ ! c\/ b0 c~ b0 cF c==> c~ ! c\/ b0 c~ b0 cF c==> c==> c~ ! c\/ b0 c~ b0 cF c==> c~ ! c\/ b0 c~ b0 cF
+- |- (((t1 \/ t2) \/ t3) = (t1 \/ (t2 \/ t3)))
+T c= c\/ c\/ f0 f1 f2 c\/ f0 c\/ f1 f2
+- (~ (y = z)), (uniq r), (uniq s), ((LAST (((betwn r) z) y)) = a), (((next_el s) a) = ((next_el ((APPEND (((betwn r) z) y)) ((CONS y) NIL))) a)), (((APPEND ((CONS z) NIL)) ((APPEND (((betwn r) z) y)) ((CONS y) NIL))) = s), ((MEM a) (((betwn r) z) y)), ((MEM y) r), ((MEM z) r) |- (((LAST (((betwn r) z) y)) = a) /\ (((next_el ((APPEND (((betwn r) z) y)) ((CONS y) NIL))) a) = ((next_el r) a)))
+T c==> c~ c= f0 f1 c==> cuniq f2 c==> cuniq f3 c==> c= cLAST cbetwn f2 f1 f0 f4 c==> c= cnext_el f3 f4 cnext_el cAPPEND cbetwn f2 f1 f0 cCONS f0 cNIL f4 c==> c= cAPPEND cCONS f1 cNIL cAPPEND cbetwn f2 f1 f0 cCONS f0 cNIL f3 c==> cMEM f4 cbetwn f2 f1 f0 c==> cMEM f0 f2 c==> cMEM f1 f2 c/\ c= cLAST cbetwn f2 f1 f0 f4 c= cnext_el cAPPEND cbetwn f2 f1 f0 cCONS f0 cNIL f4 cnext_el f2 f4
+- (NIL = (((betwn r) z) y)) |- ((((betwn r) z) y) = NIL)
+T c==> c= cNIL cbetwn f0 f1 f2 c= cbetwn f0 f1 f2 cNIL
+- (~ (y = z)), (uniq r), (uniq s), (((APPEND ((CONS z) NIL)) ((APPEND (((betwn r) z) y)) ((CONS y) NIL))) = s), ((MEM a) (((betwn r) z) y)), ((MEM y) r), ((MEM z) r) |- (((MEM a) (((betwn r) z) y)) /\ ((((next_el s) a) = ((next_el ((APPEND (((betwn r) z) y)) ((CONS y) NIL))) a)) ==> ((~ ((LAST (((betwn r) z) y)) = a)) ==> (((next_el ((APPEND (((betwn r) z) y)) ((CONS y) NIL))) a) = ((next_el r) a)))))
+T c==> c~ c= f0 f1 c==> cuniq f2 c==> cuniq f3 c==> c= cAPPEND cCONS f1 cNIL cAPPEND cbetwn f2 f1 f0 cCONS f0 cNIL f3 c==> cMEM f4 cbetwn f2 f1 f0 c==> cMEM f0 f2 c==> cMEM f1 f2 c/\ cMEM f4 cbetwn f2 f1 f0 c==> c= cnext_el f3 f4 cnext_el cAPPEND cbetwn f2 f1 f0 cCONS f0 cNIL f4 c==> c~ c= cLAST cbetwn f2 f1 f0 f4 c= cnext_el cAPPEND cbetwn f2 f1 f0 cCONS f0 cNIL f4 cnext_el f2 f4
+- ((~ (!A. (A \/ (~ A)))) ==> F), (((~ (!A. (A \/ (~ A)))) ==> F) ==> ((~ (!A. (A \/ (~ A)))) ==> F)) |- ((((~ (!A. (A \/ (~ A)))) ==> F) ==> ((~ (!A. (A \/ (~ A)))) ==> F)) /\ ((~ (!A. (A \/ (~ A)))) ==> F))
+T c==> c==> c~ ! c\/ b0 c~ b0 cF c==> c==> c==> c~ ! c\/ b0 c~ b0 cF c==> c~ ! c\/ b0 c~ b0 cF c/\ c==> c==> c~ ! c\/ b0 c~ b0 cF c==> c~ ! c\/ b0 c~ b0 cF c==> c~ ! c\/ b0 c~ b0 cF
+- |- ((!A. (P \/ (Q A))) = (P \/ (!A. (Q A))))
+T c= ! c\/ f0 * f1 b0 c\/ f0 ! * f1 b0
+- |- (((!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))) ==> ((\t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))) t3)) = ((\t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))) t3))
+T c= c==> ! c= c\/ f0 c\/ f1 b0 c\/ c\/ f0 f1 b0 * / c= c\/ f0 c\/ f1 b0 c\/ c\/ f0 f1 b0 f2 * / c= c\/ f0 c\/ f1 b0 c\/ c\/ f0 f1 b0 f2
+- (((CONS x) NIL) = NIL) |- (NIL = ((CONS x) NIL))
+T c==> c= cCONS f0 cNIL cNIL c= cNIL cCONS f0 cNIL
+- |- ((t /\ t) = t)
+T c= c/\ f0 f0 f0
+- |- (((((~ (!A. (A \/ (~ A)))) ==> F) ==> ((~ (!A. (A \/ (~ A)))) ==> F)) ==> (((~ (!A. (A \/ (~ A)))) ==> F) ==> ((~ (!A. (A \/ (~ A)))) ==> F))) = (((~ (!A. (A \/ (~ A)))) ==> F) ==> ((~ (!A. (A \/ (~ A)))) ==> F)))
+T c= c==> c==> c==> c~ ! c\/ b0 c~ b0 cF c==> c~ ! c\/ b0 c~ b0 cF c==> c==> c~ ! c\/ b0 c~ b0 cF c==> c~ ! c\/ b0 c~ b0 cF c==> c==> c~ ! c\/ b0 c~ b0 cF c==> c~ ! c\/ b0 c~ b0 cF
+- ((~ (!A. (A \/ (~ A)))) ==> F) |- (((~ (!A. (A \/ (~ A)))) ==> F) /\ ((~ (!A. (A \/ (~ A)))) ==> F))
+T c==> c==> c~ ! c\/ b0 c~ b0 cF c/\ c==> c~ ! c\/ b0 c~ b0 cF c==> c~ ! c\/ b0 c~ b0 cF
+- (~ (y = z)), (~ ((LAST (((betwn r) z) y)) = a)), (uniq r), (uniq (((betwn r) z) y)), ((MEM a) (((betwn r) z) y)), ((MEM y) r), ((MEM z) r) |- ((~ ((((betwn r) z) y) = NIL)) ==> (((next_el ((APPEND (((betwn r) z) y)) ((CONS y) NIL))) a) = ((next_el r) a)))
+T c==> c~ c= f0 f1 c==> c~ c= cLAST cbetwn f2 f1 f0 f3 c==> cuniq f2 c==> cuniq cbetwn f2 f1 f0 c==> cMEM f3 cbetwn f2 f1 f0 c==> cMEM f0 f2 c==> cMEM f1 f2 c==> c~ c= cbetwn f2 f1 f0 cNIL c= cnext_el cAPPEND cbetwn f2 f1 f0 cCONS f0 cNIL f3 cnext_el f2 f3
+- |- ((F \/ t) = t)
+T c= c\/ cF f0 f0
+- (~ (y = z)), (~ ((LAST (((betwn r) z) y)) = a)), (uniq r), (uniq s), (((next_el s) a) = ((next_el ((APPEND (((betwn r) z) y)) ((CONS y) NIL))) a)), (((APPEND ((CONS z) NIL)) ((APPEND (((betwn r) z) y)) ((CONS y) NIL))) = s), ((MEM a) (((betwn r) z) y)), ((MEM y) r), ((MEM z) r) |- ((~ ((LAST (((betwn r) z) y)) = a)) /\ (((next_el ((APPEND (((betwn r) z) y)) ((CONS y) NIL))) a) = ((next_el r) a)))
+T c==> c~ c= f0 f1 c==> c~ c= cLAST cbetwn f2 f1 f0 f3 c==> cuniq f2 c==> cuniq f4 c==> c= cnext_el f4 f3 cnext_el cAPPEND cbetwn f2 f1 f0 cCONS f0 cNIL f3 c==> c= cAPPEND cCONS f1 cNIL cAPPEND cbetwn f2 f1 f0 cCONS f0 cNIL f4 c==> cMEM f3 cbetwn f2 f1 f0 c==> cMEM f0 f2 c==> cMEM f1 f2 c/\ c~ c= cLAST cbetwn f2 f1 f0 f3 c= cnext_el cAPPEND cbetwn f2 f1 f0 cCONS f0 cNIL f3 cnext_el f2 f3
+- ((((betwn r) z) y) = NIL) |- (NIL = (((betwn r) z) y))
+T c==> c= cbetwn f0 f1 f2 cNIL c= cNIL cbetwn f0 f1 f2
+- |- ((!A. (P A)) = ((P T) /\ (P F)))
+T c= ! * f0 b0 c/\ * f0 cT * f0 cF
+- |- (((!t1. (!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))))) ==> ((\t1. (!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))))) t1)) = ((\t1. (!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))))) t1))
+T c= c==> ! ! ! c= c\/ b0 c\/ b1 b2 c\/ c\/ b0 b1 b2 * / ! ! c= c\/ b0 c\/ b1 b2 c\/ c\/ b0 b1 b2 f0 * / ! ! c= c\/ b0 c\/ b1 b2 c\/ c\/ b0 b1 b2 f0
+- |- ((~ (~ t)) = t)
+T c= c~ c~ f0 f0
+- (~ (y = z)), (~ ((LAST (((betwn r) z) y)) = a)), (~ ((((betwn r) z) y) = NIL)), (uniq r), (uniq (((betwn r) z) y)), ((MEM a) (((betwn r) z) y)), ((MEM y) r), ((MEM z) r) |- ((~ ((((betwn r) z) y) = NIL)) /\ (((next_el ((APPEND (((betwn r) z) y)) ((CONS y) NIL))) a) = ((next_el r) a)))
+T c==> c~ c= f0 f1 c==> c~ c= cLAST cbetwn f2 f1 f0 f3 c==> c~ c= cbetwn f2 f1 f0 cNIL c==> cuniq f2 c==> cuniq cbetwn f2 f1 f0 c==> cMEM f3 cbetwn f2 f1 f0 c==> cMEM f0 f2 c==> cMEM f1 f2 c/\ c~ c= cbetwn f2 f1 f0 cNIL c= cnext_el cAPPEND cbetwn f2 f1 f0 cCONS f0 cNIL f3 cnext_el f2 f3
+- (~ (y = z)), (uniq r), (((APPEND ((CONS z) NIL)) ((APPEND (((betwn r) z) y)) ((CONS y) NIL))) = s), ((MEM a) s), ((MEM y) r), ((MEM z) r) |- ((~ (a = y)) ==> ((uniq s) ==> (((next_el s) a) = ((next_el r) a))))
+T c==> c~ c= f0 f1 c==> cuniq f2 c==> c= cAPPEND cCONS f1 cNIL cAPPEND cbetwn f2 f1 f0 cCONS f0 cNIL f3 c==> cMEM f4 f3 c==> cMEM f0 f2 c==> cMEM f1 f2 c==> c~ c= f4 f0 c==> cuniq f3 c= cnext_el f3 f4 cnext_el f2 f4
+- (~ (y = z)), (~ ((LAST (((betwn r) z) y)) = a)), (uniq r), (uniq (((betwn r) z) y)), ((MEM a) (((betwn r) z) y)), ((MEM y) r), ((MEM z) r) |- ((((MEM a) (((betwn r) z) y)) ==> (~ ((((betwn r) z) y) = NIL))) ==> (((next_el ((APPEND (((betwn r) z) y)) ((CONS y) NIL))) a) = ((next_el r) a)))
+T c==> c~ c= f0 f1 c==> c~ c= cLAST cbetwn f2 f1 f0 f3 c==> cuniq f2 c==> cuniq cbetwn f2 f1 f0 c==> cMEM f3 cbetwn f2 f1 f0 c==> cMEM f0 f2 c==> cMEM f1 f2 c==> c==> cMEM f3 cbetwn f2 f1 f0 c~ c= cbetwn f2 f1 f0 cNIL c= cnext_el cAPPEND cbetwn f2 f1 f0 cCONS f0 cNIL f3 cnext_el f2 f3
+- (~ (y = z)), (uniq r), (uniq s), (((APPEND ((CONS z) NIL)) ((APPEND (((betwn r) z) y)) ((CONS y) NIL))) = s), ((MEM y) r), ((MEM z) r) |- (((MEM a) (((betwn r) z) y)) ==> ((((next_el s) a) = ((next_el ((APPEND (((betwn r) z) y)) ((CONS y) NIL))) a)) ==> ((~ ((LAST (((betwn r) z) y)) = a)) ==> (((next_el ((APPEND (((betwn r) z) y)) ((CONS y) NIL))) a) = ((next_el r) a)))))
+T c==> c~ c= f0 f1 c==> cuniq f2 c==> cuniq f3 c==> c= cAPPEND cCONS f1 cNIL cAPPEND cbetwn f2 f1 f0 cCONS f0 cNIL f3 c==> cMEM f0 f2 c==> cMEM f1 f2 c==> cMEM f4 cbetwn f2 f1 f0 c==> c= cnext_el f3 f4 cnext_el cAPPEND cbetwn f2 f1 f0 cCONS f0 cNIL f4 c==> c~ c= cLAST cbetwn f2 f1 f0 f4 c= cnext_el cAPPEND cbetwn f2 f1 f0 cCONS f0 cNIL f4 cnext_el f2 f4
+- |- (((~ (!A. (A \/ (~ A)))) ==> F) = (!A. (A \/ (~ A))))
+T c= c==> c~ ! c\/ b0 c~ b0 cF ! c\/ b0 c~ b0
+- ((~ (!A. (A \/ (~ A)))) ==> F) |- ((((~ (!A. (A \/ (~ A)))) ==> F) ==> ((~ (!A. (A \/ (~ A)))) ==> F)) ==> ((~ (!A. (A \/ (~ A)))) ==> F))
+T c==> c==> c~ ! c\/ b0 c~ b0 cF c==> c==> c==> c~ ! c\/ b0 c~ b0 cF c==> c~ ! c\/ b0 c~ b0 cF c==> c~ ! c\/ b0 c~ b0 cF

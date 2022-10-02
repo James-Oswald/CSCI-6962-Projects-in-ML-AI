@@ -1,0 +1,27 @@
+N REVERSE_REVERSE
+C |- (!l. ((REVERSE (REVERSE l)) = l))
+T c= cREVERSE cREVERSE f0 f0
+D list_INDUCT
+A |- (!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x))))
+T c==> c/\ * f0 cNIL ! ! c==> * f0 b1 * f0 cCONS b0 b1 ! * f0 b0
+D APPEND
+A |- ((!l. (((APPEND NIL) l) = l)) /\ (!h. (!t. (!l. (((APPEND ((CONS h) t)) l) = ((CONS h) ((APPEND t) l)))))))
+T c/\ ! c= cAPPEND cNIL b0 b0 ! ! ! c= cAPPEND cCONS b0 b1 b2 cCONS b0 cAPPEND b1 b2
+D REVERSE
+A |- (((REVERSE NIL) = NIL) /\ ((REVERSE ((CONS x) l)) = ((APPEND (REVERSE l)) ((CONS x) NIL))))
+T c/\ c= cREVERSE cNIL cNIL c= cREVERSE cCONS f0 f1 cAPPEND cREVERSE f1 cCONS f0 cNIL
+D REVERSE_APPEND
+A |- (!l. (!m. ((REVERSE ((APPEND l) m)) = ((APPEND (REVERSE m)) (REVERSE l)))))
+T c= cREVERSE cAPPEND f0 f1 cAPPEND cREVERSE f1 cREVERSE f0
+- ((REVERSE (REVERSE t)) = t) |- (T = ((REVERSE (REVERSE ((CONS h) t))) = ((CONS h) t)))
+T c==> c= cREVERSE cREVERSE f0 f0 c= cT c= cREVERSE cREVERSE cCONS f1 f0 cCONS f1 f0
++ |- ((!h. (!t. (((REVERSE (REVERSE t)) = t) ==> ((REVERSE (REVERSE ((CONS h) t))) = ((CONS h) t))))) = (((REVERSE (REVERSE NIL)) = NIL) /\ (!h. (!t. (((REVERSE (REVERSE t)) = t) ==> ((REVERSE (REVERSE ((CONS h) t))) = ((CONS h) t)))))))
+T c= ! ! c==> c= cREVERSE cREVERSE b1 b1 c= cREVERSE cREVERSE cCONS b0 b1 cCONS b0 b1 c/\ c= cREVERSE cREVERSE cNIL cNIL ! ! c==> c= cREVERSE cREVERSE b1 b1 c= cREVERSE cREVERSE cCONS b0 b1 cCONS b0 b1
++ |- ((REVERSE ((CONS x) l)) = ((APPEND (REVERSE l)) ((CONS x) NIL)))
+T c= cREVERSE cCONS f0 f1 cAPPEND cREVERSE f1 cCONS f0 cNIL
++ |- ((\l. (((APPEND ((CONS h) t)) l) = ((CONS h) ((APPEND t) l)))) l)
+T * / c= cAPPEND cCONS f0 f1 b0 cCONS f0 cAPPEND f1 b0 f2
+- |- ((x = x) = T)
+T c= c= f0 f0 cT
+- |- (T = ((REVERSE (REVERSE NIL)) = NIL))
+T c= cT c= cREVERSE cREVERSE cNIL cNIL

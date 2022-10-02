@@ -1,0 +1,76 @@
+N List_hypermap.set_of_list_flatten_map
+C |- (!s. ((set_of_list (flatten s)) = (UNIONS (set_of_list ((map set_of_list) s)))))
+T c= * part cset_of_list cflatten f0 * part cUNIONS * part cset_of_list cmap part cset_of_list f0
+D TRUTH
+A |- T
+T cT
+D EXTENSION
+A |- (!s. (!t. ((s = t) = (!x. ((x IN s) = (x IN t))))))
+T c= c= f0 f1 ! c= cIN b0 f0 cIN b0 f1
+D IN_UNIONS
+A |- (!s. (!x. ((x IN (UNIONS s)) = (?t. ((t IN s) /\ (x IN t))))))
+T c= cIN f0 * part cUNIONS f1 c? / c/\ cIN b0 f1 cIN f0 b0
+D IN_SET_OF_LIST
+A |- (!x. (!l. ((x IN (set_of_list l)) = ((MEM x) l))))
+T c= cIN f0 * part cset_of_list f1 cMEM f0 f1
+D Ssrbool.andbT
+A |- (!b. ((b /\ T) = b))
+T c= c/\ f0 cT f0
+D Seq.mapP
+A |- (!f. (!s. (!y. (((MEM y) ((map f) s)) = (?x. (((MEM x) s) /\ (y = (f x))))))))
+T c= cMEM f0 cmap f1 f2 c? / c/\ cMEM b0 f2 c= f0 * f1 b0
+D Seq2.mem_flatten
+A |- (!x. (!L. (((MEM x) (flatten L)) = (?l. (((MEM l) L) /\ ((MEM x) l))))))
+T c= cMEM f0 cflatten f1 c? / c/\ cMEM b0 f1 cMEM f0 b0
++ |- ((\L. (((MEM x) (flatten L)) = (?l. (((MEM l) L) /\ ((MEM x) l))))) L)
+T * / c= cMEM f0 cflatten b0 c? / c/\ cMEM b1 b0 cMEM f0 b1 f1
++ (((MEM l) s) /\ ((MEM x) l)) |- ((?x. (((MEM x) s) /\ ((set_of_list l) = (set_of_list x)))) /\ ((MEM x) l))
+T c==> c/\ cMEM f0 f1 cMEM f2 f0 c/\ c? / c/\ cMEM b0 f1 c= * part cset_of_list f0 * part cset_of_list b0 cMEM f2 f0
++ |- (((!l. ((x IN (set_of_list l)) = ((MEM x) l))) ==> ((\l. ((x IN (set_of_list l)) = ((MEM x) l))) l)) = ((\l. ((x IN (set_of_list l)) = ((MEM x) l))) l))
+T c= c==> ! c= cIN f0 * part cset_of_list b0 cMEM f0 b0 * / c= cIN f0 * part cset_of_list b0 cMEM f0 b0 f1 * / c= cIN f0 * part cset_of_list b0 cMEM f0 b0 f1
+- ((!x. (P ==> (Q x))) = (P ==> (!x. (Q x)))) |- ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))
+T c==> c= ! c==> f0 * f1 b0 c==> f0 ! * f1 b0 c= c==> f0 ! * f1 b0 ! c==> f0 * f1 b0
++ (((MEM l) s) /\ ((MEM x) l)) |- ((\t. ((?x. (((MEM x) s) /\ (t = (set_of_list x)))) /\ (x IN t))) (set_of_list l))
+T c==> c/\ cMEM f0 f1 cMEM f2 f0 * / c/\ c? / c/\ cMEM b1 f1 c= b0 * part cset_of_list b1 cIN f2 b0 * part cset_of_list f0
+- |- ((\P. (!Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x)))))) P)
+T * / ! c= c==> b0 ! * b1 b2 ! c==> b0 * b1 b2 f0
++ (((MEM l) s) /\ ((MEM x) l)) |- ((?x. (((MEM x) s) /\ ((set_of_list l) = (set_of_list x)))) /\ (x IN (set_of_list l)))
+T c==> c/\ cMEM f0 f1 cMEM f2 f0 c/\ c? / c/\ cMEM b0 f1 c= * part cset_of_list f0 * part cset_of_list b0 cIN f2 * part cset_of_list f0
++ |- (((?t. (P t)) ==> Q) = (!t. ((P t) ==> Q)))
+T c= c==> c? / * f0 b0 f1 ! c==> * f0 b0 f1
++ (((MEM l) s) /\ ((MEM x) l)) |- (((MEM l) s) /\ ((set_of_list l) = (set_of_list l)))
+T c==> c/\ cMEM f0 f1 cMEM f2 f0 c/\ cMEM f0 f1 c= * part cset_of_list f0 * part cset_of_list f0
++ ((MEM l2) s) |- ((x IN (set_of_list l2)) ==> (?l. (((MEM l) s) /\ ((MEM x) l))))
+T c==> cMEM f0 f1 c==> cIN f2 * part cset_of_list f0 c? / c/\ cMEM b0 f1 cMEM f2 b0
++ ((MEM x) l2), ((MEM l2) s) |- ((\l. (((MEM l) s) /\ ((MEM x) l))) l2)
+T c==> cMEM f0 f1 c==> cMEM f1 f2 * / c/\ cMEM b0 f2 cMEM f0 b0 f1
++ (((MEM l) s) /\ ((MEM x) l)) |- ((\x. (((MEM x) s) /\ ((set_of_list l) = (set_of_list x)))) l)
+T c==> c/\ cMEM f0 f1 cMEM f2 f0 * / c/\ cMEM b0 f1 c= * part cset_of_list f0 * part cset_of_list b0 f0
++ |- (((?l. (((MEM l) s) /\ ((MEM x) l))) ==> (?t. ((?x. (((MEM x) s) /\ (t = (set_of_list x)))) /\ (x IN t)))) = (!l. ((((MEM l) s) /\ ((MEM x) l)) ==> (?t. ((?x. (((MEM x) s) /\ (t = (set_of_list x)))) /\ (x IN t))))))
+T c= c==> c? / c/\ cMEM b0 f0 cMEM f1 b0 c? / c/\ c? / c/\ cMEM b1 f0 c= b0 * part cset_of_list b1 cIN f1 b0 ! c==> c/\ cMEM b0 f0 cMEM f1 b0 c? / c/\ c? / c/\ cMEM b2 f0 c= b1 * part cset_of_list b2 cIN f1 b1
++ |- (((?x. (((MEM x) s) /\ ((set_of_list l) = (set_of_list x)))) /\ (x IN (set_of_list l))) = ((\t. ((?x. (((MEM x) s) /\ (t = (set_of_list x)))) /\ (x IN t))) (set_of_list l)))
+T c= c/\ c? / c/\ cMEM b0 f0 c= * part cset_of_list f1 * part cset_of_list b0 cIN f2 * part cset_of_list f1 * / c/\ c? / c/\ cMEM b1 f0 c= b0 * part cset_of_list b1 cIN f2 b0 * part cset_of_list f1
+- ((MEM l2) s) |- (((MEM l2) s) /\ ((t = (set_of_list l2)) ==> ((x IN t) ==> (?l. (((MEM l) s) /\ ((MEM x) l))))))
+T c==> cMEM f0 f1 c/\ cMEM f0 f1 c==> c= f2 * part cset_of_list f0 c==> cIN f3 f2 c? / c/\ cMEM b0 f1 cMEM f3 b0
++ |- ((\Q. (((?x. (P x)) ==> Q) = (!x. ((P x) ==> Q)))) Q)
+T * / c= c==> c? / * f0 b1 b0 ! c==> * f0 b1 b0 f1
+- |- (((MEM l2) s) ==> ((t = (set_of_list l2)) ==> ((x IN t) ==> (?l. (((MEM l) s) /\ ((MEM x) l))))))
+T c==> cMEM f0 f1 c==> c= f2 * part cset_of_list f0 c==> cIN f3 f2 c? / c/\ cMEM b0 f1 cMEM f3 b0
+- |- ((\Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))) Q)
+T * / c= c==> f0 ! * b0 b1 ! c==> f0 * b0 b1 f1
+- |- (((!P. (!Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x)))))) ==> ((\P. (!Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x)))))) P)) = ((\P. (!Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x)))))) P))
+T c= c==> ! ! c= c==> b0 ! * b1 b2 ! c==> b0 * b1 b2 * / ! c= c==> b0 ! * b1 b2 ! c==> b0 * b1 b2 f0 * / ! c= c==> b0 ! * b1 b2 ! c==> b0 * b1 b2 f0
+- (((?x. (P x)) ==> Q) = (!x. ((P x) ==> Q))) |- ((!x. ((P x) ==> Q)) = ((?x. (P x)) ==> Q))
+T c==> c= c==> c? / * f0 b0 f1 ! c==> * f0 b0 f1 c= ! c==> * f0 b0 f1 c==> c? / * f0 b0 f1
+- |- ((t /\ t) = t)
+T c= c/\ f0 f0 f0
+- ((!x. ((P x) ==> Q)) = ((?x. (P x)) ==> Q)) |- (((?x. (P x)) ==> Q) = (!x. ((P x) ==> Q)))
+T c==> c= ! c==> * f0 b0 f1 c==> c? / * f0 b0 f1 c= c==> c? / * f0 b0 f1 ! c==> * f0 b0 f1
+- ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x)))) |- ((!x. (P ==> (Q x))) = (P ==> (!x. (Q x))))
+T c==> c= c==> f0 ! * f1 b0 ! c==> f0 * f1 b0 c= ! c==> f0 * f1 b0 c==> f0 ! * f1 b0
+- (t = (set_of_list l2)), ((MEM l2) s) |- ((t = (set_of_list l2)) /\ ((x IN t) ==> (?l. (((MEM l) s) /\ ((MEM x) l)))))
+T c==> c= f0 * part cset_of_list f1 c==> cMEM f1 f2 c/\ c= f0 * part cset_of_list f1 c==> cIN f3 f0 c? / c/\ cMEM b0 f2 cMEM f3 b0
+- |- ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))
+T c= c==> f0 ! * f1 b0 ! c==> f0 * f1 b0
+- |- (((!Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))) ==> ((\Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))) Q)) = ((\Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))) Q))
+T c= c==> ! c= c==> f0 ! * b0 b1 ! c==> f0 * b0 b1 * / c= c==> f0 ! * b0 b1 ! c==> f0 * b0 b1 f1 * / c= c==> f0 ! * b0 b1 ! c==> f0 * b0 b1 f1

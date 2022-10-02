@@ -1,0 +1,283 @@
+N FLOOR_POS
+C |- (!x. (((real_le (real_of_num (NUMERAL _0))) x) ==> (?n. ((floor x) = (real_of_num n)))))
+T c==> creal_le creal_of_num cNUMERAL c_0 f0 c? / c= cfloor f0 creal_of_num b0
+D TRUTH
+A |- T
+T cT
+D BOOL_CASES_AX
+A |- (!t. ((t = T) \/ (t = F)))
+T c\/ c= f0 cT c= f0 cF
+D COND_CLAUSES
+A |- (!t1. (!t2. (((((COND T) t1) t2) = t1) /\ ((((COND F) t1) t2) = t2))))
+T c/\ c= cCOND cT f0 f1 f0 c= cCOND cF f0 f1 f1
+D real_abs
+A |- (!x. ((real_abs x) = (((COND ((real_le (real_of_num (NUMERAL _0))) x)) x) (real_neg x))))
+T c= creal_abs f0 cCOND creal_le creal_of_num cNUMERAL c_0 f0 f0 creal_neg f0
+D integer
+A |- (!x. ((integer x) = (?n. ((real_abs x) = (real_of_num n)))))
+T c= cinteger f0 c? / c= creal_abs f0 creal_of_num b0
+D INTEGER_CLOSED
+A |- ((!n. (integer (real_of_num n))) /\ ((!x. (!y. (((integer x) /\ (integer y)) ==> (integer ((real_add x) y))))) /\ ((!x. (!y. (((integer x) /\ (integer y)) ==> (integer ((real_sub x) y))))) /\ ((!x. (!y. (((integer x) /\ (integer y)) ==> (integer ((real_mul x) y))))) /\ ((!x. (!r. ((integer x) ==> (integer ((real_pow x) r))))) /\ ((!x. ((integer x) ==> (integer (real_neg x)))) /\ ((!x. ((integer x) ==> (integer (real_abs x)))) /\ ((!x. (!y. (((integer x) /\ (integer y)) ==> (integer ((real_max x) y))))) /\ (!x. (!y. (((integer x) /\ (integer y)) ==> (integer ((real_min x) y)))))))))))))
+T c/\ ! cinteger creal_of_num b0 c/\ ! ! c==> c/\ cinteger b0 cinteger b1 cinteger creal_add b0 b1 c/\ ! ! c==> c/\ cinteger b0 cinteger b1 cinteger creal_sub b0 b1 c/\ ! ! c==> c/\ cinteger b0 cinteger b1 cinteger creal_mul b0 b1 c/\ ! ! c==> cinteger b0 cinteger creal_pow b0 b1 c/\ ! c==> cinteger b0 cinteger creal_neg b0 c/\ ! c==> cinteger b0 cinteger creal_abs b0 c/\ ! ! c==> c/\ cinteger b0 cinteger b1 cinteger creal_max b0 b1 ! ! c==> c/\ cinteger b0 cinteger b1 cinteger creal_min b0 b1
+D FLOOR
+A |- (!x. ((integer (floor x)) /\ (((real_le (floor x)) x) /\ ((real_lt x) ((real_add (floor x)) (real_of_num (NUMERAL (BIT1 _0))))))))
+T c/\ cinteger cfloor f0 c/\ creal_le cfloor f0 f0 creal_lt f0 creal_add cfloor f0 creal_of_num cNUMERAL cBIT1 c_0
+D REAL_LE_FLOOR
+A |- (!x. (!n. ((integer n) ==> (((real_le n) (floor x)) = ((real_le n) x)))))
+T c==> cinteger f0 c= creal_le f0 cfloor f1 creal_le f0 f1
++ |- (((T ==> ((floor x) = (floor x))) ==> (((~ T) ==> ((real_neg (floor x)) = e')) ==> ((((COND ((real_le (real_of_num (NUMERAL _0))) (floor x))) (floor x)) (real_neg (floor x))) = (((COND T) (floor x)) e')))) = (((~ T) ==> ((real_neg (floor x)) = e')) ==> ((((COND ((real_le (real_of_num (NUMERAL _0))) (floor x))) (floor x)) (real_neg (floor x))) = (((COND T) (floor x)) e'))))
+T c= c==> c==> cT c= cfloor f0 cfloor f0 c==> c==> c~ cT c= creal_neg cfloor f0 f1 c= cCOND creal_le creal_of_num cNUMERAL c_0 cfloor f0 cfloor f0 creal_neg cfloor f0 cCOND cT cfloor f0 f1 c==> c==> c~ cT c= creal_neg cfloor f0 f1 c= cCOND creal_le creal_of_num cNUMERAL c_0 cfloor f0 cfloor f0 creal_neg cfloor f0 cCOND cT cfloor f0 f1
+- |- ((integer x) ==> ((integer ((real_pow x) r)) = T))
+T c==> cinteger f0 c= cinteger creal_pow f0 f1 cT
++ |- ((~ T) ==> ((real_neg (floor x)) = (real_neg (floor x))))
+T c==> c~ cT c= creal_neg cfloor f0 creal_neg cfloor f0
+- ((integer x) /\ (integer y)) |- (integer ((real_sub x) y))
+T c==> c/\ cinteger f0 cinteger f1 cinteger creal_sub f0 f1
+- ((integer x) /\ (integer y)) |- (integer ((real_add x) y))
+T c==> c/\ cinteger f0 cinteger f1 cinteger creal_add f0 f1
+- |- ((\x. (!y. (((integer x) /\ (integer y)) ==> (integer ((real_sub x) y))))) x)
+T * / ! c==> c/\ cinteger b0 cinteger b1 cinteger creal_sub b0 b1 f0
+- ((integer x) /\ (integer y)) |- (((integer x) /\ (integer y)) /\ ((integer ((real_max x) y)) = T))
+T c==> c/\ cinteger f0 cinteger f1 c/\ c/\ cinteger f0 cinteger f1 c= cinteger creal_max f0 f1 cT
+- ((integer x) /\ (integer y)) |- (integer ((real_min x) y))
+T c==> c/\ cinteger f0 cinteger f1 cinteger creal_min f0 f1
++ |- (integer (real_of_num n))
+T cinteger creal_of_num f0
+- |- ((!x. (!y. (((integer x) /\ (integer y)) ==> (integer ((real_mul x) y))))) /\ ((!x. (!r. ((integer x) ==> (integer ((real_pow x) r))))) /\ ((!x. ((integer x) ==> (integer (real_neg x)))) /\ ((!x. ((integer x) ==> (integer (real_abs x)))) /\ ((!x. (!y. (((integer x) /\ (integer y)) ==> (integer ((real_max x) y))))) /\ (!x. (!y. (((integer x) /\ (integer y)) ==> (integer ((real_min x) y))))))))))
+T c/\ ! ! c==> c/\ cinteger b0 cinteger b1 cinteger creal_mul b0 b1 c/\ ! ! c==> cinteger b0 cinteger creal_pow b0 b1 c/\ ! c==> cinteger b0 cinteger creal_neg b0 c/\ ! c==> cinteger b0 cinteger creal_abs b0 c/\ ! ! c==> c/\ cinteger b0 cinteger b1 cinteger creal_max b0 b1 ! ! c==> c/\ cinteger b0 cinteger b1 cinteger creal_min b0 b1
++ |- ((\x. ((real_abs x) = (((COND ((real_le (real_of_num (NUMERAL _0))) x)) x) (real_neg x)))) x)
+T * / c= creal_abs b0 cCOND creal_le creal_of_num cNUMERAL c_0 b0 b0 creal_neg b0 f0
+- (integer x) |- (integer (real_neg x))
+T c==> cinteger f0 cinteger creal_neg f0
+- |- ((\y. (((integer x) /\ (integer y)) ==> (integer ((real_max x) y)))) y)
+T * / c==> c/\ cinteger f0 cinteger b0 cinteger creal_max f0 b0 f1
+- |- (((real_le (floor x)) x) /\ ((real_lt x) ((real_add (floor x)) (real_of_num (NUMERAL (BIT1 _0))))))
+T c/\ creal_le cfloor f0 f0 creal_lt f0 creal_add cfloor f0 creal_of_num cNUMERAL cBIT1 c_0
++ |- (((real_le (real_of_num (NUMERAL _0))) (floor x)) = ((real_le (real_of_num (NUMERAL _0))) x))
+T c= creal_le creal_of_num cNUMERAL c_0 cfloor f0 creal_le creal_of_num cNUMERAL c_0 f0
++ |- (T ==> ((floor x) = (floor x)))
+T c==> cT c= cfloor f0 cfloor f0
++ |- ((t ==> T) = T)
+T c= c==> f0 cT cT
+- |- ((\y. (((integer x) /\ (integer y)) ==> (integer ((real_mul x) y)))) y)
+T * / c==> c/\ cinteger f0 cinteger b0 cinteger creal_mul f0 b0 f1
+- |- ((t ==> t) = T)
+T c= c==> f0 f0 cT
+- |- ((\x. ((integer x) ==> (integer (real_neg x)))) x)
+T * / c==> cinteger b0 cinteger creal_neg b0 f0
+- ((integer x) /\ (integer y)) |- (((integer x) /\ (integer y)) /\ ((integer ((real_sub x) y)) = T))
+T c==> c/\ cinteger f0 cinteger f1 c/\ c/\ cinteger f0 cinteger f1 c= cinteger creal_sub f0 f1 cT
++ ((real_le (real_of_num (NUMERAL _0))) x) |- ((?n. ((real_abs (floor x)) = (real_of_num n))) ==> (?n. ((floor x) = (real_of_num n))))
+T c==> creal_le creal_of_num cNUMERAL c_0 f0 c==> c? / c= creal_abs cfloor f0 creal_of_num b0 c? / c= cfloor f0 creal_of_num b0
+- |- ((?n. t) = t)
+T c= c? / f0 f0
++ ((real_le (real_of_num (NUMERAL _0))) x) |- (((real_le (real_of_num (NUMERAL _0))) x) = T)
+T c==> creal_le creal_of_num cNUMERAL c_0 f0 c= creal_le creal_of_num cNUMERAL c_0 f0 cT
+- |- (((!x. (!y. (((integer x) /\ (integer y)) ==> (integer ((real_max x) y))))) ==> ((\x. (!y. (((integer x) /\ (integer y)) ==> (integer ((real_max x) y))))) x)) = ((\x. (!y. (((integer x) /\ (integer y)) ==> (integer ((real_max x) y))))) x))
+T c= c==> ! ! c==> c/\ cinteger b0 cinteger b1 cinteger creal_max b0 b1 * / ! c==> c/\ cinteger b0 cinteger b1 cinteger creal_max b0 b1 f0 * / ! c==> c/\ cinteger b0 cinteger b1 cinteger creal_max b0 b1 f0
+- |- ((\x. (!y. (((integer x) /\ (integer y)) ==> (integer ((real_min x) y))))) x)
+T * / ! c==> c/\ cinteger b0 cinteger b1 cinteger creal_min b0 b1 f0
+- |- (((real_le (floor x)) x) = T)
+T c= creal_le cfloor f0 f0 cT
++ |- ((\g'. (!t'. (!e'. ((((real_le (real_of_num (NUMERAL _0))) (floor x)) = g') ==> ((g' ==> ((floor x) = t')) ==> (((~ g') ==> ((real_neg (floor x)) = e')) ==> ((((COND ((real_le (real_of_num (NUMERAL _0))) (floor x))) (floor x)) (real_neg (floor x))) = (((COND g') t') e')))))))) g')
+T * / ! ! c==> c= creal_le creal_of_num cNUMERAL c_0 cfloor f0 b0 c==> c==> b0 c= cfloor f0 b1 c==> c==> c~ b0 c= creal_neg cfloor f0 b2 c= cCOND creal_le creal_of_num cNUMERAL c_0 cfloor f0 cfloor f0 creal_neg cfloor f0 cCOND b0 b1 b2 f1
+- |- (((!x. (!y. (((integer x) /\ (integer y)) ==> (integer ((real_sub x) y))))) ==> ((\x. (!y. (((integer x) /\ (integer y)) ==> (integer ((real_sub x) y))))) x)) = ((\x. (!y. (((integer x) /\ (integer y)) ==> (integer ((real_sub x) y))))) x))
+T c= c==> ! ! c==> c/\ cinteger b0 cinteger b1 cinteger creal_sub b0 b1 * / ! c==> c/\ cinteger b0 cinteger b1 cinteger creal_sub b0 b1 f0 * / ! c==> c/\ cinteger b0 cinteger b1 cinteger creal_sub b0 b1 f0
+- T |- (T = T)
+T c==> cT c= cT cT
+- |- (((!r. ((integer x) ==> (integer ((real_pow x) r)))) ==> ((\r. ((integer x) ==> (integer ((real_pow x) r)))) r)) = ((\r. ((integer x) ==> (integer ((real_pow x) r)))) r))
+T c= c==> ! c==> cinteger f0 cinteger creal_pow f0 b0 * / c==> cinteger f0 cinteger creal_pow f0 b0 f1 * / c==> cinteger f0 cinteger creal_pow f0 b0 f1
++ |- ((\q'. (((?n. ((real_abs (floor x)) = (real_of_num n))) = p') ==> ((p' ==> ((?n. ((floor x) = (real_of_num n))) = q')) ==> (((?n. ((real_abs (floor x)) = (real_of_num n))) ==> (?n. ((floor x) = (real_of_num n)))) = (p' ==> q'))))) q')
+T * / c==> c= c? / c= creal_abs cfloor f0 creal_of_num b1 f1 c==> c==> f1 c= c? / c= cfloor f0 creal_of_num b1 b0 c= c==> c? / c= creal_abs cfloor f0 creal_of_num b1 c? / c= cfloor f0 creal_of_num b1 c==> f1 b0 f2
+- |- ((\x. (!y. (((integer x) /\ (integer y)) ==> (integer ((real_mul x) y))))) x)
+T * / ! c==> c/\ cinteger b0 cinteger b1 cinteger creal_mul b0 b1 f0
++ |- ((!q'. ((p = p') ==> ((p' ==> (q = q')) ==> ((p ==> q) = (p' ==> q'))))) = T)
+T c= ! c==> c= f0 f1 c==> c==> f1 c= f2 b0 c= c==> f0 f2 c==> f1 b0 cT
+- |- (((!x. (!r. ((integer x) ==> (integer ((real_pow x) r))))) ==> ((\x. (!r. ((integer x) ==> (integer ((real_pow x) r))))) x)) = ((\x. (!r. ((integer x) ==> (integer ((real_pow x) r))))) x))
+T c= c==> ! ! c==> cinteger b0 cinteger creal_pow b0 b1 * / ! c==> cinteger b0 cinteger creal_pow b0 b1 f0 * / ! c==> cinteger b0 cinteger creal_pow b0 b1 f0
+- |- (((!x. (!y. (((integer x) /\ (integer y)) ==> (integer ((real_add x) y))))) ==> ((\x. (!y. (((integer x) /\ (integer y)) ==> (integer ((real_add x) y))))) x)) = ((\x. (!y. (((integer x) /\ (integer y)) ==> (integer ((real_add x) y))))) x))
+T c= c==> ! ! c==> c/\ cinteger b0 cinteger b1 cinteger creal_add b0 b1 * / ! c==> c/\ cinteger b0 cinteger b1 cinteger creal_add b0 b1 f0 * / ! c==> c/\ cinteger b0 cinteger b1 cinteger creal_add b0 b1 f0
++ |- (((g = g') ==> ((g' ==> (t = t')) ==> (((~ g') ==> (e = e')) ==> ((((COND g) t) e) = (((COND g') t') e'))))) = T)
+T c= c==> c= f0 f1 c==> c==> f1 c= f2 f3 c==> c==> c~ f1 c= f4 f5 c= cCOND f0 f2 f4 cCOND f1 f3 f5 cT
++ |- (((!x. (!n. ((integer n) ==> (((real_le n) (floor x)) = ((real_le n) x))))) ==> ((\x. (!n. ((integer n) ==> (((real_le n) (floor x)) = ((real_le n) x))))) x)) = ((\x. (!n. ((integer n) ==> (((real_le n) (floor x)) = ((real_le n) x))))) x))
+T c= c==> ! ! c==> cinteger b1 c= creal_le b1 cfloor b0 creal_le b1 b0 * / ! c==> cinteger b1 c= creal_le b1 cfloor b0 creal_le b1 b0 f0 * / ! c==> cinteger b1 c= creal_le b1 cfloor b0 creal_le b1 b0 f0
+- |- (((!x. ((integer x) ==> (integer (real_abs x)))) ==> ((\x. ((integer x) ==> (integer (real_abs x)))) x)) = ((\x. ((integer x) ==> (integer (real_abs x)))) x))
+T c= c==> ! c==> cinteger b0 cinteger creal_abs b0 * / c==> cinteger b0 cinteger creal_abs b0 f0 * / c==> cinteger b0 cinteger creal_abs b0 f0
++ |- (((!e'. ((((real_le (real_of_num (NUMERAL _0))) (floor x)) = g') ==> ((g' ==> ((floor x) = t')) ==> (((~ g') ==> ((real_neg (floor x)) = e')) ==> ((((COND ((real_le (real_of_num (NUMERAL _0))) (floor x))) (floor x)) (real_neg (floor x))) = (((COND g') t') e')))))) ==> ((\e'. ((((real_le (real_of_num (NUMERAL _0))) (floor x)) = g') ==> ((g' ==> ((floor x) = t')) ==> (((~ g') ==> ((real_neg (floor x)) = e')) ==> ((((COND ((real_le (real_of_num (NUMERAL _0))) (floor x))) (floor x)) (real_neg (floor x))) = (((COND g') t') e')))))) e')) = ((\e'. ((((real_le (real_of_num (NUMERAL _0))) (floor x)) = g') ==> ((g' ==> ((floor x) = t')) ==> (((~ g') ==> ((real_neg (floor x)) = e')) ==> ((((COND ((real_le (real_of_num (NUMERAL _0))) (floor x))) (floor x)) (real_neg (floor x))) = (((COND g') t') e')))))) e'))
+T c= c==> ! c==> c= creal_le creal_of_num cNUMERAL c_0 cfloor f0 f1 c==> c==> f1 c= cfloor f0 f2 c==> c==> c~ f1 c= creal_neg cfloor f0 b0 c= cCOND creal_le creal_of_num cNUMERAL c_0 cfloor f0 cfloor f0 creal_neg cfloor f0 cCOND f1 f2 b0 * / c==> c= creal_le creal_of_num cNUMERAL c_0 cfloor f0 f1 c==> c==> f1 c= cfloor f0 f2 c==> c==> c~ f1 c= creal_neg cfloor f0 b0 c= cCOND creal_le creal_of_num cNUMERAL c_0 cfloor f0 cfloor f0 creal_neg cfloor f0 cCOND f1 f2 b0 f3 * / c==> c= creal_le creal_of_num cNUMERAL c_0 cfloor f0 f1 c==> c==> f1 c= cfloor f0 f2 c==> c==> c~ f1 c= creal_neg cfloor f0 b0 c= cCOND creal_le creal_of_num cNUMERAL c_0 cfloor f0 cfloor f0 creal_neg cfloor f0 cCOND f1 f2 b0 f3
++ |- (((!x. ((integer (floor x)) /\ (((real_le (floor x)) x) /\ ((real_lt x) ((real_add (floor x)) (real_of_num (NUMERAL (BIT1 _0)))))))) ==> ((\x. ((integer (floor x)) /\ (((real_le (floor x)) x) /\ ((real_lt x) ((real_add (floor x)) (real_of_num (NUMERAL (BIT1 _0)))))))) x)) = ((\x. ((integer (floor x)) /\ (((real_le (floor x)) x) /\ ((real_lt x) ((real_add (floor x)) (real_of_num (NUMERAL (BIT1 _0)))))))) x))
+T c= c==> ! c/\ cinteger cfloor b0 c/\ creal_le cfloor b0 b0 creal_lt b0 creal_add cfloor b0 creal_of_num cNUMERAL cBIT1 c_0 * / c/\ cinteger cfloor b0 c/\ creal_le cfloor b0 b0 creal_lt b0 creal_add cfloor b0 creal_of_num cNUMERAL cBIT1 c_0 f0 * / c/\ cinteger cfloor b0 c/\ creal_le cfloor b0 b0 creal_lt b0 creal_add cfloor b0 creal_of_num cNUMERAL cBIT1 c_0 f0
+- (integer n) |- ((integer n) /\ (((real_le n) (floor x)) = ((real_le n) x)))
+T c==> cinteger f0 c/\ cinteger f0 c= creal_le f0 cfloor f1 creal_le f0 f1
++ |- ((\n. ((integer n) ==> (((real_le n) (floor x)) = ((real_le n) x)))) n)
+T * / c==> cinteger b0 c= creal_le b0 cfloor f0 creal_le b0 f0 f1
+- |- ((\r. ((integer x) ==> (integer ((real_pow x) r)))) r)
+T * / c==> cinteger f0 cinteger creal_pow f0 b0 f1
+- |- (((integer x) /\ (integer y)) ==> ((integer ((real_min x) y)) = T))
+T c==> c/\ cinteger f0 cinteger f1 c= cinteger creal_min f0 f1 cT
++ |- ((\p'. (!q'. (((?n. ((real_abs (floor x)) = (real_of_num n))) = p') ==> ((p' ==> ((?n. ((floor x) = (real_of_num n))) = q')) ==> (((?n. ((real_abs (floor x)) = (real_of_num n))) ==> (?n. ((floor x) = (real_of_num n)))) = (p' ==> q')))))) p')
+T * / ! c==> c= c? / c= creal_abs cfloor f0 creal_of_num b2 b0 c==> c==> b0 c= c? / c= cfloor f0 creal_of_num b2 b1 c= c==> c? / c= creal_abs cfloor f0 creal_of_num b2 c? / c= cfloor f0 creal_of_num b2 c==> b0 b1 f1
+- (integer x) |- (integer ((real_pow x) r))
+T c==> cinteger f0 cinteger creal_pow f0 f1
++ |- ((\x. ((integer x) = (?n. ((real_abs x) = (real_of_num n))))) x)
+T * / c= cinteger b0 c? / c= creal_abs b0 creal_of_num b1 f0
+- |- ((x = x) = T)
+T c= c= f0 f0 cT
+- |- (((integer x) /\ (integer y)) ==> ((integer ((real_mul x) y)) = T))
+T c==> c/\ cinteger f0 cinteger f1 c= cinteger creal_mul f0 f1 cT
++ |- (((?n. ((real_abs (floor x)) = (real_of_num n))) ==> (?n. ((floor x) = (real_of_num n)))) = ((integer (floor x)) ==> (?n. ((floor x) = (real_of_num n)))))
+T c= c==> c? / c= creal_abs cfloor f0 creal_of_num b0 c? / c= cfloor f0 creal_of_num b0 c==> cinteger cfloor f0 c? / c= cfloor f0 creal_of_num b0
++ |- ((\t'. (!e'. ((((real_le (real_of_num (NUMERAL _0))) (floor x)) = g') ==> ((g' ==> ((floor x) = t')) ==> (((~ g') ==> ((real_neg (floor x)) = e')) ==> ((((COND ((real_le (real_of_num (NUMERAL _0))) (floor x))) (floor x)) (real_neg (floor x))) = (((COND g') t') e'))))))) t')
+T * / ! c==> c= creal_le creal_of_num cNUMERAL c_0 cfloor f0 f1 c==> c==> f1 c= cfloor f0 b0 c==> c==> c~ f1 c= creal_neg cfloor f0 b1 c= cCOND creal_le creal_of_num cNUMERAL c_0 cfloor f0 cfloor f0 creal_neg cfloor f0 cCOND f1 b0 b1 f2
++ |- ((\x. ((integer (floor x)) /\ (((real_le (floor x)) x) /\ ((real_lt x) ((real_add (floor x)) (real_of_num (NUMERAL (BIT1 _0)))))))) x)
+T * / c/\ cinteger cfloor b0 c/\ creal_le cfloor b0 b0 creal_lt b0 creal_add cfloor b0 creal_of_num cNUMERAL cBIT1 c_0 f0
++ |- (integer (real_of_num (NUMERAL _0)))
+T cinteger creal_of_num cNUMERAL c_0
+- |- ((!x. (!y. (((integer x) /\ (integer y)) ==> (integer ((real_add x) y))))) /\ ((!x. (!y. (((integer x) /\ (integer y)) ==> (integer ((real_sub x) y))))) /\ ((!x. (!y. (((integer x) /\ (integer y)) ==> (integer ((real_mul x) y))))) /\ ((!x. (!r. ((integer x) ==> (integer ((real_pow x) r))))) /\ ((!x. ((integer x) ==> (integer (real_neg x)))) /\ ((!x. ((integer x) ==> (integer (real_abs x)))) /\ ((!x. (!y. (((integer x) /\ (integer y)) ==> (integer ((real_max x) y))))) /\ (!x. (!y. (((integer x) /\ (integer y)) ==> (integer ((real_min x) y))))))))))))
+T c/\ ! ! c==> c/\ cinteger b0 cinteger b1 cinteger creal_add b0 b1 c/\ ! ! c==> c/\ cinteger b0 cinteger b1 cinteger creal_sub b0 b1 c/\ ! ! c==> c/\ cinteger b0 cinteger b1 cinteger creal_mul b0 b1 c/\ ! ! c==> cinteger b0 cinteger creal_pow b0 b1 c/\ ! c==> cinteger b0 cinteger creal_neg b0 c/\ ! c==> cinteger b0 cinteger creal_abs b0 c/\ ! ! c==> c/\ cinteger b0 cinteger b1 cinteger creal_max b0 b1 ! ! c==> c/\ cinteger b0 cinteger b1 cinteger creal_min b0 b1
+- |- ((!x. (!y. (((integer x) /\ (integer y)) ==> (integer ((real_max x) y))))) /\ (!x. (!y. (((integer x) /\ (integer y)) ==> (integer ((real_min x) y))))))
+T c/\ ! ! c==> c/\ cinteger b0 cinteger b1 cinteger creal_max b0 b1 ! ! c==> c/\ cinteger b0 cinteger b1 cinteger creal_min b0 b1
++ ((real_le (real_of_num (NUMERAL _0))) x) |- (((?n. ((floor x) = (real_of_num n))) ==> ((?n. ((floor x) = (real_of_num n))) = q')) ==> (((?n. ((real_abs (floor x)) = (real_of_num n))) ==> (?n. ((floor x) = (real_of_num n)))) = ((?n. ((floor x) = (real_of_num n))) ==> q')))
+T c==> creal_le creal_of_num cNUMERAL c_0 f0 c==> c==> c? / c= cfloor f0 creal_of_num b0 c= c? / c= cfloor f0 creal_of_num b0 f1 c= c==> c? / c= creal_abs cfloor f0 creal_of_num b0 c? / c= cfloor f0 creal_of_num b0 c==> c? / c= cfloor f0 creal_of_num b0 f1
+- |- (((!x. (!y. (((integer x) /\ (integer y)) ==> (integer ((real_min x) y))))) ==> ((\x. (!y. (((integer x) /\ (integer y)) ==> (integer ((real_min x) y))))) x)) = ((\x. (!y. (((integer x) /\ (integer y)) ==> (integer ((real_min x) y))))) x))
+T c= c==> ! ! c==> c/\ cinteger b0 cinteger b1 cinteger creal_min b0 b1 * / ! c==> c/\ cinteger b0 cinteger b1 cinteger creal_min b0 b1 f0 * / ! c==> c/\ cinteger b0 cinteger b1 cinteger creal_min b0 b1 f0
+- |- (((integer x) /\ (integer y)) ==> ((integer ((real_max x) y)) = T))
+T c==> c/\ cinteger f0 cinteger f1 c= cinteger creal_max f0 f1 cT
+- |- ((\y. (((integer x) /\ (integer y)) ==> (integer ((real_add x) y)))) y)
+T * / c==> c/\ cinteger f0 cinteger b0 cinteger creal_add f0 b0 f1
+- |- (((!y. (((integer x) /\ (integer y)) ==> (integer ((real_min x) y)))) ==> ((\y. (((integer x) /\ (integer y)) ==> (integer ((real_min x) y)))) y)) = ((\y. (((integer x) /\ (integer y)) ==> (integer ((real_min x) y)))) y))
+T c= c==> ! c==> c/\ cinteger f0 cinteger b0 cinteger creal_min f0 b0 * / c==> c/\ cinteger f0 cinteger b0 cinteger creal_min f0 b0 f1 * / c==> c/\ cinteger f0 cinteger b0 cinteger creal_min f0 b0 f1
++ |- ((?n. ((floor x) = (real_of_num n))) ==> ((?n. ((floor x) = (real_of_num n))) = T))
+T c==> c? / c= cfloor f0 creal_of_num b0 c= c? / c= cfloor f0 creal_of_num b0 cT
+- |- ((!x. ((integer x) ==> (integer (real_neg x)))) /\ ((!x. ((integer x) ==> (integer (real_abs x)))) /\ ((!x. (!y. (((integer x) /\ (integer y)) ==> (integer ((real_max x) y))))) /\ (!x. (!y. (((integer x) /\ (integer y)) ==> (integer ((real_min x) y))))))))
+T c/\ ! c==> cinteger b0 cinteger creal_neg b0 c/\ ! c==> cinteger b0 cinteger creal_abs b0 c/\ ! ! c==> c/\ cinteger b0 cinteger b1 cinteger creal_max b0 b1 ! ! c==> c/\ cinteger b0 cinteger b1 cinteger creal_min b0 b1
++ |- (!g'. (!t'. (!e'. ((g = g') ==> ((g' ==> (t = t')) ==> (((~ g') ==> (e = e')) ==> ((((COND g) t) e) = (((COND g') t') e'))))))))
+T c==> c= f0 f1 c==> c==> f1 c= f2 f3 c==> c==> c~ f1 c= f4 f5 c= cCOND f0 f2 f4 cCOND f1 f3 f5
++ |- ((\n. (integer (real_of_num n))) n)
+T * / cinteger creal_of_num b0 f0
+- ((integer x) /\ (integer y)) |- (((integer x) /\ (integer y)) /\ ((integer ((real_add x) y)) = T))
+T c==> c/\ cinteger f0 cinteger f1 c/\ c/\ cinteger f0 cinteger f1 c= cinteger creal_add f0 f1 cT
+- |- ((!x. (!y. (((integer x) /\ (integer y)) ==> (integer ((real_sub x) y))))) /\ ((!x. (!y. (((integer x) /\ (integer y)) ==> (integer ((real_mul x) y))))) /\ ((!x. (!r. ((integer x) ==> (integer ((real_pow x) r))))) /\ ((!x. ((integer x) ==> (integer (real_neg x)))) /\ ((!x. ((integer x) ==> (integer (real_abs x)))) /\ ((!x. (!y. (((integer x) /\ (integer y)) ==> (integer ((real_max x) y))))) /\ (!x. (!y. (((integer x) /\ (integer y)) ==> (integer ((real_min x) y)))))))))))
+T c/\ ! ! c==> c/\ cinteger b0 cinteger b1 cinteger creal_sub b0 b1 c/\ ! ! c==> c/\ cinteger b0 cinteger b1 cinteger creal_mul b0 b1 c/\ ! ! c==> cinteger b0 cinteger creal_pow b0 b1 c/\ ! c==> cinteger b0 cinteger creal_neg b0 c/\ ! c==> cinteger b0 cinteger creal_abs b0 c/\ ! ! c==> c/\ cinteger b0 cinteger b1 cinteger creal_max b0 b1 ! ! c==> c/\ cinteger b0 cinteger b1 cinteger creal_min b0 b1
+- (integer x) |- ((integer x) /\ ((integer ((real_pow x) r)) = T))
+T c==> cinteger f0 c/\ cinteger f0 c= cinteger creal_pow f0 f1 cT
++ |- (((?n. ((real_abs (floor x)) = (real_of_num n))) = p') ==> ((p' ==> ((?n. ((floor x) = (real_of_num n))) = q')) ==> (((?n. ((real_abs (floor x)) = (real_of_num n))) ==> (?n. ((floor x) = (real_of_num n)))) = (p' ==> q'))))
+T c==> c= c? / c= creal_abs cfloor f0 creal_of_num b0 f1 c==> c==> f1 c= c? / c= cfloor f0 creal_of_num b0 f2 c= c==> c? / c= creal_abs cfloor f0 creal_of_num b0 c? / c= cfloor f0 creal_of_num b0 c==> f1 f2
+- |- ((\x. ((integer x) ==> (integer (real_abs x)))) x)
+T * / c==> cinteger b0 cinteger creal_abs b0 f0
+- |- ((\y. (((integer x) /\ (integer y)) ==> (integer ((real_min x) y)))) y)
+T * / c==> c/\ cinteger f0 cinteger b0 cinteger creal_min f0 b0 f1
++ |- (((!x. ((real_abs x) = (((COND ((real_le (real_of_num (NUMERAL _0))) x)) x) (real_neg x)))) ==> ((\x. ((real_abs x) = (((COND ((real_le (real_of_num (NUMERAL _0))) x)) x) (real_neg x)))) x)) = ((\x. ((real_abs x) = (((COND ((real_le (real_of_num (NUMERAL _0))) x)) x) (real_neg x)))) x))
+T c= c==> ! c= creal_abs b0 cCOND creal_le creal_of_num cNUMERAL c_0 b0 b0 creal_neg b0 * / c= creal_abs b0 cCOND creal_le creal_of_num cNUMERAL c_0 b0 b0 creal_neg b0 f0 * / c= creal_abs b0 cCOND creal_le creal_of_num cNUMERAL c_0 b0 b0 creal_neg b0 f0
++ |- ((((~ T) ==> ((real_neg (floor x)) = (real_neg (floor x)))) ==> ((((COND ((real_le (real_of_num (NUMERAL _0))) (floor x))) (floor x)) (real_neg (floor x))) = (((COND T) (floor x)) (real_neg (floor x))))) = ((((COND ((real_le (real_of_num (NUMERAL _0))) (floor x))) (floor x)) (real_neg (floor x))) = (((COND T) (floor x)) (real_neg (floor x)))))
+T c= c==> c==> c~ cT c= creal_neg cfloor f0 creal_neg cfloor f0 c= cCOND creal_le creal_of_num cNUMERAL c_0 cfloor f0 cfloor f0 creal_neg cfloor f0 cCOND cT cfloor f0 creal_neg cfloor f0 c= cCOND creal_le creal_of_num cNUMERAL c_0 cfloor f0 cfloor f0 creal_neg cfloor f0 cCOND cT cfloor f0 creal_neg cfloor f0
+- |- ((real_lt x) ((real_add (floor x)) (real_of_num (NUMERAL (BIT1 _0)))))
+T creal_lt f0 creal_add cfloor f0 creal_of_num cNUMERAL cBIT1 c_0
++ (?n. ((floor x) = (real_of_num n))) |- ((?n. ((floor x) = (real_of_num n))) /\ ((?n. ((floor x) = (real_of_num n))) = T))
+T c==> c? / c= cfloor f0 creal_of_num b0 c/\ c? / c= cfloor f0 creal_of_num b0 c= c? / c= cfloor f0 creal_of_num b0 cT
+- |- (((!x. (!y. (((integer x) /\ (integer y)) ==> (integer ((real_mul x) y))))) ==> ((\x. (!y. (((integer x) /\ (integer y)) ==> (integer ((real_mul x) y))))) x)) = ((\x. (!y. (((integer x) /\ (integer y)) ==> (integer ((real_mul x) y))))) x))
+T c= c==> ! ! c==> c/\ cinteger b0 cinteger b1 cinteger creal_mul b0 b1 * / ! c==> c/\ cinteger b0 cinteger b1 cinteger creal_mul b0 b1 f0 * / ! c==> c/\ cinteger b0 cinteger b1 cinteger creal_mul b0 b1 f0
++ |- (T = (integer (real_of_num (NUMERAL _0))))
+T c= cT cinteger creal_of_num cNUMERAL c_0
++ |- (((integer (real_of_num (NUMERAL _0))) ==> (((real_le (real_of_num (NUMERAL _0))) (floor x)) = ((real_le (real_of_num (NUMERAL _0))) x))) = (((real_le (real_of_num (NUMERAL _0))) (floor x)) = ((real_le (real_of_num (NUMERAL _0))) x)))
+T c= c==> cinteger creal_of_num cNUMERAL c_0 c= creal_le creal_of_num cNUMERAL c_0 cfloor f0 creal_le creal_of_num cNUMERAL c_0 f0 c= creal_le creal_of_num cNUMERAL c_0 cfloor f0 creal_le creal_of_num cNUMERAL c_0 f0
++ ((real_le (real_of_num (NUMERAL _0))) x) |- (T = ((?n. ((real_abs (floor x)) = (real_of_num n))) ==> (?n. ((floor x) = (real_of_num n)))))
+T c==> creal_le creal_of_num cNUMERAL c_0 f0 c= cT c==> c? / c= creal_abs cfloor f0 creal_of_num b0 c? / c= cfloor f0 creal_of_num b0
+- |- ((\x. (!r. ((integer x) ==> (integer ((real_pow x) r))))) x)
+T * / ! c==> cinteger b0 cinteger creal_pow b0 b1 f0
+- |- ((integer (floor x)) = T)
+T c= cinteger cfloor f0 cT
+- ((integer x) /\ (integer y)) |- (((integer x) /\ (integer y)) /\ ((integer ((real_min x) y)) = T))
+T c==> c/\ cinteger f0 cinteger f1 c/\ c/\ cinteger f0 cinteger f1 c= cinteger creal_min f0 f1 cT
++ |- ((((real_le (real_of_num (NUMERAL _0))) (floor x)) = g') ==> ((g' ==> ((floor x) = t')) ==> (((~ g') ==> ((real_neg (floor x)) = e')) ==> ((((COND ((real_le (real_of_num (NUMERAL _0))) (floor x))) (floor x)) (real_neg (floor x))) = (((COND g') t') e')))))
+T c==> c= creal_le creal_of_num cNUMERAL c_0 cfloor f0 f1 c==> c==> f1 c= cfloor f0 f2 c==> c==> c~ f1 c= creal_neg cfloor f0 f3 c= cCOND creal_le creal_of_num cNUMERAL c_0 cfloor f0 cfloor f0 creal_neg cfloor f0 cCOND f1 f2 f3
+- |- (((!y. (((integer x) /\ (integer y)) ==> (integer ((real_max x) y)))) ==> ((\y. (((integer x) /\ (integer y)) ==> (integer ((real_max x) y)))) y)) = ((\y. (((integer x) /\ (integer y)) ==> (integer ((real_max x) y)))) y))
+T c= c==> ! c==> c/\ cinteger f0 cinteger b0 cinteger creal_max f0 b0 * / c==> c/\ cinteger f0 cinteger b0 cinteger creal_max f0 b0 f1 * / c==> c/\ cinteger f0 cinteger b0 cinteger creal_max f0 b0 f1
+- ((integer x) /\ (integer y)) |- (integer ((real_max x) y))
+T c==> c/\ cinteger f0 cinteger f1 cinteger creal_max f0 f1
+- |- ((\x. (!y. (((integer x) /\ (integer y)) ==> (integer ((real_max x) y))))) x)
+T * / ! c==> c/\ cinteger b0 cinteger b1 cinteger creal_max b0 b1 f0
+- ((integer x) /\ (integer y)) |- (integer ((real_mul x) y))
+T c==> c/\ cinteger f0 cinteger f1 cinteger creal_mul f0 f1
++ |- (((!t'. (!e'. ((((real_le (real_of_num (NUMERAL _0))) (floor x)) = g') ==> ((g' ==> ((floor x) = t')) ==> (((~ g') ==> ((real_neg (floor x)) = e')) ==> ((((COND ((real_le (real_of_num (NUMERAL _0))) (floor x))) (floor x)) (real_neg (floor x))) = (((COND g') t') e'))))))) ==> ((\t'. (!e'. ((((real_le (real_of_num (NUMERAL _0))) (floor x)) = g') ==> ((g' ==> ((floor x) = t')) ==> (((~ g') ==> ((real_neg (floor x)) = e')) ==> ((((COND ((real_le (real_of_num (NUMERAL _0))) (floor x))) (floor x)) (real_neg (floor x))) = (((COND g') t') e'))))))) t')) = ((\t'. (!e'. ((((real_le (real_of_num (NUMERAL _0))) (floor x)) = g') ==> ((g' ==> ((floor x) = t')) ==> (((~ g') ==> ((real_neg (floor x)) = e')) ==> ((((COND ((real_le (real_of_num (NUMERAL _0))) (floor x))) (floor x)) (real_neg (floor x))) = (((COND g') t') e'))))))) t'))
+T c= c==> ! ! c==> c= creal_le creal_of_num cNUMERAL c_0 cfloor f0 f1 c==> c==> f1 c= cfloor f0 b0 c==> c==> c~ f1 c= creal_neg cfloor f0 b1 c= cCOND creal_le creal_of_num cNUMERAL c_0 cfloor f0 cfloor f0 creal_neg cfloor f0 cCOND f1 b0 b1 * / ! c==> c= creal_le creal_of_num cNUMERAL c_0 cfloor f0 f1 c==> c==> f1 c= cfloor f0 b0 c==> c==> c~ f1 c= creal_neg cfloor f0 b1 c= cCOND creal_le creal_of_num cNUMERAL c_0 cfloor f0 cfloor f0 creal_neg cfloor f0 cCOND f1 b0 b1 f2 * / ! c==> c= creal_le creal_of_num cNUMERAL c_0 cfloor f0 f1 c==> c==> f1 c= cfloor f0 b0 c==> c==> c~ f1 c= creal_neg cfloor f0 b1 c= cCOND creal_le creal_of_num cNUMERAL c_0 cfloor f0 cfloor f0 creal_neg cfloor f0 cCOND f1 b0 b1 f2
++ ((real_le (real_of_num (NUMERAL _0))) x) |- ((integer (floor x)) ==> (?n. ((floor x) = (real_of_num n))))
+T c==> creal_le creal_of_num cNUMERAL c_0 f0 c==> cinteger cfloor f0 c? / c= cfloor f0 creal_of_num b0
+- |- ((!x. (!r. ((integer x) ==> (integer ((real_pow x) r))))) /\ ((!x. ((integer x) ==> (integer (real_neg x)))) /\ ((!x. ((integer x) ==> (integer (real_abs x)))) /\ ((!x. (!y. (((integer x) /\ (integer y)) ==> (integer ((real_max x) y))))) /\ (!x. (!y. (((integer x) /\ (integer y)) ==> (integer ((real_min x) y)))))))))
+T c/\ ! ! c==> cinteger b0 cinteger creal_pow b0 b1 c/\ ! c==> cinteger b0 cinteger creal_neg b0 c/\ ! c==> cinteger b0 cinteger creal_abs b0 c/\ ! ! c==> c/\ cinteger b0 cinteger b1 cinteger creal_max b0 b1 ! ! c==> c/\ cinteger b0 cinteger b1 cinteger creal_min b0 b1
++ |- ((!e'. ((g = g') ==> ((g' ==> (t = t')) ==> (((~ g') ==> (e = e')) ==> ((((COND g) t) e) = (((COND g') t') e')))))) = T)
+T c= ! c==> c= f0 f1 c==> c==> f1 c= f2 f3 c==> c==> c~ f1 c= f4 b0 c= cCOND f0 f2 f4 cCOND f1 f3 b0 cT
+- ((integer x) /\ (integer y)) |- (((integer x) /\ (integer y)) /\ ((integer ((real_mul x) y)) = T))
+T c==> c/\ cinteger f0 cinteger f1 c/\ c/\ cinteger f0 cinteger f1 c= cinteger creal_mul f0 f1 cT
++ |- (((!n. ((integer n) ==> (((real_le n) (floor x)) = ((real_le n) x)))) ==> ((\n. ((integer n) ==> (((real_le n) (floor x)) = ((real_le n) x)))) n)) = ((\n. ((integer n) ==> (((real_le n) (floor x)) = ((real_le n) x)))) n))
+T c= c==> ! c==> cinteger b0 c= creal_le b0 cfloor f0 creal_le b0 f0 * / c==> cinteger b0 c= creal_le b0 cfloor f0 creal_le b0 f0 f1 * / c==> cinteger b0 c= creal_le b0 cfloor f0 creal_le b0 f0 f1
++ |- ((integer (real_of_num n)) = T)
+T c= cinteger creal_of_num f0 cT
+- |- (((real_lt x) ((real_add (floor x)) (real_of_num (NUMERAL (BIT1 _0))))) = T)
+T c= creal_lt f0 creal_add cfloor f0 creal_of_num cNUMERAL cBIT1 c_0 cT
++ |- ((\e'. ((((real_le (real_of_num (NUMERAL _0))) (floor x)) = g') ==> ((g' ==> ((floor x) = t')) ==> (((~ g') ==> ((real_neg (floor x)) = e')) ==> ((((COND ((real_le (real_of_num (NUMERAL _0))) (floor x))) (floor x)) (real_neg (floor x))) = (((COND g') t') e')))))) e')
+T * / c==> c= creal_le creal_of_num cNUMERAL c_0 cfloor f0 f1 c==> c==> f1 c= cfloor f0 f2 c==> c==> c~ f1 c= creal_neg cfloor f0 b0 c= cCOND creal_le creal_of_num cNUMERAL c_0 cfloor f0 cfloor f0 creal_neg cfloor f0 cCOND f1 f2 b0 f3
++ ((real_le (real_of_num (NUMERAL _0))) x) |- ((((?n. ((real_abs (floor x)) = (real_of_num n))) = (?n. ((floor x) = (real_of_num n)))) ==> (((?n. ((floor x) = (real_of_num n))) ==> ((?n. ((floor x) = (real_of_num n))) = q')) ==> (((?n. ((real_abs (floor x)) = (real_of_num n))) ==> (?n. ((floor x) = (real_of_num n)))) = ((?n. ((floor x) = (real_of_num n))) ==> q')))) = (((?n. ((floor x) = (real_of_num n))) ==> ((?n. ((floor x) = (real_of_num n))) = q')) ==> (((?n. ((real_abs (floor x)) = (real_of_num n))) ==> (?n. ((floor x) = (real_of_num n)))) = ((?n. ((floor x) = (real_of_num n))) ==> q'))))
+T c==> creal_le creal_of_num cNUMERAL c_0 f0 c= c==> c= c? / c= creal_abs cfloor f0 creal_of_num b0 c? / c= cfloor f0 creal_of_num b0 c==> c==> c? / c= cfloor f0 creal_of_num b0 c= c? / c= cfloor f0 creal_of_num b0 f1 c= c==> c? / c= creal_abs cfloor f0 creal_of_num b0 c? / c= cfloor f0 creal_of_num b0 c==> c? / c= cfloor f0 creal_of_num b0 f1 c==> c==> c? / c= cfloor f0 creal_of_num b0 c= c? / c= cfloor f0 creal_of_num b0 f1 c= c==> c? / c= creal_abs cfloor f0 creal_of_num b0 c? / c= cfloor f0 creal_of_num b0 c==> c? / c= cfloor f0 creal_of_num b0 f1
+- |- ((\x. (!y. (((integer x) /\ (integer y)) ==> (integer ((real_add x) y))))) x)
+T * / ! c==> c/\ cinteger b0 cinteger b1 cinteger creal_add b0 b1 f0
++ ((real_le (real_of_num (NUMERAL _0))) x) |- (((((real_le (real_of_num (NUMERAL _0))) (floor x)) = T) ==> ((T ==> ((floor x) = t')) ==> (((~ T) ==> ((real_neg (floor x)) = e')) ==> ((((COND ((real_le (real_of_num (NUMERAL _0))) (floor x))) (floor x)) (real_neg (floor x))) = (((COND T) t') e'))))) = ((T ==> ((floor x) = t')) ==> (((~ T) ==> ((real_neg (floor x)) = e')) ==> ((((COND ((real_le (real_of_num (NUMERAL _0))) (floor x))) (floor x)) (real_neg (floor x))) = (((COND T) t') e')))))
+T c==> creal_le creal_of_num cNUMERAL c_0 f0 c= c==> c= creal_le creal_of_num cNUMERAL c_0 cfloor f0 cT c==> c==> cT c= cfloor f0 f1 c==> c==> c~ cT c= creal_neg cfloor f0 f2 c= cCOND creal_le creal_of_num cNUMERAL c_0 cfloor f0 cfloor f0 creal_neg cfloor f0 cCOND cT f1 f2 c==> c==> cT c= cfloor f0 f1 c==> c==> c~ cT c= creal_neg cfloor f0 f2 c= cCOND creal_le creal_of_num cNUMERAL c_0 cfloor f0 cfloor f0 creal_neg cfloor f0 cCOND cT f1 f2
++ |- (((!x. ((integer x) = (?n. ((real_abs x) = (real_of_num n))))) ==> ((\x. ((integer x) = (?n. ((real_abs x) = (real_of_num n))))) x)) = ((\x. ((integer x) = (?n. ((real_abs x) = (real_of_num n))))) x))
+T c= c==> ! c= cinteger b0 c? / c= creal_abs b0 creal_of_num b1 * / c= cinteger b0 c? / c= creal_abs b0 creal_of_num b1 f0 * / c= cinteger b0 c? / c= creal_abs b0 creal_of_num b1 f0
++ ((real_le (real_of_num (NUMERAL _0))) x) |- ((T ==> ((floor x) = t')) ==> (((~ T) ==> ((real_neg (floor x)) = e')) ==> ((((COND ((real_le (real_of_num (NUMERAL _0))) (floor x))) (floor x)) (real_neg (floor x))) = (((COND T) t') e'))))
+T c==> creal_le creal_of_num cNUMERAL c_0 f0 c==> c==> cT c= cfloor f0 f1 c==> c==> c~ cT c= creal_neg cfloor f0 f2 c= cCOND creal_le creal_of_num cNUMERAL c_0 cfloor f0 cfloor f0 creal_neg cfloor f0 cCOND cT f1 f2
++ |- ((((real_le (real_of_num (NUMERAL _0))) x) ==> (?n. ((floor x) = (real_of_num n)))) = T)
+T c= c==> creal_le creal_of_num cNUMERAL c_0 f0 c? / c= cfloor f0 creal_of_num b0 cT
+- |- ((integer x) ==> ((integer (real_abs x)) = T))
+T c==> cinteger f0 c= cinteger creal_abs f0 cT
++ |- (((!g'. (!t'. (!e'. ((((real_le (real_of_num (NUMERAL _0))) (floor x)) = g') ==> ((g' ==> ((floor x) = t')) ==> (((~ g') ==> ((real_neg (floor x)) = e')) ==> ((((COND ((real_le (real_of_num (NUMERAL _0))) (floor x))) (floor x)) (real_neg (floor x))) = (((COND g') t') e')))))))) ==> ((\g'. (!t'. (!e'. ((((real_le (real_of_num (NUMERAL _0))) (floor x)) = g') ==> ((g' ==> ((floor x) = t')) ==> (((~ g') ==> ((real_neg (floor x)) = e')) ==> ((((COND ((real_le (real_of_num (NUMERAL _0))) (floor x))) (floor x)) (real_neg (floor x))) = (((COND g') t') e')))))))) g')) = ((\g'. (!t'. (!e'. ((((real_le (real_of_num (NUMERAL _0))) (floor x)) = g') ==> ((g' ==> ((floor x) = t')) ==> (((~ g') ==> ((real_neg (floor x)) = e')) ==> ((((COND ((real_le (real_of_num (NUMERAL _0))) (floor x))) (floor x)) (real_neg (floor x))) = (((COND g') t') e')))))))) g'))
+T c= c==> ! ! ! c==> c= creal_le creal_of_num cNUMERAL c_0 cfloor f0 b0 c==> c==> b0 c= cfloor f0 b1 c==> c==> c~ b0 c= creal_neg cfloor f0 b2 c= cCOND creal_le creal_of_num cNUMERAL c_0 cfloor f0 cfloor f0 creal_neg cfloor f0 cCOND b0 b1 b2 * / ! ! c==> c= creal_le creal_of_num cNUMERAL c_0 cfloor f0 b0 c==> c==> b0 c= cfloor f0 b1 c==> c==> c~ b0 c= creal_neg cfloor f0 b2 c= cCOND creal_le creal_of_num cNUMERAL c_0 cfloor f0 cfloor f0 creal_neg cfloor f0 cCOND b0 b1 b2 f1 * / ! ! c==> c= creal_le creal_of_num cNUMERAL c_0 cfloor f0 b0 c==> c==> b0 c= cfloor f0 b1 c==> c==> c~ b0 c= creal_neg cfloor f0 b2 c= cCOND creal_le creal_of_num cNUMERAL c_0 cfloor f0 cfloor f0 creal_neg cfloor f0 cCOND b0 b1 b2 f1
++ (~ T) |- ((~ T) /\ ((real_neg (floor x)) = (real_neg (floor x))))
+T c==> c~ cT c/\ c~ cT c= creal_neg cfloor f0 creal_neg cfloor f0
++ T |- (T /\ ((floor x) = (floor x)))
+T c==> cT c/\ cT c= cfloor f0 cfloor f0
++ |- (((!p'. (!q'. (((?n. ((real_abs (floor x)) = (real_of_num n))) = p') ==> ((p' ==> ((?n. ((floor x) = (real_of_num n))) = q')) ==> (((?n. ((real_abs (floor x)) = (real_of_num n))) ==> (?n. ((floor x) = (real_of_num n)))) = (p' ==> q')))))) ==> ((\p'. (!q'. (((?n. ((real_abs (floor x)) = (real_of_num n))) = p') ==> ((p' ==> ((?n. ((floor x) = (real_of_num n))) = q')) ==> (((?n. ((real_abs (floor x)) = (real_of_num n))) ==> (?n. ((floor x) = (real_of_num n)))) = (p' ==> q')))))) p')) = ((\p'. (!q'. (((?n. ((real_abs (floor x)) = (real_of_num n))) = p') ==> ((p' ==> ((?n. ((floor x) = (real_of_num n))) = q')) ==> (((?n. ((real_abs (floor x)) = (real_of_num n))) ==> (?n. ((floor x) = (real_of_num n)))) = (p' ==> q')))))) p'))
+T c= c==> ! ! c==> c= c? / c= creal_abs cfloor f0 creal_of_num b2 b0 c==> c==> b0 c= c? / c= cfloor f0 creal_of_num b2 b1 c= c==> c? / c= creal_abs cfloor f0 creal_of_num b2 c? / c= cfloor f0 creal_of_num b2 c==> b0 b1 * / ! c==> c= c? / c= creal_abs cfloor f0 creal_of_num b2 b0 c==> c==> b0 c= c? / c= cfloor f0 creal_of_num b2 b1 c= c==> c? / c= creal_abs cfloor f0 creal_of_num b2 c? / c= cfloor f0 creal_of_num b2 c==> b0 b1 f1 * / ! c==> c= c? / c= creal_abs cfloor f0 creal_of_num b2 b0 c==> c==> b0 c= c? / c= cfloor f0 creal_of_num b2 b1 c= c==> c? / c= creal_abs cfloor f0 creal_of_num b2 c? / c= cfloor f0 creal_of_num b2 c==> b0 b1 f1
+- |- (((integer x) /\ (integer y)) ==> ((integer ((real_sub x) y)) = T))
+T c==> c/\ cinteger f0 cinteger f1 c= cinteger creal_sub f0 f1 cT
+- |- ((\y. (((integer x) /\ (integer y)) ==> (integer ((real_sub x) y)))) y)
+T * / c==> c/\ cinteger f0 cinteger b0 cinteger creal_sub f0 b0 f1
+- (~ T) |- (T = F)
+T c==> c~ cT c= cT cF
++ ((real_le (real_of_num (NUMERAL _0))) x) |- (((?n. ((real_abs (floor x)) = (real_of_num n))) ==> (?n. ((floor x) = (real_of_num n)))) = ((?n. ((floor x) = (real_of_num n))) ==> T))
+T c==> creal_le creal_of_num cNUMERAL c_0 f0 c= c==> c? / c= creal_abs cfloor f0 creal_of_num b0 c? / c= cfloor f0 creal_of_num b0 c==> c? / c= cfloor f0 creal_of_num b0 cT
++ ((real_le (real_of_num (NUMERAL _0))) x) |- (((~ T) ==> ((real_neg (floor x)) = e')) ==> ((((COND ((real_le (real_of_num (NUMERAL _0))) (floor x))) (floor x)) (real_neg (floor x))) = (((COND T) (floor x)) e')))
+T c==> creal_le creal_of_num cNUMERAL c_0 f0 c==> c==> c~ cT c= creal_neg cfloor f0 f1 c= cCOND creal_le creal_of_num cNUMERAL c_0 cfloor f0 cfloor f0 creal_neg cfloor f0 cCOND cT cfloor f0 f1
+- T |- ((T = T) = T)
+T c==> cT c= c= cT cT cT
+- |- ((!x. ((integer x) ==> (integer (real_abs x)))) /\ ((!x. (!y. (((integer x) /\ (integer y)) ==> (integer ((real_max x) y))))) /\ (!x. (!y. (((integer x) /\ (integer y)) ==> (integer ((real_min x) y)))))))
+T c/\ ! c==> cinteger b0 cinteger creal_abs b0 c/\ ! ! c==> c/\ cinteger b0 cinteger b1 cinteger creal_max b0 b1 ! ! c==> c/\ cinteger b0 cinteger b1 cinteger creal_min b0 b1
++ |- (((integer (floor x)) ==> (?n. ((floor x) = (real_of_num n)))) = (?n. ((floor x) = (real_of_num n))))
+T c= c==> cinteger cfloor f0 c? / c= cfloor f0 creal_of_num b0 c? / c= cfloor f0 creal_of_num b0
++ |- (!p'. (!q'. ((p = p') ==> ((p' ==> (q = q')) ==> ((p ==> q) = (p' ==> q'))))))
+T c==> c= f0 f1 c==> c==> f1 c= f2 f3 c= c==> f0 f2 c==> f1 f3
+- (integer x) |- ((integer x) /\ ((integer (real_neg x)) = T))
+T c==> cinteger f0 c/\ cinteger f0 c= cinteger creal_neg f0 cT
++ |- ((\x. (!n. ((integer n) ==> (((real_le n) (floor x)) = ((real_le n) x))))) x)
+T * / ! c==> cinteger b1 c= creal_le b1 cfloor b0 creal_le b1 b0 f0
++ ((real_le (real_of_num (NUMERAL _0))) x) |- (((real_le (real_of_num (NUMERAL _0))) x) /\ (?n. ((floor x) = (real_of_num n))))
+T c==> creal_le creal_of_num cNUMERAL c_0 f0 c/\ creal_le creal_of_num cNUMERAL c_0 f0 c? / c= cfloor f0 creal_of_num b0
++ |- (((p = p') ==> ((p' ==> (q = q')) ==> ((p ==> q) = (p' ==> q')))) = T)
+T c= c==> c= f0 f1 c==> c==> f1 c= f2 f3 c= c==> f0 f2 c==> f1 f3 cT
+- |- (((!y. (((integer x) /\ (integer y)) ==> (integer ((real_sub x) y)))) ==> ((\y. (((integer x) /\ (integer y)) ==> (integer ((real_sub x) y)))) y)) = ((\y. (((integer x) /\ (integer y)) ==> (integer ((real_sub x) y)))) y))
+T c= c==> ! c==> c/\ cinteger f0 cinteger b0 cinteger creal_sub f0 b0 * / c==> c/\ cinteger f0 cinteger b0 cinteger creal_sub f0 b0 f1 * / c==> c/\ cinteger f0 cinteger b0 cinteger creal_sub f0 b0 f1
++ ((real_le (real_of_num (NUMERAL _0))) x) |- ((((COND ((real_le (real_of_num (NUMERAL _0))) (floor x))) (floor x)) (real_neg (floor x))) = (((COND T) (floor x)) (real_neg (floor x))))
+T c==> creal_le creal_of_num cNUMERAL c_0 f0 c= cCOND creal_le creal_of_num cNUMERAL c_0 cfloor f0 cfloor f0 creal_neg cfloor f0 cCOND cT cfloor f0 creal_neg cfloor f0
++ |- (integer (floor x))
+T cinteger cfloor f0
++ |- ((!t'. (!e'. ((g = g') ==> ((g' ==> (t = t')) ==> (((~ g') ==> (e = e')) ==> ((((COND g) t) e) = (((COND g') t') e'))))))) = T)
+T c= ! ! c==> c= f0 f1 c==> c==> f1 c= f2 b0 c==> c==> c~ f1 c= f3 b1 c= cCOND f0 f2 f3 cCOND f1 b0 b1 cT
++ |- ((((?n. ((floor x) = (real_of_num n))) ==> ((?n. ((floor x) = (real_of_num n))) = T)) ==> (((?n. ((real_abs (floor x)) = (real_of_num n))) ==> (?n. ((floor x) = (real_of_num n)))) = ((?n. ((floor x) = (real_of_num n))) ==> T))) = (((?n. ((real_abs (floor x)) = (real_of_num n))) ==> (?n. ((floor x) = (real_of_num n)))) = ((?n. ((floor x) = (real_of_num n))) ==> T)))
+T c= c==> c==> c? / c= cfloor f0 creal_of_num b0 c= c? / c= cfloor f0 creal_of_num b0 cT c= c==> c? / c= creal_abs cfloor f0 creal_of_num b0 c? / c= cfloor f0 creal_of_num b0 c==> c? / c= cfloor f0 creal_of_num b0 cT c= c==> c? / c= creal_abs cfloor f0 creal_of_num b0 c? / c= cfloor f0 creal_of_num b0 c==> c? / c= cfloor f0 creal_of_num b0 cT
++ |- ((((COND T) t1) t2) = t1)
+T c= cCOND cT f0 f1 f0
++ |- (((!n. (integer (real_of_num n))) ==> ((\n. (integer (real_of_num n))) n)) = ((\n. (integer (real_of_num n))) n))
+T c= c==> ! cinteger creal_of_num b0 * / cinteger creal_of_num b0 f0 * / cinteger creal_of_num b0 f0
++ |- (((!q'. (((?n. ((real_abs (floor x)) = (real_of_num n))) = p') ==> ((p' ==> ((?n. ((floor x) = (real_of_num n))) = q')) ==> (((?n. ((real_abs (floor x)) = (real_of_num n))) ==> (?n. ((floor x) = (real_of_num n)))) = (p' ==> q'))))) ==> ((\q'. (((?n. ((real_abs (floor x)) = (real_of_num n))) = p') ==> ((p' ==> ((?n. ((floor x) = (real_of_num n))) = q')) ==> (((?n. ((real_abs (floor x)) = (real_of_num n))) ==> (?n. ((floor x) = (real_of_num n)))) = (p' ==> q'))))) q')) = ((\q'. (((?n. ((real_abs (floor x)) = (real_of_num n))) = p') ==> ((p' ==> ((?n. ((floor x) = (real_of_num n))) = q')) ==> (((?n. ((real_abs (floor x)) = (real_of_num n))) ==> (?n. ((floor x) = (real_of_num n)))) = (p' ==> q'))))) q'))
+T c= c==> ! c==> c= c? / c= creal_abs cfloor f0 creal_of_num b1 f1 c==> c==> f1 c= c? / c= cfloor f0 creal_of_num b1 b0 c= c==> c? / c= creal_abs cfloor f0 creal_of_num b1 c? / c= cfloor f0 creal_of_num b1 c==> f1 b0 * / c==> c= c? / c= creal_abs cfloor f0 creal_of_num b1 f1 c==> c==> f1 c= c? / c= cfloor f0 creal_of_num b1 b0 c= c==> c? / c= creal_abs cfloor f0 creal_of_num b1 c? / c= cfloor f0 creal_of_num b1 c==> f1 b0 f2 * / c==> c= c? / c= creal_abs cfloor f0 creal_of_num b1 f1 c==> c==> f1 c= c? / c= cfloor f0 creal_of_num b1 b0 c= c==> c? / c= creal_abs cfloor f0 creal_of_num b1 c? / c= cfloor f0 creal_of_num b1 c==> f1 b0 f2

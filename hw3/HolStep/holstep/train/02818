@@ -1,0 +1,91 @@
+N Reduction1.split_face_nonfinal2
+C |- (!f. (!u. (!v. (!ws. ((LET (GABS (\f. (!f1. (!f2. ((GEQ (f (f1 , f2))) (LET_END (~ (SND f2))))))))) ((((split_face f) u) v) ws))))))
+T cLET * part cGABS / ! ! cGEQ * b0 c, b1 b2 cLET_END c~ cSND b2 csplit_face f0 f1 f2 f3
+D TRUTH
+A |- T
+T cT
+D ETA_AX
+A |- (!t. ((\x. (t x)) = t))
+T c= / * f0 b0 f0
+D SELECT_AX
+A |- (!P. (!x. ((P x) ==> (P (@ P)))))
+T c==> * f0 f1 * f0 c@ f0
+D EXCLUDED_MIDDLE
+A |- (!t. (t \/ (~ t)))
+T c\/ f0 c~ f0
+D BOOL_CASES_AX
+A |- (!t. ((t = T) \/ (t = F)))
+T c\/ c= f0 cT c= f0 cF
+D NOT_CLAUSES
+A |- ((!t. ((~ (~ t)) = t)) /\ (((~ T) = F) /\ ((~ F) = T)))
+T c/\ ! c= c~ c~ b0 b0 c/\ c= c~ cT cF c= c~ cF cT
+D I_DEF
+A |- (I = (\x. x))
+T c= part cI / b0
+D LET_DEF
+A |- (!f. (!x. (((LET f) x) = (f x))))
+T c= cLET f0 f1 * f0 f1
+D LET_END_DEF
+A |- (!t. ((LET_END t) = t))
+T c= cLET_END f0 f0
+D GABS_DEF
+A |- (!P. ((GABS P) = (@ P)))
+T c= cGABS f0 c@ f0
+D GEQ_DEF
+A |- (!a. (!b. (((GEQ a) b) = (a = b))))
+T c= cGEQ f0 f1 c= f0 f1
+D PAIR_EQ
+A |- (!x. (!y. (!a. (!b. (((x , y) = (a , b)) = ((x = a) /\ (y = b)))))))
+T c= c= c, f0 f1 c, f2 f3 c/\ c= f0 f2 c= f1 f3
+D FST
+A |- (!x. (!y. ((FST (x , y)) = x)))
+T c= cFST c, f0 f1 f0
+D SND
+A |- (!x. (!y. ((SND (x , y)) = y)))
+T c= cSND c, f0 f1 f1
+D PAIR
+A |- (!x. (((FST x) , (SND x)) = x))
+T c= c, cFST f0 cSND f0 f0
+D pair_RECURSION
+A |- (!PAIR'. (?fn. (!a0. (!a1. ((fn (a0 , a1)) = ((PAIR' a0) a1))))))
+T c? / ! ! c= * b0 c, b1 b2 * * f0 b1 b2
+D Truong_tactic.hold_def
+A |- (hold = I)
+T c= part chold part cI
+D Wrgcvdr_cizmrrh.PAIR_EQ2
+A |- ((a = b) = (((FST a) = (FST b)) /\ ((SND a) = (SND b))))
+T c= c= f0 f1 c/\ c= cFST f0 cFST f1 c= cSND f0 cSND f1
+D Tame_defs.FACE
+A |- (!a. (!b. (((Face a) b) = (a , b))))
+T c= cFace f0 f1 c, f0 f1
+D Tame_defs2.split_face
+A |- (!newVs. (!ram1. (!ram2. (!f. (((((split_face f) ram1) ram2) newVs) = ((LET (\vs. (LET_END ((LET (\f1. (LET_END ((LET (\f2. (LET_END (((Face ((APPEND (REVERSE newVs)) f1)) F) , ((Face ((APPEND f2) newVs)) F))))) ((APPEND ((CONS ram2) NIL)) ((APPEND (((betwn vs) ram2) ram1)) ((CONS ram1) NIL))))))) ((APPEND ((CONS ram1) NIL)) ((APPEND (((betwn vs) ram1) ram2)) ((CONS ram2) NIL))))))) (FST f)))))))
+T c= csplit_face f0 f1 f2 f3 cLET / cLET_END cLET / cLET_END cLET / cLET_END c, cFace cAPPEND cREVERSE f3 b1 cF cFace cAPPEND b2 f3 cF cAPPEND cCONS f2 cNIL cAPPEND cbetwn b0 f2 f1 cCONS f1 cNIL cAPPEND cCONS f1 cNIL cAPPEND cbetwn b0 f1 f2 cCONS f2 cNIL cFST f0
++ |- ((\b. (((Face a) b) = (a , b))) b)
+T * / c= cFace f0 b0 c, f0 b0 f1
++ (f1' = ((APPEND ((CONS u) NIL)) ((APPEND (((betwn vs) u) v)) ((CONS v) NIL)))), (f2' = ((APPEND ((CONS v) NIL)) ((APPEND (((betwn vs) v) u)) ((CONS u) NIL)))), (vs = (FST f)) |- ((((LET (\f2. (LET_END (((Face ((APPEND (REVERSE ws)) f1')) F) , ((Face ((APPEND f2) ws)) F))))) ((APPEND ((CONS v) NIL)) ((APPEND (((betwn vs) v) u)) ((CONS u) NIL)))) = (f1 , f2)) ==> (~ (SND f2)))
+T c==> c= f0 cAPPEND cCONS f1 cNIL cAPPEND cbetwn f2 f1 f3 cCONS f3 cNIL c==> c= f4 cAPPEND cCONS f3 cNIL cAPPEND cbetwn f2 f3 f1 cCONS f1 cNIL c==> c= f2 cFST f5 c==> c= cLET / cLET_END c, cFace cAPPEND cREVERSE f6 f0 cF cFace cAPPEND b0 f6 cF cAPPEND cCONS f3 cNIL cAPPEND cbetwn f2 f3 f1 cCONS f1 cNIL c, f7 f8 c~ cSND f8
++ |- (((((LET (\f1. (LET_END ((LET (\f2. (LET_END (((Face ((APPEND (REVERSE ws)) f1)) F) , ((Face ((APPEND f2) ws)) F))))) ((APPEND ((CONS v) NIL)) ((APPEND (((betwn vs) v) u)) ((CONS u) NIL))))))) ((APPEND ((CONS u) NIL)) ((APPEND (((betwn vs) u) v)) ((CONS v) NIL)))) = (f1 , f2)) ==> (~ (SND f2))) = ((((LET (\vs. (LET_END ((LET (\f1. (LET_END ((LET (\f2. (LET_END (((Face ((APPEND (REVERSE ws)) f1)) F) , ((Face ((APPEND f2) ws)) F))))) ((APPEND ((CONS v) NIL)) ((APPEND (((betwn vs) v) u)) ((CONS u) NIL))))))) ((APPEND ((CONS u) NIL)) ((APPEND (((betwn vs) u) v)) ((CONS v) NIL))))))) vs) = (f1 , f2)) ==> (~ (SND f2))))
+T c= c==> c= cLET / cLET_END cLET / cLET_END c, cFace cAPPEND cREVERSE f0 b0 cF cFace cAPPEND b1 f0 cF cAPPEND cCONS f1 cNIL cAPPEND cbetwn f2 f1 f3 cCONS f3 cNIL cAPPEND cCONS f3 cNIL cAPPEND cbetwn f2 f3 f1 cCONS f1 cNIL c, f4 f5 c~ cSND f5 c==> c= cLET / cLET_END cLET / cLET_END cLET / cLET_END c, cFace cAPPEND cREVERSE f0 b1 cF cFace cAPPEND b2 f0 cF cAPPEND cCONS f1 cNIL cAPPEND cbetwn b0 f1 f3 cCONS f3 cNIL cAPPEND cCONS f3 cNIL cAPPEND cbetwn b0 f3 f1 cCONS f1 cNIL f2 c, f4 f5 c~ cSND f5
++ |- ((a /\ T) = a)
+T c= c/\ f0 cT f0
++ |- (T = ((SND (((APPEND f2') ws) , F)) ==> F))
+T c= cT c==> cSND c, cAPPEND f0 f1 cF cF
++ |- (a ==> (hold a))
+T c==> f0 chold f0
++ |- ((((\vs. (vs = (FST f))) vs) ==> ((((LET (\vs. (LET_END ((LET (\f1. (LET_END ((LET (\f2. (LET_END (((Face ((APPEND (REVERSE ws)) f1)) F) , ((Face ((APPEND f2) ws)) F))))) ((APPEND ((CONS v) NIL)) ((APPEND (((betwn vs) v) u)) ((CONS u) NIL))))))) ((APPEND ((CONS u) NIL)) ((APPEND (((betwn vs) u) v)) ((CONS v) NIL))))))) (FST f)) = (f1 , f2)) ==> (~ (SND f2)))) = T)
+T c= c==> * / c= b0 cFST f0 f1 c==> c= cLET / cLET_END cLET / cLET_END cLET / cLET_END c, cFace cAPPEND cREVERSE f2 b1 cF cFace cAPPEND b2 f2 cF cAPPEND cCONS f3 cNIL cAPPEND cbetwn b0 f3 f4 cCONS f4 cNIL cAPPEND cCONS f4 cNIL cAPPEND cbetwn b0 f4 f3 cCONS f3 cNIL cFST f0 c, f5 f6 c~ cSND f6 cT
+- (f2' = ((APPEND ((CONS v) NIL)) ((APPEND (((betwn vs) v) u)) ((CONS u) NIL)))) |- (((FST f) = vs) = ((FST f) = vs))
+T c==> c= f0 cAPPEND cCONS f1 cNIL cAPPEND cbetwn f2 f1 f3 cCONS f3 cNIL c= c= cFST f4 f2 c= cFST f4 f2
+- |- ((t ==> t) = T)
+T c= c==> f0 f0 cT
+- (f2' = ((APPEND ((CONS v) NIL)) ((APPEND (((betwn vs) v) u)) ((CONS u) NIL)))) |- ((((APPEND ((CONS u) NIL)) ((APPEND (((betwn vs) u) v)) ((CONS v) NIL))) = f1') = (((APPEND ((CONS u) NIL)) ((APPEND (((betwn vs) u) v)) ((CONS v) NIL))) = f1'))
+T c==> c= f0 cAPPEND cCONS f1 cNIL cAPPEND cbetwn f2 f1 f3 cCONS f3 cNIL c= c= cAPPEND cCONS f3 cNIL cAPPEND cbetwn f2 f3 f1 cCONS f1 cNIL f4 c= cAPPEND cCONS f3 cNIL cAPPEND cbetwn f2 f3 f1 cCONS f1 cNIL f4
+- |- (((x = x) ==> p) = p)
+T c= c==> c= f0 f0 f1 f1
+- |- ((!f2. t) = t)
+T c= ! f0 f0
+- |- ((t /\ t) = t)
+T c= c/\ f0 f0 f0
+- (?f2. ((f1 , f2) = ((LET (\vs. (LET_END ((LET (\f1. (LET_END ((LET (\f2. (LET_END (((Face ((APPEND (REVERSE ws)) f1)) F) , ((Face ((APPEND f2) ws)) F))))) ((APPEND ((CONS v) NIL)) ((APPEND (((betwn vs) v) u)) ((CONS u) NIL))))))) ((APPEND ((CONS u) NIL)) ((APPEND (((betwn vs) u) v)) ((CONS v) NIL))))))) (FST f)))) |- ((?f2. ((f1 , f2) = ((LET (\vs. (LET_END ((LET (\f1. (LET_END ((LET (\f2. (LET_END (((Face ((APPEND (REVERSE ws)) f1)) F) , ((Face ((APPEND f2) ws)) F))))) ((APPEND ((CONS v) NIL)) ((APPEND (((betwn vs) v) u)) ((CONS u) NIL))))))) ((APPEND ((CONS u) NIL)) ((APPEND (((betwn vs) u) v)) ((CONS v) NIL))))))) (FST f)))) /\ ((LET (GABS (\f. (!f1. (!f2. ((GEQ (f (f1 , f2))) (LET_END (~ (SND f2))))))))) ((LET (\vs. (LET_END ((LET (\f1. (LET_END ((LET (\f2. (LET_END (((Face ((APPEND (REVERSE ws)) f1)) F) , ((Face ((APPEND f2) ws)) F))))) ((APPEND ((CONS v) NIL)) ((APPEND (((betwn vs) v) u)) ((CONS u) NIL))))))) ((APPEND ((CONS u) NIL)) ((APPEND (((betwn vs) u) v)) ((CONS v) NIL))))))) (FST f))))
+T c==> c? / c= c, f0 b0 cLET / cLET_END cLET / cLET_END cLET / cLET_END c, cFace cAPPEND cREVERSE f1 b2 cF cFace cAPPEND b3 f1 cF cAPPEND cCONS f2 cNIL cAPPEND cbetwn b1 f2 f3 cCONS f3 cNIL cAPPEND cCONS f3 cNIL cAPPEND cbetwn b1 f3 f2 cCONS f2 cNIL cFST f4 c/\ c? / c= c, f0 b0 cLET / cLET_END cLET / cLET_END cLET / cLET_END c, cFace cAPPEND cREVERSE f1 b2 cF cFace cAPPEND b3 f1 cF cAPPEND cCONS f2 cNIL cAPPEND cbetwn b1 f2 f3 cCONS f3 cNIL cAPPEND cCONS f3 cNIL cAPPEND cbetwn b1 f3 f2 cCONS f2 cNIL cFST f4 cLET * part cGABS / ! ! cGEQ * b0 c, b1 b2 cLET_END c~ cSND b2 cLET / cLET_END cLET / cLET_END cLET / cLET_END c, cFace cAPPEND cREVERSE f1 b1 cF cFace cAPPEND b2 f1 cF cAPPEND cCONS f2 cNIL cAPPEND cbetwn b0 f2 f3 cCONS f3 cNIL cAPPEND cCONS f3 cNIL cAPPEND cbetwn b0 f3 f2 cCONS f2 cNIL cFST f4

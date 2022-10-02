@@ -1,0 +1,150 @@
+N Seq.subseq_uniqP
+C |- (!s1. (!s2. ((uniq s2) ==> (((subseq s1) s2) = (s1 = ((filter (\x. ((MEM x) s1))) s2))))))
+T c==> cuniq f0 c= csubseq f1 f0 c= f1 cfilter / cMEM b0 f1 f0
+D TRUTH
+A |- T
+T cT
+D Ssrbool.andb_idr
+A |- (!a. (!b. ((a ==> b) ==> ((a /\ b) = a))))
+T c==> c==> f0 f1 c= c/\ f0 f1 f0
+D Ssrnat.leqif_imp_eq
+A |- (!m. (!n. (!c. ((((leqif m) n) c) ==> ((m = n) = c)))))
+T c==> cleqif f0 f1 f2 c= c= f0 f1 f2
+D Seq.allP
+A |- (!a. (!s. ((!x. (((MEM x) s) ==> (a x))) = ((all a) s))))
+T c= ! c==> cMEM b0 f0 * f1 b0 call f1 f0
+D Seq.mem_filter
+A |- (!a. (!x. (!s. (((MEM x) ((filter a) s)) = ((a x) /\ ((MEM x) s))))))
+T c= cMEM f0 cfilter f1 f2 c/\ * f1 f0 cMEM f0 f2
+D Seq.filter_uniq
+A |- (!s. (!a. ((uniq s) ==> (uniq ((filter a) s)))))
+T c==> cuniq f0 cuniq cfilter f1 f0
+D Seq.perm_eq_size
+A |- (!s1. (!s2. (((perm_eq s1) s2) ==> ((sizel s1) = (sizel s2)))))
+T c==> cperm_eq f0 f1 c= csizel f0 csizel f1
+D Seq.uniq_perm_eq
+A |- (!s1. (!s2. ((uniq s1) ==> ((uniq s2) ==> ((!x. (((MEM x) s1) = ((MEM x) s2))) ==> ((perm_eq s1) s2))))))
+T c==> cuniq f0 c==> cuniq f1 c==> ! c= cMEM b0 f0 cMEM b0 f1 cperm_eq f0 f1
+D Seq.mem_subseq
+A |- (!s1. (!s2. (((subseq s1) s2) ==> (!x. (((MEM x) s1) ==> ((MEM x) s2))))))
+T c==> csubseq f0 f1 ! c==> cMEM b0 f0 cMEM b0 f1
+D Seq.size_subseq_leqif
+A |- (!s1. (!s2. (((subseq s1) s2) ==> (((leqif (sizel s1)) (sizel s2)) (s1 = s2)))))
+T c==> csubseq f0 f1 cleqif csizel f0 csizel f1 c= f0 f1
+D Seq.subseq_uniq
+A |- (!s1. (!s2. (((subseq s1) s2) ==> ((uniq s2) ==> (uniq s1)))))
+T c==> csubseq f0 f1 c==> cuniq f1 cuniq f0
+D Seq.filter_subseq
+A |- (!a. (!s. ((subseq ((filter a) s)) s)))
+T csubseq cfilter f0 f1 f1
+D Seq.subseq_filter
+A |- (!s1. (!s2. (!a. (((subseq s1) ((filter a) s2)) = (((all a) s1) /\ ((subseq s1) s2))))))
+T c= csubseq f0 cfilter f1 f2 c/\ call f1 f0 csubseq f0 f2
++ ((subseq s1) s2) |- ((((uniq s2) ==> ((uniq s1) = T)) ==> ((T /\ (uniq s1)) /\ (!x. (((MEM x) ((filter (\x. ((MEM x) s1))) s2)) = ((MEM x) s1))))) = ((T /\ (uniq s1)) /\ (!x. (((MEM x) ((filter (\x. ((MEM x) s1))) s2)) = ((MEM x) s1)))))
+T c==> csubseq f0 f1 c= c==> c==> cuniq f1 c= cuniq f0 cT c/\ c/\ cT cuniq f0 ! c= cMEM b0 cfilter / cMEM b1 f0 f1 cMEM b0 f0 c/\ c/\ cT cuniq f0 ! c= cMEM b0 cfilter / cMEM b1 f0 f1 cMEM b0 f0
++ |- ((\s. ((subseq ((filter a) s)) s)) s)
+T * / csubseq cfilter f0 b0 b0 f1
++ |- ((s1 = ((filter (\x. ((MEM x) s1))) s2)) ==> ((subseq s1) s2))
+T c==> c= f0 cfilter / cMEM b0 f0 f1 csubseq f0 f1
++ |- (((all a) s) = (!x. (((MEM x) s) ==> (a x))))
+T c= call f0 f1 ! c==> cMEM b0 f1 * f0 b0
++ ((subseq s1) s2) |- ((((((MEM x) s1) /\ ((MEM x) s2)) = ((MEM x) s1)) ==> ((((MEM x) s1) /\ ((MEM x) s2)) = ((MEM x) s1))) = ((((MEM x) s1) ==> ((MEM x) s2)) /\ (((((MEM x) s1) /\ ((MEM x) s2)) = ((MEM x) s1)) ==> ((((MEM x) s1) /\ ((MEM x) s2)) = ((MEM x) s1)))))
+T c==> csubseq f0 f1 c= c==> c= c/\ cMEM f2 f0 cMEM f2 f1 cMEM f2 f0 c= c/\ cMEM f2 f0 cMEM f2 f1 cMEM f2 f0 c/\ c==> cMEM f2 f0 cMEM f2 f1 c==> c= c/\ cMEM f2 f0 cMEM f2 f1 cMEM f2 f0 c= c/\ cMEM f2 f0 cMEM f2 f1 cMEM f2 f0
++ (uniq s2), ((subseq s1) s2) |- (((uniq s2) ==> ((uniq ((filter (\x. ((MEM x) s1))) s2)) = T)) ==> (((uniq ((filter (\x. ((MEM x) s1))) s2)) /\ (uniq s1)) /\ (!x. (((MEM x) ((filter (\x. ((MEM x) s1))) s2)) = ((MEM x) s1)))))
+T c==> cuniq f0 c==> csubseq f1 f0 c==> c==> cuniq f0 c= cuniq cfilter / cMEM b0 f1 f0 cT c/\ c/\ cuniq cfilter / cMEM b0 f1 f0 cuniq f1 ! c= cMEM b0 cfilter / cMEM b1 f1 f0 cMEM b0 f1
++ |- ((\a. ((uniq s) ==> (uniq ((filter a) s)))) a)
+T * / c==> cuniq f0 cuniq cfilter b0 f0 f1
++ ((subseq s1) s2) |- (((all (\x. ((MEM x) s1))) s1) /\ ((subseq s1) s2))
+T c==> csubseq f0 f1 c/\ call / cMEM b0 f0 f0 csubseq f0 f1
+- ((!x. (P ==> (Q x))) = (P ==> (!x. (Q x)))) |- ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))
+T c==> c= ! c==> f0 * f1 b0 c==> f0 ! * f1 b0 c= c==> f0 ! * f1 b0 ! c==> f0 * f1 b0
++ (uniq s2), (((sizel s1) = (sizel ((filter (\x. ((MEM x) s1))) s2))) = (s1 = ((filter (\x. ((MEM x) s1))) s2))), ((subseq s1) s2) |- (s1 = ((filter (\x. ((MEM x) s1))) s2))
+T c==> cuniq f0 c==> c= c= csizel f1 csizel cfilter / cMEM b0 f1 f0 c= f1 cfilter / cMEM b0 f1 f0 c==> csubseq f1 f0 c= f1 cfilter / cMEM b0 f1 f0
++ (((all a) s) = (!x. (((MEM x) s) ==> (a x)))) |- ((!x. (((MEM x) s) ==> (a x))) = ((all a) s))
+T c==> c= call f0 f1 ! c==> cMEM b0 f1 * f0 b0 c= ! c==> cMEM b0 f1 * f0 b0 call f0 f1
++ (uniq s2), ((subseq s1) s2), (((leqif (sizel s1)) (sizel ((filter (\x. ((MEM x) s1))) s2))) (s1 = ((filter (\x. ((MEM x) s1))) s2))) |- ((((leqif (sizel s1)) (sizel ((filter (\x. ((MEM x) s1))) s2))) (s1 = ((filter (\x. ((MEM x) s1))) s2))) /\ (s1 = ((filter (\x. ((MEM x) s1))) s2)))
+T c==> cuniq f0 c==> csubseq f1 f0 c==> cleqif csizel f1 csizel cfilter / cMEM b0 f1 f0 c= f1 cfilter / cMEM b0 f1 f0 c/\ cleqif csizel f1 csizel cfilter / cMEM b0 f1 f0 c= f1 cfilter / cMEM b0 f1 f0 c= f1 cfilter / cMEM b0 f1 f0
++ |- ((\s1. (!s2. (((subseq s1) s2) ==> (((leqif (sizel s1)) (sizel s2)) (s1 = s2))))) s1)
+T * / ! c==> csubseq b0 b1 cleqif csizel b0 csizel b1 c= b0 b1 f0
+- (a ==> b) |- ((a ==> b) /\ ((a /\ b) = a))
+T c==> c==> f0 f1 c/\ c==> f0 f1 c= c/\ f0 f1 f0
++ (!s1. (!s2. (((perm_eq s1) s2) ==> ((sizel s1) = (sizel s2))))) |- (((!s2. (((perm_eq s1) s2) ==> ((sizel s1) = (sizel s2)))) ==> ((\s2. (((perm_eq s1) s2) ==> ((sizel s1) = (sizel s2)))) s2)) = ((\s2. (((perm_eq s1) s2) ==> ((sizel s1) = (sizel s2)))) s2))
+T c==> ! ! c==> cperm_eq b0 b1 c= csizel b0 csizel b1 c= c==> ! c==> cperm_eq f0 b0 c= csizel f0 csizel b0 * / c==> cperm_eq f0 b0 c= csizel f0 csizel b0 f1 * / c==> cperm_eq f0 b0 c= csizel f0 csizel b0 f1
++ ((subseq s1) s2) |- (((!x. (((MEM x) s1) ==> ((MEM x) s2))) ==> (((MEM x) s1) ==> ((MEM x) s2))) = (((MEM x) s1) ==> ((MEM x) s2)))
+T c==> csubseq f0 f1 c= c==> ! c==> cMEM b0 f0 cMEM b0 f1 c==> cMEM f2 f0 cMEM f2 f1 c==> cMEM f2 f0 cMEM f2 f1
+- |- ((\P. (!Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x)))))) P)
+T * / ! c= c==> b0 ! * b1 b2 ! c==> b0 * b1 b2 f0
++ ((subseq s1) s2) |- (((((MEM x) s1) /\ ((MEM x) s2)) = ((MEM x) s1)) = T)
+T c==> csubseq f0 f1 c= c= c/\ cMEM f2 f0 cMEM f2 f1 cMEM f2 f0 cT
+- (!s1. (!s2. (((perm_eq s1) s2) ==> ((sizel s1) = (sizel s2))))) |- ((!s2. (((perm_eq s1) s2) ==> ((sizel s1) = (sizel s2)))) = T)
+T c==> ! ! c==> cperm_eq b0 b1 c= csizel b0 csizel b1 c= ! c==> cperm_eq f0 b0 c= csizel f0 csizel b0 cT
++ |- (((!s. (((all a) s) = (!x. (((MEM x) s) ==> (a x))))) ==> ((\s. (((all a) s) = (!x. (((MEM x) s) ==> (a x))))) s)) = ((\s. (((all a) s) = (!x. (((MEM x) s) ==> (a x))))) s))
+T c= c==> ! c= call f0 b0 ! c==> cMEM b1 b0 * f0 b1 * / c= call f0 b0 ! c==> cMEM b1 b0 * f0 b1 f1 * / c= call f0 b0 ! c==> cMEM b1 b0 * f0 b1 f1
++ (((perm_eq ((filter (\x. ((MEM x) s1))) s2)) s1) = T) |- (T = ((perm_eq ((filter (\x. ((MEM x) s1))) s2)) s1))
+T c==> c= cperm_eq cfilter / cMEM b0 f0 f1 f0 cT c= cT cperm_eq cfilter / cMEM b0 f0 f1 f0
++ |- ((t ==> t) = T)
+T c= c==> f0 f0 cT
++ |- ((\s2. (((subseq s1) s2) ==> (((leqif (sizel s1)) (sizel s2)) (s1 = s2)))) s2)
+T * / c==> csubseq f0 b0 cleqif csizel f0 csizel b0 c= f0 b0 f1
++ (uniq s) |- ((uniq s) /\ ((uniq ((filter a) s)) = T))
+T c==> cuniq f0 c/\ cuniq f0 c= cuniq cfilter f1 f0 cT
++ |- (((((MEM x) s1) /\ ((MEM x) s2)) = ((MEM x) s1)) ==> ((((MEM x) s1) /\ ((MEM x) s2)) = ((MEM x) s1)))
+T c==> c= c/\ cMEM f0 f1 cMEM f0 f2 cMEM f0 f1 c= c/\ cMEM f0 f1 cMEM f0 f2 cMEM f0 f1
++ (uniq s2), ((subseq s1) s2) |- ((perm_eq ((filter (\x. ((MEM x) s1))) s2)) s1)
+T c==> cuniq f0 c==> csubseq f1 f0 cperm_eq cfilter / cMEM b0 f1 f0 f1
++ |- ((!s2. ((uniq s2) ==> (((subseq s1) s2) = (s1 = ((filter (\x. ((MEM x) s1))) s2))))) = T)
+T c= ! c==> cuniq b0 c= csubseq f0 b0 c= f0 cfilter / cMEM b1 f0 b0 cT
++ |- (((!s2. (((subseq s1) s2) ==> (((leqif (sizel s1)) (sizel s2)) (s1 = s2)))) ==> ((\s2. (((subseq s1) s2) ==> (((leqif (sizel s1)) (sizel s2)) (s1 = s2)))) s2)) = ((\s2. (((subseq s1) s2) ==> (((leqif (sizel s1)) (sizel s2)) (s1 = s2)))) s2))
+T c= c==> ! c==> csubseq f0 b0 cleqif csizel f0 csizel b0 c= f0 b0 * / c==> csubseq f0 b0 cleqif csizel f0 csizel b0 c= f0 b0 f1 * / c==> csubseq f0 b0 cleqif csizel f0 csizel b0 c= f0 b0 f1
++ |- ((!x. t) = t)
+T c= ! f0 f0
++ |- ((\s2. ((((uniq s1) /\ (uniq s2)) /\ (!x. (((MEM x) s1) = ((MEM x) s2)))) ==> ((perm_eq s1) s2))) s2)
+T * / c==> c/\ c/\ cuniq f0 cuniq b0 ! c= cMEM b1 f0 cMEM b1 b0 cperm_eq f0 b0 f1
++ ((subseq s1) s2) |- (((MEM x) s1) ==> ((MEM x) s2))
+T c==> csubseq f0 f1 c==> cMEM f2 f0 cMEM f2 f1
+- |- ((!s1. (!s2. (((perm_eq s1) s2) ==> ((sizel s1) = (sizel s2))))) ==> (!s1. (!s2. (((perm_eq s1) s2) ==> ((sizel s1) = (sizel s2))))))
+T c==> ! ! c==> cperm_eq b0 b1 c= csizel b0 csizel b1 ! ! c==> cperm_eq b0 b1 c= csizel b0 csizel b1
+- ((((MEM x) s1) /\ ((MEM x) s2)) = ((MEM x) s1)) |- ((((MEM x) s1) = ((MEM x) s1)) = ((((MEM x) s1) /\ ((MEM x) s2)) = ((MEM x) s1)))
+T c==> c= c/\ cMEM f0 f1 cMEM f0 f2 cMEM f0 f1 c= c= cMEM f0 f1 cMEM f0 f1 c= c/\ cMEM f0 f1 cMEM f0 f2 cMEM f0 f1
+- (!s1. (!s2. (((perm_eq s1) s2) ==> ((sizel s1) = (sizel s2))))), ((perm_eq s1) s2) |- ((!s1. (!s2. (((perm_eq s1) s2) ==> ((sizel s1) = (sizel s2))))) /\ ((sizel s1) = (sizel s2)))
+T c==> ! ! c==> cperm_eq b0 b1 c= csizel b0 csizel b1 c==> cperm_eq f0 f1 c/\ ! ! c==> cperm_eq b0 b1 c= csizel b0 csizel b1 c= csizel f0 csizel f1
+- |- (((uniq s1) /\ (!x. (((MEM x) ((filter (\x. ((MEM x) s1))) s2)) = ((MEM x) s1)))) = ((T /\ (uniq s1)) /\ (!x. (((MEM x) ((filter (\x. ((MEM x) s1))) s2)) = ((MEM x) s1)))))
+T c= c/\ cuniq f0 ! c= cMEM b0 cfilter / cMEM b1 f0 f1 cMEM b0 f0 c/\ c/\ cT cuniq f0 ! c= cMEM b0 cfilter / cMEM b1 f0 f1 cMEM b0 f0
+- (((sizel s1) = (sizel ((filter (\x. ((MEM x) s1))) s2))) = (s1 = ((filter (\x. ((MEM x) s1))) s2))) |- ((s1 = ((filter (\x. ((MEM x) s1))) s2)) = ((sizel s1) = (sizel ((filter (\x. ((MEM x) s1))) s2))))
+T c==> c= c= csizel f0 csizel cfilter / cMEM b0 f0 f1 c= f0 cfilter / cMEM b0 f0 f1 c= c= f0 cfilter / cMEM b0 f0 f1 c= csizel f0 csizel cfilter / cMEM b0 f0 f1
+- (!s1. (!s2. (((perm_eq s1) s2) ==> ((sizel s1) = (sizel s2))))) |- ((((perm_eq s1) s2) ==> ((sizel s1) = (sizel s2))) = T)
+T c==> ! ! c==> cperm_eq b0 b1 c= csizel b0 csizel b1 c= c==> cperm_eq f0 f1 c= csizel f0 csizel f1 cT
+- ((s1 = ((filter (\x. ((MEM x) s1))) s2)) = ((sizel s1) = (sizel ((filter (\x. ((MEM x) s1))) s2)))) |- (((sizel s1) = (sizel ((filter (\x. ((MEM x) s1))) s2))) = (s1 = ((filter (\x. ((MEM x) s1))) s2)))
+T c==> c= c= f0 cfilter / cMEM b0 f0 f1 c= csizel f0 csizel cfilter / cMEM b0 f0 f1 c= c= csizel f0 csizel cfilter / cMEM b0 f0 f1 c= f0 cfilter / cMEM b0 f0 f1
+- |- ((x = x) = T)
+T c= c= f0 f0 cT
+- |- ((\Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))) Q)
+T * / c= c==> f0 ! * b0 b1 ! c==> f0 * b0 b1 f1
+- (!s1. (!s2. (((perm_eq s1) s2) ==> ((sizel s1) = (sizel s2))))), ((perm_eq s1) s2) |- (((perm_eq s1) s2) /\ ((sizel s1) = (sizel s2)))
+T c==> ! ! c==> cperm_eq b0 b1 c= csizel b0 csizel b1 c==> cperm_eq f0 f1 c/\ cperm_eq f0 f1 c= csizel f0 csizel f1
+- |- ((!x. (((MEM x) ((filter (\x. ((MEM x) s1))) s2)) = ((MEM x) s1))) = ((T /\ T) /\ (!x. (((MEM x) ((filter (\x. ((MEM x) s1))) s2)) = ((MEM x) s1)))))
+T c= ! c= cMEM b0 cfilter / cMEM b1 f0 f1 cMEM b0 f0 c/\ c/\ cT cT ! c= cMEM b0 cfilter / cMEM b1 f0 f1 cMEM b0 f0
+- |- (T = (((MEM x) s1) = ((MEM x) s1)))
+T c= cT c= cMEM f0 f1 cMEM f0 f1
+- |- (((!P. (!Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x)))))) ==> ((\P. (!Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x)))))) P)) = ((\P. (!Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x)))))) P))
+T c= c==> ! ! c= c==> b0 ! * b1 b2 ! c==> b0 * b1 b2 * / ! c= c==> b0 ! * b1 b2 ! c==> b0 * b1 b2 f0 * / ! c= c==> b0 ! * b1 b2 ! c==> b0 * b1 b2 f0
+- ((perm_eq s1) s2) |- ((!s1. (!s2. (((perm_eq s1) s2) ==> ((sizel s1) = (sizel s2))))) ==> ((sizel s1) = (sizel s2)))
+T c==> cperm_eq f0 f1 c==> ! ! c==> cperm_eq b0 b1 c= csizel b0 csizel b1 c= csizel f0 csizel f1
+- |- ((t /\ t) = t)
+T c= c/\ f0 f0 f0
+- (!s1. (!s2. (((perm_eq s1) s2) ==> ((sizel s1) = (sizel s2))))) |- ((!s1. (!s2. (((perm_eq s1) s2) ==> ((sizel s1) = (sizel s2))))) /\ (!s1. (!s2. (((perm_eq s1) s2) ==> ((sizel s1) = (sizel s2))))))
+T c==> ! ! c==> cperm_eq b0 b1 c= csizel b0 csizel b1 c/\ ! ! c==> cperm_eq b0 b1 c= csizel b0 csizel b1 ! ! c==> cperm_eq b0 b1 c= csizel b0 csizel b1
+- (uniq s2) |- (T = (uniq s2))
+T c==> cuniq f0 c= cT cuniq f0
+- ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x)))) |- ((!x. (P ==> (Q x))) = (P ==> (!x. (Q x))))
+T c==> c= c==> f0 ! * f1 b0 ! c==> f0 * f1 b0 c= ! c==> f0 * f1 b0 c==> f0 ! * f1 b0
+- |- ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))
+T c= c==> f0 ! * f1 b0 ! c==> f0 * f1 b0
+- (uniq s2) |- ((uniq s2) = T)
+T c==> cuniq f0 c= cuniq f0 cT
+- |- (((\x. (f x)) y) = (f y))
+T c= * / * f0 b0 f1 * f0 f1
+- |- (((!Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))) ==> ((\Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))) Q)) = ((\Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))) Q))
+T c= c==> ! c= c==> f0 ! * b0 b1 ! c==> f0 * b0 b1 * / c= c==> f0 ! * b0 b1 ! c==> f0 * b0 b1 f1 * / c= c==> f0 ! * b0 b1 ! c==> f0 * b0 b1 f1
+- (uniq s2), ((subseq s1) s2), ((subseq s1) ((filter (\x. ((MEM x) s1))) s2)) |- (((subseq s1) ((filter (\x. ((MEM x) s1))) s2)) /\ (s1 = ((filter (\x. ((MEM x) s1))) s2)))
+T c==> cuniq f0 c==> csubseq f1 f0 c==> csubseq f1 cfilter / cMEM b0 f1 f0 c/\ csubseq f1 cfilter / cMEM b0 f1 f0 c= f1 cfilter / cMEM b0 f1 f0

@@ -1,0 +1,99 @@
+N REAL_SERIES_DIFFS
+C |- (!f. (!k. ((((---> f) (real_of_num (NUMERAL _0))) sequentially) ==> (((real_sums (\n. ((real_sub (f n)) (f (n + (NUMERAL (BIT1 _0))))))) (f k)) (from k)))))
+T c==> c---> f0 creal_of_num cNUMERAL c_0 csequentially creal_sums / creal_sub * f0 b0 * f0 c+ b0 cNUMERAL cBIT1 c_0 * f0 f1 * part cfrom f1
+D TRUTH
+A |- T
+T cT
+D BOOL_CASES_AX
+A |- (!t. ((t = T) \/ (t = F)))
+T c\/ c= f0 cT c= f0 cF
+D COND_CLAUSES
+A |- (!t1. (!t2. (((((COND T) t1) t2) = t1) /\ ((((COND F) t1) t2) = t2))))
+T c/\ c= cCOND cT f0 f1 f0 c= cCOND cF f0 f1 f1
+D REAL_SUB_RZERO
+A |- (!x. (((real_sub x) (real_of_num (NUMERAL _0))) = x))
+T c= creal_sub f0 creal_of_num cNUMERAL c_0 f0
+D SUM_DIFFS
+A |- (!m. (!n. (((sum (m .. n)) (\k. ((real_sub (f k)) (f (k + (NUMERAL (BIT1 _0))))))) = (((COND (m <= n)) ((real_sub (f m)) (f (n + (NUMERAL (BIT1 _0)))))) (real_of_num (NUMERAL _0))))))
+T c= csum * * part c.. f0 f1 / creal_sub * f2 b0 * f2 c+ b0 cNUMERAL cBIT1 c_0 cCOND c<= f0 f1 creal_sub * f2 f0 * f2 c+ f1 cNUMERAL cBIT1 c_0 creal_of_num cNUMERAL c_0
+D FROM_INTER_NUMSEG
+A |- (!k. (!n. (((from k) INTER ((NUMERAL _0) .. n)) = (k .. n))))
+T c= * * part cINTER * part cfrom f0 * * part c.. cNUMERAL c_0 f1 * * part c.. f0 f1
+D EVENTUALLY_SEQUENTIALLY
+A |- (!p. (((eventually p) sequentially) = (?N. (!n. ((N <= n) ==> (p n))))))
+T c= ceventually f0 csequentially c? / ! c==> c<= b0 b1 * f0 b1
+D REALLIM_CONST
+A |- (!net. (!a. (((---> (\x. a)) a) net)))
+T c---> / f0 f0 f1
+D REALLIM_SUB
+A |- (!net. (!f. (!g. (!l. (!m. (((((---> f) l) net) /\ (((---> g) m) net)) ==> (((---> (\x. ((real_sub (f x)) (g x)))) ((real_sub l) m)) net)))))))
+T c==> c/\ c---> f0 f1 f2 c---> f3 f4 f2 c---> / creal_sub * f0 b0 * f3 b0 creal_sub f1 f4 f2
+D REALLIM_TRANSFORM_EVENTUALLY
+A |- (!net. (!f. (!g. (!l. ((((eventually (\x. ((f x) = (g x)))) net) /\ (((---> f) l) net)) ==> (((---> g) l) net))))))
+T c==> c/\ ceventually / c= * f0 b0 * f1 b0 f2 c---> f0 f3 f2 c---> f1 f3 f2
+D REAL_SEQ_OFFSET
+A |- (!f. (!l. (!k. ((((---> f) l) sequentially) ==> (((---> (\i. (f (i + k)))) l) sequentially)))))
+T c==> c---> f0 f1 csequentially c---> / * f0 c+ b0 f2 f1 csequentially
+D real_sums
+A |- (!s. (!f. (!l. ((((real_sums f) l) s) = (((---> (\n. ((sum (s INTER ((NUMERAL _0) .. n))) f))) l) sequentially)))))
+T c= creal_sums f0 f1 f2 c---> / csum * * part cINTER f2 * * part c.. cNUMERAL c_0 b0 f0 f1 csequentially
++ |- ((!net. (!f. (!g. (!l. ((((eventually (\x. ((f x) = (g x)))) net) /\ (((---> f) l) net)) ==> (((---> g) l) net)))))) ==> (!g. (!l. (!net. ((?f. (((eventually (\x. ((f x) = (g x)))) net) /\ (((---> f) l) net))) ==> (((---> g) l) net))))))
+T c==> ! ! ! ! c==> c/\ ceventually / c= * b1 b4 * b2 b4 b0 c---> b1 b3 b0 c---> b2 b3 b0 ! ! ! c==> c? / c/\ ceventually / c= * b3 b4 * b0 b4 b2 c---> b3 b1 b2 c---> b0 b1 b2
++ |- (!n. ((k <= n) ==> (((real_sub (f k)) (f (n + (NUMERAL (BIT1 _0))))) = (((COND (k <= n)) ((real_sub (f k)) (f (n + (NUMERAL (BIT1 _0)))))) (real_of_num (NUMERAL _0))))))
+T c==> c<= f0 f1 c= creal_sub * f2 f0 * f2 c+ f1 cNUMERAL cBIT1 c_0 cCOND c<= f0 f1 creal_sub * f2 f0 * f2 c+ f1 cNUMERAL cBIT1 c_0 creal_of_num cNUMERAL c_0
++ |- (!f. (((\f. (((eventually (\x. ((f x) = (g x)))) net) /\ (((---> f) l) net))) f) ==> ((!net. (!f. (!g. (!l. ((((eventually (\x. ((f x) = (g x)))) net) /\ (((---> f) l) net)) ==> (((---> g) l) net)))))) ==> (((---> g) l) net))))
+T c==> * / c/\ ceventually / c= * b0 b1 * f0 b1 f1 c---> b0 f2 f1 f3 c==> ! ! ! ! c==> c/\ ceventually / c= * b1 b4 * b2 b4 b0 c---> b1 b3 b0 c---> b2 b3 b0 c---> f0 f2 f1
+- (((---> f) (real_of_num (NUMERAL _0))) sequentially) |- (T = (((---> f) (real_of_num (NUMERAL _0))) sequentially))
+T c==> c---> f0 creal_of_num cNUMERAL c_0 csequentially c= cT c---> f0 creal_of_num cNUMERAL c_0 csequentially
++ (((real_sub x) (real_of_num (NUMERAL _0))) = x) |- (x = ((real_sub x) (real_of_num (NUMERAL _0))))
+T c==> c= creal_sub f0 creal_of_num cNUMERAL c_0 f0 c= f0 creal_sub f0 creal_of_num cNUMERAL c_0
++ |- ((!n. ((k <= n) ==> (((real_sub (f k)) (f (n + (NUMERAL (BIT1 _0))))) = (((COND (k <= n)) ((real_sub (f k)) (f (n + (NUMERAL (BIT1 _0)))))) (real_of_num (NUMERAL _0)))))) = ((\N. (!n. ((N <= n) ==> (((real_sub (f k)) (f (n + (NUMERAL (BIT1 _0))))) = (((COND (k <= n)) ((real_sub (f k)) (f (n + (NUMERAL (BIT1 _0)))))) (real_of_num (NUMERAL _0))))))) k))
+T c= ! c==> c<= f0 b0 c= creal_sub * f1 f0 * f1 c+ b0 cNUMERAL cBIT1 c_0 cCOND c<= f0 b0 creal_sub * f1 f0 * f1 c+ b0 cNUMERAL cBIT1 c_0 creal_of_num cNUMERAL c_0 * / ! c==> c<= b0 b1 c= creal_sub * f1 f0 * f1 c+ b1 cNUMERAL cBIT1 c_0 cCOND c<= f0 b1 creal_sub * f1 f0 * f1 c+ b1 cNUMERAL cBIT1 c_0 creal_of_num cNUMERAL c_0 f0
++ |- ((\p'. (!q'. (((k <= n) = p') ==> ((p' ==> ((((real_sub (f k)) (f (n + (NUMERAL (BIT1 _0))))) = (((COND (k <= n)) ((real_sub (f k)) (f (n + (NUMERAL (BIT1 _0)))))) (real_of_num (NUMERAL _0)))) = q')) ==> (((k <= n) ==> (((real_sub (f k)) (f (n + (NUMERAL (BIT1 _0))))) = (((COND (k <= n)) ((real_sub (f k)) (f (n + (NUMERAL (BIT1 _0)))))) (real_of_num (NUMERAL _0))))) = (p' ==> q')))))) p')
+T * / ! c==> c= c<= f0 f1 b0 c==> c==> b0 c= c= creal_sub * f2 f0 * f2 c+ f1 cNUMERAL cBIT1 c_0 cCOND c<= f0 f1 creal_sub * f2 f0 * f2 c+ f1 cNUMERAL cBIT1 c_0 creal_of_num cNUMERAL c_0 b1 c= c==> c<= f0 f1 c= creal_sub * f2 f0 * f2 c+ f1 cNUMERAL cBIT1 c_0 cCOND c<= f0 f1 creal_sub * f2 f0 * f2 c+ f1 cNUMERAL cBIT1 c_0 creal_of_num cNUMERAL c_0 c==> b0 b1 f3
++ (k <= n) |- ((T ==> (((real_sub (f k)) (f (n + (NUMERAL (BIT1 _0))))) = t')) ==> (((~ T) ==> ((real_of_num (NUMERAL _0)) = e')) ==> ((((COND (k <= n)) ((real_sub (f k)) (f (n + (NUMERAL (BIT1 _0)))))) (real_of_num (NUMERAL _0))) = (((COND T) t') e'))))
+T c==> c<= f0 f1 c==> c==> cT c= creal_sub * f2 f0 * f2 c+ f1 cNUMERAL cBIT1 c_0 f3 c==> c==> c~ cT c= creal_of_num cNUMERAL c_0 f4 c= cCOND c<= f0 f1 creal_sub * f2 f0 * f2 c+ f1 cNUMERAL cBIT1 c_0 creal_of_num cNUMERAL c_0 cCOND cT f3 f4
++ |- (((!g. (!l. (!m. (!net. (((((---> f) l) net) /\ (((---> g) m) net)) ==> (((---> (\x. ((real_sub (f x)) (g x)))) ((real_sub l) m)) net)))))) ==> ((\g. (!l. (!m. (!net. (((((---> f) l) net) /\ (((---> g) m) net)) ==> (((---> (\x. ((real_sub (f x)) (g x)))) ((real_sub l) m)) net)))))) g)) = ((\g. (!l. (!m. (!net. (((((---> f) l) net) /\ (((---> g) m) net)) ==> (((---> (\x. ((real_sub (f x)) (g x)))) ((real_sub l) m)) net)))))) g))
+T c= c==> ! ! ! ! c==> c/\ c---> f0 b1 b3 c---> b0 b2 b3 c---> / creal_sub * f0 b4 * b0 b4 creal_sub b1 b2 b3 * / ! ! ! c==> c/\ c---> f0 b1 b3 c---> b0 b2 b3 c---> / creal_sub * f0 b4 * b0 b4 creal_sub b1 b2 b3 f1 * / ! ! ! c==> c/\ c---> f0 b1 b3 c---> b0 b2 b3 c---> / creal_sub * f0 b4 * b0 b4 creal_sub b1 b2 b3 f1
++ (((---> f) (real_of_num (NUMERAL _0))) sequentially) |- ((((((---> (\n. (f k))) (f k)) sequentially) /\ (((---> (\n. (f (n + (NUMERAL (BIT1 _0)))))) (real_of_num (NUMERAL _0))) sequentially)) ==> (((---> (\n. ((real_sub (f k)) (f (n + (NUMERAL (BIT1 _0))))))) ((real_sub (f k)) (real_of_num (NUMERAL _0)))) sequentially)) = (((---> (\n. ((real_sub (f k)) (f (n + (NUMERAL (BIT1 _0))))))) ((real_sub (f k)) (real_of_num (NUMERAL _0)))) sequentially))
+T c==> c---> f0 creal_of_num cNUMERAL c_0 csequentially c= c==> c/\ c---> / * f0 f1 * f0 f1 csequentially c---> / * f0 c+ b0 cNUMERAL cBIT1 c_0 creal_of_num cNUMERAL c_0 csequentially c---> / creal_sub * f0 f1 * f0 c+ b0 cNUMERAL cBIT1 c_0 creal_sub * f0 f1 creal_of_num cNUMERAL c_0 csequentially c---> / creal_sub * f0 f1 * f0 c+ b0 cNUMERAL cBIT1 c_0 creal_sub * f0 f1 creal_of_num cNUMERAL c_0 csequentially
++ (!net. (!f. (!g. (!l. (!m. (((((---> f) l) net) /\ (((---> g) m) net)) ==> (((---> (\x. ((real_sub (f x)) (g x)))) ((real_sub l) m)) net))))))) |- ((\m. (((((---> f) l) net) /\ (((---> g) m) net)) ==> (((---> (\x. ((real_sub (f x)) (g x)))) ((real_sub l) m)) net))) m)
+T c==> ! ! ! ! ! c==> c/\ c---> b1 b3 b0 c---> b2 b4 b0 c---> / creal_sub * b1 b5 * b2 b5 creal_sub b3 b4 b0 * / c==> c/\ c---> f0 f1 f2 c---> f3 b0 f2 c---> / creal_sub * f0 b1 * f3 b1 creal_sub f1 b0 f2 f4
++ ((\f. (((eventually (\x. ((f x) = (g x)))) net) /\ (((---> f) l) net))) f) |- (((eventually (\x. ((f x) = (g x)))) net) /\ (((---> f) l) net))
+T c==> * / c/\ ceventually / c= * b0 b1 * f0 b1 f1 c---> b0 f2 f1 f3 c/\ ceventually / c= * f3 b0 * f0 b0 f1 c---> f3 f2 f1
+- (!f. (!l. (!k. ((((---> f) l) sequentially) ==> (((---> (\i. (f (i + k)))) l) sequentially))))), (((---> f) l) sequentially) |- ((((---> f) l) sequentially) /\ (((---> (\i. (f (i + k)))) l) sequentially))
+T c==> ! ! ! c==> c---> b0 b1 csequentially c---> / * b0 c+ b3 b2 b1 csequentially c==> c---> f0 f1 csequentially c/\ c---> f0 f1 csequentially c---> / * f0 c+ b0 f2 f1 csequentially
++ (!net. (!f. (!g. (!l. ((((eventually (\x. ((f x) = (g x)))) net) /\ (((---> f) l) net)) ==> (((---> g) l) net)))))) |- ((\f. (!g. (!l. ((((eventually (\x. ((f x) = (g x)))) net) /\ (((---> f) l) net)) ==> (((---> g) l) net))))) f)
+T c==> ! ! ! ! c==> c/\ ceventually / c= * b1 b4 * b2 b4 b0 c---> b1 b3 b0 c---> b2 b3 b0 * / ! ! c==> c/\ ceventually / c= * b0 b3 * b1 b3 f0 c---> b0 b2 f0 c---> b1 b2 f0 f1
++ T |- (T /\ (((real_sub (f k)) (f (n + (NUMERAL (BIT1 _0))))) = ((real_sub (f k)) (f (n + (NUMERAL (BIT1 _0)))))))
+T c==> cT c/\ cT c= creal_sub * f0 f1 * f0 c+ f2 cNUMERAL cBIT1 c_0 creal_sub * f0 f1 * f0 c+ f2 cNUMERAL cBIT1 c_0
++ |- (((!net. (((((---> f) l) net) /\ (((---> g) m) net)) ==> (((---> (\x. ((real_sub (f x)) (g x)))) ((real_sub l) m)) net))) ==> ((\net. (((((---> f) l) net) /\ (((---> g) m) net)) ==> (((---> (\x. ((real_sub (f x)) (g x)))) ((real_sub l) m)) net))) net)) = ((\net. (((((---> f) l) net) /\ (((---> g) m) net)) ==> (((---> (\x. ((real_sub (f x)) (g x)))) ((real_sub l) m)) net))) net))
+T c= c==> ! c==> c/\ c---> f0 f1 b0 c---> f2 f3 b0 c---> / creal_sub * f0 b1 * f2 b1 creal_sub f1 f3 b0 * / c==> c/\ c---> f0 f1 b0 c---> f2 f3 b0 c---> / creal_sub * f0 b1 * f2 b1 creal_sub f1 f3 b0 f4 * / c==> c/\ c---> f0 f1 b0 c---> f2 f3 b0 c---> / creal_sub * f0 b1 * f2 b1 creal_sub f1 f3 b0 f4
+- ((((---> f) l) net) /\ (((---> g) m) net)) |- ((!net. (!f. (!g. (!l. (!m. (((((---> f) l) net) /\ (((---> g) m) net)) ==> (((---> (\x. ((real_sub (f x)) (g x)))) ((real_sub l) m)) net))))))) ==> (((---> (\x. ((real_sub (f x)) (g x)))) ((real_sub l) m)) net))
+T c==> c/\ c---> f0 f1 f2 c---> f3 f4 f2 c==> ! ! ! ! ! c==> c/\ c---> b1 b3 b0 c---> b2 b4 b0 c---> / creal_sub * b1 b5 * b2 b5 creal_sub b3 b4 b0 c---> / creal_sub * f0 b0 * f3 b0 creal_sub f1 f4 f2
++ |- ((\q'. (((k <= n) = p') ==> ((p' ==> ((((real_sub (f k)) (f (n + (NUMERAL (BIT1 _0))))) = (((COND (k <= n)) ((real_sub (f k)) (f (n + (NUMERAL (BIT1 _0)))))) (real_of_num (NUMERAL _0)))) = q')) ==> (((k <= n) ==> (((real_sub (f k)) (f (n + (NUMERAL (BIT1 _0))))) = (((COND (k <= n)) ((real_sub (f k)) (f (n + (NUMERAL (BIT1 _0)))))) (real_of_num (NUMERAL _0))))) = (p' ==> q'))))) q')
+T * / c==> c= c<= f0 f1 f2 c==> c==> f2 c= c= creal_sub * f3 f0 * f3 c+ f1 cNUMERAL cBIT1 c_0 cCOND c<= f0 f1 creal_sub * f3 f0 * f3 c+ f1 cNUMERAL cBIT1 c_0 creal_of_num cNUMERAL c_0 b0 c= c==> c<= f0 f1 c= creal_sub * f3 f0 * f3 c+ f1 cNUMERAL cBIT1 c_0 cCOND c<= f0 f1 creal_sub * f3 f0 * f3 c+ f1 cNUMERAL cBIT1 c_0 creal_of_num cNUMERAL c_0 c==> f2 b0 f4
+- |- ((t ==> t) = T)
+T c= c==> f0 f0 cT
+- (((---> f) (real_of_num (NUMERAL _0))) sequentially) |- ((((---> f) (real_of_num (NUMERAL _0))) sequentially) = T)
+T c==> c---> f0 creal_of_num cNUMERAL c_0 csequentially c= c---> f0 creal_of_num cNUMERAL c_0 csequentially cT
+- |- ((?N. t) = t)
+T c= c? / f0 f0
+- T |- (T = T)
+T c==> cT c= cT cT
+- (!net. (!f. (!g. (!l. (!m. (((((---> f) l) net) /\ (((---> g) m) net)) ==> (((---> (\x. ((real_sub (f x)) (g x)))) ((real_sub l) m)) net))))))), ((((---> f) l) net) /\ (((---> g) m) net)) |- (((((---> f) l) net) /\ (((---> g) m) net)) /\ (((---> (\x. ((real_sub (f x)) (g x)))) ((real_sub l) m)) net))
+T c==> ! ! ! ! ! c==> c/\ c---> b1 b3 b0 c---> b2 b4 b0 c---> / creal_sub * b1 b5 * b2 b5 creal_sub b3 b4 b0 c==> c/\ c---> f0 f1 f2 c---> f3 f4 f2 c/\ c/\ c---> f0 f1 f2 c---> f3 f4 f2 c---> / creal_sub * f0 b0 * f3 b0 creal_sub f1 f4 f2
+- |- ((t /\ t) = t)
+T c= c/\ f0 f0 f0
+- (!net. (!f. (!g. (!l. (!m. (((((---> f) l) net) /\ (((---> g) m) net)) ==> (((---> (\x. ((real_sub (f x)) (g x)))) ((real_sub l) m)) net))))))), ((((---> f) l) net) /\ (((---> g) m) net)) |- ((!net. (!f. (!g. (!l. (!m. (((((---> f) l) net) /\ (((---> g) m) net)) ==> (((---> (\x. ((real_sub (f x)) (g x)))) ((real_sub l) m)) net))))))) /\ (((---> (\x. ((real_sub (f x)) (g x)))) ((real_sub l) m)) net))
+T c==> ! ! ! ! ! c==> c/\ c---> b1 b3 b0 c---> b2 b4 b0 c---> / creal_sub * b1 b5 * b2 b5 creal_sub b3 b4 b0 c==> c/\ c---> f0 f1 f2 c---> f3 f4 f2 c/\ ! ! ! ! ! c==> c/\ c---> b1 b3 b0 c---> b2 b4 b0 c---> / creal_sub * b1 b5 * b2 b5 creal_sub b3 b4 b0 c---> / creal_sub * f0 b0 * f3 b0 creal_sub f1 f4 f2
+- (~ T) |- (T = F)
+T c==> c~ cT c= cT cF
+- T |- ((T = T) = T)
+T c==> cT c= c= cT cT cT
+- |- (((\n. (f n)) y) = (f y))
+T c= * / * f0 b0 f1 * f0 f1
+- (!f. (!l. (!k. ((((---> f) l) sequentially) ==> (((---> (\i. (f (i + k)))) l) sequentially))))), (((---> f) l) sequentially) |- ((!f. (!l. (!k. ((((---> f) l) sequentially) ==> (((---> (\i. (f (i + k)))) l) sequentially))))) /\ (((---> (\i. (f (i + k)))) l) sequentially))
+T c==> ! ! ! c==> c---> b0 b1 csequentially c---> / * b0 c+ b3 b2 b1 csequentially c==> c---> f0 f1 csequentially c/\ ! ! ! c==> c---> b0 b1 csequentially c---> / * b0 c+ b3 b2 b1 csequentially c---> / * f0 c+ b0 f2 f1 csequentially
+- (((---> f) l) sequentially) |- ((!f. (!l. (!k. ((((---> f) l) sequentially) ==> (((---> (\i. (f (i + k)))) l) sequentially))))) ==> (((---> (\i. (f (i + k)))) l) sequentially))
+T c==> c---> f0 f1 csequentially c==> ! ! ! c==> c---> b0 b1 csequentially c---> / * b0 c+ b3 b2 b1 csequentially c---> / * f0 c+ b0 f2 f1 csequentially

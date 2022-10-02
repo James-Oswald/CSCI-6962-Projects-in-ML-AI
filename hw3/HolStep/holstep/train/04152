@@ -1,0 +1,122 @@
+N Seq.index_last
+C |- (!x. (!s. ((uniq ((CONS x) s)) ==> (((indexl ((last x) s)) ((CONS x) s)) = (sizel s)))))
+T c==> cuniq cCONS f0 f1 c= cindexl clast f0 f1 cCONS f0 f1 csizel f1
+D TRUTH
+A |- T
+T cT
+D EXCLUDED_MIDDLE
+A |- (!t. (t \/ (~ t)))
+T c\/ f0 c~ f0
+D BOOL_CASES_AX
+A |- (!t. ((t = T) \/ (t = F)))
+T c\/ c= f0 cT c= f0 cF
+D COND_CLAUSES
+A |- (!t1. (!t2. (((((COND T) t1) t2) = t1) /\ ((((COND F) t1) t2) = t2))))
+T c/\ c= cCOND cT f0 f1 f0 c= cCOND cF f0 f1 f1
+D Ssrnat.addn0
+A |- (!n. ((n + (NUMERAL _0)) = n))
+T c= c+ f0 cNUMERAL c_0 f0
+D Seq.cats1
+A |- (!s. (!z. (((cat s) ((CONS z) NIL)) = ((rcons s) z))))
+T c= ccat f0 cCONS f1 cNIL crcons f0 f1
+D Seq.lastI
+A |- (!x. (!s. (((CONS x) s) = ((rcons ((belast x) s)) ((last x) s)))))
+T c= cCONS f0 f1 crcons cbelast f0 f1 clast f0 f1
+D Seq.size_belast
+A |- (!x. (!s. ((sizel ((belast x) s)) = (sizel s))))
+T c= csizel cbelast f0 f1 csizel f1
+D Seq.find
+A |- (!a. (!x. (!s'. ((((find a) NIL) = (NUMERAL _0)) /\ (((find a) ((CONS x) s')) = (((COND (a x)) (NUMERAL _0)) (SUC ((find a) s'))))))))
+T c/\ c= cfind f0 cNIL cNUMERAL c_0 c= cfind f0 cCONS f1 f2 cCOND * f0 f1 cNUMERAL c_0 cSUC cfind f0 f2
+D Seq.pred1
+A |- (!a. ((pred1 a) = (\x. (x = a))))
+T c= * part cpred1 f0 / c= b0 f0
+D Seq.rcons_uniq
+A |- (!s. (!x. ((uniq ((rcons s) x)) = ((~ ((MEM x) s)) /\ (uniq s)))))
+T c= cuniq crcons f0 f1 c/\ c~ cMEM f1 f0 cuniq f0
+D Seq.index
+A |- (!x. ((indexl x) = (find (pred1 x))))
+T c= * part cindexl f0 * part cfind * part cpred1 f0
+D Seq.index_cat
+A |- (!x. (!s1. (!s2. (((indexl x) ((cat s1) s2)) = (((COND ((MEM x) s1)) ((indexl x) s1)) ((sizel s1) + ((indexl x) s2)))))))
+T c= cindexl f0 ccat f1 f2 cCOND cMEM f0 f1 cindexl f0 f1 c+ csizel f1 cindexl f0 f2
++ (uniq ((belast x) s)) |- ((uniq ((belast x) s)) /\ ((((sizel s) + (((COND ((\x'. (x' = ((last x) s))) ((last x) s))) (NUMERAL _0)) (SUC ((find (\x'. (x' = ((last x) s)))) NIL)))) = (sizel s)) = (((sizel s) + (NUMERAL _0)) = (sizel s))))
+T c==> cuniq cbelast f0 f1 c/\ cuniq cbelast f0 f1 c= c= c+ csizel f1 cCOND * / c= b0 clast f0 f1 clast f0 f1 cNUMERAL c_0 cSUC cfind / c= b0 clast f0 f1 cNIL csizel f1 c= c+ csizel f1 cNUMERAL c_0 csizel f1
++ |- (((!s. (((CONS x) s) = ((rcons ((belast x) s)) ((last x) s)))) ==> ((\s. (((CONS x) s) = ((rcons ((belast x) s)) ((last x) s)))) s)) = ((\s. (((CONS x) s) = ((rcons ((belast x) s)) ((last x) s)))) s))
+T c= c==> ! c= cCONS f0 b0 crcons cbelast f0 b0 clast f0 b0 * / c= cCONS f0 b0 crcons cbelast f0 b0 clast f0 b0 f1 * / c= cCONS f0 b0 crcons cbelast f0 b0 clast f0 b0 f1
++ ((MEM ((last x) s)) ((belast x) s)) |- (((MEM ((last x) s)) ((belast x) s)) = T)
+T c==> cMEM clast f0 f1 cbelast f0 f1 c= cMEM clast f0 f1 cbelast f0 f1 cT
++ |- ((\s. (!x. ((uniq ((rcons s) x)) = ((~ ((MEM x) s)) /\ (uniq s))))) s)
+T * / ! c= cuniq crcons b0 b1 c/\ c~ cMEM b1 b0 cuniq b0 f0
++ (~ ((MEM ((last x) s)) ((belast x) s))) |- ((F ==> (((indexl ((last x) s)) ((belast x) s)) = t')) ==> (((~ F) ==> (((sizel s) + ((indexl ((last x) s)) ((CONS ((last x) s)) NIL))) = e')) ==> ((((COND ((MEM ((last x) s)) ((belast x) s))) ((indexl ((last x) s)) ((belast x) s))) ((sizel s) + ((indexl ((last x) s)) ((CONS ((last x) s)) NIL)))) = (((COND F) t') e'))))
+T c==> c~ cMEM clast f0 f1 cbelast f0 f1 c==> c==> cF c= cindexl clast f0 f1 cbelast f0 f1 f2 c==> c==> c~ cF c= c+ csizel f1 cindexl clast f0 f1 cCONS clast f0 f1 cNIL f3 c= cCOND cMEM clast f0 f1 cbelast f0 f1 cindexl clast f0 f1 cbelast f0 f1 c+ csizel f1 cindexl clast f0 f1 cCONS clast f0 f1 cNIL cCOND cF f2 f3
++ |- (((uniq ((belast x) s)) = p') ==> ((p' ==> ((((sizel s) + ((indexl ((last x) s)) ((CONS ((last x) s)) NIL))) = (sizel s)) = q')) ==> (((uniq ((belast x) s)) ==> (((sizel s) + ((indexl ((last x) s)) ((CONS ((last x) s)) NIL))) = (sizel s))) = (p' ==> q'))))
+T c==> c= cuniq cbelast f0 f1 f2 c==> c==> f2 c= c= c+ csizel f1 cindexl clast f0 f1 cCONS clast f0 f1 cNIL csizel f1 f3 c= c==> cuniq cbelast f0 f1 c= c+ csizel f1 cindexl clast f0 f1 cCONS clast f0 f1 cNIL csizel f1 c==> f2 f3
++ |- (((find a) ((CONS x) s')) = (((COND (a x)) (NUMERAL _0)) (SUC ((find a) s'))))
+T c= cfind f0 cCONS f1 f2 cCOND * f0 f1 cNUMERAL c_0 cSUC cfind f0 f2
+- ((!x. (P ==> (Q x))) = (P ==> (!x. (Q x)))) |- ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))
+T c==> c= ! c==> f0 * f1 b0 c==> f0 ! * f1 b0 c= c==> f0 ! * f1 b0 ! c==> f0 * f1 b0
++ |- ((\p'. (!q'. (((~ ((MEM ((last x) s)) ((belast x) s))) = p') ==> ((p' ==> (((uniq ((belast x) s)) ==> (((sizel s) + (((COND ((\x'. (x' = ((last x) s))) ((last x) s))) (NUMERAL _0)) (SUC ((find (\x'. (x' = ((last x) s)))) NIL)))) = (sizel s))) = q')) ==> (((~ ((MEM ((last x) s)) ((belast x) s))) ==> ((uniq ((belast x) s)) ==> (((sizel s) + (((COND ((\x'. (x' = ((last x) s))) ((last x) s))) (NUMERAL _0)) (SUC ((find (\x'. (x' = ((last x) s)))) NIL)))) = (sizel s)))) = (p' ==> q')))))) p')
+T * / ! c==> c= c~ cMEM clast f0 f1 cbelast f0 f1 b0 c==> c==> b0 c= c==> cuniq cbelast f0 f1 c= c+ csizel f1 cCOND * / c= b2 clast f0 f1 clast f0 f1 cNUMERAL c_0 cSUC cfind / c= b2 clast f0 f1 cNIL csizel f1 b1 c= c==> c~ cMEM clast f0 f1 cbelast f0 f1 c==> cuniq cbelast f0 f1 c= c+ csizel f1 cCOND * / c= b2 clast f0 f1 clast f0 f1 cNUMERAL c_0 cSUC cfind / c= b2 clast f0 f1 cNIL csizel f1 c==> b0 b1 f2
++ |- ((\e'. ((((\x'. (x' = ((last x) s))) ((last x) s)) = g') ==> ((g' ==> ((NUMERAL _0) = t')) ==> (((~ g') ==> ((SUC ((find (\x'. (x' = ((last x) s)))) NIL)) = e')) ==> ((((COND ((\x'. (x' = ((last x) s))) ((last x) s))) (NUMERAL _0)) (SUC ((find (\x'. (x' = ((last x) s)))) NIL))) = (((COND g') t') e')))))) e')
+T * / c==> c= * / c= b1 clast f0 f1 clast f0 f1 f2 c==> c==> f2 c= cNUMERAL c_0 f3 c==> c==> c~ f2 c= cSUC cfind / c= b1 clast f0 f1 cNIL b0 c= cCOND * / c= b1 clast f0 f1 clast f0 f1 cNUMERAL c_0 cSUC cfind / c= b1 clast f0 f1 cNIL cCOND f2 f3 b0 f4
++ |- (((!g'. (!t'. (!e'. ((((MEM ((last x) s)) ((belast x) s)) = g') ==> ((g' ==> (((indexl ((last x) s)) ((belast x) s)) = t')) ==> (((~ g') ==> (((sizel s) + ((indexl ((last x) s)) ((CONS ((last x) s)) NIL))) = e')) ==> ((((COND ((MEM ((last x) s)) ((belast x) s))) ((indexl ((last x) s)) ((belast x) s))) ((sizel s) + ((indexl ((last x) s)) ((CONS ((last x) s)) NIL)))) = (((COND g') t') e')))))))) ==> ((\g'. (!t'. (!e'. ((((MEM ((last x) s)) ((belast x) s)) = g') ==> ((g' ==> (((indexl ((last x) s)) ((belast x) s)) = t')) ==> (((~ g') ==> (((sizel s) + ((indexl ((last x) s)) ((CONS ((last x) s)) NIL))) = e')) ==> ((((COND ((MEM ((last x) s)) ((belast x) s))) ((indexl ((last x) s)) ((belast x) s))) ((sizel s) + ((indexl ((last x) s)) ((CONS ((last x) s)) NIL)))) = (((COND g') t') e')))))))) g')) = ((\g'. (!t'. (!e'. ((((MEM ((last x) s)) ((belast x) s)) = g') ==> ((g' ==> (((indexl ((last x) s)) ((belast x) s)) = t')) ==> (((~ g') ==> (((sizel s) + ((indexl ((last x) s)) ((CONS ((last x) s)) NIL))) = e')) ==> ((((COND ((MEM ((last x) s)) ((belast x) s))) ((indexl ((last x) s)) ((belast x) s))) ((sizel s) + ((indexl ((last x) s)) ((CONS ((last x) s)) NIL)))) = (((COND g') t') e')))))))) g'))
+T c= c==> ! ! ! c==> c= cMEM clast f0 f1 cbelast f0 f1 b0 c==> c==> b0 c= cindexl clast f0 f1 cbelast f0 f1 b1 c==> c==> c~ b0 c= c+ csizel f1 cindexl clast f0 f1 cCONS clast f0 f1 cNIL b2 c= cCOND cMEM clast f0 f1 cbelast f0 f1 cindexl clast f0 f1 cbelast f0 f1 c+ csizel f1 cindexl clast f0 f1 cCONS clast f0 f1 cNIL cCOND b0 b1 b2 * / ! ! c==> c= cMEM clast f0 f1 cbelast f0 f1 b0 c==> c==> b0 c= cindexl clast f0 f1 cbelast f0 f1 b1 c==> c==> c~ b0 c= c+ csizel f1 cindexl clast f0 f1 cCONS clast f0 f1 cNIL b2 c= cCOND cMEM clast f0 f1 cbelast f0 f1 cindexl clast f0 f1 cbelast f0 f1 c+ csizel f1 cindexl clast f0 f1 cCONS clast f0 f1 cNIL cCOND b0 b1 b2 f2 * / ! ! c==> c= cMEM clast f0 f1 cbelast f0 f1 b0 c==> c==> b0 c= cindexl clast f0 f1 cbelast f0 f1 b1 c==> c==> c~ b0 c= c+ csizel f1 cindexl clast f0 f1 cCONS clast f0 f1 cNIL b2 c= cCOND cMEM clast f0 f1 cbelast f0 f1 cindexl clast f0 f1 cbelast f0 f1 c+ csizel f1 cindexl clast f0 f1 cCONS clast f0 f1 cNIL cCOND b0 b1 b2 f2
++ |- ((\g'. (!t'. (!e'. ((((\x'. (x' = ((last x) s))) ((last x) s)) = g') ==> ((g' ==> ((NUMERAL _0) = t')) ==> (((~ g') ==> ((SUC ((find (\x'. (x' = ((last x) s)))) NIL)) = e')) ==> ((((COND ((\x'. (x' = ((last x) s))) ((last x) s))) (NUMERAL _0)) (SUC ((find (\x'. (x' = ((last x) s)))) NIL))) = (((COND g') t') e')))))))) g')
+T * / ! ! c==> c= * / c= b3 clast f0 f1 clast f0 f1 b0 c==> c==> b0 c= cNUMERAL c_0 b1 c==> c==> c~ b0 c= cSUC cfind / c= b3 clast f0 f1 cNIL b2 c= cCOND * / c= b3 clast f0 f1 clast f0 f1 cNUMERAL c_0 cSUC cfind / c= b3 clast f0 f1 cNIL cCOND b0 b1 b2 f2
++ |- (((!q'. (((uniq ((belast x) s)) = p') ==> ((p' ==> ((((sizel s) + ((indexl ((last x) s)) ((CONS ((last x) s)) NIL))) = (sizel s)) = q')) ==> (((uniq ((belast x) s)) ==> (((sizel s) + ((indexl ((last x) s)) ((CONS ((last x) s)) NIL))) = (sizel s))) = (p' ==> q'))))) ==> ((\q'. (((uniq ((belast x) s)) = p') ==> ((p' ==> ((((sizel s) + ((indexl ((last x) s)) ((CONS ((last x) s)) NIL))) = (sizel s)) = q')) ==> (((uniq ((belast x) s)) ==> (((sizel s) + ((indexl ((last x) s)) ((CONS ((last x) s)) NIL))) = (sizel s))) = (p' ==> q'))))) q')) = ((\q'. (((uniq ((belast x) s)) = p') ==> ((p' ==> ((((sizel s) + ((indexl ((last x) s)) ((CONS ((last x) s)) NIL))) = (sizel s)) = q')) ==> (((uniq ((belast x) s)) ==> (((sizel s) + ((indexl ((last x) s)) ((CONS ((last x) s)) NIL))) = (sizel s))) = (p' ==> q'))))) q'))
+T c= c==> ! c==> c= cuniq cbelast f0 f1 f2 c==> c==> f2 c= c= c+ csizel f1 cindexl clast f0 f1 cCONS clast f0 f1 cNIL csizel f1 b0 c= c==> cuniq cbelast f0 f1 c= c+ csizel f1 cindexl clast f0 f1 cCONS clast f0 f1 cNIL csizel f1 c==> f2 b0 * / c==> c= cuniq cbelast f0 f1 f2 c==> c==> f2 c= c= c+ csizel f1 cindexl clast f0 f1 cCONS clast f0 f1 cNIL csizel f1 b0 c= c==> cuniq cbelast f0 f1 c= c+ csizel f1 cindexl clast f0 f1 cCONS clast f0 f1 cNIL csizel f1 c==> f2 b0 f3 * / c==> c= cuniq cbelast f0 f1 f2 c==> c==> f2 c= c= c+ csizel f1 cindexl clast f0 f1 cCONS clast f0 f1 cNIL csizel f1 b0 c= c==> cuniq cbelast f0 f1 c= c+ csizel f1 cindexl clast f0 f1 cCONS clast f0 f1 cNIL csizel f1 c==> f2 b0 f3
++ |- ((\s. ((sizel ((belast x) s)) = (sizel s))) s)
+T * / c= csizel cbelast f0 b0 csizel b0 f1
++ |- ((\a. ((pred1 a) = (\x. (x = a)))) a)
+T * / c= * part cpred1 b0 / c= b1 b0 f0
++ |- (((!q'. ((((~ ((MEM ((last x) s)) ((belast x) s))) /\ (uniq ((belast x) s))) = p') ==> ((p' ==> (((((COND ((MEM ((last x) s)) ((belast x) s))) ((indexl ((last x) s)) ((belast x) s))) ((sizel s) + ((indexl ((last x) s)) ((CONS ((last x) s)) NIL)))) = (sizel s)) = q')) ==> ((((~ ((MEM ((last x) s)) ((belast x) s))) /\ (uniq ((belast x) s))) ==> ((((COND ((MEM ((last x) s)) ((belast x) s))) ((indexl ((last x) s)) ((belast x) s))) ((sizel s) + ((indexl ((last x) s)) ((CONS ((last x) s)) NIL)))) = (sizel s))) = (p' ==> q'))))) ==> ((\q'. ((((~ ((MEM ((last x) s)) ((belast x) s))) /\ (uniq ((belast x) s))) = p') ==> ((p' ==> (((((COND ((MEM ((last x) s)) ((belast x) s))) ((indexl ((last x) s)) ((belast x) s))) ((sizel s) + ((indexl ((last x) s)) ((CONS ((last x) s)) NIL)))) = (sizel s)) = q')) ==> ((((~ ((MEM ((last x) s)) ((belast x) s))) /\ (uniq ((belast x) s))) ==> ((((COND ((MEM ((last x) s)) ((belast x) s))) ((indexl ((last x) s)) ((belast x) s))) ((sizel s) + ((indexl ((last x) s)) ((CONS ((last x) s)) NIL)))) = (sizel s))) = (p' ==> q'))))) q')) = ((\q'. ((((~ ((MEM ((last x) s)) ((belast x) s))) /\ (uniq ((belast x) s))) = p') ==> ((p' ==> (((((COND ((MEM ((last x) s)) ((belast x) s))) ((indexl ((last x) s)) ((belast x) s))) ((sizel s) + ((indexl ((last x) s)) ((CONS ((last x) s)) NIL)))) = (sizel s)) = q')) ==> ((((~ ((MEM ((last x) s)) ((belast x) s))) /\ (uniq ((belast x) s))) ==> ((((COND ((MEM ((last x) s)) ((belast x) s))) ((indexl ((last x) s)) ((belast x) s))) ((sizel s) + ((indexl ((last x) s)) ((CONS ((last x) s)) NIL)))) = (sizel s))) = (p' ==> q'))))) q'))
+T c= c==> ! c==> c= c/\ c~ cMEM clast f0 f1 cbelast f0 f1 cuniq cbelast f0 f1 f2 c==> c==> f2 c= c= cCOND cMEM clast f0 f1 cbelast f0 f1 cindexl clast f0 f1 cbelast f0 f1 c+ csizel f1 cindexl clast f0 f1 cCONS clast f0 f1 cNIL csizel f1 b0 c= c==> c/\ c~ cMEM clast f0 f1 cbelast f0 f1 cuniq cbelast f0 f1 c= cCOND cMEM clast f0 f1 cbelast f0 f1 cindexl clast f0 f1 cbelast f0 f1 c+ csizel f1 cindexl clast f0 f1 cCONS clast f0 f1 cNIL csizel f1 c==> f2 b0 * / c==> c= c/\ c~ cMEM clast f0 f1 cbelast f0 f1 cuniq cbelast f0 f1 f2 c==> c==> f2 c= c= cCOND cMEM clast f0 f1 cbelast f0 f1 cindexl clast f0 f1 cbelast f0 f1 c+ csizel f1 cindexl clast f0 f1 cCONS clast f0 f1 cNIL csizel f1 b0 c= c==> c/\ c~ cMEM clast f0 f1 cbelast f0 f1 cuniq cbelast f0 f1 c= cCOND cMEM clast f0 f1 cbelast f0 f1 cindexl clast f0 f1 cbelast f0 f1 c+ csizel f1 cindexl clast f0 f1 cCONS clast f0 f1 cNIL csizel f1 c==> f2 b0 f3 * / c==> c= c/\ c~ cMEM clast f0 f1 cbelast f0 f1 cuniq cbelast f0 f1 f2 c==> c==> f2 c= c= cCOND cMEM clast f0 f1 cbelast f0 f1 cindexl clast f0 f1 cbelast f0 f1 c+ csizel f1 cindexl clast f0 f1 cCONS clast f0 f1 cNIL csizel f1 b0 c= c==> c/\ c~ cMEM clast f0 f1 cbelast f0 f1 cuniq cbelast f0 f1 c= cCOND cMEM clast f0 f1 cbelast f0 f1 cindexl clast f0 f1 cbelast f0 f1 c+ csizel f1 cindexl clast f0 f1 cCONS clast f0 f1 cNIL csizel f1 c==> f2 b0 f3
++ |- ((((uniq ((belast x) s)) = (uniq ((belast x) s))) ==> (((uniq ((belast x) s)) ==> ((((sizel s) + (((COND ((\x'. (x' = ((last x) s))) ((last x) s))) (NUMERAL _0)) (SUC ((find (\x'. (x' = ((last x) s)))) NIL)))) = (sizel s)) = q')) ==> (((uniq ((belast x) s)) ==> (((sizel s) + (((COND ((\x'. (x' = ((last x) s))) ((last x) s))) (NUMERAL _0)) (SUC ((find (\x'. (x' = ((last x) s)))) NIL)))) = (sizel s))) = ((uniq ((belast x) s)) ==> q')))) = (((uniq ((belast x) s)) ==> ((((sizel s) + (((COND ((\x'. (x' = ((last x) s))) ((last x) s))) (NUMERAL _0)) (SUC ((find (\x'. (x' = ((last x) s)))) NIL)))) = (sizel s)) = q')) ==> (((uniq ((belast x) s)) ==> (((sizel s) + (((COND ((\x'. (x' = ((last x) s))) ((last x) s))) (NUMERAL _0)) (SUC ((find (\x'. (x' = ((last x) s)))) NIL)))) = (sizel s))) = ((uniq ((belast x) s)) ==> q'))))
+T c= c==> c= cuniq cbelast f0 f1 cuniq cbelast f0 f1 c==> c==> cuniq cbelast f0 f1 c= c= c+ csizel f1 cCOND * / c= b0 clast f0 f1 clast f0 f1 cNUMERAL c_0 cSUC cfind / c= b0 clast f0 f1 cNIL csizel f1 f2 c= c==> cuniq cbelast f0 f1 c= c+ csizel f1 cCOND * / c= b0 clast f0 f1 clast f0 f1 cNUMERAL c_0 cSUC cfind / c= b0 clast f0 f1 cNIL csizel f1 c==> cuniq cbelast f0 f1 f2 c==> c==> cuniq cbelast f0 f1 c= c= c+ csizel f1 cCOND * / c= b0 clast f0 f1 clast f0 f1 cNUMERAL c_0 cSUC cfind / c= b0 clast f0 f1 cNIL csizel f1 f2 c= c==> cuniq cbelast f0 f1 c= c+ csizel f1 cCOND * / c= b0 clast f0 f1 clast f0 f1 cNUMERAL c_0 cSUC cfind / c= b0 clast f0 f1 cNIL csizel f1 c==> cuniq cbelast f0 f1 f2
++ |- (((!p'. (!q'. (((~ ((MEM ((last x) s)) ((belast x) s))) = p') ==> ((p' ==> (((uniq ((belast x) s)) ==> (((sizel s) + ((indexl ((last x) s)) ((CONS ((last x) s)) NIL))) = (sizel s))) = q')) ==> (((~ ((MEM ((last x) s)) ((belast x) s))) ==> ((uniq ((belast x) s)) ==> (((sizel s) + ((indexl ((last x) s)) ((CONS ((last x) s)) NIL))) = (sizel s)))) = (p' ==> q')))))) ==> ((\p'. (!q'. (((~ ((MEM ((last x) s)) ((belast x) s))) = p') ==> ((p' ==> (((uniq ((belast x) s)) ==> (((sizel s) + ((indexl ((last x) s)) ((CONS ((last x) s)) NIL))) = (sizel s))) = q')) ==> (((~ ((MEM ((last x) s)) ((belast x) s))) ==> ((uniq ((belast x) s)) ==> (((sizel s) + ((indexl ((last x) s)) ((CONS ((last x) s)) NIL))) = (sizel s)))) = (p' ==> q')))))) p')) = ((\p'. (!q'. (((~ ((MEM ((last x) s)) ((belast x) s))) = p') ==> ((p' ==> (((uniq ((belast x) s)) ==> (((sizel s) + ((indexl ((last x) s)) ((CONS ((last x) s)) NIL))) = (sizel s))) = q')) ==> (((~ ((MEM ((last x) s)) ((belast x) s))) ==> ((uniq ((belast x) s)) ==> (((sizel s) + ((indexl ((last x) s)) ((CONS ((last x) s)) NIL))) = (sizel s)))) = (p' ==> q')))))) p'))
+T c= c==> ! ! c==> c= c~ cMEM clast f0 f1 cbelast f0 f1 b0 c==> c==> b0 c= c==> cuniq cbelast f0 f1 c= c+ csizel f1 cindexl clast f0 f1 cCONS clast f0 f1 cNIL csizel f1 b1 c= c==> c~ cMEM clast f0 f1 cbelast f0 f1 c==> cuniq cbelast f0 f1 c= c+ csizel f1 cindexl clast f0 f1 cCONS clast f0 f1 cNIL csizel f1 c==> b0 b1 * / ! c==> c= c~ cMEM clast f0 f1 cbelast f0 f1 b0 c==> c==> b0 c= c==> cuniq cbelast f0 f1 c= c+ csizel f1 cindexl clast f0 f1 cCONS clast f0 f1 cNIL csizel f1 b1 c= c==> c~ cMEM clast f0 f1 cbelast f0 f1 c==> cuniq cbelast f0 f1 c= c+ csizel f1 cindexl clast f0 f1 cCONS clast f0 f1 cNIL csizel f1 c==> b0 b1 f2 * / ! c==> c= c~ cMEM clast f0 f1 cbelast f0 f1 b0 c==> c==> b0 c= c==> cuniq cbelast f0 f1 c= c+ csizel f1 cindexl clast f0 f1 cCONS clast f0 f1 cNIL csizel f1 b1 c= c==> c~ cMEM clast f0 f1 cbelast f0 f1 c==> cuniq cbelast f0 f1 c= c+ csizel f1 cindexl clast f0 f1 cCONS clast f0 f1 cNIL csizel f1 c==> b0 b1 f2
++ |- (((!s. ((sizel ((belast x) s)) = (sizel s))) ==> ((\s. ((sizel ((belast x) s)) = (sizel s))) s)) = ((\s. ((sizel ((belast x) s)) = (sizel s))) s))
+T c= c==> ! c= csizel cbelast f0 b0 csizel b0 * / c= csizel cbelast f0 b0 csizel b0 f1 * / c= csizel cbelast f0 b0 csizel b0 f1
+- |- ((\P. (!Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x)))))) P)
+T * / ! c= c==> b0 ! * b1 b2 ! c==> b0 * b1 b2 f0
++ |- ((\a. (!x. (!s'. ((((find a) NIL) = (NUMERAL _0)) /\ (((find a) ((CONS x) s')) = (((COND (a x)) (NUMERAL _0)) (SUC ((find a) s')))))))) a)
+T * / ! ! c/\ c= cfind b0 cNIL cNUMERAL c_0 c= cfind b0 cCONS b1 b2 cCOND * b0 b1 cNUMERAL c_0 cSUC cfind b0 b2 f0
++ |- (((!p'. (!q'. (((~ ((MEM ((last x) s)) ((belast x) s))) = p') ==> ((p' ==> (((uniq ((belast x) s)) ==> (((sizel s) + (NUMERAL _0)) = (sizel s))) = q')) ==> (((~ ((MEM ((last x) s)) ((belast x) s))) ==> ((uniq ((belast x) s)) ==> (((sizel s) + (NUMERAL _0)) = (sizel s)))) = (p' ==> q')))))) ==> ((\p'. (!q'. (((~ ((MEM ((last x) s)) ((belast x) s))) = p') ==> ((p' ==> (((uniq ((belast x) s)) ==> (((sizel s) + (NUMERAL _0)) = (sizel s))) = q')) ==> (((~ ((MEM ((last x) s)) ((belast x) s))) ==> ((uniq ((belast x) s)) ==> (((sizel s) + (NUMERAL _0)) = (sizel s)))) = (p' ==> q')))))) p')) = ((\p'. (!q'. (((~ ((MEM ((last x) s)) ((belast x) s))) = p') ==> ((p' ==> (((uniq ((belast x) s)) ==> (((sizel s) + (NUMERAL _0)) = (sizel s))) = q')) ==> (((~ ((MEM ((last x) s)) ((belast x) s))) ==> ((uniq ((belast x) s)) ==> (((sizel s) + (NUMERAL _0)) = (sizel s)))) = (p' ==> q')))))) p'))
+T c= c==> ! ! c==> c= c~ cMEM clast f0 f1 cbelast f0 f1 b0 c==> c==> b0 c= c==> cuniq cbelast f0 f1 c= c+ csizel f1 cNUMERAL c_0 csizel f1 b1 c= c==> c~ cMEM clast f0 f1 cbelast f0 f1 c==> cuniq cbelast f0 f1 c= c+ csizel f1 cNUMERAL c_0 csizel f1 c==> b0 b1 * / ! c==> c= c~ cMEM clast f0 f1 cbelast f0 f1 b0 c==> c==> b0 c= c==> cuniq cbelast f0 f1 c= c+ csizel f1 cNUMERAL c_0 csizel f1 b1 c= c==> c~ cMEM clast f0 f1 cbelast f0 f1 c==> cuniq cbelast f0 f1 c= c+ csizel f1 cNUMERAL c_0 csizel f1 c==> b0 b1 f2 * / ! c==> c= c~ cMEM clast f0 f1 cbelast f0 f1 b0 c==> c==> b0 c= c==> cuniq cbelast f0 f1 c= c+ csizel f1 cNUMERAL c_0 csizel f1 b1 c= c==> c~ cMEM clast f0 f1 cbelast f0 f1 c==> cuniq cbelast f0 f1 c= c+ csizel f1 cNUMERAL c_0 csizel f1 c==> b0 b1 f2
+- |- ((t ==> t) = T)
+T c= c==> f0 f0 cT
+- T |- (T = T)
+T c==> cT c= cT cT
+- (~ ((MEM ((last x) s)) ((belast x) s))) |- ((~ ((MEM ((last x) s)) ((belast x) s))) /\ (((~ ((MEM ((last x) s)) ((belast x) s))) /\ (uniq ((belast x) s))) ==> ((((COND ((MEM ((last x) s)) ((belast x) s))) ((indexl ((last x) s)) ((belast x) s))) ((sizel s) + ((indexl ((last x) s)) ((CONS ((last x) s)) NIL)))) = (sizel s))))
+T c==> c~ cMEM clast f0 f1 cbelast f0 f1 c/\ c~ cMEM clast f0 f1 cbelast f0 f1 c==> c/\ c~ cMEM clast f0 f1 cbelast f0 f1 cuniq cbelast f0 f1 c= cCOND cMEM clast f0 f1 cbelast f0 f1 cindexl clast f0 f1 cbelast f0 f1 c+ csizel f1 cindexl clast f0 f1 cCONS clast f0 f1 cNIL csizel f1
+- (~ F) |- ((F = F) = T)
+T c==> c~ cF c= c= cF cF cT
+- |- ((\Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))) Q)
+T * / c= c==> f0 ! * b0 b1 ! c==> f0 * b0 b1 f1
+- F |- (F = T)
+T c==> cF c= cF cT
+- |- (((!P. (!Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x)))))) ==> ((\P. (!Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x)))))) P)) = ((\P. (!Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x)))))) P))
+T c= c==> ! ! c= c==> b0 ! * b1 b2 ! c==> b0 * b1 b2 * / ! c= c==> b0 ! * b1 b2 ! c==> b0 * b1 b2 f0 * / ! c= c==> b0 ! * b1 b2 ! c==> b0 * b1 b2 f0
+- |- (((find a) NIL) = (NUMERAL _0))
+T c= cfind f0 cNIL cNUMERAL c_0
+- |- ((t /\ t) = t)
+T c= c/\ f0 f0 f0
+- (~ F) |- (F = F)
+T c==> c~ cF c= cF cF
+- ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x)))) |- ((!x. (P ==> (Q x))) = (P ==> (!x. (Q x))))
+T c==> c= c==> f0 ! * f1 b0 ! c==> f0 * f1 b0 c= ! c==> f0 * f1 b0 c==> f0 ! * f1 b0
+- (uniq ((belast x) s)) |- ((uniq ((belast x) s)) = T)
+T c==> cuniq cbelast f0 f1 c= cuniq cbelast f0 f1 cT
+- |- ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))
+T c= c==> f0 ! * f1 b0 ! c==> f0 * f1 b0
+- (~ T) |- (T = F)
+T c==> c~ cT c= cT cF
+- T |- ((T = T) = T)
+T c==> cT c= c= cT cT cT
+- |- (((\x'. (f x')) y) = (f y))
+T c= * / * f0 b0 f1 * f0 f1
+- ((MEM ((last x) s)) ((belast x) s)) |- (((MEM ((last x) s)) ((belast x) s)) /\ (((~ ((MEM ((last x) s)) ((belast x) s))) /\ (uniq ((belast x) s))) ==> ((((COND ((MEM ((last x) s)) ((belast x) s))) ((indexl ((last x) s)) ((belast x) s))) ((sizel s) + ((indexl ((last x) s)) ((CONS ((last x) s)) NIL)))) = (sizel s))))
+T c==> cMEM clast f0 f1 cbelast f0 f1 c/\ cMEM clast f0 f1 cbelast f0 f1 c==> c/\ c~ cMEM clast f0 f1 cbelast f0 f1 cuniq cbelast f0 f1 c= cCOND cMEM clast f0 f1 cbelast f0 f1 cindexl clast f0 f1 cbelast f0 f1 c+ csizel f1 cindexl clast f0 f1 cCONS clast f0 f1 cNIL csizel f1
+- |- (((!Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))) ==> ((\Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))) Q)) = ((\Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))) Q))
+T c= c==> ! c= c==> f0 ! * b0 b1 ! c==> f0 * b0 b1 * / c= c==> f0 ! * b0 b1 ! c==> f0 * b0 b1 f1 * / c= c==> f0 ! * b0 b1 ! c==> f0 * b0 b1 f1

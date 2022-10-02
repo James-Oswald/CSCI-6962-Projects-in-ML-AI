@@ -1,0 +1,100 @@
+N ARITH_PRE
+C |- ((!n. ((PRE (NUMERAL n)) = (NUMERAL (PRE n)))) /\ (((PRE _0) = _0) /\ ((!n. ((PRE (BIT0 n)) = (((COND (n = _0)) _0) (BIT1 (PRE n))))) /\ (!n. ((PRE (BIT1 n)) = (BIT0 n))))))
+T c/\ ! c= cPRE cNUMERAL b0 cNUMERAL cPRE b0 c/\ c= cPRE c_0 c_0 c/\ ! c= cPRE cBIT0 b0 cCOND c= b0 c_0 c_0 cBIT1 cPRE b0 ! c= cPRE cBIT1 b0 cBIT0 b0
+D TRUTH
+A |- T
+T cT
+D COND_CLAUSES
+A |- (!t1. (!t2. (((((COND T) t1) t2) = t1) /\ ((((COND F) t1) t2) = t2))))
+T c/\ c= cCOND cT f0 f1 f0 c= cCOND cF f0 f1 f1
+D NUMERAL
+A |- (!n. ((NUMERAL n) = n))
+T c= cNUMERAL f0 f0
+D Hypermap.NON_ZERO
+A |- (!n. (~ ((SUC n) = (NUMERAL _0))))
+T c~ c= cSUC f0 cNUMERAL c_0
+D num_INDUCTION
+A |- (!P. (((P (NUMERAL _0)) /\ (!n. ((P n) ==> (P (SUC n))))) ==> (!n. (P n))))
+T c==> c/\ * f0 cNUMERAL c_0 ! c==> * f0 b0 * f0 cSUC b0 ! * f0 b0
+D PRE
+A |- (((PRE (NUMERAL _0)) = (NUMERAL _0)) /\ (!n. ((PRE (SUC n)) = n)))
+T c/\ c= cPRE cNUMERAL c_0 cNUMERAL c_0 ! c= cPRE cSUC b0 b0
+D Ssrnat.addSn
+A |- (!m. (!n. (((SUC m) + n) = (SUC (m + n)))))
+T c= c+ cSUC f0 f1 cSUC c+ f0 f1
+D Ssrnat.addnS
+A |- (!m. (!n. ((m + (SUC n)) = (SUC (m + n)))))
+T c= c+ f0 cSUC f1 cSUC c+ f0 f1
+D ADD_CLAUSES
+A |- ((!n. (((NUMERAL _0) + n) = n)) /\ ((!m. ((m + (NUMERAL _0)) = m)) /\ ((!m. (!n. (((SUC m) + n) = (SUC (m + n))))) /\ (!m. (!n. ((m + (SUC n)) = (SUC (m + n))))))))
+T c/\ ! c= c+ cNUMERAL c_0 b0 b0 c/\ ! c= c+ b0 cNUMERAL c_0 b0 c/\ ! ! c= c+ cSUC b0 b1 cSUC c+ b0 b1 ! ! c= c+ b0 cSUC b1 cSUC c+ b0 b1
+D BIT0
+A |- (!n. ((BIT0 n) = (n + n)))
+T c= cBIT0 f0 c+ f0 f0
+D BIT1
+A |- (!n. ((BIT1 n) = (SUC (n + n))))
+T c= cBIT1 f0 cSUC c+ f0 f0
+- |- ((\m. ((m + _0) = m)) m)
+T * / c= c+ b0 c_0 b0 f0
+- |- ((!m. ((m + _0) = m)) /\ ((!m. (!n. (((SUC m) + n) = (SUC (m + n))))) /\ (!m. (!n. ((m + (SUC n)) = (SUC (m + n)))))))
+T c/\ ! c= c+ b0 c_0 b0 c/\ ! ! c= c+ cSUC b0 b1 cSUC c+ b0 b1 ! ! c= c+ b0 cSUC b1 cSUC c+ b0 b1
++ |- ((!n. ((PRE (n + n)) = (((COND (n = _0)) _0) (SUC ((PRE n) + (PRE n)))))) = ((!n. ((PRE (NUMERAL n)) = (NUMERAL (PRE n)))) /\ (((PRE _0) = _0) /\ ((!n. ((PRE (BIT0 n)) = (((COND (n = _0)) _0) (BIT1 (PRE n))))) /\ (!n. ((PRE (BIT1 n)) = (BIT0 n)))))))
+T c= ! c= cPRE c+ b0 b0 cCOND c= b0 c_0 c_0 cSUC c+ cPRE b0 cPRE b0 c/\ ! c= cPRE cNUMERAL b0 cNUMERAL cPRE b0 c/\ c= cPRE c_0 c_0 c/\ ! c= cPRE cBIT0 b0 cCOND c= b0 c_0 c_0 cBIT1 cPRE b0 ! c= cPRE cBIT1 b0 cBIT0 b0
++ |- ((t /\ T) = t)
+T c= c/\ f0 cT f0
++ |- (~ ((SUC n) = _0))
+T c~ c= cSUC f0 c_0
+- |- ((!m. (!n. (((SUC m) + n) = (SUC (m + n))))) /\ (!m. (!n. ((m + (SUC n)) = (SUC (m + n))))))
+T c/\ ! ! c= c+ cSUC b0 b1 cSUC c+ b0 b1 ! ! c= c+ b0 cSUC b1 cSUC c+ b0 b1
++ |- ((((PRE (n + n)) = (((COND (n = _0)) _0) (SUC ((PRE n) + (PRE n))))) ==> ((PRE ((SUC n) + (SUC n))) = (((COND ((SUC n) = _0)) _0) (SUC ((PRE (SUC n)) + (PRE (SUC n))))))) = T)
+T c= c==> c= cPRE c+ f0 f0 cCOND c= f0 c_0 c_0 cSUC c+ cPRE f0 cPRE f0 c= cPRE c+ cSUC f0 cSUC f0 cCOND c= cSUC f0 c_0 c_0 cSUC c+ cPRE cSUC f0 cPRE cSUC f0 cT
++ |- (!n. (((PRE (n + n)) = (((COND (n = _0)) _0) (SUC ((PRE n) + (PRE n))))) ==> ((PRE ((SUC n) + (SUC n))) = (((COND ((SUC n) = _0)) _0) (SUC ((PRE (SUC n)) + (PRE (SUC n))))))))
+T c==> c= cPRE c+ f0 f0 cCOND c= f0 c_0 c_0 cSUC c+ cPRE f0 cPRE f0 c= cPRE c+ cSUC f0 cSUC f0 cCOND c= cSUC f0 c_0 c_0 cSUC c+ cPRE cSUC f0 cPRE cSUC f0
++ |- (((!n. ((_0 + n) = n)) ==> ((\n. ((_0 + n) = n)) n)) = ((\n. ((_0 + n) = n)) n))
+T c= c==> ! c= c+ c_0 b0 b0 * / c= c+ c_0 b0 b0 f0 * / c= c+ c_0 b0 b0 f0
++ |- ((PRE (SUC n)) = n)
+T c= cPRE cSUC f0 f0
++ |- ((\n. ((BIT0 n) = (n + n))) n)
+T * / c= cBIT0 b0 c+ b0 b0 f0
++ |- ((PRE ((SUC n) + (SUC n))) = (((COND ((SUC n) = _0)) _0) (SUC ((PRE (SUC n)) + (PRE (SUC n))))))
+T c= cPRE c+ cSUC f0 cSUC f0 cCOND c= cSUC f0 c_0 c_0 cSUC c+ cPRE cSUC f0 cPRE cSUC f0
+- |- ((NUMERAL (NUMERAL _0)) = (NUMERAL _0))
+T c= cNUMERAL cNUMERAL c_0 cNUMERAL c_0
++ |- ((!n. t) = t)
+T c= ! f0 f0
++ ((PRE (n + n)) = (((COND (n = _0)) _0) (SUC ((PRE n) + (PRE n))))) |- (((PRE (n + n)) = (((COND (n = _0)) _0) (SUC ((PRE n) + (PRE n))))) /\ ((PRE ((SUC n) + (SUC n))) = (((COND ((SUC n) = _0)) _0) (SUC ((PRE (SUC n)) + (PRE (SUC n)))))))
+T c==> c= cPRE c+ f0 f0 cCOND c= f0 c_0 c_0 cSUC c+ cPRE f0 cPRE f0 c/\ c= cPRE c+ f0 f0 cCOND c= f0 c_0 c_0 cSUC c+ cPRE f0 cPRE f0 c= cPRE c+ cSUC f0 cSUC f0 cCOND c= cSUC f0 c_0 c_0 cSUC c+ cPRE cSUC f0 cPRE cSUC f0
++ |- ((\n. ((PRE (SUC n)) = n)) n)
+T * / c= cPRE cSUC b0 b0 f0
+- |- ((_0 = (SUC n)) = F)
+T c= c= c_0 cSUC f0 cF
++ |- ((PRE _0) = _0)
+T c= cPRE c_0 c_0
++ |- (T = ((PRE ((SUC n) + (SUC n))) = (((COND ((SUC n) = _0)) _0) (SUC ((PRE (SUC n)) + (PRE (SUC n)))))))
+T c= cT c= cPRE c+ cSUC f0 cSUC f0 cCOND c= cSUC f0 c_0 c_0 cSUC c+ cPRE cSUC f0 cPRE cSUC f0
+- (_0 = (SUC n)) |- ((SUC n) = _0)
+T c==> c= c_0 cSUC f0 c= cSUC f0 c_0
++ |- ((\n. (~ ((SUC n) = _0))) n)
+T * / c~ c= cSUC b0 c_0 f0
++ |- (!n. ((PRE (n + n)) = (((COND (n = _0)) _0) (SUC ((PRE n) + (PRE n))))))
+T c= cPRE c+ f0 f0 cCOND c= f0 c_0 c_0 cSUC c+ cPRE f0 cPRE f0
+- |- (((!m. ((m + _0) = m)) ==> ((\m. ((m + _0) = m)) m)) = ((\m. ((m + _0) = m)) m))
+T c= c==> ! c= c+ b0 c_0 b0 * / c= c+ b0 c_0 b0 f0 * / c= c+ b0 c_0 b0 f0
+- |- ((((COND (x = x)) y) z) = y)
+T c= cCOND c= f0 f0 f1 f2 f1
+- |- ((m + _0) = m)
+T c= c+ f0 c_0 f0
+- |- ((\n. ((NUMERAL n) = n)) n)
+T * / c= cNUMERAL b0 b0 f0
+- |- ((t /\ t) = t)
+T c= c/\ f0 f0 f0
+- ((SUC n) = _0) |- (_0 = (SUC n))
+T c==> c= cSUC f0 c_0 c= c_0 cSUC f0
+- |- ((BIT0 _0) = _0)
+T c= cBIT0 c_0 c_0
+- |- (((~ (_0 = (SUC n))) ==> ((_0 = (SUC n)) = F)) = ((_0 = (SUC n)) = F))
+T c= c==> c~ c= c_0 cSUC f0 c= c= c_0 cSUC f0 cF c= c= c_0 cSUC f0 cF
+- |- (~ (_0 = (SUC n)))
+T c~ c= c_0 cSUC f0
+- |- (((!n. ((NUMERAL n) = n)) ==> ((\n. ((NUMERAL n) = n)) n)) = ((\n. ((NUMERAL n) = n)) n))
+T c= c==> ! c= cNUMERAL b0 b0 * / c= cNUMERAL b0 b0 f0 * / c= cNUMERAL b0 b0 f0

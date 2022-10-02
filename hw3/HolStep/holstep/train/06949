@@ -1,0 +1,151 @@
+N Seq.drop_oversize
+C |- (!n. (!s. (((sizel s) <= n) ==> (((dropl n) s) = NIL))))
+T c==> c<= csizel f0 f1 c= cdropl f1 f0 cNIL
+D TRUTH
+A |- T
+T cT
+D num_INDUCTION
+A |- (!P. (((P (NUMERAL _0)) /\ (!n. ((P n) ==> (P (SUC n))))) ==> (!n. (P n))))
+T c==> c/\ * f0 cNUMERAL c_0 ! c==> * f0 b0 * f0 cSUC b0 ! * f0 b0
+D list_INDUCT
+A |- (!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x))))
+T c==> c/\ * f0 cNIL ! ! c==> * f0 b1 * f0 cCONS b0 b1 ! * f0 b0
+D Ssrnat.ltn0
+A |- (!n. ((n < (NUMERAL _0)) = F))
+T c= c< f0 cNUMERAL c_0 cF
+D Ssrnat.ltE
+A |- (!n. (!m. ((n < m) = ((SUC n) <= m))))
+T c= c< f0 f1 c<= cSUC f0 f1
+D Ssrnat.leqSS
+A |- (!n. (!m. (((SUC n) <= (SUC m)) = (n <= m))))
+T c= c<= cSUC f0 cSUC f1 c<= f0 f1
+D Seq.size_cons
+A |- (!h. (!t. ((sizel ((CONS h) t)) = (SUC (sizel t)))))
+T c= csizel cCONS f0 f1 cSUC csizel f1
+D Seq.drop
+A |- (!n. (!x. (!s. ((((dropl (SUC n)) ((CONS x) s)) = ((dropl n) s)) /\ ((((dropl n) NIL) = NIL) /\ (((dropl (NUMERAL _0)) s) = s))))))
+T c/\ c= cdropl cSUC f0 cCONS f1 f2 cdropl f0 f2 c/\ c= cdropl f0 cNIL cNIL c= cdropl cNUMERAL c_0 f2 f2
++ |- ((((SUC (sizel s)) <= (NUMERAL _0)) ==> (((CONS x) s) = NIL)) = (((sizel ((CONS x) s)) <= (NUMERAL _0)) ==> (((CONS x) s) = NIL)))
+T c= c==> c<= cSUC csizel f0 cNUMERAL c_0 c= cCONS f1 f0 cNIL c==> c<= csizel cCONS f1 f0 cNUMERAL c_0 c= cCONS f1 f0 cNIL
+- (!s. (((sizel s) <= n) ==> (((dropl n) s) = NIL))), ((sizel s) <= n) |- (((sizel s) <= n) /\ (((dropl n) s) = NIL))
+T c==> ! c==> c<= csizel b0 f0 c= cdropl f0 b0 cNIL c==> c<= csizel f1 f0 c/\ c<= csizel f1 f0 c= cdropl f0 f1 cNIL
++ |- (((!s. (((sizel s) <= n) ==> (((dropl n) s) = NIL))) ==> (!s. (((sizel s) <= (SUC n)) ==> (((dropl (SUC n)) s) = NIL)))) = T)
+T c= c==> ! c==> c<= csizel b0 f0 c= cdropl f0 b0 cNIL ! c==> c<= csizel b0 cSUC f0 c= cdropl cSUC f0 b0 cNIL cT
+- (!P. (((P (NUMERAL _0)) /\ (!n. ((P n) ==> (P (SUC n))))) ==> (!n. (P n)))) |- ((((P (NUMERAL _0)) /\ (!n. ((P n) ==> (P (SUC n))))) ==> (!n. (P n))) = T)
+T c==> ! c==> c/\ * b0 cNUMERAL c_0 ! c==> * b0 b1 * b0 cSUC b1 ! * b0 b1 c= c==> c/\ * f0 cNUMERAL c_0 ! c==> * f0 b0 * f0 cSUC b0 ! * f0 b0 cT
++ |- (((((sizel NIL) <= (SUC n)) ==> (((dropl (SUC n)) NIL) = NIL)) /\ (!a0. (!a1. ((((sizel a1) <= (SUC n)) ==> (((dropl (SUC n)) a1) = NIL)) ==> (((sizel ((CONS a0) a1)) <= (SUC n)) ==> (((dropl (SUC n)) ((CONS a0) a1)) = NIL)))))) ==> (!s. (((sizel s) <= (SUC n)) ==> (((dropl (SUC n)) s) = NIL))))
+T c==> c/\ c==> c<= csizel cNIL cSUC f0 c= cdropl cSUC f0 cNIL cNIL ! ! c==> c==> c<= csizel b1 cSUC f0 c= cdropl cSUC f0 b1 cNIL c==> c<= csizel cCONS b0 b1 cSUC f0 c= cdropl cSUC f0 cCONS b0 b1 cNIL ! c==> c<= csizel b0 cSUC f0 c= cdropl cSUC f0 b0 cNIL
++ (!s. (((sizel s) <= n) ==> (((dropl n) s) = NIL))) |- ((!s. (((sizel s) <= n) ==> (((dropl n) s) = NIL))) /\ (!s. (((sizel s) <= (SUC n)) ==> (((dropl (SUC n)) s) = NIL))))
+T c==> ! c==> c<= csizel b0 f0 c= cdropl f0 b0 cNIL c/\ ! c==> c<= csizel b0 f0 c= cdropl f0 b0 cNIL ! c==> c<= csizel b0 cSUC f0 c= cdropl cSUC f0 b0 cNIL
++ (!s. (((sizel s) <= n) ==> (((dropl n) s) = NIL))) |- (((((sizel s) <= (SUC n)) ==> (((dropl (SUC n)) s) = NIL)) ==> (((sizel ((CONS x) s)) <= (SUC n)) ==> (((dropl (SUC n)) ((CONS x) s)) = NIL))) = T)
+T c==> ! c==> c<= csizel b0 f0 c= cdropl f0 b0 cNIL c= c==> c==> c<= csizel f1 cSUC f0 c= cdropl cSUC f0 f1 cNIL c==> c<= csizel cCONS f2 f1 cSUC f0 c= cdropl cSUC f0 cCONS f2 f1 cNIL cT
++ |- ((((sizel ((CONS x) s)) <= (NUMERAL _0)) ==> (((CONS x) s) = NIL)) = (((sizel ((CONS x) s)) <= (NUMERAL _0)) ==> (((dropl (NUMERAL _0)) ((CONS x) s)) = NIL)))
+T c= c==> c<= csizel cCONS f0 f1 cNUMERAL c_0 c= cCONS f0 f1 cNIL c==> c<= csizel cCONS f0 f1 cNUMERAL c_0 c= cdropl cNUMERAL c_0 cCONS f0 f1 cNIL
++ |- (((!P. (((P (NUMERAL _0)) /\ (!n. ((P n) ==> (P (SUC n))))) ==> (!n. (P n)))) ==> ((\P. (((P (NUMERAL _0)) /\ (!n. ((P n) ==> (P (SUC n))))) ==> (!n. (P n)))) P)) = ((\P. (((P (NUMERAL _0)) /\ (!n. ((P n) ==> (P (SUC n))))) ==> (!n. (P n)))) P))
+T c= c==> ! c==> c/\ * b0 cNUMERAL c_0 ! c==> * b0 b1 * b0 cSUC b1 ! * b0 b1 * / c==> c/\ * b0 cNUMERAL c_0 ! c==> * b0 b1 * b0 cSUC b1 ! * b0 b1 f0 * / c==> c/\ * b0 cNUMERAL c_0 ! c==> * b0 b1 * b0 cSUC b1 ! * b0 b1 f0
++ |- (((!n. (!x. (!s. ((((dropl (SUC n)) ((CONS x) s)) = ((dropl n) s)) /\ ((((dropl n) NIL) = NIL) /\ (((dropl (NUMERAL _0)) s) = s)))))) ==> ((\n. (!x. (!s. ((((dropl (SUC n)) ((CONS x) s)) = ((dropl n) s)) /\ ((((dropl n) NIL) = NIL) /\ (((dropl (NUMERAL _0)) s) = s)))))) n)) = ((\n. (!x. (!s. ((((dropl (SUC n)) ((CONS x) s)) = ((dropl n) s)) /\ ((((dropl n) NIL) = NIL) /\ (((dropl (NUMERAL _0)) s) = s)))))) n))
+T c= c==> ! ! ! c/\ c= cdropl cSUC b0 cCONS b1 b2 cdropl b0 b2 c/\ c= cdropl b0 cNIL cNIL c= cdropl cNUMERAL c_0 b2 b2 * / ! ! c/\ c= cdropl cSUC b0 cCONS b1 b2 cdropl b0 b2 c/\ c= cdropl b0 cNIL cNIL c= cdropl cNUMERAL c_0 b2 b2 f0 * / ! ! c/\ c= cdropl cSUC b0 cCONS b1 b2 cdropl b0 b2 c/\ c= cdropl b0 cNIL cNIL c= cdropl cNUMERAL c_0 b2 b2 f0
++ |- (((sizel NIL) <= (NUMERAL _0)) ==> (((dropl (NUMERAL _0)) NIL) = NIL))
+T c==> c<= csizel cNIL cNUMERAL c_0 c= cdropl cNUMERAL c_0 cNIL cNIL
++ |- (((!h. (!t. ((sizel ((CONS h) t)) = (SUC (sizel t))))) ==> ((\h. (!t. ((sizel ((CONS h) t)) = (SUC (sizel t))))) h)) = ((\h. (!t. ((sizel ((CONS h) t)) = (SUC (sizel t))))) h))
+T c= c==> ! ! c= csizel cCONS b0 b1 cSUC csizel b1 * / ! c= csizel cCONS b0 b1 cSUC csizel b1 f0 * / ! c= csizel cCONS b0 b1 cSUC csizel b1 f0
++ |- ((t ==> T) = T)
+T c= c==> f0 cT cT
++ |- ((\h. (!t. ((sizel ((CONS h) t)) = (SUC (sizel t))))) h)
+T * / ! c= csizel cCONS b0 b1 cSUC csizel b1 f0
++ |- (((dropl (NUMERAL _0)) s) = s)
+T c= cdropl cNUMERAL c_0 f0 f0
++ (!s. (((sizel s) <= n) ==> (((dropl n) s) = NIL))) |- ((((sizel NIL) <= (SUC n)) ==> (((dropl (SUC n)) NIL) = NIL)) /\ (!a0. (!a1. ((((sizel a1) <= (SUC n)) ==> (((dropl (SUC n)) a1) = NIL)) ==> (((sizel ((CONS a0) a1)) <= (SUC n)) ==> (((dropl (SUC n)) ((CONS a0) a1)) = NIL))))))
+T c==> ! c==> c<= csizel b0 f0 c= cdropl f0 b0 cNIL c/\ c==> c<= csizel cNIL cSUC f0 c= cdropl cSUC f0 cNIL cNIL ! ! c==> c==> c<= csizel b1 cSUC f0 c= cdropl cSUC f0 b1 cNIL c==> c<= csizel cCONS b0 b1 cSUC f0 c= cdropl cSUC f0 cCONS b0 b1 cNIL
++ |- ((!a0. (!a1. ((((sizel a1) <= (SUC n)) ==> (((dropl (SUC n)) a1) = NIL)) ==> (((sizel ((CONS a0) a1)) <= (SUC n)) ==> (((dropl (SUC n)) ((CONS a0) a1)) = NIL))))) = ((((sizel NIL) <= (SUC n)) ==> (((dropl (SUC n)) NIL) = NIL)) /\ (!a0. (!a1. ((((sizel a1) <= (SUC n)) ==> (((dropl (SUC n)) a1) = NIL)) ==> (((sizel ((CONS a0) a1)) <= (SUC n)) ==> (((dropl (SUC n)) ((CONS a0) a1)) = NIL)))))))
+T c= ! ! c==> c==> c<= csizel b1 cSUC f0 c= cdropl cSUC f0 b1 cNIL c==> c<= csizel cCONS b0 b1 cSUC f0 c= cdropl cSUC f0 cCONS b0 b1 cNIL c/\ c==> c<= csizel cNIL cSUC f0 c= cdropl cSUC f0 cNIL cNIL ! ! c==> c==> c<= csizel b1 cSUC f0 c= cdropl cSUC f0 b1 cNIL c==> c<= csizel cCONS b0 b1 cSUC f0 c= cdropl cSUC f0 cCONS b0 b1 cNIL
++ |- ((\P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))) P)
+T * / c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 f0
++ |- ((((sizel NIL) <= (SUC n)) ==> (NIL = NIL)) = (((sizel NIL) <= (SUC n)) ==> (((dropl (SUC n)) NIL) = NIL)))
+T c= c==> c<= csizel cNIL cSUC f0 c= cNIL cNIL c==> c<= csizel cNIL cSUC f0 c= cdropl cSUC f0 cNIL cNIL
+- |- ((t ==> t) = T)
+T c= c==> f0 f0 cT
+- |- (((!m. ((n < m) = ((SUC n) <= m))) ==> ((\m. ((n < m) = ((SUC n) <= m))) m)) = ((\m. ((n < m) = ((SUC n) <= m))) m))
+T c= c==> ! c= c< f0 b0 c<= cSUC f0 b0 * / c= c< f0 b0 c<= cSUC f0 b0 f1 * / c= c< f0 b0 c<= cSUC f0 b0 f1
+- |- (((x = x) ==> p) = p)
+T c= c==> c= f0 f0 f1 f1
++ |- (((((sizel NIL) <= (NUMERAL _0)) ==> (((dropl (NUMERAL _0)) NIL) = NIL)) /\ (!a0. (!a1. ((((sizel a1) <= (NUMERAL _0)) ==> (((dropl (NUMERAL _0)) a1) = NIL)) ==> (((sizel ((CONS a0) a1)) <= (NUMERAL _0)) ==> (((dropl (NUMERAL _0)) ((CONS a0) a1)) = NIL)))))) ==> (!s. (((sizel s) <= (NUMERAL _0)) ==> (((dropl (NUMERAL _0)) s) = NIL))))
+T c==> c/\ c==> c<= csizel cNIL cNUMERAL c_0 c= cdropl cNUMERAL c_0 cNIL cNIL ! ! c==> c==> c<= csizel b1 cNUMERAL c_0 c= cdropl cNUMERAL c_0 b1 cNIL c==> c<= csizel cCONS b0 b1 cNUMERAL c_0 c= cdropl cNUMERAL c_0 cCONS b0 b1 cNIL ! c==> c<= csizel b0 cNUMERAL c_0 c= cdropl cNUMERAL c_0 b0 cNIL
++ |- (((!s. (((sizel s) <= (NUMERAL _0)) ==> (((dropl (NUMERAL _0)) s) = NIL))) /\ (!n. ((!s. (((sizel s) <= n) ==> (((dropl n) s) = NIL))) ==> (!s. (((sizel s) <= (SUC n)) ==> (((dropl (SUC n)) s) = NIL)))))) ==> (!n. (!s. (((sizel s) <= n) ==> (((dropl n) s) = NIL)))))
+T c==> c/\ ! c==> c<= csizel b0 cNUMERAL c_0 c= cdropl cNUMERAL c_0 b0 cNIL ! c==> ! c==> c<= csizel b1 b0 c= cdropl b0 b1 cNIL ! c==> c<= csizel b1 cSUC b0 c= cdropl cSUC b0 b1 cNIL ! ! c==> c<= csizel b1 b0 c= cdropl b0 b1 cNIL
+- ((P (NUMERAL _0)) /\ (!n. ((P n) ==> (P (SUC n))))) |- ((!P. (((P (NUMERAL _0)) /\ (!n. ((P n) ==> (P (SUC n))))) ==> (!n. (P n)))) ==> (!n. (P n)))
+T c==> c/\ * f0 cNUMERAL c_0 ! c==> * f0 b0 * f0 cSUC b0 c==> ! c==> c/\ * b0 cNUMERAL c_0 ! c==> * b0 b1 * b0 cSUC b1 ! * b0 b1 ! * f0 b0
+- (!P. (((P (NUMERAL _0)) /\ (!n. ((P n) ==> (P (SUC n))))) ==> (!n. (P n)))), ((P (NUMERAL _0)) /\ (!n. ((P n) ==> (P (SUC n))))) |- (((P (NUMERAL _0)) /\ (!n. ((P n) ==> (P (SUC n))))) /\ (!n. (P n)))
+T c==> ! c==> c/\ * b0 cNUMERAL c_0 ! c==> * b0 b1 * b0 cSUC b1 ! * b0 b1 c==> c/\ * f0 cNUMERAL c_0 ! c==> * f0 b0 * f0 cSUC b0 c/\ c/\ * f0 cNUMERAL c_0 ! c==> * f0 b0 * f0 cSUC b0 ! * f0 b0
++ |- (((sizel ((CONS x) s)) <= (NUMERAL _0)) ==> (((CONS x) s) = NIL))
+T c==> c<= csizel cCONS f0 f1 cNUMERAL c_0 c= cCONS f0 f1 cNIL
+- (!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))), ((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) |- ((!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))) /\ (!x. (P x)))
+T c==> ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 c==> c/\ * f0 cNIL ! ! c==> * f0 b1 * f0 cCONS b0 b1 c/\ ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 ! * f0 b0
+- (!s. (((sizel s) <= n) ==> (((dropl n) s) = NIL))) |- (((sizel s) < (SUC n)) ==> (((dropl n) s) = NIL))
+T c==> ! c==> c<= csizel b0 f0 c= cdropl f0 b0 cNIL c==> c< csizel f1 cSUC f0 c= cdropl f0 f1 cNIL
++ |- ((!s. (((sizel s) <= (NUMERAL _0)) ==> (((dropl (NUMERAL _0)) s) = NIL))) /\ (!n. ((!s. (((sizel s) <= n) ==> (((dropl n) s) = NIL))) ==> (!s. (((sizel s) <= (SUC n)) ==> (((dropl (SUC n)) s) = NIL))))))
+T c/\ ! c==> c<= csizel b0 cNUMERAL c_0 c= cdropl cNUMERAL c_0 b0 cNIL ! c==> ! c==> c<= csizel b1 b0 c= cdropl b0 b1 cNIL ! c==> c<= csizel b1 cSUC b0 c= cdropl cSUC b0 b1 cNIL
++ |- (((!m. (((SUC n) <= (SUC m)) = (n <= m))) ==> ((\m. (((SUC n) <= (SUC m)) = (n <= m))) m)) = ((\m. (((SUC n) <= (SUC m)) = (n <= m))) m))
+T c= c==> ! c= c<= cSUC f0 cSUC b0 c<= f0 b0 * / c= c<= cSUC f0 cSUC b0 c<= f0 b0 f1 * / c= c<= cSUC f0 cSUC b0 c<= f0 b0 f1
++ |- ((!a0. (!a1. ((((sizel a1) <= (NUMERAL _0)) ==> (((dropl (NUMERAL _0)) a1) = NIL)) ==> (((sizel ((CONS a0) a1)) <= (NUMERAL _0)) ==> (((dropl (NUMERAL _0)) ((CONS a0) a1)) = NIL))))) = ((((sizel NIL) <= (NUMERAL _0)) ==> (((dropl (NUMERAL _0)) NIL) = NIL)) /\ (!a0. (!a1. ((((sizel a1) <= (NUMERAL _0)) ==> (((dropl (NUMERAL _0)) a1) = NIL)) ==> (((sizel ((CONS a0) a1)) <= (NUMERAL _0)) ==> (((dropl (NUMERAL _0)) ((CONS a0) a1)) = NIL)))))))
+T c= ! ! c==> c==> c<= csizel b1 cNUMERAL c_0 c= cdropl cNUMERAL c_0 b1 cNIL c==> c<= csizel cCONS b0 b1 cNUMERAL c_0 c= cdropl cNUMERAL c_0 cCONS b0 b1 cNIL c/\ c==> c<= csizel cNIL cNUMERAL c_0 c= cdropl cNUMERAL c_0 cNIL cNIL ! ! c==> c==> c<= csizel b1 cNUMERAL c_0 c= cdropl cNUMERAL c_0 b1 cNIL c==> c<= csizel cCONS b0 b1 cNUMERAL c_0 c= cdropl cNUMERAL c_0 cCONS b0 b1 cNIL
++ |- (((SUC n) <= m) = (n < m))
+T c= c<= cSUC f0 f1 c< f0 f1
++ (!s. (((sizel s) <= n) ==> (((dropl n) s) = NIL))) |- ((!a1. ((((sizel a1) <= (SUC n)) ==> (((dropl (SUC n)) a1) = NIL)) ==> (((sizel ((CONS x) a1)) <= (SUC n)) ==> (((dropl (SUC n)) ((CONS x) a1)) = NIL)))) = T)
+T c==> ! c==> c<= csizel b0 f0 c= cdropl f0 b0 cNIL c= ! c==> c==> c<= csizel b0 cSUC f0 c= cdropl cSUC f0 b0 cNIL c==> c<= csizel cCONS f1 b0 cSUC f0 c= cdropl cSUC f0 cCONS f1 b0 cNIL cT
++ |- (((!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))) ==> ((\P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))) P)) = ((\P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))) P))
+T c= c==> ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 * / c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 f0 * / c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 f0
+- (!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))), ((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) |- (!x. (P x))
+T c==> ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 c==> c/\ * f0 cNIL ! ! c==> * f0 b1 * f0 cCONS b0 b1 ! * f0 b0
++ |- (((sizel NIL) <= (NUMERAL _0)) ==> (NIL = NIL))
+T c==> c<= csizel cNIL cNUMERAL c_0 c= cNIL cNIL
+- (!s. (((sizel s) <= n) ==> (((dropl n) s) = NIL))) |- ((((sizel s) <= n) ==> (((dropl n) s) = NIL)) = T)
+T c==> ! c==> c<= csizel b0 f0 c= cdropl f0 b0 cNIL c= c==> c<= csizel f1 f0 c= cdropl f0 f1 cNIL cT
++ |- (((!n. ((n < (NUMERAL _0)) = F)) ==> ((\n. ((n < (NUMERAL _0)) = F)) n)) = ((\n. ((n < (NUMERAL _0)) = F)) n))
+T c= c==> ! c= c< b0 cNUMERAL c_0 cF * / c= c< b0 cNUMERAL c_0 cF f0 * / c= c< b0 cNUMERAL c_0 cF f0
++ |- ((((!s. (((sizel s) <= (NUMERAL _0)) ==> (((dropl (NUMERAL _0)) s) = NIL))) /\ (!n. ((!s. (((sizel s) <= n) ==> (((dropl n) s) = NIL))) ==> (!s. (((sizel s) <= (SUC n)) ==> (((dropl (SUC n)) s) = NIL)))))) ==> (!n. (!s. (((sizel s) <= n) ==> (((dropl n) s) = NIL))))) = (!n. (!s. (((sizel s) <= n) ==> (((dropl n) s) = NIL)))))
+T c= c==> c/\ ! c==> c<= csizel b0 cNUMERAL c_0 c= cdropl cNUMERAL c_0 b0 cNIL ! c==> ! c==> c<= csizel b1 b0 c= cdropl b0 b1 cNIL ! c==> c<= csizel b1 cSUC b0 c= cdropl cSUC b0 b1 cNIL ! ! c==> c<= csizel b1 b0 c= cdropl b0 b1 cNIL ! ! c==> c<= csizel b1 b0 c= cdropl b0 b1 cNIL
+- |- ((((dropl n) s) = NIL) ==> (((dropl n) s) = NIL))
+T c==> c= cdropl f0 f1 cNIL c= cdropl f0 f1 cNIL
++ |- (((((sizel s) <= (NUMERAL _0)) ==> (((dropl (NUMERAL _0)) s) = NIL)) ==> (((sizel ((CONS x) s)) <= (NUMERAL _0)) ==> (((dropl (NUMERAL _0)) ((CONS x) s)) = NIL))) = T)
+T c= c==> c==> c<= csizel f0 cNUMERAL c_0 c= cdropl cNUMERAL c_0 f0 cNIL c==> c<= csizel cCONS f1 f0 cNUMERAL c_0 c= cdropl cNUMERAL c_0 cCONS f1 f0 cNIL cT
++ |- (!a0. (!a1. ((((sizel a1) <= (NUMERAL _0)) ==> (((dropl (NUMERAL _0)) a1) = NIL)) ==> (((sizel ((CONS a0) a1)) <= (NUMERAL _0)) ==> (((dropl (NUMERAL _0)) ((CONS a0) a1)) = NIL)))))
+T c==> c==> c<= csizel f0 cNUMERAL c_0 c= cdropl cNUMERAL c_0 f0 cNIL c==> c<= csizel cCONS f1 f0 cNUMERAL c_0 c= cdropl cNUMERAL c_0 cCONS f1 f0 cNIL
+- (!P. (((P (NUMERAL _0)) /\ (!n. ((P n) ==> (P (SUC n))))) ==> (!n. (P n)))) |- ((\P. (((P (NUMERAL _0)) /\ (!n. ((P n) ==> (P (SUC n))))) ==> (!n. (P n)))) P)
+T c==> ! c==> c/\ * b0 cNUMERAL c_0 ! c==> * b0 b1 * b0 cSUC b1 ! * b0 b1 * / c==> c/\ * b0 cNUMERAL c_0 ! c==> * b0 b1 * b0 cSUC b1 ! * b0 b1 f0
+- |- (((!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))) ==> (!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x))))) = (!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))))
+T c= c==> ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1
+- (!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))), ((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) |- (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) /\ (!x. (P x)))
+T c==> ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 c==> c/\ * f0 cNIL ! ! c==> * f0 b1 * f0 cCONS b0 b1 c/\ c/\ * f0 cNIL ! ! c==> * f0 b1 * f0 cCONS b0 b1 ! * f0 b0
+- ((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) |- ((!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))) ==> (!x. (P x)))
+T c==> c/\ * f0 cNIL ! ! c==> * f0 b1 * f0 cCONS b0 b1 c==> ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 ! * f0 b0
+- |- ((\n. (!m. ((n < m) = ((SUC n) <= m)))) n)
+T * / ! c= c< b0 b1 c<= cSUC b0 b1 f0
+- (!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))) |- ((\P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))) P)
+T c==> ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 * / c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 f0
+- |- (((!P. (((P (NUMERAL _0)) /\ (!n. ((P n) ==> (P (SUC n))))) ==> (!n. (P n)))) ==> (!P. (((P (NUMERAL _0)) /\ (!n. ((P n) ==> (P (SUC n))))) ==> (!n. (P n))))) = (!P. (((P (NUMERAL _0)) /\ (!n. ((P n) ==> (P (SUC n))))) ==> (!n. (P n)))))
+T c= c==> ! c==> c/\ * b0 cNUMERAL c_0 ! c==> * b0 b1 * b0 cSUC b1 ! * b0 b1 ! c==> c/\ * b0 cNUMERAL c_0 ! c==> * b0 b1 * b0 cSUC b1 ! * b0 b1 ! c==> c/\ * b0 cNUMERAL c_0 ! c==> * b0 b1 * b0 cSUC b1 ! * b0 b1
+- |- ((!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))) ==> (!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))))
+T c==> ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1
+- |- ((\m. ((n < m) = ((SUC n) <= m))) m)
+T * / c= c< f0 b0 c<= cSUC f0 b0 f1
+- |- ((!P. (((P (NUMERAL _0)) /\ (!n. ((P n) ==> (P (SUC n))))) ==> (!n. (P n)))) ==> (!P. (((P (NUMERAL _0)) /\ (!n. ((P n) ==> (P (SUC n))))) ==> (!n. (P n)))))
+T c==> ! c==> c/\ * b0 cNUMERAL c_0 ! c==> * b0 b1 * b0 cSUC b1 ! * b0 b1 ! c==> c/\ * b0 cNUMERAL c_0 ! c==> * b0 b1 * b0 cSUC b1 ! * b0 b1
+- (!P. (((P (NUMERAL _0)) /\ (!n. ((P n) ==> (P (SUC n))))) ==> (!n. (P n)))), ((P (NUMERAL _0)) /\ (!n. ((P n) ==> (P (SUC n))))) |- (!n. (P n))
+T c==> ! c==> c/\ * b0 cNUMERAL c_0 ! c==> * b0 b1 * b0 cSUC b1 ! * b0 b1 c==> c/\ * f0 cNUMERAL c_0 ! c==> * f0 b0 * f0 cSUC b0 ! * f0 b0
+- (!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))) |- ((((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x))) = T)
+T c==> ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 c= c==> c/\ * f0 cNIL ! ! c==> * f0 b1 * f0 cCONS b0 b1 ! * f0 b0 cT
+- (!s. (((sizel s) <= n) ==> (((dropl n) s) = NIL))), ((sizel s) <= n) |- (((((dropl n) s) = NIL) ==> (((dropl n) s) = NIL)) = (((dropl n) s) = NIL))
+T c==> ! c==> c<= csizel b0 f0 c= cdropl f0 b0 cNIL c==> c<= csizel f1 f0 c= c==> c= cdropl f0 f1 cNIL c= cdropl f0 f1 cNIL c= cdropl f0 f1 cNIL
+- |- ((((sizel s) < (SUC n)) ==> (((dropl n) s) = NIL)) = (((SUC (sizel s)) <= (SUC n)) ==> (((dropl n) s) = NIL)))
+T c= c==> c< csizel f0 cSUC f1 c= cdropl f1 f0 cNIL c==> c<= cSUC csizel f0 cSUC f1 c= cdropl f1 f0 cNIL
+- |- (((!n. (!m. ((n < m) = ((SUC n) <= m)))) ==> ((\n. (!m. ((n < m) = ((SUC n) <= m)))) n)) = ((\n. (!m. ((n < m) = ((SUC n) <= m)))) n))
+T c= c==> ! ! c= c< b0 b1 c<= cSUC b0 b1 * / ! c= c< b0 b1 c<= cSUC b0 b1 f0 * / ! c= c< b0 b1 c<= cSUC b0 b1 f0
+- (!P. (((P (NUMERAL _0)) /\ (!n. ((P n) ==> (P (SUC n))))) ==> (!n. (P n)))) |- ((!P. (((P (NUMERAL _0)) /\ (!n. ((P n) ==> (P (SUC n))))) ==> (!n. (P n)))) /\ (!P. (((P (NUMERAL _0)) /\ (!n. ((P n) ==> (P (SUC n))))) ==> (!n. (P n)))))
+T c==> ! c==> c/\ * b0 cNUMERAL c_0 ! c==> * b0 b1 * b0 cSUC b1 ! * b0 b1 c/\ ! c==> c/\ * b0 cNUMERAL c_0 ! c==> * b0 b1 * b0 cSUC b1 ! * b0 b1 ! c==> c/\ * b0 cNUMERAL c_0 ! c==> * b0 b1 * b0 cSUC b1 ! * b0 b1
+- (!P. (((P (NUMERAL _0)) /\ (!n. ((P n) ==> (P (SUC n))))) ==> (!n. (P n)))), ((P (NUMERAL _0)) /\ (!n. ((P n) ==> (P (SUC n))))) |- ((!P. (((P (NUMERAL _0)) /\ (!n. ((P n) ==> (P (SUC n))))) ==> (!n. (P n)))) /\ (!n. (P n)))
+T c==> ! c==> c/\ * b0 cNUMERAL c_0 ! c==> * b0 b1 * b0 cSUC b1 ! * b0 b1 c==> c/\ * f0 cNUMERAL c_0 ! c==> * f0 b0 * f0 cSUC b0 c/\ ! c==> c/\ * b0 cNUMERAL c_0 ! c==> * b0 b1 * b0 cSUC b1 ! * b0 b1 ! * f0 b0
+- |- (T = ((((dropl n) s) = NIL) ==> (((dropl n) s) = NIL)))
+T c= cT c==> c= cdropl f0 f1 cNIL c= cdropl f0 f1 cNIL
+- (!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))) |- ((!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))) /\ (!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))))
+T c==> ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 c/\ ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1

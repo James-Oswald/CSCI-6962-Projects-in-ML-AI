@@ -1,0 +1,44 @@
+N Pwssrat.rotate_to_hd
+C |- (((rotate_to ((CONS h) t)) h) = ((CONS h) t))
+T c= crotate_to cCONS f0 f1 f0 cCONS f0 f1
+D COND_CLAUSES
+A |- (!t1. (!t2. (((((COND T) t1) t2) = t1) /\ ((((COND F) t1) t2) = t2))))
+T c/\ c= cCOND cT f0 f1 f0 c= cCOND cF f0 f1 f1
+D FST
+A |- (!x. (!y. ((FST (x , y)) = x)))
+T c= cFST c, f0 f1 f0
+D SND
+A |- (!x. (!y. ((SND (x , y)) = y)))
+T c= cSND c, f0 f1 f1
+D APPEND_NIL
+A |- (!l. (((APPEND l) NIL) = l))
+T c= cAPPEND f0 cNIL f0
+D Tame_defs.split_at_rec
+A |- (((((split_at_rec c) bs) NIL) = (bs , NIL)) /\ ((((split_at_rec c) bs) ((CONS a) xs)) = (((COND (a = c)) (bs , xs)) (((split_at_rec c) ((APPEND bs) ((CONS a) NIL))) xs))))
+T c/\ c= csplit_at_rec f0 f1 cNIL c, f1 cNIL c= csplit_at_rec f0 f1 cCONS f2 f3 cCOND c= f2 f0 c, f1 f3 csplit_at_rec f0 cAPPEND f1 cCONS f2 cNIL f3
+D Tame_defs.split_at
+A |- (!c. (!xs. (((split_at c) xs) = (((split_at_rec c) NIL) xs))))
+T c= csplit_at f0 f1 csplit_at_rec f0 cNIL f1
+D Tame_defs.rotate_to
+A |- (!v. (!vs. (((rotate_to vs) v) = ((CONS v) ((APPEND (SND ((split_at v) vs))) (FST ((split_at v) vs)))))))
+T c= crotate_to f0 f1 cCONS f1 cAPPEND cSND csplit_at f1 f0 cFST csplit_at f1 f0
++ |- ((\c. (!xs. (((split_at c) xs) = (((split_at_rec c) NIL) xs)))) c)
+T * / ! c= csplit_at b0 b1 csplit_at_rec b0 cNIL b1 f0
++ |- (((!xs. (((split_at c) xs) = (((split_at_rec c) NIL) xs))) ==> ((\xs. (((split_at c) xs) = (((split_at_rec c) NIL) xs))) xs)) = ((\xs. (((split_at c) xs) = (((split_at_rec c) NIL) xs))) xs))
+T c= c==> ! c= csplit_at f0 b0 csplit_at_rec f0 cNIL b0 * / c= csplit_at f0 b0 csplit_at_rec f0 cNIL b0 f1 * / c= csplit_at f0 b0 csplit_at_rec f0 cNIL b0 f1
++ |- ((\xs. (((split_at c) xs) = (((split_at_rec c) NIL) xs))) xs)
+T * / c= csplit_at f0 b0 csplit_at_rec f0 cNIL b0 f1
++ |- (((!v. (!vs. (((rotate_to vs) v) = ((CONS v) ((APPEND (SND ((split_at v) vs))) (FST ((split_at v) vs))))))) ==> ((\v. (!vs. (((rotate_to vs) v) = ((CONS v) ((APPEND (SND ((split_at v) vs))) (FST ((split_at v) vs))))))) v)) = ((\v. (!vs. (((rotate_to vs) v) = ((CONS v) ((APPEND (SND ((split_at v) vs))) (FST ((split_at v) vs))))))) v))
+T c= c==> ! ! c= crotate_to b1 b0 cCONS b0 cAPPEND cSND csplit_at b0 b1 cFST csplit_at b0 b1 * / ! c= crotate_to b1 b0 cCONS b0 cAPPEND cSND csplit_at b0 b1 cFST csplit_at b0 b1 f0 * / ! c= crotate_to b1 b0 cCONS b0 cAPPEND cSND csplit_at b0 b1 cFST csplit_at b0 b1 f0
++ |- ((((COND (x = x)) y) z) = y)
+T c= cCOND c= f0 f0 f1 f2 f1
+- |- (((next_el ((CONS h) NIL)) h) = h)
+T c= cnext_el cCONS f0 cNIL f0 f0
+- |- ((x = x) = T)
+T c= c= f0 f0 cT
+- |- ((\h. (((next_el ((CONS h) NIL)) h) = h)) h)
+T * / c= cnext_el cCONS b0 cNIL b0 b0 f0
+- |- (((!h. (((next_el ((CONS h) NIL)) h) = h)) ==> ((\h. (((next_el ((CONS h) NIL)) h) = h)) h)) = ((\h. (((next_el ((CONS h) NIL)) h) = h)) h))
+T c= c==> ! c= cnext_el cCONS b0 cNIL b0 b0 * / c= cnext_el cCONS b0 cNIL b0 b0 f0 * / c= cnext_el cCONS b0 cNIL b0 b0 f0
+- |- ((((split_at_rec c) bs) NIL) = (bs , NIL))
+T c= csplit_at_rec f0 f1 cNIL c, f1 cNIL

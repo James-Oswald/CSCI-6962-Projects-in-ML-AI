@@ -1,0 +1,87 @@
+N Seq.rot_addn
+C |- (!m. (!n. (!s. (((m + n) <= (sizel s)) ==> (((rot (m + n)) s) = ((rot m) ((rot n) s)))))))
+T c==> c<= c+ f0 f1 csizel f2 c= crot c+ f0 f1 f2 crot f0 crot f1 f2
+D LE_ADDR
+A |- (!m. (!n. (n <= (m + n))))
+T c<= f0 c+ f1 f0
+D Ssrnat.addnK
+A |- (!n. (!x. (((x + n) - n) = x)))
+T c= c- c+ f0 f1 f1 f0
+D Seq.catA
+A |- (!s1. (!s2. (!s3. (((cat s1) ((cat s2) s3)) = ((cat ((cat s1) s2)) s3)))))
+T c= ccat f0 ccat f1 f2 ccat ccat f0 f1 f2
+D Seq.rot
+A |- (!n. (!s. (((rot n) s) = ((cat ((dropl n) s)) ((take n) s)))))
+T c= crot f0 f1 ccat cdropl f0 f1 ctake f0 f1
+D Seq.rot_size_cat
+A |- (!s1. (!s2. (((rot (sizel s1)) ((cat s1) s2)) = ((cat s2) s1))))
+T c= crot csizel f0 ccat f0 f1 ccat f1 f0
+D Seq.size_drop
+A |- (!n0. (!s. ((sizel ((dropl n0) s)) = ((sizel s) - n0))))
+T c= csizel cdropl f0 f1 c- csizel f1 f0
+D Seq.cat_take_drop
+A |- (!n0. (!s. (((cat ((take n0) s)) ((dropl n0) s)) = s)))
+T c= ccat ctake f0 f1 cdropl f0 f1 f1
+D Seq.size_takel
+A |- (!n0. (!s. ((n0 <= (sizel s)) ==> ((sizel ((take n0) s)) = n0))))
+T c==> c<= f0 csizel f1 c= csizel ctake f0 f1 f0
++ |- (((cat s2) s1) = ((rot (sizel s1)) ((cat s1) s2)))
+T c= ccat f0 f1 crot csizel f1 ccat f1 f0
+- ((m + n) <= (sizel s)) |- (T = ((m + n) <= (sizel s)))
+T c==> c<= c+ f0 f1 csizel f2 c= cT c<= c+ f0 f1 csizel f2
+- ((!x. (P ==> (Q x))) = (P ==> (!x. (Q x)))) |- ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))
+T c==> c= ! c==> f0 * f1 b0 c==> f0 ! * f1 b0 c= c==> f0 ! * f1 b0 ! c==> f0 * f1 b0
++ |- ((!s. (((m + n) <= (sizel s)) ==> (((rot (m + n)) s) = ((rot m) ((rot n) s))))) = T)
+T c= ! c==> c<= c+ f0 f1 csizel b0 c= crot c+ f0 f1 b0 crot f0 crot f1 b0 cT
++ |- (((!s1. (!s2. (!s3. (((cat s1) ((cat s2) s3)) = ((cat ((cat s1) s2)) s3))))) ==> ((\s1. (!s2. (!s3. (((cat s1) ((cat s2) s3)) = ((cat ((cat s1) s2)) s3))))) s1)) = ((\s1. (!s2. (!s3. (((cat s1) ((cat s2) s3)) = ((cat ((cat s1) s2)) s3))))) s1))
+T c= c==> ! ! ! c= ccat b0 ccat b1 b2 ccat ccat b0 b1 b2 * / ! ! c= ccat b0 ccat b1 b2 ccat ccat b0 b1 b2 f0 * / ! ! c= ccat b0 ccat b1 b2 ccat ccat b0 b1 b2 f0
++ |- (((!n0. (!s. ((sizel ((dropl n0) s)) = ((sizel s) - n0)))) ==> ((\n0. (!s. ((sizel ((dropl n0) s)) = ((sizel s) - n0)))) n0)) = ((\n0. (!s. ((sizel ((dropl n0) s)) = ((sizel s) - n0)))) n0))
+T c= c==> ! ! c= csizel cdropl b0 b1 c- csizel b1 b0 * / ! c= csizel cdropl b0 b1 c- csizel b1 b0 f0 * / ! c= csizel cdropl b0 b1 c- csizel b1 b0 f0
+- |- ((n <= (m + n)) = T)
+T c= c<= f0 c+ f1 f0 cT
++ ((m + n) <= (sizel s)) |- ((((n <= (sizel ((take (m + n)) s))) /\ (((sizel ((take n) ((take (m + n)) s))) = n) ==> (((rot ((m + n) - n)) ((rot (sizel ((take n) ((take (m + n)) s)))) s)) = ((rot m) ((rot n) s))))) ==> (((n <= (sizel ((take (m + n)) s))) ==> ((sizel ((take n) ((take (m + n)) s))) = n)) ==> (((rot ((m + n) - n)) ((rot (sizel ((take n) ((take (m + n)) s)))) s)) = ((rot m) ((rot n) s))))) = (((n <= (sizel ((take (m + n)) s))) ==> ((sizel ((take n) ((take (m + n)) s))) = n)) ==> (((rot ((m + n) - n)) ((rot (sizel ((take n) ((take (m + n)) s)))) s)) = ((rot m) ((rot n) s)))))
+T c==> c<= c+ f0 f1 csizel f2 c= c==> c/\ c<= f1 csizel ctake c+ f0 f1 f2 c==> c= csizel ctake f1 ctake c+ f0 f1 f2 f1 c= crot c- c+ f0 f1 f1 crot csizel ctake f1 ctake c+ f0 f1 f2 f2 crot f0 crot f1 f2 c==> c==> c<= f1 csizel ctake c+ f0 f1 f2 c= csizel ctake f1 ctake c+ f0 f1 f2 f1 c= crot c- c+ f0 f1 f1 crot csizel ctake f1 ctake c+ f0 f1 f2 f2 crot f0 crot f1 f2 c==> c==> c<= f1 csizel ctake c+ f0 f1 f2 c= csizel ctake f1 ctake c+ f0 f1 f2 f1 c= crot c- c+ f0 f1 f1 crot csizel ctake f1 ctake c+ f0 f1 f2 f2 crot f0 crot f1 f2
+- |- ((\P. (!Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x)))))) P)
+T * / ! c= c==> b0 ! * b1 b2 ! c==> b0 * b1 b2 f0
++ |- (((!s3. (((cat s1) ((cat s2) s3)) = ((cat ((cat s1) s2)) s3))) ==> ((\s3. (((cat s1) ((cat s2) s3)) = ((cat ((cat s1) s2)) s3))) s3)) = ((\s3. (((cat s1) ((cat s2) s3)) = ((cat ((cat s1) s2)) s3))) s3))
+T c= c==> ! c= ccat f0 ccat f1 b0 ccat ccat f0 f1 b0 * / c= ccat f0 ccat f1 b0 ccat ccat f0 f1 b0 f2 * / c= ccat f0 ccat f1 b0 ccat ccat f0 f1 b0 f2
++ |- ((\s. (((cat ((take n0) s)) ((dropl n0) s)) = s)) s)
+T * / c= ccat ctake f0 b0 cdropl f0 b0 b0 f1
+- |- (T = (n <= (m + n)))
+T c= cT c<= f0 c+ f1 f0
++ ((sizel ((take n) ((take (m + n)) s))) = n) |- ((((rot ((m + n) - n)) ((rot n) s)) = ((rot m) ((rot n) s))) = (((rot ((m + n) - n)) ((rot (sizel ((take n) ((take (m + n)) s)))) s)) = ((rot m) ((rot n) s))))
+T c==> c= csizel ctake f0 ctake c+ f1 f0 f2 f0 c= c= crot c- c+ f1 f0 f0 crot f0 f2 crot f1 crot f0 f2 c= crot c- c+ f1 f0 f0 crot csizel ctake f0 ctake c+ f1 f0 f2 f2 crot f1 crot f0 f2
++ ((m + n) <= (sizel s)) |- (((cat ((dropl (m + n)) s)) ((cat ((take n) ((take (m + n)) s))) ((dropl n) ((take (m + n)) s)))) = ((rot m) ((rot n) s)))
+T c==> c<= c+ f0 f1 csizel f2 c= ccat cdropl c+ f0 f1 f2 ccat ctake f1 ctake c+ f0 f1 f2 cdropl f1 ctake c+ f0 f1 f2 crot f0 crot f1 f2
+- |- ((((rot m) ((rot n) s)) = ((rot m) ((rot n) s))) = (((rot ((m + n) - n)) ((rot n) s)) = ((rot m) ((rot n) s))))
+T c= c= crot f0 crot f1 f2 crot f0 crot f1 f2 c= crot c- c+ f0 f1 f1 crot f1 f2 crot f0 crot f1 f2
++ ((m + n) <= (sizel s)) |- ((((sizel ((take n) ((take (m + n)) s))) = n) ==> (((rot ((m + n) - n)) ((rot (sizel ((take n) ((take (m + n)) s)))) s)) = ((rot m) ((rot n) s)))) = ((n <= (sizel ((take (m + n)) s))) /\ (((sizel ((take n) ((take (m + n)) s))) = n) ==> (((rot ((m + n) - n)) ((rot (sizel ((take n) ((take (m + n)) s)))) s)) = ((rot m) ((rot n) s))))))
+T c==> c<= c+ f0 f1 csizel f2 c= c==> c= csizel ctake f1 ctake c+ f0 f1 f2 f1 c= crot c- c+ f0 f1 f1 crot csizel ctake f1 ctake c+ f0 f1 f2 f2 crot f0 crot f1 f2 c/\ c<= f1 csizel ctake c+ f0 f1 f2 c==> c= csizel ctake f1 ctake c+ f0 f1 f2 f1 c= crot c- c+ f0 f1 f1 crot csizel ctake f1 ctake c+ f0 f1 f2 f2 crot f0 crot f1 f2
++ |- ((\s2. (!s3. (((cat s1) ((cat s2) s3)) = ((cat ((cat s1) s2)) s3)))) s2)
+T * / ! c= ccat f0 ccat b0 b1 ccat ccat f0 b0 b1 f1
++ ((m + n) <= (sizel s)) |- (n <= (sizel ((take (m + n)) s)))
+T c==> c<= c+ f0 f1 csizel f2 c<= f1 csizel ctake c+ f0 f1 f2
++ |- (((!m. (!n. (n <= (m + n)))) ==> ((\m. (!n. (n <= (m + n)))) m)) = ((\m. (!n. (n <= (m + n)))) m))
+T c= c==> ! ! c<= b1 c+ b0 b1 * / ! c<= b1 c+ b0 b1 f0 * / ! c<= b1 c+ b0 b1 f0
++ |- (s = ((cat ((take n) s)) ((dropl n) s)))
+T c= f0 ccat ctake f1 f0 cdropl f1 f0
++ (((rot (sizel s1)) ((cat s1) s2)) = ((cat s2) s1)) |- (((cat s2) s1) = ((rot (sizel s1)) ((cat s1) s2)))
+T c==> c= crot csizel f0 ccat f0 f1 ccat f1 f0 c= ccat f1 f0 crot csizel f0 ccat f0 f1
+- |- (T = (((rot m) ((rot n) s)) = ((rot m) ((rot n) s))))
+T c= cT c= crot f0 crot f1 f2 crot f0 crot f1 f2
+- |- ((x = x) = T)
+T c= c= f0 f0 cT
+- |- ((\Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))) Q)
+T * / c= c==> f0 ! * b0 b1 ! c==> f0 * b0 b1 f1
+- ((m + n) <= (sizel s)) |- (((m + n) <= (sizel s)) = T)
+T c==> c<= c+ f0 f1 csizel f2 c= c<= c+ f0 f1 csizel f2 cT
+- |- (((!P. (!Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x)))))) ==> ((\P. (!Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x)))))) P)) = ((\P. (!Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x)))))) P))
+T c= c==> ! ! c= c==> b0 ! * b1 b2 ! c==> b0 * b1 b2 * / ! c= c==> b0 ! * b1 b2 ! c==> b0 * b1 b2 f0 * / ! c= c==> b0 ! * b1 b2 ! c==> b0 * b1 b2 f0
+- ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x)))) |- ((!x. (P ==> (Q x))) = (P ==> (!x. (Q x))))
+T c==> c= c==> f0 ! * f1 b0 ! c==> f0 * f1 b0 c= ! c==> f0 * f1 b0 c==> f0 ! * f1 b0
+- (n0 <= (sizel s)) |- ((n0 <= (sizel s)) /\ ((sizel ((take n0) s)) = n0))
+T c==> c<= f0 csizel f1 c/\ c<= f0 csizel f1 c= csizel ctake f0 f1 f0
+- |- ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))
+T c= c==> f0 ! * f1 b0 ! c==> f0 * f1 b0
+- |- (((!Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))) ==> ((\Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))) Q)) = ((\Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))) Q))
+T c= c==> ! c= c==> f0 ! * b0 b1 ! c==> f0 * b0 b1 * / c= c==> f0 ! * b0 b1 ! c==> f0 * b0 b1 f1 * / c= c==> f0 ! * b0 b1 ! c==> f0 * b0 b1 f1

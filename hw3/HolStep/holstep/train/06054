@@ -1,0 +1,137 @@
+N Tame_list.iso_list_uniq_flatten
+C |- (!L. (!N. (!L'. (!N'. ((((normal_list L) N) /\ ((iso_list (L , N)) (L' , N'))) ==> (uniq (flatten N')))))))
+T c==> c/\ cnormal_list f0 f1 ciso_list c, f0 f1 c, f2 f3 cuniq cflatten f3
+D TRUTH
+A |- T
+T cT
+D Tame_defs.inj_on
+A |- (!s. (!f. (((inj_on f) s) = (!x. (!y. (((s x) /\ ((s y) /\ ((f x) = (f y)))) ==> (x = y)))))))
+T c= cinj_on f0 f1 ! ! c==> c/\ * f1 b0 c/\ * f1 b1 c= * f0 b0 * f0 b1 c= b0 b1
+D Tame_defs2.iso_list
+A |- (!L. (!N. (!L'. (!N'. (((iso_list (L , N)) (L' , N')) = (?phi. (((inj_on phi) (elements_of_list L)) /\ ((L' = ((MAP (MAP phi)) L)) /\ (N' = ((MAP (MAP (\u. ((phi (FST u)) , (phi (SND u)))))) N))))))))))
+T c= ciso_list c, f0 f1 c, f2 f3 c? / c/\ cinj_on b0 * part celements_of_list f0 c/\ c= f2 cMAP * part cMAP b0 f0 c= f3 cMAP * part cMAP / c, * b0 cFST b1 * b0 cSND b1 f1
+D Tame_defs2.normal_list
+A |- (!L. (!N. (((normal_list L) N) = ((uniq (flatten N)) /\ (((all (\s. (~ (s = NIL)))) N) /\ (((all (f_last L)) N) /\ (((all (loop_list L)) N) /\ (!d. (((MEM d) (flatten N)) ==> (((node (hypermap_of_list L)) d) SUBSET (set_of_list (flatten N))))))))))))
+T c= cnormal_list f0 f1 c/\ cuniq cflatten f1 c/\ call / c~ c= b0 cNIL f1 c/\ call * part cf_last f0 f1 c/\ call * part cloop_list f0 f1 ! c==> cMEM b0 cflatten f1 cSUBSET * * part cnode chypermap_of_list f0 b0 * part cset_of_list cflatten f1
+D Tame_list.MAP_flatten
+A |- (!f. (!x. (((MAP f) (flatten x)) = (flatten ((MAP (MAP f)) x)))))
+T c= cMAP f0 cflatten f1 cflatten cMAP * part cMAP f0 f1
+D Tame_list.uniq_map
+A |- (!y. (!f. (((uniq y) /\ (!u. (!v. ((((MEM u) y) /\ (((MEM v) y) /\ ((f u) = (f v)))) ==> (u = v))))) ==> (uniq ((MAP f) y)))))
+T c==> c/\ cuniq f0 ! ! c==> c/\ cMEM b0 f0 c/\ cMEM b1 f0 c= * f1 b0 * f1 b1 c= b0 b1 cuniq cMAP f1 f0
+D Tame_list.inj_on_subset
+A |- (!phi. (!U. (!V. ((((inj_on phi) U) /\ (V SUBSET U)) ==> ((inj_on phi) V)))))
+T c==> c/\ cinj_on f0 f1 cSUBSET f2 f1 cinj_on f0 f2
+D Tame_list.IN_ELIM_SET_OF_LIST
+A |- (!u. (!s. (((set_of_list s) u) = ((MEM u) s))))
+T c= cset_of_list f0 f1 cMEM f1 f0
+D Tame_list.normal_list_darts_of_list
+A |- (!L. (!N. (((normal_list L) N) ==> ((set_of_list (flatten N)) SUBSET (darts_of_list L)))))
+T c==> cnormal_list f0 f1 cSUBSET * part cset_of_list cflatten f1 * part cdarts_of_list f0
+D Tame_list.inj_on_dart_of_list
+A |- (!p. (!L. (((inj_on p) (elements_of_list L)) ==> ((inj_on (\t. ((p (FST t)) , (p (SND t))))) (darts_of_list L)))))
+T c==> cinj_on f0 * part celements_of_list f1 cinj_on / c, * f0 cFST b0 * f0 cSND b0 * part cdarts_of_list f1
++ (uniq (flatten N)), (N' = ((MAP (MAP (\u. ((phi (FST u)) , (phi (SND u)))))) N)), ((set_of_list (flatten N)) SUBSET (darts_of_list L)), ((inj_on phi) (elements_of_list L)) |- (!nphi. (((\nphi. ((\u. ((phi (FST u)) , (phi (SND u)))) = nphi)) nphi) ==> (uniq (flatten N'))))
+T c==> cuniq cflatten f0 c==> c= f1 cMAP * part cMAP / c, * f2 cFST b0 * f2 cSND b0 f0 c==> cSUBSET * part cset_of_list cflatten f0 * part cdarts_of_list f3 c==> cinj_on f2 * part celements_of_list f3 ! c==> * / c= / c, * f2 cFST b1 * f2 cSND b1 b1 b0 cuniq cflatten f1
++ |- ((\y. (((uniq y) /\ (!u. (!v. ((((MEM u) y) /\ (((MEM v) y) /\ ((f u) = (f v)))) ==> (u = v))))) ==> (uniq ((MAP f) y)))) y)
+T * / c==> c/\ cuniq b0 ! ! c==> c/\ cMEM b1 b0 c/\ cMEM b2 b0 c= * f0 b1 * f0 b2 c= b1 b2 cuniq cMAP f0 b0 f1
+- |- (((\u. ((phi (FST u)) , (phi (SND u)))) = nphi) = ((\nphi. ((\u. ((phi (FST u)) , (phi (SND u)))) = nphi)) nphi))
+T c= c= / c, * f0 cFST b0 * f0 cSND b0 f1 * / c= / c, * f0 cFST b1 * f0 cSND b1 b0 f1
++ (((normal_list L) N) /\ ((iso_list (L , N)) (L' , N'))), ((normal_list L) N) |- (uniq (flatten N'))
+T c==> c/\ cnormal_list f0 f1 ciso_list c, f0 f1 c, f2 f3 c==> cnormal_list f0 f1 cuniq cflatten f3
++ (!y. (!f. (((uniq y) /\ (!u. (!v. ((((MEM u) y) /\ (((MEM v) y) /\ ((f u) = (f v)))) ==> (u = v))))) ==> (uniq ((MAP f) y))))) |- ((\y. (!f. (((uniq y) /\ (!u. (!v. ((((MEM u) y) /\ (((MEM v) y) /\ ((f u) = (f v)))) ==> (u = v))))) ==> (uniq ((MAP f) y))))) y)
+T c==> ! ! c==> c/\ cuniq b0 ! ! c==> c/\ cMEM b2 b0 c/\ cMEM b3 b0 c= * b1 b2 * b1 b3 c= b2 b3 cuniq cMAP b1 b0 * / ! c==> c/\ cuniq b0 ! ! c==> c/\ cMEM b2 b0 c/\ cMEM b3 b0 c= * b1 b2 * b1 b3 c= b2 b3 cuniq cMAP b1 b0 f0
++ |- (((!N. (!L'. (!N'. (((iso_list (L , N)) (L' , N')) = (?phi. (((inj_on phi) (elements_of_list L)) /\ ((L' = ((MAP (MAP phi)) L)) /\ (N' = ((MAP (MAP (\u. ((phi (FST u)) , (phi (SND u)))))) N))))))))) ==> ((\N. (!L'. (!N'. (((iso_list (L , N)) (L' , N')) = (?phi. (((inj_on phi) (elements_of_list L)) /\ ((L' = ((MAP (MAP phi)) L)) /\ (N' = ((MAP (MAP (\u. ((phi (FST u)) , (phi (SND u)))))) N))))))))) N)) = ((\N. (!L'. (!N'. (((iso_list (L , N)) (L' , N')) = (?phi. (((inj_on phi) (elements_of_list L)) /\ ((L' = ((MAP (MAP phi)) L)) /\ (N' = ((MAP (MAP (\u. ((phi (FST u)) , (phi (SND u)))))) N))))))))) N))
+T c= c==> ! ! ! c= ciso_list c, f0 b0 c, b1 b2 c? / c/\ cinj_on b3 * part celements_of_list f0 c/\ c= b1 cMAP * part cMAP b3 f0 c= b2 cMAP * part cMAP / c, * b3 cFST b4 * b3 cSND b4 b0 * / ! ! c= ciso_list c, f0 b0 c, b1 b2 c? / c/\ cinj_on b3 * part celements_of_list f0 c/\ c= b1 cMAP * part cMAP b3 f0 c= b2 cMAP * part cMAP / c, * b3 cFST b4 * b3 cSND b4 b0 f1 * / ! ! c= ciso_list c, f0 b0 c, b1 b2 c? / c/\ cinj_on b3 * part celements_of_list f0 c/\ c= b1 cMAP * part cMAP b3 f0 c= b2 cMAP * part cMAP / c, * b3 cFST b4 * b3 cSND b4 b0 f1
++ |- (((!L. (!N. (((normal_list L) N) = ((uniq (flatten N)) /\ (((all (\s. (~ (s = NIL)))) N) /\ (((all (f_last L)) N) /\ (((all (loop_list L)) N) /\ (!d. (((MEM d) (flatten N)) ==> (((node (hypermap_of_list L)) d) SUBSET (set_of_list (flatten N)))))))))))) ==> ((\L. (!N. (((normal_list L) N) = ((uniq (flatten N)) /\ (((all (\s. (~ (s = NIL)))) N) /\ (((all (f_last L)) N) /\ (((all (loop_list L)) N) /\ (!d. (((MEM d) (flatten N)) ==> (((node (hypermap_of_list L)) d) SUBSET (set_of_list (flatten N)))))))))))) L)) = ((\L. (!N. (((normal_list L) N) = ((uniq (flatten N)) /\ (((all (\s. (~ (s = NIL)))) N) /\ (((all (f_last L)) N) /\ (((all (loop_list L)) N) /\ (!d. (((MEM d) (flatten N)) ==> (((node (hypermap_of_list L)) d) SUBSET (set_of_list (flatten N)))))))))))) L))
+T c= c==> ! ! c= cnormal_list b0 b1 c/\ cuniq cflatten b1 c/\ call / c~ c= b2 cNIL b1 c/\ call * part cf_last b0 b1 c/\ call * part cloop_list b0 b1 ! c==> cMEM b2 cflatten b1 cSUBSET * * part cnode chypermap_of_list b0 b2 * part cset_of_list cflatten b1 * / ! c= cnormal_list b0 b1 c/\ cuniq cflatten b1 c/\ call / c~ c= b2 cNIL b1 c/\ call * part cf_last b0 b1 c/\ call * part cloop_list b0 b1 ! c==> cMEM b2 cflatten b1 cSUBSET * * part cnode chypermap_of_list b0 b2 * part cset_of_list cflatten b1 f0 * / ! c= cnormal_list b0 b1 c/\ cuniq cflatten b1 c/\ call / c~ c= b2 cNIL b1 c/\ call * part cf_last b0 b1 c/\ call * part cloop_list b0 b1 ! c==> cMEM b2 cflatten b1 cSUBSET * * part cnode chypermap_of_list b0 b2 * part cset_of_list cflatten b1 f0
+- |- (!nphi. (((\nphi. ((\u. ((phi (FST u)) , (phi (SND u)))) = nphi)) nphi) ==> (?nphi. ((\u. ((phi (FST u)) , (phi (SND u)))) = nphi))))
+T c==> * / c= / c, * f0 cFST b1 * f0 cSND b1 b0 f1 c? / c= / c, * f0 cFST b1 * f0 cSND b1 b0
++ (uniq (flatten N)) |- ((uniq (flatten N)) = T)
+T c==> cuniq cflatten f0 c= cuniq cflatten f0 cT
++ (uniq (flatten N)) |- ((((\phi. (((inj_on phi) (elements_of_list L)) /\ ((L' = ((MAP (MAP phi)) L)) /\ (N' = ((MAP (MAP (\u. ((phi (FST u)) , (phi (SND u)))))) N))))) phi) ==> (((set_of_list (flatten N)) SUBSET (darts_of_list L)) ==> (uniq (flatten N')))) = T)
+T c==> cuniq cflatten f0 c= c==> * / c/\ cinj_on b0 * part celements_of_list f1 c/\ c= f2 cMAP * part cMAP b0 f1 c= f3 cMAP * part cMAP / c, * b0 cFST b1 * b0 cSND b1 f0 f4 c==> cSUBSET * part cset_of_list cflatten f0 * part cdarts_of_list f1 cuniq cflatten f3 cT
++ |- ((flatten ((MAP (MAP f)) x)) = ((MAP f) (flatten x)))
+T c= cflatten cMAP * part cMAP f0 f1 cMAP f0 cflatten f1
++ (uniq (flatten N)), (((inj_on phi) (elements_of_list L)) /\ ((L' = ((MAP (MAP phi)) L)) /\ (N' = ((MAP (MAP (\u. ((phi (FST u)) , (phi (SND u)))))) N)))) |- ((((inj_on phi) (elements_of_list L)) /\ ((L' = ((MAP (MAP phi)) L)) /\ (N' = ((MAP (MAP (\u. ((phi (FST u)) , (phi (SND u)))))) N)))) /\ (((set_of_list (flatten N)) SUBSET (darts_of_list L)) ==> (uniq (flatten N'))))
+T c==> cuniq cflatten f0 c==> c/\ cinj_on f1 * part celements_of_list f2 c/\ c= f3 cMAP * part cMAP f1 f2 c= f4 cMAP * part cMAP / c, * f1 cFST b0 * f1 cSND b0 f0 c/\ c/\ cinj_on f1 * part celements_of_list f2 c/\ c= f3 cMAP * part cMAP f1 f2 c= f4 cMAP * part cMAP / c, * f1 cFST b0 * f1 cSND b0 f0 c==> cSUBSET * part cset_of_list cflatten f0 * part cdarts_of_list f2 cuniq cflatten f4
++ |- (((!U. (!V. ((((inj_on nphi) U) /\ (V SUBSET U)) ==> ((inj_on nphi) V)))) ==> ((\U. (!V. ((((inj_on nphi) U) /\ (V SUBSET U)) ==> ((inj_on nphi) V)))) (darts_of_list L))) = ((\U. (!V. ((((inj_on nphi) U) /\ (V SUBSET U)) ==> ((inj_on nphi) V)))) (darts_of_list L)))
+T c= c==> ! ! c==> c/\ cinj_on f0 b0 cSUBSET b1 b0 cinj_on f0 b1 * / ! c==> c/\ cinj_on f0 b0 cSUBSET b1 b0 cinj_on f0 b1 * part cdarts_of_list f1 * / ! c==> c/\ cinj_on f0 b0 cSUBSET b1 b0 cinj_on f0 b1 * part cdarts_of_list f1
++ ((uniq (flatten N)) /\ (((all (\s. (~ (s = NIL)))) N) /\ (((all (f_last L)) N) /\ (((all (loop_list L)) N) /\ (!d. (((MEM d) (flatten N)) ==> (((node (hypermap_of_list L)) d) SUBSET (set_of_list (flatten N))))))))) |- (((uniq (flatten N)) /\ (((all (\s. (~ (s = NIL)))) N) /\ (((all (f_last L)) N) /\ (((all (loop_list L)) N) /\ (!d. (((MEM d) (flatten N)) ==> (((node (hypermap_of_list L)) d) SUBSET (set_of_list (flatten N))))))))) /\ ((?phi. (((inj_on phi) (elements_of_list L)) /\ ((L' = ((MAP (MAP phi)) L)) /\ (N' = ((MAP (MAP (\u. ((phi (FST u)) , (phi (SND u)))))) N))))) ==> (((set_of_list (flatten N)) SUBSET (darts_of_list L)) ==> (uniq (flatten N')))))
+T c==> c/\ cuniq cflatten f0 c/\ call / c~ c= b0 cNIL f0 c/\ call * part cf_last f1 f0 c/\ call * part cloop_list f1 f0 ! c==> cMEM b0 cflatten f0 cSUBSET * * part cnode chypermap_of_list f1 b0 * part cset_of_list cflatten f0 c/\ c/\ cuniq cflatten f0 c/\ call / c~ c= b0 cNIL f0 c/\ call * part cf_last f1 f0 c/\ call * part cloop_list f1 f0 ! c==> cMEM b0 cflatten f0 cSUBSET * * part cnode chypermap_of_list f1 b0 * part cset_of_list cflatten f0 c==> c? / c/\ cinj_on b0 * part celements_of_list f1 c/\ c= f2 cMAP * part cMAP b0 f1 c= f3 cMAP * part cMAP / c, * b0 cFST b1 * b0 cSND b1 f0 c==> cSUBSET * part cset_of_list cflatten f0 * part cdarts_of_list f1 cuniq cflatten f3
++ |- ((!x. (!y. ((((set_of_list (flatten N)) x) /\ (((set_of_list (flatten N)) y) /\ ((nphi x) = (nphi y)))) ==> (x = y)))) ==> (!u. (!v. ((((MEM u) (flatten N)) /\ (((MEM v) (flatten N)) /\ ((nphi u) = (nphi v)))) ==> (u = v)))))
+T c==> ! ! c==> c/\ cset_of_list cflatten f0 b0 c/\ cset_of_list cflatten f0 b1 c= * f1 b0 * f1 b1 c= b0 b1 ! ! c==> c/\ cMEM b0 cflatten f0 c/\ cMEM b1 cflatten f0 c= * f1 b0 * f1 b1 c= b0 b1
++ |- ((t ==> t) = T)
+T c= c==> f0 f0 cT
++ ((\u. ((phi (FST u)) , (phi (SND u)))) = nphi), (N' = ((MAP (MAP (\u. ((phi (FST u)) , (phi (SND u)))))) N)) |- (N' = ((MAP (MAP nphi)) N))
+T c==> c= / c, * f0 cFST b0 * f0 cSND b0 f1 c==> c= f2 cMAP * part cMAP / c, * f0 cFST b0 * f0 cSND b0 f3 c= f2 cMAP * part cMAP f1 f3
++ (uniq (flatten N)), (N' = ((MAP (MAP (\u. ((phi (FST u)) , (phi (SND u)))))) N)), ((set_of_list (flatten N)) SUBSET (darts_of_list L)), ((inj_on phi) (elements_of_list L)) |- ((?nphi. ((\u. ((phi (FST u)) , (phi (SND u)))) = nphi)) ==> (uniq (flatten N')))
+T c==> cuniq cflatten f0 c==> c= f1 cMAP * part cMAP / c, * f2 cFST b0 * f2 cSND b0 f0 c==> cSUBSET * part cset_of_list cflatten f0 * part cdarts_of_list f3 c==> cinj_on f2 * part celements_of_list f3 c==> c? / c= / c, * f2 cFST b1 * f2 cSND b1 b0 cuniq cflatten f1
++ (!y. (!f. (((uniq y) /\ (!u. (!v. ((((MEM u) y) /\ (((MEM v) y) /\ ((f u) = (f v)))) ==> (u = v))))) ==> (uniq ((MAP f) y))))) |- (((!f. (((uniq y) /\ (!u. (!v. ((((MEM u) y) /\ (((MEM v) y) /\ ((f u) = (f v)))) ==> (u = v))))) ==> (uniq ((MAP f) y)))) ==> ((\f. (((uniq y) /\ (!u. (!v. ((((MEM u) y) /\ (((MEM v) y) /\ ((f u) = (f v)))) ==> (u = v))))) ==> (uniq ((MAP f) y)))) f)) = ((\f. (((uniq y) /\ (!u. (!v. ((((MEM u) y) /\ (((MEM v) y) /\ ((f u) = (f v)))) ==> (u = v))))) ==> (uniq ((MAP f) y)))) f))
+T c==> ! ! c==> c/\ cuniq b0 ! ! c==> c/\ cMEM b2 b0 c/\ cMEM b3 b0 c= * b1 b2 * b1 b3 c= b2 b3 cuniq cMAP b1 b0 c= c==> ! c==> c/\ cuniq f0 ! ! c==> c/\ cMEM b1 f0 c/\ cMEM b2 f0 c= * b0 b1 * b0 b2 c= b1 b2 cuniq cMAP b0 f0 * / c==> c/\ cuniq f0 ! ! c==> c/\ cMEM b1 f0 c/\ cMEM b2 f0 c= * b0 b1 * b0 b2 c= b1 b2 cuniq cMAP b0 f0 f1 * / c==> c/\ cuniq f0 ! ! c==> c/\ cMEM b1 f0 c/\ cMEM b2 f0 c= * b0 b1 * b0 b2 c= b1 b2 cuniq cMAP b0 f0 f1
++ |- (((\u. ((phi (FST u)) , (phi (SND u)))) = (\u. ((phi (FST u)) , (phi (SND u))))) = ((\nphi. ((\u. ((phi (FST u)) , (phi (SND u)))) = nphi)) (\u. ((phi (FST u)) , (phi (SND u))))))
+T c= c= / c, * f0 cFST b0 * f0 cSND b0 / c, * f0 cFST b0 * f0 cSND b0 * / c= / c, * f0 cFST b1 * f0 cSND b1 b0 / c, * f0 cFST b0 * f0 cSND b0
++ |- ((\N'. (((iso_list (L , N)) (L' , N')) = (?phi. (((inj_on phi) (elements_of_list L)) /\ ((L' = ((MAP (MAP phi)) L)) /\ (N' = ((MAP (MAP (\u. ((phi (FST u)) , (phi (SND u)))))) N))))))) N')
+T * / c= ciso_list c, f0 f1 c, f2 b0 c? / c/\ cinj_on b1 * part celements_of_list f0 c/\ c= f2 cMAP * part cMAP b1 f0 c= b0 cMAP * part cMAP / c, * b1 cFST b2 * b1 cSND b2 f1 f3
++ ((iso_list (L , N)) (L' , N')), ((normal_list L) N) |- ((((normal_list L) N) ==> ((set_of_list (flatten N)) SUBSET (darts_of_list L))) ==> (uniq (flatten N')))
+T c==> ciso_list c, f0 f1 c, f2 f3 c==> cnormal_list f0 f1 c==> c==> cnormal_list f0 f1 cSUBSET * part cset_of_list cflatten f1 * part cdarts_of_list f0 cuniq cflatten f3
++ |- ((!N. (!L'. (!N'. ((((normal_list L) N) /\ ((iso_list (L , N)) (L' , N'))) ==> (uniq (flatten N')))))) = T)
+T c= ! ! ! c==> c/\ cnormal_list f0 b0 ciso_list c, f0 b0 c, b1 b2 cuniq cflatten b2 cT
++ |- (T = ((!x. (!y. ((((set_of_list (flatten N)) x) /\ (((set_of_list (flatten N)) y) /\ ((nphi x) = (nphi y)))) ==> (x = y)))) ==> (!u. (!v. ((((MEM u) (flatten N)) /\ (((MEM v) (flatten N)) /\ ((nphi u) = (nphi v)))) ==> (u = v))))))
+T c= cT c==> ! ! c==> c/\ cset_of_list cflatten f0 b0 c/\ cset_of_list cflatten f0 b1 c= * f1 b0 * f1 b1 c= b0 b1 ! ! c==> c/\ cMEM b0 cflatten f0 c/\ cMEM b1 cflatten f0 c= * f1 b0 * f1 b1 c= b0 b1
+- (!d. (((MEM d) (flatten N)) ==> (((node (hypermap_of_list L)) d) SUBSET (set_of_list (flatten N))))) |- ((((MEM d) (flatten N)) ==> (((node (hypermap_of_list L)) d) SUBSET (set_of_list (flatten N)))) = T)
+T c==> ! c==> cMEM b0 cflatten f0 cSUBSET * * part cnode chypermap_of_list f1 b0 * part cset_of_list cflatten f0 c= c==> cMEM f2 cflatten f0 cSUBSET * * part cnode chypermap_of_list f1 f2 * part cset_of_list cflatten f0 cT
++ |- (((uniq (flatten N)) /\ (((all (\s. (~ (s = NIL)))) N) /\ (((all (f_last L)) N) /\ (((all (loop_list L)) N) /\ (!d. (((MEM d) (flatten N)) ==> (((node (hypermap_of_list L)) d) SUBSET (set_of_list (flatten N))))))))) ==> ((?phi. (((inj_on phi) (elements_of_list L)) /\ ((L' = ((MAP (MAP phi)) L)) /\ (N' = ((MAP (MAP (\u. ((phi (FST u)) , (phi (SND u)))))) N))))) ==> (((set_of_list (flatten N)) SUBSET (darts_of_list L)) ==> (uniq (flatten N')))))
+T c==> c/\ cuniq cflatten f0 c/\ call / c~ c= b0 cNIL f0 c/\ call * part cf_last f1 f0 c/\ call * part cloop_list f1 f0 ! c==> cMEM b0 cflatten f0 cSUBSET * * part cnode chypermap_of_list f1 b0 * part cset_of_list cflatten f0 c==> c? / c/\ cinj_on b0 * part celements_of_list f1 c/\ c= f2 cMAP * part cMAP b0 f1 c= f3 cMAP * part cMAP / c, * b0 cFST b1 * b0 cSND b1 f0 c==> cSUBSET * part cset_of_list cflatten f0 * part cdarts_of_list f1 cuniq cflatten f3
+- (?phi. (((inj_on phi) (elements_of_list L)) /\ ((L' = ((MAP (MAP phi)) L)) /\ (N' = ((MAP (MAP (\u. ((phi (FST u)) , (phi (SND u)))))) N))))), (uniq (flatten N)) |- ((?phi. (((inj_on phi) (elements_of_list L)) /\ ((L' = ((MAP (MAP phi)) L)) /\ (N' = ((MAP (MAP (\u. ((phi (FST u)) , (phi (SND u)))))) N))))) /\ (((set_of_list (flatten N)) SUBSET (darts_of_list L)) ==> (uniq (flatten N'))))
+T c==> c? / c/\ cinj_on b0 * part celements_of_list f0 c/\ c= f1 cMAP * part cMAP b0 f0 c= f2 cMAP * part cMAP / c, * b0 cFST b1 * b0 cSND b1 f3 c==> cuniq cflatten f3 c/\ c? / c/\ cinj_on b0 * part celements_of_list f0 c/\ c= f1 cMAP * part cMAP b0 f0 c= f2 cMAP * part cMAP / c, * b0 cFST b1 * b0 cSND b1 f3 c==> cSUBSET * part cset_of_list cflatten f3 * part cdarts_of_list f0 cuniq cflatten f2
++ (uniq (flatten N)), (N' = ((MAP (MAP (\u. ((phi (FST u)) , (phi (SND u)))))) N)), ((set_of_list (flatten N)) SUBSET (darts_of_list L)), ((inj_on phi) (elements_of_list L)) |- (((!x. (((\nphi. ((\u. ((phi (FST u)) , (phi (SND u)))) = nphi)) x) ==> (uniq (flatten N')))) ==> ((?nphi. ((\u. ((phi (FST u)) , (phi (SND u)))) = nphi)) ==> (uniq (flatten N')))) = ((?nphi. ((\u. ((phi (FST u)) , (phi (SND u)))) = nphi)) ==> (uniq (flatten N'))))
+T c==> cuniq cflatten f0 c==> c= f1 cMAP * part cMAP / c, * f2 cFST b0 * f2 cSND b0 f0 c==> cSUBSET * part cset_of_list cflatten f0 * part cdarts_of_list f3 c==> cinj_on f2 * part celements_of_list f3 c= c==> ! c==> * / c= / c, * f2 cFST b2 * f2 cSND b2 b1 b0 cuniq cflatten f1 c==> c? / c= / c, * f2 cFST b1 * f2 cSND b1 b0 cuniq cflatten f1 c==> c? / c= / c, * f2 cFST b1 * f2 cSND b1 b0 cuniq cflatten f1
++ |- ((((((inj_on nphi) (darts_of_list L)) /\ ((set_of_list (flatten N)) SUBSET (darts_of_list L))) ==> ((inj_on nphi) (set_of_list (flatten N)))) ==> (!u. (!v. ((((MEM u) (flatten N)) /\ (((MEM v) (flatten N)) /\ ((nphi u) = (nphi v)))) ==> (u = v))))) = (!u. (!v. ((((MEM u) (flatten N)) /\ (((MEM v) (flatten N)) /\ ((nphi u) = (nphi v)))) ==> (u = v)))))
+T c= c==> c==> c/\ cinj_on f0 * part cdarts_of_list f1 cSUBSET * part cset_of_list cflatten f2 * part cdarts_of_list f1 cinj_on f0 * part cset_of_list cflatten f2 ! ! c==> c/\ cMEM b0 cflatten f2 c/\ cMEM b1 cflatten f2 c= * f0 b0 * f0 b1 c= b0 b1 ! ! c==> c/\ cMEM b0 cflatten f2 c/\ cMEM b1 cflatten f2 c= * f0 b0 * f0 b1 c= b0 b1
+- |- ((!y. t) = t)
+T c= ! f0 f0
++ ((set_of_list (flatten N)) SUBSET (darts_of_list L)), ((inj_on nphi) (darts_of_list L)) |- (((((inj_on nphi) (darts_of_list L)) /\ ((set_of_list (flatten N)) SUBSET (darts_of_list L))) ==> ((inj_on nphi) (set_of_list (flatten N)))) ==> (!u. (!v. ((((MEM u) (flatten N)) /\ (((MEM v) (flatten N)) /\ ((nphi u) = (nphi v)))) ==> (u = v)))))
+T c==> cSUBSET * part cset_of_list cflatten f0 * part cdarts_of_list f1 c==> cinj_on f2 * part cdarts_of_list f1 c==> c==> c/\ cinj_on f2 * part cdarts_of_list f1 cSUBSET * part cset_of_list cflatten f0 * part cdarts_of_list f1 cinj_on f2 * part cset_of_list cflatten f0 ! ! c==> c/\ cMEM b0 cflatten f0 c/\ cMEM b1 cflatten f0 c= * f2 b0 * f2 b1 c= b0 b1
+- |- ((?phi. t) = t)
+T c= c? / f0 f0
+- ((all (loop_list L)) N) |- (((all (loop_list L)) N) = T)
+T c==> call * part cloop_list f0 f1 c= call * part cloop_list f0 f1 cT
+- ((all (\s. (~ (s = NIL)))) N) |- (((all (\s. (~ (s = NIL)))) N) = T)
+T c==> call / c~ c= b0 cNIL f0 c= call / c~ c= b0 cNIL f0 cT
+- (!y. (!f. (((uniq y) /\ (!u. (!v. ((((MEM u) y) /\ (((MEM v) y) /\ ((f u) = (f v)))) ==> (u = v))))) ==> (uniq ((MAP f) y))))), ((uniq y) /\ (!u. (!v. ((((MEM u) y) /\ (((MEM v) y) /\ ((f u) = (f v)))) ==> (u = v))))) |- ((!y. (!f. (((uniq y) /\ (!u. (!v. ((((MEM u) y) /\ (((MEM v) y) /\ ((f u) = (f v)))) ==> (u = v))))) ==> (uniq ((MAP f) y))))) /\ (uniq ((MAP f) y)))
+T c==> ! ! c==> c/\ cuniq b0 ! ! c==> c/\ cMEM b2 b0 c/\ cMEM b3 b0 c= * b1 b2 * b1 b3 c= b2 b3 cuniq cMAP b1 b0 c==> c/\ cuniq f0 ! ! c==> c/\ cMEM b0 f0 c/\ cMEM b1 f0 c= * f1 b0 * f1 b1 c= b0 b1 c/\ ! ! c==> c/\ cuniq b0 ! ! c==> c/\ cMEM b2 b0 c/\ cMEM b3 b0 c= * b1 b2 * b1 b3 c= b2 b3 cuniq cMAP b1 b0 cuniq cMAP f1 f0
+- |- ((?nphi. ((\u. ((phi (FST u)) , (phi (SND u)))) = nphi)) ==> (?nphi. ((\u. ((phi (FST u)) , (phi (SND u)))) = nphi)))
+T c==> c? / c= / c, * f0 cFST b1 * f0 cSND b1 b0 c? / c= / c, * f0 cFST b1 * f0 cSND b1 b0
+- |- (((\u. ((phi (FST u)) , (phi (SND u)))) = nphi) ==> (?nphi. ((\u. ((phi (FST u)) , (phi (SND u)))) = nphi)))
+T c==> c= / c, * f0 cFST b0 * f0 cSND b0 f1 c? / c= / c, * f0 cFST b1 * f0 cSND b1 b0
+- ((\u. ((phi (FST u)) , (phi (SND u)))) = nphi) |- (((\u. ((phi (FST u)) , (phi (SND u)))) = nphi) /\ (?nphi. ((\u. ((phi (FST u)) , (phi (SND u)))) = nphi)))
+T c==> c= / c, * f0 cFST b0 * f0 cSND b0 f1 c/\ c= / c, * f0 cFST b0 * f0 cSND b0 f1 c? / c= / c, * f0 cFST b1 * f0 cSND b1 b0
+- ((uniq y) /\ (!u. (!v. ((((MEM u) y) /\ (((MEM v) y) /\ ((f u) = (f v)))) ==> (u = v))))) |- ((!y. (!f. (((uniq y) /\ (!u. (!v. ((((MEM u) y) /\ (((MEM v) y) /\ ((f u) = (f v)))) ==> (u = v))))) ==> (uniq ((MAP f) y))))) ==> (uniq ((MAP f) y)))
+T c==> c/\ cuniq f0 ! ! c==> c/\ cMEM b0 f0 c/\ cMEM b1 f0 c= * f1 b0 * f1 b1 c= b0 b1 c==> ! ! c==> c/\ cuniq b0 ! ! c==> c/\ cMEM b2 b0 c/\ cMEM b3 b0 c= * b1 b2 * b1 b3 c= b2 b3 cuniq cMAP b1 b0 cuniq cMAP f1 f0
+- |- ((x = x) = T)
+T c= c= f0 f0 cT
+- (!y. (!f. (((uniq y) /\ (!u. (!v. ((((MEM u) y) /\ (((MEM v) y) /\ ((f u) = (f v)))) ==> (u = v))))) ==> (uniq ((MAP f) y))))), ((uniq y) /\ (!u. (!v. ((((MEM u) y) /\ (((MEM v) y) /\ ((f u) = (f v)))) ==> (u = v))))) |- (((uniq y) /\ (!u. (!v. ((((MEM u) y) /\ (((MEM v) y) /\ ((f u) = (f v)))) ==> (u = v))))) /\ (uniq ((MAP f) y)))
+T c==> ! ! c==> c/\ cuniq b0 ! ! c==> c/\ cMEM b2 b0 c/\ cMEM b3 b0 c= * b1 b2 * b1 b3 c= b2 b3 cuniq cMAP b1 b0 c==> c/\ cuniq f0 ! ! c==> c/\ cMEM b0 f0 c/\ cMEM b1 f0 c= * f1 b0 * f1 b1 c= b0 b1 c/\ c/\ cuniq f0 ! ! c==> c/\ cMEM b0 f0 c/\ cMEM b1 f0 c= * f1 b0 * f1 b1 c= b0 b1 cuniq cMAP f1 f0
+- (!d. (((MEM d) (flatten N)) ==> (((node (hypermap_of_list L)) d) SUBSET (set_of_list (flatten N))))) |- ((\d. (((MEM d) (flatten N)) ==> (((node (hypermap_of_list L)) d) SUBSET (set_of_list (flatten N))))) d)
+T c==> ! c==> cMEM b0 cflatten f0 cSUBSET * * part cnode chypermap_of_list f1 b0 * part cset_of_list cflatten f0 * / c==> cMEM b0 cflatten f0 cSUBSET * * part cnode chypermap_of_list f1 b0 * part cset_of_list cflatten f0 f2
+- |- ((((\nphi. ((\u. ((phi (FST u)) , (phi (SND u)))) = nphi)) nphi) ==> (?nphi. ((\u. ((phi (FST u)) , (phi (SND u)))) = nphi))) = T)
+T c= c==> * / c= / c, * f0 cFST b1 * f0 cSND b1 b0 f1 c? / c= / c, * f0 cFST b1 * f0 cSND b1 b0 cT
+- |- ((t /\ t) = t)
+T c= c/\ f0 f0 f0
+- |- (((!x. (((\nphi. ((\u. ((phi (FST u)) , (phi (SND u)))) = nphi)) x) ==> (?nphi. ((\u. ((phi (FST u)) , (phi (SND u)))) = nphi)))) ==> ((?nphi. ((\u. ((phi (FST u)) , (phi (SND u)))) = nphi)) ==> (?nphi. ((\u. ((phi (FST u)) , (phi (SND u)))) = nphi)))) = ((?nphi. ((\u. ((phi (FST u)) , (phi (SND u)))) = nphi)) ==> (?nphi. ((\u. ((phi (FST u)) , (phi (SND u)))) = nphi))))
+T c= c==> ! c==> * / c= / c, * f0 cFST b2 * f0 cSND b2 b1 b0 c? / c= / c, * f0 cFST b2 * f0 cSND b2 b1 c==> c? / c= / c, * f0 cFST b1 * f0 cSND b1 b0 c? / c= / c, * f0 cFST b1 * f0 cSND b1 b0 c==> c? / c= / c, * f0 cFST b1 * f0 cSND b1 b0 c? / c= / c, * f0 cFST b1 * f0 cSND b1 b0
+- (?phi. (((inj_on phi) (elements_of_list L)) /\ ((L' = ((MAP (MAP phi)) L)) /\ (N' = ((MAP (MAP (\u. ((phi (FST u)) , (phi (SND u)))))) N))))), (uniq (flatten N)) |- (((set_of_list (flatten N)) SUBSET (darts_of_list L)) ==> (uniq (flatten N')))
+T c==> c? / c/\ cinj_on b0 * part celements_of_list f0 c/\ c= f1 cMAP * part cMAP b0 f0 c= f2 cMAP * part cMAP / c, * b0 cFST b1 * b0 cSND b1 f3 c==> cuniq cflatten f3 c==> cSUBSET * part cset_of_list cflatten f3 * part cdarts_of_list f0 cuniq cflatten f2
+- ((\u. ((phi (FST u)) , (phi (SND u)))) = nphi) |- ((\nphi. ((\u. ((phi (FST u)) , (phi (SND u)))) = nphi)) nphi)
+T c==> c= / c, * f0 cFST b0 * f0 cSND b0 f1 * / c= / c, * f0 cFST b1 * f0 cSND b1 b0 f1
+- (!d. (((MEM d) (flatten N)) ==> (((node (hypermap_of_list L)) d) SUBSET (set_of_list (flatten N))))) |- (((MEM d) (flatten N)) ==> (((node (hypermap_of_list L)) d) SUBSET (set_of_list (flatten N))))
+T c==> ! c==> cMEM b0 cflatten f0 cSUBSET * * part cnode chypermap_of_list f1 b0 * part cset_of_list cflatten f0 c==> cMEM f2 cflatten f0 cSUBSET * * part cnode chypermap_of_list f1 f2 * part cset_of_list cflatten f0
+- ((iso_list (L , N)) (L' , N')) |- (((iso_list (L , N)) (L' , N')) = T)
+T c==> ciso_list c, f0 f1 c, f2 f3 c= ciso_list c, f0 f1 c, f2 f3 cT
+- ((\nphi. ((\u. ((phi (FST u)) , (phi (SND u)))) = nphi)) nphi) |- (((\nphi. ((\u. ((phi (FST u)) , (phi (SND u)))) = nphi)) nphi) /\ (?nphi. ((\u. ((phi (FST u)) , (phi (SND u)))) = nphi)))
+T c==> * / c= / c, * f0 cFST b1 * f0 cSND b1 b0 f1 c/\ * / c= / c, * f0 cFST b1 * f0 cSND b1 b0 f1 c? / c= / c, * f0 cFST b1 * f0 cSND b1 b0
+- ((all (f_last L)) N) |- (((all (f_last L)) N) = T)
+T c==> call * part cf_last f0 f1 c= call * part cf_last f0 f1 cT
+- ((\nphi. ((\u. ((phi (FST u)) , (phi (SND u)))) = nphi)) nphi) |- ((((\u. ((phi (FST u)) , (phi (SND u)))) = nphi) ==> (?nphi. ((\u. ((phi (FST u)) , (phi (SND u)))) = nphi))) = (?nphi. ((\u. ((phi (FST u)) , (phi (SND u)))) = nphi)))
+T c==> * / c= / c, * f0 cFST b1 * f0 cSND b1 b0 f1 c= c==> c= / c, * f0 cFST b0 * f0 cSND b0 f1 c? / c= / c, * f0 cFST b1 * f0 cSND b1 b0 c? / c= / c, * f0 cFST b1 * f0 cSND b1 b0

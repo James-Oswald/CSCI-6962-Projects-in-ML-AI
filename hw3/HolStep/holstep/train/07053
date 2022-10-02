@@ -1,0 +1,682 @@
+N EXTREME_POINT_OF_CONVEX_HULL_INSERT
+C |- (!s. (!a. (((FINITE s) /\ (~ (a IN ((hull convex) s)))) ==> ((extreme_point_of a) ((hull convex) (a INSERT s))))))
+T c==> c/\ cFINITE f0 c~ cIN f1 * * part chull part cconvex f0 cextreme_point_of f1 * * part chull part cconvex * * part cINSERT f1 f0
+D TRUTH
+A |- T
+T cT
+D ETA_AX
+A |- (!t. ((\x. (t x)) = t))
+T c= / * f0 b0 f0
+D EXCLUDED_MIDDLE
+A |- (!t. (t \/ (~ t)))
+T c\/ f0 c~ f0
+D BOOL_CASES_AX
+A |- (!t. ((t = T) \/ (t = F)))
+T c\/ c= f0 cT c= f0 cF
+D NOT_CLAUSES
+A |- ((!t. ((~ (~ t)) = t)) /\ (((~ T) = F) /\ ((~ F) = T)))
+T c/\ ! c= c~ c~ b0 b0 c/\ c= c~ cT cF c= c~ cF cT
+D NOT_FORALL_THM
+A |- (!P. ((~ (!x. (P x))) = (?x. (~ (P x)))))
+T c= c~ ! * f0 b0 c? / c~ * f0 b0
+D I_THM
+A |- (!x. ((I x) = x))
+T c= cI f0 f0
+D IN
+A |- (!P. (!x. ((x IN P) = (P x))))
+T c= cIN f0 f1 * f1 f0
+D EXTENSION
+A |- (!s. (!t. ((s = t) = (!x. ((x IN s) = (x IN t))))))
+T c= c= f0 f1 ! c= cIN b0 f0 cIN b0 f1
+D SUBSET
+A |- (!s. (!t. ((s SUBSET t) = (!x. ((x IN s) ==> (x IN t))))))
+T c= cSUBSET f0 f1 ! c==> cIN b0 f0 cIN b0 f1
+D DISJOINT
+A |- (!s. (!t. (((DISJOINT s) t) = ((s INTER t) = EMPTY))))
+T c= cDISJOINT f0 f1 c= * * part cINTER f0 f1 part cEMPTY
+D NOT_IN_EMPTY
+A |- (!x. (~ (x IN EMPTY)))
+T c~ cIN f0 part cEMPTY
+D IN_INTER
+A |- (!s. (!t. (!x. ((x IN (s INTER t)) = ((x IN s) /\ (x IN t))))))
+T c= cIN f0 * * part cINTER f1 f2 c/\ cIN f0 f1 cIN f0 f2
+D IN_DIFF
+A |- (!s. (!t. (!x. ((x IN (s DIFF t)) = ((x IN s) /\ (~ (x IN t)))))))
+T c= cIN f0 * * part cDIFF f1 f2 c/\ cIN f0 f1 c~ cIN f0 f2
+D IN_INSERT
+A |- (!x. (!y. (!s. ((x IN (y INSERT s)) = ((x = y) \/ (x IN s))))))
+T c= cIN f0 * * part cINSERT f1 f2 c\/ c= f0 f1 cIN f0 f2
+D FINITE_INSERT
+A |- (!s. (!x. ((FINITE (x INSERT s)) = (FINITE s))))
+T c= cFINITE * * part cINSERT f0 f1 cFINITE f1
+D HULL_INC
+A |- (!P. (!s. (!x. ((x IN s) ==> (x IN ((hull P) s))))))
+T c==> cIN f0 f1 cIN f0 * * part chull f2 f1
+D AFFINE_HULL_SING
+A |- (!a. (((hull affine) (a INSERT EMPTY)) = (a INSERT EMPTY)))
+T c= * * part chull part caffine * * part cINSERT f0 part cEMPTY * * part cINSERT f0 part cEMPTY
+D CONVEX_HULL_SING
+A |- (!a. (((hull convex) (a INSERT EMPTY)) = (a INSERT EMPTY)))
+T c= * * part chull part cconvex * * part cINSERT f0 part cEMPTY * * part cINSERT f0 part cEMPTY
+D FACE_OF_CONVEX_HULLS
+A |- (!f. (!s. (((FINITE s) /\ ((f SUBSET s) /\ ((DISJOINT ((hull affine) f)) ((hull convex) (s DIFF f))))) ==> ((face_of ((hull convex) f)) ((hull convex) s)))))
+T c==> c/\ cFINITE f0 c/\ cSUBSET f1 f0 cDISJOINT * * part chull part caffine f1 * * part chull part cconvex * * part cDIFF f0 f1 cface_of * * part chull part cconvex f1 * * part chull part cconvex f0
+D FACE_OF_SING
+A |- (!x. (!s. (((face_of (x INSERT EMPTY)) s) = ((extreme_point_of x) s))))
+T c= cface_of * * part cINSERT f0 part cEMPTY f1 cextreme_point_of f0 f1
+- |- ((\a. ((~ ((~ (s a)) ==> (!x. ((((x = a) \/ (s x)) /\ (~ (x = a))) = (s x))))) ==> F)) a)
+T * / c==> c~ c==> c~ * f0 b0 ! c= c/\ c\/ c= b1 b0 * f0 b1 c~ c= b1 b0 * f0 b1 cF f1
++ (FINITE s) |- ((FINITE s) = T)
+T c==> cFINITE f0 c= cFINITE f0 cT
++ ((~ (((hull convex) s) a)) /\ ((FINITE s) /\ (~ (s a)))) |- ((?x. (((x = a) /\ ((~ (x = a)) /\ (~ (s x)))) \/ ((x = a) /\ (((hull convex) s) x)))) ==> F)
+T c==> c/\ c~ chull part cconvex f0 f1 c/\ cFINITE f0 c~ * f0 f1 c==> c? / c\/ c/\ c= b0 f1 c/\ c~ c= b0 f1 c~ * f0 b0 c/\ c= b0 f1 chull part cconvex f0 b0 cF
++ ((((x = a) \/ (s x)) /\ (~ (x = a))) /\ (~ (s x))) |- (~ (x = a))
+T c==> c/\ c/\ c\/ c= f0 f1 * f2 f0 c~ c= f0 f1 c~ * f2 f0 c~ c= f0 f1
++ |- ((t = F) = (~ t))
+T c= c= f0 cF c~ f0
++ (~ (a IN s)), (~ (a IN ((hull convex) s))), (FINITE s) |- ((((~ (a IN ((hull convex) s))) /\ ((FINITE s) /\ (~ (a IN s)))) ==> (((a INSERT EMPTY) SUBSET (a INSERT s)) /\ ((DISJOINT (a INSERT EMPTY)) ((hull convex) s)))) = (((a INSERT EMPTY) SUBSET (a INSERT s)) /\ ((DISJOINT (a INSERT EMPTY)) ((hull convex) s))))
+T c==> c~ cIN f0 f1 c==> c~ cIN f0 * * part chull part cconvex f1 c==> cFINITE f1 c= c==> c/\ c~ cIN f0 * * part chull part cconvex f1 c/\ cFINITE f1 c~ cIN f0 f1 c/\ cSUBSET * * part cINSERT f0 part cEMPTY * * part cINSERT f0 f1 cDISJOINT * * part cINSERT f0 part cEMPTY * * part chull part cconvex f1 c/\ cSUBSET * * part cINSERT f0 part cEMPTY * * part cINSERT f0 f1 cDISJOINT * * part cINSERT f0 part cEMPTY * * part chull part cconvex f1
+- |- ((!s. (!a. (((~ (((hull convex) s) a)) /\ ((FINITE s) /\ (~ (s a)))) ==> ((!x. ((x = a) ==> ((x = a) \/ (s x)))) /\ (!x. (~ ((x = a) /\ (((hull convex) s) x)))))))) = (!s. (!a. ((~ (((~ (((hull convex) s) a)) /\ ((FINITE s) /\ (~ (s a)))) ==> ((!x. ((x = a) ==> ((x = a) \/ (s x)))) /\ (!x. (~ ((x = a) /\ (((hull convex) s) x))))))) ==> F))))
+T c= ! ! c==> c/\ c~ chull part cconvex b0 b1 c/\ cFINITE b0 c~ * b0 b1 c/\ ! c==> c= b2 b1 c\/ c= b2 b1 * b0 b2 ! c~ c/\ c= b2 b1 chull part cconvex b0 b2 ! ! c==> c~ c==> c/\ c~ chull part cconvex b0 b1 c/\ cFINITE b0 c~ * b0 b1 c/\ ! c==> c= b2 b1 c\/ c= b2 b1 * b0 b2 ! c~ c/\ c= b2 b1 chull part cconvex b0 b2 cF
++ |- ((\x. ((x IN s) ==> (x IN ((hull P) s)))) x)
+T * / c==> cIN b0 f0 cIN b0 * * part chull f1 f0 f2
++ |- ((t \/ F) = t)
+T c= c\/ f0 cF f0
++ ((~ (((hull convex) s) a)) /\ ((FINITE s) /\ (~ (s a)))), ((x = a) /\ (((hull convex) s) x)) |- (((x = a) /\ (((hull convex) s) x)) /\ F)
+T c==> c/\ c~ chull part cconvex f0 f1 c/\ cFINITE f0 c~ * f0 f1 c==> c/\ c= f2 f1 chull part cconvex f0 f2 c/\ c/\ c= f2 f1 chull part cconvex f0 f2 cF
++ |- (((~ (a IN s)) ==> (!x. ((x IN ((a INSERT s) DIFF (a INSERT EMPTY))) = (x IN s)))) = ((~ (a IN s)) ==> (((a INSERT s) DIFF (a INSERT EMPTY)) = s)))
+T c= c==> c~ cIN f0 f1 ! c= cIN b0 * * part cDIFF * * part cINSERT f0 f1 * * part cINSERT f0 part cEMPTY cIN b0 f1 c==> c~ cIN f0 f1 c= * * part cDIFF * * part cINSERT f0 f1 * * part cINSERT f0 part cEMPTY f1
++ |- (((!a. (((hull affine) (a INSERT EMPTY)) = (a INSERT EMPTY))) ==> ((\a. (((hull affine) (a INSERT EMPTY)) = (a INSERT EMPTY))) a)) = ((\a. (((hull affine) (a INSERT EMPTY)) = (a INSERT EMPTY))) a))
+T c= c==> ! c= * * part chull part caffine * * part cINSERT b0 part cEMPTY * * part cINSERT b0 part cEMPTY * / c= * * part chull part caffine * * part cINSERT b0 part cEMPTY * * part cINSERT b0 part cEMPTY f0 * / c= * * part chull part caffine * * part cINSERT b0 part cEMPTY * * part cINSERT b0 part cEMPTY f0
++ (~ (a IN s)), (~ (a IN ((hull convex) s))), (FINITE s) |- ((~ (a IN ((hull convex) s))) /\ ((FINITE s) /\ (~ (a IN s))))
+T c==> c~ cIN f0 f1 c==> c~ cIN f0 * * part chull part cconvex f1 c==> cFINITE f1 c/\ c~ cIN f0 * * part chull part cconvex f1 c/\ cFINITE f1 c~ cIN f0 f1
++ (~ (s a)) |- ((~ ((((x = a) \/ (s x)) /\ (~ (x = a))) = (s x))) ==> F)
+T c==> c~ * f0 f1 c==> c~ c= c/\ c\/ c= f2 f1 * f0 f2 c~ c= f2 f1 * f0 f2 cF
+- ((x = a) /\ ((~ (x = a)) /\ (~ ((I s) x)))) |- ((~ ((I s) a)) = (~ ((I s) a)))
+T c==> c/\ c= f0 f1 c/\ c~ c= f0 f1 c~ cI f2 f0 c= c~ cI f2 f1 c~ cI f2 f1
+- |- ((\t1. (!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))))) t1)
+T * / ! ! c= c\/ b0 c\/ b1 b2 c\/ c\/ b0 b1 b2 f0
+- |- ((~ (a = a)) ==> (a = a))
+T c==> c~ c= f0 f0 c= f0 f0
++ (~ (s a)), ((((~ (x = a)) /\ (~ (s x))) \/ (x = a)) /\ (s x)) |- ((x = a) ==> F)
+T c==> c~ * f0 f1 c==> c/\ c\/ c/\ c~ c= f2 f1 c~ * f0 f2 c= f2 f1 * f0 f2 c==> c= f2 f1 cF
++ |- (((!P. (!s. (!x. ((x IN s) ==> (x IN ((hull P) s)))))) ==> ((\P. (!s. (!x. ((x IN s) ==> (x IN ((hull P) s)))))) P)) = ((\P. (!s. (!x. ((x IN s) ==> (x IN ((hull P) s)))))) P))
+T c= c==> ! ! ! c==> cIN b2 b1 cIN b2 * * part chull b0 b1 * / ! ! c==> cIN b2 b1 cIN b2 * * part chull b0 b1 f0 * / ! ! c==> cIN b2 b1 cIN b2 * * part chull b0 b1 f0
+- |- ((((~ ((~ (s a)) ==> (!x. ((((x = a) \/ (s x)) /\ (~ (x = a))) = (s x))))) ==> F) ==> ((~ ((~ (s a)) ==> (!x. ((((x = a) \/ (s x)) /\ (~ (x = a))) = (s x))))) ==> F)) ==> (((~ ((~ (s a)) ==> (!x. ((((x = a) \/ (s x)) /\ (~ (x = a))) = (s x))))) ==> F) ==> ((~ ((~ (s a)) ==> (!x. ((((x = a) \/ (s x)) /\ (~ (x = a))) = (s x))))) ==> F)))
+T c==> c==> c==> c~ c==> c~ * f0 f1 ! c= c/\ c\/ c= b0 f1 * f0 b0 c~ c= b0 f1 * f0 b0 cF c==> c~ c==> c~ * f0 f1 ! c= c/\ c\/ c= b0 f1 * f0 b0 c~ c= b0 f1 * f0 b0 cF c==> c==> c~ c==> c~ * f0 f1 ! c= c/\ c\/ c= b0 f1 * f0 b0 c~ c= b0 f1 * f0 b0 cF c==> c~ c==> c~ * f0 f1 ! c= c/\ c\/ c= b0 f1 * f0 b0 c~ c= b0 f1 * f0 b0 cF
++ |- ((\s. (((face_of (x INSERT EMPTY)) s) = ((extreme_point_of x) s))) s)
+T * / c= cface_of * * part cINSERT f0 part cEMPTY b0 cextreme_point_of f0 b0 f1
++ |- (((((x = a) \/ (s x)) /\ (~ (x = a))) /\ (~ (s x))) ==> F)
+T c==> c/\ c/\ c\/ c= f0 f1 * f2 f0 c~ c= f0 f1 c~ * f2 f0 cF
++ |- ((a IN s) ==> (((FINITE s) /\ (~ (a IN ((hull convex) s)))) ==> ((extreme_point_of a) ((hull convex) (a INSERT s)))))
+T c==> cIN f0 f1 c==> c/\ cFINITE f1 c~ cIN f0 * * part chull part cconvex f1 cextreme_point_of f0 * * part chull part cconvex * * part cINSERT f0 f1
+- ((~ (((hull convex) s) a)) /\ ((FINITE s) /\ (~ (s a)))) |- (FINITE s)
+T c==> c/\ c~ chull part cconvex f0 f1 c/\ cFINITE f0 c~ * f0 f1 cFINITE f0
++ |- (((FINITE (a INSERT s)) /\ (((a INSERT EMPTY) SUBSET (a INSERT s)) /\ ((DISJOINT ((hull affine) (a INSERT EMPTY))) ((hull convex) ((a INSERT s) DIFF (a INSERT EMPTY)))))) ==> ((face_of ((hull convex) (a INSERT EMPTY))) ((hull convex) (a INSERT s))))
+T c==> c/\ cFINITE * * part cINSERT f0 f1 c/\ cSUBSET * * part cINSERT f0 part cEMPTY * * part cINSERT f0 f1 cDISJOINT * * part chull part caffine * * part cINSERT f0 part cEMPTY * * part chull part cconvex * * part cDIFF * * part cINSERT f0 f1 * * part cINSERT f0 part cEMPTY cface_of * * part chull part cconvex * * part cINSERT f0 part cEMPTY * * part chull part cconvex * * part cINSERT f0 f1
+- (~ F), ((~ (x = a)) /\ (~ (s x))), ((((~ (x = a)) /\ (~ (s x))) \/ (x = a)) /\ (s x)) |- ((~ F) /\ F)
+T c==> c~ cF c==> c/\ c~ c= f0 f1 c~ * f2 f0 c==> c/\ c\/ c/\ c~ c= f0 f1 c~ * f2 f0 c= f0 f1 * f2 f0 c/\ c~ cF cF
++ |- (((((FINITE (a INSERT s)) /\ (((a INSERT EMPTY) SUBSET (a INSERT s)) /\ ((DISJOINT ((hull affine) (a INSERT EMPTY))) ((hull convex) ((a INSERT s) DIFF (a INSERT EMPTY)))))) ==> ((face_of ((hull convex) (a INSERT EMPTY))) ((hull convex) (a INSERT s)))) ==> ((extreme_point_of a) ((hull convex) (a INSERT s)))) = ((extreme_point_of a) ((hull convex) (a INSERT s))))
+T c= c==> c==> c/\ cFINITE * * part cINSERT f0 f1 c/\ cSUBSET * * part cINSERT f0 part cEMPTY * * part cINSERT f0 f1 cDISJOINT * * part chull part caffine * * part cINSERT f0 part cEMPTY * * part chull part cconvex * * part cDIFF * * part cINSERT f0 f1 * * part cINSERT f0 part cEMPTY cface_of * * part chull part cconvex * * part cINSERT f0 part cEMPTY * * part chull part cconvex * * part cINSERT f0 f1 cextreme_point_of f0 * * part chull part cconvex * * part cINSERT f0 f1 cextreme_point_of f0 * * part chull part cconvex * * part cINSERT f0 f1
++ ((~ (x = a)) /\ (~ (s x))), ((((~ (x = a)) /\ (~ (s x))) \/ (x = a)) /\ (s x)) |- (((~ (x = a)) /\ (~ (s x))) /\ F)
+T c==> c/\ c~ c= f0 f1 c~ * f2 f0 c==> c/\ c\/ c/\ c~ c= f0 f1 c~ * f2 f0 c= f0 f1 * f2 f0 c/\ c/\ c~ c= f0 f1 c~ * f2 f0 cF
+- ((~ (((~ (((hull convex) s) a)) /\ ((FINITE s) /\ (~ (s a)))) ==> ((!x. ((x = a) ==> ((x = a) \/ (s x)))) /\ (!x. (~ ((x = a) /\ (((hull convex) s) x))))))) ==> F) |- (((~ (((~ (((hull convex) s) a)) /\ ((FINITE s) /\ (~ (s a)))) ==> ((!x. ((x = a) ==> ((x = a) \/ (s x)))) /\ (!x. (~ ((x = a) /\ (((hull convex) s) x))))))) ==> F) /\ ((~ (((~ (((hull convex) s) a)) /\ ((FINITE s) /\ (~ (s a)))) ==> ((!x. ((x = a) ==> ((x = a) \/ (s x)))) /\ (!x. (~ ((x = a) /\ (((hull convex) s) x))))))) ==> F))
+T c==> c==> c~ c==> c/\ c~ chull part cconvex f0 f1 c/\ cFINITE f0 c~ * f0 f1 c/\ ! c==> c= b0 f1 c\/ c= b0 f1 * f0 b0 ! c~ c/\ c= b0 f1 chull part cconvex f0 b0 cF c/\ c==> c~ c==> c/\ c~ chull part cconvex f0 f1 c/\ cFINITE f0 c~ * f0 f1 c/\ ! c==> c= b0 f1 c\/ c= b0 f1 * f0 b0 ! c~ c/\ c= b0 f1 chull part cconvex f0 b0 cF c==> c~ c==> c/\ c~ chull part cconvex f0 f1 c/\ cFINITE f0 c~ * f0 f1 c/\ ! c==> c= b0 f1 c\/ c= b0 f1 * f0 b0 ! c~ c/\ c= b0 f1 chull part cconvex f0 b0 cF
++ |- ((a IN s) \/ (~ (a IN s)))
+T c\/ cIN f0 f1 c~ cIN f0 f1
+- ((x = a) /\ (((hull convex) s) x)) |- ((~ (((hull convex) s) a)) = (~ (((hull convex) s) a)))
+T c==> c/\ c= f0 f1 chull part cconvex f2 f0 c= c~ chull part cconvex f2 f1 c~ chull part cconvex f2 f1
++ ((~ (x = a)) /\ (~ (s x))) |- ((s x) ==> F)
+T c==> c/\ c~ c= f0 f1 c~ * f2 f0 c==> * f2 f0 cF
+- (a IN s) |- (T = (a IN s))
+T c==> cIN f0 f1 c= cT cIN f0 f1
+- (_899598 = _899601), (_899599 = _899602) |- ((_899598 = _899601) /\ ((~ (_899597 = _899600)) \/ ((((hull _899600) _899601) _899602) \/ (~ (((hull _899597) _899598) _899599)))))
+T c==> c= f0 f1 c==> c= f2 f3 c/\ c= f0 f1 c\/ c~ c= f4 f5 c\/ chull f5 f1 f3 c~ chull f4 f0 f2
+- |- (((~ (s a)) ==> (!x. ((((x = a) \/ (s x)) /\ (~ (x = a))) = (s x)))) = T)
+T c= c==> c~ * f0 f1 ! c= c/\ c\/ c= b0 f1 * f0 b0 c~ c= b0 f1 * f0 b0 cT
+- ((x = a) /\ ((~ (x = a)) /\ (~ ((I s) x)))) |- ((FINITE s) = (FINITE s))
+T c==> c/\ c= f0 f1 c/\ c~ c= f0 f1 c~ cI f2 f0 c= cFINITE f2 cFINITE f2
+- ((x = a) /\ ((~ (x = a)) /\ (~ ((I s) x)))) |- (~ ((I s) a))
+T c==> c/\ c= f0 f1 c/\ c~ c= f0 f1 c~ cI f2 f0 c~ cI f2 f1
++ ((~ (((hull convex) s) a)) /\ ((FINITE s) /\ (~ (s a)))) |- (~ (((hull convex) s) a))
+T c==> c/\ c~ chull part cconvex f0 f1 c/\ cFINITE f0 c~ * f0 f1 c~ chull part cconvex f0 f1
++ (~ (a IN s)), (~ (a IN ((hull convex) s))), (FINITE s) |- (((((a INSERT EMPTY) SUBSET (a INSERT s)) /\ ((DISJOINT (a INSERT EMPTY)) ((hull convex) ((a INSERT s) DIFF (a INSERT EMPTY))))) ==> ((face_of (a INSERT EMPTY)) ((hull convex) (a INSERT s)))) ==> ((extreme_point_of a) ((hull convex) (a INSERT s))))
+T c==> c~ cIN f0 f1 c==> c~ cIN f0 * * part chull part cconvex f1 c==> cFINITE f1 c==> c==> c/\ cSUBSET * * part cINSERT f0 part cEMPTY * * part cINSERT f0 f1 cDISJOINT * * part cINSERT f0 part cEMPTY * * part chull part cconvex * * part cDIFF * * part cINSERT f0 f1 * * part cINSERT f0 part cEMPTY cface_of * * part cINSERT f0 part cEMPTY * * part chull part cconvex * * part cINSERT f0 f1 cextreme_point_of f0 * * part chull part cconvex * * part cINSERT f0 f1
+- ((((~ (x = a)) /\ (~ (s x))) \/ (x = a)) /\ (s x)) |- ((~ (s x)) ==> (s x))
+T c==> c/\ c\/ c/\ c~ c= f0 f1 c~ * f2 f0 c= f0 f1 * f2 f0 c==> c~ * f2 f0 * f2 f0
+- ((~ ((~ (s a)) ==> (!x. ((((x = a) \/ (s x)) /\ (~ (x = a))) = (s x))))) ==> F), (((~ ((~ (s a)) ==> (!x. ((((x = a) \/ (s x)) /\ (~ (x = a))) = (s x))))) ==> F) ==> ((~ ((~ (s a)) ==> (!x. ((((x = a) \/ (s x)) /\ (~ (x = a))) = (s x))))) ==> F)) |- (((~ ((~ (s a)) ==> (!x. ((((x = a) \/ (s x)) /\ (~ (x = a))) = (s x))))) ==> F) /\ ((~ ((~ (s a)) ==> (!x. ((((x = a) \/ (s x)) /\ (~ (x = a))) = (s x))))) ==> F))
+T c==> c==> c~ c==> c~ * f0 f1 ! c= c/\ c\/ c= b0 f1 * f0 b0 c~ c= b0 f1 * f0 b0 cF c==> c==> c==> c~ c==> c~ * f0 f1 ! c= c/\ c\/ c= b0 f1 * f0 b0 c~ c= b0 f1 * f0 b0 cF c==> c~ c==> c~ * f0 f1 ! c= c/\ c\/ c= b0 f1 * f0 b0 c~ c= b0 f1 * f0 b0 cF c/\ c==> c~ c==> c~ * f0 f1 ! c= c/\ c\/ c= b0 f1 * f0 b0 c~ c= b0 f1 * f0 b0 cF c==> c~ c==> c~ * f0 f1 ! c= c/\ c\/ c= b0 f1 * f0 b0 c~ c= b0 f1 * f0 b0 cF
+- |- ((t ==> t) = T)
+T c= c==> f0 f0 cT
+- (~ F), ((x = a) /\ ((~ (x = a)) /\ (~ ((I s) x)))) |- ((~ F) /\ F)
+T c==> c~ cF c==> c/\ c= f0 f1 c/\ c~ c= f0 f1 c~ cI f2 f0 c/\ c~ cF cF
+- |- ((~ (_899595 = _899596)) \/ ((FINITE _899596) \/ (~ (FINITE _899595))))
+T c\/ c~ c= f0 f1 c\/ cFINITE f1 c~ cFINITE f0
+- |- ((t \/ t) = t)
+T c= c\/ f0 f0 f0
+- |- (((~ ((~ (s a)) ==> (!x. ((((x = a) \/ (s x)) /\ (~ (x = a))) = (s x))))) ==> F) ==> ((~ ((~ (s a)) ==> (!x. ((((x = a) \/ (s x)) /\ (~ (x = a))) = (s x))))) ==> F))
+T c==> c==> c~ c==> c~ * f0 f1 ! c= c/\ c\/ c= b0 f1 * f0 b0 c~ c= b0 f1 * f0 b0 cF c==> c~ c==> c~ * f0 f1 ! c= c/\ c\/ c= b0 f1 * f0 b0 c~ c= b0 f1 * f0 b0 cF
++ (~ ((!x. ((x = a) ==> ((x = a) \/ (s x)))) /\ (!x. (~ ((x = a) /\ (((hull convex) s) x)))))) |- (((?x. (((x = a) /\ ((~ (x = a)) /\ (~ (s x)))) \/ ((x = a) /\ (((hull convex) s) x)))) ==> F) = F)
+T c==> c~ c/\ ! c==> c= b0 f0 c\/ c= b0 f0 * f1 b0 ! c~ c/\ c= b0 f0 chull part cconvex f1 b0 c= c==> c? / c\/ c/\ c= b0 f0 c/\ c~ c= b0 f0 c~ * f1 b0 c/\ c= b0 f0 chull part cconvex f1 b0 cF cF
+- (_899591 = _899593), (_899592 = _899594) |- (((((I _899591) _899592) = ((I _899593) _899594)) ==> (((I _899593) _899594) \/ (~ ((I _899591) _899592)))) = (((I _899593) _899594) \/ (~ ((I _899591) _899592))))
+T c==> c= f0 f1 c==> c= f2 f3 c= c==> c= cI f0 f2 cI f1 f3 c\/ cI f1 f3 c~ cI f0 f2 c\/ cI f1 f3 c~ cI f0 f2
++ (x = a), ((((x = a) \/ (s x)) /\ (~ (x = a))) /\ (~ (s x))) |- ((x = a) /\ F)
+T c==> c= f0 f1 c==> c/\ c/\ c\/ c= f0 f1 * f2 f0 c~ c= f0 f1 c~ * f2 f0 c/\ c= f0 f1 cF
++ (~ (a IN s)), (~ (a IN ((hull convex) s))), (FINITE s) |- ((((FINITE (a INSERT s)) /\ (((a INSERT EMPTY) SUBSET (a INSERT s)) /\ ((DISJOINT ((hull affine) (a INSERT EMPTY))) ((hull convex) ((a INSERT s) DIFF (a INSERT EMPTY)))))) ==> ((face_of ((hull convex) (a INSERT EMPTY))) ((hull convex) (a INSERT s)))) ==> ((extreme_point_of a) ((hull convex) (a INSERT s))))
+T c==> c~ cIN f0 f1 c==> c~ cIN f0 * * part chull part cconvex f1 c==> cFINITE f1 c==> c==> c/\ cFINITE * * part cINSERT f0 f1 c/\ cSUBSET * * part cINSERT f0 part cEMPTY * * part cINSERT f0 f1 cDISJOINT * * part chull part caffine * * part cINSERT f0 part cEMPTY * * part chull part cconvex * * part cDIFF * * part cINSERT f0 f1 * * part cINSERT f0 part cEMPTY cface_of * * part chull part cconvex * * part cINSERT f0 part cEMPTY * * part chull part cconvex * * part cINSERT f0 f1 cextreme_point_of f0 * * part chull part cconvex * * part cINSERT f0 f1
+- |- ((\t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))) t3)
+T * / c= c\/ f0 c\/ f1 b0 c\/ c\/ f0 f1 b0 f2
+- |- (((~ (((~ (((hull convex) s) a)) /\ ((FINITE s) /\ (~ (s a)))) ==> ((!x. ((x = a) ==> ((x = a) \/ (s x)))) /\ (!x. (~ ((x = a) /\ (((hull convex) s) x))))))) ==> F) ==> ((~ (((~ (((hull convex) s) a)) /\ ((FINITE s) /\ (~ (s a)))) ==> ((!x. ((x = a) ==> ((x = a) \/ (s x)))) /\ (!x. (~ ((x = a) /\ (((hull convex) s) x))))))) ==> F))
+T c==> c==> c~ c==> c/\ c~ chull part cconvex f0 f1 c/\ cFINITE f0 c~ * f0 f1 c/\ ! c==> c= b0 f1 c\/ c= b0 f1 * f0 b0 ! c~ c/\ c= b0 f1 chull part cconvex f0 b0 cF c==> c~ c==> c/\ c~ chull part cconvex f0 f1 c/\ cFINITE f0 c~ * f0 f1 c/\ ! c==> c= b0 f1 c\/ c= b0 f1 * f0 b0 ! c~ c/\ c= b0 f1 chull part cconvex f0 b0 cF
++ F |- (F /\ (((extreme_point_of a) ((hull convex) (a INSERT s))) = ((extreme_point_of a) ((hull convex) (a INSERT s)))))
+T c==> cF c/\ cF c= cextreme_point_of f0 * * part chull part cconvex * * part cINSERT f0 f1 cextreme_point_of f0 * * part chull part cconvex * * part cINSERT f0 f1
+- |- ((?x'. ((x = a) /\ ((~ (x' = a)) /\ (~ (s x'))))) = ((x = a) /\ (?x. ((~ (x = a)) /\ (~ (s x))))))
+T c= c? / c/\ c= f0 f1 c/\ c~ c= b0 f1 c~ * f2 b0 c/\ c= f0 f1 c? / c/\ c~ c= b0 f1 c~ * f2 b0
+- |- (((~ p) ==> p) = p)
+T c= c==> c~ f0 f0 f0
++ (a IN s) |- ((F ==> (((extreme_point_of a) ((hull convex) (a INSERT s))) = q')) ==> ((((FINITE s) /\ (~ (a IN ((hull convex) s)))) ==> ((extreme_point_of a) ((hull convex) (a INSERT s)))) = (F ==> q')))
+T c==> cIN f0 f1 c==> c==> cF c= cextreme_point_of f0 * * part chull part cconvex * * part cINSERT f0 f1 f2 c= c==> c/\ cFINITE f1 c~ cIN f0 * * part chull part cconvex f1 cextreme_point_of f0 * * part chull part cconvex * * part cINSERT f0 f1 c==> cF f2
+- |- (((x = x) ==> p) = p)
+T c= c==> c= f0 f0 f1 f1
+- |- ((!a. t) = t)
+T c= ! f0 f0
++ (~ (s a)), ((((~ (x = a)) /\ (~ (s x))) \/ (x = a)) /\ (s x)) |- (((((~ (x = a)) /\ (~ (s x))) \/ (x = a)) /\ (s x)) /\ F)
+T c==> c~ * f0 f1 c==> c/\ c\/ c/\ c~ c= f2 f1 c~ * f0 f2 c= f2 f1 * f0 f2 c/\ c/\ c\/ c/\ c~ c= f2 f1 c~ * f0 f2 c= f2 f1 * f0 f2 cF
++ ((((x = a) \/ (s x)) /\ (~ (x = a))) /\ (~ (s x))) |- ((x = a) \/ (s x))
+T c==> c/\ c/\ c\/ c= f0 f1 * f2 f0 c~ c= f0 f1 c~ * f2 f0 c\/ c= f0 f1 * f2 f0
++ |- (((!t. (t \/ (~ t))) ==> ((\t. (t \/ (~ t))) (a IN s))) = ((\t. (t \/ (~ t))) (a IN s)))
+T c= c==> ! c\/ b0 c~ b0 * / c\/ b0 c~ b0 cIN f0 f1 * / c\/ b0 c~ b0 cIN f0 f1
+- ((x = a) /\ (((hull convex) s) x)) |- ((FINITE s) = (FINITE s))
+T c==> c/\ c= f0 f1 chull part cconvex f2 f0 c= cFINITE f2 cFINITE f2
+- (~ (a IN s)) |- ((~ (a IN s)) /\ (((a INSERT s) DIFF (a INSERT EMPTY)) = s))
+T c==> c~ cIN f0 f1 c/\ c~ cIN f0 f1 c= * * part cDIFF * * part cINSERT f0 f1 * * part cINSERT f0 part cEMPTY f1
+- |- (((~ (((~ (((hull convex) s) a)) /\ ((FINITE s) /\ (~ (s a)))) ==> ((!x. ((x = a) ==> ((x = a) \/ (s x)))) /\ (!x. (~ ((x = a) /\ (((hull convex) s) x))))))) ==> F) = (((~ (((hull convex) s) a)) /\ ((FINITE s) /\ (~ (s a)))) ==> ((!x. ((x = a) ==> ((x = a) \/ (s x)))) /\ (!x. (~ ((x = a) /\ (((hull convex) s) x)))))))
+T c= c==> c~ c==> c/\ c~ chull part cconvex f0 f1 c/\ cFINITE f0 c~ * f0 f1 c/\ ! c==> c= b0 f1 c\/ c= b0 f1 * f0 b0 ! c~ c/\ c= b0 f1 chull part cconvex f0 b0 cF c==> c/\ c~ chull part cconvex f0 f1 c/\ cFINITE f0 c~ * f0 f1 c/\ ! c==> c= b0 f1 c\/ c= b0 f1 * f0 b0 ! c~ c/\ c= b0 f1 chull part cconvex f0 b0
++ |- ((f x) = ((I f) x))
+T c= * f0 f1 cI f0 f1
+- |- ((t ==> F) = (~ t))
+T c= c==> f0 cF c~ f0
++ |- ((\P. (!s. (!x. ((x IN s) ==> (x IN ((hull P) s)))))) P)
+T * / ! ! c==> cIN b2 b1 cIN b2 * * part chull b0 b1 f0
+- |- ((~ (_899592 = _899594)) \/ ((~ (_899591 = _899593)) \/ (((I _899593) _899594) \/ (~ ((I _899591) _899592)))))
+T c\/ c~ c= f0 f1 c\/ c~ c= f2 f3 c\/ cI f3 f1 c~ cI f2 f0
+- |- ((((~ (((hull convex) s) a)) /\ ((FINITE s) /\ (~ (s a)))) ==> ((!x. ((x = a) ==> ((x = a) \/ (s x)))) /\ (!x. (~ ((x = a) /\ (((hull convex) s) x)))))) = T)
+T c= c==> c/\ c~ chull part cconvex f0 f1 c/\ cFINITE f0 c~ * f0 f1 c/\ ! c==> c= b0 f1 c\/ c= b0 f1 * f0 b0 ! c~ c/\ c= b0 f1 chull part cconvex f0 b0 cT
+- ((~ (((hull convex) s) a)) /\ ((FINITE s) /\ (~ (s a)))) |- (~ ((I s) a))
+T c==> c/\ c~ chull part cconvex f0 f1 c/\ cFINITE f0 c~ * f0 f1 c~ cI f0 f1
++ (x = a), ((((x = a) \/ (s x)) /\ (~ (x = a))) /\ (~ (s x))) |- F
+T c==> c= f0 f1 c==> c/\ c/\ c\/ c= f0 f1 * f2 f0 c~ c= f0 f1 c~ * f2 f0 cF
+- ((~ (((hull convex) s) a)) /\ ((FINITE s) /\ (~ (s a)))), ((x = a) /\ (((hull convex) s) x)) |- ((~ F) ==> F)
+T c==> c/\ c~ chull part cconvex f0 f1 c/\ cFINITE f0 c~ * f0 f1 c==> c/\ c= f2 f1 chull part cconvex f0 f2 c==> c~ cF cF
++ (~ (a IN s)), (~ (a IN ((hull convex) s))), (FINITE s) |- (((((a INSERT EMPTY) SUBSET (a INSERT s)) /\ ((DISJOINT (a INSERT EMPTY)) ((hull convex) ((a INSERT s) DIFF (a INSERT EMPTY))))) ==> ((extreme_point_of a) ((hull convex) (a INSERT s)))) = ((extreme_point_of a) ((hull convex) (a INSERT s))))
+T c==> c~ cIN f0 f1 c==> c~ cIN f0 * * part chull part cconvex f1 c==> cFINITE f1 c= c==> c/\ cSUBSET * * part cINSERT f0 part cEMPTY * * part cINSERT f0 f1 cDISJOINT * * part cINSERT f0 part cEMPTY * * part chull part cconvex * * part cDIFF * * part cINSERT f0 f1 * * part cINSERT f0 part cEMPTY cextreme_point_of f0 * * part chull part cconvex * * part cINSERT f0 f1 cextreme_point_of f0 * * part chull part cconvex * * part cINSERT f0 f1
++ (((x = a) /\ ((~ (x = a)) /\ (~ (s x)))) \/ ((x = a) /\ (((hull convex) s) x))) |- (((x = a) /\ ((~ (x = a)) /\ (~ ((I s) x)))) \/ ((x = a) /\ (((hull convex) s) x)))
+T c==> c\/ c/\ c= f0 f1 c/\ c~ c= f0 f1 c~ * f2 f0 c/\ c= f0 f1 chull part cconvex f2 f0 c\/ c/\ c= f0 f1 c/\ c~ c= f0 f1 c~ cI f2 f0 c/\ c= f0 f1 chull part cconvex f2 f0
++ ((x = a) /\ (((hull convex) s) x)) |- (((hull convex) s) a)
+T c==> c/\ c= f0 f1 chull part cconvex f2 f0 chull part cconvex f2 f1
++ |- (p = ((~ p) ==> F))
+T c= f0 c==> c~ f0 cF
+- |- ((?x. t) = t)
+T c= c? / f0 f0
+- (a IN s) |- ((a IN s) = T)
+T c==> cIN f0 f1 c= cIN f0 f1 cT
++ (~ (s a)) |- ((~ (s a)) /\ (!x. ((((x = a) \/ (s x)) /\ (~ (x = a))) = (s x))))
+T c==> c~ * f0 f1 c/\ c~ * f0 f1 ! c= c/\ c\/ c= b0 f1 * f0 b0 c~ c= b0 f1 * f0 b0
++ |- (((?x. ((x = a) /\ ((~ (x = a)) /\ (~ (s x))))) \/ (?x. ((x = a) /\ (((hull convex) s) x)))) = (?x. (((x = a) /\ ((~ (x = a)) /\ (~ (s x)))) \/ ((x = a) /\ (((hull convex) s) x)))))
+T c= c\/ c? / c/\ c= b0 f0 c/\ c~ c= b0 f0 c~ * f1 b0 c? / c/\ c= b0 f0 chull part cconvex f1 b0 c? / c\/ c/\ c= b0 f0 c/\ c~ c= b0 f0 c~ * f1 b0 c/\ c= b0 f0 chull part cconvex f1 b0
++ (FINITE s) |- ((((((a INSERT EMPTY) SUBSET (a INSERT s)) /\ ((DISJOINT (a INSERT EMPTY)) ((hull convex) ((a INSERT s) DIFF (a INSERT EMPTY))))) ==> ((face_of (a INSERT EMPTY)) ((hull convex) (a INSERT s)))) ==> ((extreme_point_of a) ((hull convex) (a INSERT s)))) = ((((FINITE (a INSERT s)) /\ (((a INSERT EMPTY) SUBSET (a INSERT s)) /\ ((DISJOINT ((hull affine) (a INSERT EMPTY))) ((hull convex) ((a INSERT s) DIFF (a INSERT EMPTY)))))) ==> ((face_of ((hull convex) (a INSERT EMPTY))) ((hull convex) (a INSERT s)))) ==> ((extreme_point_of a) ((hull convex) (a INSERT s)))))
+T c==> cFINITE f0 c= c==> c==> c/\ cSUBSET * * part cINSERT f1 part cEMPTY * * part cINSERT f1 f0 cDISJOINT * * part cINSERT f1 part cEMPTY * * part chull part cconvex * * part cDIFF * * part cINSERT f1 f0 * * part cINSERT f1 part cEMPTY cface_of * * part cINSERT f1 part cEMPTY * * part chull part cconvex * * part cINSERT f1 f0 cextreme_point_of f1 * * part chull part cconvex * * part cINSERT f1 f0 c==> c==> c/\ cFINITE * * part cINSERT f1 f0 c/\ cSUBSET * * part cINSERT f1 part cEMPTY * * part cINSERT f1 f0 cDISJOINT * * part chull part caffine * * part cINSERT f1 part cEMPTY * * part chull part cconvex * * part cDIFF * * part cINSERT f1 f0 * * part cINSERT f1 part cEMPTY cface_of * * part chull part cconvex * * part cINSERT f1 part cEMPTY * * part chull part cconvex * * part cINSERT f1 f0 cextreme_point_of f1 * * part chull part cconvex * * part cINSERT f1 f0
++ (~ (a IN s)), (~ (a IN ((hull convex) s))), (FINITE s) |- (((((a INSERT EMPTY) SUBSET (a INSERT s)) /\ ((DISJOINT (a INSERT EMPTY)) ((hull convex) ((a INSERT s) DIFF (a INSERT EMPTY))))) ==> ((extreme_point_of a) ((hull convex) (a INSERT s)))) ==> ((extreme_point_of a) ((hull convex) (a INSERT s))))
+T c==> c~ cIN f0 f1 c==> c~ cIN f0 * * part chull part cconvex f1 c==> cFINITE f1 c==> c==> c/\ cSUBSET * * part cINSERT f0 part cEMPTY * * part cINSERT f0 f1 cDISJOINT * * part cINSERT f0 part cEMPTY * * part chull part cconvex * * part cDIFF * * part cINSERT f0 f1 * * part cINSERT f0 part cEMPTY cextreme_point_of f0 * * part chull part cconvex * * part cINSERT f0 f1 cextreme_point_of f0 * * part chull part cconvex * * part cINSERT f0 f1
++ |- ((((~ (a IN ((hull convex) s))) /\ ((FINITE s) /\ (~ (a IN s)))) ==> ((!x. ((x IN (a INSERT EMPTY)) ==> (x IN (a INSERT s)))) /\ (!x. ((x IN ((a INSERT EMPTY) INTER ((hull convex) s))) = (x IN EMPTY))))) = (((~ (a IN ((hull convex) s))) /\ ((FINITE s) /\ (~ (a IN s)))) ==> (((a INSERT EMPTY) SUBSET (a INSERT s)) /\ ((DISJOINT (a INSERT EMPTY)) ((hull convex) s)))))
+T c= c==> c/\ c~ cIN f0 * * part chull part cconvex f1 c/\ cFINITE f1 c~ cIN f0 f1 c/\ ! c==> cIN b0 * * part cINSERT f0 part cEMPTY cIN b0 * * part cINSERT f0 f1 ! c= cIN b0 * * part cINTER * * part cINSERT f0 part cEMPTY * * part chull part cconvex f1 cIN b0 part cEMPTY c==> c/\ c~ cIN f0 * * part chull part cconvex f1 c/\ cFINITE f1 c~ cIN f0 f1 c/\ cSUBSET * * part cINSERT f0 part cEMPTY * * part cINSERT f0 f1 cDISJOINT * * part cINSERT f0 part cEMPTY * * part chull part cconvex f1
+- |- ((_899595 = _899596) ==> ((FINITE _899596) \/ (~ (FINITE _899595))))
+T c==> c= f0 f1 c\/ cFINITE f1 c~ cFINITE f0
+- |- ((((~ (((~ (((hull convex) s) a)) /\ ((FINITE s) /\ (~ (s a)))) ==> ((!x. ((x = a) ==> ((x = a) \/ (s x)))) /\ (!x. (~ ((x = a) /\ (((hull convex) s) x))))))) ==> F) ==> ((~ (((~ (((hull convex) s) a)) /\ ((FINITE s) /\ (~ (s a)))) ==> ((!x. ((x = a) ==> ((x = a) \/ (s x)))) /\ (!x. (~ ((x = a) /\ (((hull convex) s) x))))))) ==> F)) = ((~ (((~ (((hull convex) s) a)) /\ ((FINITE s) /\ (~ (s a)))) ==> ((!x. ((x = a) ==> ((x = a) \/ (s x)))) /\ (!x. (~ ((x = a) /\ (((hull convex) s) x))))))) ==> F))
+T c= c==> c==> c~ c==> c/\ c~ chull part cconvex f0 f1 c/\ cFINITE f0 c~ * f0 f1 c/\ ! c==> c= b0 f1 c\/ c= b0 f1 * f0 b0 ! c~ c/\ c= b0 f1 chull part cconvex f0 b0 cF c==> c~ c==> c/\ c~ chull part cconvex f0 f1 c/\ cFINITE f0 c~ * f0 f1 c/\ ! c==> c= b0 f1 c\/ c= b0 f1 * f0 b0 ! c~ c/\ c= b0 f1 chull part cconvex f0 b0 cF c==> c~ c==> c/\ c~ chull part cconvex f0 f1 c/\ cFINITE f0 c~ * f0 f1 c/\ ! c==> c= b0 f1 c\/ c= b0 f1 * f0 b0 ! c~ c/\ c= b0 f1 chull part cconvex f0 b0 cF
++ |- (((!s. (((FINITE s) /\ (((a INSERT EMPTY) SUBSET s) /\ ((DISJOINT ((hull affine) (a INSERT EMPTY))) ((hull convex) (s DIFF (a INSERT EMPTY)))))) ==> ((face_of ((hull convex) (a INSERT EMPTY))) ((hull convex) s)))) ==> ((\s. (((FINITE s) /\ (((a INSERT EMPTY) SUBSET s) /\ ((DISJOINT ((hull affine) (a INSERT EMPTY))) ((hull convex) (s DIFF (a INSERT EMPTY)))))) ==> ((face_of ((hull convex) (a INSERT EMPTY))) ((hull convex) s)))) (a INSERT s))) = ((\s. (((FINITE s) /\ (((a INSERT EMPTY) SUBSET s) /\ ((DISJOINT ((hull affine) (a INSERT EMPTY))) ((hull convex) (s DIFF (a INSERT EMPTY)))))) ==> ((face_of ((hull convex) (a INSERT EMPTY))) ((hull convex) s)))) (a INSERT s)))
+T c= c==> ! c==> c/\ cFINITE b0 c/\ cSUBSET * * part cINSERT f0 part cEMPTY b0 cDISJOINT * * part chull part caffine * * part cINSERT f0 part cEMPTY * * part chull part cconvex * * part cDIFF b0 * * part cINSERT f0 part cEMPTY cface_of * * part chull part cconvex * * part cINSERT f0 part cEMPTY * * part chull part cconvex b0 * / c==> c/\ cFINITE b0 c/\ cSUBSET * * part cINSERT f0 part cEMPTY b0 cDISJOINT * * part chull part caffine * * part cINSERT f0 part cEMPTY * * part chull part cconvex * * part cDIFF b0 * * part cINSERT f0 part cEMPTY cface_of * * part chull part cconvex * * part cINSERT f0 part cEMPTY * * part chull part cconvex b0 * * part cINSERT f0 f1 * / c==> c/\ cFINITE b0 c/\ cSUBSET * * part cINSERT f0 part cEMPTY b0 cDISJOINT * * part chull part caffine * * part cINSERT f0 part cEMPTY * * part chull part cconvex * * part cDIFF b0 * * part cINSERT f0 part cEMPTY cface_of * * part chull part cconvex * * part cINSERT f0 part cEMPTY * * part chull part cconvex b0 * * part cINSERT f0 f1
+- (_899597 = _899600), (_899598 = _899601), (_899599 = _899602) |- ((((((hull _899597) _899598) _899599) = (((hull _899600) _899601) _899602)) ==> ((((hull _899600) _899601) _899602) \/ (~ (((hull _899597) _899598) _899599)))) = ((((hull _899600) _899601) _899602) \/ (~ (((hull _899597) _899598) _899599))))
+T c==> c= f0 f1 c==> c= f2 f3 c==> c= f4 f5 c= c==> c= chull f0 f2 f4 chull f1 f3 f5 c\/ chull f1 f3 f5 c~ chull f0 f2 f4 c\/ chull f1 f3 f5 c~ chull f0 f2 f4
++ |- (((!a. (((hull convex) (a INSERT EMPTY)) = (a INSERT EMPTY))) ==> ((\a. (((hull convex) (a INSERT EMPTY)) = (a INSERT EMPTY))) a)) = ((\a. (((hull convex) (a INSERT EMPTY)) = (a INSERT EMPTY))) a))
+T c= c==> ! c= * * part chull part cconvex * * part cINSERT b0 part cEMPTY * * part cINSERT b0 part cEMPTY * / c= * * part chull part cconvex * * part cINSERT b0 part cEMPTY * * part cINSERT b0 part cEMPTY f0 * / c= * * part chull part cconvex * * part cINSERT b0 part cEMPTY * * part cINSERT b0 part cEMPTY f0
+- (s x), ((((x = a) \/ (s x)) /\ (~ (x = a))) /\ (~ (s x))) |- ((~ F) ==> F)
+T c==> * f0 f1 c==> c/\ c/\ c\/ c= f1 f2 * f0 f1 c~ c= f1 f2 c~ * f0 f1 c==> c~ cF cF
+- (~ (s x)), ((((~ (x = a)) /\ (~ (s x))) \/ (x = a)) /\ (s x)) |- ((~ (s x)) /\ (s x))
+T c==> c~ * f0 f1 c==> c/\ c\/ c/\ c~ c= f1 f2 c~ * f0 f1 c= f1 f2 * f0 f1 c/\ c~ * f0 f1 * f0 f1
++ |- ((\s. (((FINITE s) /\ (((a INSERT EMPTY) SUBSET s) /\ ((DISJOINT ((hull affine) (a INSERT EMPTY))) ((hull convex) (s DIFF (a INSERT EMPTY)))))) ==> ((face_of ((hull convex) (a INSERT EMPTY))) ((hull convex) s)))) (a INSERT s))
+T * / c==> c/\ cFINITE b0 c/\ cSUBSET * * part cINSERT f0 part cEMPTY b0 cDISJOINT * * part chull part caffine * * part cINSERT f0 part cEMPTY * * part chull part cconvex * * part cDIFF b0 * * part cINSERT f0 part cEMPTY cface_of * * part chull part cconvex * * part cINSERT f0 part cEMPTY * * part chull part cconvex b0 * * part cINSERT f0 f1
++ ((~ (((hull convex) s) a)) /\ ((FINITE s) /\ (~ (s a)))) |- (((\x. (((x = a) /\ ((~ (x = a)) /\ (~ (s x)))) \/ ((x = a) /\ (((hull convex) s) x)))) x) ==> F)
+T c==> c/\ c~ chull part cconvex f0 f1 c/\ cFINITE f0 c~ * f0 f1 c==> * / c\/ c/\ c= b0 f1 c/\ c~ c= b0 f1 c~ * f0 b0 c/\ c= b0 f1 chull part cconvex f0 b0 f2 cF
+- |- ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))
+T c= c\/ f0 c\/ f1 f2 c\/ c\/ f0 f1 f2
++ (x = a), ((((x = a) \/ (s x)) /\ (~ (x = a))) /\ (~ (s x))) |- (~ (a = a))
+T c==> c= f0 f1 c==> c/\ c/\ c\/ c= f0 f1 * f2 f0 c~ c= f0 f1 c~ * f2 f0 c~ c= f1 f1
++ |- (((~ ((((x = a) \/ (s x)) /\ (~ (x = a))) = (s x))) ==> F) = ((((x = a) \/ (s x)) /\ (~ (x = a))) = (s x)))
+T c= c==> c~ c= c/\ c\/ c= f0 f1 * f2 f0 c~ c= f0 f1 * f2 f0 cF c= c/\ c\/ c= f0 f1 * f2 f0 c~ c= f0 f1 * f2 f0
++ |- ((\a. (((hull affine) (a INSERT EMPTY)) = (a INSERT EMPTY))) a)
+T * / c= * * part chull part caffine * * part cINSERT b0 part cEMPTY * * part cINSERT b0 part cEMPTY f0
++ (~ ((((x = a) \/ (s x)) /\ (~ (x = a))) = (s x))), (((((x = a) \/ (s x)) /\ (~ (x = a))) /\ (~ (s x))) ==> F), (((((~ (x = a)) /\ (~ (s x))) \/ (x = a)) /\ (s x)) ==> F) |- F
+T c==> c~ c= c/\ c\/ c= f0 f1 * f2 f0 c~ c= f0 f1 * f2 f0 c==> c==> c/\ c/\ c\/ c= f0 f1 * f2 f0 c~ c= f0 f1 c~ * f2 f0 cF c==> c==> c/\ c\/ c/\ c~ c= f0 f1 c~ * f2 f0 c= f0 f1 * f2 f0 cF cF
++ (~ (s a)) |- ((s a) ==> F)
+T c==> c~ * f0 f1 c==> * f0 f1 cF
+- ((x = a) /\ ((~ (x = a)) /\ (~ ((I s) x)))) |- ((~ ((I s) x)) = (~ ((I s) a)))
+T c==> c/\ c= f0 f1 c/\ c~ c= f0 f1 c~ cI f2 f0 c= c~ cI f2 f0 c~ cI f2 f1
++ |- (((!f. (!s. (((FINITE s) /\ ((f SUBSET s) /\ ((DISJOINT ((hull affine) f)) ((hull convex) (s DIFF f))))) ==> ((face_of ((hull convex) f)) ((hull convex) s))))) ==> ((\f. (!s. (((FINITE s) /\ ((f SUBSET s) /\ ((DISJOINT ((hull affine) f)) ((hull convex) (s DIFF f))))) ==> ((face_of ((hull convex) f)) ((hull convex) s))))) (a INSERT EMPTY))) = ((\f. (!s. (((FINITE s) /\ ((f SUBSET s) /\ ((DISJOINT ((hull affine) f)) ((hull convex) (s DIFF f))))) ==> ((face_of ((hull convex) f)) ((hull convex) s))))) (a INSERT EMPTY)))
+T c= c==> ! ! c==> c/\ cFINITE b1 c/\ cSUBSET b0 b1 cDISJOINT * * part chull part caffine b0 * * part chull part cconvex * * part cDIFF b1 b0 cface_of * * part chull part cconvex b0 * * part chull part cconvex b1 * / ! c==> c/\ cFINITE b1 c/\ cSUBSET b0 b1 cDISJOINT * * part chull part caffine b0 * * part chull part cconvex * * part cDIFF b1 b0 cface_of * * part chull part cconvex b0 * * part chull part cconvex b1 * * part cINSERT f0 part cEMPTY * / ! c==> c/\ cFINITE b1 c/\ cSUBSET b0 b1 cDISJOINT * * part chull part caffine b0 * * part chull part cconvex * * part cDIFF b1 b0 cface_of * * part chull part cconvex b0 * * part chull part cconvex b1 * * part cINSERT f0 part cEMPTY
++ ((x = a) /\ (((hull convex) s) x)) |- (((((hull convex) s) a) ==> F) = F)
+T c==> c/\ c= f0 f1 chull part cconvex f2 f0 c= c==> chull part cconvex f2 f1 cF cF
++ |- (F ==> (((extreme_point_of a) ((hull convex) (a INSERT s))) = ((extreme_point_of a) ((hull convex) (a INSERT s)))))
+T c==> cF c= cextreme_point_of f0 * * part chull part cconvex * * part cINSERT f0 f1 cextreme_point_of f0 * * part chull part cconvex * * part cINSERT f0 f1
++ (~ (a IN s)), (~ (a IN ((hull convex) s))), (FINITE s) |- (((a INSERT EMPTY) SUBSET (a INSERT s)) /\ ((DISJOINT (a INSERT EMPTY)) ((hull convex) ((a INSERT s) DIFF (a INSERT EMPTY)))))
+T c==> c~ cIN f0 f1 c==> c~ cIN f0 * * part chull part cconvex f1 c==> cFINITE f1 c/\ cSUBSET * * part cINSERT f0 part cEMPTY * * part cINSERT f0 f1 cDISJOINT * * part cINSERT f0 part cEMPTY * * part chull part cconvex * * part cDIFF * * part cINSERT f0 f1 * * part cINSERT f0 part cEMPTY
++ |- ((!q'. ((p = p') ==> ((p' ==> (q = q')) ==> ((p ==> q) = (p' ==> q'))))) = T)
+T c= ! c==> c= f0 f1 c==> c==> f1 c= f2 b0 c= c==> f0 f2 c==> f1 b0 cT
+- ((FINITE s) /\ (~ (a IN ((hull convex) s)))) |- (((~ (a IN ((hull convex) s))) ==> ((a IN ((hull convex) s)) = F)) = ((a IN ((hull convex) s)) = F))
+T c==> c/\ cFINITE f0 c~ cIN f1 * * part chull part cconvex f0 c= c==> c~ cIN f1 * * part chull part cconvex f0 c= cIN f1 * * part chull part cconvex f0 cF c= cIN f1 * * part chull part cconvex f0 cF
+- (x = a), ((((~ (x = a)) /\ (~ (s x))) \/ (x = a)) /\ (s x)) |- ((~ (s a)) ==> (s a))
+T c==> c= f0 f1 c==> c/\ c\/ c/\ c~ c= f0 f1 c~ * f2 f0 c= f0 f1 * f2 f0 c==> c~ * f2 f1 * f2 f1
+- |- ((((FINITE s) /\ (~ (a IN ((hull convex) s)))) ==> (((extreme_point_of a) ((hull convex) (a INSERT s))) = q')) ==> ((((FINITE s) /\ (~ (a IN ((hull convex) s)))) ==> ((extreme_point_of a) ((hull convex) (a INSERT s)))) = (((FINITE s) /\ (~ (a IN ((hull convex) s)))) ==> q')))
+T c==> c==> c/\ cFINITE f0 c~ cIN f1 * * part chull part cconvex f0 c= cextreme_point_of f1 * * part chull part cconvex * * part cINSERT f1 f0 f2 c= c==> c/\ cFINITE f0 c~ cIN f1 * * part chull part cconvex f0 cextreme_point_of f1 * * part chull part cconvex * * part cINSERT f1 f0 c==> c/\ cFINITE f0 c~ cIN f1 * * part chull part cconvex f0 f2
+- |- ((_899567 = _899568) ==> ((s _899568) \/ (~ (s _899567))))
+T c==> c= f0 f1 c\/ * f2 f1 c~ * f2 f0
++ |- (((!x. (!s. (((face_of (x INSERT EMPTY)) s) = ((extreme_point_of x) s)))) ==> ((\x. (!s. (((face_of (x INSERT EMPTY)) s) = ((extreme_point_of x) s)))) x)) = ((\x. (!s. (((face_of (x INSERT EMPTY)) s) = ((extreme_point_of x) s)))) x))
+T c= c==> ! ! c= cface_of * * part cINSERT b0 part cEMPTY b1 cextreme_point_of b0 b1 * / ! c= cface_of * * part cINSERT b0 part cEMPTY b1 cextreme_point_of b0 b1 f0 * / ! c= cface_of * * part cINSERT b0 part cEMPTY b1 cextreme_point_of b0 b1 f0
+- |- ((\t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3)))) t2)
+T * / ! c= c\/ f0 c\/ b0 b1 c\/ c\/ f0 b0 b1 f1
+- ((x = a) /\ ((~ (x = a)) /\ (~ ((I s) x)))) |- (F = F)
+T c==> c/\ c= f0 f1 c/\ c~ c= f0 f1 c~ cI f2 f0 c= cF cF
++ ((~ (((hull convex) s) a)) /\ ((FINITE s) /\ (~ (s a)))) |- (!x. (((\x. (((x = a) /\ ((~ (x = a)) /\ (~ (s x)))) \/ ((x = a) /\ (((hull convex) s) x)))) x) ==> F))
+T c==> c/\ c~ chull part cconvex f0 f1 c/\ cFINITE f0 c~ * f0 f1 ! c==> * / c\/ c/\ c= b1 f1 c/\ c~ c= b1 f1 c~ * f0 b1 c/\ c= b1 f1 chull part cconvex f0 b1 b0 cF
+- (x = a), ((((x = a) \/ (s x)) /\ (~ (x = a))) /\ (~ (s x))) |- ((~ F) ==> F)
+T c==> c= f0 f1 c==> c/\ c/\ c\/ c= f0 f1 * f2 f0 c~ c= f0 f1 c~ * f2 f0 c==> c~ cF cF
++ (~ ((((x = a) \/ (s x)) /\ (~ (x = a))) = (s x))) |- (((((x = a) \/ (s x)) /\ (~ (x = a))) /\ (~ (s x))) \/ ((((~ (x = a)) /\ (~ (s x))) \/ (x = a)) /\ (s x)))
+T c==> c~ c= c/\ c\/ c= f0 f1 * f2 f0 c~ c= f0 f1 * f2 f0 c\/ c/\ c/\ c\/ c= f0 f1 * f2 f0 c~ c= f0 f1 c~ * f2 f0 c/\ c\/ c/\ c~ c= f0 f1 c~ * f2 f0 c= f0 f1 * f2 f0
+- |- ((_899599 = _899602) ==> ((~ (_899598 = _899601)) \/ ((~ (_899597 = _899600)) \/ ((((hull _899600) _899601) _899602) \/ (~ (((hull _899597) _899598) _899599))))))
+T c==> c= f0 f1 c\/ c~ c= f2 f3 c\/ c~ c= f4 f5 c\/ chull f5 f3 f1 c~ chull f4 f2 f0
++ (~ (s a)), (x = a), ((((~ (x = a)) /\ (~ (s x))) \/ (x = a)) /\ (s x)) |- ((x = a) /\ F)
+T c==> c~ * f0 f1 c==> c= f2 f1 c==> c/\ c\/ c/\ c~ c= f2 f1 c~ * f0 f2 c= f2 f1 * f0 f2 c/\ c= f2 f1 cF
+- ((~ ((~ (s a)) ==> (!x. ((((x = a) \/ (s x)) /\ (~ (x = a))) = (s x))))) ==> F) |- ((((~ ((~ (s a)) ==> (!x. ((((x = a) \/ (s x)) /\ (~ (x = a))) = (s x))))) ==> F) ==> ((~ ((~ (s a)) ==> (!x. ((((x = a) \/ (s x)) /\ (~ (x = a))) = (s x))))) ==> F)) ==> ((~ ((~ (s a)) ==> (!x. ((((x = a) \/ (s x)) /\ (~ (x = a))) = (s x))))) ==> F))
+T c==> c==> c~ c==> c~ * f0 f1 ! c= c/\ c\/ c= b0 f1 * f0 b0 c~ c= b0 f1 * f0 b0 cF c==> c==> c==> c~ c==> c~ * f0 f1 ! c= c/\ c\/ c= b0 f1 * f0 b0 c~ c= b0 f1 * f0 b0 cF c==> c~ c==> c~ * f0 f1 ! c= c/\ c\/ c= b0 f1 * f0 b0 c~ c= b0 f1 * f0 b0 cF c==> c~ c==> c~ * f0 f1 ! c= c/\ c\/ c= b0 f1 * f0 b0 c~ c= b0 f1 * f0 b0 cF
++ |- (((a = a) ==> F) = F)
+T c= c==> c= f0 f0 cF cF
++ (~ (a IN s)), (FINITE s), ((FINITE s) /\ (~ (a IN ((hull convex) s)))) |- ((extreme_point_of a) ((hull convex) (a INSERT s)))
+T c==> c~ cIN f0 f1 c==> cFINITE f1 c==> c/\ cFINITE f1 c~ cIN f0 * * part chull part cconvex f1 cextreme_point_of f0 * * part chull part cconvex * * part cINSERT f0 f1
++ ((x = a) /\ ((~ (x = a)) /\ (~ ((I s) x)))) |- (~ (x = a))
+T c==> c/\ c= f0 f1 c/\ c~ c= f0 f1 c~ cI f2 f0 c~ c= f0 f1
+- (_899595 = _899596) |- ((_899595 = _899596) /\ ((FINITE _899596) \/ (~ (FINITE _899595))))
+T c==> c= f0 f1 c/\ c= f0 f1 c\/ cFINITE f1 c~ cFINITE f0
++ (~ (a IN s)), (FINITE s) |- ((FINITE s) /\ (~ (a IN s)))
+T c==> c~ cIN f0 f1 c==> cFINITE f1 c/\ cFINITE f1 c~ cIN f0 f1
+- |- ((\s. (!a. ((~ ((~ (s a)) ==> (!x. ((((x = a) \/ (s x)) /\ (~ (x = a))) = (s x))))) ==> F))) s)
+T * / ! c==> c~ c==> c~ * b0 b1 ! c= c/\ c\/ c= b2 b1 * b0 b2 c~ c= b2 b1 * b0 b2 cF f0
++ |- ((~ (a IN s)) ==> (((FINITE s) /\ (~ (a IN ((hull convex) s)))) ==> ((extreme_point_of a) ((hull convex) (a INSERT s)))))
+T c==> c~ cIN f0 f1 c==> c/\ cFINITE f1 c~ cIN f0 * * part chull part cconvex f1 cextreme_point_of f0 * * part chull part cconvex * * part cINSERT f0 f1
+- (~ (s a)), (x = a), ((((~ (x = a)) /\ (~ (s x))) \/ (x = a)) /\ (s x)) |- ((~ (s a)) /\ (s a))
+T c==> c~ * f0 f1 c==> c= f2 f1 c==> c/\ c\/ c/\ c~ c= f2 f1 c~ * f0 f2 c= f2 f1 * f0 f2 c/\ c~ * f0 f1 * f0 f1
+- |- (((!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3)))) ==> ((\t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3)))) t2)) = ((\t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3)))) t2))
+T c= c==> ! ! c= c\/ f0 c\/ b0 b1 c\/ c\/ f0 b0 b1 * / ! c= c\/ f0 c\/ b0 b1 c\/ c\/ f0 b0 b1 f1 * / ! c= c\/ f0 c\/ b0 b1 c\/ c\/ f0 b0 b1 f1
++ ((x = a) /\ ((~ (x = a)) /\ (~ ((I s) x)))) |- (((x = a) /\ ((~ (x = a)) /\ (~ ((I s) x)))) /\ F)
+T c==> c/\ c= f0 f1 c/\ c~ c= f0 f1 c~ cI f2 f0 c/\ c/\ c= f0 f1 c/\ c~ c= f0 f1 c~ cI f2 f0 cF
+- ((x = a) /\ (((hull convex) s) x)) |- ((~ ((I s) a)) = (~ ((I s) a)))
+T c==> c/\ c= f0 f1 chull part cconvex f2 f0 c= c~ cI f2 f1 c~ cI f2 f1
++ |- (((~ (s a)) ==> (!x. ((((x = a) \/ (s x)) /\ (~ (x = a))) = (s x)))) = ((~ (a IN s)) ==> (!x. ((x IN ((a INSERT s) DIFF (a INSERT EMPTY))) = (x IN s)))))
+T c= c==> c~ * f0 f1 ! c= c/\ c\/ c= b0 f1 * f0 b0 c~ c= b0 f1 * f0 b0 c==> c~ cIN f1 f0 ! c= cIN b0 * * part cDIFF * * part cINSERT f1 f0 * * part cINSERT f1 part cEMPTY cIN b0 f0
++ ((\x. (((x = a) /\ ((~ (x = a)) /\ (~ (s x)))) \/ ((x = a) /\ (((hull convex) s) x)))) x) |- (((((x = a) /\ ((~ (x = a)) /\ (~ (s x)))) \/ ((x = a) /\ (((hull convex) s) x))) ==> F) = F)
+T c==> * / c\/ c/\ c= b0 f0 c/\ c~ c= b0 f0 c~ * f1 b0 c/\ c= b0 f0 chull part cconvex f1 b0 f2 c= c==> c\/ c/\ c= f2 f0 c/\ c~ c= f2 f0 c~ * f1 f2 c/\ c= f2 f0 chull part cconvex f1 f2 cF cF
++ (a IN s) |- (((((FINITE s) /\ (~ (a IN ((hull convex) s)))) = F) ==> ((F ==> (((extreme_point_of a) ((hull convex) (a INSERT s))) = q')) ==> ((((FINITE s) /\ (~ (a IN ((hull convex) s)))) ==> ((extreme_point_of a) ((hull convex) (a INSERT s)))) = (F ==> q')))) = ((F ==> (((extreme_point_of a) ((hull convex) (a INSERT s))) = q')) ==> ((((FINITE s) /\ (~ (a IN ((hull convex) s)))) ==> ((extreme_point_of a) ((hull convex) (a INSERT s)))) = (F ==> q'))))
+T c==> cIN f0 f1 c= c==> c= c/\ cFINITE f1 c~ cIN f0 * * part chull part cconvex f1 cF c==> c==> cF c= cextreme_point_of f0 * * part chull part cconvex * * part cINSERT f0 f1 f2 c= c==> c/\ cFINITE f1 c~ cIN f0 * * part chull part cconvex f1 cextreme_point_of f0 * * part chull part cconvex * * part cINSERT f0 f1 c==> cF f2 c==> c==> cF c= cextreme_point_of f0 * * part chull part cconvex * * part cINSERT f0 f1 f2 c= c==> c/\ cFINITE f1 c~ cIN f0 * * part chull part cconvex f1 cextreme_point_of f0 * * part chull part cconvex * * part cINSERT f0 f1 c==> cF f2
+- ((FINITE s) /\ (~ (a IN ((hull convex) s)))) |- (((FINITE s) /\ (~ (a IN ((hull convex) s)))) /\ (((extreme_point_of a) ((hull convex) (a INSERT s))) = ((extreme_point_of a) ((hull convex) (a INSERT s)))))
+T c==> c/\ cFINITE f0 c~ cIN f1 * * part chull part cconvex f0 c/\ c/\ cFINITE f0 c~ cIN f1 * * part chull part cconvex f0 c= cextreme_point_of f1 * * part chull part cconvex * * part cINSERT f1 f0 cextreme_point_of f1 * * part chull part cconvex * * part cINSERT f1 f0
++ ((((x = a) \/ (s x)) /\ (~ (x = a))) /\ (~ (s x))) |- ((s x) ==> F)
+T c==> c/\ c/\ c\/ c= f0 f1 * f2 f0 c~ c= f0 f1 c~ * f2 f0 c==> * f2 f0 cF
+- (((a INSERT EMPTY) SUBSET (a INSERT s)) /\ ((DISJOINT (a INSERT EMPTY)) ((hull convex) ((a INSERT s) DIFF (a INSERT EMPTY))))) |- (((((a INSERT EMPTY) SUBSET (a INSERT s)) /\ ((DISJOINT (a INSERT EMPTY)) ((hull convex) ((a INSERT s) DIFF (a INSERT EMPTY))))) ==> ((extreme_point_of a) ((hull convex) (a INSERT s)))) ==> ((extreme_point_of a) ((hull convex) (a INSERT s))))
+T c==> c/\ cSUBSET * * part cINSERT f0 part cEMPTY * * part cINSERT f0 f1 cDISJOINT * * part cINSERT f0 part cEMPTY * * part chull part cconvex * * part cDIFF * * part cINSERT f0 f1 * * part cINSERT f0 part cEMPTY c==> c==> c/\ cSUBSET * * part cINSERT f0 part cEMPTY * * part cINSERT f0 f1 cDISJOINT * * part cINSERT f0 part cEMPTY * * part chull part cconvex * * part cDIFF * * part cINSERT f0 f1 * * part cINSERT f0 part cEMPTY cextreme_point_of f0 * * part chull part cconvex * * part cINSERT f0 f1 cextreme_point_of f0 * * part chull part cconvex * * part cINSERT f0 f1
+- |- ((x = x) = T)
+T c= c= f0 f0 cT
+- (_899591 = _899593), (_899592 = _899594) |- ((_899591 = _899593) /\ (((I _899593) _899594) \/ (~ ((I _899591) _899592))))
+T c==> c= f0 f1 c==> c= f2 f3 c/\ c= f0 f1 c\/ cI f1 f3 c~ cI f0 f2
++ (x = a), ((((~ (x = a)) /\ (~ (s x))) \/ (x = a)) /\ (s x)) |- (((s a) ==> F) = F)
+T c==> c= f0 f1 c==> c/\ c\/ c/\ c~ c= f0 f1 c~ * f2 f0 c= f0 f1 * f2 f0 c= c==> * f2 f1 cF cF
+- (~ F), (s x), ((((x = a) \/ (s x)) /\ (~ (x = a))) /\ (~ (s x))) |- ((~ F) /\ F)
+T c==> c~ cF c==> * f0 f1 c==> c/\ c/\ c\/ c= f1 f2 * f0 f1 c~ c= f1 f2 c~ * f0 f1 c/\ c~ cF cF
++ ((~ (((hull convex) s) a)) /\ ((FINITE s) /\ (~ (s a)))) |- ((~ (((hull convex) s) a)) /\ ((FINITE s) /\ (~ ((I s) a))))
+T c==> c/\ c~ chull part cconvex f0 f1 c/\ cFINITE f0 c~ * f0 f1 c/\ c~ chull part cconvex f0 f1 c/\ cFINITE f0 c~ cI f0 f1
+- |- ((((~ ((~ (s a)) ==> (!x. ((((x = a) \/ (s x)) /\ (~ (x = a))) = (s x))))) ==> F) ==> ((~ ((~ (s a)) ==> (!x. ((((x = a) \/ (s x)) /\ (~ (x = a))) = (s x))))) ==> F)) = ((~ ((~ (s a)) ==> (!x. ((((x = a) \/ (s x)) /\ (~ (x = a))) = (s x))))) ==> F))
+T c= c==> c==> c~ c==> c~ * f0 f1 ! c= c/\ c\/ c= b0 f1 * f0 b0 c~ c= b0 f1 * f0 b0 cF c==> c~ c==> c~ * f0 f1 ! c= c/\ c\/ c= b0 f1 * f0 b0 c~ c= b0 f1 * f0 b0 cF c==> c~ c==> c~ * f0 f1 ! c= c/\ c\/ c= b0 f1 * f0 b0 c~ c= b0 f1 * f0 b0 cF
+- |- ((a ==> b) = ((~ a) \/ b))
+T c= c==> f0 f1 c\/ c~ f0 f1
++ ((x = a) /\ (((hull convex) s) x)) |- ((((hull convex) s) x) = (((hull convex) s) a))
+T c==> c/\ c= f0 f1 chull part cconvex f2 f0 c= chull part cconvex f2 f0 chull part cconvex f2 f1
+- F |- (F = T)
+T c==> cF c= cF cT
+- (s x), ((((x = a) \/ (s x)) /\ (~ (x = a))) /\ (~ (s x))) |- ((s x) /\ F)
+T c==> * f0 f1 c==> c/\ c/\ c\/ c= f1 f2 * f0 f1 c~ c= f1 f2 c~ * f0 f1 c/\ * f0 f1 cF
++ |- ((((FINITE s) /\ (~ (a IN ((hull convex) s)))) ==> ((extreme_point_of a) ((hull convex) (a INSERT s)))) = T)
+T c= c==> c/\ cFINITE f0 c~ cIN f1 * * part chull part cconvex f0 cextreme_point_of f1 * * part chull part cconvex * * part cINSERT f1 f0 cT
++ ((x = a) /\ ((~ (x = a)) /\ (~ ((I s) x)))) |- (~ (a = a))
+T c==> c/\ c= f0 f1 c/\ c~ c= f0 f1 c~ cI f2 f0 c~ c= f1 f1
+- (~ (a IN s)) |- ((a IN s) = F)
+T c==> c~ cIN f0 f1 c= cIN f0 f1 cF
+- |- ((~ (_899599 = _899602)) \/ ((~ (_899598 = _899601)) \/ ((~ (_899597 = _899600)) \/ ((((hull _899600) _899601) _899602) \/ (~ (((hull _899597) _899598) _899599))))))
+T c\/ c~ c= f0 f1 c\/ c~ c= f2 f3 c\/ c~ c= f4 f5 c\/ chull f5 f3 f1 c~ chull f4 f2 f0
++ |- (((!q'. ((((FINITE s) /\ (~ (a IN ((hull convex) s)))) = p') ==> ((p' ==> (((extreme_point_of a) ((hull convex) (a INSERT s))) = q')) ==> ((((FINITE s) /\ (~ (a IN ((hull convex) s)))) ==> ((extreme_point_of a) ((hull convex) (a INSERT s)))) = (p' ==> q'))))) ==> ((\q'. ((((FINITE s) /\ (~ (a IN ((hull convex) s)))) = p') ==> ((p' ==> (((extreme_point_of a) ((hull convex) (a INSERT s))) = q')) ==> ((((FINITE s) /\ (~ (a IN ((hull convex) s)))) ==> ((extreme_point_of a) ((hull convex) (a INSERT s)))) = (p' ==> q'))))) q')) = ((\q'. ((((FINITE s) /\ (~ (a IN ((hull convex) s)))) = p') ==> ((p' ==> (((extreme_point_of a) ((hull convex) (a INSERT s))) = q')) ==> ((((FINITE s) /\ (~ (a IN ((hull convex) s)))) ==> ((extreme_point_of a) ((hull convex) (a INSERT s)))) = (p' ==> q'))))) q'))
+T c= c==> ! c==> c= c/\ cFINITE f0 c~ cIN f1 * * part chull part cconvex f0 f2 c==> c==> f2 c= cextreme_point_of f1 * * part chull part cconvex * * part cINSERT f1 f0 b0 c= c==> c/\ cFINITE f0 c~ cIN f1 * * part chull part cconvex f0 cextreme_point_of f1 * * part chull part cconvex * * part cINSERT f1 f0 c==> f2 b0 * / c==> c= c/\ cFINITE f0 c~ cIN f1 * * part chull part cconvex f0 f2 c==> c==> f2 c= cextreme_point_of f1 * * part chull part cconvex * * part cINSERT f1 f0 b0 c= c==> c/\ cFINITE f0 c~ cIN f1 * * part chull part cconvex f0 cextreme_point_of f1 * * part chull part cconvex * * part cINSERT f1 f0 c==> f2 b0 f3 * / c==> c= c/\ cFINITE f0 c~ cIN f1 * * part chull part cconvex f0 f2 c==> c==> f2 c= cextreme_point_of f1 * * part chull part cconvex * * part cINSERT f1 f0 b0 c= c==> c/\ cFINITE f0 c~ cIN f1 * * part chull part cconvex f0 cextreme_point_of f1 * * part chull part cconvex * * part cINSERT f1 f0 c==> f2 b0 f3
+- ((~ ((~ (s a)) ==> (!x. ((((x = a) \/ (s x)) /\ (~ (x = a))) = (s x))))) ==> F), (((~ ((~ (s a)) ==> (!x. ((((x = a) \/ (s x)) /\ (~ (x = a))) = (s x))))) ==> F) ==> ((~ ((~ (s a)) ==> (!x. ((((x = a) \/ (s x)) /\ (~ (x = a))) = (s x))))) ==> F)) |- ((((~ ((~ (s a)) ==> (!x. ((((x = a) \/ (s x)) /\ (~ (x = a))) = (s x))))) ==> F) ==> ((~ ((~ (s a)) ==> (!x. ((((x = a) \/ (s x)) /\ (~ (x = a))) = (s x))))) ==> F)) /\ ((~ ((~ (s a)) ==> (!x. ((((x = a) \/ (s x)) /\ (~ (x = a))) = (s x))))) ==> F))
+T c==> c==> c~ c==> c~ * f0 f1 ! c= c/\ c\/ c= b0 f1 * f0 b0 c~ c= b0 f1 * f0 b0 cF c==> c==> c==> c~ c==> c~ * f0 f1 ! c= c/\ c\/ c= b0 f1 * f0 b0 c~ c= b0 f1 * f0 b0 cF c==> c~ c==> c~ * f0 f1 ! c= c/\ c\/ c= b0 f1 * f0 b0 c~ c= b0 f1 * f0 b0 cF c/\ c==> c==> c~ c==> c~ * f0 f1 ! c= c/\ c\/ c= b0 f1 * f0 b0 c~ c= b0 f1 * f0 b0 cF c==> c~ c==> c~ * f0 f1 ! c= c/\ c\/ c= b0 f1 * f0 b0 c~ c= b0 f1 * f0 b0 cF c==> c~ c==> c~ * f0 f1 ! c= c/\ c\/ c= b0 f1 * f0 b0 c~ c= b0 f1 * f0 b0 cF
++ (~ (a IN s)) |- ((((a INSERT EMPTY) SUBSET (a INSERT s)) /\ ((DISJOINT (a INSERT EMPTY)) ((hull convex) s))) = (((a INSERT EMPTY) SUBSET (a INSERT s)) /\ ((DISJOINT (a INSERT EMPTY)) ((hull convex) ((a INSERT s) DIFF (a INSERT EMPTY))))))
+T c==> c~ cIN f0 f1 c= c/\ cSUBSET * * part cINSERT f0 part cEMPTY * * part cINSERT f0 f1 cDISJOINT * * part cINSERT f0 part cEMPTY * * part chull part cconvex f1 c/\ cSUBSET * * part cINSERT f0 part cEMPTY * * part cINSERT f0 f1 cDISJOINT * * part cINSERT f0 part cEMPTY * * part chull part cconvex * * part cDIFF * * part cINSERT f0 f1 * * part cINSERT f0 part cEMPTY
++ |- ((~ (a IN s)) ==> (!x. ((x IN ((a INSERT s) DIFF (a INSERT EMPTY))) = (x IN s))))
+T c==> c~ cIN f0 f1 ! c= cIN b0 * * part cDIFF * * part cINSERT f0 f1 * * part cINSERT f0 part cEMPTY cIN b0 f1
++ (x = a) |- ((s x) = (s a))
+T c==> c= f0 f1 c= * f2 f0 * f2 f1
++ |- (((!p'. (!q'. ((((FINITE s) /\ (~ (a IN ((hull convex) s)))) = p') ==> ((p' ==> (((extreme_point_of a) ((hull convex) (a INSERT s))) = q')) ==> ((((FINITE s) /\ (~ (a IN ((hull convex) s)))) ==> ((extreme_point_of a) ((hull convex) (a INSERT s)))) = (p' ==> q')))))) ==> ((\p'. (!q'. ((((FINITE s) /\ (~ (a IN ((hull convex) s)))) = p') ==> ((p' ==> (((extreme_point_of a) ((hull convex) (a INSERT s))) = q')) ==> ((((FINITE s) /\ (~ (a IN ((hull convex) s)))) ==> ((extreme_point_of a) ((hull convex) (a INSERT s)))) = (p' ==> q')))))) p')) = ((\p'. (!q'. ((((FINITE s) /\ (~ (a IN ((hull convex) s)))) = p') ==> ((p' ==> (((extreme_point_of a) ((hull convex) (a INSERT s))) = q')) ==> ((((FINITE s) /\ (~ (a IN ((hull convex) s)))) ==> ((extreme_point_of a) ((hull convex) (a INSERT s)))) = (p' ==> q')))))) p'))
+T c= c==> ! ! c==> c= c/\ cFINITE f0 c~ cIN f1 * * part chull part cconvex f0 b0 c==> c==> b0 c= cextreme_point_of f1 * * part chull part cconvex * * part cINSERT f1 f0 b1 c= c==> c/\ cFINITE f0 c~ cIN f1 * * part chull part cconvex f0 cextreme_point_of f1 * * part chull part cconvex * * part cINSERT f1 f0 c==> b0 b1 * / ! c==> c= c/\ cFINITE f0 c~ cIN f1 * * part chull part cconvex f0 b0 c==> c==> b0 c= cextreme_point_of f1 * * part chull part cconvex * * part cINSERT f1 f0 b1 c= c==> c/\ cFINITE f0 c~ cIN f1 * * part chull part cconvex f0 cextreme_point_of f1 * * part chull part cconvex * * part cINSERT f1 f0 c==> b0 b1 f2 * / ! c==> c= c/\ cFINITE f0 c~ cIN f1 * * part chull part cconvex f0 b0 c==> c==> b0 c= cextreme_point_of f1 * * part chull part cconvex * * part cINSERT f1 f0 b1 c= c==> c/\ cFINITE f0 c~ cIN f1 * * part chull part cconvex f0 cextreme_point_of f1 * * part chull part cconvex * * part cINSERT f1 f0 c==> b0 b1 f2
++ ((~ (((hull convex) s) a)) /\ ((FINITE s) /\ (~ (s a)))) |- (((~ (((hull convex) s) a)) /\ ((FINITE s) /\ (~ (s a)))) /\ ((!x. ((x = a) ==> ((x = a) \/ (s x)))) /\ (!x. (~ ((x = a) /\ (((hull convex) s) x))))))
+T c==> c/\ c~ chull part cconvex f0 f1 c/\ cFINITE f0 c~ * f0 f1 c/\ c/\ c~ chull part cconvex f0 f1 c/\ cFINITE f0 c~ * f0 f1 c/\ ! c==> c= b0 f1 c\/ c= b0 f1 * f0 b0 ! c~ c/\ c= b0 f1 chull part cconvex f0 b0
+- |- ((!a. ((~ (s a)) ==> (!x. ((((x = a) \/ (s x)) /\ (~ (x = a))) = (s x))))) = T)
+T c= ! c==> c~ * f0 b0 ! c= c/\ c\/ c= b1 b0 * f0 b1 c~ c= b1 b0 * f0 b1 cT
+- ((~ (((~ (((hull convex) s) a)) /\ ((FINITE s) /\ (~ (s a)))) ==> ((!x. ((x = a) ==> ((x = a) \/ (s x)))) /\ (!x. (~ ((x = a) /\ (((hull convex) s) x))))))) ==> F), (((~ (((~ (((hull convex) s) a)) /\ ((FINITE s) /\ (~ (s a)))) ==> ((!x. ((x = a) ==> ((x = a) \/ (s x)))) /\ (!x. (~ ((x = a) /\ (((hull convex) s) x))))))) ==> F) ==> ((~ (((~ (((hull convex) s) a)) /\ ((FINITE s) /\ (~ (s a)))) ==> ((!x. ((x = a) ==> ((x = a) \/ (s x)))) /\ (!x. (~ ((x = a) /\ (((hull convex) s) x))))))) ==> F)) |- ((((~ (((~ (((hull convex) s) a)) /\ ((FINITE s) /\ (~ (s a)))) ==> ((!x. ((x = a) ==> ((x = a) \/ (s x)))) /\ (!x. (~ ((x = a) /\ (((hull convex) s) x))))))) ==> F) ==> ((~ (((~ (((hull convex) s) a)) /\ ((FINITE s) /\ (~ (s a)))) ==> ((!x. ((x = a) ==> ((x = a) \/ (s x)))) /\ (!x. (~ ((x = a) /\ (((hull convex) s) x))))))) ==> F)) /\ ((~ (((~ (((hull convex) s) a)) /\ ((FINITE s) /\ (~ (s a)))) ==> ((!x. ((x = a) ==> ((x = a) \/ (s x)))) /\ (!x. (~ ((x = a) /\ (((hull convex) s) x))))))) ==> F))
+T c==> c==> c~ c==> c/\ c~ chull part cconvex f0 f1 c/\ cFINITE f0 c~ * f0 f1 c/\ ! c==> c= b0 f1 c\/ c= b0 f1 * f0 b0 ! c~ c/\ c= b0 f1 chull part cconvex f0 b0 cF c==> c==> c==> c~ c==> c/\ c~ chull part cconvex f0 f1 c/\ cFINITE f0 c~ * f0 f1 c/\ ! c==> c= b0 f1 c\/ c= b0 f1 * f0 b0 ! c~ c/\ c= b0 f1 chull part cconvex f0 b0 cF c==> c~ c==> c/\ c~ chull part cconvex f0 f1 c/\ cFINITE f0 c~ * f0 f1 c/\ ! c==> c= b0 f1 c\/ c= b0 f1 * f0 b0 ! c~ c/\ c= b0 f1 chull part cconvex f0 b0 cF c/\ c==> c==> c~ c==> c/\ c~ chull part cconvex f0 f1 c/\ cFINITE f0 c~ * f0 f1 c/\ ! c==> c= b0 f1 c\/ c= b0 f1 * f0 b0 ! c~ c/\ c= b0 f1 chull part cconvex f0 b0 cF c==> c~ c==> c/\ c~ chull part cconvex f0 f1 c/\ cFINITE f0 c~ * f0 f1 c/\ ! c==> c= b0 f1 c\/ c= b0 f1 * f0 b0 ! c~ c/\ c= b0 f1 chull part cconvex f0 b0 cF c==> c~ c==> c/\ c~ chull part cconvex f0 f1 c/\ cFINITE f0 c~ * f0 f1 c/\ ! c==> c= b0 f1 c\/ c= b0 f1 * f0 b0 ! c~ c/\ c= b0 f1 chull part cconvex f0 b0 cF
++ ((((~ (x = a)) /\ (~ (s x))) \/ (x = a)) /\ (s x)) |- (((s x) ==> F) = F)
+T c==> c/\ c\/ c/\ c~ c= f0 f1 c~ * f2 f0 c= f0 f1 * f2 f0 c= c==> * f2 f0 cF cF
+- ((~ (((~ (((hull convex) s) a)) /\ ((FINITE s) /\ (~ (s a)))) ==> ((!x. ((x = a) ==> ((x = a) \/ (s x)))) /\ (!x. (~ ((x = a) /\ (((hull convex) s) x))))))) ==> F), (((~ (((~ (((hull convex) s) a)) /\ ((FINITE s) /\ (~ (s a)))) ==> ((!x. ((x = a) ==> ((x = a) \/ (s x)))) /\ (!x. (~ ((x = a) /\ (((hull convex) s) x))))))) ==> F) ==> ((~ (((~ (((hull convex) s) a)) /\ ((FINITE s) /\ (~ (s a)))) ==> ((!x. ((x = a) ==> ((x = a) \/ (s x)))) /\ (!x. (~ ((x = a) /\ (((hull convex) s) x))))))) ==> F)) |- (((~ (((~ (((hull convex) s) a)) /\ ((FINITE s) /\ (~ (s a)))) ==> ((!x. ((x = a) ==> ((x = a) \/ (s x)))) /\ (!x. (~ ((x = a) /\ (((hull convex) s) x))))))) ==> F) /\ ((~ (((~ (((hull convex) s) a)) /\ ((FINITE s) /\ (~ (s a)))) ==> ((!x. ((x = a) ==> ((x = a) \/ (s x)))) /\ (!x. (~ ((x = a) /\ (((hull convex) s) x))))))) ==> F))
+T c==> c==> c~ c==> c/\ c~ chull part cconvex f0 f1 c/\ cFINITE f0 c~ * f0 f1 c/\ ! c==> c= b0 f1 c\/ c= b0 f1 * f0 b0 ! c~ c/\ c= b0 f1 chull part cconvex f0 b0 cF c==> c==> c==> c~ c==> c/\ c~ chull part cconvex f0 f1 c/\ cFINITE f0 c~ * f0 f1 c/\ ! c==> c= b0 f1 c\/ c= b0 f1 * f0 b0 ! c~ c/\ c= b0 f1 chull part cconvex f0 b0 cF c==> c~ c==> c/\ c~ chull part cconvex f0 f1 c/\ cFINITE f0 c~ * f0 f1 c/\ ! c==> c= b0 f1 c\/ c= b0 f1 * f0 b0 ! c~ c/\ c= b0 f1 chull part cconvex f0 b0 cF c/\ c==> c~ c==> c/\ c~ chull part cconvex f0 f1 c/\ cFINITE f0 c~ * f0 f1 c/\ ! c==> c= b0 f1 c\/ c= b0 f1 * f0 b0 ! c~ c/\ c= b0 f1 chull part cconvex f0 b0 cF c==> c~ c==> c/\ c~ chull part cconvex f0 f1 c/\ cFINITE f0 c~ * f0 f1 c/\ ! c==> c= b0 f1 c\/ c= b0 f1 * f0 b0 ! c~ c/\ c= b0 f1 chull part cconvex f0 b0 cF
+- |- ((((~ (((~ (((hull convex) s) a)) /\ ((FINITE s) /\ (~ (s a)))) ==> ((!x. ((x = a) ==> ((x = a) \/ (s x)))) /\ (!x. (~ ((x = a) /\ (((hull convex) s) x))))))) ==> F) ==> ((~ (((~ (((hull convex) s) a)) /\ ((FINITE s) /\ (~ (s a)))) ==> ((!x. ((x = a) ==> ((x = a) \/ (s x)))) /\ (!x. (~ ((x = a) /\ (((hull convex) s) x))))))) ==> F)) ==> (((~ (((~ (((hull convex) s) a)) /\ ((FINITE s) /\ (~ (s a)))) ==> ((!x. ((x = a) ==> ((x = a) \/ (s x)))) /\ (!x. (~ ((x = a) /\ (((hull convex) s) x))))))) ==> F) ==> ((~ (((~ (((hull convex) s) a)) /\ ((FINITE s) /\ (~ (s a)))) ==> ((!x. ((x = a) ==> ((x = a) \/ (s x)))) /\ (!x. (~ ((x = a) /\ (((hull convex) s) x))))))) ==> F)))
+T c==> c==> c==> c~ c==> c/\ c~ chull part cconvex f0 f1 c/\ cFINITE f0 c~ * f0 f1 c/\ ! c==> c= b0 f1 c\/ c= b0 f1 * f0 b0 ! c~ c/\ c= b0 f1 chull part cconvex f0 b0 cF c==> c~ c==> c/\ c~ chull part cconvex f0 f1 c/\ cFINITE f0 c~ * f0 f1 c/\ ! c==> c= b0 f1 c\/ c= b0 f1 * f0 b0 ! c~ c/\ c= b0 f1 chull part cconvex f0 b0 cF c==> c==> c~ c==> c/\ c~ chull part cconvex f0 f1 c/\ cFINITE f0 c~ * f0 f1 c/\ ! c==> c= b0 f1 c\/ c= b0 f1 * f0 b0 ! c~ c/\ c= b0 f1 chull part cconvex f0 b0 cF c==> c~ c==> c/\ c~ chull part cconvex f0 f1 c/\ cFINITE f0 c~ * f0 f1 c/\ ! c==> c= b0 f1 c\/ c= b0 f1 * f0 b0 ! c~ c/\ c= b0 f1 chull part cconvex f0 b0 cF
++ ((~ (((hull convex) s) a)) /\ ((FINITE s) /\ (~ (s a)))) |- ((((x = a) /\ ((~ (x = a)) /\ (~ (s x)))) \/ ((x = a) /\ (((hull convex) s) x))) ==> F)
+T c==> c/\ c~ chull part cconvex f0 f1 c/\ cFINITE f0 c~ * f0 f1 c==> c\/ c/\ c= f2 f1 c/\ c~ c= f2 f1 c~ * f0 f2 c/\ c= f2 f1 chull part cconvex f0 f2 cF
+- |- (((((a INSERT EMPTY) SUBSET (a INSERT s)) /\ ((DISJOINT (a INSERT EMPTY)) ((hull convex) ((a INSERT s) DIFF (a INSERT EMPTY))))) ==> ((extreme_point_of a) ((hull convex) (a INSERT s)))) ==> ((((a INSERT EMPTY) SUBSET (a INSERT s)) /\ ((DISJOINT (a INSERT EMPTY)) ((hull convex) ((a INSERT s) DIFF (a INSERT EMPTY))))) ==> ((extreme_point_of a) ((hull convex) (a INSERT s)))))
+T c==> c==> c/\ cSUBSET * * part cINSERT f0 part cEMPTY * * part cINSERT f0 f1 cDISJOINT * * part cINSERT f0 part cEMPTY * * part chull part cconvex * * part cDIFF * * part cINSERT f0 f1 * * part cINSERT f0 part cEMPTY cextreme_point_of f0 * * part chull part cconvex * * part cINSERT f0 f1 c==> c/\ cSUBSET * * part cINSERT f0 part cEMPTY * * part cINSERT f0 f1 cDISJOINT * * part cINSERT f0 part cEMPTY * * part chull part cconvex * * part cDIFF * * part cINSERT f0 f1 * * part cINSERT f0 part cEMPTY cextreme_point_of f0 * * part chull part cconvex * * part cINSERT f0 f1
+- (_899592 = _899594) |- ((_899592 = _899594) /\ ((~ (_899591 = _899593)) \/ (((I _899593) _899594) \/ (~ ((I _899591) _899592)))))
+T c==> c= f0 f1 c/\ c= f0 f1 c\/ c~ c= f2 f3 c\/ cI f3 f1 c~ cI f2 f0
+- (~ (a IN s)) |- (T = (~ (a IN s)))
+T c==> c~ cIN f0 f1 c= cT c~ cIN f0 f1
+- (_899567 = _899568) |- ((_899567 = _899568) /\ ((s _899568) \/ (~ (s _899567))))
+T c==> c= f0 f1 c/\ c= f0 f1 c\/ * f2 f1 c~ * f2 f0
+- |- (((((~ (((~ (((hull convex) s) a)) /\ ((FINITE s) /\ (~ (s a)))) ==> ((!x. ((x = a) ==> ((x = a) \/ (s x)))) /\ (!x. (~ ((x = a) /\ (((hull convex) s) x))))))) ==> F) ==> ((~ (((~ (((hull convex) s) a)) /\ ((FINITE s) /\ (~ (s a)))) ==> ((!x. ((x = a) ==> ((x = a) \/ (s x)))) /\ (!x. (~ ((x = a) /\ (((hull convex) s) x))))))) ==> F)) ==> (((~ (((~ (((hull convex) s) a)) /\ ((FINITE s) /\ (~ (s a)))) ==> ((!x. ((x = a) ==> ((x = a) \/ (s x)))) /\ (!x. (~ ((x = a) /\ (((hull convex) s) x))))))) ==> F) ==> ((~ (((~ (((hull convex) s) a)) /\ ((FINITE s) /\ (~ (s a)))) ==> ((!x. ((x = a) ==> ((x = a) \/ (s x)))) /\ (!x. (~ ((x = a) /\ (((hull convex) s) x))))))) ==> F))) = (((~ (((~ (((hull convex) s) a)) /\ ((FINITE s) /\ (~ (s a)))) ==> ((!x. ((x = a) ==> ((x = a) \/ (s x)))) /\ (!x. (~ ((x = a) /\ (((hull convex) s) x))))))) ==> F) ==> ((~ (((~ (((hull convex) s) a)) /\ ((FINITE s) /\ (~ (s a)))) ==> ((!x. ((x = a) ==> ((x = a) \/ (s x)))) /\ (!x. (~ ((x = a) /\ (((hull convex) s) x))))))) ==> F)))
+T c= c==> c==> c==> c~ c==> c/\ c~ chull part cconvex f0 f1 c/\ cFINITE f0 c~ * f0 f1 c/\ ! c==> c= b0 f1 c\/ c= b0 f1 * f0 b0 ! c~ c/\ c= b0 f1 chull part cconvex f0 b0 cF c==> c~ c==> c/\ c~ chull part cconvex f0 f1 c/\ cFINITE f0 c~ * f0 f1 c/\ ! c==> c= b0 f1 c\/ c= b0 f1 * f0 b0 ! c~ c/\ c= b0 f1 chull part cconvex f0 b0 cF c==> c==> c~ c==> c/\ c~ chull part cconvex f0 f1 c/\ cFINITE f0 c~ * f0 f1 c/\ ! c==> c= b0 f1 c\/ c= b0 f1 * f0 b0 ! c~ c/\ c= b0 f1 chull part cconvex f0 b0 cF c==> c~ c==> c/\ c~ chull part cconvex f0 f1 c/\ cFINITE f0 c~ * f0 f1 c/\ ! c==> c= b0 f1 c\/ c= b0 f1 * f0 b0 ! c~ c/\ c= b0 f1 chull part cconvex f0 b0 cF c==> c==> c~ c==> c/\ c~ chull part cconvex f0 f1 c/\ cFINITE f0 c~ * f0 f1 c/\ ! c==> c= b0 f1 c\/ c= b0 f1 * f0 b0 ! c~ c/\ c= b0 f1 chull part cconvex f0 b0 cF c==> c~ c==> c/\ c~ chull part cconvex f0 f1 c/\ cFINITE f0 c~ * f0 f1 c/\ ! c==> c= b0 f1 c\/ c= b0 f1 * f0 b0 ! c~ c/\ c= b0 f1 chull part cconvex f0 b0 cF
+- (((a INSERT EMPTY) SUBSET (a INSERT s)) /\ ((DISJOINT (a INSERT EMPTY)) ((hull convex) ((a INSERT s) DIFF (a INSERT EMPTY))))), ((((a INSERT EMPTY) SUBSET (a INSERT s)) /\ ((DISJOINT (a INSERT EMPTY)) ((hull convex) ((a INSERT s) DIFF (a INSERT EMPTY))))) ==> ((extreme_point_of a) ((hull convex) (a INSERT s)))) |- (((((a INSERT EMPTY) SUBSET (a INSERT s)) /\ ((DISJOINT (a INSERT EMPTY)) ((hull convex) ((a INSERT s) DIFF (a INSERT EMPTY))))) ==> ((extreme_point_of a) ((hull convex) (a INSERT s)))) /\ ((extreme_point_of a) ((hull convex) (a INSERT s))))
+T c==> c/\ cSUBSET * * part cINSERT f0 part cEMPTY * * part cINSERT f0 f1 cDISJOINT * * part cINSERT f0 part cEMPTY * * part chull part cconvex * * part cDIFF * * part cINSERT f0 f1 * * part cINSERT f0 part cEMPTY c==> c==> c/\ cSUBSET * * part cINSERT f0 part cEMPTY * * part cINSERT f0 f1 cDISJOINT * * part cINSERT f0 part cEMPTY * * part chull part cconvex * * part cDIFF * * part cINSERT f0 f1 * * part cINSERT f0 part cEMPTY cextreme_point_of f0 * * part chull part cconvex * * part cINSERT f0 f1 c/\ c==> c/\ cSUBSET * * part cINSERT f0 part cEMPTY * * part cINSERT f0 f1 cDISJOINT * * part cINSERT f0 part cEMPTY * * part chull part cconvex * * part cDIFF * * part cINSERT f0 f1 * * part cINSERT f0 part cEMPTY cextreme_point_of f0 * * part chull part cconvex * * part cINSERT f0 f1 cextreme_point_of f0 * * part chull part cconvex * * part cINSERT f0 f1
+- (x = a) |- (F = F)
+T c==> c= f0 f1 c= cF cF
+- |- (((~ ((~ (s a)) ==> (!x. ((((x = a) \/ (s x)) /\ (~ (x = a))) = (s x))))) ==> F) = ((~ (s a)) ==> (!x. ((((x = a) \/ (s x)) /\ (~ (x = a))) = (s x)))))
+T c= c==> c~ c==> c~ * f0 f1 ! c= c/\ c\/ c= b0 f1 * f0 b0 c~ c= b0 f1 * f0 b0 cF c==> c~ * f0 f1 ! c= c/\ c\/ c= b0 f1 * f0 b0 c~ c= b0 f1 * f0 b0
+- ((~ (((hull convex) s) a)) /\ ((FINITE s) /\ (~ (s a)))) |- ((FINITE s) /\ (~ ((I s) a)))
+T c==> c/\ c~ chull part cconvex f0 f1 c/\ cFINITE f0 c~ * f0 f1 c/\ cFINITE f0 c~ cI f0 f1
++ ((~ (((hull convex) s) a)) /\ ((FINITE s) /\ (~ (s a)))), (((x = a) /\ ((~ (x = a)) /\ (~ (s x)))) \/ ((x = a) /\ (((hull convex) s) x))) |- ((((x = a) /\ ((~ (x = a)) /\ (~ (s x)))) \/ ((x = a) /\ (((hull convex) s) x))) /\ F)
+T c==> c/\ c~ chull part cconvex f0 f1 c/\ cFINITE f0 c~ * f0 f1 c==> c\/ c/\ c= f2 f1 c/\ c~ c= f2 f1 c~ * f0 f2 c/\ c= f2 f1 chull part cconvex f0 f2 c/\ c\/ c/\ c= f2 f1 c/\ c~ c= f2 f1 c~ * f0 f2 c/\ c= f2 f1 chull part cconvex f0 f2 cF
++ ((\x. (((x = a) /\ ((~ (x = a)) /\ (~ (s x)))) \/ ((x = a) /\ (((hull convex) s) x)))) x) |- (((x = a) /\ ((~ (x = a)) /\ (~ (s x)))) \/ ((x = a) /\ (((hull convex) s) x)))
+T c==> * / c\/ c/\ c= b0 f0 c/\ c~ c= b0 f0 c~ * f1 b0 c/\ c= b0 f0 chull part cconvex f1 b0 f2 c\/ c/\ c= f2 f0 c/\ c~ c= f2 f0 c~ * f1 f2 c/\ c= f2 f0 chull part cconvex f1 f2
++ |- ((\t. (t \/ (~ t))) (a IN s))
+T * / c\/ b0 c~ b0 cIN f0 f1
++ |- (((~ (a IN ((hull convex) s))) /\ ((FINITE s) /\ (~ (a IN s)))) ==> (((a INSERT EMPTY) SUBSET (a INSERT s)) /\ ((DISJOINT (a INSERT EMPTY)) ((hull convex) s))))
+T c==> c/\ c~ cIN f0 * * part chull part cconvex f1 c/\ cFINITE f1 c~ cIN f0 f1 c/\ cSUBSET * * part cINSERT f0 part cEMPTY * * part cINSERT f0 f1 cDISJOINT * * part cINSERT f0 part cEMPTY * * part chull part cconvex f1
++ (~ (s a)) |- (((((x = a) \/ (s x)) /\ (~ (x = a))) = (s x)) = T)
+T c==> c~ * f0 f1 c= c= c/\ c\/ c= f2 f1 * f0 f2 c~ c= f2 f1 * f0 f2 cT
+- |- (((t1 \/ t2) \/ t3) = (t1 \/ (t2 \/ t3)))
+T c= c\/ c\/ f0 f1 f2 c\/ f0 c\/ f1 f2
+- (x = a), ((((x = a) \/ (s x)) /\ (~ (x = a))) /\ (~ (s x))) |- (~ (s a))
+T c==> c= f0 f1 c==> c/\ c/\ c\/ c= f0 f1 * f2 f0 c~ c= f0 f1 c~ * f2 f0 c~ * f2 f1
+- |- ((?x'. ((x' = a) /\ ((~ (x = a)) /\ (~ (s x))))) = ((?x. (x = a)) /\ ((~ (x = a)) /\ (~ (s x)))))
+T c= c? / c/\ c= b0 f0 c/\ c~ c= f1 f0 c~ * f2 f1 c/\ c? / c= b0 f0 c/\ c~ c= f1 f0 c~ * f2 f1
++ (~ ((!x. ((x = a) ==> ((x = a) \/ (s x)))) /\ (!x. (~ ((x = a) /\ (((hull convex) s) x)))))), ((~ (((hull convex) s) a)) /\ ((FINITE s) /\ (~ (s a)))) |- F
+T c==> c~ c/\ ! c==> c= b0 f0 c\/ c= b0 f0 * f1 b0 ! c~ c/\ c= b0 f0 chull part cconvex f1 b0 c==> c/\ c~ chull part cconvex f1 f0 c/\ cFINITE f1 c~ * f1 f0 cF
++ ((~ (((hull convex) s) a)) /\ ((FINITE s) /\ (~ (s a)))) |- ((((hull convex) s) a) ==> F)
+T c==> c/\ c~ chull part cconvex f0 f1 c/\ cFINITE f0 c~ * f0 f1 c==> chull part cconvex f0 f1 cF
++ ((~ (a IN s)) ==> (((FINITE s) /\ (~ (a IN ((hull convex) s)))) ==> ((extreme_point_of a) ((hull convex) (a INSERT s))))), ((a IN s) ==> (((FINITE s) /\ (~ (a IN ((hull convex) s)))) ==> ((extreme_point_of a) ((hull convex) (a INSERT s))))) |- (((FINITE s) /\ (~ (a IN ((hull convex) s)))) ==> ((extreme_point_of a) ((hull convex) (a INSERT s))))
+T c==> c==> c~ cIN f0 f1 c==> c/\ cFINITE f1 c~ cIN f0 * * part chull part cconvex f1 cextreme_point_of f0 * * part chull part cconvex * * part cINSERT f0 f1 c==> c==> cIN f0 f1 c==> c/\ cFINITE f1 c~ cIN f0 * * part chull part cconvex f1 cextreme_point_of f0 * * part chull part cconvex * * part cINSERT f0 f1 c==> c/\ cFINITE f1 c~ cIN f0 * * part chull part cconvex f1 cextreme_point_of f0 * * part chull part cconvex * * part cINSERT f0 f1
+- (~ (((hull convex) s) a)), ((x = a) /\ (((hull convex) s) x)) |- ((~ (((hull convex) s) a)) /\ (((hull convex) s) a))
+T c==> c~ chull part cconvex f0 f1 c==> c/\ c= f2 f1 chull part cconvex f0 f2 c/\ c~ chull part cconvex f0 f1 chull part cconvex f0 f1
+- ((~ (((~ (((hull convex) s) a)) /\ ((FINITE s) /\ (~ (s a)))) ==> ((!x. ((x = a) ==> ((x = a) \/ (s x)))) /\ (!x. (~ ((x = a) /\ (((hull convex) s) x))))))) ==> F) |- ((((~ (((~ (((hull convex) s) a)) /\ ((FINITE s) /\ (~ (s a)))) ==> ((!x. ((x = a) ==> ((x = a) \/ (s x)))) /\ (!x. (~ ((x = a) /\ (((hull convex) s) x))))))) ==> F) ==> ((~ (((~ (((hull convex) s) a)) /\ ((FINITE s) /\ (~ (s a)))) ==> ((!x. ((x = a) ==> ((x = a) \/ (s x)))) /\ (!x. (~ ((x = a) /\ (((hull convex) s) x))))))) ==> F)) ==> ((~ (((~ (((hull convex) s) a)) /\ ((FINITE s) /\ (~ (s a)))) ==> ((!x. ((x = a) ==> ((x = a) \/ (s x)))) /\ (!x. (~ ((x = a) /\ (((hull convex) s) x))))))) ==> F))
+T c==> c==> c~ c==> c/\ c~ chull part cconvex f0 f1 c/\ cFINITE f0 c~ * f0 f1 c/\ ! c==> c= b0 f1 c\/ c= b0 f1 * f0 b0 ! c~ c/\ c= b0 f1 chull part cconvex f0 b0 cF c==> c==> c==> c~ c==> c/\ c~ chull part cconvex f0 f1 c/\ cFINITE f0 c~ * f0 f1 c/\ ! c==> c= b0 f1 c\/ c= b0 f1 * f0 b0 ! c~ c/\ c= b0 f1 chull part cconvex f0 b0 cF c==> c~ c==> c/\ c~ chull part cconvex f0 f1 c/\ cFINITE f0 c~ * f0 f1 c/\ ! c==> c= b0 f1 c\/ c= b0 f1 * f0 b0 ! c~ c/\ c= b0 f1 chull part cconvex f0 b0 cF c==> c~ c==> c/\ c~ chull part cconvex f0 f1 c/\ cFINITE f0 c~ * f0 f1 c/\ ! c==> c= b0 f1 c\/ c= b0 f1 * f0 b0 ! c~ c/\ c= b0 f1 chull part cconvex f0 b0 cF
++ |- ((x IN s) ==> ((x IN ((hull P) s)) = T))
+T c==> cIN f0 f1 c= cIN f0 * * part chull f2 f1 cT
++ (x = a), ((((~ (x = a)) /\ (~ (s x))) \/ (x = a)) /\ (s x)) |- (s a)
+T c==> c= f0 f1 c==> c/\ c\/ c/\ c~ c= f0 f1 c~ * f2 f0 c= f0 f1 * f2 f0 * f2 f1
+- (_899599 = _899602) |- ((_899598 = _899601) ==> ((~ (_899597 = _899600)) \/ ((((hull _899600) _899601) _899602) \/ (~ (((hull _899597) _899598) _899599)))))
+T c==> c= f0 f1 c==> c= f2 f3 c\/ c~ c= f4 f5 c\/ chull f5 f3 f1 c~ chull f4 f2 f0
++ (a IN s) |- ((a IN s) /\ (((FINITE s) /\ (~ (a IN ((hull convex) s)))) ==> ((extreme_point_of a) ((hull convex) (a INSERT s)))))
+T c==> cIN f0 f1 c/\ cIN f0 f1 c==> c/\ cFINITE f1 c~ cIN f0 * * part chull part cconvex f1 cextreme_point_of f0 * * part chull part cconvex * * part cINSERT f0 f1
+- |- (((((~ ((~ (s a)) ==> (!x. ((((x = a) \/ (s x)) /\ (~ (x = a))) = (s x))))) ==> F) ==> ((~ ((~ (s a)) ==> (!x. ((((x = a) \/ (s x)) /\ (~ (x = a))) = (s x))))) ==> F)) ==> (((~ ((~ (s a)) ==> (!x. ((((x = a) \/ (s x)) /\ (~ (x = a))) = (s x))))) ==> F) ==> ((~ ((~ (s a)) ==> (!x. ((((x = a) \/ (s x)) /\ (~ (x = a))) = (s x))))) ==> F))) = (((~ ((~ (s a)) ==> (!x. ((((x = a) \/ (s x)) /\ (~ (x = a))) = (s x))))) ==> F) ==> ((~ ((~ (s a)) ==> (!x. ((((x = a) \/ (s x)) /\ (~ (x = a))) = (s x))))) ==> F)))
+T c= c==> c==> c==> c~ c==> c~ * f0 f1 ! c= c/\ c\/ c= b0 f1 * f0 b0 c~ c= b0 f1 * f0 b0 cF c==> c~ c==> c~ * f0 f1 ! c= c/\ c\/ c= b0 f1 * f0 b0 c~ c= b0 f1 * f0 b0 cF c==> c==> c~ c==> c~ * f0 f1 ! c= c/\ c\/ c= b0 f1 * f0 b0 c~ c= b0 f1 * f0 b0 cF c==> c~ c==> c~ * f0 f1 ! c= c/\ c\/ c= b0 f1 * f0 b0 c~ c= b0 f1 * f0 b0 cF c==> c==> c~ c==> c~ * f0 f1 ! c= c/\ c\/ c= b0 f1 * f0 b0 c~ c= b0 f1 * f0 b0 cF c==> c~ c==> c~ * f0 f1 ! c= c/\ c\/ c= b0 f1 * f0 b0 c~ c= b0 f1 * f0 b0 cF
++ (x IN s) |- ((x IN s) /\ ((x IN ((hull P) s)) = T))
+T c==> cIN f0 f1 c/\ cIN f0 f1 c= cIN f0 * * part chull f2 f1 cT
++ |- ((\f. (!s. (((FINITE s) /\ ((f SUBSET s) /\ ((DISJOINT ((hull affine) f)) ((hull convex) (s DIFF f))))) ==> ((face_of ((hull convex) f)) ((hull convex) s))))) (a INSERT EMPTY))
+T * / ! c==> c/\ cFINITE b1 c/\ cSUBSET b0 b1 cDISJOINT * * part chull part caffine b0 * * part chull part cconvex * * part cDIFF b1 b0 cface_of * * part chull part cconvex b0 * * part chull part cconvex b1 * * part cINSERT f0 part cEMPTY
+- ((x = a) /\ ((~ (x = a)) /\ (~ ((I s) x)))) |- ((~ (((hull convex) s) a)) = (~ (((hull convex) s) a)))
+T c==> c/\ c= f0 f1 c/\ c~ c= f0 f1 c~ cI f2 f0 c= c~ chull part cconvex f2 f1 c~ chull part cconvex f2 f1
++ ((x = a) /\ ((~ (x = a)) /\ (~ ((I s) x)))) |- ((~ (x = a)) = (~ (a = a)))
+T c==> c/\ c= f0 f1 c/\ c~ c= f0 f1 c~ cI f2 f0 c= c~ c= f0 f1 c~ c= f1 f1
+- (~ (s x)), (s x) |- ((~ (s x)) /\ (s x))
+T c==> c~ * f0 f1 c==> * f0 f1 c/\ c~ * f0 f1 * f0 f1
+- ((x = a) /\ (((hull convex) s) x)) |- ((~ (((hull convex) s) a)) ==> (((hull convex) s) a))
+T c==> c/\ c= f0 f1 chull part cconvex f2 f0 c==> c~ chull part cconvex f2 f1 chull part cconvex f2 f1
+- (_899598 = _899601), (_899599 = _899602) |- ((_899597 = _899600) ==> ((((hull _899600) _899601) _899602) \/ (~ (((hull _899597) _899598) _899599))))
+T c==> c= f0 f1 c==> c= f2 f3 c==> c= f4 f5 c\/ chull f5 f1 f3 c~ chull f4 f0 f2
++ |- (((!s. (!x. ((FINITE (x INSERT s)) = (FINITE s)))) ==> ((\s. (!x. ((FINITE (x INSERT s)) = (FINITE s)))) s)) = ((\s. (!x. ((FINITE (x INSERT s)) = (FINITE s)))) s))
+T c= c==> ! ! c= cFINITE * * part cINSERT b1 b0 cFINITE b0 * / ! c= cFINITE * * part cINSERT b1 b0 cFINITE b0 f0 * / ! c= cFINITE * * part cINSERT b1 b0 cFINITE b0 f0
++ ((~ (((hull convex) s) a)) /\ ((FINITE s) /\ (~ (s a)))) |- (((!x. (((\x. (((x = a) /\ ((~ (x = a)) /\ (~ (s x)))) \/ ((x = a) /\ (((hull convex) s) x)))) x) ==> F)) ==> ((?x. (((x = a) /\ ((~ (x = a)) /\ (~ (s x)))) \/ ((x = a) /\ (((hull convex) s) x)))) ==> F)) = ((?x. (((x = a) /\ ((~ (x = a)) /\ (~ (s x)))) \/ ((x = a) /\ (((hull convex) s) x)))) ==> F))
+T c==> c/\ c~ chull part cconvex f0 f1 c/\ cFINITE f0 c~ * f0 f1 c= c==> ! c==> * / c\/ c/\ c= b1 f1 c/\ c~ c= b1 f1 c~ * f0 b1 c/\ c= b1 f1 chull part cconvex f0 b1 b0 cF c==> c? / c\/ c/\ c= b0 f1 c/\ c~ c= b0 f1 c~ * f0 b0 c/\ c= b0 f1 chull part cconvex f0 b0 cF c==> c? / c\/ c/\ c= b0 f1 c/\ c~ c= b0 f1 c~ * f0 b0 c/\ c= b0 f1 chull part cconvex f0 b0 cF
++ |- ((!a. (((FINITE s) /\ (~ (a IN ((hull convex) s)))) ==> ((extreme_point_of a) ((hull convex) (a INSERT s))))) = T)
+T c= ! c==> c/\ cFINITE f0 c~ cIN b0 * * part chull part cconvex f0 cextreme_point_of b0 * * part chull part cconvex * * part cINSERT b0 f0 cT
+- (~ (s a)), (x = a), ((((~ (x = a)) /\ (~ (s x))) \/ (x = a)) /\ (s x)) |- ((~ F) ==> F)
+T c==> c~ * f0 f1 c==> c= f2 f1 c==> c/\ c\/ c/\ c~ c= f2 f1 c~ * f0 f2 c= f2 f1 * f0 f2 c==> c~ cF cF
+- |- (((!s. (!a. ((~ ((~ (s a)) ==> (!x. ((((x = a) \/ (s x)) /\ (~ (x = a))) = (s x))))) ==> F))) ==> ((\s. (!a. ((~ ((~ (s a)) ==> (!x. ((((x = a) \/ (s x)) /\ (~ (x = a))) = (s x))))) ==> F))) s)) = ((\s. (!a. ((~ ((~ (s a)) ==> (!x. ((((x = a) \/ (s x)) /\ (~ (x = a))) = (s x))))) ==> F))) s))
+T c= c==> ! ! c==> c~ c==> c~ * b0 b1 ! c= c/\ c\/ c= b2 b1 * b0 b2 c~ c= b2 b1 * b0 b2 cF * / ! c==> c~ c==> c~ * b0 b1 ! c= c/\ c\/ c= b2 b1 * b0 b2 c~ c= b2 b1 * b0 b2 cF f0 * / ! c==> c~ c==> c~ * b0 b1 ! c= c/\ c\/ c= b2 b1 * b0 b2 c~ c= b2 b1 * b0 b2 cF f0
+- |- (((FINITE s) /\ (~ (a IN ((hull convex) s)))) ==> (((extreme_point_of a) ((hull convex) (a INSERT s))) = ((extreme_point_of a) ((hull convex) (a INSERT s)))))
+T c==> c/\ cFINITE f0 c~ cIN f1 * * part chull part cconvex f0 c= cextreme_point_of f1 * * part chull part cconvex * * part cINSERT f1 f0 cextreme_point_of f1 * * part chull part cconvex * * part cINSERT f1 f0
++ (~ (s a)), (~ ((((x = a) \/ (s x)) /\ (~ (x = a))) = (s x))) |- ((~ ((((x = a) \/ (s x)) /\ (~ (x = a))) = (s x))) /\ F)
+T c==> c~ * f0 f1 c==> c~ c= c/\ c\/ c= f2 f1 * f0 f2 c~ c= f2 f1 * f0 f2 c/\ c~ c= c/\ c\/ c= f2 f1 * f0 f2 c~ c= f2 f1 * f0 f2 cF
++ |- ((F ==> t) = T)
+T c= c==> cF f0 cT
+- (((a INSERT EMPTY) SUBSET (a INSERT s)) /\ ((DISJOINT (a INSERT EMPTY)) ((hull convex) ((a INSERT s) DIFF (a INSERT EMPTY))))), ((((a INSERT EMPTY) SUBSET (a INSERT s)) /\ ((DISJOINT (a INSERT EMPTY)) ((hull convex) ((a INSERT s) DIFF (a INSERT EMPTY))))) ==> ((extreme_point_of a) ((hull convex) (a INSERT s)))) |- ((((a INSERT EMPTY) SUBSET (a INSERT s)) /\ ((DISJOINT (a INSERT EMPTY)) ((hull convex) ((a INSERT s) DIFF (a INSERT EMPTY))))) /\ ((extreme_point_of a) ((hull convex) (a INSERT s))))
+T c==> c/\ cSUBSET * * part cINSERT f0 part cEMPTY * * part cINSERT f0 f1 cDISJOINT * * part cINSERT f0 part cEMPTY * * part chull part cconvex * * part cDIFF * * part cINSERT f0 f1 * * part cINSERT f0 part cEMPTY c==> c==> c/\ cSUBSET * * part cINSERT f0 part cEMPTY * * part cINSERT f0 f1 cDISJOINT * * part cINSERT f0 part cEMPTY * * part chull part cconvex * * part cDIFF * * part cINSERT f0 f1 * * part cINSERT f0 part cEMPTY cextreme_point_of f0 * * part chull part cconvex * * part cINSERT f0 f1 c/\ c/\ cSUBSET * * part cINSERT f0 part cEMPTY * * part cINSERT f0 f1 cDISJOINT * * part cINSERT f0 part cEMPTY * * part chull part cconvex * * part cDIFF * * part cINSERT f0 f1 * * part cINSERT f0 part cEMPTY cextreme_point_of f0 * * part chull part cconvex * * part cINSERT f0 f1
++ |- (((!x. ((x IN s) ==> (x IN ((hull P) s)))) ==> ((\x. ((x IN s) ==> (x IN ((hull P) s)))) x)) = ((\x. ((x IN s) ==> (x IN ((hull P) s)))) x))
+T c= c==> ! c==> cIN b0 f0 cIN b0 * * part chull f1 f0 * / c==> cIN b0 f0 cIN b0 * * part chull f1 f0 f2 * / c==> cIN b0 f0 cIN b0 * * part chull f1 f0 f2
+- (_899597 = _899600), (_899598 = _899601), (_899599 = _899602) |- ((((hull _899600) _899601) _899602) \/ (~ (((hull _899597) _899598) _899599)))
+T c==> c= f0 f1 c==> c= f2 f3 c==> c= f4 f5 c\/ chull f1 f3 f5 c~ chull f0 f2 f4
+- (~ F), ((~ (((hull convex) s) a)) /\ ((FINITE s) /\ (~ (s a)))), ((x = a) /\ (((hull convex) s) x)) |- ((~ F) /\ F)
+T c==> c~ cF c==> c/\ c~ chull part cconvex f0 f1 c/\ cFINITE f0 c~ * f0 f1 c==> c/\ c= f2 f1 chull part cconvex f0 f2 c/\ c~ cF cF
+- |- (((!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))) ==> ((\t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))) t3)) = ((\t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))) t3))
+T c= c==> ! c= c\/ f0 c\/ f1 b0 c\/ c\/ f0 f1 b0 * / c= c\/ f0 c\/ f1 b0 c\/ c\/ f0 f1 b0 f2 * / c= c\/ f0 c\/ f1 b0 c\/ c\/ f0 f1 b0 f2
++ |- ((\a. (((hull convex) (a INSERT EMPTY)) = (a INSERT EMPTY))) a)
+T * / c= * * part chull part cconvex * * part cINSERT b0 part cEMPTY * * part cINSERT b0 part cEMPTY f0
++ (~ (a IN s)), (~ (a IN ((hull convex) s))), (FINITE s), ((((a INSERT EMPTY) SUBSET (a INSERT s)) /\ ((DISJOINT (a INSERT EMPTY)) ((hull convex) ((a INSERT s) DIFF (a INSERT EMPTY))))) ==> ((extreme_point_of a) ((hull convex) (a INSERT s)))) |- (((((a INSERT EMPTY) SUBSET (a INSERT s)) /\ ((DISJOINT (a INSERT EMPTY)) ((hull convex) ((a INSERT s) DIFF (a INSERT EMPTY))))) ==> ((extreme_point_of a) ((hull convex) (a INSERT s)))) /\ ((extreme_point_of a) ((hull convex) (a INSERT s))))
+T c==> c~ cIN f0 f1 c==> c~ cIN f0 * * part chull part cconvex f1 c==> cFINITE f1 c==> c==> c/\ cSUBSET * * part cINSERT f0 part cEMPTY * * part cINSERT f0 f1 cDISJOINT * * part cINSERT f0 part cEMPTY * * part chull part cconvex * * part cDIFF * * part cINSERT f0 f1 * * part cINSERT f0 part cEMPTY cextreme_point_of f0 * * part chull part cconvex * * part cINSERT f0 f1 c/\ c==> c/\ cSUBSET * * part cINSERT f0 part cEMPTY * * part cINSERT f0 f1 cDISJOINT * * part cINSERT f0 part cEMPTY * * part chull part cconvex * * part cDIFF * * part cINSERT f0 f1 * * part cINSERT f0 part cEMPTY cextreme_point_of f0 * * part chull part cconvex * * part cINSERT f0 f1 cextreme_point_of f0 * * part chull part cconvex * * part cINSERT f0 f1
+- |- ((t /\ t) = t)
+T c= c/\ f0 f0 f0
+- |- ((a = b) ==> (b \/ (~ a)))
+T c==> c= f0 f1 c\/ f1 c~ f0
+- (_899591 = _899593), (_899592 = _899594) |- (((I _899593) _899594) \/ (~ ((I _899591) _899592)))
+T c==> c= f0 f1 c==> c= f2 f3 c\/ cI f1 f3 c~ cI f0 f2
+- ((FINITE s) /\ (~ (a IN ((hull convex) s)))) |- ((FINITE s) = T)
+T c==> c/\ cFINITE f0 c~ cIN f1 * * part chull part cconvex f0 c= cFINITE f0 cT
+- ((~ ((~ (s a)) ==> (!x. ((((x = a) \/ (s x)) /\ (~ (x = a))) = (s x))))) ==> F) |- (((~ ((~ (s a)) ==> (!x. ((((x = a) \/ (s x)) /\ (~ (x = a))) = (s x))))) ==> F) /\ ((~ ((~ (s a)) ==> (!x. ((((x = a) \/ (s x)) /\ (~ (x = a))) = (s x))))) ==> F))
+T c==> c==> c~ c==> c~ * f0 f1 ! c= c/\ c\/ c= b0 f1 * f0 b0 c~ c= b0 f1 * f0 b0 cF c/\ c==> c~ c==> c~ * f0 f1 ! c= c/\ c\/ c= b0 f1 * f0 b0 c~ c= b0 f1 * f0 b0 cF c==> c~ c==> c~ * f0 f1 ! c= c/\ c\/ c= b0 f1 * f0 b0 c~ c= b0 f1 * f0 b0 cF
+- ((x = a) /\ (((hull convex) s) x)) |- (F = F)
+T c==> c/\ c= f0 f1 chull part cconvex f2 f0 c= cF cF
++ |- ((\x. (!s. (((face_of (x INSERT EMPTY)) s) = ((extreme_point_of x) s)))) x)
+T * / ! c= cface_of * * part cINSERT b0 part cEMPTY b1 cextreme_point_of b0 b1 f0
++ (~ ((!x. ((x = a) ==> ((x = a) \/ (s x)))) /\ (!x. (~ ((x = a) /\ (((hull convex) s) x)))))), ((~ (((hull convex) s) a)) /\ ((FINITE s) /\ (~ (s a)))) |- ((~ ((!x. ((x = a) ==> ((x = a) \/ (s x)))) /\ (!x. (~ ((x = a) /\ (((hull convex) s) x)))))) /\ F)
+T c==> c~ c/\ ! c==> c= b0 f0 c\/ c= b0 f0 * f1 b0 ! c~ c/\ c= b0 f0 chull part cconvex f1 b0 c==> c/\ c~ chull part cconvex f1 f0 c/\ cFINITE f1 c~ * f1 f0 c/\ c~ c/\ ! c==> c= b0 f0 c\/ c= b0 f0 * f1 b0 ! c~ c/\ c= b0 f0 chull part cconvex f1 b0 cF
++ |- ((~ T) = F)
+T c= c~ cT cF
++ |- (((~ ((!x. ((x = a) ==> ((x = a) \/ (s x)))) /\ (!x. (~ ((x = a) /\ (((hull convex) s) x)))))) ==> F) = ((!x. ((x = a) ==> ((x = a) \/ (s x)))) /\ (!x. (~ ((x = a) /\ (((hull convex) s) x))))))
+T c= c==> c~ c/\ ! c==> c= b0 f0 c\/ c= b0 f0 * f1 b0 ! c~ c/\ c= b0 f0 chull part cconvex f1 b0 cF c/\ ! c==> c= b0 f0 c\/ c= b0 f0 * f1 b0 ! c~ c/\ c= b0 f0 chull part cconvex f1 b0
++ ((((x = a) \/ (s x)) /\ (~ (x = a))) /\ (~ (s x))) |- ((x = a) ==> F)
+T c==> c/\ c/\ c\/ c= f0 f1 * f2 f0 c~ c= f0 f1 c~ * f2 f0 c==> c= f0 f1 cF
+- (~ (a IN ((hull convex) s))) |- ((a IN ((hull convex) s)) = F)
+T c==> c~ cIN f0 * * part chull part cconvex f1 c= cIN f0 * * part chull part cconvex f1 cF
+- (((~ (((~ (((hull convex) s) a)) /\ ((FINITE s) /\ (~ (s a)))) ==> ((!x. ((x = a) ==> ((x = a) \/ (s x)))) /\ (!x. (~ ((x = a) /\ (((hull convex) s) x))))))) ==> F) ==> ((~ (((~ (((hull convex) s) a)) /\ ((FINITE s) /\ (~ (s a)))) ==> ((!x. ((x = a) ==> ((x = a) \/ (s x)))) /\ (!x. (~ ((x = a) /\ (((hull convex) s) x))))))) ==> F)) |- ((((~ (((~ (((hull convex) s) a)) /\ ((FINITE s) /\ (~ (s a)))) ==> ((!x. ((x = a) ==> ((x = a) \/ (s x)))) /\ (!x. (~ ((x = a) /\ (((hull convex) s) x))))))) ==> F) ==> ((~ (((~ (((hull convex) s) a)) /\ ((FINITE s) /\ (~ (s a)))) ==> ((!x. ((x = a) ==> ((x = a) \/ (s x)))) /\ (!x. (~ ((x = a) /\ (((hull convex) s) x))))))) ==> F)) /\ (((~ (((~ (((hull convex) s) a)) /\ ((FINITE s) /\ (~ (s a)))) ==> ((!x. ((x = a) ==> ((x = a) \/ (s x)))) /\ (!x. (~ ((x = a) /\ (((hull convex) s) x))))))) ==> F) ==> ((~ (((~ (((hull convex) s) a)) /\ ((FINITE s) /\ (~ (s a)))) ==> ((!x. ((x = a) ==> ((x = a) \/ (s x)))) /\ (!x. (~ ((x = a) /\ (((hull convex) s) x))))))) ==> F)))
+T c==> c==> c==> c~ c==> c/\ c~ chull part cconvex f0 f1 c/\ cFINITE f0 c~ * f0 f1 c/\ ! c==> c= b0 f1 c\/ c= b0 f1 * f0 b0 ! c~ c/\ c= b0 f1 chull part cconvex f0 b0 cF c==> c~ c==> c/\ c~ chull part cconvex f0 f1 c/\ cFINITE f0 c~ * f0 f1 c/\ ! c==> c= b0 f1 c\/ c= b0 f1 * f0 b0 ! c~ c/\ c= b0 f1 chull part cconvex f0 b0 cF c/\ c==> c==> c~ c==> c/\ c~ chull part cconvex f0 f1 c/\ cFINITE f0 c~ * f0 f1 c/\ ! c==> c= b0 f1 c\/ c= b0 f1 * f0 b0 ! c~ c/\ c= b0 f1 chull part cconvex f0 b0 cF c==> c~ c==> c/\ c~ chull part cconvex f0 f1 c/\ cFINITE f0 c~ * f0 f1 c/\ ! c==> c= b0 f1 c\/ c= b0 f1 * f0 b0 ! c~ c/\ c= b0 f1 chull part cconvex f0 b0 cF c==> c==> c~ c==> c/\ c~ chull part cconvex f0 f1 c/\ cFINITE f0 c~ * f0 f1 c/\ ! c==> c= b0 f1 c\/ c= b0 f1 * f0 b0 ! c~ c/\ c= b0 f1 chull part cconvex f0 b0 cF c==> c~ c==> c/\ c~ chull part cconvex f0 f1 c/\ cFINITE f0 c~ * f0 f1 c/\ ! c==> c= b0 f1 c\/ c= b0 f1 * f0 b0 ! c~ c/\ c= b0 f1 chull part cconvex f0 b0 cF
+- (((~ ((~ (s a)) ==> (!x. ((((x = a) \/ (s x)) /\ (~ (x = a))) = (s x))))) ==> F) ==> ((~ ((~ (s a)) ==> (!x. ((((x = a) \/ (s x)) /\ (~ (x = a))) = (s x))))) ==> F)) |- ((((~ ((~ (s a)) ==> (!x. ((((x = a) \/ (s x)) /\ (~ (x = a))) = (s x))))) ==> F) ==> ((~ ((~ (s a)) ==> (!x. ((((x = a) \/ (s x)) /\ (~ (x = a))) = (s x))))) ==> F)) /\ (((~ ((~ (s a)) ==> (!x. ((((x = a) \/ (s x)) /\ (~ (x = a))) = (s x))))) ==> F) ==> ((~ ((~ (s a)) ==> (!x. ((((x = a) \/ (s x)) /\ (~ (x = a))) = (s x))))) ==> F)))
+T c==> c==> c==> c~ c==> c~ * f0 f1 ! c= c/\ c\/ c= b0 f1 * f0 b0 c~ c= b0 f1 * f0 b0 cF c==> c~ c==> c~ * f0 f1 ! c= c/\ c\/ c= b0 f1 * f0 b0 c~ c= b0 f1 * f0 b0 cF c/\ c==> c==> c~ c==> c~ * f0 f1 ! c= c/\ c\/ c= b0 f1 * f0 b0 c~ c= b0 f1 * f0 b0 cF c==> c~ c==> c~ * f0 f1 ! c= c/\ c\/ c= b0 f1 * f0 b0 c~ c= b0 f1 * f0 b0 cF c==> c==> c~ c==> c~ * f0 f1 ! c= c/\ c\/ c= b0 f1 * f0 b0 c~ c= b0 f1 * f0 b0 cF c==> c~ c==> c~ * f0 f1 ! c= c/\ c\/ c= b0 f1 * f0 b0 c~ c= b0 f1 * f0 b0 cF
+- |- ((!a. (((~ (((hull convex) s) a)) /\ ((FINITE s) /\ (~ (s a)))) ==> ((!x. ((x = a) ==> ((x = a) \/ (s x)))) /\ (!x. (~ ((x = a) /\ (((hull convex) s) x))))))) = T)
+T c= ! c==> c/\ c~ chull part cconvex f0 b0 c/\ cFINITE f0 c~ * f0 b0 c/\ ! c==> c= b1 b0 c\/ c= b1 b0 * f0 b1 ! c~ c/\ c= b1 b0 chull part cconvex f0 b1 cT
++ (x = a) |- ((~ (x = a)) = (~ (a = a)))
+T c==> c= f0 f1 c= c~ c= f0 f1 c~ c= f1 f1
+- |- (((!a. ((~ (((~ (((hull convex) s) a)) /\ ((FINITE s) /\ (~ (s a)))) ==> ((!x. ((x = a) ==> ((x = a) \/ (s x)))) /\ (!x. (~ ((x = a) /\ (((hull convex) s) x))))))) ==> F)) ==> ((\a. ((~ (((~ (((hull convex) s) a)) /\ ((FINITE s) /\ (~ (s a)))) ==> ((!x. ((x = a) ==> ((x = a) \/ (s x)))) /\ (!x. (~ ((x = a) /\ (((hull convex) s) x))))))) ==> F)) a)) = ((\a. ((~ (((~ (((hull convex) s) a)) /\ ((FINITE s) /\ (~ (s a)))) ==> ((!x. ((x = a) ==> ((x = a) \/ (s x)))) /\ (!x. (~ ((x = a) /\ (((hull convex) s) x))))))) ==> F)) a))
+T c= c==> ! c==> c~ c==> c/\ c~ chull part cconvex f0 b0 c/\ cFINITE f0 c~ * f0 b0 c/\ ! c==> c= b1 b0 c\/ c= b1 b0 * f0 b1 ! c~ c/\ c= b1 b0 chull part cconvex f0 b1 cF * / c==> c~ c==> c/\ c~ chull part cconvex f0 b0 c/\ cFINITE f0 c~ * f0 b0 c/\ ! c==> c= b1 b0 c\/ c= b1 b0 * f0 b1 ! c~ c/\ c= b1 b0 chull part cconvex f0 b1 cF f1 * / c==> c~ c==> c/\ c~ chull part cconvex f0 b0 c/\ cFINITE f0 c~ * f0 b0 c/\ ! c==> c= b1 b0 c\/ c= b1 b0 * f0 b1 ! c~ c/\ c= b1 b0 chull part cconvex f0 b1 cF f1
+- (x = a) |- ((~ (s a)) = (~ (s a)))
+T c==> c= f0 f1 c= c~ * f2 f1 c~ * f2 f1
++ |- ((x IN EMPTY) = F)
+T c= cIN f0 part cEMPTY cF
+- |- ((_899592 = _899594) ==> ((~ (_899591 = _899593)) \/ (((I _899593) _899594) \/ (~ ((I _899591) _899592)))))
+T c==> c= f0 f1 c\/ c~ c= f2 f3 c\/ cI f3 f1 c~ cI f2 f0
++ (~ ((!x. ((x = a) ==> ((x = a) \/ (s x)))) /\ (!x. (~ ((x = a) /\ (((hull convex) s) x)))))) |- (?x. (((x = a) /\ ((~ (x = a)) /\ (~ (s x)))) \/ ((x = a) /\ (((hull convex) s) x))))
+T c==> c~ c/\ ! c==> c= b0 f0 c\/ c= b0 f0 * f1 b0 ! c~ c/\ c= b0 f0 chull part cconvex f1 b0 c? / c\/ c/\ c= b0 f0 c/\ c~ c= b0 f0 c~ * f1 b0 c/\ c= b0 f0 chull part cconvex f1 b0
+- (~ ((~ (s a)) ==> (!x. ((((x = a) \/ (s x)) /\ (~ (x = a))) = (s x))))) |- ((~ ((~ (s a)) ==> (!x. ((((x = a) \/ (s x)) /\ (~ (x = a))) = (s x))))) /\ F)
+T c==> c~ c==> c~ * f0 f1 ! c= c/\ c\/ c= b0 f1 * f0 b0 c~ c= b0 f1 * f0 b0 c/\ c~ c==> c~ * f0 f1 ! c= c/\ c\/ c= b0 f1 * f0 b0 c~ c= b0 f1 * f0 b0 cF
++ ((((~ (x = a)) /\ (~ (s x))) \/ (x = a)) /\ (s x)), ((x = a) ==> F) |- F
+T c==> c/\ c\/ c/\ c~ c= f0 f1 c~ * f2 f0 c= f0 f1 * f2 f0 c==> c==> c= f0 f1 cF cF
++ ((~ (((hull convex) s) a)) /\ ((FINITE s) /\ (~ (s a)))) |- ((~ ((!x. ((x = a) ==> ((x = a) \/ (s x)))) /\ (!x. (~ ((x = a) /\ (((hull convex) s) x)))))) ==> F)
+T c==> c/\ c~ chull part cconvex f0 f1 c/\ cFINITE f0 c~ * f0 f1 c==> c~ c/\ ! c==> c= b0 f1 c\/ c= b0 f1 * f0 b0 ! c~ c/\ c= b0 f1 chull part cconvex f0 b0 cF
+- (~ (((~ (((hull convex) s) a)) /\ ((FINITE s) /\ (~ (s a)))) ==> ((!x. ((x = a) ==> ((x = a) \/ (s x)))) /\ (!x. (~ ((x = a) /\ (((hull convex) s) x))))))) |- ((~ (((~ (((hull convex) s) a)) /\ ((FINITE s) /\ (~ (s a)))) ==> ((!x. ((x = a) ==> ((x = a) \/ (s x)))) /\ (!x. (~ ((x = a) /\ (((hull convex) s) x))))))) /\ F)
+T c==> c~ c==> c/\ c~ chull part cconvex f0 f1 c/\ cFINITE f0 c~ * f0 f1 c/\ ! c==> c= b0 f1 c\/ c= b0 f1 * f0 b0 ! c~ c/\ c= b0 f1 chull part cconvex f0 b0 c/\ c~ c==> c/\ c~ chull part cconvex f0 f1 c/\ cFINITE f0 c~ * f0 f1 c/\ ! c==> c= b0 f1 c\/ c= b0 f1 * f0 b0 ! c~ c/\ c= b0 f1 chull part cconvex f0 b0 cF
+- ((x = a) /\ ((~ (x = a)) /\ (~ ((I s) x)))) |- ((~ F) ==> F)
+T c==> c/\ c= f0 f1 c/\ c~ c= f0 f1 c~ cI f2 f0 c==> c~ cF cF
++ ((x = a) /\ ((~ (x = a)) /\ (~ ((I s) x)))) |- ((a = a) ==> F)
+T c==> c/\ c= f0 f1 c/\ c~ c= f0 f1 c~ cI f2 f0 c==> c= f1 f1 cF
+- |- ((~ F) = T)
+T c= c~ cF cT
++ ((((x = a) \/ (s x)) /\ (~ (x = a))) /\ (~ (s x))) |- (((((x = a) \/ (s x)) /\ (~ (x = a))) /\ (~ (s x))) /\ F)
+T c==> c/\ c/\ c\/ c= f0 f1 * f2 f0 c~ c= f0 f1 c~ * f2 f0 c/\ c/\ c/\ c\/ c= f0 f1 * f2 f0 c~ c= f0 f1 c~ * f2 f0 cF
++ ((~ (((hull convex) s) a)) /\ ((FINITE s) /\ (~ (s a)))), ((\x. (((x = a) /\ ((~ (x = a)) /\ (~ (s x)))) \/ ((x = a) /\ (((hull convex) s) x)))) x) |- (((\x. (((x = a) /\ ((~ (x = a)) /\ (~ (s x)))) \/ ((x = a) /\ (((hull convex) s) x)))) x) /\ F)
+T c==> c/\ c~ chull part cconvex f0 f1 c/\ cFINITE f0 c~ * f0 f1 c==> * / c\/ c/\ c= b0 f1 c/\ c~ c= b0 f1 c~ * f0 b0 c/\ c= b0 f1 chull part cconvex f0 b0 f2 c/\ * / c\/ c/\ c= b0 f1 c/\ c~ c= b0 f1 c~ * f0 b0 c/\ c= b0 f1 chull part cconvex f0 b0 f2 cF
+- (~ ((~ (s a)) ==> (!x. ((((x = a) \/ (s x)) /\ (~ (x = a))) = (s x))))) |- F
+T c==> c~ c==> c~ * f0 f1 ! c= c/\ c\/ c= b0 f1 * f0 b0 c~ c= b0 f1 * f0 b0 cF
++ |- (((?x. (P x)) \/ (?x. (Q x))) = (?x. ((P x) \/ (Q x))))
+T c= c\/ c? / * f0 b0 c? / * f1 b0 c? / c\/ * f0 b0 * f1 b0
+- (_899592 = _899594) |- ((_899591 = _899593) ==> (((I _899593) _899594) \/ (~ ((I _899591) _899592))))
+T c==> c= f0 f1 c==> c= f2 f3 c\/ cI f3 f1 c~ cI f2 f0
+- |- ((!x. (P x)) = ((P T) /\ (P F)))
+T c= ! * f0 b0 c/\ * f0 cT * f0 cF
++ |- ((\x. ((FINITE (x INSERT s)) = (FINITE s))) x)
+T * / c= cFINITE * * part cINSERT b0 f0 cFINITE f0 f1
++ ((~ (x = a)) /\ (~ (s x))), ((((~ (x = a)) /\ (~ (s x))) \/ (x = a)) /\ (s x)) |- F
+T c==> c/\ c~ c= f0 f1 c~ * f2 f0 c==> c/\ c\/ c/\ c~ c= f0 f1 c~ * f2 f0 c= f0 f1 * f2 f0 cF
++ (a IN s) |- ((a IN ((hull convex) s)) = T)
+T c==> cIN f0 f1 c= cIN f0 * * part chull part cconvex f1 cT
+- |- ((?x'. ((x = a) /\ (((hull convex) s) x'))) = ((x = a) /\ (?x. (((hull convex) s) x))))
+T c= c? / c/\ c= f0 f1 chull part cconvex f2 b0 c/\ c= f0 f1 c? / chull part cconvex f2 b0
++ |- ((\q'. ((((FINITE s) /\ (~ (a IN ((hull convex) s)))) = p') ==> ((p' ==> (((extreme_point_of a) ((hull convex) (a INSERT s))) = q')) ==> ((((FINITE s) /\ (~ (a IN ((hull convex) s)))) ==> ((extreme_point_of a) ((hull convex) (a INSERT s)))) = (p' ==> q'))))) q')
+T * / c==> c= c/\ cFINITE f0 c~ cIN f1 * * part chull part cconvex f0 f2 c==> c==> f2 c= cextreme_point_of f1 * * part chull part cconvex * * part cINSERT f1 f0 b0 c= c==> c/\ cFINITE f0 c~ cIN f1 * * part chull part cconvex f0 cextreme_point_of f1 * * part chull part cconvex * * part cINSERT f1 f0 c==> f2 b0 f3
+- |- ((!s. (!a. ((~ (s a)) ==> (!x. ((((x = a) \/ (s x)) /\ (~ (x = a))) = (s x)))))) = (!s. (!a. ((~ ((~ (s a)) ==> (!x. ((((x = a) \/ (s x)) /\ (~ (x = a))) = (s x))))) ==> F))))
+T c= ! ! c==> c~ * b0 b1 ! c= c/\ c\/ c= b2 b1 * b0 b2 c~ c= b2 b1 * b0 b2 ! ! c==> c~ c==> c~ * b0 b1 ! c= c/\ c\/ c= b2 b1 * b0 b2 c~ c= b2 b1 * b0 b2 cF
+- |- (((!t1. (!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))))) ==> ((\t1. (!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))))) t1)) = ((\t1. (!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))))) t1))
+T c= c==> ! ! ! c= c\/ b0 c\/ b1 b2 c\/ c\/ b0 b1 b2 * / ! ! c= c\/ b0 c\/ b1 b2 c\/ c\/ b0 b1 b2 f0 * / ! ! c= c\/ b0 c\/ b1 b2 c\/ c\/ b0 b1 b2 f0
+- (x = a) |- ((~ (s x)) = (~ (s a)))
+T c==> c= f0 f1 c= c~ * f2 f0 c~ * f2 f1
++ (x = a), ((((x = a) \/ (s x)) /\ (~ (x = a))) /\ (~ (s x))) |- ((a = a) ==> F)
+T c==> c= f0 f1 c==> c/\ c/\ c\/ c= f0 f1 * f2 f0 c~ c= f0 f1 c~ * f2 f0 c==> c= f1 f1 cF
+- |- (((!s. (!a. ((~ (((~ (((hull convex) s) a)) /\ ((FINITE s) /\ (~ (s a)))) ==> ((!x. ((x = a) ==> ((x = a) \/ (s x)))) /\ (!x. (~ ((x = a) /\ (((hull convex) s) x))))))) ==> F))) ==> ((\s. (!a. ((~ (((~ (((hull convex) s) a)) /\ ((FINITE s) /\ (~ (s a)))) ==> ((!x. ((x = a) ==> ((x = a) \/ (s x)))) /\ (!x. (~ ((x = a) /\ (((hull convex) s) x))))))) ==> F))) s)) = ((\s. (!a. ((~ (((~ (((hull convex) s) a)) /\ ((FINITE s) /\ (~ (s a)))) ==> ((!x. ((x = a) ==> ((x = a) \/ (s x)))) /\ (!x. (~ ((x = a) /\ (((hull convex) s) x))))))) ==> F))) s))
+T c= c==> ! ! c==> c~ c==> c/\ c~ chull part cconvex b0 b1 c/\ cFINITE b0 c~ * b0 b1 c/\ ! c==> c= b2 b1 c\/ c= b2 b1 * b0 b2 ! c~ c/\ c= b2 b1 chull part cconvex b0 b2 cF * / ! c==> c~ c==> c/\ c~ chull part cconvex b0 b1 c/\ cFINITE b0 c~ * b0 b1 c/\ ! c==> c= b2 b1 c\/ c= b2 b1 * b0 b2 ! c~ c/\ c= b2 b1 chull part cconvex b0 b2 cF f0 * / ! c==> c~ c==> c/\ c~ chull part cconvex b0 b1 c/\ cFINITE b0 c~ * b0 b1 c/\ ! c==> c= b2 b1 c\/ c= b2 b1 * b0 b2 ! c~ c/\ c= b2 b1 chull part cconvex b0 b2 cF f0
++ (~ (a IN s)), (~ (a IN ((hull convex) s))), (FINITE s) |- (((a INSERT EMPTY) SUBSET (a INSERT s)) /\ ((DISJOINT (a INSERT EMPTY)) ((hull convex) s)))
+T c==> c~ cIN f0 f1 c==> c~ cIN f0 * * part chull part cconvex f1 c==> cFINITE f1 c/\ cSUBSET * * part cINSERT f0 part cEMPTY * * part cINSERT f0 f1 cDISJOINT * * part cINSERT f0 part cEMPTY * * part chull part cconvex f1
++ |- (((!s. (!x. ((x IN s) ==> (x IN ((hull P) s))))) ==> ((\s. (!x. ((x IN s) ==> (x IN ((hull P) s))))) s)) = ((\s. (!x. ((x IN s) ==> (x IN ((hull P) s))))) s))
+T c= c==> ! ! c==> cIN b1 b0 cIN b1 * * part chull f0 b0 * / ! c==> cIN b1 b0 cIN b1 * * part chull f0 b0 f1 * / ! c==> cIN b1 b0 cIN b1 * * part chull f0 b0 f1
+- |- ((?x'. ((x' = a) /\ (((hull convex) s) x))) = ((?x. (x = a)) /\ (((hull convex) s) x)))
+T c= c? / c/\ c= b0 f0 chull part cconvex f1 f2 c/\ c? / c= b0 f0 chull part cconvex f1 f2
+- |- ((~ (~ t)) = t)
+T c= c~ c~ f0 f0
++ |- ((((((a INSERT EMPTY) SUBSET (a INSERT s)) /\ ((DISJOINT (a INSERT EMPTY)) ((hull convex) ((a INSERT s) DIFF (a INSERT EMPTY))))) ==> ((extreme_point_of a) ((hull convex) (a INSERT s)))) ==> ((extreme_point_of a) ((hull convex) (a INSERT s)))) = (((((a INSERT EMPTY) SUBSET (a INSERT s)) /\ ((DISJOINT (a INSERT EMPTY)) ((hull convex) ((a INSERT s) DIFF (a INSERT EMPTY))))) ==> ((face_of (a INSERT EMPTY)) ((hull convex) (a INSERT s)))) ==> ((extreme_point_of a) ((hull convex) (a INSERT s)))))
+T c= c==> c==> c/\ cSUBSET * * part cINSERT f0 part cEMPTY * * part cINSERT f0 f1 cDISJOINT * * part cINSERT f0 part cEMPTY * * part chull part cconvex * * part cDIFF * * part cINSERT f0 f1 * * part cINSERT f0 part cEMPTY cextreme_point_of f0 * * part chull part cconvex * * part cINSERT f0 f1 cextreme_point_of f0 * * part chull part cconvex * * part cINSERT f0 f1 c==> c==> c/\ cSUBSET * * part cINSERT f0 part cEMPTY * * part cINSERT f0 f1 cDISJOINT * * part cINSERT f0 part cEMPTY * * part chull part cconvex * * part cDIFF * * part cINSERT f0 f1 * * part cINSERT f0 part cEMPTY cface_of * * part cINSERT f0 part cEMPTY * * part chull part cconvex * * part cINSERT f0 f1 cextreme_point_of f0 * * part chull part cconvex * * part cINSERT f0 f1
++ (~ (a IN s)), ((FINITE s) /\ (~ (a IN ((hull convex) s)))) |- (((FINITE s) /\ (~ (a IN ((hull convex) s)))) /\ ((extreme_point_of a) ((hull convex) (a INSERT s))))
+T c==> c~ cIN f0 f1 c==> c/\ cFINITE f1 c~ cIN f0 * * part chull part cconvex f1 c/\ c/\ cFINITE f1 c~ cIN f0 * * part chull part cconvex f1 cextreme_point_of f0 * * part chull part cconvex * * part cINSERT f0 f1
++ |- ((\s. (!x. ((x IN s) ==> (x IN ((hull P) s))))) s)
+T * / ! c==> cIN b1 b0 cIN b1 * * part chull f0 b0 f1
++ ((((x = a) \/ (s x)) /\ (~ (x = a))) /\ (~ (s x))), ((s x) ==> F) |- F
+T c==> c/\ c/\ c\/ c= f0 f1 * f2 f0 c~ c= f0 f1 c~ * f2 f0 c==> c==> * f2 f0 cF cF
+- |- (((((FINITE s) /\ (~ (a IN ((hull convex) s)))) = ((FINITE s) /\ (~ (a IN ((hull convex) s))))) ==> ((((FINITE s) /\ (~ (a IN ((hull convex) s)))) ==> (((extreme_point_of a) ((hull convex) (a INSERT s))) = q')) ==> ((((FINITE s) /\ (~ (a IN ((hull convex) s)))) ==> ((extreme_point_of a) ((hull convex) (a INSERT s)))) = (((FINITE s) /\ (~ (a IN ((hull convex) s)))) ==> q')))) = ((((FINITE s) /\ (~ (a IN ((hull convex) s)))) ==> (((extreme_point_of a) ((hull convex) (a INSERT s))) = q')) ==> ((((FINITE s) /\ (~ (a IN ((hull convex) s)))) ==> ((extreme_point_of a) ((hull convex) (a INSERT s)))) = (((FINITE s) /\ (~ (a IN ((hull convex) s)))) ==> q'))))
+T c= c==> c= c/\ cFINITE f0 c~ cIN f1 * * part chull part cconvex f0 c/\ cFINITE f0 c~ cIN f1 * * part chull part cconvex f0 c==> c==> c/\ cFINITE f0 c~ cIN f1 * * part chull part cconvex f0 c= cextreme_point_of f1 * * part chull part cconvex * * part cINSERT f1 f0 f2 c= c==> c/\ cFINITE f0 c~ cIN f1 * * part chull part cconvex f0 cextreme_point_of f1 * * part chull part cconvex * * part cINSERT f1 f0 c==> c/\ cFINITE f0 c~ cIN f1 * * part chull part cconvex f0 f2 c==> c==> c/\ cFINITE f0 c~ cIN f1 * * part chull part cconvex f0 c= cextreme_point_of f1 * * part chull part cconvex * * part cINSERT f1 f0 f2 c= c==> c/\ cFINITE f0 c~ cIN f1 * * part chull part cconvex f0 cextreme_point_of f1 * * part chull part cconvex * * part cINSERT f1 f0 c==> c/\ cFINITE f0 c~ cIN f1 * * part chull part cconvex f0 f2
+- ((((a INSERT EMPTY) SUBSET (a INSERT s)) /\ ((DISJOINT (a INSERT EMPTY)) ((hull convex) ((a INSERT s) DIFF (a INSERT EMPTY))))) ==> ((extreme_point_of a) ((hull convex) (a INSERT s)))) |- (((((a INSERT EMPTY) SUBSET (a INSERT s)) /\ ((DISJOINT (a INSERT EMPTY)) ((hull convex) ((a INSERT s) DIFF (a INSERT EMPTY))))) ==> ((extreme_point_of a) ((hull convex) (a INSERT s)))) /\ ((((a INSERT EMPTY) SUBSET (a INSERT s)) /\ ((DISJOINT (a INSERT EMPTY)) ((hull convex) ((a INSERT s) DIFF (a INSERT EMPTY))))) ==> ((extreme_point_of a) ((hull convex) (a INSERT s)))))
+T c==> c==> c/\ cSUBSET * * part cINSERT f0 part cEMPTY * * part cINSERT f0 f1 cDISJOINT * * part cINSERT f0 part cEMPTY * * part chull part cconvex * * part cDIFF * * part cINSERT f0 f1 * * part cINSERT f0 part cEMPTY cextreme_point_of f0 * * part chull part cconvex * * part cINSERT f0 f1 c/\ c==> c/\ cSUBSET * * part cINSERT f0 part cEMPTY * * part cINSERT f0 f1 cDISJOINT * * part cINSERT f0 part cEMPTY * * part chull part cconvex * * part cDIFF * * part cINSERT f0 f1 * * part cINSERT f0 part cEMPTY cextreme_point_of f0 * * part chull part cconvex * * part cINSERT f0 f1 c==> c/\ cSUBSET * * part cINSERT f0 part cEMPTY * * part cINSERT f0 f1 cDISJOINT * * part cINSERT f0 part cEMPTY * * part chull part cconvex * * part cDIFF * * part cINSERT f0 f1 * * part cINSERT f0 part cEMPTY cextreme_point_of f0 * * part chull part cconvex * * part cINSERT f0 f1
+- (s x) |- ((~ (s x)) ==> (s x))
+T c==> * f0 f1 c==> c~ * f0 f1 * f0 f1
+- |- ((\a. ((~ (((~ (((hull convex) s) a)) /\ ((FINITE s) /\ (~ (s a)))) ==> ((!x. ((x = a) ==> ((x = a) \/ (s x)))) /\ (!x. (~ ((x = a) /\ (((hull convex) s) x))))))) ==> F)) a)
+T * / c==> c~ c==> c/\ c~ chull part cconvex f0 b0 c/\ cFINITE f0 c~ * f0 b0 c/\ ! c==> c= b1 b0 c\/ c= b1 b0 * f0 b1 ! c~ c/\ c= b1 b0 chull part cconvex f0 b1 cF f1
++ (~ (s a)) |- (((((~ (x = a)) /\ (~ (s x))) \/ (x = a)) /\ (s x)) ==> F)
+T c==> c~ * f0 f1 c==> c/\ c\/ c/\ c~ c= f2 f1 c~ * f0 f2 c= f2 f1 * f0 f2 cF
++ |- ((t /\ F) = F)
+T c= c/\ f0 cF cF
++ |- (!s. (((FINITE s) /\ (((a INSERT EMPTY) SUBSET s) /\ ((DISJOINT ((hull affine) (a INSERT EMPTY))) ((hull convex) (s DIFF (a INSERT EMPTY)))))) ==> ((face_of ((hull convex) (a INSERT EMPTY))) ((hull convex) s))))
+T c==> c/\ cFINITE f0 c/\ cSUBSET * * part cINSERT f1 part cEMPTY f0 cDISJOINT * * part chull part caffine * * part cINSERT f1 part cEMPTY * * part chull part cconvex * * part cDIFF f0 * * part cINSERT f1 part cEMPTY cface_of * * part chull part cconvex * * part cINSERT f1 part cEMPTY * * part chull part cconvex f0
++ ((~ (((hull convex) s) a)) /\ ((FINITE s) /\ (~ (s a)))) |- (((x = a) /\ (((hull convex) s) x)) ==> F)
+T c==> c/\ c~ chull part cconvex f0 f1 c/\ cFINITE f0 c~ * f0 f1 c==> c/\ c= f2 f1 chull part cconvex f0 f2 cF
++ ((((x = a) \/ (s x)) /\ (~ (x = a))) /\ (~ (s x))), ((s x) ==> F), ((x = a) ==> F) |- F
+T c==> c/\ c/\ c\/ c= f0 f1 * f2 f0 c~ c= f0 f1 c~ * f2 f0 c==> c==> * f2 f0 cF c==> c==> c= f0 f1 cF cF
++ ((((~ (x = a)) /\ (~ (s x))) \/ (x = a)) /\ (s x)), ((x = a) ==> F), (((~ (x = a)) /\ (~ (s x))) ==> F) |- F
+T c==> c/\ c\/ c/\ c~ c= f0 f1 c~ * f2 f0 c= f0 f1 * f2 f0 c==> c==> c= f0 f1 cF c==> c==> c/\ c~ c= f0 f1 c~ * f2 f0 cF cF
+- (~ F), (~ (s a)), (x = a), ((((~ (x = a)) /\ (~ (s x))) \/ (x = a)) /\ (s x)) |- ((~ F) /\ F)
+T c==> c~ cF c==> c~ * f0 f1 c==> c= f2 f1 c==> c/\ c\/ c/\ c~ c= f2 f1 c~ * f0 f2 c= f2 f1 * f0 f2 c/\ c~ cF cF
+- |- ((?x. (P /\ (Q x))) = (P /\ (?x. (Q x))))
+T c= c? / c/\ f0 * f1 b0 c/\ f0 c? / * f1 b0
+- (_899595 = _899596) |- ((((FINITE _899595) = (FINITE _899596)) ==> ((FINITE _899596) \/ (~ (FINITE _899595)))) = ((FINITE _899596) \/ (~ (FINITE _899595))))
+T c==> c= f0 f1 c= c==> c= cFINITE f0 cFINITE f1 c\/ cFINITE f1 c~ cFINITE f0 c\/ cFINITE f1 c~ cFINITE f0
+- ((~ (x = a)) /\ (~ (s x))), ((((~ (x = a)) /\ (~ (s x))) \/ (x = a)) /\ (s x)) |- ((~ F) ==> F)
+T c==> c/\ c~ c= f0 f1 c~ * f2 f0 c==> c/\ c\/ c/\ c~ c= f0 f1 c~ * f2 f0 c= f0 f1 * f2 f0 c==> c~ cF cF
++ |- (!p'. (!q'. ((p = p') ==> ((p' ==> (q = q')) ==> ((p ==> q) = (p' ==> q'))))))
+T c==> c= f0 f1 c==> c==> f1 c= f2 f3 c= c==> f0 f2 c==> f1 f3
++ |- ((\p'. (!q'. ((((FINITE s) /\ (~ (a IN ((hull convex) s)))) = p') ==> ((p' ==> (((extreme_point_of a) ((hull convex) (a INSERT s))) = q')) ==> ((((FINITE s) /\ (~ (a IN ((hull convex) s)))) ==> ((extreme_point_of a) ((hull convex) (a INSERT s)))) = (p' ==> q')))))) p')
+T * / ! c==> c= c/\ cFINITE f0 c~ cIN f1 * * part chull part cconvex f0 b0 c==> c==> b0 c= cextreme_point_of f1 * * part chull part cconvex * * part cINSERT f1 f0 b1 c= c==> c/\ cFINITE f0 c~ cIN f1 * * part chull part cconvex f0 cextreme_point_of f1 * * part chull part cconvex * * part cINSERT f1 f0 c==> b0 b1 f2
+- (_899567 = _899568) |- ((((s _899567) = (s _899568)) ==> ((s _899568) \/ (~ (s _899567)))) = ((s _899568) \/ (~ (s _899567))))
+T c==> c= f0 f1 c= c==> c= * f2 f0 * f2 f1 c\/ * f2 f1 c~ * f2 f0 c\/ * f2 f1 c~ * f2 f0
++ |- (((p = p') ==> ((p' ==> (q = q')) ==> ((p ==> q) = (p' ==> q')))) = T)
+T c= c==> c= f0 f1 c==> c==> f1 c= f2 f3 c= c==> f0 f2 c==> f1 f3 cT
++ |- ((((~ (((hull convex) s) a)) /\ ((FINITE s) /\ (~ (s a)))) ==> ((!x. ((x = a) ==> ((x = a) \/ (s x)))) /\ (!x. (~ ((x = a) /\ (((hull convex) s) x)))))) = (((~ (a IN ((hull convex) s))) /\ ((FINITE s) /\ (~ (a IN s)))) ==> ((!x. ((x IN (a INSERT EMPTY)) ==> (x IN (a INSERT s)))) /\ (!x. ((x IN ((a INSERT EMPTY) INTER ((hull convex) s))) = (x IN EMPTY))))))
+T c= c==> c/\ c~ chull part cconvex f0 f1 c/\ cFINITE f0 c~ * f0 f1 c/\ ! c==> c= b0 f1 c\/ c= b0 f1 * f0 b0 ! c~ c/\ c= b0 f1 chull part cconvex f0 b0 c==> c/\ c~ cIN f1 * * part chull part cconvex f0 c/\ cFINITE f0 c~ cIN f1 f0 c/\ ! c==> cIN b0 * * part cINSERT f1 part cEMPTY cIN b0 * * part cINSERT f1 f0 ! c= cIN b0 * * part cINTER * * part cINSERT f1 part cEMPTY * * part chull part cconvex f0 cIN b0 part cEMPTY
+- (~ (a = a)) |- ((~ (a = a)) /\ (a = a))
+T c==> c~ c= f0 f0 c/\ c~ c= f0 f0 c= f0 f0
++ ((((~ (x = a)) /\ (~ (s x))) \/ (x = a)) /\ (s x)) |- (((~ (x = a)) /\ (~ (s x))) ==> F)
+T c==> c/\ c\/ c/\ c~ c= f0 f1 c~ * f2 f0 c= f0 f1 * f2 f0 c==> c/\ c~ c= f0 f1 c~ * f2 f0 cF
+- |- ((~ (_899567 = _899568)) \/ ((s _899568) \/ (~ (s _899567))))
+T c\/ c~ c= f0 f1 c\/ * f2 f1 c~ * f2 f0
++ |- ((T /\ t) = t)
+T c= c/\ cT f0 f0
+- (s x), ((((x = a) \/ (s x)) /\ (~ (x = a))) /\ (~ (s x))) |- F
+T c==> * f0 f1 c==> c/\ c/\ c\/ c= f1 f2 * f0 f1 c~ c= f1 f2 c~ * f0 f1 cF
++ |- ((~ p) = (p ==> F))
+T c= c~ f0 c==> f0 cF
+- (_899599 = _899602) |- ((_899599 = _899602) /\ ((~ (_899598 = _899601)) \/ ((~ (_899597 = _899600)) \/ ((((hull _899600) _899601) _899602) \/ (~ (((hull _899597) _899598) _899599))))))
+T c==> c= f0 f1 c/\ c= f0 f1 c\/ c~ c= f2 f3 c\/ c~ c= f4 f5 c\/ chull f5 f3 f1 c~ chull f4 f2 f0
++ |- ((((FINITE s) /\ (~ (a IN ((hull convex) s)))) = p') ==> ((p' ==> (((extreme_point_of a) ((hull convex) (a INSERT s))) = q')) ==> ((((FINITE s) /\ (~ (a IN ((hull convex) s)))) ==> ((extreme_point_of a) ((hull convex) (a INSERT s)))) = (p' ==> q'))))
+T c==> c= c/\ cFINITE f0 c~ cIN f1 * * part chull part cconvex f0 f2 c==> c==> f2 c= cextreme_point_of f1 * * part chull part cconvex * * part cINSERT f1 f0 f3 c= c==> c/\ cFINITE f0 c~ cIN f1 * * part chull part cconvex f0 cextreme_point_of f1 * * part chull part cconvex * * part cINSERT f1 f0 c==> f2 f3
+- ((x = a) /\ ((~ (x = a)) /\ (~ ((I s) x)))) |- (~ ((I s) x))
+T c==> c/\ c= f0 f1 c/\ c~ c= f0 f1 c~ cI f2 f0 c~ cI f2 f0
++ |- (((~ (a IN ((hull convex) s))) /\ ((FINITE s) /\ (~ (a IN s)))) ==> ((!x. ((x IN (a INSERT EMPTY)) ==> (x IN (a INSERT s)))) /\ (!x. ((x IN ((a INSERT EMPTY) INTER ((hull convex) s))) = (x IN EMPTY)))))
+T c==> c/\ c~ cIN f0 * * part chull part cconvex f1 c/\ cFINITE f1 c~ cIN f0 f1 c/\ ! c==> cIN b0 * * part cINSERT f0 part cEMPTY cIN b0 * * part cINSERT f0 f1 ! c= cIN b0 * * part cINTER * * part cINSERT f0 part cEMPTY * * part chull part cconvex f1 cIN b0 part cEMPTY
+- (_899597 = _899600), (_899598 = _899601), (_899599 = _899602) |- ((_899597 = _899600) /\ ((((hull _899600) _899601) _899602) \/ (~ (((hull _899597) _899598) _899599))))
+T c==> c= f0 f1 c==> c= f2 f3 c==> c= f4 f5 c/\ c= f0 f1 c\/ chull f1 f3 f5 c~ chull f0 f2 f4
++ ((~ (a IN s)) ==> (((FINITE s) /\ (~ (a IN ((hull convex) s)))) ==> ((extreme_point_of a) ((hull convex) (a INSERT s))))) |- (((FINITE s) /\ (~ (a IN ((hull convex) s)))) ==> ((extreme_point_of a) ((hull convex) (a INSERT s))))
+T c==> c==> c~ cIN f0 f1 c==> c/\ cFINITE f1 c~ cIN f0 * * part chull part cconvex f1 cextreme_point_of f0 * * part chull part cconvex * * part cINSERT f0 f1 c==> c/\ cFINITE f1 c~ cIN f0 * * part chull part cconvex f1 cextreme_point_of f0 * * part chull part cconvex * * part cINSERT f0 f1
++ (a IN s) |- (T = (((FINITE s) /\ (~ (a IN ((hull convex) s)))) ==> ((extreme_point_of a) ((hull convex) (a INSERT s)))))
+T c==> cIN f0 f1 c= cT c==> c/\ cFINITE f1 c~ cIN f0 * * part chull part cconvex f1 cextreme_point_of f0 * * part chull part cconvex * * part cINSERT f0 f1
++ |- (((x = a) /\ ((~ (x = a)) /\ (~ ((I s) x)))) ==> F)
+T c==> c/\ c= f0 f1 c/\ c~ c= f0 f1 c~ cI f2 f0 cF
++ |- (((F ==> (((extreme_point_of a) ((hull convex) (a INSERT s))) = ((extreme_point_of a) ((hull convex) (a INSERT s))))) ==> ((((FINITE s) /\ (~ (a IN ((hull convex) s)))) ==> ((extreme_point_of a) ((hull convex) (a INSERT s)))) = (F ==> ((extreme_point_of a) ((hull convex) (a INSERT s)))))) = ((((FINITE s) /\ (~ (a IN ((hull convex) s)))) ==> ((extreme_point_of a) ((hull convex) (a INSERT s)))) = (F ==> ((extreme_point_of a) ((hull convex) (a INSERT s))))))
+T c= c==> c==> cF c= cextreme_point_of f0 * * part chull part cconvex * * part cINSERT f0 f1 cextreme_point_of f0 * * part chull part cconvex * * part cINSERT f0 f1 c= c==> c/\ cFINITE f1 c~ cIN f0 * * part chull part cconvex f1 cextreme_point_of f0 * * part chull part cconvex * * part cINSERT f0 f1 c==> cF cextreme_point_of f0 * * part chull part cconvex * * part cINSERT f0 f1 c= c==> c/\ cFINITE f1 c~ cIN f0 * * part chull part cconvex f1 cextreme_point_of f0 * * part chull part cconvex * * part cINSERT f0 f1 c==> cF cextreme_point_of f0 * * part chull part cconvex * * part cINSERT f0 f1
++ ((~ (((hull convex) s) a)) /\ ((FINITE s) /\ (~ (s a)))) |- ((((\x. (((x = a) /\ ((~ (x = a)) /\ (~ (s x)))) \/ ((x = a) /\ (((hull convex) s) x)))) x) ==> F) = T)
+T c==> c/\ c~ chull part cconvex f0 f1 c/\ cFINITE f0 c~ * f0 f1 c= c==> * / c\/ c/\ c= b0 f1 c/\ c~ c= b0 f1 c~ * f0 b0 c/\ c= b0 f1 chull part cconvex f0 b0 f2 cF cT
+- ((FINITE s) /\ (~ (a IN ((hull convex) s)))) |- ((a IN ((hull convex) s)) = F)
+T c==> c/\ cFINITE f0 c~ cIN f1 * * part chull part cconvex f0 c= cIN f1 * * part chull part cconvex f0 cF
+- (~ (a IN s)) |- (F = (a IN s))
+T c==> c~ cIN f0 f1 c= cF cIN f0 f1
++ (((x = a) /\ (((hull convex) s) x)) ==> F), (((x = a) /\ ((~ (x = a)) /\ (~ (s x)))) \/ ((x = a) /\ (((hull convex) s) x))) |- F
+T c==> c==> c/\ c= f0 f1 chull part cconvex f2 f0 cF c==> c\/ c/\ c= f0 f1 c/\ c~ c= f0 f1 c~ * f2 f0 c/\ c= f0 f1 chull part cconvex f2 f0 cF
++ |- ((\s. (!x. ((FINITE (x INSERT s)) = (FINITE s)))) s)
+T * / ! c= cFINITE * * part cINSERT b1 b0 cFINITE b0 f0
+- (~ (((~ (((hull convex) s) a)) /\ ((FINITE s) /\ (~ (s a)))) ==> ((!x. ((x = a) ==> ((x = a) \/ (s x)))) /\ (!x. (~ ((x = a) /\ (((hull convex) s) x))))))) |- F
+T c==> c~ c==> c/\ c~ chull part cconvex f0 f1 c/\ cFINITE f0 c~ * f0 f1 c/\ ! c==> c= b0 f1 c\/ c= b0 f1 * f0 b0 ! c~ c/\ c= b0 f1 chull part cconvex f0 b0 cF
+- (~ F), (x = a), ((((x = a) \/ (s x)) /\ (~ (x = a))) /\ (~ (s x))) |- ((~ F) /\ F)
+T c==> c~ cF c==> c= f0 f1 c==> c/\ c/\ c\/ c= f0 f1 * f2 f0 c~ c= f0 f1 c~ * f2 f0 c/\ c~ cF cF
+- (_899598 = _899601), (_899599 = _899602) |- ((~ (_899597 = _899600)) \/ ((((hull _899600) _899601) _899602) \/ (~ (((hull _899597) _899598) _899599))))
+T c==> c= f0 f1 c==> c= f2 f3 c\/ c~ c= f4 f5 c\/ chull f5 f1 f3 c~ chull f4 f0 f2
+- |- ((\s. (!a. ((~ (((~ (((hull convex) s) a)) /\ ((FINITE s) /\ (~ (s a)))) ==> ((!x. ((x = a) ==> ((x = a) \/ (s x)))) /\ (!x. (~ ((x = a) /\ (((hull convex) s) x))))))) ==> F))) s)
+T * / ! c==> c~ c==> c/\ c~ chull part cconvex b0 b1 c/\ cFINITE b0 c~ * b0 b1 c/\ ! c==> c= b2 b1 c\/ c= b2 b1 * b0 b2 ! c~ c/\ c= b2 b1 chull part cconvex b0 b2 cF f0
+- |- ((?x. ((P x) /\ Q)) = ((?x. (P x)) /\ Q))
+T c= c? / c/\ * f0 b0 f1 c/\ c? / * f0 b0 f1
+- |- (((!a. ((~ ((~ (s a)) ==> (!x. ((((x = a) \/ (s x)) /\ (~ (x = a))) = (s x))))) ==> F)) ==> ((\a. ((~ ((~ (s a)) ==> (!x. ((((x = a) \/ (s x)) /\ (~ (x = a))) = (s x))))) ==> F)) a)) = ((\a. ((~ ((~ (s a)) ==> (!x. ((((x = a) \/ (s x)) /\ (~ (x = a))) = (s x))))) ==> F)) a))
+T c= c==> ! c==> c~ c==> c~ * f0 b0 ! c= c/\ c\/ c= b1 b0 * f0 b1 c~ c= b1 b0 * f0 b1 cF * / c==> c~ c==> c~ * f0 b0 ! c= c/\ c\/ c= b1 b0 * f0 b1 c~ c= b1 b0 * f0 b1 cF f1 * / c==> c~ c==> c~ * f0 b0 ! c= c/\ c\/ c= b1 b0 * f0 b1 c~ c= b1 b0 * f0 b1 cF f1
+- |- (((((FINITE s) /\ (~ (a IN ((hull convex) s)))) ==> (((extreme_point_of a) ((hull convex) (a INSERT s))) = ((extreme_point_of a) ((hull convex) (a INSERT s))))) ==> ((((FINITE s) /\ (~ (a IN ((hull convex) s)))) ==> ((extreme_point_of a) ((hull convex) (a INSERT s)))) = (((FINITE s) /\ (~ (a IN ((hull convex) s)))) ==> ((extreme_point_of a) ((hull convex) (a INSERT s)))))) = ((((FINITE s) /\ (~ (a IN ((hull convex) s)))) ==> ((extreme_point_of a) ((hull convex) (a INSERT s)))) = (((FINITE s) /\ (~ (a IN ((hull convex) s)))) ==> ((extreme_point_of a) ((hull convex) (a INSERT s))))))
+T c= c==> c==> c/\ cFINITE f0 c~ cIN f1 * * part chull part cconvex f0 c= cextreme_point_of f1 * * part chull part cconvex * * part cINSERT f1 f0 cextreme_point_of f1 * * part chull part cconvex * * part cINSERT f1 f0 c= c==> c/\ cFINITE f0 c~ cIN f1 * * part chull part cconvex f0 cextreme_point_of f1 * * part chull part cconvex * * part cINSERT f1 f0 c==> c/\ cFINITE f0 c~ cIN f1 * * part chull part cconvex f0 cextreme_point_of f1 * * part chull part cconvex * * part cINSERT f1 f0 c= c==> c/\ cFINITE f0 c~ cIN f1 * * part chull part cconvex f0 cextreme_point_of f1 * * part chull part cconvex * * part cINSERT f1 f0 c==> c/\ cFINITE f0 c~ cIN f1 * * part chull part cconvex f0 cextreme_point_of f1 * * part chull part cconvex * * part cINSERT f1 f0

@@ -1,0 +1,89 @@
+N Oxl_2012.SUM_NUMSEG4
+C |- (((sum (m .. (m + (NUMERAL (BIT1 (BIT1 _0)))))) f) = ((real_add (f m)) ((real_add (f (m + (NUMERAL (BIT1 _0))))) ((real_add (f (m + (NUMERAL (BIT0 (BIT1 _0)))))) (f (m + (NUMERAL (BIT1 (BIT1 _0)))))))))
+T c= csum * * part c.. f0 c+ f0 cNUMERAL cBIT1 cBIT1 c_0 f1 creal_add * f1 f0 creal_add * f1 c+ f0 cNUMERAL cBIT1 c_0 creal_add * f1 c+ f0 cNUMERAL cBIT0 cBIT1 c_0 * f1 c+ f0 cNUMERAL cBIT1 cBIT1 c_0
+D TRUTH
+A |- T
+T cT
+D ETA_AX
+A |- (!t. ((\x. (t x)) = t))
+T c= / * f0 b0 f0
+D EXCLUDED_MIDDLE
+A |- (!t. (t \/ (~ t)))
+T c\/ f0 c~ f0
+D BOOL_CASES_AX
+A |- (!t. ((t = T) \/ (t = F)))
+T c\/ c= f0 cT c= f0 cF
+D NOT_CLAUSES
+A |- ((!t. ((~ (~ t)) = t)) /\ (((~ T) = F) /\ ((~ F) = T)))
+T c/\ ! c= c~ c~ b0 b0 c/\ c= c~ cT cF c= c~ cF cT
+D NOT_FORALL_THM
+A |- (!P. ((~ (!x. (P x))) = (?x. (~ (P x)))))
+T c= c~ ! * f0 b0 c? / c~ * f0 b0
+D NUMERAL
+A |- (!n. ((NUMERAL n) = n))
+T c= cNUMERAL f0 f0
+D num_INDUCTION
+A |- (!P. (((P (NUMERAL _0)) /\ (!n. ((P n) ==> (P (SUC n))))) ==> (!n. (P n))))
+T c==> c/\ * f0 cNUMERAL c_0 ! c==> * f0 b0 * f0 cSUC b0 ! * f0 b0
+D Ssrnat.add0n
+A |- (!n. (((NUMERAL _0) + n) = n))
+T c= c+ cNUMERAL c_0 f0 f0
+D ADD_0
+A |- (!m. ((m + (NUMERAL _0)) = m))
+T c= c+ f0 cNUMERAL c_0 f0
+D Ssrnat.addnS
+A |- (!m. (!n. ((m + (SUC n)) = (SUC (m + n)))))
+T c= c+ f0 cSUC f1 cSUC c+ f0 f1
+D ADD_ASSOC
+A |- (!m. (!n. (!p. ((m + (n + p)) = ((m + n) + p)))))
+T c= c+ f0 c+ f1 f2 c+ c+ f0 f1 f2
+D ADD_AC
+A |- (((m + n) = (n + m)) /\ ((((m + n) + p) = (m + (n + p))) /\ ((m + (n + p)) = (n + (m + p)))))
+T c/\ c= c+ f0 f1 c+ f1 f0 c/\ c= c+ c+ f0 f1 f2 c+ f0 c+ f1 f2 c= c+ f0 c+ f1 f2 c+ f1 c+ f0 f2
+D ONE
+A |- ((NUMERAL (BIT1 _0)) = (SUC (NUMERAL _0)))
+T c= cNUMERAL cBIT1 c_0 cSUC cNUMERAL c_0
+D TWO
+A |- ((NUMERAL (BIT0 (BIT1 _0))) = (SUC (NUMERAL (BIT1 _0))))
+T c= cNUMERAL cBIT0 cBIT1 c_0 cSUC cNUMERAL cBIT1 c_0
+D Ssrnat.mul0n
+A |- (!n. (((NUMERAL _0) * n) = (NUMERAL _0)))
+T c= c* cNUMERAL c_0 f0 cNUMERAL c_0
+D MULT_0
+A |- (!m. ((m * (NUMERAL _0)) = (NUMERAL _0)))
+T c= c* f0 cNUMERAL c_0 cNUMERAL c_0
+D MULT_SUC
+A |- (!m. (!n. ((m * (SUC n)) = (m + (m * n)))))
+T c= c* f0 cSUC f1 c+ f0 c* f0 f1
+D Ssrnat.mul1n
+A |- (!n. (((NUMERAL (BIT1 _0)) * n) = n))
+T c= c* cNUMERAL cBIT1 c_0 f0 f0
+D LEFT_ADD_DISTRIB
+A |- (!m. (!n. (!p. ((m * (n + p)) = ((m * n) + (m * p))))))
+T c= c* f0 c+ f1 f2 c+ c* f0 f1 c* f0 f2
+D MULT_AC
+A |- (((m * n) = (n * m)) /\ ((((m * n) * p) = (m * (n * p))) /\ ((m * (n * p)) = (n * (m * p)))))
+T c/\ c= c* f0 f1 c* f1 f0 c/\ c= c* c* f0 f1 f2 c* f0 c* f1 f2 c= c* f0 c* f1 f2 c* f1 c* f0 f2
+D Ssrnat.expnS
+A |- (!m. (!n. ((m EXP (SUC n)) = (m * (m EXP n)))))
+T c= cEXP f0 cSUC f1 c* f0 cEXP f0 f1
+D Ssrnat.expn0
+A |- (!m. ((m EXP (NUMERAL _0)) = (NUMERAL (BIT1 _0))))
+T c= cEXP f0 cNUMERAL c_0 cNUMERAL cBIT1 c_0
+D ARITH_SUC
+A |- ((!n. ((SUC (NUMERAL n)) = (NUMERAL (SUC n)))) /\ (((SUC _0) = (BIT1 _0)) /\ ((!n. ((SUC (BIT0 n)) = (BIT1 n))) /\ (!n. ((SUC (BIT1 n)) = (BIT0 (SUC n)))))))
+T c/\ ! c= cSUC cNUMERAL b0 cNUMERAL cSUC b0 c/\ c= cSUC c_0 cBIT1 c_0 c/\ ! c= cSUC cBIT0 b0 cBIT1 b0 ! c= cSUC cBIT1 b0 cBIT0 cSUC b0
+D ARITH_ADD
+A |- ((!m. (!n. (((NUMERAL m) + (NUMERAL n)) = (NUMERAL (m + n))))) /\ (((_0 + _0) = _0) /\ ((!n. ((_0 + (BIT0 n)) = (BIT0 n))) /\ ((!n. ((_0 + (BIT1 n)) = (BIT1 n))) /\ ((!n. (((BIT0 n) + _0) = (BIT0 n))) /\ ((!n. (((BIT1 n) + _0) = (BIT1 n))) /\ ((!m. (!n. (((BIT0 m) + (BIT0 n)) = (BIT0 (m + n))))) /\ ((!m. (!n. (((BIT0 m) + (BIT1 n)) = (BIT1 (m + n))))) /\ ((!m. (!n. (((BIT1 m) + (BIT0 n)) = (BIT1 (m + n))))) /\ (!m. (!n. (((BIT1 m) + (BIT1 n)) = (BIT0 (SUC (m + n)))))))))))))))
+T c/\ ! ! c= c+ cNUMERAL b0 cNUMERAL b1 cNUMERAL c+ b0 b1 c/\ c= c+ c_0 c_0 c_0 c/\ ! c= c+ c_0 cBIT0 b0 cBIT0 b0 c/\ ! c= c+ c_0 cBIT1 b0 cBIT1 b0 c/\ ! c= c+ cBIT0 b0 c_0 cBIT0 b0 c/\ ! c= c+ cBIT1 b0 c_0 cBIT1 b0 c/\ ! ! c= c+ cBIT0 b0 cBIT0 b1 cBIT0 c+ b0 b1 c/\ ! ! c= c+ cBIT0 b0 cBIT1 b1 cBIT1 c+ b0 b1 c/\ ! ! c= c+ cBIT1 b0 cBIT0 b1 cBIT1 c+ b0 b1 ! ! c= c+ cBIT1 b0 cBIT1 b1 cBIT0 cSUC c+ b0 b1
+D Oxl_2012.SUM_NUMSEG44
+A |- (((sum (m .. ((m + (NUMERAL (BIT1 _0))) + (NUMERAL (BIT0 (BIT1 _0)))))) f) = ((real_add (f m)) ((real_add (f (m + (NUMERAL (BIT1 _0))))) ((real_add (f ((m + (NUMERAL (BIT1 _0))) + (NUMERAL (BIT1 _0))))) (f ((m + (NUMERAL (BIT1 _0))) + (NUMERAL (BIT0 (BIT1 _0)))))))))
+T c= csum * * part c.. f0 c+ c+ f0 cNUMERAL cBIT1 c_0 cNUMERAL cBIT0 cBIT1 c_0 f1 creal_add * f1 f0 creal_add * f1 c+ f0 cNUMERAL cBIT1 c_0 creal_add * f1 c+ c+ f0 cNUMERAL cBIT1 c_0 cNUMERAL cBIT1 c_0 * f1 c+ c+ f0 cNUMERAL cBIT1 c_0 cNUMERAL cBIT0 cBIT1 c_0
+- |- (((real_lt (real_of_num (NUMERAL _0))) (real_of_num (NUMERAL (BIT1 _0)))) ==> ((((real_mul ((real_add ((real_mul (real_of_num (NUMERAL (BIT1 (BIT1 _0))))) (real_of_num (NUMERAL (BIT1 _0))))) ((real_mul (real_neg (real_of_num (NUMERAL (BIT0 (BIT0 (BIT1 _0))))))) (real_of_num (NUMERAL (BIT1 _0)))))) (real_of_num (NUMERAL (BIT1 _0)))) = ((real_mul (real_neg (real_of_num (NUMERAL (BIT1 _0))))) ((real_mul (real_of_num (NUMERAL (BIT1 _0)))) (real_of_num (NUMERAL (BIT1 _0)))))) ==> (((real_add ((real_div (real_of_num (NUMERAL (BIT1 (BIT1 _0))))) (real_of_num (NUMERAL (BIT1 _0))))) ((real_div (real_neg (real_of_num (NUMERAL (BIT0 (BIT0 (BIT1 _0))))))) (real_of_num (NUMERAL (BIT1 _0))))) = ((real_div (real_neg (real_of_num (NUMERAL (BIT1 _0))))) (real_of_num (NUMERAL (BIT1 _0)))))))
+T c==> creal_lt creal_of_num cNUMERAL c_0 creal_of_num cNUMERAL cBIT1 c_0 c==> c= creal_mul creal_add creal_mul creal_of_num cNUMERAL cBIT1 cBIT1 c_0 creal_of_num cNUMERAL cBIT1 c_0 creal_mul creal_neg creal_of_num cNUMERAL cBIT0 cBIT0 cBIT1 c_0 creal_of_num cNUMERAL cBIT1 c_0 creal_of_num cNUMERAL cBIT1 c_0 creal_mul creal_neg creal_of_num cNUMERAL cBIT1 c_0 creal_mul creal_of_num cNUMERAL cBIT1 c_0 creal_of_num cNUMERAL cBIT1 c_0 c= creal_add creal_div creal_of_num cNUMERAL cBIT1 cBIT1 c_0 creal_of_num cNUMERAL cBIT1 c_0 creal_div creal_neg creal_of_num cNUMERAL cBIT0 cBIT0 cBIT1 c_0 creal_of_num cNUMERAL cBIT1 c_0 creal_div creal_neg creal_of_num cNUMERAL cBIT1 c_0 creal_of_num cNUMERAL cBIT1 c_0
+- |- ((m = n) = ((int_of_num m) = (int_of_num n)))
+T c= c= f0 f1 c= cint_of_num f0 cint_of_num f1
++ |- (((NUMERAL (BIT1 _0)) + (NUMERAL (BIT1 _0))) = (NUMERAL (BIT0 (BIT1 _0))))
+T c= c+ cNUMERAL cBIT1 c_0 cNUMERAL cBIT1 c_0 cNUMERAL cBIT0 cBIT1 c_0
++ |- (((NUMERAL (BIT1 _0)) + (NUMERAL (BIT0 (BIT1 _0)))) = (NUMERAL (BIT1 (BIT1 _0))))
+T c= c+ cNUMERAL cBIT1 c_0 cNUMERAL cBIT0 cBIT1 c_0 cNUMERAL cBIT1 cBIT1 c_0

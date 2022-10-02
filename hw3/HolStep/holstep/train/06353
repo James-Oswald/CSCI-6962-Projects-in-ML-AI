@@ -1,0 +1,147 @@
+N Seq.subseq_cat
+C |- (!s1. (!s2. (!s3. (!s4. (((subseq s1) s3) ==> (((subseq s2) s4) ==> ((subseq ((cat s1) s2)) ((cat s3) s4))))))))
+T c==> csubseq f0 f1 c==> csubseq f2 f3 csubseq ccat f0 f2 ccat f1 f3
+D TRUTH
+A |- T
+T cT
+D Seq.size_cat
+A |- (!s1. (!s2. ((sizel ((cat s1) s2)) = ((sizel s1) + (sizel s2)))))
+T c= csizel ccat f0 f1 c+ csizel f0 csizel f1
+D Seq.mask_cat
+A |- (!m1. (!s1. (!m2. (!s2. (((sizel m1) = (sizel s1)) ==> (((mask ((cat m1) m2)) ((cat s1) s2)) = ((cat ((mask m1) s1)) ((mask m2) s2))))))))
+T c==> c= csizel f0 csizel f1 c= cmask ccat f0 f2 ccat f1 f3 ccat cmask f0 f1 cmask f2 f3
+D Seq.subseqP
+A |- (!s1. (!s2. (((subseq s1) s2) = (?m. (((sizel m) = (sizel s2)) /\ (s1 = ((mask m) s2)))))))
+T c= csubseq f0 f1 c? / c/\ c= csizel b0 csizel f1 c= f0 cmask b0 f1
+- ((!x. (P ==> (Q x))) = (P ==> (!x. (Q x)))) |- ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))
+T c==> c= ! c==> f0 * f1 b0 c==> f0 ! * f1 b0 c= c==> f0 ! * f1 b0 ! c==> f0 * f1 b0
++ ((sizel m1) = (sizel s3)), ((sizel m2) = (sizel s4)) |- ((((sizel m1) + (sizel m2)) = (sizel ((cat s3) s4))) /\ (((cat ((mask m1) s3)) ((mask m2) s4)) = ((mask ((cat m1) m2)) ((cat s3) s4))))
+T c==> c= csizel f0 csizel f1 c==> c= csizel f2 csizel f3 c/\ c= c+ csizel f0 csizel f2 csizel ccat f1 f3 c= ccat cmask f0 f1 cmask f2 f3 cmask ccat f0 f2 ccat f1 f3
+- |- (((subseq s) s) = T)
+T c= csubseq f0 f0 cT
+- |- (((!x. (((\s1. (s = s1)) x) ==> ((subseq s) s))) ==> ((?s1. (s = s1)) ==> ((subseq s) s))) = ((?s1. (s = s1)) ==> ((subseq s) s)))
+T c= c==> ! c==> * / c= f0 b1 b0 csubseq f0 f0 c==> c? / c= f0 b0 csubseq f0 f0 c==> c? / c= f0 b0 csubseq f0 f0
++ ((sizel m1) = (sizel s3)), (((sizel m1) = (sizel s3)) /\ (s1 = ((mask m1) s3))) |- ((?m. (((sizel m) = (sizel s4)) /\ (s2 = ((mask m) s4)))) ==> (?m. (((sizel m) = (sizel ((cat s3) s4))) /\ (((cat s1) s2) = ((mask m) ((cat s3) s4))))))
+T c==> c= csizel f0 csizel f1 c==> c/\ c= csizel f0 csizel f1 c= f2 cmask f0 f1 c==> c? / c/\ c= csizel b0 csizel f3 c= f4 cmask b0 f3 c? / c/\ c= csizel b0 csizel ccat f1 f3 c= ccat f2 f4 cmask b0 ccat f1 f3
++ |- ((!s3. (!s4. (((subseq s1) s3) ==> (((subseq s2) s4) ==> ((subseq ((cat s1) s2)) ((cat s3) s4)))))) = T)
+T c= ! ! c==> csubseq f0 b0 c==> csubseq f1 b1 csubseq ccat f0 f1 ccat b0 b1 cT
+- |- ((\P. (!Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x)))))) P)
+T * / ! c= c==> b0 ! * b1 b2 ! c==> b0 * b1 b2 f0
++ |- (((!m1. (!s1. (!m2. (!s2. (((sizel m1) = (sizel s1)) ==> (((mask ((cat m1) m2)) ((cat s1) s2)) = ((cat ((mask m1) s1)) ((mask m2) s2)))))))) ==> ((\m1. (!s1. (!m2. (!s2. (((sizel m1) = (sizel s1)) ==> (((mask ((cat m1) m2)) ((cat s1) s2)) = ((cat ((mask m1) s1)) ((mask m2) s2)))))))) m1)) = ((\m1. (!s1. (!m2. (!s2. (((sizel m1) = (sizel s1)) ==> (((mask ((cat m1) m2)) ((cat s1) s2)) = ((cat ((mask m1) s1)) ((mask m2) s2)))))))) m1))
+T c= c==> ! ! ! ! c==> c= csizel b0 csizel b1 c= cmask ccat b0 b2 ccat b1 b3 ccat cmask b0 b1 cmask b2 b3 * / ! ! ! c==> c= csizel b0 csizel b1 c= cmask ccat b0 b2 ccat b1 b3 ccat cmask b0 b1 cmask b2 b3 f0 * / ! ! ! c==> c= csizel b0 csizel b1 c= cmask ccat b0 b2 ccat b1 b3 ccat cmask b0 b1 cmask b2 b3 f0
+- |- (T = ((sizel s3) = (sizel s3)))
+T c= cT c= csizel f0 csizel f0
++ |- (((?m. (P m)) ==> Q) = (!m. ((P m) ==> Q)))
+T c= c==> c? / * f0 b0 f1 ! c==> * f0 b0 f1
++ |- (((!s1. (!s2. ((sizel ((cat s1) s2)) = ((sizel s1) + (sizel s2))))) ==> ((\s1. (!s2. ((sizel ((cat s1) s2)) = ((sizel s1) + (sizel s2))))) s1)) = ((\s1. (!s2. ((sizel ((cat s1) s2)) = ((sizel s1) + (sizel s2))))) s1))
+T c= c==> ! ! c= csizel ccat b0 b1 c+ csizel b0 csizel b1 * / ! c= csizel ccat b0 b1 c+ csizel b0 csizel b1 f0 * / ! c= csizel ccat b0 b1 c+ csizel b0 csizel b1 f0
++ |- (T = ((((sizel s3) + (sizel s4)) = ((sizel s3) + (sizel s4))) /\ (((cat ((mask m1) s3)) ((mask m2) s4)) = ((cat ((mask m1) s3)) ((mask m2) s4)))))
+T c= cT c/\ c= c+ csizel f0 csizel f1 c+ csizel f0 csizel f1 c= ccat cmask f2 f0 cmask f3 f1 ccat cmask f2 f0 cmask f3 f1
++ |- (((?m. (((sizel m) = (sizel s3)) /\ (s1 = ((mask m) s3)))) ==> ((?m. (((sizel m) = (sizel s4)) /\ (s2 = ((mask m) s4)))) ==> (?m. (((sizel m) = (sizel ((cat s3) s4))) /\ (((cat s1) s2) = ((mask m) ((cat s3) s4))))))) = ((?m. (((sizel m) = (sizel s3)) /\ (s1 = ((mask m) s3)))) ==> ((?m. (((sizel m) = (sizel s4)) /\ (s2 = ((mask m) s4)))) ==> ((subseq ((cat s1) s2)) ((cat s3) s4)))))
+T c= c==> c? / c/\ c= csizel b0 csizel f0 c= f1 cmask b0 f0 c==> c? / c/\ c= csizel b0 csizel f2 c= f3 cmask b0 f2 c? / c/\ c= csizel b0 csizel ccat f0 f2 c= ccat f1 f3 cmask b0 ccat f0 f2 c==> c? / c/\ c= csizel b0 csizel f0 c= f1 cmask b0 f0 c==> c? / c/\ c= csizel b0 csizel f2 c= f3 cmask b0 f2 csubseq ccat f1 f3 ccat f0 f2
+- ((\s1. (s = s1)) s1) |- (((\s1. (s = s1)) s1) /\ ((subseq s) s))
+T c==> * / c= f0 b0 f1 c/\ * / c= f0 b0 f1 csubseq f0 f0
+- |- ((((\s1. (s = s1)) s1) ==> ((subseq s) s)) = T)
+T c= c==> * / c= f0 b0 f1 csubseq f0 f0 cT
+- |- ((s = s1) ==> ((subseq s) s))
+T c==> c= f0 f1 csubseq f0 f0
++ |- ((\Q. (((?x. (P x)) ==> Q) = (!x. ((P x) ==> Q)))) Q)
+T * / c= c==> c? / * f0 b1 b0 ! c==> * f0 b1 b0 f1
++ |- (((!P. (!Q. (((?x. (P x)) ==> Q) = (!x. ((P x) ==> Q))))) ==> ((\P. (!Q. (((?x. (P x)) ==> Q) = (!x. ((P x) ==> Q))))) P)) = ((\P. (!Q. (((?x. (P x)) ==> Q) = (!x. ((P x) ==> Q))))) P))
+T c= c==> ! ! c= c==> c? / * b0 b2 b1 ! c==> * b0 b2 b1 * / ! c= c==> c? / * b0 b2 b1 ! c==> * b0 b2 b1 f0 * / ! c= c==> c? / * b0 b2 b1 ! c==> * b0 b2 b1 f0
++ ((sizel m1) = (sizel s3)) |- (!m. ((((sizel m) = (sizel s4)) /\ (s2 = ((mask m) s4))) ==> (?m. (((sizel m) = (sizel ((cat s3) s4))) /\ (((cat ((mask m1) s3)) s2) = ((mask m) ((cat s3) s4)))))))
+T c==> c= csizel f0 csizel f1 ! c==> c/\ c= csizel b0 csizel f2 c= f3 cmask b0 f2 c? / c/\ c= csizel b1 csizel ccat f1 f2 c= ccat cmask f0 f1 f3 cmask b1 ccat f1 f2
++ (s1 = ((mask m1) s3)) |- (((?m. (((sizel m) = (sizel s4)) /\ (s2 = ((mask m) s4)))) ==> (?m. (((sizel m) = (sizel ((cat s3) s4))) /\ (((cat ((mask m1) s3)) s2) = ((mask m) ((cat s3) s4)))))) = ((?m. (((sizel m) = (sizel s4)) /\ (s2 = ((mask m) s4)))) ==> (?m. (((sizel m) = (sizel ((cat s3) s4))) /\ (((cat s1) s2) = ((mask m) ((cat s3) s4)))))))
+T c==> c= f0 cmask f1 f2 c= c==> c? / c/\ c= csizel b0 csizel f3 c= f4 cmask b0 f3 c? / c/\ c= csizel b0 csizel ccat f2 f3 c= ccat cmask f1 f2 f4 cmask b0 ccat f2 f3 c==> c? / c/\ c= csizel b0 csizel f3 c= f4 cmask b0 f3 c? / c/\ c= csizel b0 csizel ccat f2 f3 c= ccat f0 f4 cmask b0 ccat f2 f3
++ |- ((\m1. (!s1. (!m2. (!s2. (((sizel m1) = (sizel s1)) ==> (((mask ((cat m1) m2)) ((cat s1) s2)) = ((cat ((mask m1) s1)) ((mask m2) s2)))))))) m1)
+T * / ! ! ! c==> c= csizel b0 csizel b1 c= cmask ccat b0 b2 ccat b1 b3 ccat cmask b0 b1 cmask b2 b3 f0
++ |- (((?m. (((sizel m) = (sizel s4)) /\ (s2 = ((mask m) s4)))) ==> (?m. (((sizel m) = (sizel ((cat s3) s4))) /\ (((cat ((mask m1) s3)) s2) = ((mask m) ((cat s3) s4)))))) = (!m. ((((sizel m) = (sizel s4)) /\ (s2 = ((mask m) s4))) ==> (?m. (((sizel m) = (sizel ((cat s3) s4))) /\ (((cat ((mask m1) s3)) s2) = ((mask m) ((cat s3) s4))))))))
+T c= c==> c? / c/\ c= csizel b0 csizel f0 c= f1 cmask b0 f0 c? / c/\ c= csizel b0 csizel ccat f2 f0 c= ccat cmask f3 f2 f1 cmask b0 ccat f2 f0 ! c==> c/\ c= csizel b0 csizel f0 c= f1 cmask b0 f0 c? / c/\ c= csizel b1 csizel ccat f2 f0 c= ccat cmask f3 f2 f1 cmask b1 ccat f2 f0
++ |- (((!s2. (((subseq s1) s2) = (?m. (((sizel m) = (sizel s2)) /\ (s1 = ((mask m) s2)))))) ==> ((\s2. (((subseq s1) s2) = (?m. (((sizel m) = (sizel s2)) /\ (s1 = ((mask m) s2)))))) s2)) = ((\s2. (((subseq s1) s2) = (?m. (((sizel m) = (sizel s2)) /\ (s1 = ((mask m) s2)))))) s2))
+T c= c==> ! c= csubseq f0 b0 c? / c/\ c= csizel b1 csizel b0 c= f0 cmask b1 b0 * / c= csubseq f0 b0 c? / c/\ c= csizel b1 csizel b0 c= f0 cmask b1 b0 f1 * / c= csubseq f0 b0 c? / c/\ c= csizel b1 csizel b0 c= f0 cmask b1 b0 f1
++ |- (((!s2. ((sizel ((cat s1) s2)) = ((sizel s1) + (sizel s2)))) ==> ((\s2. ((sizel ((cat s1) s2)) = ((sizel s1) + (sizel s2)))) s2)) = ((\s2. ((sizel ((cat s1) s2)) = ((sizel s1) + (sizel s2)))) s2))
+T c= c==> ! c= csizel ccat f0 b0 c+ csizel f0 csizel b0 * / c= csizel ccat f0 b0 c+ csizel f0 csizel b0 f1 * / c= csizel ccat f0 b0 c+ csizel f0 csizel b0 f1
++ ((sizel m1) = (sizel s3)), ((sizel m2) = (sizel s4)) |- (?m. (((sizel m) = (sizel ((cat s3) s4))) /\ (((cat ((mask m1) s3)) ((mask m2) s4)) = ((mask m) ((cat s3) s4)))))
+T c==> c= csizel f0 csizel f1 c==> c= csizel f2 csizel f3 c? / c/\ c= csizel b0 csizel ccat f1 f3 c= ccat cmask f0 f1 cmask f2 f3 cmask b0 ccat f1 f3
++ |- (!m. ((((sizel m) = (sizel s3)) /\ (s1 = ((mask m) s3))) ==> ((?m. (((sizel m) = (sizel s4)) /\ (s2 = ((mask m) s4)))) ==> (?m. (((sizel m) = (sizel ((cat s3) s4))) /\ (((cat s1) s2) = ((mask m) ((cat s3) s4))))))))
+T c==> c/\ c= csizel f0 csizel f1 c= f2 cmask f0 f1 c==> c? / c/\ c= csizel b0 csizel f3 c= f4 cmask b0 f3 c? / c/\ c= csizel b0 csizel ccat f1 f3 c= ccat f2 f4 cmask b0 ccat f1 f3
++ ((sizel m1) = (sizel s3)), (((sizel m2) = (sizel s4)) /\ (s2 = ((mask m2) s4))) |- ((((sizel m2) = (sizel s4)) /\ (s2 = ((mask m2) s4))) /\ (?m. (((sizel m) = (sizel ((cat s3) s4))) /\ (((cat ((mask m1) s3)) s2) = ((mask m) ((cat s3) s4))))))
+T c==> c= csizel f0 csizel f1 c==> c/\ c= csizel f2 csizel f3 c= f4 cmask f2 f3 c/\ c/\ c= csizel f2 csizel f3 c= f4 cmask f2 f3 c? / c/\ c= csizel b0 csizel ccat f1 f3 c= ccat cmask f0 f1 f4 cmask b0 ccat f1 f3
++ |- (((!s2. (((sizel m1) = (sizel s1)) ==> (((mask ((cat m1) m2)) ((cat s1) s2)) = ((cat ((mask m1) s1)) ((mask m2) s2))))) ==> ((\s2. (((sizel m1) = (sizel s1)) ==> (((mask ((cat m1) m2)) ((cat s1) s2)) = ((cat ((mask m1) s1)) ((mask m2) s2))))) s2)) = ((\s2. (((sizel m1) = (sizel s1)) ==> (((mask ((cat m1) m2)) ((cat s1) s2)) = ((cat ((mask m1) s1)) ((mask m2) s2))))) s2))
+T c= c==> ! c==> c= csizel f0 csizel f1 c= cmask ccat f0 f2 ccat f1 b0 ccat cmask f0 f1 cmask f2 b0 * / c==> c= csizel f0 csizel f1 c= cmask ccat f0 f2 ccat f1 b0 ccat cmask f0 f1 cmask f2 b0 f3 * / c==> c= csizel f0 csizel f1 c= cmask ccat f0 f2 ccat f1 b0 ccat cmask f0 f1 cmask f2 b0 f3
+- ((sizel m1) = (sizel s1)) |- (((sizel m1) = (sizel s1)) /\ (((mask ((cat m1) m2)) ((cat s1) s2)) = ((cat ((mask m1) s1)) ((mask m2) s2))))
+T c==> c= csizel f0 csizel f1 c/\ c= csizel f0 csizel f1 c= cmask ccat f0 f2 ccat f1 f3 ccat cmask f0 f1 cmask f2 f3
++ |- (((!s1. (!m2. (!s2. (((sizel m1) = (sizel s1)) ==> (((mask ((cat m1) m2)) ((cat s1) s2)) = ((cat ((mask m1) s1)) ((mask m2) s2))))))) ==> ((\s1. (!m2. (!s2. (((sizel m1) = (sizel s1)) ==> (((mask ((cat m1) m2)) ((cat s1) s2)) = ((cat ((mask m1) s1)) ((mask m2) s2))))))) s1)) = ((\s1. (!m2. (!s2. (((sizel m1) = (sizel s1)) ==> (((mask ((cat m1) m2)) ((cat s1) s2)) = ((cat ((mask m1) s1)) ((mask m2) s2))))))) s1))
+T c= c==> ! ! ! c==> c= csizel f0 csizel b0 c= cmask ccat f0 b1 ccat b0 b2 ccat cmask f0 b0 cmask b1 b2 * / ! ! c==> c= csizel f0 csizel b0 c= cmask ccat f0 b1 ccat b0 b2 ccat cmask f0 b0 cmask b1 b2 f1 * / ! ! c==> c= csizel f0 csizel b0 c= cmask ccat f0 b1 ccat b0 b2 ccat cmask f0 b0 cmask b1 b2 f1
+- (s = s1) |- ((s = s1) /\ ((subseq s) s))
+T c==> c= f0 f1 c/\ c= f0 f1 csubseq f0 f0
+- ((sizel m1) = (sizel s3)) |- (((sizel s3) = (sizel s3)) = ((sizel m1) = (sizel s3)))
+T c==> c= csizel f0 csizel f1 c= c= csizel f1 csizel f1 c= csizel f0 csizel f1
++ ((sizel m1) = (sizel s3)) |- ((?m. (((sizel m) = (sizel s4)) /\ (s2 = ((mask m) s4)))) ==> (?m. (((sizel m) = (sizel ((cat s3) s4))) /\ (((cat ((mask m1) s3)) s2) = ((mask m) ((cat s3) s4))))))
+T c==> c= csizel f0 csizel f1 c==> c? / c/\ c= csizel b0 csizel f2 c= f3 cmask b0 f2 c? / c/\ c= csizel b0 csizel ccat f1 f2 c= ccat cmask f0 f1 f3 cmask b0 ccat f1 f2
++ ((sizel m1) = (sizel s3)), ((sizel m2) = (sizel s4)) |- ((((sizel m1) = (sizel s3)) ==> (((mask ((cat m1) m2)) ((cat s3) s4)) = ((cat ((mask m1) s3)) ((mask m2) s4)))) ==> ((((sizel m1) + (sizel m2)) = ((sizel s3) + (sizel s4))) /\ (((cat ((mask m1) s3)) ((mask m2) s4)) = ((mask ((cat m1) m2)) ((cat s3) s4)))))
+T c==> c= csizel f0 csizel f1 c==> c= csizel f2 csizel f3 c==> c==> c= csizel f0 csizel f1 c= cmask ccat f0 f2 ccat f1 f3 ccat cmask f0 f1 cmask f2 f3 c/\ c= c+ csizel f0 csizel f2 c+ csizel f1 csizel f3 c= ccat cmask f0 f1 cmask f2 f3 cmask ccat f0 f2 ccat f1 f3
++ |- ((\s2. (((subseq s1) s2) = (?m. (((sizel m) = (sizel s2)) /\ (s1 = ((mask m) s2)))))) s2)
+T * / c= csubseq f0 b0 c? / c/\ c= csizel b1 csizel b0 c= f0 cmask b1 b0 f1
+- |- ((?s1. (s = s1)) ==> ((subseq s) s))
+T c==> c? / c= f0 b0 csubseq f0 f0
++ |- ((\P. (!Q. (((?x. (P x)) ==> Q) = (!x. ((P x) ==> Q))))) P)
+T * / ! c= c==> c? / * b0 b2 b1 ! c==> * b0 b2 b1 f0
++ |- ((x = x) = T)
+T c= c= f0 f0 cT
+- |- ((\Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))) Q)
+T * / c= c==> f0 ! * b0 b1 ! c==> f0 * b0 b1 f1
++ |- ((?m. (((sizel m) = (sizel s3)) /\ (s1 = ((mask m) s3)))) ==> (((subseq s2) s4) ==> ((subseq ((cat s1) s2)) ((cat s3) s4))))
+T c==> c? / c/\ c= csizel b0 csizel f0 c= f1 cmask b0 f0 c==> csubseq f2 f3 csubseq ccat f1 f2 ccat f0 f3
++ |- ((((subseq s1) s3) ==> (((subseq s2) s4) ==> ((subseq ((cat s1) s2)) ((cat s3) s4)))) = T)
+T c= c==> csubseq f0 f1 c==> csubseq f2 f3 csubseq ccat f0 f2 ccat f1 f3 cT
++ |- ((?m. (((sizel m) = (sizel s3)) /\ (s1 = ((mask m) s3)))) ==> ((?m. (((sizel m) = (sizel s4)) /\ (s2 = ((mask m) s4)))) ==> ((subseq ((cat s1) s2)) ((cat s3) s4))))
+T c==> c? / c/\ c= csizel b0 csizel f0 c= f1 cmask b0 f0 c==> c? / c/\ c= csizel b0 csizel f2 c= f3 cmask b0 f2 csubseq ccat f1 f3 ccat f0 f2
++ |- (((((sizel m1) + (sizel m2)) = (sizel ((cat s3) s4))) /\ (((cat ((mask m1) s3)) ((mask m2) s4)) = ((mask ((cat m1) m2)) ((cat s3) s4)))) = (((sizel ((cat m1) m2)) = (sizel ((cat s3) s4))) /\ (((cat ((mask m1) s3)) ((mask m2) s4)) = ((mask ((cat m1) m2)) ((cat s3) s4)))))
+T c= c/\ c= c+ csizel f0 csizel f1 csizel ccat f2 f3 c= ccat cmask f0 f2 cmask f1 f3 cmask ccat f0 f1 ccat f2 f3 c/\ c= csizel ccat f0 f1 csizel ccat f2 f3 c= ccat cmask f0 f2 cmask f1 f3 cmask ccat f0 f1 ccat f2 f3
++ ((sizel m1) = (sizel s3)) |- ((((sizel m2) = (sizel s4)) /\ (s2 = ((mask m2) s4))) ==> (?m. (((sizel m) = (sizel ((cat s3) s4))) /\ (((cat ((mask m1) s3)) s2) = ((mask m) ((cat s3) s4))))))
+T c==> c= csizel f0 csizel f1 c==> c/\ c= csizel f2 csizel f3 c= f4 cmask f2 f3 c? / c/\ c= csizel b0 csizel ccat f1 f3 c= ccat cmask f0 f1 f4 cmask b0 ccat f1 f3
+- ((\s1. (s = s1)) s1) |- (((s = s1) ==> ((subseq s) s)) = ((subseq s) s))
+T c==> * / c= f0 b0 f1 c= c==> c= f0 f1 csubseq f0 f0 csubseq f0 f0
++ ((sizel m2) = (sizel s4)) |- ((((sizel s3) + (sizel m2)) = ((sizel s3) + (sizel s4))) /\ (((cat ((mask m1) s3)) ((mask m2) s4)) = ((cat ((mask m1) s3)) ((mask m2) s4))))
+T c==> c= csizel f0 csizel f1 c/\ c= c+ csizel f2 csizel f0 c+ csizel f2 csizel f1 c= ccat cmask f3 f2 cmask f0 f1 ccat cmask f3 f2 cmask f0 f1
+- |- ((\s. ((subseq s) s)) s1)
+T * / csubseq b0 b0 f0
++ |- ((((sizel s3) + (sizel s4)) = ((sizel s3) + (sizel s4))) /\ (((cat ((mask m1) s3)) ((mask m2) s4)) = ((cat ((mask m1) s3)) ((mask m2) s4))))
+T c/\ c= c+ csizel f0 csizel f1 c+ csizel f0 csizel f1 c= ccat cmask f2 f0 cmask f3 f1 ccat cmask f2 f0 cmask f3 f1
+- |- (((!P. (!Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x)))))) ==> ((\P. (!Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x)))))) P)) = ((\P. (!Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x)))))) P))
+T c= c==> ! ! c= c==> b0 ! * b1 b2 ! c==> b0 * b1 b2 * / ! c= c==> b0 ! * b1 b2 ! c==> b0 * b1 b2 f0 * / ! c= c==> b0 ! * b1 b2 ! c==> b0 * b1 b2 f0
+- |- (((!s. ((subseq s) s)) ==> ((\s. ((subseq s) s)) s1)) = ((\s. ((subseq s) s)) s1))
+T c= c==> ! csubseq b0 b0 * / csubseq b0 b0 f0 * / csubseq b0 b0 f0
+- (((?x. (P x)) ==> Q) = (!x. ((P x) ==> Q))) |- ((!x. ((P x) ==> Q)) = ((?x. (P x)) ==> Q))
+T c==> c= c==> c? / * f0 b0 f1 ! c==> * f0 b0 f1 c= ! c==> * f0 b0 f1 c==> c? / * f0 b0 f1
+- ((\s1. (s = s1)) s1) |- (s = s1)
+T c==> * / c= f0 b0 f1 c= f0 f1
+- |- (!s1. (((\s1. (s = s1)) s1) ==> ((subseq s) s)))
+T c==> * / c= f0 b0 f1 csubseq f0 f0
+- (s = s1) |- ((subseq s1) s)
+T c==> c= f0 f1 csubseq f1 f0
+- |- ((t /\ t) = t)
+T c= c/\ f0 f0 f0
+- (s = s1) |- ((subseq s1) s1)
+T c==> c= f0 f1 csubseq f1 f1
+- ((sizel m1) = (sizel s3)), ((sizel m2) = (sizel s4)) |- (((sizel m2) = (sizel s4)) /\ ((s2 = ((mask m2) s4)) ==> (?m. (((sizel m) = (sizel ((cat s3) s4))) /\ (((cat ((mask m1) s3)) s2) = ((mask m) ((cat s3) s4)))))))
+T c==> c= csizel f0 csizel f1 c==> c= csizel f2 csizel f3 c/\ c= csizel f2 csizel f3 c==> c= f4 cmask f2 f3 c? / c/\ c= csizel b0 csizel ccat f1 f3 c= ccat cmask f0 f1 f4 cmask b0 ccat f1 f3
+- ((!x. ((P x) ==> Q)) = ((?x. (P x)) ==> Q)) |- (((?x. (P x)) ==> Q) = (!x. ((P x) ==> Q)))
+T c==> c= ! c==> * f0 b0 f1 c==> c? / * f0 b0 f1 c= c==> c? / * f0 b0 f1 ! c==> * f0 b0 f1
+- ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x)))) |- ((!x. (P ==> (Q x))) = (P ==> (!x. (Q x))))
+T c==> c= c==> f0 ! * f1 b0 ! c==> f0 * f1 b0 c= ! c==> f0 * f1 b0 c==> f0 ! * f1 b0
+- |- ((subseq s) s)
+T csubseq f0 f0
+- |- (((?s1. (s = s1)) ==> ((subseq s) s)) = ((subseq s) s))
+T c= c==> c? / c= f0 b0 csubseq f0 f0 csubseq f0 f0
+- ((sizel m1) = (sizel s3)), ((sizel m2) = (sizel s4)), (s2 = ((mask m2) s4)) |- ((s2 = ((mask m2) s4)) /\ (?m. (((sizel m) = (sizel ((cat s3) s4))) /\ (((cat ((mask m1) s3)) s2) = ((mask m) ((cat s3) s4))))))
+T c==> c= csizel f0 csizel f1 c==> c= csizel f2 csizel f3 c==> c= f4 cmask f2 f3 c/\ c= f4 cmask f2 f3 c? / c/\ c= csizel b0 csizel ccat f1 f3 c= ccat cmask f0 f1 f4 cmask b0 ccat f1 f3
+- |- ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))
+T c= c==> f0 ! * f1 b0 ! c==> f0 * f1 b0
+- ((sizel m1) = (sizel s3)), (s1 = ((mask m1) s3)) |- ((s1 = ((mask m1) s3)) /\ ((?m. (((sizel m) = (sizel s4)) /\ (s2 = ((mask m) s4)))) ==> (?m. (((sizel m) = (sizel ((cat s3) s4))) /\ (((cat s1) s2) = ((mask m) ((cat s3) s4)))))))
+T c==> c= csizel f0 csizel f1 c==> c= f2 cmask f0 f1 c/\ c= f2 cmask f0 f1 c==> c? / c/\ c= csizel b0 csizel f3 c= f4 cmask b0 f3 c? / c/\ c= csizel b0 csizel ccat f1 f3 c= ccat f2 f4 cmask b0 ccat f1 f3
+- |- (((!Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))) ==> ((\Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))) Q)) = ((\Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))) Q))
+T c= c==> ! c= c==> f0 ! * b0 b1 ! c==> f0 * b0 b1 * / c= c==> f0 ! * b0 b1 ! c==> f0 * b0 b1 f1 * / c= c==> f0 ! * b0 b1 ! c==> f0 * b0 b1 f1
+- ((sizel m1) = (sizel s3)) |- (((sizel m1) = (sizel s3)) /\ ((s1 = ((mask m1) s3)) ==> ((?m. (((sizel m) = (sizel s4)) /\ (s2 = ((mask m) s4)))) ==> (?m. (((sizel m) = (sizel ((cat s3) s4))) /\ (((cat s1) s2) = ((mask m) ((cat s3) s4))))))))
+T c==> c= csizel f0 csizel f1 c/\ c= csizel f0 csizel f1 c==> c= f2 cmask f0 f1 c==> c? / c/\ c= csizel b0 csizel f3 c= f4 cmask b0 f3 c? / c/\ c= csizel b0 csizel ccat f1 f3 c= ccat f2 f4 cmask b0 ccat f1 f3

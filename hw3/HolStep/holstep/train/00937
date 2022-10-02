@@ -1,0 +1,113 @@
+N Reduction4.filter_nseq
+C |- (!n. (!f. (!x. (((filter f) ((nseq n) x)) = (((COND (f x)) ((nseq n) x)) NIL)))))
+T c= cfilter f0 cnseq f1 f2 cCOND * f0 f2 cnseq f1 f2 cNIL
+D TRUTH
+A |- T
+T cT
+D BOOL_CASES_AX
+A |- (!t. ((t = T) \/ (t = F)))
+T c\/ c= f0 cT c= f0 cF
+D NOT_CLAUSES
+A |- ((!t. ((~ (~ t)) = t)) /\ (((~ T) = F) /\ ((~ F) = T)))
+T c/\ ! c= c~ c~ b0 b0 c/\ c= c~ cT cF c= c~ cF cT
+D COND_CLAUSES
+A |- (!t1. (!t2. (((((COND T) t1) t2) = t1) /\ ((((COND F) t1) t2) = t2))))
+T c/\ c= cCOND cT f0 f1 f0 c= cCOND cF f0 f1 f1
+D COND_ELIM_THM
+A |- ((P (((COND c) x) y)) = ((c ==> (P x)) /\ ((~ c) ==> (P y))))
+T c= * f0 cCOND f1 f2 f3 c/\ c==> f1 * f0 f2 c==> c~ f1 * f0 f3
+D num_INDUCTION
+A |- (!P. (((P (NUMERAL _0)) /\ (!n. ((P n) ==> (P (SUC n))))) ==> (!n. (P n))))
+T c==> c/\ * f0 cNUMERAL c_0 ! c==> * f0 b0 * f0 cSUC b0 ! * f0 b0
+D Seq.filter_nil
+A |- (!a. (((filter a) NIL) = NIL))
+T c= cfilter f0 cNIL cNIL
+D Seq.filter_cons
+A |- (!a. (!x. (!t. (((filter a) ((CONS x) t)) = (((COND (a x)) ((CONS x) ((filter a) t))) ((filter a) t))))))
+T c= cfilter f0 cCONS f1 f2 cCOND * f0 f1 cCONS f1 cfilter f0 f2 cfilter f0 f2
+D Reduction3.nseq0
+A |- (!x. (((nseq (NUMERAL _0)) x) = NIL))
+T c= cnseq cNUMERAL c_0 f0 cNIL
+D Reduction3.nseq_suc
+A |- (!n. (!x. (((nseq (SUC n)) x) = ((CONS x) ((nseq n) x)))))
+T c= cnseq cSUC f0 f1 cCONS f1 cnseq f0 f1
++ |- (((~ (f x)) ==> ((((COND (f x)) ((nseq n) x)) NIL) = (((COND (f x)) ((CONS x) ((nseq n) x))) NIL))) = (((f x) ==> (((CONS x) (((COND (f x)) ((nseq n) x)) NIL)) = (((COND (f x)) ((CONS x) ((nseq n) x))) NIL))) /\ ((~ (f x)) ==> ((((COND (f x)) ((nseq n) x)) NIL) = (((COND (f x)) ((CONS x) ((nseq n) x))) NIL)))))
+T c= c==> c~ * f0 f1 c= cCOND * f0 f1 cnseq f2 f1 cNIL cCOND * f0 f1 cCONS f1 cnseq f2 f1 cNIL c/\ c==> * f0 f1 c= cCONS f1 cCOND * f0 f1 cnseq f2 f1 cNIL cCOND * f0 f1 cCONS f1 cnseq f2 f1 cNIL c==> c~ * f0 f1 c= cCOND * f0 f1 cnseq f2 f1 cNIL cCOND * f0 f1 cCONS f1 cnseq f2 f1 cNIL
++ (f x) |- ((f x) /\ (((CONS x) (((COND (f x)) ((nseq n) x)) NIL)) = (((COND (f x)) ((CONS x) ((nseq n) x))) NIL)))
+T c==> * f0 f1 c/\ * f0 f1 c= cCONS f1 cCOND * f0 f1 cnseq f2 f1 cNIL cCOND * f0 f1 cCONS f1 cnseq f2 f1 cNIL
++ ((f x) = F) |- (((f x) = F) /\ ((NIL = (((COND (f x)) NIL) NIL)) = T))
+T c==> c= * f0 f1 cF c/\ c= * f0 f1 cF c= c= cNIL cCOND * f0 f1 cNIL cNIL cT
+- |- ((\t1. (!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))))) t1)
+T * / ! ! c= c\/ b0 c\/ b1 b2 c\/ c\/ b0 b1 b2 f0
++ |- (T = (((CONS x) (((COND T) ((nseq n) x)) NIL)) = (((COND T) ((CONS x) ((nseq n) x))) NIL)))
+T c= cT c= cCONS f0 cCOND cT cnseq f1 f0 cNIL cCOND cT cCONS f0 cnseq f1 f0 cNIL
++ |- (((!x. (((nseq (NUMERAL _0)) x) = NIL)) ==> ((\x. (((nseq (NUMERAL _0)) x) = NIL)) x)) = ((\x. (((nseq (NUMERAL _0)) x) = NIL)) x))
+T c= c==> ! c= cnseq cNUMERAL c_0 b0 cNIL * / c= cnseq cNUMERAL c_0 b0 cNIL f0 * / c= cnseq cNUMERAL c_0 b0 cNIL f0
++ |- ((!f. (!x. (NIL = (((COND (f x)) NIL) NIL)))) = (!f. (!x. (((filter f) ((nseq (NUMERAL _0)) x)) = (((COND (f x)) ((nseq (NUMERAL _0)) x)) NIL)))))
+T c= ! ! c= cNIL cCOND * b0 b1 cNIL cNIL ! ! c= cfilter b0 cnseq cNUMERAL c_0 b1 cCOND * b0 b1 cnseq cNUMERAL c_0 b1 cNIL
++ |- ((t \/ T) = T)
+T c= c\/ f0 cT cT
+- ((~ (!f. (!x. (NIL = (((COND (f x)) NIL) NIL))))) ==> F) |- ((((~ (!f. (!x. (NIL = (((COND (f x)) NIL) NIL))))) ==> F) ==> ((~ (!f. (!x. (NIL = (((COND (f x)) NIL) NIL))))) ==> F)) ==> ((~ (!f. (!x. (NIL = (((COND (f x)) NIL) NIL))))) ==> F))
+T c==> c==> c~ ! ! c= cNIL cCOND * b0 b1 cNIL cNIL cF c==> c==> c==> c~ ! ! c= cNIL cCOND * b0 b1 cNIL cNIL cF c==> c~ ! ! c= cNIL cCOND * b0 b1 cNIL cNIL cF c==> c~ ! ! c= cNIL cCOND * b0 b1 cNIL cNIL cF
+- |- ((\t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))) t3)
+T * / c= c\/ f0 c\/ f1 b0 c\/ c\/ f0 f1 b0 f2
++ ((f x) = T) |- (((f x) = T) /\ ((NIL = (((COND (f x)) NIL) NIL)) = T))
+T c==> c= * f0 f1 cT c/\ c= * f0 f1 cT c= c= cNIL cCOND * f0 f1 cNIL cNIL cT
++ |- (((!f. (!x. (((filter f) ((nseq n) x)) = (((COND (f x)) ((nseq n) x)) NIL)))) ==> (!f. (!x. (((filter f) ((nseq (SUC n)) x)) = (((COND (f x)) ((nseq (SUC n)) x)) NIL))))) = T)
+T c= c==> ! ! c= cfilter b0 cnseq f0 b1 cCOND * b0 b1 cnseq f0 b1 cNIL ! ! c= cfilter b0 cnseq cSUC f0 b1 cCOND * b0 b1 cnseq cSUC f0 b1 cNIL cT
++ |- ((!x. t) = t)
+T c= ! f0 f0
+- |- ((t ==> F) = (~ t))
+T c= c==> f0 cF c~ f0
++ |- (((!x. (!t. (((filter a) ((CONS x) t)) = (((COND (a x)) ((CONS x) ((filter a) t))) ((filter a) t))))) ==> ((\x. (!t. (((filter a) ((CONS x) t)) = (((COND (a x)) ((CONS x) ((filter a) t))) ((filter a) t))))) x)) = ((\x. (!t. (((filter a) ((CONS x) t)) = (((COND (a x)) ((CONS x) ((filter a) t))) ((filter a) t))))) x))
+T c= c==> ! ! c= cfilter f0 cCONS b0 b1 cCOND * f0 b0 cCONS b0 cfilter f0 b1 cfilter f0 b1 * / ! c= cfilter f0 cCONS b0 b1 cCOND * f0 b0 cCONS b0 cfilter f0 b1 cfilter f0 b1 f1 * / ! c= cfilter f0 cCONS b0 b1 cCOND * f0 b0 cCONS b0 cfilter f0 b1 cfilter f0 b1 f1
+- |- ((((~ (!f. (!x. (NIL = (((COND (f x)) NIL) NIL))))) ==> F) ==> ((~ (!f. (!x. (NIL = (((COND (f x)) NIL) NIL))))) ==> F)) = ((~ (!f. (!x. (NIL = (((COND (f x)) NIL) NIL))))) ==> F))
+T c= c==> c==> c~ ! ! c= cNIL cCOND * b0 b1 cNIL cNIL cF c==> c~ ! ! c= cNIL cCOND * b0 b1 cNIL cNIL cF c==> c~ ! ! c= cNIL cCOND * b0 b1 cNIL cNIL cF
++ |- (p = ((~ p) ==> F))
+T c= f0 c==> c~ f0 cF
++ |- (!n. ((!f. (!x. (((filter f) ((nseq n) x)) = (((COND (f x)) ((nseq n) x)) NIL)))) ==> (!f. (!x. (((filter f) ((nseq (SUC n)) x)) = (((COND (f x)) ((nseq (SUC n)) x)) NIL))))))
+T c==> ! ! c= cfilter b0 cnseq f0 b1 cCOND * b0 b1 cnseq f0 b1 cNIL ! ! c= cfilter b0 cnseq cSUC f0 b1 cCOND * b0 b1 cnseq cSUC f0 b1 cNIL
+- |- ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))
+T c= c\/ f0 c\/ f1 f2 c\/ c\/ f0 f1 f2
+- |- (((~ (!f. (!x. (NIL = (((COND (f x)) NIL) NIL))))) ==> F) ==> ((~ (!f. (!x. (NIL = (((COND (f x)) NIL) NIL))))) ==> F))
+T c==> c==> c~ ! ! c= cNIL cCOND * b0 b1 cNIL cNIL cF c==> c~ ! ! c= cNIL cCOND * b0 b1 cNIL cNIL cF
++ |- (T = ((((COND F) ((nseq n) x)) NIL) = (((COND F) ((CONS x) ((nseq n) x))) NIL)))
+T c= cT c= cCOND cF cnseq f0 f1 cNIL cCOND cF cCONS f1 cnseq f0 f1 cNIL
++ |- ((\x. (!t. (((filter a) ((CONS x) t)) = (((COND (a x)) ((CONS x) ((filter a) t))) ((filter a) t))))) x)
+T * / ! c= cfilter f0 cCONS b0 b1 cCOND * f0 b0 cCONS b0 cfilter f0 b1 cfilter f0 b1 f1
++ |- ((((((f x) = F) ==> ((NIL = (((COND (f x)) NIL) NIL)) = T)) /\ (((f x) = T) ==> ((NIL = (((COND (f x)) NIL) NIL)) = T))) ==> ((NIL = (((COND (f x)) NIL) NIL)) = (((~ (f x)) \/ T) /\ ((f x) \/ T)))) = ((NIL = (((COND (f x)) NIL) NIL)) = (((~ (f x)) \/ T) /\ ((f x) \/ T))))
+T c= c==> c/\ c==> c= * f0 f1 cF c= c= cNIL cCOND * f0 f1 cNIL cNIL cT c==> c= * f0 f1 cT c= c= cNIL cCOND * f0 f1 cNIL cNIL cT c= c= cNIL cCOND * f0 f1 cNIL cNIL c/\ c\/ c~ * f0 f1 cT c\/ * f0 f1 cT c= c= cNIL cCOND * f0 f1 cNIL cNIL c/\ c\/ c~ * f0 f1 cT c\/ * f0 f1 cT
++ (!f. (!x. (((filter f) ((nseq n) x)) = (((COND (f x)) ((nseq n) x)) NIL)))) |- (((!x. (((filter f) ((nseq n) x)) = (((COND (f x)) ((nseq n) x)) NIL))) ==> ((\x. (((filter f) ((nseq n) x)) = (((COND (f x)) ((nseq n) x)) NIL))) x)) = ((\x. (((filter f) ((nseq n) x)) = (((COND (f x)) ((nseq n) x)) NIL))) x))
+T c==> ! ! c= cfilter b0 cnseq f0 b1 cCOND * b0 b1 cnseq f0 b1 cNIL c= c==> ! c= cfilter f1 cnseq f0 b0 cCOND * f1 b0 cnseq f0 b0 cNIL * / c= cfilter f1 cnseq f0 b0 cCOND * f1 b0 cnseq f0 b0 cNIL f2 * / c= cfilter f1 cnseq f0 b0 cCOND * f1 b0 cnseq f0 b0 cNIL f2
++ (!f. (!x. (((filter f) ((nseq n) x)) = (((COND (f x)) ((nseq n) x)) NIL)))) |- ((!f. (!x. ((((COND (f x)) ((CONS x) (((COND (f x)) ((nseq n) x)) NIL))) (((COND (f x)) ((nseq n) x)) NIL)) = (((COND (f x)) ((CONS x) ((nseq n) x))) NIL)))) = (!f. (!x. (((filter f) ((nseq (SUC n)) x)) = (((COND (f x)) ((nseq (SUC n)) x)) NIL)))))
+T c==> ! ! c= cfilter b0 cnseq f0 b1 cCOND * b0 b1 cnseq f0 b1 cNIL c= ! ! c= cCOND * b0 b1 cCONS b1 cCOND * b0 b1 cnseq f0 b1 cNIL cCOND * b0 b1 cnseq f0 b1 cNIL cCOND * b0 b1 cCONS b1 cnseq f0 b1 cNIL ! ! c= cfilter b0 cnseq cSUC f0 b1 cCOND * b0 b1 cnseq cSUC f0 b1 cNIL
++ |- ((f x) ==> (((CONS x) (((COND (f x)) ((nseq n) x)) NIL)) = (((COND (f x)) ((CONS x) ((nseq n) x))) NIL)))
+T c==> * f0 f1 c= cCONS f1 cCOND * f0 f1 cnseq f2 f1 cNIL cCOND * f0 f1 cCONS f1 cnseq f2 f1 cNIL
+- |- ((\t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3)))) t2)
+T * / ! c= c\/ f0 c\/ b0 b1 c\/ c\/ f0 b0 b1 f1
++ |- ((\a. (((filter a) NIL) = NIL)) a)
+T * / c= cfilter b0 cNIL cNIL f0
+- |- (((!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3)))) ==> ((\t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3)))) t2)) = ((\t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3)))) t2))
+T c= c==> ! ! c= c\/ f0 c\/ b0 b1 c\/ c\/ f0 b0 b1 * / ! c= c\/ f0 c\/ b0 b1 c\/ c\/ f0 b0 b1 f1 * / ! c= c\/ f0 c\/ b0 b1 c\/ c\/ f0 b0 b1 f1
+- ((~ (!f. (!x. (NIL = (((COND (f x)) NIL) NIL))))) ==> F) |- (((~ (!f. (!x. (NIL = (((COND (f x)) NIL) NIL))))) ==> F) /\ ((~ (!f. (!x. (NIL = (((COND (f x)) NIL) NIL))))) ==> F))
+T c==> c==> c~ ! ! c= cNIL cCOND * b0 b1 cNIL cNIL cF c/\ c==> c~ ! ! c= cNIL cCOND * b0 b1 cNIL cNIL cF c==> c~ ! ! c= cNIL cCOND * b0 b1 cNIL cNIL cF
+- (~ (!f. (!x. (NIL = (((COND (f x)) NIL) NIL))))) |- ((~ (!f. (!x. (NIL = (((COND (f x)) NIL) NIL))))) /\ F)
+T c==> c~ ! ! c= cNIL cCOND * b0 b1 cNIL cNIL c/\ c~ ! ! c= cNIL cCOND * b0 b1 cNIL cNIL cF
+- |- (((t1 \/ t2) \/ t3) = (t1 \/ (t2 \/ t3)))
+T c= c\/ c\/ f0 f1 f2 c\/ f0 c\/ f1 f2
+- |- (((((~ (!f. (!x. (NIL = (((COND (f x)) NIL) NIL))))) ==> F) ==> ((~ (!f. (!x. (NIL = (((COND (f x)) NIL) NIL))))) ==> F)) ==> (((~ (!f. (!x. (NIL = (((COND (f x)) NIL) NIL))))) ==> F) ==> ((~ (!f. (!x. (NIL = (((COND (f x)) NIL) NIL))))) ==> F))) = (((~ (!f. (!x. (NIL = (((COND (f x)) NIL) NIL))))) ==> F) ==> ((~ (!f. (!x. (NIL = (((COND (f x)) NIL) NIL))))) ==> F)))
+T c= c==> c==> c==> c~ ! ! c= cNIL cCOND * b0 b1 cNIL cNIL cF c==> c~ ! ! c= cNIL cCOND * b0 b1 cNIL cNIL cF c==> c==> c~ ! ! c= cNIL cCOND * b0 b1 cNIL cNIL cF c==> c~ ! ! c= cNIL cCOND * b0 b1 cNIL cNIL cF c==> c==> c~ ! ! c= cNIL cCOND * b0 b1 cNIL cNIL cF c==> c~ ! ! c= cNIL cCOND * b0 b1 cNIL cNIL cF
+- |- (((!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))) ==> ((\t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))) t3)) = ((\t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))) t3))
+T c= c==> ! c= c\/ f0 c\/ f1 b0 c\/ c\/ f0 f1 b0 * / c= c\/ f0 c\/ f1 b0 c\/ c\/ f0 f1 b0 f2 * / c= c\/ f0 c\/ f1 b0 c\/ c\/ f0 f1 b0 f2
+- (((~ (!f. (!x. (NIL = (((COND (f x)) NIL) NIL))))) ==> F) ==> ((~ (!f. (!x. (NIL = (((COND (f x)) NIL) NIL))))) ==> F)) |- ((((~ (!f. (!x. (NIL = (((COND (f x)) NIL) NIL))))) ==> F) ==> ((~ (!f. (!x. (NIL = (((COND (f x)) NIL) NIL))))) ==> F)) /\ (((~ (!f. (!x. (NIL = (((COND (f x)) NIL) NIL))))) ==> F) ==> ((~ (!f. (!x. (NIL = (((COND (f x)) NIL) NIL))))) ==> F)))
+T c==> c==> c==> c~ ! ! c= cNIL cCOND * b0 b1 cNIL cNIL cF c==> c~ ! ! c= cNIL cCOND * b0 b1 cNIL cNIL cF c/\ c==> c==> c~ ! ! c= cNIL cCOND * b0 b1 cNIL cNIL cF c==> c~ ! ! c= cNIL cCOND * b0 b1 cNIL cNIL cF c==> c==> c~ ! ! c= cNIL cCOND * b0 b1 cNIL cNIL cF c==> c~ ! ! c= cNIL cCOND * b0 b1 cNIL cNIL cF
+- ((~ (!f. (!x. (NIL = (((COND (f x)) NIL) NIL))))) ==> F), (((~ (!f. (!x. (NIL = (((COND (f x)) NIL) NIL))))) ==> F) ==> ((~ (!f. (!x. (NIL = (((COND (f x)) NIL) NIL))))) ==> F)) |- ((((~ (!f. (!x. (NIL = (((COND (f x)) NIL) NIL))))) ==> F) ==> ((~ (!f. (!x. (NIL = (((COND (f x)) NIL) NIL))))) ==> F)) /\ ((~ (!f. (!x. (NIL = (((COND (f x)) NIL) NIL))))) ==> F))
+T c==> c==> c~ ! ! c= cNIL cCOND * b0 b1 cNIL cNIL cF c==> c==> c==> c~ ! ! c= cNIL cCOND * b0 b1 cNIL cNIL cF c==> c~ ! ! c= cNIL cCOND * b0 b1 cNIL cNIL cF c/\ c==> c==> c~ ! ! c= cNIL cCOND * b0 b1 cNIL cNIL cF c==> c~ ! ! c= cNIL cCOND * b0 b1 cNIL cNIL cF c==> c~ ! ! c= cNIL cCOND * b0 b1 cNIL cNIL cF
+- ((~ (!f. (!x. (NIL = (((COND (f x)) NIL) NIL))))) ==> F), (((~ (!f. (!x. (NIL = (((COND (f x)) NIL) NIL))))) ==> F) ==> ((~ (!f. (!x. (NIL = (((COND (f x)) NIL) NIL))))) ==> F)) |- (((~ (!f. (!x. (NIL = (((COND (f x)) NIL) NIL))))) ==> F) /\ ((~ (!f. (!x. (NIL = (((COND (f x)) NIL) NIL))))) ==> F))
+T c==> c==> c~ ! ! c= cNIL cCOND * b0 b1 cNIL cNIL cF c==> c==> c==> c~ ! ! c= cNIL cCOND * b0 b1 cNIL cNIL cF c==> c~ ! ! c= cNIL cCOND * b0 b1 cNIL cNIL cF c/\ c==> c~ ! ! c= cNIL cCOND * b0 b1 cNIL cNIL cF c==> c~ ! ! c= cNIL cCOND * b0 b1 cNIL cNIL cF
+- |- (((!t1. (!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))))) ==> ((\t1. (!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))))) t1)) = ((\t1. (!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))))) t1))
+T c= c==> ! ! ! c= c\/ b0 c\/ b1 b2 c\/ c\/ b0 b1 b2 * / ! ! c= c\/ b0 c\/ b1 b2 c\/ c\/ b0 b1 b2 f0 * / ! ! c= c\/ b0 c\/ b1 b2 c\/ c\/ b0 b1 b2 f0
+- |- ((~ (~ t)) = t)
+T c= c~ c~ f0 f0
+- |- ((((~ (!f. (!x. (NIL = (((COND (f x)) NIL) NIL))))) ==> F) ==> ((~ (!f. (!x. (NIL = (((COND (f x)) NIL) NIL))))) ==> F)) ==> (((~ (!f. (!x. (NIL = (((COND (f x)) NIL) NIL))))) ==> F) ==> ((~ (!f. (!x. (NIL = (((COND (f x)) NIL) NIL))))) ==> F)))
+T c==> c==> c==> c~ ! ! c= cNIL cCOND * b0 b1 cNIL cNIL cF c==> c~ ! ! c= cNIL cCOND * b0 b1 cNIL cNIL cF c==> c==> c~ ! ! c= cNIL cCOND * b0 b1 cNIL cNIL cF c==> c~ ! ! c= cNIL cCOND * b0 b1 cNIL cNIL cF

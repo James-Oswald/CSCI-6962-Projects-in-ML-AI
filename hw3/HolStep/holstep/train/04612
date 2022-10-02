@@ -1,0 +1,358 @@
+N CONNECTED_SIMPLE_PATH_IMAGE_DELETE
+C |- (!g. (!a. (((simple_path g) /\ ((pathfinish g) = (pathstart g))) ==> (connected ((path_image g) DELETE a)))))
+T c==> c/\ csimple_path f0 c= cpathfinish f0 cpathstart f0 cconnected * * part cDELETE * part cpath_image f0 f1
+D TRUTH
+A |- T
+T cT
+D EXCLUDED_MIDDLE
+A |- (!t. (t \/ (~ t)))
+T c\/ f0 c~ f0
+D BOOL_CASES_AX
+A |- (!t. ((t = T) \/ (t = F)))
+T c\/ c= f0 cT c= f0 cF
+D NOT_CLAUSES
+A |- ((!t. ((~ (~ t)) = t)) /\ (((~ T) = F) /\ ((~ F) = T)))
+T c/\ ! c= c~ c~ b0 b0 c/\ c= c~ cT cF c= c~ cF cT
+D IN
+A |- (!P. (!x. ((x IN P) = (P x))))
+T c= cIN f0 f1 * f1 f0
+D EXTENSION
+A |- (!s. (!t. ((s = t) = (!x. ((x IN s) = (x IN t))))))
+T c= c= f0 f1 ! c= cIN b0 f0 cIN b0 f1
+D NOT_IN_EMPTY
+A |- (!x. (~ (x IN EMPTY)))
+T c~ cIN f0 part cEMPTY
+D IN_DIFF
+A |- (!s. (!t. (!x. ((x IN (s DIFF t)) = ((x IN s) /\ (~ (x IN t)))))))
+T c= cIN f0 * * part cDIFF f1 f2 c/\ cIN f0 f1 c~ cIN f0 f2
+D IN_INSERT
+A |- (!x. (!y. (!s. ((x IN (y INSERT s)) = ((x = y) \/ (x IN s))))))
+T c= cIN f0 * * part cINSERT f1 f2 c\/ c= f0 f1 cIN f0 f2
+D IN_DELETE
+A |- (!s. (!x. (!y. ((x IN (s DELETE y)) = ((x IN s) /\ (~ (x = y)))))))
+T c= cIN f0 * * part cDELETE f1 f2 c/\ cIN f0 f1 c~ c= f0 f2
+D IN_IMAGE
+A |- (!y. (!s. (!f. ((y IN ((IMAGE f) s)) = (?x. ((y = (f x)) /\ (x IN s)))))))
+T c= cIN f0 * * part cIMAGE f1 f2 c? / c/\ c= f0 * f1 b0 cIN b0 f2
+D DROP_VEC
+A |- (!n. ((drop (vec n)) = (real_of_num n)))
+T c= cdrop cvec f0 creal_of_num f0
+D IN_INTERVAL_1
+A |- (!a. (!b. (!x. (((x IN (closed_interval ((CONS (a , b)) NIL))) = (((real_le (drop a)) (drop x)) /\ ((real_le (drop x)) (drop b)))) /\ ((x IN (open_interval (a , b))) = (((real_lt (drop a)) (drop x)) /\ ((real_lt (drop x)) (drop b))))))))
+T c/\ c= cIN f0 * part cclosed_interval cCONS c, f1 f2 cNIL c/\ creal_le cdrop f1 cdrop f0 creal_le cdrop f0 cdrop f2 c= cIN f0 * part copen_interval c, f1 f2 c/\ creal_lt cdrop f1 cdrop f0 creal_lt cdrop f0 cdrop f2
+D path_image
+A |- (!g. ((path_image g) = ((IMAGE g) (closed_interval ((CONS ((vec (NUMERAL _0)) , (vec (NUMERAL (BIT1 _0))))) NIL)))))
+T c= * part cpath_image f0 * * part cIMAGE f0 * part cclosed_interval cCONS c, cvec cNUMERAL c_0 cvec cNUMERAL cBIT1 c_0 cNIL
+D SIMPLE_PATH_IMP_PATH
+A |- (!g. ((simple_path g) ==> (path g)))
+T c==> csimple_path f0 cpath f0
+D CONNECTED_PATH_IMAGE
+A |- (!g. ((path g) ==> (connected (path_image g))))
+T c==> cpath f0 cconnected * part cpath_image f0
+D PATHSTART_SHIFTPATH
+A |- (!a. (!g. (((real_le (drop a)) (real_of_num (NUMERAL (BIT1 _0)))) ==> ((pathstart ((shiftpath a) g)) = (g a)))))
+T c==> creal_le cdrop f0 creal_of_num cNUMERAL cBIT1 c_0 c= cpathstart * * part cshiftpath f0 f1 * f1 f0
+D PATHFINISH_SHIFTPATH
+A |- (!a. (!g. ((((real_le (real_of_num (NUMERAL _0))) (drop a)) /\ ((pathfinish g) = (pathstart g))) ==> ((pathfinish ((shiftpath a) g)) = (g a)))))
+T c==> c/\ creal_le creal_of_num cNUMERAL c_0 cdrop f0 c= cpathfinish f1 cpathstart f1 c= cpathfinish * * part cshiftpath f0 f1 * f1 f0
+D PATH_IMAGE_SHIFTPATH
+A |- (!a. (!g. (((a IN (closed_interval ((CONS ((vec (NUMERAL _0)) , (vec (NUMERAL (BIT1 _0))))) NIL))) /\ ((pathfinish g) = (pathstart g))) ==> ((path_image ((shiftpath a) g)) = (path_image g)))))
+T c==> c/\ cIN f0 * part cclosed_interval cCONS c, cvec cNUMERAL c_0 cvec cNUMERAL cBIT1 c_0 cNIL c= cpathfinish f1 cpathstart f1 c= * part cpath_image * * part cshiftpath f0 f1 * part cpath_image f1
+D SIMPLE_PATH_SHIFTPATH
+A |- (!g. (!a. (((simple_path g) /\ (((pathfinish g) = (pathstart g)) /\ (a IN (closed_interval ((CONS ((vec (NUMERAL _0)) , (vec (NUMERAL (BIT1 _0))))) NIL))))) ==> (simple_path ((shiftpath a) g)))))
+T c==> c/\ csimple_path f0 c/\ c= cpathfinish f0 cpathstart f0 cIN f1 * part cclosed_interval cCONS c, cvec cNUMERAL c_0 cvec cNUMERAL cBIT1 c_0 cNIL csimple_path * * part cshiftpath f1 f0
+D CONNECTED_SIMPLE_PATH_ENDLESS
+A |- (!c. ((simple_path c) ==> (connected ((path_image c) DIFF ((pathstart c) INSERT ((pathfinish c) INSERT EMPTY))))))
+T c==> csimple_path f0 cconnected * * part cDIFF * part cpath_image f0 * * part cINSERT cpathstart f0 * * part cINSERT cpathfinish f0 part cEMPTY
++ (simple_path g), ((pathfinish g) = (pathstart g)), (t IN (closed_interval ((CONS ((vec (NUMERAL _0)) , (vec (NUMERAL (BIT1 _0))))) NIL))) |- ((T ==> ((connected ((path_image ((shiftpath t) g)) DIFF ((pathstart ((shiftpath t) g)) INSERT ((pathfinish ((shiftpath t) g)) INSERT EMPTY)))) = q')) ==> (((simple_path ((shiftpath t) g)) ==> (connected ((path_image ((shiftpath t) g)) DIFF ((pathstart ((shiftpath t) g)) INSERT ((pathfinish ((shiftpath t) g)) INSERT EMPTY))))) = (T ==> q')))
+T c==> csimple_path f0 c==> c= cpathfinish f0 cpathstart f0 c==> cIN f1 * part cclosed_interval cCONS c, cvec cNUMERAL c_0 cvec cNUMERAL cBIT1 c_0 cNIL c==> c==> cT c= cconnected * * part cDIFF * part cpath_image * * part cshiftpath f1 f0 * * part cINSERT cpathstart * * part cshiftpath f1 f0 * * part cINSERT cpathfinish * * part cshiftpath f1 f0 part cEMPTY f2 c= c==> csimple_path * * part cshiftpath f1 f0 cconnected * * part cDIFF * part cpath_image * * part cshiftpath f1 f0 * * part cINSERT cpathstart * * part cshiftpath f1 f0 * * part cINSERT cpathfinish * * part cshiftpath f1 f0 part cEMPTY c==> cT f2
++ (simple_path g), ((simple_path g) /\ ((pathfinish g) = (pathstart g))) |- (connected ((path_image g) DELETE a))
+T c==> csimple_path f0 c==> c/\ csimple_path f0 c= cpathfinish f0 cpathstart f0 cconnected * * part cDELETE * part cpath_image f0 f1
++ (simple_path g), ((pathfinish g) = (pathstart g)), ((g t) = a), (t IN (closed_interval ((CONS ((vec (NUMERAL _0)) , (vec (NUMERAL (BIT1 _0))))) NIL))) |- (connected ((path_image g) DELETE a))
+T c==> csimple_path f0 c==> c= cpathfinish f0 cpathstart f0 c==> c= * f0 f1 f2 c==> cIN f1 * part cclosed_interval cCONS c, cvec cNUMERAL c_0 cvec cNUMERAL cBIT1 c_0 cNIL cconnected * * part cDELETE * part cpath_image f0 f2
++ |- ((t \/ F) = t)
+T c= c\/ f0 cF f0
+- |- ((\t1. (!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))))) t1)
+T * / ! ! c= c\/ b0 c\/ b1 b2 c\/ c\/ b0 b1 b2 f0
++ (simple_path g), ((pathfinish g) = (pathstart g)), ((a = (g t)) /\ (t IN (closed_interval ((CONS ((vec (NUMERAL _0)) , (vec (NUMERAL (BIT1 _0))))) NIL)))) |- (((a = (g t)) /\ (t IN (closed_interval ((CONS ((vec (NUMERAL _0)) , (vec (NUMERAL (BIT1 _0))))) NIL)))) /\ (connected ((path_image g) DELETE a)))
+T c==> csimple_path f0 c==> c= cpathfinish f0 cpathstart f0 c==> c/\ c= f1 * f0 f2 cIN f2 * part cclosed_interval cCONS c, cvec cNUMERAL c_0 cvec cNUMERAL cBIT1 c_0 cNIL c/\ c/\ c= f1 * f0 f2 cIN f2 * part cclosed_interval cCONS c, cvec cNUMERAL c_0 cvec cNUMERAL cBIT1 c_0 cNIL cconnected * * part cDELETE * part cpath_image f0 f1
++ (simple_path g), ((pathfinish g) = (pathstart g)), ((\x. ((a = (g x)) /\ (x IN (closed_interval ((CONS ((vec (NUMERAL _0)) , (vec (NUMERAL (BIT1 _0))))) NIL))))) t) |- (((\x. ((a = (g x)) /\ (x IN (closed_interval ((CONS ((vec (NUMERAL _0)) , (vec (NUMERAL (BIT1 _0))))) NIL))))) t) /\ (connected ((path_image g) DELETE a)))
+T c==> csimple_path f0 c==> c= cpathfinish f0 cpathstart f0 c==> * / c/\ c= f1 * f0 b0 cIN b0 * part cclosed_interval cCONS c, cvec cNUMERAL c_0 cvec cNUMERAL cBIT1 c_0 cNIL f2 c/\ * / c/\ c= f1 * f0 b0 cIN b0 * part cclosed_interval cCONS c, cvec cNUMERAL c_0 cvec cNUMERAL cBIT1 c_0 cNIL f2 cconnected * * part cDELETE * part cpath_image f0 f1
++ (simple_path g), ((pathfinish g) = (pathstart g)), (t IN (closed_interval ((CONS ((vec (NUMERAL _0)) , (vec (NUMERAL (BIT1 _0))))) NIL))) |- (((connected ((path_image g) DIFF ((pathstart ((shiftpath t) g)) INSERT ((pathfinish ((shiftpath t) g)) INSERT EMPTY)))) ==> (connected ((path_image g) DELETE a))) = (((simple_path ((shiftpath t) g)) ==> (connected ((path_image ((shiftpath t) g)) DIFF ((pathstart ((shiftpath t) g)) INSERT ((pathfinish ((shiftpath t) g)) INSERT EMPTY))))) ==> (connected ((path_image g) DELETE a))))
+T c==> csimple_path f0 c==> c= cpathfinish f0 cpathstart f0 c==> cIN f1 * part cclosed_interval cCONS c, cvec cNUMERAL c_0 cvec cNUMERAL cBIT1 c_0 cNIL c= c==> cconnected * * part cDIFF * part cpath_image f0 * * part cINSERT cpathstart * * part cshiftpath f1 f0 * * part cINSERT cpathfinish * * part cshiftpath f1 f0 part cEMPTY cconnected * * part cDELETE * part cpath_image f0 f2 c==> c==> csimple_path * * part cshiftpath f1 f0 cconnected * * part cDIFF * part cpath_image * * part cshiftpath f1 f0 * * part cINSERT cpathstart * * part cshiftpath f1 f0 * * part cINSERT cpathfinish * * part cshiftpath f1 f0 part cEMPTY cconnected * * part cDELETE * part cpath_image f0 f2
++ (~ (s x)), (((~ (s x)) \/ (x = a)) /\ (s x)) |- ((~ (s x)) /\ F)
+T c==> c~ * f0 f1 c==> c/\ c\/ c~ * f0 f1 c= f1 f2 * f0 f1 c/\ c~ * f0 f1 cF
++ |- (((connected ((path_image g) DIFF ((pathstart ((shiftpath t) g)) INSERT ((pathfinish ((shiftpath t) g)) INSERT EMPTY)))) ==> (connected ((path_image g) DELETE a))) = ((connected ((path_image g) DIFF ((pathstart ((shiftpath t) g)) INSERT ((pathfinish ((shiftpath t) g)) INSERT EMPTY)))) ==> (connected ((path_image g) DELETE a))))
+T c= c==> cconnected * * part cDIFF * part cpath_image f0 * * part cINSERT cpathstart * * part cshiftpath f1 f0 * * part cINSERT cpathfinish * * part cshiftpath f1 f0 part cEMPTY cconnected * * part cDELETE * part cpath_image f0 f2 c==> cconnected * * part cDIFF * part cpath_image f0 * * part cINSERT cpathstart * * part cshiftpath f1 f0 * * part cINSERT cpathfinish * * part cshiftpath f1 f0 part cEMPTY cconnected * * part cDELETE * part cpath_image f0 f2
+- (?x. ((a = (g x)) /\ (x IN (closed_interval ((CONS ((vec (NUMERAL _0)) , (vec (NUMERAL (BIT1 _0))))) NIL))))), (simple_path g), ((pathfinish g) = (pathstart g)) |- ((?x. ((a = (g x)) /\ (x IN (closed_interval ((CONS ((vec (NUMERAL _0)) , (vec (NUMERAL (BIT1 _0))))) NIL))))) /\ (connected ((path_image g) DELETE a)))
+T c==> c? / c/\ c= f0 * f1 b0 cIN b0 * part cclosed_interval cCONS c, cvec cNUMERAL c_0 cvec cNUMERAL cBIT1 c_0 cNIL c==> csimple_path f1 c==> c= cpathfinish f1 cpathstart f1 c/\ c? / c/\ c= f0 * f1 b0 cIN b0 * part cclosed_interval cCONS c, cvec cNUMERAL c_0 cvec cNUMERAL cBIT1 c_0 cNIL cconnected * * part cDELETE * part cpath_image f1 f0
++ (~ (((s x) /\ (~ (x = a))) = (s x))), ((((s x) /\ (~ (x = a))) /\ (~ (s x))) ==> F), ((((~ (s x)) \/ (x = a)) /\ (s x)) ==> F) |- F
+T c==> c~ c= c/\ * f0 f1 c~ c= f1 f2 * f0 f1 c==> c==> c/\ c/\ * f0 f1 c~ c= f1 f2 c~ * f0 f1 cF c==> c==> c/\ c\/ c~ * f0 f1 c= f1 f2 * f0 f1 cF cF
++ |- (((connected ((path_image g) DIFF (a INSERT (a INSERT EMPTY)))) ==> (connected ((path_image g) DELETE a))) = ((connected ((path_image g) DIFF (a INSERT (a INSERT EMPTY)))) ==> (connected ((path_image g) DELETE a))))
+T c= c==> cconnected * * part cDIFF * part cpath_image f0 * * part cINSERT f1 * * part cINSERT f1 part cEMPTY cconnected * * part cDELETE * part cpath_image f0 f1 c==> cconnected * * part cDIFF * part cpath_image f0 * * part cINSERT f1 * * part cINSERT f1 part cEMPTY cconnected * * part cDELETE * part cpath_image f0 f1
++ |- ((~ (a IN s)) ==> (!x. ((x IN (s DELETE a)) = (x IN s))))
+T c==> c~ cIN f0 f1 ! c= cIN b0 * * part cDELETE f1 f0 cIN b0 f1
+- (~ (s x)), (((s x) /\ (~ (x = a))) /\ (~ (s x))) |- ((~ (s x)) /\ (s x))
+T c==> c~ * f0 f1 c==> c/\ c/\ * f0 f1 c~ c= f1 f2 c~ * f0 f1 c/\ c~ * f0 f1 * f0 f1
++ |- ((((simple_path g) /\ ((pathfinish g) = (pathstart g))) ==> (connected ((path_image g) DELETE a))) = T)
+T c= c==> c/\ csimple_path f0 c= cpathfinish f0 cpathstart f0 cconnected * * part cDELETE * part cpath_image f0 f1 cT
++ (((s x) /\ (~ (x = a))) /\ (~ (s x))) |- ((s x) ==> F)
+T c==> c/\ c/\ * f0 f1 c~ c= f1 f2 c~ * f0 f1 c==> * f0 f1 cF
++ |- ((t ==> t) = T)
+T c= c==> f0 f0 cT
++ |- ((t \/ t) = t)
+T c= c\/ f0 f0 f0
++ |- (((!p'. (!q'. (((connected ((path_image g) DIFF (a INSERT (a INSERT EMPTY)))) = p') ==> ((p' ==> ((connected ((path_image g) DELETE a)) = q')) ==> (((connected ((path_image g) DIFF (a INSERT (a INSERT EMPTY)))) ==> (connected ((path_image g) DELETE a))) = (p' ==> q')))))) ==> ((\p'. (!q'. (((connected ((path_image g) DIFF (a INSERT (a INSERT EMPTY)))) = p') ==> ((p' ==> ((connected ((path_image g) DELETE a)) = q')) ==> (((connected ((path_image g) DIFF (a INSERT (a INSERT EMPTY)))) ==> (connected ((path_image g) DELETE a))) = (p' ==> q')))))) p')) = ((\p'. (!q'. (((connected ((path_image g) DIFF (a INSERT (a INSERT EMPTY)))) = p') ==> ((p' ==> ((connected ((path_image g) DELETE a)) = q')) ==> (((connected ((path_image g) DIFF (a INSERT (a INSERT EMPTY)))) ==> (connected ((path_image g) DELETE a))) = (p' ==> q')))))) p'))
+T c= c==> ! ! c==> c= cconnected * * part cDIFF * part cpath_image f0 * * part cINSERT f1 * * part cINSERT f1 part cEMPTY b0 c==> c==> b0 c= cconnected * * part cDELETE * part cpath_image f0 f1 b1 c= c==> cconnected * * part cDIFF * part cpath_image f0 * * part cINSERT f1 * * part cINSERT f1 part cEMPTY cconnected * * part cDELETE * part cpath_image f0 f1 c==> b0 b1 * / ! c==> c= cconnected * * part cDIFF * part cpath_image f0 * * part cINSERT f1 * * part cINSERT f1 part cEMPTY b0 c==> c==> b0 c= cconnected * * part cDELETE * part cpath_image f0 f1 b1 c= c==> cconnected * * part cDIFF * part cpath_image f0 * * part cINSERT f1 * * part cINSERT f1 part cEMPTY cconnected * * part cDELETE * part cpath_image f0 f1 c==> b0 b1 f2 * / ! c==> c= cconnected * * part cDIFF * part cpath_image f0 * * part cINSERT f1 * * part cINSERT f1 part cEMPTY b0 c==> c==> b0 c= cconnected * * part cDELETE * part cpath_image f0 f1 b1 c= c==> cconnected * * part cDIFF * part cpath_image f0 * * part cINSERT f1 * * part cINSERT f1 part cEMPTY cconnected * * part cDELETE * part cpath_image f0 f1 c==> b0 b1 f2
++ |- ((\q'. ((((simple_path ((shiftpath t) g)) ==> (connected ((path_image ((shiftpath t) g)) DIFF ((pathstart ((shiftpath t) g)) INSERT ((pathfinish ((shiftpath t) g)) INSERT EMPTY))))) = p') ==> ((p' ==> ((connected ((path_image g) DELETE a)) = q')) ==> ((((simple_path ((shiftpath t) g)) ==> (connected ((path_image ((shiftpath t) g)) DIFF ((pathstart ((shiftpath t) g)) INSERT ((pathfinish ((shiftpath t) g)) INSERT EMPTY))))) ==> (connected ((path_image g) DELETE a))) = (p' ==> q'))))) q')
+T * / c==> c= c==> csimple_path * * part cshiftpath f0 f1 cconnected * * part cDIFF * part cpath_image * * part cshiftpath f0 f1 * * part cINSERT cpathstart * * part cshiftpath f0 f1 * * part cINSERT cpathfinish * * part cshiftpath f0 f1 part cEMPTY f2 c==> c==> f2 c= cconnected * * part cDELETE * part cpath_image f1 f3 b0 c= c==> c==> csimple_path * * part cshiftpath f0 f1 cconnected * * part cDIFF * part cpath_image * * part cshiftpath f0 f1 * * part cINSERT cpathstart * * part cshiftpath f0 f1 * * part cINSERT cpathfinish * * part cshiftpath f0 f1 part cEMPTY cconnected * * part cDELETE * part cpath_image f1 f3 c==> f2 b0 f4
++ (~ (s a)), (~ (((s x) /\ (~ (x = a))) = (s x))) |- ((~ (((s x) /\ (~ (x = a))) = (s x))) /\ F)
+T c==> c~ * f0 f1 c==> c~ c= c/\ * f0 f2 c~ c= f2 f1 * f0 f2 c/\ c~ c= c/\ * f0 f2 c~ c= f2 f1 * f0 f2 cF
+- (~ F), (~ (s x)), (((~ (s x)) \/ (x = a)) /\ (s x)) |- ((~ F) /\ F)
+T c==> c~ cF c==> c~ * f0 f1 c==> c/\ c\/ c~ * f0 f1 c= f1 f2 * f0 f1 c/\ c~ cF cF
++ (((~ (s x)) \/ (x = a)) /\ (s x)) |- ((~ (s x)) ==> F)
+T c==> c/\ c\/ c~ * f0 f1 c= f1 f2 * f0 f1 c==> c~ * f0 f1 cF
++ |- ((\p'. (!q'. ((((simple_path ((shiftpath t) g)) ==> (connected ((path_image ((shiftpath t) g)) DIFF ((pathstart ((shiftpath t) g)) INSERT ((pathfinish ((shiftpath t) g)) INSERT EMPTY))))) = p') ==> ((p' ==> ((connected ((path_image g) DELETE a)) = q')) ==> ((((simple_path ((shiftpath t) g)) ==> (connected ((path_image ((shiftpath t) g)) DIFF ((pathstart ((shiftpath t) g)) INSERT ((pathfinish ((shiftpath t) g)) INSERT EMPTY))))) ==> (connected ((path_image g) DELETE a))) = (p' ==> q')))))) p')
+T * / ! c==> c= c==> csimple_path * * part cshiftpath f0 f1 cconnected * * part cDIFF * part cpath_image * * part cshiftpath f0 f1 * * part cINSERT cpathstart * * part cshiftpath f0 f1 * * part cINSERT cpathfinish * * part cshiftpath f0 f1 part cEMPTY b0 c==> c==> b0 c= cconnected * * part cDELETE * part cpath_image f1 f2 b1 c= c==> c==> csimple_path * * part cshiftpath f0 f1 cconnected * * part cDIFF * part cpath_image * * part cshiftpath f0 f1 * * part cINSERT cpathstart * * part cshiftpath f0 f1 * * part cINSERT cpathfinish * * part cshiftpath f0 f1 part cEMPTY cconnected * * part cDELETE * part cpath_image f1 f2 c==> b0 b1 f3
++ (t IN (closed_interval ((CONS ((vec (NUMERAL _0)) , (vec (NUMERAL (BIT1 _0))))) NIL))) |- ((real_le (real_of_num (NUMERAL _0))) (drop t))
+T c==> cIN f0 * part cclosed_interval cCONS c, cvec cNUMERAL c_0 cvec cNUMERAL cBIT1 c_0 cNIL creal_le creal_of_num cNUMERAL c_0 cdrop f0
++ (simple_path g), ((pathfinish g) = (pathstart g)), (t IN (closed_interval ((CONS ((vec (NUMERAL _0)) , (vec (NUMERAL (BIT1 _0))))) NIL))) |- (T = ((simple_path g) /\ (((pathfinish g) = (pathstart g)) /\ (t IN (closed_interval ((CONS ((vec (NUMERAL _0)) , (vec (NUMERAL (BIT1 _0))))) NIL))))))
+T c==> csimple_path f0 c==> c= cpathfinish f0 cpathstart f0 c==> cIN f1 * part cclosed_interval cCONS c, cvec cNUMERAL c_0 cvec cNUMERAL cBIT1 c_0 cNIL c= cT c/\ csimple_path f0 c/\ c= cpathfinish f0 cpathstart f0 cIN f1 * part cclosed_interval cCONS c, cvec cNUMERAL c_0 cvec cNUMERAL cBIT1 c_0 cNIL
+- |- ((\t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))) t3)
+T * / c= c\/ f0 c\/ f1 b0 c\/ c\/ f0 f1 b0 f2
+- |- (((!a. ((~ ((~ (s a)) ==> (!x. (((s x) /\ (~ (x = a))) = (s x))))) ==> F)) ==> ((\a. ((~ ((~ (s a)) ==> (!x. (((s x) /\ (~ (x = a))) = (s x))))) ==> F)) a)) = ((\a. ((~ ((~ (s a)) ==> (!x. (((s x) /\ (~ (x = a))) = (s x))))) ==> F)) a))
+T c= c==> ! c==> c~ c==> c~ * f0 b0 ! c= c/\ * f0 b1 c~ c= b1 b0 * f0 b1 cF * / c==> c~ c==> c~ * f0 b0 ! c= c/\ * f0 b1 c~ c= b1 b0 * f0 b1 cF f1 * / c==> c~ c==> c~ * f0 b0 ! c= c/\ * f0 b1 c~ c= b1 b0 * f0 b1 cF f1
++ ((pathfinish g) = (pathstart g)), (t IN (closed_interval ((CONS ((vec (NUMERAL _0)) , (vec (NUMERAL (BIT1 _0))))) NIL))) |- (T = ((t IN (closed_interval ((CONS ((vec (NUMERAL _0)) , (vec (NUMERAL (BIT1 _0))))) NIL))) /\ ((pathfinish g) = (pathstart g))))
+T c==> c= cpathfinish f0 cpathstart f0 c==> cIN f1 * part cclosed_interval cCONS c, cvec cNUMERAL c_0 cvec cNUMERAL cBIT1 c_0 cNIL c= cT c/\ cIN f1 * part cclosed_interval cCONS c, cvec cNUMERAL c_0 cvec cNUMERAL cBIT1 c_0 cNIL c= cpathfinish f0 cpathstart f0
++ (simple_path g), ((pathfinish g) = (pathstart g)) |- (((a = (g t)) /\ (t IN (closed_interval ((CONS ((vec (NUMERAL _0)) , (vec (NUMERAL (BIT1 _0))))) NIL)))) ==> (connected ((path_image g) DELETE a)))
+T c==> csimple_path f0 c==> c= cpathfinish f0 cpathstart f0 c==> c/\ c= f1 * f0 f2 cIN f2 * part cclosed_interval cCONS c, cvec cNUMERAL c_0 cvec cNUMERAL cBIT1 c_0 cNIL cconnected * * part cDELETE * part cpath_image f0 f1
++ |- ((((connected ((path_image g) DIFF (a INSERT (a INSERT EMPTY)))) ==> ((connected ((path_image g) DELETE a)) = (connected ((path_image g) DELETE a)))) ==> (((connected ((path_image g) DIFF (a INSERT (a INSERT EMPTY)))) ==> (connected ((path_image g) DELETE a))) = ((connected ((path_image g) DIFF (a INSERT (a INSERT EMPTY)))) ==> (connected ((path_image g) DELETE a))))) = (((connected ((path_image g) DIFF (a INSERT (a INSERT EMPTY)))) ==> (connected ((path_image g) DELETE a))) = ((connected ((path_image g) DIFF (a INSERT (a INSERT EMPTY)))) ==> (connected ((path_image g) DELETE a)))))
+T c= c==> c==> cconnected * * part cDIFF * part cpath_image f0 * * part cINSERT f1 * * part cINSERT f1 part cEMPTY c= cconnected * * part cDELETE * part cpath_image f0 f1 cconnected * * part cDELETE * part cpath_image f0 f1 c= c==> cconnected * * part cDIFF * part cpath_image f0 * * part cINSERT f1 * * part cINSERT f1 part cEMPTY cconnected * * part cDELETE * part cpath_image f0 f1 c==> cconnected * * part cDIFF * part cpath_image f0 * * part cINSERT f1 * * part cINSERT f1 part cEMPTY cconnected * * part cDELETE * part cpath_image f0 f1 c= c==> cconnected * * part cDIFF * part cpath_image f0 * * part cINSERT f1 * * part cINSERT f1 part cEMPTY cconnected * * part cDELETE * part cpath_image f0 f1 c==> cconnected * * part cDIFF * part cpath_image f0 * * part cINSERT f1 * * part cINSERT f1 part cEMPTY cconnected * * part cDELETE * part cpath_image f0 f1
+- |- (((~ p) ==> p) = p)
+T c= c==> c~ f0 f0 f0
++ |- ((connected ((path_image g) DIFF (a INSERT (a INSERT EMPTY)))) ==> ((connected ((path_image g) DELETE a)) = (connected ((path_image g) DELETE a))))
+T c==> cconnected * * part cDIFF * part cpath_image f0 * * part cINSERT f1 * * part cINSERT f1 part cEMPTY c= cconnected * * part cDELETE * part cpath_image f0 f1 cconnected * * part cDELETE * part cpath_image f0 f1
++ |- ((((connected ((path_image g) DIFF ((pathstart ((shiftpath t) g)) INSERT ((pathfinish ((shiftpath t) g)) INSERT EMPTY)))) = (connected ((path_image g) DIFF ((pathstart ((shiftpath t) g)) INSERT ((pathfinish ((shiftpath t) g)) INSERT EMPTY))))) ==> (((connected ((path_image g) DIFF ((pathstart ((shiftpath t) g)) INSERT ((pathfinish ((shiftpath t) g)) INSERT EMPTY)))) ==> ((connected ((path_image g) DELETE a)) = q')) ==> (((connected ((path_image g) DIFF ((pathstart ((shiftpath t) g)) INSERT ((pathfinish ((shiftpath t) g)) INSERT EMPTY)))) ==> (connected ((path_image g) DELETE a))) = ((connected ((path_image g) DIFF ((pathstart ((shiftpath t) g)) INSERT ((pathfinish ((shiftpath t) g)) INSERT EMPTY)))) ==> q')))) = (((connected ((path_image g) DIFF ((pathstart ((shiftpath t) g)) INSERT ((pathfinish ((shiftpath t) g)) INSERT EMPTY)))) ==> ((connected ((path_image g) DELETE a)) = q')) ==> (((connected ((path_image g) DIFF ((pathstart ((shiftpath t) g)) INSERT ((pathfinish ((shiftpath t) g)) INSERT EMPTY)))) ==> (connected ((path_image g) DELETE a))) = ((connected ((path_image g) DIFF ((pathstart ((shiftpath t) g)) INSERT ((pathfinish ((shiftpath t) g)) INSERT EMPTY)))) ==> q'))))
+T c= c==> c= cconnected * * part cDIFF * part cpath_image f0 * * part cINSERT cpathstart * * part cshiftpath f1 f0 * * part cINSERT cpathfinish * * part cshiftpath f1 f0 part cEMPTY cconnected * * part cDIFF * part cpath_image f0 * * part cINSERT cpathstart * * part cshiftpath f1 f0 * * part cINSERT cpathfinish * * part cshiftpath f1 f0 part cEMPTY c==> c==> cconnected * * part cDIFF * part cpath_image f0 * * part cINSERT cpathstart * * part cshiftpath f1 f0 * * part cINSERT cpathfinish * * part cshiftpath f1 f0 part cEMPTY c= cconnected * * part cDELETE * part cpath_image f0 f2 f3 c= c==> cconnected * * part cDIFF * part cpath_image f0 * * part cINSERT cpathstart * * part cshiftpath f1 f0 * * part cINSERT cpathfinish * * part cshiftpath f1 f0 part cEMPTY cconnected * * part cDELETE * part cpath_image f0 f2 c==> cconnected * * part cDIFF * part cpath_image f0 * * part cINSERT cpathstart * * part cshiftpath f1 f0 * * part cINSERT cpathfinish * * part cshiftpath f1 f0 part cEMPTY f3 c==> c==> cconnected * * part cDIFF * part cpath_image f0 * * part cINSERT cpathstart * * part cshiftpath f1 f0 * * part cINSERT cpathfinish * * part cshiftpath f1 f0 part cEMPTY c= cconnected * * part cDELETE * part cpath_image f0 f2 f3 c= c==> cconnected * * part cDIFF * part cpath_image f0 * * part cINSERT cpathstart * * part cshiftpath f1 f0 * * part cINSERT cpathfinish * * part cshiftpath f1 f0 part cEMPTY cconnected * * part cDELETE * part cpath_image f0 f2 c==> cconnected * * part cDIFF * part cpath_image f0 * * part cINSERT cpathstart * * part cshiftpath f1 f0 * * part cINSERT cpathfinish * * part cshiftpath f1 f0 part cEMPTY f3
+- ((~ ((~ (s a)) ==> (!x. (((s x) /\ (~ (x = a))) = (s x))))) ==> F), (((~ ((~ (s a)) ==> (!x. (((s x) /\ (~ (x = a))) = (s x))))) ==> F) ==> ((~ ((~ (s a)) ==> (!x. (((s x) /\ (~ (x = a))) = (s x))))) ==> F)) |- (((~ ((~ (s a)) ==> (!x. (((s x) /\ (~ (x = a))) = (s x))))) ==> F) /\ ((~ ((~ (s a)) ==> (!x. (((s x) /\ (~ (x = a))) = (s x))))) ==> F))
+T c==> c==> c~ c==> c~ * f0 f1 ! c= c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF c==> c==> c==> c~ c==> c~ * f0 f1 ! c= c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF c==> c~ c==> c~ * f0 f1 ! c= c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF c/\ c==> c~ c==> c~ * f0 f1 ! c= c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF c==> c~ c==> c~ * f0 f1 ! c= c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF
++ (simple_path g) |- (((path g) ==> ((connected (path_image g)) = T)) = ((connected (path_image g)) = T))
+T c==> csimple_path f0 c= c==> cpath f0 c= cconnected * part cpath_image f0 cT c= cconnected * part cpath_image f0 cT
++ |- (T = (!x. ((x IN (s DIFF (a INSERT (a INSERT EMPTY)))) = (x IN (s DELETE a)))))
+T c= cT ! c= cIN b0 * * part cDIFF f0 * * part cINSERT f1 * * part cINSERT f1 part cEMPTY cIN b0 * * part cDELETE f0 f1
+- ((~ ((~ (s a)) ==> (!x. (((s x) /\ (~ (x = a))) = (s x))))) ==> F), (((~ ((~ (s a)) ==> (!x. (((s x) /\ (~ (x = a))) = (s x))))) ==> F) ==> ((~ ((~ (s a)) ==> (!x. (((s x) /\ (~ (x = a))) = (s x))))) ==> F)) |- ((((~ ((~ (s a)) ==> (!x. (((s x) /\ (~ (x = a))) = (s x))))) ==> F) ==> ((~ ((~ (s a)) ==> (!x. (((s x) /\ (~ (x = a))) = (s x))))) ==> F)) /\ ((~ ((~ (s a)) ==> (!x. (((s x) /\ (~ (x = a))) = (s x))))) ==> F))
+T c==> c==> c~ c==> c~ * f0 f1 ! c= c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF c==> c==> c==> c~ c==> c~ * f0 f1 ! c= c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF c==> c~ c==> c~ * f0 f1 ! c= c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF c/\ c==> c==> c~ c==> c~ * f0 f1 ! c= c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF c==> c~ c==> c~ * f0 f1 ! c= c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF c==> c~ c==> c~ * f0 f1 ! c= c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF
++ (t IN (closed_interval ((CONS ((vec (NUMERAL _0)) , (vec (NUMERAL (BIT1 _0))))) NIL))) |- ((t IN (closed_interval ((CONS ((vec (NUMERAL _0)) , (vec (NUMERAL (BIT1 _0))))) NIL))) = T)
+T c==> cIN f0 * part cclosed_interval cCONS c, cvec cNUMERAL c_0 cvec cNUMERAL cBIT1 c_0 cNIL c= cIN f0 * part cclosed_interval cCONS c, cvec cNUMERAL c_0 cvec cNUMERAL cBIT1 c_0 cNIL cT
++ |- (((connected ((path_image g) DIFF (a INSERT (a INSERT EMPTY)))) = p') ==> ((p' ==> ((connected ((path_image g) DELETE a)) = q')) ==> (((connected ((path_image g) DIFF (a INSERT (a INSERT EMPTY)))) ==> (connected ((path_image g) DELETE a))) = (p' ==> q'))))
+T c==> c= cconnected * * part cDIFF * part cpath_image f0 * * part cINSERT f1 * * part cINSERT f1 part cEMPTY f2 c==> c==> f2 c= cconnected * * part cDELETE * part cpath_image f0 f1 f3 c= c==> cconnected * * part cDIFF * part cpath_image f0 * * part cINSERT f1 * * part cINSERT f1 part cEMPTY cconnected * * part cDELETE * part cpath_image f0 f1 c==> f2 f3
++ |- (((!g. ((simple_path g) ==> (path g))) ==> ((\g. ((simple_path g) ==> (path g))) g)) = ((\g. ((simple_path g) ==> (path g))) g))
+T c= c==> ! c==> csimple_path b0 cpath b0 * / c==> csimple_path b0 cpath b0 f0 * / c==> csimple_path b0 cpath b0 f0
+- |- ((t ==> F) = (~ t))
+T c= c==> f0 cF c~ f0
++ |- (((!g. ((((real_le (real_of_num (NUMERAL _0))) (drop a)) /\ ((pathfinish g) = (pathstart g))) ==> ((pathfinish ((shiftpath a) g)) = (g a)))) ==> ((\g. ((((real_le (real_of_num (NUMERAL _0))) (drop a)) /\ ((pathfinish g) = (pathstart g))) ==> ((pathfinish ((shiftpath a) g)) = (g a)))) g)) = ((\g. ((((real_le (real_of_num (NUMERAL _0))) (drop a)) /\ ((pathfinish g) = (pathstart g))) ==> ((pathfinish ((shiftpath a) g)) = (g a)))) g))
+T c= c==> ! c==> c/\ creal_le creal_of_num cNUMERAL c_0 cdrop f0 c= cpathfinish b0 cpathstart b0 c= cpathfinish * * part cshiftpath f0 b0 * b0 f0 * / c==> c/\ creal_le creal_of_num cNUMERAL c_0 cdrop f0 c= cpathfinish b0 cpathstart b0 c= cpathfinish * * part cshiftpath f0 b0 * b0 f0 f1 * / c==> c/\ creal_le creal_of_num cNUMERAL c_0 cdrop f0 c= cpathfinish b0 cpathstart b0 c= cpathfinish * * part cshiftpath f0 b0 * b0 f0 f1
++ |- (((!x. (((x IN (closed_interval ((CONS (a , b)) NIL))) = (((real_le (drop a)) (drop x)) /\ ((real_le (drop x)) (drop b)))) /\ ((x IN (open_interval (a , b))) = (((real_lt (drop a)) (drop x)) /\ ((real_lt (drop x)) (drop b)))))) ==> ((\x. (((x IN (closed_interval ((CONS (a , b)) NIL))) = (((real_le (drop a)) (drop x)) /\ ((real_le (drop x)) (drop b)))) /\ ((x IN (open_interval (a , b))) = (((real_lt (drop a)) (drop x)) /\ ((real_lt (drop x)) (drop b)))))) x)) = ((\x. (((x IN (closed_interval ((CONS (a , b)) NIL))) = (((real_le (drop a)) (drop x)) /\ ((real_le (drop x)) (drop b)))) /\ ((x IN (open_interval (a , b))) = (((real_lt (drop a)) (drop x)) /\ ((real_lt (drop x)) (drop b)))))) x))
+T c= c==> ! c/\ c= cIN b0 * part cclosed_interval cCONS c, f0 f1 cNIL c/\ creal_le cdrop f0 cdrop b0 creal_le cdrop b0 cdrop f1 c= cIN b0 * part copen_interval c, f0 f1 c/\ creal_lt cdrop f0 cdrop b0 creal_lt cdrop b0 cdrop f1 * / c/\ c= cIN b0 * part cclosed_interval cCONS c, f0 f1 cNIL c/\ creal_le cdrop f0 cdrop b0 creal_le cdrop b0 cdrop f1 c= cIN b0 * part copen_interval c, f0 f1 c/\ creal_lt cdrop f0 cdrop b0 creal_lt cdrop b0 cdrop f1 f2 * / c/\ c= cIN b0 * part cclosed_interval cCONS c, f0 f1 cNIL c/\ creal_le cdrop f0 cdrop b0 creal_le cdrop b0 cdrop f1 c= cIN b0 * part copen_interval c, f0 f1 c/\ creal_lt cdrop f0 cdrop b0 creal_lt cdrop b0 cdrop f1 f2
++ (simple_path g), ((pathfinish g) = (pathstart g)), ((~ (a IN (path_image g))) ==> (connected ((path_image g) DELETE a))) |- (connected ((path_image g) DELETE a))
+T c==> csimple_path f0 c==> c= cpathfinish f0 cpathstart f0 c==> c==> c~ cIN f1 * part cpath_image f0 cconnected * * part cDELETE * part cpath_image f0 f1 cconnected * * part cDELETE * part cpath_image f0 f1
++ |- ((\y. (!s. (!f. ((y IN ((IMAGE f) s)) = (?x. ((y = (f x)) /\ (x IN s))))))) y)
+T * / ! ! c= cIN b0 * * part cIMAGE b2 b1 c? / c/\ c= b0 * b2 b3 cIN b3 b1 f0
++ |- (((~ (((s x) /\ (~ (x = a))) = (s x))) ==> F) = (((s x) /\ (~ (x = a))) = (s x)))
+T c= c==> c~ c= c/\ * f0 f1 c~ c= f1 f2 * f0 f1 cF c= c/\ * f0 f1 c~ c= f1 f2 * f0 f1
++ |- (p = ((~ p) ==> F))
+T c= f0 c==> c~ f0 cF
+- (t IN (closed_interval ((CONS ((vec (NUMERAL _0)) , (vec (NUMERAL (BIT1 _0))))) NIL))) |- (((real_le (drop t)) (real_of_num (NUMERAL (BIT1 _0)))) = T)
+T c==> cIN f0 * part cclosed_interval cCONS c, cvec cNUMERAL c_0 cvec cNUMERAL cBIT1 c_0 cNIL c= creal_le cdrop f0 creal_of_num cNUMERAL cBIT1 c_0 cT
++ |- ((((s x) /\ (~ (x = a))) /\ (~ (s x))) ==> F)
+T c==> c/\ c/\ * f0 f1 c~ c= f1 f2 c~ * f0 f1 cF
++ ((pathfinish g) = (pathstart g)), (t IN (closed_interval ((CONS ((vec (NUMERAL _0)) , (vec (NUMERAL (BIT1 _0))))) NIL))) |- (((((real_le (real_of_num (NUMERAL _0))) (drop t)) /\ ((pathfinish g) = (pathstart g))) ==> ((pathfinish ((shiftpath t) g)) = (g t))) = ((pathfinish ((shiftpath t) g)) = (g t)))
+T c==> c= cpathfinish f0 cpathstart f0 c==> cIN f1 * part cclosed_interval cCONS c, cvec cNUMERAL c_0 cvec cNUMERAL cBIT1 c_0 cNIL c= c==> c/\ creal_le creal_of_num cNUMERAL c_0 cdrop f1 c= cpathfinish f0 cpathstart f0 c= cpathfinish * * part cshiftpath f1 f0 * f0 f1 c= cpathfinish * * part cshiftpath f1 f0 * f0 f1
++ |- (((!q'. ((((simple_path ((shiftpath t) g)) ==> (connected ((path_image ((shiftpath t) g)) DIFF ((pathstart ((shiftpath t) g)) INSERT ((pathfinish ((shiftpath t) g)) INSERT EMPTY))))) = p') ==> ((p' ==> ((connected ((path_image g) DELETE a)) = q')) ==> ((((simple_path ((shiftpath t) g)) ==> (connected ((path_image ((shiftpath t) g)) DIFF ((pathstart ((shiftpath t) g)) INSERT ((pathfinish ((shiftpath t) g)) INSERT EMPTY))))) ==> (connected ((path_image g) DELETE a))) = (p' ==> q'))))) ==> ((\q'. ((((simple_path ((shiftpath t) g)) ==> (connected ((path_image ((shiftpath t) g)) DIFF ((pathstart ((shiftpath t) g)) INSERT ((pathfinish ((shiftpath t) g)) INSERT EMPTY))))) = p') ==> ((p' ==> ((connected ((path_image g) DELETE a)) = q')) ==> ((((simple_path ((shiftpath t) g)) ==> (connected ((path_image ((shiftpath t) g)) DIFF ((pathstart ((shiftpath t) g)) INSERT ((pathfinish ((shiftpath t) g)) INSERT EMPTY))))) ==> (connected ((path_image g) DELETE a))) = (p' ==> q'))))) q')) = ((\q'. ((((simple_path ((shiftpath t) g)) ==> (connected ((path_image ((shiftpath t) g)) DIFF ((pathstart ((shiftpath t) g)) INSERT ((pathfinish ((shiftpath t) g)) INSERT EMPTY))))) = p') ==> ((p' ==> ((connected ((path_image g) DELETE a)) = q')) ==> ((((simple_path ((shiftpath t) g)) ==> (connected ((path_image ((shiftpath t) g)) DIFF ((pathstart ((shiftpath t) g)) INSERT ((pathfinish ((shiftpath t) g)) INSERT EMPTY))))) ==> (connected ((path_image g) DELETE a))) = (p' ==> q'))))) q'))
+T c= c==> ! c==> c= c==> csimple_path * * part cshiftpath f0 f1 cconnected * * part cDIFF * part cpath_image * * part cshiftpath f0 f1 * * part cINSERT cpathstart * * part cshiftpath f0 f1 * * part cINSERT cpathfinish * * part cshiftpath f0 f1 part cEMPTY f2 c==> c==> f2 c= cconnected * * part cDELETE * part cpath_image f1 f3 b0 c= c==> c==> csimple_path * * part cshiftpath f0 f1 cconnected * * part cDIFF * part cpath_image * * part cshiftpath f0 f1 * * part cINSERT cpathstart * * part cshiftpath f0 f1 * * part cINSERT cpathfinish * * part cshiftpath f0 f1 part cEMPTY cconnected * * part cDELETE * part cpath_image f1 f3 c==> f2 b0 * / c==> c= c==> csimple_path * * part cshiftpath f0 f1 cconnected * * part cDIFF * part cpath_image * * part cshiftpath f0 f1 * * part cINSERT cpathstart * * part cshiftpath f0 f1 * * part cINSERT cpathfinish * * part cshiftpath f0 f1 part cEMPTY f2 c==> c==> f2 c= cconnected * * part cDELETE * part cpath_image f1 f3 b0 c= c==> c==> csimple_path * * part cshiftpath f0 f1 cconnected * * part cDIFF * part cpath_image * * part cshiftpath f0 f1 * * part cINSERT cpathstart * * part cshiftpath f0 f1 * * part cINSERT cpathfinish * * part cshiftpath f0 f1 part cEMPTY cconnected * * part cDELETE * part cpath_image f1 f3 c==> f2 b0 f4 * / c==> c= c==> csimple_path * * part cshiftpath f0 f1 cconnected * * part cDIFF * part cpath_image * * part cshiftpath f0 f1 * * part cINSERT cpathstart * * part cshiftpath f0 f1 * * part cINSERT cpathfinish * * part cshiftpath f0 f1 part cEMPTY f2 c==> c==> f2 c= cconnected * * part cDELETE * part cpath_image f1 f3 b0 c= c==> c==> csimple_path * * part cshiftpath f0 f1 cconnected * * part cDIFF * part cpath_image * * part cshiftpath f0 f1 * * part cINSERT cpathstart * * part cshiftpath f0 f1 * * part cINSERT cpathfinish * * part cshiftpath f0 f1 part cEMPTY cconnected * * part cDELETE * part cpath_image f1 f3 c==> f2 b0 f4
++ |- ((((simple_path ((shiftpath t) g)) ==> (connected ((path_image ((shiftpath t) g)) DIFF ((pathstart ((shiftpath t) g)) INSERT ((pathfinish ((shiftpath t) g)) INSERT EMPTY))))) = p') ==> ((p' ==> ((connected ((path_image g) DELETE a)) = q')) ==> ((((simple_path ((shiftpath t) g)) ==> (connected ((path_image ((shiftpath t) g)) DIFF ((pathstart ((shiftpath t) g)) INSERT ((pathfinish ((shiftpath t) g)) INSERT EMPTY))))) ==> (connected ((path_image g) DELETE a))) = (p' ==> q'))))
+T c==> c= c==> csimple_path * * part cshiftpath f0 f1 cconnected * * part cDIFF * part cpath_image * * part cshiftpath f0 f1 * * part cINSERT cpathstart * * part cshiftpath f0 f1 * * part cINSERT cpathfinish * * part cshiftpath f0 f1 part cEMPTY f2 c==> c==> f2 c= cconnected * * part cDELETE * part cpath_image f1 f3 f4 c= c==> c==> csimple_path * * part cshiftpath f0 f1 cconnected * * part cDIFF * part cpath_image * * part cshiftpath f0 f1 * * part cINSERT cpathstart * * part cshiftpath f0 f1 * * part cINSERT cpathfinish * * part cshiftpath f0 f1 part cEMPTY cconnected * * part cDELETE * part cpath_image f1 f3 c==> f2 f4
++ ((pathfinish g) = (pathstart g)), (t IN (closed_interval ((CONS ((vec (NUMERAL _0)) , (vec (NUMERAL (BIT1 _0))))) NIL))) |- (T ==> ((connected ((path_image ((shiftpath t) g)) DIFF ((pathstart ((shiftpath t) g)) INSERT ((pathfinish ((shiftpath t) g)) INSERT EMPTY)))) = (connected ((path_image g) DIFF ((pathstart ((shiftpath t) g)) INSERT ((pathfinish ((shiftpath t) g)) INSERT EMPTY))))))
+T c==> c= cpathfinish f0 cpathstart f0 c==> cIN f1 * part cclosed_interval cCONS c, cvec cNUMERAL c_0 cvec cNUMERAL cBIT1 c_0 cNIL c==> cT c= cconnected * * part cDIFF * part cpath_image * * part cshiftpath f1 f0 * * part cINSERT cpathstart * * part cshiftpath f1 f0 * * part cINSERT cpathfinish * * part cshiftpath f1 f0 part cEMPTY cconnected * * part cDIFF * part cpath_image f0 * * part cINSERT cpathstart * * part cshiftpath f1 f0 * * part cINSERT cpathfinish * * part cshiftpath f1 f0 part cEMPTY
++ |- ((\a. (!g. (((real_le (drop a)) (real_of_num (NUMERAL (BIT1 _0)))) ==> ((pathstart ((shiftpath a) g)) = (g a))))) a)
+T * / ! c==> creal_le cdrop b0 creal_of_num cNUMERAL cBIT1 c_0 c= cpathstart * * part cshiftpath b0 b1 * b1 b0 f0
+- |- ((\s. (!a. ((~ ((~ (s a)) ==> (!x. (((s x) /\ (~ (x = a))) = (s x))))) ==> F))) s)
+T * / ! c==> c~ c==> c~ * b0 b1 ! c= c/\ * b0 b2 c~ c= b2 b1 * b0 b2 cF f0
+- |- (((((~ ((~ (s a)) ==> (!x. (((s x) /\ (~ (x = a))) = (s x))))) ==> F) ==> ((~ ((~ (s a)) ==> (!x. (((s x) /\ (~ (x = a))) = (s x))))) ==> F)) ==> (((~ ((~ (s a)) ==> (!x. (((s x) /\ (~ (x = a))) = (s x))))) ==> F) ==> ((~ ((~ (s a)) ==> (!x. (((s x) /\ (~ (x = a))) = (s x))))) ==> F))) = (((~ ((~ (s a)) ==> (!x. (((s x) /\ (~ (x = a))) = (s x))))) ==> F) ==> ((~ ((~ (s a)) ==> (!x. (((s x) /\ (~ (x = a))) = (s x))))) ==> F)))
+T c= c==> c==> c==> c~ c==> c~ * f0 f1 ! c= c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF c==> c~ c==> c~ * f0 f1 ! c= c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF c==> c==> c~ c==> c~ * f0 f1 ! c= c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF c==> c~ c==> c~ * f0 f1 ! c= c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF c==> c==> c~ c==> c~ * f0 f1 ! c= c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF c==> c~ c==> c~ * f0 f1 ! c= c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF
++ ((simple_path g) /\ ((pathfinish g) = (pathstart g))) |- (((simple_path g) /\ ((pathfinish g) = (pathstart g))) /\ (connected ((path_image g) DELETE a)))
+T c==> c/\ csimple_path f0 c= cpathfinish f0 cpathstart f0 c/\ c/\ csimple_path f0 c= cpathfinish f0 cpathstart f0 cconnected * * part cDELETE * part cpath_image f0 f1
++ |- ((T ==> t) = t)
+T c= c==> cT f0 f0
+- |- ((!a. ((~ (s a)) ==> (!x. (((s x) /\ (~ (x = a))) = (s x))))) = T)
+T c= ! c==> c~ * f0 b0 ! c= c/\ * f0 b1 c~ c= b1 b0 * f0 b1 cT
+- |- ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))
+T c= c\/ f0 c\/ f1 f2 c\/ c\/ f0 f1 f2
++ |- (!x. ((x IN (s DIFF (a INSERT (a INSERT EMPTY)))) = (x IN (s DELETE a))))
+T c= cIN f0 * * part cDIFF f1 * * part cINSERT f2 * * part cINSERT f2 part cEMPTY cIN f0 * * part cDELETE f1 f2
++ (~ (s a)) |- ((~ (((s x) /\ (~ (x = a))) = (s x))) ==> F)
+T c==> c~ * f0 f1 c==> c~ c= c/\ * f0 f2 c~ c= f2 f1 * f0 f2 cF
++ ((a = (g t)) /\ (t IN (closed_interval ((CONS ((vec (NUMERAL _0)) , (vec (NUMERAL (BIT1 _0))))) NIL)))) |- (t IN (closed_interval ((CONS ((vec (NUMERAL _0)) , (vec (NUMERAL (BIT1 _0))))) NIL)))
+T c==> c/\ c= f0 * f1 f2 cIN f2 * part cclosed_interval cCONS c, cvec cNUMERAL c_0 cvec cNUMERAL cBIT1 c_0 cNIL cIN f2 * part cclosed_interval cCONS c, cvec cNUMERAL c_0 cvec cNUMERAL cBIT1 c_0 cNIL
++ (connected ((path_image g) DIFF (a INSERT (a INSERT EMPTY)))) |- ((connected ((path_image g) DIFF (a INSERT (a INSERT EMPTY)))) /\ ((connected ((path_image g) DELETE a)) = (connected ((path_image g) DELETE a))))
+T c==> cconnected * * part cDIFF * part cpath_image f0 * * part cINSERT f1 * * part cINSERT f1 part cEMPTY c/\ cconnected * * part cDIFF * part cpath_image f0 * * part cINSERT f1 * * part cINSERT f1 part cEMPTY c= cconnected * * part cDELETE * part cpath_image f0 f1 cconnected * * part cDELETE * part cpath_image f0 f1
+- T |- (T = T)
+T c==> cT c= cT cT
+- (~ F), (((s x) /\ (~ (x = a))) /\ (~ (s x))) |- ((~ F) /\ F)
+T c==> c~ cF c==> c/\ c/\ * f0 f1 c~ c= f1 f2 c~ * f0 f1 c/\ c~ cF cF
+- (((s x) /\ (~ (x = a))) /\ (~ (s x))) |- ((~ (s x)) ==> (s x))
+T c==> c/\ c/\ * f0 f1 c~ c= f1 f2 c~ * f0 f1 c==> c~ * f0 f1 * f0 f1
++ (~ (s a)), (((~ (s x)) \/ (x = a)) /\ (s x)) |- ((x = a) ==> F)
+T c==> c~ * f0 f1 c==> c/\ c\/ c~ * f0 f2 c= f2 f1 * f0 f2 c==> c= f2 f1 cF
+- |- ((!s. (!a. ((~ (s a)) ==> (!x. (((s x) /\ (~ (x = a))) = (s x)))))) = (!s. (!a. ((~ ((~ (s a)) ==> (!x. (((s x) /\ (~ (x = a))) = (s x))))) ==> F))))
+T c= ! ! c==> c~ * b0 b1 ! c= c/\ * b0 b2 c~ c= b2 b1 * b0 b2 ! ! c==> c~ c==> c~ * b0 b1 ! c= c/\ * b0 b2 c~ c= b2 b1 * b0 b2 cF
+- (~ ((~ (s a)) ==> (!x. (((s x) /\ (~ (x = a))) = (s x))))) |- ((~ ((~ (s a)) ==> (!x. (((s x) /\ (~ (x = a))) = (s x))))) /\ F)
+T c==> c~ c==> c~ * f0 f1 ! c= c/\ * f0 b0 c~ c= b0 f1 * f0 b0 c/\ c~ c==> c~ * f0 f1 ! c= c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF
++ (((s x) /\ (~ (x = a))) /\ (~ (s x))) |- (s x)
+T c==> c/\ c/\ * f0 f1 c~ c= f1 f2 c~ * f0 f1 * f0 f1
++ (~ (s a)) |- ((s a) ==> F)
+T c==> c~ * f0 f1 c==> * f0 f1 cF
+- (((~ (s x)) \/ (x = a)) /\ (s x)) |- ((~ (s x)) ==> (s x))
+T c==> c/\ c\/ c~ * f0 f1 c= f1 f2 * f0 f1 c==> c~ * f0 f1 * f0 f1
+- (~ F), (~ (s a)), (x = a), (((~ (s x)) \/ (x = a)) /\ (s x)) |- ((~ F) /\ F)
+T c==> c~ cF c==> c~ * f0 f1 c==> c= f2 f1 c==> c/\ c\/ c~ * f0 f2 c= f2 f1 * f0 f2 c/\ c~ cF cF
++ ((a = (g t)) /\ (t IN (closed_interval ((CONS ((vec (NUMERAL _0)) , (vec (NUMERAL (BIT1 _0))))) NIL)))) |- ((g t) = a)
+T c==> c/\ c= f0 * f1 f2 cIN f2 * part cclosed_interval cCONS c, cvec cNUMERAL c_0 cvec cNUMERAL cBIT1 c_0 cNIL c= * f1 f2 f0
++ (t IN (closed_interval ((CONS ((vec (NUMERAL _0)) , (vec (NUMERAL (BIT1 _0))))) NIL))) |- (((real_le (real_of_num (NUMERAL _0))) (drop t)) = T)
+T c==> cIN f0 * part cclosed_interval cCONS c, cvec cNUMERAL c_0 cvec cNUMERAL cBIT1 c_0 cNIL c= creal_le creal_of_num cNUMERAL c_0 cdrop f0 cT
++ (~ (a IN (path_image g))), (simple_path g) |- (connected ((path_image g) DELETE a))
+T c==> c~ cIN f0 * part cpath_image f1 c==> csimple_path f1 cconnected * * part cDELETE * part cpath_image f1 f0
++ |- ((!q'. ((p = p') ==> ((p' ==> (q = q')) ==> ((p ==> q) = (p' ==> q'))))) = T)
+T c= ! c==> c= f0 f1 c==> c==> f1 c= f2 b0 c= c==> f0 f2 c==> f1 b0 cT
++ |- (((!t. (t \/ (~ t))) ==> ((\t. (t \/ (~ t))) (a IN (path_image g)))) = ((\t. (t \/ (~ t))) (a IN (path_image g))))
+T c= c==> ! c\/ b0 c~ b0 * / c\/ b0 c~ b0 cIN f0 * part cpath_image f1 * / c\/ b0 c~ b0 cIN f0 * part cpath_image f1
++ (~ (((s x) /\ (~ (x = a))) = (s x))) |- ((((s x) /\ (~ (x = a))) /\ (~ (s x))) \/ (((~ (s x)) \/ (x = a)) /\ (s x)))
+T c==> c~ c= c/\ * f0 f1 c~ c= f1 f2 * f0 f1 c\/ c/\ c/\ * f0 f1 c~ c= f1 f2 c~ * f0 f1 c/\ c\/ c~ * f0 f1 c= f1 f2 * f0 f1
++ |- ((\q'. (((connected ((path_image g) DIFF ((pathstart ((shiftpath t) g)) INSERT ((pathfinish ((shiftpath t) g)) INSERT EMPTY)))) = p') ==> ((p' ==> ((connected ((path_image g) DELETE a)) = q')) ==> (((connected ((path_image g) DIFF ((pathstart ((shiftpath t) g)) INSERT ((pathfinish ((shiftpath t) g)) INSERT EMPTY)))) ==> (connected ((path_image g) DELETE a))) = (p' ==> q'))))) q')
+T * / c==> c= cconnected * * part cDIFF * part cpath_image f0 * * part cINSERT cpathstart * * part cshiftpath f1 f0 * * part cINSERT cpathfinish * * part cshiftpath f1 f0 part cEMPTY f2 c==> c==> f2 c= cconnected * * part cDELETE * part cpath_image f0 f3 b0 c= c==> cconnected * * part cDIFF * part cpath_image f0 * * part cINSERT cpathstart * * part cshiftpath f1 f0 * * part cINSERT cpathfinish * * part cshiftpath f1 f0 part cEMPTY cconnected * * part cDELETE * part cpath_image f0 f3 c==> f2 b0 f4
++ |- ((\g. ((path g) ==> (connected (path_image g)))) g)
+T * / c==> cpath b0 cconnected * part cpath_image b0 f0
++ (t IN (closed_interval ((CONS ((vec (NUMERAL _0)) , (vec (NUMERAL (BIT1 _0))))) NIL))) |- ((pathstart ((shiftpath t) g)) = (g t))
+T c==> cIN f0 * part cclosed_interval cCONS c, cvec cNUMERAL c_0 cvec cNUMERAL cBIT1 c_0 cNIL c= cpathstart * * part cshiftpath f0 f1 * f1 f0
+- |- ((_592737 = _592738) ==> ((s _592738) \/ (~ (s _592737))))
+T c==> c= f0 f1 c\/ * f2 f1 c~ * f2 f0
++ (simple_path g) |- ((connected (path_image g)) = T)
+T c==> csimple_path f0 c= cconnected * part cpath_image f0 cT
++ ((pathfinish g) = (pathstart g)), (t IN (closed_interval ((CONS ((vec (NUMERAL _0)) , (vec (NUMERAL (BIT1 _0))))) NIL))) |- ((path_image ((shiftpath t) g)) = (path_image g))
+T c==> c= cpathfinish f0 cpathstart f0 c==> cIN f1 * part cclosed_interval cCONS c, cvec cNUMERAL c_0 cvec cNUMERAL cBIT1 c_0 cNIL c= * part cpath_image * * part cshiftpath f1 f0 * part cpath_image f0
+- |- ((\t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3)))) t2)
+T * / ! c= c\/ f0 c\/ b0 b1 c\/ c\/ f0 b0 b1 f1
++ (a IN (path_image g)) |- (((?x. ((a = (g x)) /\ (x IN (closed_interval ((CONS ((vec (NUMERAL _0)) , (vec (NUMERAL (BIT1 _0))))) NIL))))) ==> (connected ((path_image g) DELETE a))) = (connected ((path_image g) DELETE a)))
+T c==> cIN f0 * part cpath_image f1 c= c==> c? / c/\ c= f0 * f1 b0 cIN b0 * part cclosed_interval cCONS c, cvec cNUMERAL c_0 cvec cNUMERAL cBIT1 c_0 cNIL cconnected * * part cDELETE * part cpath_image f1 f0 cconnected * * part cDELETE * part cpath_image f1 f0
++ |- (((!f. ((y IN ((IMAGE f) s)) = (?x. ((y = (f x)) /\ (x IN s))))) ==> ((\f. ((y IN ((IMAGE f) s)) = (?x. ((y = (f x)) /\ (x IN s))))) f)) = ((\f. ((y IN ((IMAGE f) s)) = (?x. ((y = (f x)) /\ (x IN s))))) f))
+T c= c==> ! c= cIN f0 * * part cIMAGE b0 f1 c? / c/\ c= f0 * b0 b1 cIN b1 f1 * / c= cIN f0 * * part cIMAGE b0 f1 c? / c/\ c= f0 * b0 b1 cIN b1 f1 f2 * / c= cIN f0 * * part cIMAGE b0 f1 c? / c/\ c= f0 * b0 b1 cIN b1 f1 f2
++ (simple_path g) |- (T = (path g))
+T c==> csimple_path f0 c= cT cpath f0
++ (~ (a IN (path_image g))), (simple_path g) |- (T = (connected ((path_image g) DELETE a)))
+T c==> c~ cIN f0 * part cpath_image f1 c==> csimple_path f1 c= cT cconnected * * part cDELETE * part cpath_image f1 f0
++ (simple_path g), ((pathfinish g) = (pathstart g)) |- ((a IN (path_image g)) ==> (connected ((path_image g) DELETE a)))
+T c==> csimple_path f0 c==> c= cpathfinish f0 cpathstart f0 c==> cIN f1 * part cpath_image f0 cconnected * * part cDELETE * part cpath_image f0 f1
++ |- ((!x. ((x IN (s DIFF (a INSERT (a INSERT EMPTY)))) = (x IN (s DELETE a)))) = ((s DIFF (a INSERT (a INSERT EMPTY))) = (s DELETE a)))
+T c= ! c= cIN b0 * * part cDIFF f0 * * part cINSERT f1 * * part cINSERT f1 part cEMPTY cIN b0 * * part cDELETE f0 f1 c= * * part cDIFF f0 * * part cINSERT f1 * * part cINSERT f1 part cEMPTY * * part cDELETE f0 f1
+- (~ (s x)), (((~ (s x)) \/ (x = a)) /\ (s x)) |- ((~ F) ==> F)
+T c==> c~ * f0 f1 c==> c/\ c\/ c~ * f0 f1 c= f1 f2 * f0 f1 c==> c~ cF cF
+- |- (((~ ((~ (s a)) ==> (!x. (((s x) /\ (~ (x = a))) = (s x))))) ==> F) = ((~ (s a)) ==> (!x. (((s x) /\ (~ (x = a))) = (s x)))))
+T c= c==> c~ c==> c~ * f0 f1 ! c= c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF c==> c~ * f0 f1 ! c= c/\ * f0 b0 c~ c= b0 f1 * f0 b0
+- (t IN (closed_interval ((CONS ((vec (NUMERAL _0)) , (vec (NUMERAL (BIT1 _0))))) NIL))) |- (T = ((real_le (drop t)) (real_of_num (NUMERAL (BIT1 _0)))))
+T c==> cIN f0 * part cclosed_interval cCONS c, cvec cNUMERAL c_0 cvec cNUMERAL cBIT1 c_0 cNIL c= cT creal_le cdrop f0 creal_of_num cNUMERAL cBIT1 c_0
++ (simple_path g), ((pathfinish g) = (pathstart g)) |- ((((\x. ((a = (g x)) /\ (x IN (closed_interval ((CONS ((vec (NUMERAL _0)) , (vec (NUMERAL (BIT1 _0))))) NIL))))) t) ==> (connected ((path_image g) DELETE a))) = T)
+T c==> csimple_path f0 c==> c= cpathfinish f0 cpathstart f0 c= c==> * / c/\ c= f1 * f0 b0 cIN b0 * part cclosed_interval cCONS c, cvec cNUMERAL c_0 cvec cNUMERAL cBIT1 c_0 cNIL f2 cconnected * * part cDELETE * part cpath_image f0 f1 cT
++ (simple_path g), ((pathfinish g) = (pathstart g)) |- (((\x. ((a = (g x)) /\ (x IN (closed_interval ((CONS ((vec (NUMERAL _0)) , (vec (NUMERAL (BIT1 _0))))) NIL))))) t) ==> (connected ((path_image g) DELETE a)))
+T c==> csimple_path f0 c==> c= cpathfinish f0 cpathstart f0 c==> * / c/\ c= f1 * f0 b0 cIN b0 * part cclosed_interval cCONS c, cvec cNUMERAL c_0 cvec cNUMERAL cBIT1 c_0 cNIL f2 cconnected * * part cDELETE * part cpath_image f0 f1
+- (((~ ((~ (s a)) ==> (!x. (((s x) /\ (~ (x = a))) = (s x))))) ==> F) ==> ((~ ((~ (s a)) ==> (!x. (((s x) /\ (~ (x = a))) = (s x))))) ==> F)) |- ((((~ ((~ (s a)) ==> (!x. (((s x) /\ (~ (x = a))) = (s x))))) ==> F) ==> ((~ ((~ (s a)) ==> (!x. (((s x) /\ (~ (x = a))) = (s x))))) ==> F)) /\ (((~ ((~ (s a)) ==> (!x. (((s x) /\ (~ (x = a))) = (s x))))) ==> F) ==> ((~ ((~ (s a)) ==> (!x. (((s x) /\ (~ (x = a))) = (s x))))) ==> F)))
+T c==> c==> c==> c~ c==> c~ * f0 f1 ! c= c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF c==> c~ c==> c~ * f0 f1 ! c= c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF c/\ c==> c==> c~ c==> c~ * f0 f1 ! c= c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF c==> c~ c==> c~ * f0 f1 ! c= c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF c==> c==> c~ c==> c~ * f0 f1 ! c= c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF c==> c~ c==> c~ * f0 f1 ! c= c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF
+- (a IN (path_image g)) |- (F = (~ (a IN (path_image g))))
+T c==> cIN f0 * part cpath_image f1 c= cF c~ cIN f0 * part cpath_image f1
+- |- (((!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3)))) ==> ((\t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3)))) t2)) = ((\t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3)))) t2))
+T c= c==> ! ! c= c\/ f0 c\/ b0 b1 c\/ c\/ f0 b0 b1 * / ! c= c\/ f0 c\/ b0 b1 c\/ c\/ f0 b0 b1 f1 * / ! c= c\/ f0 c\/ b0 b1 c\/ c\/ f0 b0 b1 f1
+- (((real_le (real_of_num (NUMERAL _0))) (drop a)) /\ ((pathfinish g) = (pathstart g))) |- ((((real_le (real_of_num (NUMERAL _0))) (drop a)) /\ ((pathfinish g) = (pathstart g))) /\ ((pathfinish ((shiftpath a) g)) = (g a)))
+T c==> c/\ creal_le creal_of_num cNUMERAL c_0 cdrop f0 c= cpathfinish f1 cpathstart f1 c/\ c/\ creal_le creal_of_num cNUMERAL c_0 cdrop f0 c= cpathfinish f1 cpathstart f1 c= cpathfinish * * part cshiftpath f0 f1 * f1 f0
+- ((~ ((~ (s a)) ==> (!x. (((s x) /\ (~ (x = a))) = (s x))))) ==> F) |- ((((~ ((~ (s a)) ==> (!x. (((s x) /\ (~ (x = a))) = (s x))))) ==> F) ==> ((~ ((~ (s a)) ==> (!x. (((s x) /\ (~ (x = a))) = (s x))))) ==> F)) ==> ((~ ((~ (s a)) ==> (!x. (((s x) /\ (~ (x = a))) = (s x))))) ==> F))
+T c==> c==> c~ c==> c~ * f0 f1 ! c= c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF c==> c==> c==> c~ c==> c~ * f0 f1 ! c= c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF c==> c~ c==> c~ * f0 f1 ! c= c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF c==> c~ c==> c~ * f0 f1 ! c= c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF
+- |- ((a ==> b) = ((~ a) \/ b))
+T c= c==> f0 f1 c\/ c~ f0 f1
+- (((s x) /\ (~ (x = a))) /\ (~ (s x))) |- (~ (x = a))
+T c==> c/\ c/\ * f0 f1 c~ c= f1 f2 c~ * f0 f1 c~ c= f1 f2
+- (~ (s a)), (x = a), (((~ (s x)) \/ (x = a)) /\ (s x)) |- ((~ F) ==> F)
+T c==> c~ * f0 f1 c==> c= f2 f1 c==> c/\ c\/ c~ * f0 f2 c= f2 f1 * f0 f2 c==> c~ cF cF
+- |- (((!s. (!a. ((~ ((~ (s a)) ==> (!x. (((s x) /\ (~ (x = a))) = (s x))))) ==> F))) ==> ((\s. (!a. ((~ ((~ (s a)) ==> (!x. (((s x) /\ (~ (x = a))) = (s x))))) ==> F))) s)) = ((\s. (!a. ((~ ((~ (s a)) ==> (!x. (((s x) /\ (~ (x = a))) = (s x))))) ==> F))) s))
+T c= c==> ! ! c==> c~ c==> c~ * b0 b1 ! c= c/\ * b0 b2 c~ c= b2 b1 * b0 b2 cF * / ! c==> c~ c==> c~ * b0 b1 ! c= c/\ * b0 b2 c~ c= b2 b1 * b0 b2 cF f0 * / ! c==> c~ c==> c~ * b0 b1 ! c= c/\ * b0 b2 c~ c= b2 b1 * b0 b2 cF f0
+- (_592737 = _592738) |- ((_592737 = _592738) /\ ((s _592738) \/ (~ (s _592737))))
+T c==> c= f0 f1 c/\ c= f0 f1 c\/ * f2 f1 c~ * f2 f0
+- (~ (a IN (path_image g))) |- ((a IN (path_image g)) = F)
+T c==> c~ cIN f0 * part cpath_image f1 c= cIN f0 * part cpath_image f1 cF
+- |- ((x IN (open_interval (a , b))) = (((real_lt (drop a)) (drop x)) /\ ((real_lt (drop x)) (drop b))))
+T c= cIN f0 * part copen_interval c, f1 f2 c/\ creal_lt cdrop f1 cdrop f0 creal_lt cdrop f0 cdrop f2
+- (x = a) |- (F = F)
+T c==> c= f0 f1 c= cF cF
+- |- ((((~ ((~ (s a)) ==> (!x. (((s x) /\ (~ (x = a))) = (s x))))) ==> F) ==> ((~ ((~ (s a)) ==> (!x. (((s x) /\ (~ (x = a))) = (s x))))) ==> F)) ==> (((~ ((~ (s a)) ==> (!x. (((s x) /\ (~ (x = a))) = (s x))))) ==> F) ==> ((~ ((~ (s a)) ==> (!x. (((s x) /\ (~ (x = a))) = (s x))))) ==> F)))
+T c==> c==> c==> c~ c==> c~ * f0 f1 ! c= c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF c==> c~ c==> c~ * f0 f1 ! c= c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF c==> c==> c~ c==> c~ * f0 f1 ! c= c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF c==> c~ c==> c~ * f0 f1 ! c= c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF
+- |- (((t1 \/ t2) \/ t3) = (t1 \/ (t2 \/ t3)))
+T c= c\/ c\/ f0 f1 f2 c\/ f0 c\/ f1 f2
+- ((~ ((~ (s a)) ==> (!x. (((s x) /\ (~ (x = a))) = (s x))))) ==> F) |- (((~ ((~ (s a)) ==> (!x. (((s x) /\ (~ (x = a))) = (s x))))) ==> F) /\ ((~ ((~ (s a)) ==> (!x. (((s x) /\ (~ (x = a))) = (s x))))) ==> F))
+T c==> c==> c~ c==> c~ * f0 f1 ! c= c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF c/\ c==> c~ c==> c~ * f0 f1 ! c= c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF c==> c~ c==> c~ * f0 f1 ! c= c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF
+- ((a IN (closed_interval ((CONS ((vec (NUMERAL _0)) , (vec (NUMERAL (BIT1 _0))))) NIL))) /\ ((pathfinish g) = (pathstart g))) |- (((a IN (closed_interval ((CONS ((vec (NUMERAL _0)) , (vec (NUMERAL (BIT1 _0))))) NIL))) /\ ((pathfinish g) = (pathstart g))) /\ ((path_image ((shiftpath a) g)) = (path_image g)))
+T c==> c/\ cIN f0 * part cclosed_interval cCONS c, cvec cNUMERAL c_0 cvec cNUMERAL cBIT1 c_0 cNIL c= cpathfinish f1 cpathstart f1 c/\ c/\ cIN f0 * part cclosed_interval cCONS c, cvec cNUMERAL c_0 cvec cNUMERAL cBIT1 c_0 cNIL c= cpathfinish f1 cpathstart f1 c= * part cpath_image * * part cshiftpath f0 f1 * part cpath_image f1
+- (((s x) /\ (~ (x = a))) /\ (~ (s x))) |- ((~ F) ==> F)
+T c==> c/\ c/\ * f0 f1 c~ c= f1 f2 c~ * f0 f1 c==> c~ cF cF
+- |- (((~ ((~ (s a)) ==> (!x. (((s x) /\ (~ (x = a))) = (s x))))) ==> F) ==> ((~ ((~ (s a)) ==> (!x. (((s x) /\ (~ (x = a))) = (s x))))) ==> F))
+T c==> c==> c~ c==> c~ * f0 f1 ! c= c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF c==> c~ c==> c~ * f0 f1 ! c= c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF
+- (~ (s a)), (x = a), (((~ (s x)) \/ (x = a)) /\ (s x)) |- ((~ (s a)) /\ (s a))
+T c==> c~ * f0 f1 c==> c= f2 f1 c==> c/\ c\/ c~ * f0 f2 c= f2 f1 * f0 f2 c/\ c~ * f0 f1 * f0 f1
+- (~ (a IN s)) |- ((~ (a IN s)) /\ ((s DELETE a) = s))
+T c==> c~ cIN f0 f1 c/\ c~ cIN f0 f1 c= * * part cDELETE f1 f0 f1
+- |- (((!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))) ==> ((\t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))) t3)) = ((\t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))) t3))
+T c= c==> ! c= c\/ f0 c\/ f1 b0 c\/ c\/ f0 f1 b0 * / c= c\/ f0 c\/ f1 b0 c\/ c\/ f0 f1 b0 f2 * / c= c\/ f0 c\/ f1 b0 c\/ c\/ f0 f1 b0 f2
+- ((real_le (drop a)) (real_of_num (NUMERAL (BIT1 _0)))) |- (((real_le (drop a)) (real_of_num (NUMERAL (BIT1 _0)))) /\ ((pathstart ((shiftpath a) g)) = (g a)))
+T c==> creal_le cdrop f0 creal_of_num cNUMERAL cBIT1 c_0 c/\ creal_le cdrop f0 creal_of_num cNUMERAL cBIT1 c_0 c= cpathstart * * part cshiftpath f0 f1 * f1 f0
+- |- ((t /\ t) = t)
+T c= c/\ f0 f0 f0
+- |- ((a = b) ==> (b \/ (~ a)))
+T c==> c= f0 f1 c\/ f1 c~ f0
+- |- ((~ T) = F)
+T c= c~ cT cF
+- (x = a), (((~ (s x)) \/ (x = a)) /\ (s x)) |- ((~ (s a)) ==> (s a))
+T c==> c= f0 f1 c==> c/\ c\/ c~ * f2 f0 c= f0 f1 * f2 f0 c==> c~ * f2 f1 * f2 f1
+- (x = a) |- ((~ (s a)) = (~ (s a)))
+T c==> c= f0 f1 c= c~ * f2 f1 c~ * f2 f1
+- |- ((\a. ((~ ((~ (s a)) ==> (!x. (((s x) /\ (~ (x = a))) = (s x))))) ==> F)) a)
+T * / c==> c~ c==> c~ * f0 b0 ! c= c/\ * f0 b1 c~ c= b1 b0 * f0 b1 cF f1
+- |- ((((~ ((~ (s a)) ==> (!x. (((s x) /\ (~ (x = a))) = (s x))))) ==> F) ==> ((~ ((~ (s a)) ==> (!x. (((s x) /\ (~ (x = a))) = (s x))))) ==> F)) = ((~ ((~ (s a)) ==> (!x. (((s x) /\ (~ (x = a))) = (s x))))) ==> F))
+T c= c==> c==> c~ c==> c~ * f0 f1 ! c= c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF c==> c~ c==> c~ * f0 f1 ! c= c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF c==> c~ c==> c~ * f0 f1 ! c= c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF
+- |- ((~ F) = T)
+T c= c~ cF cT
+- |- ((!x. (P x)) = ((P T) /\ (P F)))
+T c= ! * f0 b0 c/\ * f0 cT * f0 cF
+- |- (((!t1. (!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))))) ==> ((\t1. (!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))))) t1)) = ((\t1. (!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))))) t1))
+T c= c==> ! ! ! c= c\/ b0 c\/ b1 b2 c\/ c\/ b0 b1 b2 * / ! ! c= c\/ b0 c\/ b1 b2 c\/ c\/ b0 b1 b2 f0 * / ! ! c= c\/ b0 c\/ b1 b2 c\/ c\/ b0 b1 b2 f0
+- |- ((~ (~ t)) = t)
+T c= c~ c~ f0 f0
+- (?x. ((a = (g x)) /\ (x IN (closed_interval ((CONS ((vec (NUMERAL _0)) , (vec (NUMERAL (BIT1 _0))))) NIL))))), (simple_path g), ((pathfinish g) = (pathstart g)) |- (connected ((path_image g) DELETE a))
+T c==> c? / c/\ c= f0 * f1 b0 cIN b0 * part cclosed_interval cCONS c, cvec cNUMERAL c_0 cvec cNUMERAL cBIT1 c_0 cNIL c==> csimple_path f1 c==> c= cpathfinish f1 cpathstart f1 cconnected * * part cDELETE * part cpath_image f1 f0
+- T |- ((T = T) = T)
+T c==> cT c= c= cT cT cT
+- (~ (s x)), (((~ (s x)) \/ (x = a)) /\ (s x)) |- ((~ (s x)) /\ (s x))
+T c==> c~ * f0 f1 c==> c/\ c\/ c~ * f0 f1 c= f1 f2 * f0 f1 c/\ c~ * f0 f1 * f0 f1
+- (~ ((~ (s a)) ==> (!x. (((s x) /\ (~ (x = a))) = (s x))))) |- F
+T c==> c~ c==> c~ * f0 f1 ! c= c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cF
+- (connected ((path_image g) DIFF (a INSERT (a INSERT EMPTY)))) |- ((connected ((path_image g) DIFF (a INSERT (a INSERT EMPTY)))) = T)
+T c==> cconnected * * part cDIFF * part cpath_image f0 * * part cINSERT f1 * * part cINSERT f1 part cEMPTY c= cconnected * * part cDIFF * part cpath_image f0 * * part cINSERT f1 * * part cINSERT f1 part cEMPTY cT
+- (~ (a IN (path_image g))) |- (T = (~ (a IN (path_image g))))
+T c==> c~ cIN f0 * part cpath_image f1 c= cT c~ cIN f0 * part cpath_image f1
+- (connected ((path_image g) DIFF ((pathstart ((shiftpath t) g)) INSERT ((pathfinish ((shiftpath t) g)) INSERT EMPTY)))) |- ((connected ((path_image g) DIFF ((pathstart ((shiftpath t) g)) INSERT ((pathfinish ((shiftpath t) g)) INSERT EMPTY)))) = T)
+T c==> cconnected * * part cDIFF * part cpath_image f0 * * part cINSERT cpathstart * * part cshiftpath f1 f0 * * part cINSERT cpathfinish * * part cshiftpath f1 f0 part cEMPTY c= cconnected * * part cDIFF * part cpath_image f0 * * part cINSERT cpathstart * * part cshiftpath f1 f0 * * part cINSERT cpathfinish * * part cshiftpath f1 f0 part cEMPTY cT
+- (_592737 = _592738) |- ((((s _592737) = (s _592738)) ==> ((s _592738) \/ (~ (s _592737)))) = ((s _592738) \/ (~ (s _592737))))
+T c==> c= f0 f1 c= c==> c= * f2 f0 * f2 f1 c\/ * f2 f1 c~ * f2 f0 c\/ * f2 f1 c~ * f2 f0
+- |- ((~ (_592737 = _592738)) \/ ((s _592738) \/ (~ (s _592737))))
+T c\/ c~ c= f0 f1 c\/ * f2 f1 c~ * f2 f0
+- (a IN (path_image g)) |- ((a IN (path_image g)) = T)
+T c==> cIN f0 * part cpath_image f1 c= cIN f0 * part cpath_image f1 cT
+- |- (((~ (s a)) ==> (!x. (((s x) /\ (~ (x = a))) = (s x)))) = T)
+T c= c==> c~ * f0 f1 ! c= c/\ * f0 b0 c~ c= b0 f1 * f0 b0 cT
+- (simple_path g) |- (T = (simple_path g))
+T c==> csimple_path f0 c= cT csimple_path f0

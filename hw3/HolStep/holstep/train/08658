@@ -1,0 +1,59 @@
+N RANK_INVERTIBLE_RMUL
+C |- (!A. (!B. ((invertible B) ==> ((rank ((matrix_mul A) B)) = (rank A)))))
+T c==> cinvertible f0 c= crank cmatrix_mul f1 f0 crank f1
+D TRUTH
+A |- T
+T cT
+D LE_REFL
+A |- (!n. (n <= n))
+T c<= f0 f0
+D LE_TRANS
+A |- (!m. (!n. (!p. (((m <= n) /\ (n <= p)) ==> (m <= p)))))
+T c==> c/\ c<= f0 f1 c<= f1 f2 c<= f0 f2
+D Ssrnat.eqn_leq
+A |- (!m. (!n. ((m = n) = ((m <= n) /\ (n <= m)))))
+T c= c= f0 f1 c/\ c<= f0 f1 c<= f1 f0
+D MATRIX_MUL_RID
+A |- (!A. (((matrix_mul A) (mat (NUMERAL (BIT1 _0)))) = A))
+T c= cmatrix_mul f0 cmat cNUMERAL cBIT1 c_0 f0
+D MATRIX_MUL_ASSOC
+A |- (!A. (!B. (!C. (((matrix_mul A) ((matrix_mul B) C)) = ((matrix_mul ((matrix_mul A) B)) C)))))
+T c= cmatrix_mul f0 cmatrix_mul f1 f2 cmatrix_mul cmatrix_mul f0 f1 f2
+D RANK_MUL_LE_LEFT
+A |- (!A. (!B. ((rank ((matrix_mul A) B)) <= (rank A))))
+T c<= crank cmatrix_mul f0 f1 crank f0
+D MATRIX_INV
+A |- (!A. ((invertible A) ==> ((((matrix_mul A) (matrix_inv A)) = (mat (NUMERAL (BIT1 _0)))) /\ (((matrix_mul (matrix_inv A)) A) = (mat (NUMERAL (BIT1 _0)))))))
+T c==> cinvertible f0 c/\ c= cmatrix_mul f0 cmatrix_inv f0 cmat cNUMERAL cBIT1 c_0 c= cmatrix_mul cmatrix_inv f0 f0 cmat cNUMERAL cBIT1 c_0
++ |- ((t /\ T) = t)
+T c= c/\ f0 cT f0
++ |- (((matrix_mul ((matrix_mul A) B)) C) = ((matrix_mul A) ((matrix_mul B) C)))
+T c= cmatrix_mul cmatrix_mul f0 f1 f2 cmatrix_mul f0 cmatrix_mul f1 f2
++ |- (((!m. (!n. (!p. (((m <= n) /\ (n <= p)) ==> (m <= p))))) ==> (!m. (!p. ((?n. ((m <= n) /\ (n <= p))) ==> (m <= p))))) = (!m. (!p. ((?n. ((m <= n) /\ (n <= p))) ==> (m <= p)))))
+T c= c==> ! ! ! c==> c/\ c<= b0 b1 c<= b1 b2 c<= b0 b2 ! ! c==> c? / c/\ c<= b0 b2 c<= b2 b1 c<= b0 b1 ! ! c==> c? / c/\ c<= b0 b2 c<= b2 b1 c<= b0 b1
++ |- (((!A. (!B. (!C. (((matrix_mul ((matrix_mul A) B)) C) = ((matrix_mul A) ((matrix_mul B) C)))))) ==> ((\A. (!B. (!C. (((matrix_mul ((matrix_mul A) B)) C) = ((matrix_mul A) ((matrix_mul B) C)))))) A)) = ((\A. (!B. (!C. (((matrix_mul ((matrix_mul A) B)) C) = ((matrix_mul A) ((matrix_mul B) C)))))) A))
+T c= c==> ! ! ! c= cmatrix_mul cmatrix_mul b0 b1 b2 cmatrix_mul b0 cmatrix_mul b1 b2 * / ! ! c= cmatrix_mul cmatrix_mul b0 b1 b2 cmatrix_mul b0 cmatrix_mul b1 b2 f0 * / ! ! c= cmatrix_mul cmatrix_mul b0 b1 b2 cmatrix_mul b0 cmatrix_mul b1 b2 f0
++ (!m. (!n. (!p. (((m <= n) /\ (n <= p)) ==> (m <= p))))) |- (!n. (!p. (((m <= n) /\ (n <= p)) ==> (m <= p))))
+T c==> ! ! ! c==> c/\ c<= b0 b1 c<= b1 b2 c<= b0 b2 ! ! c==> c/\ c<= f0 b0 c<= b0 b1 c<= f0 b1
++ (!m. (!n. (!p. (((m <= n) /\ (n <= p)) ==> (m <= p))))) |- (!p. (((m <= n) /\ (n <= p)) ==> (m <= p)))
+T c==> ! ! ! c==> c/\ c<= b0 b1 c<= b1 b2 c<= b0 b2 ! c==> c/\ c<= f0 f1 c<= f1 b0 c<= f0 b0
++ |- (T = ((rank A) <= (rank ((matrix_mul A) (mat (NUMERAL (BIT1 _0)))))))
+T c= cT c<= crank f0 crank cmatrix_mul f0 cmat cNUMERAL cBIT1 c_0
++ |- (((!B. (!C. (((matrix_mul ((matrix_mul A) B)) C) = ((matrix_mul A) ((matrix_mul B) C))))) ==> ((\B. (!C. (((matrix_mul ((matrix_mul A) B)) C) = ((matrix_mul A) ((matrix_mul B) C))))) B)) = ((\B. (!C. (((matrix_mul ((matrix_mul A) B)) C) = ((matrix_mul A) ((matrix_mul B) C))))) B))
+T c= c==> ! ! c= cmatrix_mul cmatrix_mul f0 b0 b1 cmatrix_mul f0 cmatrix_mul b0 b1 * / ! c= cmatrix_mul cmatrix_mul f0 b0 b1 cmatrix_mul f0 cmatrix_mul b0 b1 f1 * / ! c= cmatrix_mul cmatrix_mul f0 b0 b1 cmatrix_mul f0 cmatrix_mul b0 b1 f1
+- (invertible B) |- (T = (invertible B))
+T c==> cinvertible f0 c= cT cinvertible f0
+- |- ((x = x) = T)
+T c= c= f0 f0 cT
+- (invertible B) |- ((invertible B) = T)
+T c==> cinvertible f0 c= cinvertible f0 cT
+- (invertible A) |- ((invertible A) /\ (((matrix_mul (matrix_inv A)) A) = (mat (NUMERAL (BIT1 _0)))))
+T c==> cinvertible f0 c/\ cinvertible f0 c= cmatrix_mul cmatrix_inv f0 f0 cmat cNUMERAL cBIT1 c_0
+- ((m = n) = ((m <= n) /\ (n <= m))) |- (((m <= n) /\ (n <= m)) = (m = n))
+T c==> c= c= f0 f1 c/\ c<= f0 f1 c<= f1 f0 c= c/\ c<= f0 f1 c<= f1 f0 c= f0 f1
+- (((m <= n) /\ (n <= m)) = (m = n)) |- ((m = n) = ((m <= n) /\ (n <= m)))
+T c==> c= c/\ c<= f0 f1 c<= f1 f0 c= f0 f1 c= c= f0 f1 c/\ c<= f0 f1 c<= f1 f0
+- |- ((t /\ t) = t)
+T c= c/\ f0 f0 f0
+- |- ((invertible A) ==> (((matrix_mul (matrix_inv A)) A) = (mat (NUMERAL (BIT1 _0)))))
+T c==> cinvertible f0 c= cmatrix_mul cmatrix_inv f0 f0 cmat cNUMERAL cBIT1 c_0

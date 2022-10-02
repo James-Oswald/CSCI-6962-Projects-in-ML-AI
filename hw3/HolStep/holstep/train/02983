@@ -1,0 +1,85 @@
+N Seq2.card_set_of_list_uniq
+C |- (!l. ((uniq l) ==> ((CARD (set_of_list l)) = (sizel l))))
+T c==> cuniq f0 c= cCARD * part cset_of_list f0 csizel f0
+D TRUTH
+A |- T
+T cT
+D LENGTH_LIST_OF_SET
+A |- (!s. ((FINITE s) ==> ((LENGTH (list_of_set s)) = (CARD s))))
+T c==> cFINITE f0 c= cLENGTH clist_of_set f0 cCARD f0
+D MEM_LIST_OF_SET
+A |- (!s. ((FINITE s) ==> (!x. (((MEM x) (list_of_set s)) = (x IN s)))))
+T c==> cFINITE f0 ! c= cMEM b0 clist_of_set f0 cIN b0 f0
+D FINITE_SET_OF_LIST
+A |- (!l. (FINITE (set_of_list l)))
+T cFINITE * part cset_of_list f0
+D IN_SET_OF_LIST
+A |- (!x. (!l. ((x IN (set_of_list l)) = ((MEM x) l))))
+T c= cIN f0 * part cset_of_list f1 cMEM f0 f1
+D CARD_SET_OF_LIST_LE
+A |- (!l. ((CARD (set_of_list l)) <= (LENGTH l)))
+T c<= cCARD * part cset_of_list f0 cLENGTH f0
+D Ssrbool.andTb
+A |- (!b. ((T /\ b) = b))
+T c= c/\ cT f0 f0
+D Ssrnat.anti_leq
+A |- (!m. (!n. (((m <= n) /\ (n <= m)) ==> (m = n))))
+T c==> c/\ c<= f0 f1 c<= f1 f0 c= f0 f1
+D Seq.size
+A |- (sizel = LENGTH)
+T c= part csizel part cLENGTH
+D Seq.uniq_leq_size
+A |- (!s1. (!s2. ((uniq s1) ==> ((!x. (((MEM x) s1) ==> ((MEM x) s2))) ==> ((sizel s1) <= (sizel s2))))))
+T c==> cuniq f0 c==> ! c==> cMEM b0 f0 cMEM b0 f1 c<= csizel f0 csizel f1
++ (sizel = LENGTH) |- (LENGTH = sizel)
+T c==> c= part csizel part cLENGTH c= part cLENGTH part csizel
++ |- (((!l. ((x IN (set_of_list l)) = ((MEM x) l))) ==> ((\l. ((x IN (set_of_list l)) = ((MEM x) l))) l)) = ((\l. ((x IN (set_of_list l)) = ((MEM x) l))) l))
+T c= c==> ! c= cIN f0 * part cset_of_list b0 cMEM f0 b0 * / c= cIN f0 * part cset_of_list b0 cMEM f0 b0 f1 * / c= cIN f0 * part cset_of_list b0 cMEM f0 b0 f1
++ |- ((((MEM x) l) ==> ((MEM x) (list_of_set (set_of_list l)))) = T)
+T c= c==> cMEM f0 f1 cMEM f0 clist_of_set * part cset_of_list f1 cT
+- ((!x. (P ==> (Q x))) = (P ==> (!x. (Q x)))) |- ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))
+T c==> c= ! c==> f0 * f1 b0 c==> f0 ! * f1 b0 c= c==> f0 ! * f1 b0 ! c==> f0 * f1 b0
++ |- ((\P. (!Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x)))))) P)
+T * / ! c= c==> b0 ! * b1 b2 ! c==> b0 * b1 b2 f0
++ |- (!x. (((MEM x) l) ==> ((MEM x) (list_of_set (set_of_list l)))))
+T c==> cMEM f0 f1 cMEM f0 clist_of_set * part cset_of_list f1
++ |- (((!s1. (!s2. (((uniq s1) /\ (!x. (((MEM x) s1) ==> ((MEM x) s2)))) ==> ((sizel s1) <= (sizel s2))))) ==> ((\s1. (!s2. (((uniq s1) /\ (!x. (((MEM x) s1) ==> ((MEM x) s2)))) ==> ((sizel s1) <= (sizel s2))))) s1)) = ((\s1. (!s2. (((uniq s1) /\ (!x. (((MEM x) s1) ==> ((MEM x) s2)))) ==> ((sizel s1) <= (sizel s2))))) s1))
+T c= c==> ! ! c==> c/\ cuniq b0 ! c==> cMEM b2 b0 cMEM b2 b1 c<= csizel b0 csizel b1 * / ! c==> c/\ cuniq b0 ! c==> cMEM b2 b0 cMEM b2 b1 c<= csizel b0 csizel b1 f0 * / ! c==> c/\ cuniq b0 ! c==> cMEM b2 b0 cMEM b2 b1 c<= csizel b0 csizel b1 f0
++ |- ((\s2. (((uniq s1) /\ (!x. (((MEM x) s1) ==> ((MEM x) s2)))) ==> ((sizel s1) <= (sizel s2)))) s2)
+T * / c==> c/\ cuniq f0 ! c==> cMEM b1 f0 cMEM b1 b0 c<= csizel f0 csizel b0 f1
++ |- (LENGTH = sizel)
+T c= part cLENGTH part csizel
++ ((uniq s1) /\ (!x. (((MEM x) s1) ==> ((MEM x) s2)))) |- (((uniq s1) /\ (!x. (((MEM x) s1) ==> ((MEM x) s2)))) /\ (((sizel s1) <= (sizel s2)) = T))
+T c==> c/\ cuniq f0 ! c==> cMEM b0 f0 cMEM b0 f1 c/\ c/\ cuniq f0 ! c==> cMEM b0 f0 cMEM b0 f1 c= c<= csizel f0 csizel f1 cT
++ |- (((((uniq l) /\ (!x. (((MEM x) l) ==> ((MEM x) (list_of_set (set_of_list l)))))) ==> (((sizel l) <= (sizel (list_of_set (set_of_list l)))) = T)) ==> ((sizel l) <= (sizel (list_of_set (set_of_list l))))) = ((sizel l) <= (sizel (list_of_set (set_of_list l)))))
+T c= c==> c==> c/\ cuniq f0 ! c==> cMEM b0 f0 cMEM b0 clist_of_set * part cset_of_list f0 c= c<= csizel f0 csizel clist_of_set * part cset_of_list f0 cT c<= csizel f0 csizel clist_of_set * part cset_of_list f0 c<= csizel f0 csizel clist_of_set * part cset_of_list f0
++ (uniq l) |- ((FINITE (set_of_list l)) /\ (((CARD (set_of_list l)) = (LENGTH (list_of_set (set_of_list l)))) ==> ((sizel l) <= (CARD (set_of_list l)))))
+T c==> cuniq f0 c/\ cFINITE * part cset_of_list f0 c==> c= cCARD * part cset_of_list f0 cLENGTH clist_of_set * part cset_of_list f0 c<= csizel f0 cCARD * part cset_of_list f0
++ ((LENGTH (list_of_set s)) = (CARD s)) |- ((CARD s) = (LENGTH (list_of_set s)))
+T c==> c= cLENGTH clist_of_set f0 cCARD f0 c= cCARD f0 cLENGTH clist_of_set f0
++ (!m. (!n. (((m <= n) /\ (n <= m)) ==> (m = n)))) |- (((!n. (((m <= n) /\ (n <= m)) ==> (m = n))) ==> ((\n. (((m <= n) /\ (n <= m)) ==> (m = n))) n)) = ((\n. (((m <= n) /\ (n <= m)) ==> (m = n))) n))
+T c==> ! ! c==> c/\ c<= b0 b1 c<= b1 b0 c= b0 b1 c= c==> ! c==> c/\ c<= f0 b0 c<= b0 f0 c= f0 b0 * / c==> c/\ c<= f0 b0 c<= b0 f0 c= f0 b0 f1 * / c==> c/\ c<= f0 b0 c<= b0 f0 c= f0 b0 f1
+- ((m <= n) /\ (n <= m)) |- ((!m. (!n. (((m <= n) /\ (n <= m)) ==> (m = n)))) ==> (m = n))
+T c==> c/\ c<= f0 f1 c<= f1 f0 c==> ! ! c==> c/\ c<= b0 b1 c<= b1 b0 c= b0 b1 c= f0 f1
+- ((MEM x) l) |- (T = ((MEM x) l))
+T c==> cMEM f0 f1 c= cT cMEM f0 f1
+- (!m. (!n. (((m <= n) /\ (n <= m)) ==> (m = n)))), ((m <= n) /\ (n <= m)) |- (((m <= n) /\ (n <= m)) /\ (m = n))
+T c==> ! ! c==> c/\ c<= b0 b1 c<= b1 b0 c= b0 b1 c==> c/\ c<= f0 f1 c<= f1 f0 c/\ c/\ c<= f0 f1 c<= f1 f0 c= f0 f1
+- (!m. (!n. (((m <= n) /\ (n <= m)) ==> (m = n)))) |- ((((m <= n) /\ (n <= m)) ==> (m = n)) = T)
+T c==> ! ! c==> c/\ c<= b0 b1 c<= b1 b0 c= b0 b1 c= c==> c/\ c<= f0 f1 c<= f1 f0 c= f0 f1 cT
+- (!m. (!n. (((m <= n) /\ (n <= m)) ==> (m = n)))), ((m <= n) /\ (n <= m)) |- ((!m. (!n. (((m <= n) /\ (n <= m)) ==> (m = n)))) /\ (m = n))
+T c==> ! ! c==> c/\ c<= b0 b1 c<= b1 b0 c= b0 b1 c==> c/\ c<= f0 f1 c<= f1 f0 c/\ ! ! c==> c/\ c<= b0 b1 c<= b1 b0 c= b0 b1 c= f0 f1
+- ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x)))) |- ((!x. (P ==> (Q x))) = (P ==> (!x. (Q x))))
+T c==> c= c==> f0 ! * f1 b0 ! c==> f0 * f1 b0 c= ! c==> f0 * f1 b0 c==> f0 ! * f1 b0
+- (FINITE s) |- ((FINITE s) /\ ((CARD s) = (LENGTH (list_of_set s))))
+T c==> cFINITE f0 c/\ cFINITE f0 c= cCARD f0 cLENGTH clist_of_set f0
+- (!m. (!n. (((m <= n) /\ (n <= m)) ==> (m = n)))) |- ((!m. (!n. (((m <= n) /\ (n <= m)) ==> (m = n)))) /\ (!m. (!n. (((m <= n) /\ (n <= m)) ==> (m = n)))))
+T c==> ! ! c==> c/\ c<= b0 b1 c<= b1 b0 c= b0 b1 c/\ ! ! c==> c/\ c<= b0 b1 c<= b1 b0 c= b0 b1 ! ! c==> c/\ c<= b0 b1 c<= b1 b0 c= b0 b1
+- |- ((!m. (!n. (((m <= n) /\ (n <= m)) ==> (m = n)))) ==> (!m. (!n. (((m <= n) /\ (n <= m)) ==> (m = n)))))
+T c==> ! ! c==> c/\ c<= b0 b1 c<= b1 b0 c= b0 b1 ! ! c==> c/\ c<= b0 b1 c<= b1 b0 c= b0 b1
+- (!m. (!n. (((m <= n) /\ (n <= m)) ==> (m = n)))) |- ((!n. (((m <= n) /\ (n <= m)) ==> (m = n))) = T)
+T c==> ! ! c==> c/\ c<= b0 b1 c<= b1 b0 c= b0 b1 c= ! c==> c/\ c<= f0 b0 c<= b0 f0 c= f0 b0 cT
+- (FINITE s) |- ((FINITE s) /\ (((MEM x) (list_of_set s)) = (x IN s)))
+T c==> cFINITE f0 c/\ cFINITE f0 c= cMEM f1 clist_of_set f0 cIN f1 f0
+- ((MEM x) l) |- (((MEM x) l) = T)
+T c==> cMEM f0 f1 c= cMEM f0 f1 cT

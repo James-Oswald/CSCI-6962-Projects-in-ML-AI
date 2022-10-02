@@ -1,0 +1,445 @@
+N Tame_list.MEM_showDups
+C |- (!vs. (((~ (vs = NIL)) ==> (isSome (HD vs))) ==> ((all (\t. ((MEM t) ((MAP the) ((filter isSome) vs))))) (showDups vs))))
+T c==> c==> c~ c= f0 cNIL cisSome cHD f0 call / cMEM b0 cMAP part cthe cfilter part cisSome f0 cshowDups f0
+D TRUTH
+A |- T
+T cT
+D BOOL_CASES_AX
+A |- (!t. ((t = T) \/ (t = F)))
+T c\/ c= f0 cT c= f0 cF
+D NOT_CLAUSES
+A |- ((!t. ((~ (~ t)) = t)) /\ (((~ T) = F) /\ ((~ F) = T)))
+T c/\ ! c= c~ c~ b0 b0 c/\ c= c~ cT cF c= c~ cF cT
+D COND_CLAUSES
+A |- (!t1. (!t2. (((((COND T) t1) t2) = t1) /\ ((((COND F) t1) t2) = t2))))
+T c/\ c= cCOND cT f0 f1 f0 c= cCOND cF f0 f1 f1
+D I_THM
+A |- (!x. ((I x) = x))
+T c= cI f0 f0
+D HD
+A |- ((HD ((CONS h) t)) = h)
+T c= cHD cCONS f0 f1 f0
+D MAP
+A |- ((!f. (((MAP f) NIL) = NIL)) /\ (!f. (!h. (!t. (((MAP f) ((CONS h) t)) = ((CONS (f h)) ((MAP f) t)))))))
+T c/\ ! c= cMAP b0 cNIL cNIL ! ! ! c= cMAP b0 cCONS b1 b2 cCONS * b0 b1 cMAP b0 b2
+D MEM
+A |- ((((MEM x) NIL) = F) /\ (((MEM x) ((CONS h) t)) = ((x = h) \/ ((MEM x) t))))
+T c/\ c= cMEM f0 cNIL cF c= cMEM f0 cCONS f1 f2 c\/ c= f0 f1 cMEM f0 f2
+D NOT_CONS_NIL
+A |- (!h. (!t. (~ (((CONS h) t) = NIL))))
+T c~ c= cCONS f0 f1 cNIL
+D list_CASES
+A |- (!l. ((l = NIL) \/ (?h. (?t. (l = ((CONS h) t))))))
+T c\/ c= f0 cNIL c? / c? / c= f0 cCONS b0 b1
+D Seq.filter
+A |- (!a. (!x. (!s'. ((((filter a) NIL) = NIL) /\ (((filter a) ((CONS x) s')) = (((COND (a x)) ((CONS x) ((filter a) s'))) ((filter a) s')))))))
+T c/\ c= cfilter f0 cNIL cNIL c= cfilter f0 cCONS f1 f2 cCOND * f0 f1 cCONS f1 cfilter f0 f2 cfilter f0 f2
+D Seq.allP
+A |- (!a. (!s. ((!x. (((MEM x) s) ==> (a x))) = ((all a) s))))
+T c= ! c==> cMEM b0 f0 * f1 b0 call f1 f0
+D Tame_defs2.showDups
+A |- (((showDups NIL) = NIL) /\ ((showDups ((CONS b) bs)) = ((showDups0 (the b)) ((CONS b) bs))))
+T c/\ c= cshowDups cNIL cNIL c= cshowDups cCONS f0 f1 cshowDups0 cthe f0 cCONS f0 f1
+D Tame_list.MEM_showDups0
+A |- (!vs. (!a. ((all (\t. ((t = a) \/ ((MEM t) ((MAP the) ((filter isSome) vs)))))) ((showDups0 a) vs))))
+T call / c\/ c= b0 f0 cMEM b0 cMAP part cthe cfilter part cisSome f1 cshowDups0 f0 f1
+- |- ((_10084090 = _10084092) ==> ((~ (_10084091 = _10084093)) \/ (((I _10084092) _10084093) \/ (~ ((I _10084090) _10084091)))))
+T c==> c= f0 f1 c\/ c~ c= f2 f3 c\/ cI f1 f3 c~ cI f0 f2
+- |- (~ (NIL = ((CONS h) t)))
+T c~ c= cNIL cCONS f0 f1
++ ((\h. (?t. (vs = ((CONS h) t)))) h) |- (((?t. (vs = ((CONS h) t))) ==> (((~ (vs = NIL)) ==> (isSome (HD vs))) ==> (!x. (((MEM x) (showDups vs)) ==> ((MEM x) ((MAP the) ((filter isSome) vs))))))) = (((~ (vs = NIL)) ==> (isSome (HD vs))) ==> (!x. (((MEM x) (showDups vs)) ==> ((MEM x) ((MAP the) ((filter isSome) vs)))))))
+T c==> * / c? / c= f0 cCONS b0 b1 f1 c= c==> c? / c= f0 cCONS f1 b0 c==> c==> c~ c= f0 cNIL cisSome cHD f0 ! c==> cMEM b0 cshowDups f0 cMEM b0 cMAP part cthe cfilter part cisSome f0 c==> c==> c~ c= f0 cNIL cisSome cHD f0 ! c==> cMEM b0 cshowDups f0 cMEM b0 cMAP part cthe cfilter part cisSome f0
+- |- (((((vs = ((CONS h) t)) ==> ((isSome h) ==> (((MEM x) ((showDups0 (the h)) ((CONS h) t))) ==> ((~ ((!x. (((MEM x) ((showDups0 (the h)) ((CONS h) t))) ==> ((x = (the h)) \/ ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t))))))) ==> ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t)))))) ==> F)))) ==> ((vs = ((CONS h) t)) ==> ((isSome h) ==> (((MEM x) ((showDups0 (the h)) ((CONS h) t))) ==> ((~ ((!x. (((MEM x) ((showDups0 (the h)) ((CONS h) t))) ==> ((x = (the h)) \/ ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t))))))) ==> ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t)))))) ==> F))))) ==> (((vs = ((CONS h) t)) ==> ((isSome h) ==> (((MEM x) ((showDups0 (the h)) ((CONS h) t))) ==> ((~ ((!x. (((MEM x) ((showDups0 (the h)) ((CONS h) t))) ==> ((x = (the h)) \/ ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t))))))) ==> ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t)))))) ==> F)))) ==> ((vs = ((CONS h) t)) ==> ((isSome h) ==> (((MEM x) ((showDups0 (the h)) ((CONS h) t))) ==> ((~ ((!x. (((MEM x) ((showDups0 (the h)) ((CONS h) t))) ==> ((x = (the h)) \/ ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t))))))) ==> ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t)))))) ==> F)))))) = (((vs = ((CONS h) t)) ==> ((isSome h) ==> (((MEM x) ((showDups0 (the h)) ((CONS h) t))) ==> ((~ ((!x. (((MEM x) ((showDups0 (the h)) ((CONS h) t))) ==> ((x = (the h)) \/ ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t))))))) ==> ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t)))))) ==> F)))) ==> ((vs = ((CONS h) t)) ==> ((isSome h) ==> (((MEM x) ((showDups0 (the h)) ((CONS h) t))) ==> ((~ ((!x. (((MEM x) ((showDups0 (the h)) ((CONS h) t))) ==> ((x = (the h)) \/ ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t))))))) ==> ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t)))))) ==> F))))))
+T c= c==> c==> c==> c= f0 cCONS f1 f2 c==> cisSome f1 c==> cMEM f3 cshowDups0 cthe f1 cCONS f1 f2 c==> c~ c==> ! c==> cMEM b0 cshowDups0 cthe f1 cCONS f1 f2 c\/ c= b0 cthe f1 c\/ c= b0 cthe f1 cMEM b0 cMAP part cthe cfilter part cisSome f2 c\/ c= f3 cthe f1 cMEM f3 cMAP part cthe cfilter part cisSome f2 cF c==> c= f0 cCONS f1 f2 c==> cisSome f1 c==> cMEM f3 cshowDups0 cthe f1 cCONS f1 f2 c==> c~ c==> ! c==> cMEM b0 cshowDups0 cthe f1 cCONS f1 f2 c\/ c= b0 cthe f1 c\/ c= b0 cthe f1 cMEM b0 cMAP part cthe cfilter part cisSome f2 c\/ c= f3 cthe f1 cMEM f3 cMAP part cthe cfilter part cisSome f2 cF c==> c==> c= f0 cCONS f1 f2 c==> cisSome f1 c==> cMEM f3 cshowDups0 cthe f1 cCONS f1 f2 c==> c~ c==> ! c==> cMEM b0 cshowDups0 cthe f1 cCONS f1 f2 c\/ c= b0 cthe f1 c\/ c= b0 cthe f1 cMEM b0 cMAP part cthe cfilter part cisSome f2 c\/ c= f3 cthe f1 cMEM f3 cMAP part cthe cfilter part cisSome f2 cF c==> c= f0 cCONS f1 f2 c==> cisSome f1 c==> cMEM f3 cshowDups0 cthe f1 cCONS f1 f2 c==> c~ c==> ! c==> cMEM b0 cshowDups0 cthe f1 cCONS f1 f2 c\/ c= b0 cthe f1 c\/ c= b0 cthe f1 cMEM b0 cMAP part cthe cfilter part cisSome f2 c\/ c= f3 cthe f1 cMEM f3 cMAP part cthe cfilter part cisSome f2 cF c==> c==> c= f0 cCONS f1 f2 c==> cisSome f1 c==> cMEM f3 cshowDups0 cthe f1 cCONS f1 f2 c==> c~ c==> ! c==> cMEM b0 cshowDups0 cthe f1 cCONS f1 f2 c\/ c= b0 cthe f1 c\/ c= b0 cthe f1 cMEM b0 cMAP part cthe cfilter part cisSome f2 c\/ c= f3 cthe f1 cMEM f3 cMAP part cthe cfilter part cisSome f2 cF c==> c= f0 cCONS f1 f2 c==> cisSome f1 c==> cMEM f3 cshowDups0 cthe f1 cCONS f1 f2 c==> c~ c==> ! c==> cMEM b0 cshowDups0 cthe f1 cCONS f1 f2 c\/ c= b0 cthe f1 c\/ c= b0 cthe f1 cMEM b0 cMAP part cthe cfilter part cisSome f2 c\/ c= f3 cthe f1 cMEM f3 cMAP part cthe cfilter part cisSome f2 cF
++ |- (((!a. (!x. (!s'. ((((filter a) NIL) = NIL) /\ (((filter a) ((CONS x) s')) = (((COND (a x)) ((CONS x) ((filter a) s'))) ((filter a) s'))))))) ==> ((\a. (!x. (!s'. ((((filter a) NIL) = NIL) /\ (((filter a) ((CONS x) s')) = (((COND (a x)) ((CONS x) ((filter a) s'))) ((filter a) s'))))))) a)) = ((\a. (!x. (!s'. ((((filter a) NIL) = NIL) /\ (((filter a) ((CONS x) s')) = (((COND (a x)) ((CONS x) ((filter a) s'))) ((filter a) s'))))))) a))
+T c= c==> ! ! ! c/\ c= cfilter b0 cNIL cNIL c= cfilter b0 cCONS b1 b2 cCOND * b0 b1 cCONS b1 cfilter b0 b2 cfilter b0 b2 * / ! ! c/\ c= cfilter b0 cNIL cNIL c= cfilter b0 cCONS b1 b2 cCOND * b0 b1 cCONS b1 cfilter b0 b2 cfilter b0 b2 f0 * / ! ! c/\ c= cfilter b0 cNIL cNIL c= cfilter b0 cCONS b1 b2 cCOND * b0 b1 cCONS b1 cfilter b0 b2 cfilter b0 b2 f0
++ |- (((all a) s) = (!x. (((MEM x) s) ==> (a x))))
+T c= call f0 f1 ! c==> cMEM b0 f1 * f0 b0
++ ((MEM x) ((showDups0 (the h)) ((CONS h) t))) |- (((MEM x) ((showDups0 (the h)) ((CONS h) t))) /\ ((!x. (((MEM x) ((showDups0 (the h)) ((CONS h) t))) ==> ((x = (the h)) \/ ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t))))))) ==> ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t))))))
+T c==> cMEM f0 cshowDups0 cthe f1 cCONS f1 f2 c/\ cMEM f0 cshowDups0 cthe f1 cCONS f1 f2 c==> ! c==> cMEM b0 cshowDups0 cthe f1 cCONS f1 f2 c\/ c= b0 cthe f1 c\/ c= b0 cthe f1 cMEM b0 cMAP part cthe cfilter part cisSome f2 c\/ c= f0 cthe f1 cMEM f0 cMAP part cthe cfilter part cisSome f2
+- (vs = ((CONS h) t)) |- (((I isSome) h) = ((I isSome) h))
+T c==> c= f0 cCONS f1 f2 c= cI part cisSome f1 cI part cisSome f1
++ ((MEM x) ((showDups0 (the h)) ((CONS h) t))) |- ((MEM x) ((showDups0 ((I the) h)) ((CONS h) t)))
+T c==> cMEM f0 cshowDups0 cthe f1 cCONS f1 f2 cMEM f0 cshowDups0 cI part cthe f1 cCONS f1 f2
++ (((all a) s) = (!x. (((MEM x) s) ==> (a x)))) |- ((!x. (((MEM x) s) ==> (a x))) = ((all a) s))
+T c==> c= call f0 f1 ! c==> cMEM b0 f1 * f0 b0 c= ! c==> cMEM b0 f1 * f0 b0 call f0 f1
+- |- ((\t1. (!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))))) t1)
+T * / ! ! c= c\/ b0 c\/ b1 b2 c\/ c\/ b0 b1 b2 f0
++ |- (((!f. (!h. (!t. (((MAP f) ((CONS h) t)) = ((CONS (f h)) ((MAP f) t)))))) ==> ((\f. (!h. (!t. (((MAP f) ((CONS h) t)) = ((CONS (f h)) ((MAP f) t)))))) f)) = ((\f. (!h. (!t. (((MAP f) ((CONS h) t)) = ((CONS (f h)) ((MAP f) t)))))) f))
+T c= c==> ! ! ! c= cMAP b0 cCONS b1 b2 cCONS * b0 b1 cMAP b0 b2 * / ! ! c= cMAP b0 cCONS b1 b2 cCONS * b0 b1 cMAP b0 b2 f0 * / ! ! c= cMAP b0 cCONS b1 b2 cCONS * b0 b1 cMAP b0 b2 f0
+- |- (((vs = ((CONS h) t)) ==> ((isSome h) ==> (((MEM x) ((showDups0 (the h)) ((CONS h) t))) ==> ((~ ((!x. (((MEM x) ((showDups0 (the h)) ((CONS h) t))) ==> ((x = (the h)) \/ ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t))))))) ==> ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t)))))) ==> F)))) ==> ((vs = ((CONS h) t)) ==> ((isSome h) ==> (((MEM x) ((showDups0 (the h)) ((CONS h) t))) ==> ((~ ((!x. (((MEM x) ((showDups0 (the h)) ((CONS h) t))) ==> ((x = (the h)) \/ ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t))))))) ==> ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t)))))) ==> F)))))
+T c==> c==> c= f0 cCONS f1 f2 c==> cisSome f1 c==> cMEM f3 cshowDups0 cthe f1 cCONS f1 f2 c==> c~ c==> ! c==> cMEM b0 cshowDups0 cthe f1 cCONS f1 f2 c\/ c= b0 cthe f1 c\/ c= b0 cthe f1 cMEM b0 cMAP part cthe cfilter part cisSome f2 c\/ c= f3 cthe f1 cMEM f3 cMAP part cthe cfilter part cisSome f2 cF c==> c= f0 cCONS f1 f2 c==> cisSome f1 c==> cMEM f3 cshowDups0 cthe f1 cCONS f1 f2 c==> c~ c==> ! c==> cMEM b0 cshowDups0 cthe f1 cCONS f1 f2 c\/ c= b0 cthe f1 c\/ c= b0 cthe f1 cMEM b0 cMAP part cthe cfilter part cisSome f2 c\/ c= f3 cthe f1 cMEM f3 cMAP part cthe cfilter part cisSome f2 cF
++ (!x. (((MEM x) ((showDups0 (the h)) ((CONS h) t))) ==> ((x = (the h)) \/ ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t))))))) |- (!x. ((~ ((MEM x) ((showDups0 ((I the) h)) ((CONS h) t)))) \/ ((x = ((I the) h)) \/ ((x = ((I the) h)) \/ ((MEM x) ((MAP the) ((filter isSome) t)))))))
+T c==> ! c==> cMEM b0 cshowDups0 cthe f0 cCONS f0 f1 c\/ c= b0 cthe f0 c\/ c= b0 cthe f0 cMEM b0 cMAP part cthe cfilter part cisSome f1 ! c\/ c~ cMEM b0 cshowDups0 cI part cthe f0 cCONS f0 f1 c\/ c= b0 cI part cthe f0 c\/ c= b0 cI part cthe f0 cMEM b0 cMAP part cthe cfilter part cisSome f1
++ (vs = ((CONS h) t)), ((~ (vs = NIL)) ==> (isSome (HD vs))) |- (((~ (vs = NIL)) ==> (isSome (HD vs))) /\ (!x. (((MEM x) (showDups vs)) ==> ((MEM x) ((MAP the) ((filter isSome) vs))))))
+T c==> c= f0 cCONS f1 f2 c==> c==> c~ c= f0 cNIL cisSome cHD f0 c/\ c==> c~ c= f0 cNIL cisSome cHD f0 ! c==> cMEM b0 cshowDups f0 cMEM b0 cMAP part cthe cfilter part cisSome f0
+- |- ((_10084107 = _10084109) ==> ((~ (_10084106 = _10084108)) \/ (((CONS _10084106) _10084107) = ((CONS _10084108) _10084109))))
+T c==> c= f0 f1 c\/ c~ c= f2 f3 c= cCONS f2 f0 cCONS f3 f1
++ |- ((showDups NIL) = NIL)
+T c= cshowDups cNIL cNIL
++ |- ((a \/ b) = ((~ b) ==> a))
+T c= c\/ f0 f1 c==> c~ f1 f0
++ |- ((!h. (!vs. ((vs = ((CONS h) t)) ==> ((isSome h) ==> (((MEM x) ((showDups0 (the h)) ((CONS h) t))) ==> ((!x. (((MEM x) ((showDups0 (the h)) ((CONS h) t))) ==> ((x = (the h)) \/ ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t))))))) ==> ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t)))))))))) = T)
+T c= ! ! c==> c= b1 cCONS b0 f0 c==> cisSome b0 c==> cMEM f1 cshowDups0 cthe b0 cCONS b0 f0 c==> ! c==> cMEM b2 cshowDups0 cthe b0 cCONS b0 f0 c\/ c= b2 cthe b0 c\/ c= b2 cthe b0 cMEM b2 cMAP part cthe cfilter part cisSome f0 c\/ c= f1 cthe b0 cMEM f1 cMAP part cthe cfilter part cisSome f0 cT
++ (vs = NIL), ((~ (vs = NIL)) ==> (isSome (HD vs))) |- (((~ (vs = NIL)) ==> (isSome (HD vs))) /\ (!x. (((MEM x) (showDups vs)) ==> ((MEM x) ((MAP the) ((filter isSome) vs))))))
+T c==> c= f0 cNIL c==> c==> c~ c= f0 cNIL cisSome cHD f0 c/\ c==> c~ c= f0 cNIL cisSome cHD f0 ! c==> cMEM b0 cshowDups f0 cMEM b0 cMAP part cthe cfilter part cisSome f0
++ ((?h. (?t. (vs = ((CONS h) t)))) ==> (((~ (vs = NIL)) ==> (isSome (HD vs))) ==> (!x. (((MEM x) (showDups vs)) ==> ((MEM x) ((MAP the) ((filter isSome) vs))))))), ((vs = NIL) \/ (?h. (?t. (vs = ((CONS h) t))))) |- (((~ (vs = NIL)) ==> (isSome (HD vs))) ==> (!x. (((MEM x) (showDups vs)) ==> ((MEM x) ((MAP the) ((filter isSome) vs))))))
+T c==> c==> c? / c? / c= f0 cCONS b0 b1 c==> c==> c~ c= f0 cNIL cisSome cHD f0 ! c==> cMEM b0 cshowDups f0 cMEM b0 cMAP part cthe cfilter part cisSome f0 c==> c\/ c= f0 cNIL c? / c? / c= f0 cCONS b0 b1 c==> c==> c~ c= f0 cNIL cisSome cHD f0 ! c==> cMEM b0 cshowDups f0 cMEM b0 cMAP part cthe cfilter part cisSome f0
+- ((~ (vs = NIL)) ==> (isSome (HD vs))) |- (((~ (vs = NIL)) ==> (isSome (HD vs))) = T)
+T c==> c==> c~ c= f0 cNIL cisSome cHD f0 c= c==> c~ c= f0 cNIL cisSome cHD f0 cT
++ |- ((((CONS h) t) = NIL) = F)
+T c= c= cCONS f0 f1 cNIL cF
+- (_10084090 = _10084092) |- ((_10084090 = _10084092) /\ ((~ (_10084091 = _10084093)) \/ (((I _10084092) _10084093) \/ (~ ((I _10084090) _10084091)))))
+T c==> c= f0 f1 c/\ c= f0 f1 c\/ c~ c= f2 f3 c\/ cI f1 f3 c~ cI f0 f2
++ |- (((!h. (!vs. ((vs = ((CONS h) t)) ==> ((isSome h) ==> (((MEM x) ((showDups0 (the h)) ((CONS h) t))) ==> ((~ ((!x. (((MEM x) ((showDups0 (the h)) ((CONS h) t))) ==> ((x = (the h)) \/ ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t))))))) ==> ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t)))))) ==> F)))))) ==> ((\h. (!vs. ((vs = ((CONS h) t)) ==> ((isSome h) ==> (((MEM x) ((showDups0 (the h)) ((CONS h) t))) ==> ((~ ((!x. (((MEM x) ((showDups0 (the h)) ((CONS h) t))) ==> ((x = (the h)) \/ ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t))))))) ==> ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t)))))) ==> F)))))) h)) = ((\h. (!vs. ((vs = ((CONS h) t)) ==> ((isSome h) ==> (((MEM x) ((showDups0 (the h)) ((CONS h) t))) ==> ((~ ((!x. (((MEM x) ((showDups0 (the h)) ((CONS h) t))) ==> ((x = (the h)) \/ ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t))))))) ==> ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t)))))) ==> F)))))) h))
+T c= c==> ! ! c==> c= b1 cCONS b0 f0 c==> cisSome b0 c==> cMEM f1 cshowDups0 cthe b0 cCONS b0 f0 c==> c~ c==> ! c==> cMEM b2 cshowDups0 cthe b0 cCONS b0 f0 c\/ c= b2 cthe b0 c\/ c= b2 cthe b0 cMEM b2 cMAP part cthe cfilter part cisSome f0 c\/ c= f1 cthe b0 cMEM f1 cMAP part cthe cfilter part cisSome f0 cF * / ! c==> c= b1 cCONS b0 f0 c==> cisSome b0 c==> cMEM f1 cshowDups0 cthe b0 cCONS b0 f0 c==> c~ c==> ! c==> cMEM b2 cshowDups0 cthe b0 cCONS b0 f0 c\/ c= b2 cthe b0 c\/ c= b2 cthe b0 cMEM b2 cMAP part cthe cfilter part cisSome f0 c\/ c= f1 cthe b0 cMEM f1 cMAP part cthe cfilter part cisSome f0 cF f2 * / ! c==> c= b1 cCONS b0 f0 c==> cisSome b0 c==> cMEM f1 cshowDups0 cthe b0 cCONS b0 f0 c==> c~ c==> ! c==> cMEM b2 cshowDups0 cthe b0 cCONS b0 f0 c\/ c= b2 cthe b0 c\/ c= b2 cthe b0 cMEM b2 cMAP part cthe cfilter part cisSome f0 c\/ c= f1 cthe b0 cMEM f1 cMAP part cthe cfilter part cisSome f0 cF f2
++ |- (((!s. (((all a) s) = (!x. (((MEM x) s) ==> (a x))))) ==> ((\s. (((all a) s) = (!x. (((MEM x) s) ==> (a x))))) s)) = ((\s. (((all a) s) = (!x. (((MEM x) s) ==> (a x))))) s))
+T c= c==> ! c= call f0 b0 ! c==> cMEM b1 b0 * f0 b1 * / c= call f0 b0 ! c==> cMEM b1 b0 * f0 b1 f1 * / c= call f0 b0 ! c==> cMEM b1 b0 * f0 b1 f1
++ (isSome h), (vs = ((CONS h) t)), ((MEM x) ((showDups0 (the h)) ((CONS h) t))) |- ((~ ((!x. (((MEM x) ((showDups0 (the h)) ((CONS h) t))) ==> ((x = (the h)) \/ ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t))))))) ==> ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t)))))) ==> F)
+T c==> cisSome f0 c==> c= f1 cCONS f0 f2 c==> cMEM f3 cshowDups0 cthe f0 cCONS f0 f2 c==> c~ c==> ! c==> cMEM b0 cshowDups0 cthe f0 cCONS f0 f2 c\/ c= b0 cthe f0 c\/ c= b0 cthe f0 cMEM b0 cMAP part cthe cfilter part cisSome f2 c\/ c= f3 cthe f0 cMEM f3 cMAP part cthe cfilter part cisSome f2 cF
++ (!x. (((MEM x) ((showDups0 (the h)) ((CONS h) t))) ==> ((x = (the h)) \/ ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t))))))) |- (((!x. ((~ ((MEM x) ((showDups0 ((I the) h)) ((CONS h) t)))) \/ ((x = ((I the) h)) \/ ((x = ((I the) h)) \/ ((MEM x) ((MAP the) ((filter isSome) t))))))) ==> ((\x. ((~ ((MEM x) ((showDups0 ((I the) h)) ((CONS h) t)))) \/ ((x = ((I the) h)) \/ ((x = ((I the) h)) \/ ((MEM x) ((MAP the) ((filter isSome) t))))))) _10084073)) = ((\x. ((~ ((MEM x) ((showDups0 ((I the) h)) ((CONS h) t)))) \/ ((x = ((I the) h)) \/ ((x = ((I the) h)) \/ ((MEM x) ((MAP the) ((filter isSome) t))))))) _10084073))
+T c==> ! c==> cMEM b0 cshowDups0 cthe f0 cCONS f0 f1 c\/ c= b0 cthe f0 c\/ c= b0 cthe f0 cMEM b0 cMAP part cthe cfilter part cisSome f1 c= c==> ! c\/ c~ cMEM b0 cshowDups0 cI part cthe f0 cCONS f0 f1 c\/ c= b0 cI part cthe f0 c\/ c= b0 cI part cthe f0 cMEM b0 cMAP part cthe cfilter part cisSome f1 * / c\/ c~ cMEM b0 cshowDups0 cI part cthe f0 cCONS f0 f1 c\/ c= b0 cI part cthe f0 c\/ c= b0 cI part cthe f0 cMEM b0 cMAP part cthe cfilter part cisSome f1 f2 * / c\/ c~ cMEM b0 cshowDups0 cI part cthe f0 cCONS f0 f1 c\/ c= b0 cI part cthe f0 c\/ c= b0 cI part cthe f0 cMEM b0 cMAP part cthe cfilter part cisSome f1 f2
+- |- ((t ==> t) = T)
+T c= c==> f0 f0 cT
+- |- ((p \/ p) = p)
+T c= c\/ f0 f0 f0
++ |- ((\x. (!h. (!vs. ((vs = ((CONS h) t)) ==> ((isSome h) ==> (((MEM x) ((showDups0 (the h)) ((CONS h) t))) ==> ((~ ((!x. (((MEM x) ((showDups0 (the h)) ((CONS h) t))) ==> ((x = (the h)) \/ ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t))))))) ==> ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t)))))) ==> F))))))) x)
+T * / ! ! c==> c= b2 cCONS b1 f0 c==> cisSome b1 c==> cMEM b0 cshowDups0 cthe b1 cCONS b1 f0 c==> c~ c==> ! c==> cMEM b3 cshowDups0 cthe b1 cCONS b1 f0 c\/ c= b3 cthe b1 c\/ c= b3 cthe b1 cMEM b3 cMAP part cthe cfilter part cisSome f0 c\/ c= b0 cthe b1 cMEM b0 cMAP part cthe cfilter part cisSome f0 cF f1
+- (_10084090 = _10084092), (_10084091 = _10084093) |- (((((I _10084090) _10084091) = ((I _10084092) _10084093)) ==> (((I _10084092) _10084093) \/ (~ ((I _10084090) _10084091)))) = (((I _10084092) _10084093) \/ (~ ((I _10084090) _10084091))))
+T c==> c= f0 f1 c==> c= f2 f3 c= c==> c= cI f0 f2 cI f1 f3 c\/ cI f1 f3 c~ cI f0 f2 c\/ cI f1 f3 c~ cI f0 f2
++ (!x. (((MEM x) ((showDups0 (the h)) ((CONS h) t))) ==> ((x = (the h)) \/ ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t))))))) |- ((((MEM _10084073) ((showDups0 ((I the) h)) ((CONS h) t))) /\ ((~ (_10084073 = ((I the) h))) /\ (~ (_10084073 = ((I the) h))))) ==> ((MEM _10084073) ((MAP the) ((filter isSome) t))))
+T c==> ! c==> cMEM b0 cshowDups0 cthe f0 cCONS f0 f1 c\/ c= b0 cthe f0 c\/ c= b0 cthe f0 cMEM b0 cMAP part cthe cfilter part cisSome f1 c==> c/\ cMEM f2 cshowDups0 cI part cthe f0 cCONS f0 f1 c/\ c~ c= f2 cI part cthe f0 c~ c= f2 cI part cthe f0 cMEM f2 cMAP part cthe cfilter part cisSome f1
++ |- ((((~ (vs = NIL)) ==> (isSome (HD vs))) ==> (!x. (((MEM x) (showDups vs)) ==> ((MEM x) ((MAP the) ((filter isSome) vs)))))) = T)
+T c= c==> c==> c~ c= f0 cNIL cisSome cHD f0 ! c==> cMEM b0 cshowDups f0 cMEM b0 cMAP part cthe cfilter part cisSome f0 cT
++ (isSome h), (vs = ((CONS h) t)), ((MEM x) ((showDups0 (the h)) ((CONS h) t))) |- ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t))))
+T c==> cisSome f0 c==> c= f1 cCONS f0 f2 c==> cMEM f3 cshowDups0 cthe f0 cCONS f0 f2 c\/ c= f3 cthe f0 cMEM f3 cMAP part cthe cfilter part cisSome f2
+- |- ((\t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))) t3)
+T * / c= c\/ f0 c\/ f1 b0 c\/ c\/ f0 f1 b0 f2
++ |- ((vs = ((CONS h) t)) ==> (((~ (vs = NIL)) ==> (isSome (HD vs))) ==> (!x. (((MEM x) (showDups vs)) ==> ((MEM x) ((MAP the) ((filter isSome) vs)))))))
+T c==> c= f0 cCONS f1 f2 c==> c==> c~ c= f0 cNIL cisSome cHD f0 ! c==> cMEM b0 cshowDups f0 cMEM b0 cMAP part cthe cfilter part cisSome f0
+- (vs = ((CONS h) t)) |- ((~ (x = ((I the) h))) = (~ (x = ((I the) h))))
+T c==> c= f0 cCONS f1 f2 c= c~ c= f3 cI part cthe f1 c~ c= f3 cI part cthe f1
++ |- (!t. (!x. (!h. (!vs. ((vs = ((CONS h) t)) ==> ((isSome h) ==> (((MEM x) ((showDups0 (the h)) ((CONS h) t))) ==> ((!x. (((MEM x) ((showDups0 (the h)) ((CONS h) t))) ==> ((x = (the h)) \/ ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t))))))) ==> ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t))))))))))))
+T c==> c= f0 cCONS f1 f2 c==> cisSome f1 c==> cMEM f3 cshowDups0 cthe f1 cCONS f1 f2 c==> ! c==> cMEM b0 cshowDups0 cthe f1 cCONS f1 f2 c\/ c= b0 cthe f1 c\/ c= b0 cthe f1 cMEM b0 cMAP part cthe cfilter part cisSome f2 c\/ c= f3 cthe f1 cMEM f3 cMAP part cthe cfilter part cisSome f2
+- |- (((showDups0 a) NIL) = NIL)
+T c= cshowDups0 f0 cNIL cNIL
+- |- (((~ p) ==> p) = p)
+T c= c==> c~ f0 f0 f0
+- |- ((!h. t) = t)
+T c= ! f0 f0
+- |- ((~ (_10084090 = _10084092)) \/ ((~ (_10084091 = _10084093)) \/ (((I _10084092) _10084093) \/ (~ ((I _10084090) _10084091)))))
+T c\/ c~ c= f0 f1 c\/ c~ c= f2 f3 c\/ cI f1 f3 c~ cI f0 f2
++ |- ((\h. (!t. (~ (((CONS h) t) = NIL)))) h)
+T * / ! c~ c= cCONS b0 b1 cNIL f0
++ (vs = NIL) |- ((vs = NIL) /\ (((~ (vs = NIL)) ==> (isSome (HD vs))) ==> (!x. (((MEM x) (showDups vs)) ==> ((MEM x) ((MAP the) ((filter isSome) vs)))))))
+T c==> c= f0 cNIL c/\ c= f0 cNIL c==> c==> c~ c= f0 cNIL cisSome cHD f0 ! c==> cMEM b0 cshowDups f0 cMEM b0 cMAP part cthe cfilter part cisSome f0
++ |- ((\l. ((l = NIL) \/ (?h. (?t. (l = ((CONS h) t)))))) vs)
+T * / c\/ c= b0 cNIL c? / c? / c= b0 cCONS b1 b2 f0
++ |- ((f x) = ((I f) x))
+T c= * f0 f1 cI f0 f1
+- |- ((t ==> F) = (~ t))
+T c= c==> f0 cF c~ f0
++ |- (((!s'. ((((filter a) NIL) = NIL) /\ (((filter a) ((CONS x) s')) = (((COND (a x)) ((CONS x) ((filter a) s'))) ((filter a) s'))))) ==> ((\s'. ((((filter a) NIL) = NIL) /\ (((filter a) ((CONS x) s')) = (((COND (a x)) ((CONS x) ((filter a) s'))) ((filter a) s'))))) s')) = ((\s'. ((((filter a) NIL) = NIL) /\ (((filter a) ((CONS x) s')) = (((COND (a x)) ((CONS x) ((filter a) s'))) ((filter a) s'))))) s'))
+T c= c==> ! c/\ c= cfilter f0 cNIL cNIL c= cfilter f0 cCONS f1 b0 cCOND * f0 f1 cCONS f1 cfilter f0 b0 cfilter f0 b0 * / c/\ c= cfilter f0 cNIL cNIL c= cfilter f0 cCONS f1 b0 cCOND * f0 f1 cCONS f1 cfilter f0 b0 cfilter f0 b0 f2 * / c/\ c= cfilter f0 cNIL cNIL c= cfilter f0 cCONS f1 b0 cCOND * f0 f1 cCONS f1 cfilter f0 b0 cfilter f0 b0 f2
++ (vs = ((CONS h) t)) |- ((isSome h) ==> (((MEM x) ((showDups0 (the h)) ((CONS h) t))) ==> ((MEM x) ((MAP the) (((COND (isSome h)) ((CONS h) ((filter isSome) t))) ((filter isSome) t))))))
+T c==> c= f0 cCONS f1 f2 c==> cisSome f1 c==> cMEM f3 cshowDups0 cthe f1 cCONS f1 f2 cMEM f3 cMAP part cthe cCOND cisSome f1 cCONS f1 cfilter part cisSome f2 cfilter part cisSome f2
++ (~ ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t))))), ((MEM x) ((showDups0 (the h)) ((CONS h) t))) |- (((MEM x) ((showDups0 ((I the) h)) ((CONS h) t))) /\ ((~ (x = ((I the) h))) /\ (~ (x = ((I the) h)))))
+T c==> c~ c\/ c= f0 cthe f1 cMEM f0 cMAP part cthe cfilter part cisSome f2 c==> cMEM f0 cshowDups0 cthe f1 cCONS f1 f2 c/\ cMEM f0 cshowDups0 cI part cthe f1 cCONS f1 f2 c/\ c~ c= f0 cI part cthe f1 c~ c= f0 cI part cthe f1
++ |- (!vs. (((~ (vs = NIL)) ==> (isSome (HD vs))) ==> (!x. (((MEM x) (showDups vs)) ==> ((MEM x) ((MAP the) ((filter isSome) vs)))))))
+T c==> c==> c~ c= f0 cNIL cisSome cHD f0 ! c==> cMEM b0 cshowDups f0 cMEM b0 cMAP part cthe cfilter part cisSome f0
+- ((vs = ((CONS h) t)) ==> ((isSome h) ==> (((MEM x) ((showDups0 (the h)) ((CONS h) t))) ==> ((~ ((!x. (((MEM x) ((showDups0 (the h)) ((CONS h) t))) ==> ((x = (the h)) \/ ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t))))))) ==> ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t)))))) ==> F)))), (((vs = ((CONS h) t)) ==> ((isSome h) ==> (((MEM x) ((showDups0 (the h)) ((CONS h) t))) ==> ((~ ((!x. (((MEM x) ((showDups0 (the h)) ((CONS h) t))) ==> ((x = (the h)) \/ ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t))))))) ==> ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t)))))) ==> F)))) ==> ((vs = ((CONS h) t)) ==> ((isSome h) ==> (((MEM x) ((showDups0 (the h)) ((CONS h) t))) ==> ((~ ((!x. (((MEM x) ((showDups0 (the h)) ((CONS h) t))) ==> ((x = (the h)) \/ ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t))))))) ==> ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t)))))) ==> F))))) |- ((((vs = ((CONS h) t)) ==> ((isSome h) ==> (((MEM x) ((showDups0 (the h)) ((CONS h) t))) ==> ((~ ((!x. (((MEM x) ((showDups0 (the h)) ((CONS h) t))) ==> ((x = (the h)) \/ ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t))))))) ==> ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t)))))) ==> F)))) ==> ((vs = ((CONS h) t)) ==> ((isSome h) ==> (((MEM x) ((showDups0 (the h)) ((CONS h) t))) ==> ((~ ((!x. (((MEM x) ((showDups0 (the h)) ((CONS h) t))) ==> ((x = (the h)) \/ ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t))))))) ==> ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t)))))) ==> F))))) /\ ((vs = ((CONS h) t)) ==> ((isSome h) ==> (((MEM x) ((showDups0 (the h)) ((CONS h) t))) ==> ((~ ((!x. (((MEM x) ((showDups0 (the h)) ((CONS h) t))) ==> ((x = (the h)) \/ ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t))))))) ==> ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t)))))) ==> F)))))
+T c==> c==> c= f0 cCONS f1 f2 c==> cisSome f1 c==> cMEM f3 cshowDups0 cthe f1 cCONS f1 f2 c==> c~ c==> ! c==> cMEM b0 cshowDups0 cthe f1 cCONS f1 f2 c\/ c= b0 cthe f1 c\/ c= b0 cthe f1 cMEM b0 cMAP part cthe cfilter part cisSome f2 c\/ c= f3 cthe f1 cMEM f3 cMAP part cthe cfilter part cisSome f2 cF c==> c==> c==> c= f0 cCONS f1 f2 c==> cisSome f1 c==> cMEM f3 cshowDups0 cthe f1 cCONS f1 f2 c==> c~ c==> ! c==> cMEM b0 cshowDups0 cthe f1 cCONS f1 f2 c\/ c= b0 cthe f1 c\/ c= b0 cthe f1 cMEM b0 cMAP part cthe cfilter part cisSome f2 c\/ c= f3 cthe f1 cMEM f3 cMAP part cthe cfilter part cisSome f2 cF c==> c= f0 cCONS f1 f2 c==> cisSome f1 c==> cMEM f3 cshowDups0 cthe f1 cCONS f1 f2 c==> c~ c==> ! c==> cMEM b0 cshowDups0 cthe f1 cCONS f1 f2 c\/ c= b0 cthe f1 c\/ c= b0 cthe f1 cMEM b0 cMAP part cthe cfilter part cisSome f2 c\/ c= f3 cthe f1 cMEM f3 cMAP part cthe cfilter part cisSome f2 cF c/\ c==> c==> c= f0 cCONS f1 f2 c==> cisSome f1 c==> cMEM f3 cshowDups0 cthe f1 cCONS f1 f2 c==> c~ c==> ! c==> cMEM b0 cshowDups0 cthe f1 cCONS f1 f2 c\/ c= b0 cthe f1 c\/ c= b0 cthe f1 cMEM b0 cMAP part cthe cfilter part cisSome f2 c\/ c= f3 cthe f1 cMEM f3 cMAP part cthe cfilter part cisSome f2 cF c==> c= f0 cCONS f1 f2 c==> cisSome f1 c==> cMEM f3 cshowDups0 cthe f1 cCONS f1 f2 c==> c~ c==> ! c==> cMEM b0 cshowDups0 cthe f1 cCONS f1 f2 c\/ c= b0 cthe f1 c\/ c= b0 cthe f1 cMEM b0 cMAP part cthe cfilter part cisSome f2 c\/ c= f3 cthe f1 cMEM f3 cMAP part cthe cfilter part cisSome f2 cF c==> c= f0 cCONS f1 f2 c==> cisSome f1 c==> cMEM f3 cshowDups0 cthe f1 cCONS f1 f2 c==> c~ c==> ! c==> cMEM b0 cshowDups0 cthe f1 cCONS f1 f2 c\/ c= b0 cthe f1 c\/ c= b0 cthe f1 cMEM b0 cMAP part cthe cfilter part cisSome f2 c\/ c= f3 cthe f1 cMEM f3 cMAP part cthe cfilter part cisSome f2 cF
++ (isSome h), (vs = ((CONS h) t)) |- (((MEM x) ((showDups0 (the h)) ((CONS h) t))) ==> ((MEM x) ((MAP the) (((COND (isSome h)) ((CONS h) ((filter isSome) t))) ((filter isSome) t)))))
+T c==> cisSome f0 c==> c= f1 cCONS f0 f2 c==> cMEM f3 cshowDups0 cthe f0 cCONS f0 f2 cMEM f3 cMAP part cthe cCOND cisSome f0 cCONS f0 cfilter part cisSome f2 cfilter part cisSome f2
++ |- (p = ((~ p) ==> F))
+T c= f0 c==> c~ f0 cF
+- (!x. (((MEM x) ((showDups0 (the h)) ((CONS h) t))) ==> ((x = (the h)) \/ ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t))))))), (~ F), (~ ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t))))), ((MEM x) ((showDups0 (the h)) ((CONS h) t))) |- ((~ F) /\ F)
+T c==> ! c==> cMEM b0 cshowDups0 cthe f0 cCONS f0 f1 c\/ c= b0 cthe f0 c\/ c= b0 cthe f0 cMEM b0 cMAP part cthe cfilter part cisSome f1 c==> c~ cF c==> c~ c\/ c= f2 cthe f0 cMEM f2 cMAP part cthe cfilter part cisSome f1 c==> cMEM f2 cshowDups0 cthe f0 cCONS f0 f1 c/\ c~ cF cF
+- (!x. (((MEM x) ((showDups0 (the h)) ((CONS h) t))) ==> ((x = (the h)) \/ ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t))))))), (~ ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t))))), ((MEM x) ((showDups0 (the h)) ((CONS h) t))) |- ((~ ((MEM x) ((MAP the) ((filter isSome) t)))) ==> ((MEM x) ((MAP the) ((filter isSome) t))))
+T c==> ! c==> cMEM b0 cshowDups0 cthe f0 cCONS f0 f1 c\/ c= b0 cthe f0 c\/ c= b0 cthe f0 cMEM b0 cMAP part cthe cfilter part cisSome f1 c==> c~ c\/ c= f2 cthe f0 cMEM f2 cMAP part cthe cfilter part cisSome f1 c==> cMEM f2 cshowDups0 cthe f0 cCONS f0 f1 c==> c~ cMEM f2 cMAP part cthe cfilter part cisSome f1 cMEM f2 cMAP part cthe cfilter part cisSome f1
++ |- ((\s. (((all a) s) = (!x. (((MEM x) s) ==> (a x))))) s)
+T * / c= call f0 b0 ! c==> cMEM b1 b0 * f0 b1 f1
++ (!x. (((MEM x) ((showDups0 (the h)) ((CONS h) t))) ==> ((x = (the h)) \/ ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t))))))), (~ ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t))))), ((MEM x) ((showDups0 (the h)) ((CONS h) t))) |- F
+T c==> ! c==> cMEM b0 cshowDups0 cthe f0 cCONS f0 f1 c\/ c= b0 cthe f0 c\/ c= b0 cthe f0 cMEM b0 cMAP part cthe cfilter part cisSome f1 c==> c~ c\/ c= f2 cthe f0 cMEM f2 cMAP part cthe cfilter part cisSome f1 c==> cMEM f2 cshowDups0 cthe f0 cCONS f0 f1 cF
+- (_10084086 = _10084088), (_10084087 = _10084089) |- ((_10084087 = _10084089) /\ (((MEM _10084088) _10084089) \/ (~ ((MEM _10084086) _10084087))))
+T c==> c= f0 f1 c==> c= f2 f3 c/\ c= f2 f3 c\/ cMEM f1 f3 c~ cMEM f0 f2
++ |- (((!h. (!t. (((MAP f) ((CONS h) t)) = ((CONS (f h)) ((MAP f) t))))) ==> ((\h. (!t. (((MAP f) ((CONS h) t)) = ((CONS (f h)) ((MAP f) t))))) h)) = ((\h. (!t. (((MAP f) ((CONS h) t)) = ((CONS (f h)) ((MAP f) t))))) h))
+T c= c==> ! ! c= cMAP f0 cCONS b0 b1 cCONS * f0 b0 cMAP f0 b1 * / ! c= cMAP f0 cCONS b0 b1 cCONS * f0 b0 cMAP f0 b1 f1 * / ! c= cMAP f0 cCONS b0 b1 cCONS * f0 b0 cMAP f0 b1 f1
++ |- ((\h. (!vs. ((vs = ((CONS h) t)) ==> ((isSome h) ==> (((MEM x) ((showDups0 (the h)) ((CONS h) t))) ==> ((~ ((!x. (((MEM x) ((showDups0 (the h)) ((CONS h) t))) ==> ((x = (the h)) \/ ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t))))))) ==> ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t)))))) ==> F)))))) h)
+T * / ! c==> c= b1 cCONS b0 f0 c==> cisSome b0 c==> cMEM f1 cshowDups0 cthe b0 cCONS b0 f0 c==> c~ c==> ! c==> cMEM b2 cshowDups0 cthe b0 cCONS b0 f0 c\/ c= b2 cthe b0 c\/ c= b2 cthe b0 cMEM b2 cMAP part cthe cfilter part cisSome f0 c\/ c= f1 cthe b0 cMEM f1 cMAP part cthe cfilter part cisSome f0 cF f2
+- (_10084102 = _10084104), (_10084103 = _10084105) |- ((_10084103 = _10084105) /\ (((I _10084102) _10084103) = ((I _10084104) _10084105)))
+T c==> c= f0 f1 c==> c= f2 f3 c/\ c= f2 f3 c= cI f0 f2 cI f1 f3
++ |- (((!x. (((\h. (?t. (vs = ((CONS h) t)))) x) ==> (((~ (vs = NIL)) ==> (isSome (HD vs))) ==> (!x. (((MEM x) (showDups vs)) ==> ((MEM x) ((MAP the) ((filter isSome) vs)))))))) ==> ((?h. (?t. (vs = ((CONS h) t)))) ==> (((~ (vs = NIL)) ==> (isSome (HD vs))) ==> (!x. (((MEM x) (showDups vs)) ==> ((MEM x) ((MAP the) ((filter isSome) vs)))))))) = ((?h. (?t. (vs = ((CONS h) t)))) ==> (((~ (vs = NIL)) ==> (isSome (HD vs))) ==> (!x. (((MEM x) (showDups vs)) ==> ((MEM x) ((MAP the) ((filter isSome) vs))))))))
+T c= c==> ! c==> * / c? / c= f0 cCONS b1 b2 b0 c==> c==> c~ c= f0 cNIL cisSome cHD f0 ! c==> cMEM b1 cshowDups f0 cMEM b1 cMAP part cthe cfilter part cisSome f0 c==> c? / c? / c= f0 cCONS b0 b1 c==> c==> c~ c= f0 cNIL cisSome cHD f0 ! c==> cMEM b0 cshowDups f0 cMEM b0 cMAP part cthe cfilter part cisSome f0 c==> c? / c? / c= f0 cCONS b0 b1 c==> c==> c~ c= f0 cNIL cisSome cHD f0 ! c==> cMEM b0 cshowDups f0 cMEM b0 cMAP part cthe cfilter part cisSome f0
++ ((\h. (?t. (vs = ((CONS h) t)))) h) |- (?t. (vs = ((CONS h) t)))
+T c==> * / c? / c= f0 cCONS b0 b1 f1 c? / c= f0 cCONS f1 b0
+- (_10084107 = _10084109) |- ((_10084106 = _10084108) ==> (((CONS _10084106) _10084107) = ((CONS _10084108) _10084109)))
+T c==> c= f0 f1 c==> c= f2 f3 c= cCONS f2 f0 cCONS f3 f1
+- (_10084094 = _10084096), (_10084095 = _10084097) |- ((_10084095 = _10084097) /\ (((filter _10084094) _10084095) = ((filter _10084096) _10084097)))
+T c==> c= f0 f1 c==> c= f2 f3 c/\ c= f2 f3 c= cfilter f0 f2 cfilter f1 f3
+- ((vs = ((CONS h) t)) ==> ((isSome h) ==> (((MEM x) ((showDups0 (the h)) ((CONS h) t))) ==> ((~ ((!x. (((MEM x) ((showDups0 (the h)) ((CONS h) t))) ==> ((x = (the h)) \/ ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t))))))) ==> ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t)))))) ==> F)))) |- (((vs = ((CONS h) t)) ==> ((isSome h) ==> (((MEM x) ((showDups0 (the h)) ((CONS h) t))) ==> ((~ ((!x. (((MEM x) ((showDups0 (the h)) ((CONS h) t))) ==> ((x = (the h)) \/ ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t))))))) ==> ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t)))))) ==> F)))) /\ ((vs = ((CONS h) t)) ==> ((isSome h) ==> (((MEM x) ((showDups0 (the h)) ((CONS h) t))) ==> ((~ ((!x. (((MEM x) ((showDups0 (the h)) ((CONS h) t))) ==> ((x = (the h)) \/ ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t))))))) ==> ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t)))))) ==> F)))))
+T c==> c==> c= f0 cCONS f1 f2 c==> cisSome f1 c==> cMEM f3 cshowDups0 cthe f1 cCONS f1 f2 c==> c~ c==> ! c==> cMEM b0 cshowDups0 cthe f1 cCONS f1 f2 c\/ c= b0 cthe f1 c\/ c= b0 cthe f1 cMEM b0 cMAP part cthe cfilter part cisSome f2 c\/ c= f3 cthe f1 cMEM f3 cMAP part cthe cfilter part cisSome f2 cF c/\ c==> c= f0 cCONS f1 f2 c==> cisSome f1 c==> cMEM f3 cshowDups0 cthe f1 cCONS f1 f2 c==> c~ c==> ! c==> cMEM b0 cshowDups0 cthe f1 cCONS f1 f2 c\/ c= b0 cthe f1 c\/ c= b0 cthe f1 cMEM b0 cMAP part cthe cfilter part cisSome f2 c\/ c= f3 cthe f1 cMEM f3 cMAP part cthe cfilter part cisSome f2 cF c==> c= f0 cCONS f1 f2 c==> cisSome f1 c==> cMEM f3 cshowDups0 cthe f1 cCONS f1 f2 c==> c~ c==> ! c==> cMEM b0 cshowDups0 cthe f1 cCONS f1 f2 c\/ c= b0 cthe f1 c\/ c= b0 cthe f1 cMEM b0 cMAP part cthe cfilter part cisSome f2 c\/ c= f3 cthe f1 cMEM f3 cMAP part cthe cfilter part cisSome f2 cF
++ |- (((MEM x) ((CONS h) t)) = ((x = h) \/ ((MEM x) t)))
+T c= cMEM f0 cCONS f1 f2 c\/ c= f0 f1 cMEM f0 f2
++ |- ((T ==> t) = t)
+T c= c==> cT f0 f0
+- |- ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))
+T c= c\/ f0 c\/ f1 f2 c\/ c\/ f0 f1 f2
+- (?h. (?t. (vs = ((CONS h) t)))) |- ((?h. (?t. (vs = ((CONS h) t)))) /\ (((~ (vs = NIL)) ==> (isSome (HD vs))) ==> (!x. (((MEM x) (showDups vs)) ==> ((MEM x) ((MAP the) ((filter isSome) vs)))))))
+T c==> c? / c? / c= f0 cCONS b0 b1 c/\ c? / c? / c= f0 cCONS b0 b1 c==> c==> c~ c= f0 cNIL cisSome cHD f0 ! c==> cMEM b0 cshowDups f0 cMEM b0 cMAP part cthe cfilter part cisSome f0
+- (_10084086 = _10084088) |- ((_10084086 = _10084088) /\ ((~ (_10084087 = _10084089)) \/ (((MEM _10084088) _10084089) \/ (~ ((MEM _10084086) _10084087)))))
+T c==> c= f0 f1 c/\ c= f0 f1 c\/ c~ c= f2 f3 c\/ cMEM f1 f3 c~ cMEM f0 f2
++ |- (((!t. (~ (((CONS h) t) = NIL))) ==> ((\t. (~ (((CONS h) t) = NIL))) t)) = ((\t. (~ (((CONS h) t) = NIL))) t))
+T c= c==> ! c~ c= cCONS f0 b0 cNIL * / c~ c= cCONS f0 b0 cNIL f1 * / c~ c= cCONS f0 b0 cNIL f1
+- |- ((_10084086 = _10084088) ==> ((~ (_10084087 = _10084089)) \/ (((MEM _10084088) _10084089) \/ (~ ((MEM _10084086) _10084087)))))
+T c==> c= f0 f1 c\/ c~ c= f2 f3 c\/ cMEM f1 f3 c~ cMEM f0 f2
+- (_10084098 = _10084100) |- ((_10084099 = _10084101) ==> (((MAP _10084098) _10084099) = ((MAP _10084100) _10084101)))
+T c==> c= f0 f1 c==> c= f2 f3 c= cMAP f0 f2 cMAP f1 f3
++ ((\t. (vs = ((CONS h) t))) t) |- (((\t. (vs = ((CONS h) t))) t) /\ (((~ (vs = NIL)) ==> (isSome (HD vs))) ==> (!x. (((MEM x) (showDups vs)) ==> ((MEM x) ((MAP the) ((filter isSome) vs)))))))
+T c==> * / c= f0 cCONS f1 b0 f2 c/\ * / c= f0 cCONS f1 b0 f2 c==> c==> c~ c= f0 cNIL cisSome cHD f0 ! c==> cMEM b0 cshowDups f0 cMEM b0 cMAP part cthe cfilter part cisSome f0
++ |- (((!vs. (!a. ((all (\t. ((t = a) \/ ((MEM t) ((MAP the) ((filter isSome) vs)))))) ((showDups0 a) vs)))) ==> ((\vs. (!a. ((all (\t. ((t = a) \/ ((MEM t) ((MAP the) ((filter isSome) vs)))))) ((showDups0 a) vs)))) ((CONS h) t))) = ((\vs. (!a. ((all (\t. ((t = a) \/ ((MEM t) ((MAP the) ((filter isSome) vs)))))) ((showDups0 a) vs)))) ((CONS h) t)))
+T c= c==> ! ! call / c\/ c= b2 b1 cMEM b2 cMAP part cthe cfilter part cisSome b0 cshowDups0 b1 b0 * / ! call / c\/ c= b2 b1 cMEM b2 cMAP part cthe cfilter part cisSome b0 cshowDups0 b1 b0 cCONS f0 f1 * / ! call / c\/ c= b2 b1 cMEM b2 cMAP part cthe cfilter part cisSome b0 cshowDups0 b1 b0 cCONS f0 f1
+- |- ((~ (_10084094 = _10084096)) \/ ((~ (_10084095 = _10084097)) \/ (((filter _10084094) _10084095) = ((filter _10084096) _10084097))))
+T c\/ c~ c= f0 f1 c\/ c~ c= f2 f3 c= cfilter f0 f2 cfilter f1 f3
++ ((MEM x) ((showDups0 (the h)) ((CONS h) t))) |- (((~ (x = ((I the) h))) /\ (~ (x = ((I the) h)))) = (((MEM x) ((showDups0 ((I the) h)) ((CONS h) t))) /\ ((~ (x = ((I the) h))) /\ (~ (x = ((I the) h))))))
+T c==> cMEM f0 cshowDups0 cthe f1 cCONS f1 f2 c= c/\ c~ c= f0 cI part cthe f1 c~ c= f0 cI part cthe f1 c/\ cMEM f0 cshowDups0 cI part cthe f1 cCONS f1 f2 c/\ c~ c= f0 cI part cthe f1 c~ c= f0 cI part cthe f1
+- (((vs = ((CONS h) t)) ==> ((isSome h) ==> (((MEM x) ((showDups0 (the h)) ((CONS h) t))) ==> ((~ ((!x. (((MEM x) ((showDups0 (the h)) ((CONS h) t))) ==> ((x = (the h)) \/ ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t))))))) ==> ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t)))))) ==> F)))) ==> ((vs = ((CONS h) t)) ==> ((isSome h) ==> (((MEM x) ((showDups0 (the h)) ((CONS h) t))) ==> ((~ ((!x. (((MEM x) ((showDups0 (the h)) ((CONS h) t))) ==> ((x = (the h)) \/ ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t))))))) ==> ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t)))))) ==> F))))) |- ((((vs = ((CONS h) t)) ==> ((isSome h) ==> (((MEM x) ((showDups0 (the h)) ((CONS h) t))) ==> ((~ ((!x. (((MEM x) ((showDups0 (the h)) ((CONS h) t))) ==> ((x = (the h)) \/ ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t))))))) ==> ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t)))))) ==> F)))) ==> ((vs = ((CONS h) t)) ==> ((isSome h) ==> (((MEM x) ((showDups0 (the h)) ((CONS h) t))) ==> ((~ ((!x. (((MEM x) ((showDups0 (the h)) ((CONS h) t))) ==> ((x = (the h)) \/ ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t))))))) ==> ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t)))))) ==> F))))) /\ (((vs = ((CONS h) t)) ==> ((isSome h) ==> (((MEM x) ((showDups0 (the h)) ((CONS h) t))) ==> ((~ ((!x. (((MEM x) ((showDups0 (the h)) ((CONS h) t))) ==> ((x = (the h)) \/ ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t))))))) ==> ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t)))))) ==> F)))) ==> ((vs = ((CONS h) t)) ==> ((isSome h) ==> (((MEM x) ((showDups0 (the h)) ((CONS h) t))) ==> ((~ ((!x. (((MEM x) ((showDups0 (the h)) ((CONS h) t))) ==> ((x = (the h)) \/ ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t))))))) ==> ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t)))))) ==> F))))))
+T c==> c==> c==> c= f0 cCONS f1 f2 c==> cisSome f1 c==> cMEM f3 cshowDups0 cthe f1 cCONS f1 f2 c==> c~ c==> ! c==> cMEM b0 cshowDups0 cthe f1 cCONS f1 f2 c\/ c= b0 cthe f1 c\/ c= b0 cthe f1 cMEM b0 cMAP part cthe cfilter part cisSome f2 c\/ c= f3 cthe f1 cMEM f3 cMAP part cthe cfilter part cisSome f2 cF c==> c= f0 cCONS f1 f2 c==> cisSome f1 c==> cMEM f3 cshowDups0 cthe f1 cCONS f1 f2 c==> c~ c==> ! c==> cMEM b0 cshowDups0 cthe f1 cCONS f1 f2 c\/ c= b0 cthe f1 c\/ c= b0 cthe f1 cMEM b0 cMAP part cthe cfilter part cisSome f2 c\/ c= f3 cthe f1 cMEM f3 cMAP part cthe cfilter part cisSome f2 cF c/\ c==> c==> c= f0 cCONS f1 f2 c==> cisSome f1 c==> cMEM f3 cshowDups0 cthe f1 cCONS f1 f2 c==> c~ c==> ! c==> cMEM b0 cshowDups0 cthe f1 cCONS f1 f2 c\/ c= b0 cthe f1 c\/ c= b0 cthe f1 cMEM b0 cMAP part cthe cfilter part cisSome f2 c\/ c= f3 cthe f1 cMEM f3 cMAP part cthe cfilter part cisSome f2 cF c==> c= f0 cCONS f1 f2 c==> cisSome f1 c==> cMEM f3 cshowDups0 cthe f1 cCONS f1 f2 c==> c~ c==> ! c==> cMEM b0 cshowDups0 cthe f1 cCONS f1 f2 c\/ c= b0 cthe f1 c\/ c= b0 cthe f1 cMEM b0 cMAP part cthe cfilter part cisSome f2 c\/ c= f3 cthe f1 cMEM f3 cMAP part cthe cfilter part cisSome f2 cF c==> c==> c= f0 cCONS f1 f2 c==> cisSome f1 c==> cMEM f3 cshowDups0 cthe f1 cCONS f1 f2 c==> c~ c==> ! c==> cMEM b0 cshowDups0 cthe f1 cCONS f1 f2 c\/ c= b0 cthe f1 c\/ c= b0 cthe f1 cMEM b0 cMAP part cthe cfilter part cisSome f2 c\/ c= f3 cthe f1 cMEM f3 cMAP part cthe cfilter part cisSome f2 cF c==> c= f0 cCONS f1 f2 c==> cisSome f1 c==> cMEM f3 cshowDups0 cthe f1 cCONS f1 f2 c==> c~ c==> ! c==> cMEM b0 cshowDups0 cthe f1 cCONS f1 f2 c\/ c= b0 cthe f1 c\/ c= b0 cthe f1 cMEM b0 cMAP part cthe cfilter part cisSome f2 c\/ c= f3 cthe f1 cMEM f3 cMAP part cthe cfilter part cisSome f2 cF
++ ((!x. (((MEM x) s) ==> (a x))) = ((all a) s)) |- (((all a) s) = (!x. (((MEM x) s) ==> (a x))))
+T c==> c= ! c==> cMEM b0 f0 * f1 b0 call f1 f0 c= call f1 f0 ! c==> cMEM b0 f0 * f1 b0
++ |- (((filter a) ((CONS x) s')) = (((COND (a x)) ((CONS x) ((filter a) s'))) ((filter a) s')))
+T c= cfilter f0 cCONS f1 f2 cCOND * f0 f1 cCONS f1 cfilter f0 f2 cfilter f0 f2
++ (isSome h) |- (((!x. (((MEM x) ((showDups0 (the h)) ((CONS h) t))) ==> ((x = (the h)) \/ ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t))))))) ==> ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t))))) = (((all (\t. ((t = (the h)) \/ ((MEM t) ((MAP the) ((filter isSome) ((CONS h) t))))))) ((showDups0 (the h)) ((CONS h) t))) ==> ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t))))))
+T c==> cisSome f0 c= c==> ! c==> cMEM b0 cshowDups0 cthe f0 cCONS f0 f1 c\/ c= b0 cthe f0 c\/ c= b0 cthe f0 cMEM b0 cMAP part cthe cfilter part cisSome f1 c\/ c= f2 cthe f0 cMEM f2 cMAP part cthe cfilter part cisSome f1 c==> call / c\/ c= b0 cthe f0 cMEM b0 cMAP part cthe cfilter part cisSome cCONS f0 f1 cshowDups0 cthe f0 cCONS f0 f1 c\/ c= f2 cthe f0 cMEM f2 cMAP part cthe cfilter part cisSome f1
++ |- (((!l. ((l = NIL) \/ (?h. (?t. (l = ((CONS h) t)))))) ==> ((\l. ((l = NIL) \/ (?h. (?t. (l = ((CONS h) t)))))) vs)) = ((\l. ((l = NIL) \/ (?h. (?t. (l = ((CONS h) t)))))) vs))
+T c= c==> ! c\/ c= b0 cNIL c? / c? / c= b0 cCONS b1 b2 * / c\/ c= b0 cNIL c? / c? / c= b0 cCONS b1 b2 f0 * / c\/ c= b0 cNIL c? / c? / c= b0 cCONS b1 b2 f0
++ |- ((!vs. ((vs = ((CONS h) t)) ==> ((isSome h) ==> (((MEM x) ((showDups0 (the h)) ((CONS h) t))) ==> ((!x. (((MEM x) ((showDups0 (the h)) ((CONS h) t))) ==> ((x = (the h)) \/ ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t))))))) ==> ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t))))))))) = T)
+T c= ! c==> c= b0 cCONS f0 f1 c==> cisSome f0 c==> cMEM f2 cshowDups0 cthe f0 cCONS f0 f1 c==> ! c==> cMEM b1 cshowDups0 cthe f0 cCONS f0 f1 c\/ c= b1 cthe f0 c\/ c= b1 cthe f0 cMEM b1 cMAP part cthe cfilter part cisSome f1 c\/ c= f2 cthe f0 cMEM f2 cMAP part cthe cfilter part cisSome f1 cT
++ |- ((((\h. (?t. (vs = ((CONS h) t)))) h) ==> (((~ (vs = NIL)) ==> (isSome (HD vs))) ==> (!x. (((MEM x) (showDups vs)) ==> ((MEM x) ((MAP the) ((filter isSome) vs))))))) = T)
+T c= c==> * / c? / c= f0 cCONS b0 b1 f1 c==> c==> c~ c= f0 cNIL cisSome cHD f0 ! c==> cMEM b0 cshowDups f0 cMEM b0 cMAP part cthe cfilter part cisSome f0 cT
+- |- ((((vs = ((CONS h) t)) ==> ((isSome h) ==> (((MEM x) ((showDups0 (the h)) ((CONS h) t))) ==> ((~ ((!x. (((MEM x) ((showDups0 (the h)) ((CONS h) t))) ==> ((x = (the h)) \/ ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t))))))) ==> ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t)))))) ==> F)))) ==> ((vs = ((CONS h) t)) ==> ((isSome h) ==> (((MEM x) ((showDups0 (the h)) ((CONS h) t))) ==> ((~ ((!x. (((MEM x) ((showDups0 (the h)) ((CONS h) t))) ==> ((x = (the h)) \/ ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t))))))) ==> ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t)))))) ==> F))))) = ((vs = ((CONS h) t)) ==> ((isSome h) ==> (((MEM x) ((showDups0 (the h)) ((CONS h) t))) ==> ((~ ((!x. (((MEM x) ((showDups0 (the h)) ((CONS h) t))) ==> ((x = (the h)) \/ ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t))))))) ==> ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t)))))) ==> F)))))
+T c= c==> c==> c= f0 cCONS f1 f2 c==> cisSome f1 c==> cMEM f3 cshowDups0 cthe f1 cCONS f1 f2 c==> c~ c==> ! c==> cMEM b0 cshowDups0 cthe f1 cCONS f1 f2 c\/ c= b0 cthe f1 c\/ c= b0 cthe f1 cMEM b0 cMAP part cthe cfilter part cisSome f2 c\/ c= f3 cthe f1 cMEM f3 cMAP part cthe cfilter part cisSome f2 cF c==> c= f0 cCONS f1 f2 c==> cisSome f1 c==> cMEM f3 cshowDups0 cthe f1 cCONS f1 f2 c==> c~ c==> ! c==> cMEM b0 cshowDups0 cthe f1 cCONS f1 f2 c\/ c= b0 cthe f1 c\/ c= b0 cthe f1 cMEM b0 cMAP part cthe cfilter part cisSome f2 c\/ c= f3 cthe f1 cMEM f3 cMAP part cthe cfilter part cisSome f2 cF c==> c= f0 cCONS f1 f2 c==> cisSome f1 c==> cMEM f3 cshowDups0 cthe f1 cCONS f1 f2 c==> c~ c==> ! c==> cMEM b0 cshowDups0 cthe f1 cCONS f1 f2 c\/ c= b0 cthe f1 c\/ c= b0 cthe f1 cMEM b0 cMAP part cthe cfilter part cisSome f2 c\/ c= f3 cthe f1 cMEM f3 cMAP part cthe cfilter part cisSome f2 cF
+- |- (((showDups0 a) ((CONS b) bs)) = (((COND (b = NONE)) ((CONS a) ((showDups0 a) bs))) ((CONS (the b)) ((showDups0 (the b)) bs))))
+T c= cshowDups0 f0 cCONS f1 f2 cCOND c= f1 cNONE cCONS f0 cshowDups0 f0 f2 cCONS cthe f1 cshowDups0 cthe f1 f2
+- |- ((_10084110 = _10084112) ==> ((~ (_10084111 = _10084113)) \/ (((showDups0 _10084110) _10084111) = ((showDups0 _10084112) _10084113))))
+T c==> c= f0 f1 c\/ c~ c= f2 f3 c= cshowDups0 f0 f2 cshowDups0 f1 f3
+- |- ((\t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3)))) t2)
+T * / ! c= c\/ f0 c\/ b0 b1 c\/ c\/ f0 b0 b1 f1
+- |- ((!x. ((P x) \/ Q)) = ((!x. (P x)) \/ Q))
+T c= ! c\/ * f0 b0 f1 c\/ ! * f0 b0 f1
+- (vs = ((CONS h) t)) |- ((~ ((MEM x) ((MAP the) ((filter isSome) t)))) = (~ ((MEM x) ((MAP the) ((filter isSome) t)))))
+T c==> c= f0 cCONS f1 f2 c= c~ cMEM f3 cMAP part cthe cfilter part cisSome f2 c~ cMEM f3 cMAP part cthe cfilter part cisSome f2
++ |- ((\a. (!x. (!s'. ((((filter a) NIL) = NIL) /\ (((filter a) ((CONS x) s')) = (((COND (a x)) ((CONS x) ((filter a) s'))) ((filter a) s'))))))) a)
+T * / ! ! c/\ c= cfilter b0 cNIL cNIL c= cfilter b0 cCONS b1 b2 cCOND * b0 b1 cCONS b1 cfilter b0 b2 cfilter b0 b2 f0
++ |- ((!t. (!x. (!h. (!vs. ((vs = ((CONS h) t)) ==> ((isSome h) ==> (((MEM x) ((showDups0 (the h)) ((CONS h) t))) ==> ((!x. (((MEM x) ((showDups0 (the h)) ((CONS h) t))) ==> ((x = (the h)) \/ ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t))))))) ==> ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t)))))))))))) = (!t. (!x. (!h. (!vs. ((vs = ((CONS h) t)) ==> ((isSome h) ==> (((MEM x) ((showDups0 (the h)) ((CONS h) t))) ==> ((~ ((!x. (((MEM x) ((showDups0 (the h)) ((CONS h) t))) ==> ((x = (the h)) \/ ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t))))))) ==> ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t)))))) ==> F)))))))))
+T c= ! ! ! ! c==> c= b3 cCONS b2 b0 c==> cisSome b2 c==> cMEM b1 cshowDups0 cthe b2 cCONS b2 b0 c==> ! c==> cMEM b4 cshowDups0 cthe b2 cCONS b2 b0 c\/ c= b4 cthe b2 c\/ c= b4 cthe b2 cMEM b4 cMAP part cthe cfilter part cisSome b0 c\/ c= b1 cthe b2 cMEM b1 cMAP part cthe cfilter part cisSome b0 ! ! ! ! c==> c= b3 cCONS b2 b0 c==> cisSome b2 c==> cMEM b1 cshowDups0 cthe b2 cCONS b2 b0 c==> c~ c==> ! c==> cMEM b4 cshowDups0 cthe b2 cCONS b2 b0 c\/ c= b4 cthe b2 c\/ c= b4 cthe b2 cMEM b4 cMAP part cthe cfilter part cisSome b0 c\/ c= b1 cthe b2 cMEM b1 cMAP part cthe cfilter part cisSome b0 cF
++ (vs = NIL) |- (!x. (((MEM x) (showDups vs)) ==> ((MEM x) ((MAP the) ((filter isSome) vs)))))
+T c==> c= f0 cNIL ! c==> cMEM b0 cshowDups f0 cMEM b0 cMAP part cthe cfilter part cisSome f0
++ (isSome h), (vs = ((CONS h) t)), ((MEM x) ((showDups0 (the h)) ((CONS h) t))) |- (((all (\t. ((t = (the h)) \/ ((MEM t) ((MAP the) ((filter isSome) ((CONS h) t))))))) ((showDups0 (the h)) ((CONS h) t))) ==> ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t)))))
+T c==> cisSome f0 c==> c= f1 cCONS f0 f2 c==> cMEM f3 cshowDups0 cthe f0 cCONS f0 f2 c==> call / c\/ c= b0 cthe f0 cMEM b0 cMAP part cthe cfilter part cisSome cCONS f0 f2 cshowDups0 cthe f0 cCONS f0 f2 c\/ c= f3 cthe f0 cMEM f3 cMAP part cthe cfilter part cisSome f2
++ (!x. (((MEM x) ((showDups0 (the h)) ((CONS h) t))) ==> ((x = (the h)) \/ ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t))))))) |- (((MEM _10084073) ((MAP the) ((filter isSome) t))) \/ ((~ ((MEM _10084073) ((showDups0 ((I the) h)) ((CONS h) t)))) \/ ((_10084073 = ((I the) h)) \/ (_10084073 = ((I the) h)))))
+T c==> ! c==> cMEM b0 cshowDups0 cthe f0 cCONS f0 f1 c\/ c= b0 cthe f0 c\/ c= b0 cthe f0 cMEM b0 cMAP part cthe cfilter part cisSome f1 c\/ cMEM f2 cMAP part cthe cfilter part cisSome f1 c\/ c~ cMEM f2 cshowDups0 cI part cthe f0 cCONS f0 f1 c\/ c= f2 cI part cthe f0 c= f2 cI part cthe f0
+- |- (((~ (NIL = ((CONS h) t))) ==> ((NIL = ((CONS h) t)) = F)) = ((NIL = ((CONS h) t)) = F))
+T c= c==> c~ c= cNIL cCONS f0 f1 c= c= cNIL cCONS f0 f1 cF c= c= cNIL cCONS f0 f1 cF
+- (!x. (((MEM x) ((showDups0 (the h)) ((CONS h) t))) ==> ((x = (the h)) \/ ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t))))))), (~ ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t))))), ((MEM x) ((showDups0 (the h)) ((CONS h) t))) |- ((~ F) ==> F)
+T c==> ! c==> cMEM b0 cshowDups0 cthe f0 cCONS f0 f1 c\/ c= b0 cthe f0 c\/ c= b0 cthe f0 cMEM b0 cMAP part cthe cfilter part cisSome f1 c==> c~ c\/ c= f2 cthe f0 cMEM f2 cMAP part cthe cfilter part cisSome f1 c==> cMEM f2 cshowDups0 cthe f0 cCONS f0 f1 c==> c~ cF cF
++ ((\t. (vs = ((CONS h) t))) t) |- (vs = ((CONS h) t))
+T c==> * / c= f0 cCONS f1 b0 f2 c= f0 cCONS f1 f2
++ |- (((!a. ((all (\t. ((t = a) \/ ((MEM t) ((MAP the) ((filter isSome) ((CONS h) t))))))) ((showDups0 a) ((CONS h) t)))) ==> ((\a. ((all (\t. ((t = a) \/ ((MEM t) ((MAP the) ((filter isSome) ((CONS h) t))))))) ((showDups0 a) ((CONS h) t)))) (the h))) = ((\a. ((all (\t. ((t = a) \/ ((MEM t) ((MAP the) ((filter isSome) ((CONS h) t))))))) ((showDups0 a) ((CONS h) t)))) (the h)))
+T c= c==> ! call / c\/ c= b1 b0 cMEM b1 cMAP part cthe cfilter part cisSome cCONS f0 f1 cshowDups0 b0 cCONS f0 f1 * / call / c\/ c= b1 b0 cMEM b1 cMAP part cthe cfilter part cisSome cCONS f0 f1 cshowDups0 b0 cCONS f0 f1 cthe f0 * / call / c\/ c= b1 b0 cMEM b1 cMAP part cthe cfilter part cisSome cCONS f0 f1 cshowDups0 b0 cCONS f0 f1 cthe f0
+- |- (((!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3)))) ==> ((\t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3)))) t2)) = ((\t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3)))) t2))
+T c= c==> ! ! c= c\/ f0 c\/ b0 b1 c\/ c\/ f0 b0 b1 * / ! c= c\/ f0 c\/ b0 b1 c\/ c\/ f0 b0 b1 f1 * / ! c= c\/ f0 c\/ b0 b1 c\/ c\/ f0 b0 b1 f1
+- (~ ((MEM x) ((showDups0 ((I the) h)) ((CONS h) t)))), ((MEM x) ((showDups0 (the h)) ((CONS h) t))) |- ((~ ((MEM x) ((showDups0 ((I the) h)) ((CONS h) t)))) /\ ((MEM x) ((showDups0 ((I the) h)) ((CONS h) t))))
+T c==> c~ cMEM f0 cshowDups0 cI part cthe f1 cCONS f1 f2 c==> cMEM f0 cshowDups0 cthe f1 cCONS f1 f2 c/\ c~ cMEM f0 cshowDups0 cI part cthe f1 cCONS f1 f2 cMEM f0 cshowDups0 cI part cthe f1 cCONS f1 f2
++ |- (((!h. (!t. (~ (((CONS h) t) = NIL)))) ==> ((\h. (!t. (~ (((CONS h) t) = NIL)))) h)) = ((\h. (!t. (~ (((CONS h) t) = NIL)))) h))
+T c= c==> ! ! c~ c= cCONS b0 b1 cNIL * / ! c~ c= cCONS b0 b1 cNIL f0 * / ! c~ c= cCONS b0 b1 cNIL f0
++ |- ((\s'. ((((filter a) NIL) = NIL) /\ (((filter a) ((CONS x) s')) = (((COND (a x)) ((CONS x) ((filter a) s'))) ((filter a) s'))))) s')
+T * / c/\ c= cfilter f0 cNIL cNIL c= cfilter f0 cCONS f1 b0 cCOND * f0 f1 cCONS f1 cfilter f0 b0 cfilter f0 b0 f2
+- (NIL = ((CONS h) t)) |- (((CONS h) t) = NIL)
+T c==> c= cNIL cCONS f0 f1 c= cCONS f0 f1 cNIL
+- (isSome h) |- ((I isSome) h)
+T c==> cisSome f0 cI part cisSome f0
++ |- (((!a. (!s. (((all a) s) = (!x. (((MEM x) s) ==> (a x)))))) ==> ((\a. (!s. (((all a) s) = (!x. (((MEM x) s) ==> (a x)))))) a)) = ((\a. (!s. (((all a) s) = (!x. (((MEM x) s) ==> (a x)))))) a))
+T c= c==> ! ! c= call b0 b1 ! c==> cMEM b2 b1 * b0 b2 * / ! c= call b0 b1 ! c==> cMEM b2 b1 * b0 b2 f0 * / ! c= call b0 b1 ! c==> cMEM b2 b1 * b0 b2 f0
+- |- ((_10084102 = _10084104) ==> ((~ (_10084103 = _10084105)) \/ (((I _10084102) _10084103) = ((I _10084104) _10084105))))
+T c==> c= f0 f1 c\/ c~ c= f2 f3 c= cI f0 f2 cI f1 f3
++ (~ ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t))))) |- ((~ (x = ((I the) h))) = ((~ (x = ((I the) h))) /\ (~ (x = ((I the) h)))))
+T c==> c~ c\/ c= f0 cthe f1 cMEM f0 cMAP part cthe cfilter part cisSome f2 c= c~ c= f0 cI part cthe f1 c/\ c~ c= f0 cI part cthe f1 c~ c= f0 cI part cthe f1
++ |- ((x = x) = T)
+T c= c= f0 f0 cT
++ |- ((\h. (!t. (((MAP f) ((CONS h) t)) = ((CONS (f h)) ((MAP f) t))))) h)
+T * / ! c= cMAP f0 cCONS b0 b1 cCONS * f0 b0 cMAP f0 b1 f1
++ |- ((p \/ (q \/ r)) = (q \/ (p \/ r)))
+T c= c\/ f0 c\/ f1 f2 c\/ f1 c\/ f0 f2
+- |- ((a ==> b) = ((~ a) \/ b))
+T c= c==> f0 f1 c\/ c~ f0 f1
+- (!x. (((MEM x) ((showDups0 (the h)) ((CONS h) t))) ==> ((x = (the h)) \/ ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t))))))), (~ ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t))))), (~ ((MEM x) ((MAP the) ((filter isSome) t)))), ((MEM x) ((showDups0 (the h)) ((CONS h) t))) |- ((~ ((MEM x) ((MAP the) ((filter isSome) t)))) /\ ((MEM x) ((MAP the) ((filter isSome) t))))
+T c==> ! c==> cMEM b0 cshowDups0 cthe f0 cCONS f0 f1 c\/ c= b0 cthe f0 c\/ c= b0 cthe f0 cMEM b0 cMAP part cthe cfilter part cisSome f1 c==> c~ c\/ c= f2 cthe f0 cMEM f2 cMAP part cthe cfilter part cisSome f1 c==> c~ cMEM f2 cMAP part cthe cfilter part cisSome f1 c==> cMEM f2 cshowDups0 cthe f0 cCONS f0 f1 c/\ c~ cMEM f2 cMAP part cthe cfilter part cisSome f1 cMEM f2 cMAP part cthe cfilter part cisSome f1
++ (~ ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t))))) |- (~ ((MEM x) ((MAP the) ((filter isSome) t))))
+T c==> c~ c\/ c= f0 cthe f1 cMEM f0 cMAP part cthe cfilter part cisSome f2 c~ cMEM f0 cMAP part cthe cfilter part cisSome f2
+- |- ((~ (_10084098 = _10084100)) \/ ((~ (_10084099 = _10084101)) \/ (((MAP _10084098) _10084099) = ((MAP _10084100) _10084101))))
+T c\/ c~ c= f0 f1 c\/ c~ c= f2 f3 c= cMAP f0 f2 cMAP f1 f3
++ |- (((~ ((MEM _10084073) ((showDups0 ((I the) h)) ((CONS h) t)))) \/ ((_10084073 = ((I the) h)) \/ ((_10084073 = ((I the) h)) \/ ((MEM _10084073) ((MAP the) ((filter isSome) t)))))) = (((MEM _10084073) ((MAP the) ((filter isSome) t))) \/ ((~ ((MEM _10084073) ((showDups0 ((I the) h)) ((CONS h) t)))) \/ ((_10084073 = ((I the) h)) \/ (_10084073 = ((I the) h))))))
+T c= c\/ c~ cMEM f0 cshowDups0 cI part cthe f1 cCONS f1 f2 c\/ c= f0 cI part cthe f1 c\/ c= f0 cI part cthe f1 cMEM f0 cMAP part cthe cfilter part cisSome f2 c\/ cMEM f0 cMAP part cthe cfilter part cisSome f2 c\/ c~ cMEM f0 cshowDups0 cI part cthe f1 cCONS f1 f2 c\/ c= f0 cI part cthe f1 c= f0 cI part cthe f1
++ |- (((MEM x) ((showDups0 (the h)) ((CONS h) t))) ==> ((!x. (((MEM x) ((showDups0 (the h)) ((CONS h) t))) ==> ((x = (the h)) \/ ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t))))))) ==> ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t))))))
+T c==> cMEM f0 cshowDups0 cthe f1 cCONS f1 f2 c==> ! c==> cMEM b0 cshowDups0 cthe f1 cCONS f1 f2 c\/ c= b0 cthe f1 c\/ c= b0 cthe f1 cMEM b0 cMAP part cthe cfilter part cisSome f2 c\/ c= f0 cthe f1 cMEM f0 cMAP part cthe cfilter part cisSome f2
++ |- (((~ (((CONS h) t) = NIL)) ==> ((((CONS h) t) = NIL) = F)) = ((((CONS h) t) = NIL) = F))
+T c= c==> c~ c= cCONS f0 f1 cNIL c= c= cCONS f0 f1 cNIL cF c= c= cCONS f0 f1 cNIL cF
++ |- ((\t. (~ (((CONS h) t) = NIL))) t)
+T * / c~ c= cCONS f0 b0 cNIL f1
++ (!x. (((MEM x) ((showDups0 (the h)) ((CONS h) t))) ==> ((x = (the h)) \/ ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t))))))), ((MEM x) ((showDups0 (the h)) ((CONS h) t))) |- ((~ ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t))))) ==> F)
+T c==> ! c==> cMEM b0 cshowDups0 cthe f0 cCONS f0 f1 c\/ c= b0 cthe f0 c\/ c= b0 cthe f0 cMEM b0 cMAP part cthe cfilter part cisSome f1 c==> cMEM f2 cshowDups0 cthe f0 cCONS f0 f1 c==> c~ c\/ c= f2 cthe f0 cMEM f2 cMAP part cthe cfilter part cisSome f1 cF
++ (!x. (((MEM x) ((showDups0 (the h)) ((CONS h) t))) ==> ((x = (the h)) \/ ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t))))))) |- ((~ ((MEM _10084073) ((showDups0 ((I the) h)) ((CONS h) t)))) \/ ((_10084073 = ((I the) h)) \/ ((_10084073 = ((I the) h)) \/ ((MEM _10084073) ((MAP the) ((filter isSome) t))))))
+T c==> ! c==> cMEM b0 cshowDups0 cthe f0 cCONS f0 f1 c\/ c= b0 cthe f0 c\/ c= b0 cthe f0 cMEM b0 cMAP part cthe cfilter part cisSome f1 c\/ c~ cMEM f2 cshowDups0 cI part cthe f0 cCONS f0 f1 c\/ c= f2 cI part cthe f0 c\/ c= f2 cI part cthe f0 cMEM f2 cMAP part cthe cfilter part cisSome f1
++ (~ ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t))))), ((MEM x) ((showDups0 (the h)) ((CONS h) t))) |- (((((MEM x) ((showDups0 ((I the) h)) ((CONS h) t))) /\ ((~ (x = ((I the) h))) /\ (~ (x = ((I the) h))))) ==> ((MEM x) ((MAP the) ((filter isSome) t)))) = ((MEM x) ((MAP the) ((filter isSome) t))))
+T c==> c~ c\/ c= f0 cthe f1 cMEM f0 cMAP part cthe cfilter part cisSome f2 c==> cMEM f0 cshowDups0 cthe f1 cCONS f1 f2 c= c==> c/\ cMEM f0 cshowDups0 cI part cthe f1 cCONS f1 f2 c/\ c~ c= f0 cI part cthe f1 c~ c= f0 cI part cthe f1 cMEM f0 cMAP part cthe cfilter part cisSome f2 cMEM f0 cMAP part cthe cfilter part cisSome f2
++ |- ((p \/ q) = (q \/ p))
+T c= c\/ f0 f1 c\/ f1 f0
+- |- ((p ==> (~ p)) = (~ p))
+T c= c==> f0 c~ f0 c~ f0
++ |- (((vs = ((CONS h) t)) ==> ((isSome h) ==> (((MEM x) ((showDups0 (the h)) ((CONS h) t))) ==> ((!x. (((MEM x) ((showDups0 (the h)) ((CONS h) t))) ==> ((x = (the h)) \/ ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t))))))) ==> ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t)))))))) = T)
+T c= c==> c= f0 cCONS f1 f2 c==> cisSome f1 c==> cMEM f3 cshowDups0 cthe f1 cCONS f1 f2 c==> ! c==> cMEM b0 cshowDups0 cthe f1 cCONS f1 f2 c\/ c= b0 cthe f1 c\/ c= b0 cthe f1 cMEM b0 cMAP part cthe cfilter part cisSome f2 c\/ c= f3 cthe f1 cMEM f3 cMAP part cthe cfilter part cisSome f2 cT
++ |- ((p \/ (p \/ q)) = (p \/ q))
+T c= c\/ f0 c\/ f0 f1 c\/ f0 f1
+- (((CONS h) t) = NIL) |- (NIL = ((CONS h) t))
+T c==> c= cCONS f0 f1 cNIL c= cNIL cCONS f0 f1
++ (vs = ((CONS h) t)) |- ((isSome h) ==> (((MEM x) ((showDups0 (the h)) ((CONS h) t))) ==> ((~ ((!x. (((MEM x) ((showDups0 (the h)) ((CONS h) t))) ==> ((x = (the h)) \/ ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t))))))) ==> ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t)))))) ==> F)))
+T c==> c= f0 cCONS f1 f2 c==> cisSome f1 c==> cMEM f3 cshowDups0 cthe f1 cCONS f1 f2 c==> c~ c==> ! c==> cMEM b0 cshowDups0 cthe f1 cCONS f1 f2 c\/ c= b0 cthe f1 c\/ c= b0 cthe f1 cMEM b0 cMAP part cthe cfilter part cisSome f2 c\/ c= f3 cthe f1 cMEM f3 cMAP part cthe cfilter part cisSome f2 cF
+- (~ ((!x. (((MEM x) ((showDups0 (the h)) ((CONS h) t))) ==> ((x = (the h)) \/ ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t))))))) ==> ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t)))))), (isSome h), (vs = ((CONS h) t)), ((MEM x) ((showDups0 (the h)) ((CONS h) t))) |- F
+T c==> c~ c==> ! c==> cMEM b0 cshowDups0 cthe f0 cCONS f0 f1 c\/ c= b0 cthe f0 c\/ c= b0 cthe f0 cMEM b0 cMAP part cthe cfilter part cisSome f1 c\/ c= f2 cthe f0 cMEM f2 cMAP part cthe cfilter part cisSome f1 c==> cisSome f0 c==> c= f3 cCONS f0 f1 c==> cMEM f2 cshowDups0 cthe f0 cCONS f0 f1 cF
++ (!x. (((MEM x) ((showDups0 (the h)) ((CONS h) t))) ==> ((x = (the h)) \/ ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t))))))), (~ ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t))))), ((MEM x) ((showDups0 (the h)) ((CONS h) t))) |- ((MEM x) ((MAP the) ((filter isSome) t)))
+T c==> ! c==> cMEM b0 cshowDups0 cthe f0 cCONS f0 f1 c\/ c= b0 cthe f0 c\/ c= b0 cthe f0 cMEM b0 cMAP part cthe cfilter part cisSome f1 c==> c~ c\/ c= f2 cthe f0 cMEM f2 cMAP part cthe cfilter part cisSome f1 c==> cMEM f2 cshowDups0 cthe f0 cCONS f0 f1 cMEM f2 cMAP part cthe cfilter part cisSome f1
+- (vs = ((CONS h) t)), ((~ (vs = NIL)) ==> (isSome (HD vs))), ((MEM x) (showDups vs)) |- (((MEM x) (showDups vs)) /\ ((MEM x) ((MAP the) ((filter isSome) vs))))
+T c==> c= f0 cCONS f1 f2 c==> c==> c~ c= f0 cNIL cisSome cHD f0 c==> cMEM f3 cshowDups f0 c/\ cMEM f3 cshowDups f0 cMEM f3 cMAP part cthe cfilter part cisSome f0
++ (vs = ((CONS h) t)) |- (((isSome h) ==> (((MEM x) ((showDups0 (the h)) ((CONS h) t))) ==> ((MEM x) ((MAP the) (((COND (isSome h)) ((CONS h) ((filter isSome) t))) ((filter isSome) t)))))) = (((~ (vs = NIL)) ==> (isSome (HD vs))) ==> (((MEM x) (showDups vs)) ==> ((MEM x) ((MAP the) ((filter isSome) vs))))))
+T c==> c= f0 cCONS f1 f2 c= c==> cisSome f1 c==> cMEM f3 cshowDups0 cthe f1 cCONS f1 f2 cMEM f3 cMAP part cthe cCOND cisSome f1 cCONS f1 cfilter part cisSome f2 cfilter part cisSome f2 c==> c==> c~ c= f0 cNIL cisSome cHD f0 c==> cMEM f3 cshowDups f0 cMEM f3 cMAP part cthe cfilter part cisSome f0
++ |- (((MAP f) NIL) = NIL)
+T c= cMAP f0 cNIL cNIL
+- (_10084106 = _10084108), (_10084107 = _10084109) |- ((_10084106 = _10084108) /\ (((CONS _10084106) _10084107) = ((CONS _10084108) _10084109)))
+T c==> c= f0 f1 c==> c= f2 f3 c/\ c= f0 f1 c= cCONS f0 f2 cCONS f1 f3
++ (vs = ((CONS h) t)) |- ((vs = ((CONS h) t)) /\ (((~ (vs = NIL)) ==> (isSome (HD vs))) ==> (!x. (((MEM x) (showDups vs)) ==> ((MEM x) ((MAP the) ((filter isSome) vs)))))))
+T c==> c= f0 cCONS f1 f2 c/\ c= f0 cCONS f1 f2 c==> c==> c~ c= f0 cNIL cisSome cHD f0 ! c==> cMEM b0 cshowDups f0 cMEM b0 cMAP part cthe cfilter part cisSome f0
++ (!x. (((MEM x) ((showDups0 (the h)) ((CONS h) t))) ==> ((x = (the h)) \/ ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t))))))), ((MEM x) ((showDups0 (the h)) ((CONS h) t))) |- ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t))))
+T c==> ! c==> cMEM b0 cshowDups0 cthe f0 cCONS f0 f1 c\/ c= b0 cthe f0 c\/ c= b0 cthe f0 cMEM b0 cMAP part cthe cfilter part cisSome f1 c==> cMEM f2 cshowDups0 cthe f0 cCONS f0 f1 c\/ c= f2 cthe f0 cMEM f2 cMAP part cthe cfilter part cisSome f1
+- |- (((t1 \/ t2) \/ t3) = (t1 \/ (t2 \/ t3)))
+T c= c\/ c\/ f0 f1 f2 c\/ f0 c\/ f1 f2
++ |- ((~ (a \/ b)) = ((~ a) /\ (~ b)))
+T c= c~ c\/ f0 f1 c/\ c~ f0 c~ f1
+- |- ((_10084098 = _10084100) ==> ((~ (_10084099 = _10084101)) \/ (((MAP _10084098) _10084099) = ((MAP _10084100) _10084101))))
+T c==> c= f0 f1 c\/ c~ c= f2 f3 c= cMAP f0 f2 cMAP f1 f3
++ (!x. (((MEM x) ((showDups0 (the h)) ((CONS h) t))) ==> ((x = (the h)) \/ ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t))))))), (~ ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t))))), ((MEM x) ((showDups0 (the h)) ((CONS h) t))) |- ((((MEM x) ((MAP the) ((filter isSome) t))) ==> F) = F)
+T c==> ! c==> cMEM b0 cshowDups0 cthe f0 cCONS f0 f1 c\/ c= b0 cthe f0 c\/ c= b0 cthe f0 cMEM b0 cMAP part cthe cfilter part cisSome f1 c==> c~ c\/ c= f2 cthe f0 cMEM f2 cMAP part cthe cfilter part cisSome f1 c==> cMEM f2 cshowDups0 cthe f0 cCONS f0 f1 c= c==> cMEM f2 cMAP part cthe cfilter part cisSome f1 cF cF
++ |- (((MAP f) ((CONS h) t)) = ((CONS (f h)) ((MAP f) t)))
+T c= cMAP f0 cCONS f1 f2 cCONS * f0 f1 cMAP f0 f2
+- (vs = ((CONS h) t)) |- (((~ ((MEM _10084073) ((showDups0 ((I the) h)) ((CONS h) t)))) \/ ((_10084073 = ((I the) h)) \/ ((_10084073 = ((I the) h)) \/ ((MEM _10084073) ((MAP the) ((filter isSome) t)))))) = ((~ ((MEM _10084073) ((showDups0 ((I the) h)) ((CONS h) t)))) \/ ((_10084073 = ((I the) h)) \/ ((_10084073 = ((I the) h)) \/ ((MEM _10084073) ((MAP the) ((filter isSome) t)))))))
+T c==> c= f0 cCONS f1 f2 c= c\/ c~ cMEM f3 cshowDups0 cI part cthe f1 cCONS f1 f2 c\/ c= f3 cI part cthe f1 c\/ c= f3 cI part cthe f1 cMEM f3 cMAP part cthe cfilter part cisSome f2 c\/ c~ cMEM f3 cshowDups0 cI part cthe f1 cCONS f1 f2 c\/ c= f3 cI part cthe f1 c\/ c= f3 cI part cthe f1 cMEM f3 cMAP part cthe cfilter part cisSome f2
++ (~ ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t))))) |- (((MEM x) ((MAP the) ((filter isSome) t))) ==> F)
+T c==> c~ c\/ c= f0 cthe f1 cMEM f0 cMAP part cthe cfilter part cisSome f2 c==> cMEM f0 cMAP part cthe cfilter part cisSome f2 cF
++ ((\t. (vs = ((CONS h) t))) t) |- (((vs = ((CONS h) t)) ==> (((~ (vs = NIL)) ==> (isSome (HD vs))) ==> (!x. (((MEM x) (showDups vs)) ==> ((MEM x) ((MAP the) ((filter isSome) vs))))))) = (((~ (vs = NIL)) ==> (isSome (HD vs))) ==> (!x. (((MEM x) (showDups vs)) ==> ((MEM x) ((MAP the) ((filter isSome) vs)))))))
+T c==> * / c= f0 cCONS f1 b0 f2 c= c==> c= f0 cCONS f1 f2 c==> c==> c~ c= f0 cNIL cisSome cHD f0 ! c==> cMEM b0 cshowDups f0 cMEM b0 cMAP part cthe cfilter part cisSome f0 c==> c==> c~ c= f0 cNIL cisSome cHD f0 ! c==> cMEM b0 cshowDups f0 cMEM b0 cMAP part cthe cfilter part cisSome f0
++ |- ((showDups ((CONS b) bs)) = ((showDups0 (the b)) ((CONS b) bs)))
+T c= cshowDups cCONS f0 f1 cshowDups0 cthe f0 cCONS f0 f1
+- (_10084110 = _10084112), (_10084111 = _10084113) |- ((_10084111 = _10084113) /\ (((showDups0 _10084110) _10084111) = ((showDups0 _10084112) _10084113)))
+T c==> c= f0 f1 c==> c= f2 f3 c/\ c= f2 f3 c= cshowDups0 f0 f2 cshowDups0 f1 f3
+- (_10084107 = _10084109) |- ((_10084107 = _10084109) /\ ((~ (_10084106 = _10084108)) \/ (((CONS _10084106) _10084107) = ((CONS _10084108) _10084109))))
+T c==> c= f0 f1 c/\ c= f0 f1 c\/ c~ c= f2 f3 c= cCONS f2 f0 cCONS f3 f1
++ (vs = ((CONS h) t)), ((~ (vs = NIL)) ==> (isSome (HD vs))) |- ((((MEM x) (showDups vs)) ==> ((MEM x) ((MAP the) ((filter isSome) vs)))) = T)
+T c==> c= f0 cCONS f1 f2 c==> c==> c~ c= f0 cNIL cisSome cHD f0 c= c==> cMEM f3 cshowDups f0 cMEM f3 cMAP part cthe cfilter part cisSome f0 cT
++ |- ((\vs. (!a. ((all (\t. ((t = a) \/ ((MEM t) ((MAP the) ((filter isSome) vs)))))) ((showDups0 a) vs)))) ((CONS h) t))
+T * / ! call / c\/ c= b2 b1 cMEM b2 cMAP part cthe cfilter part cisSome b0 cshowDups0 b1 b0 cCONS f0 f1
++ |- ((\a. (!s. (((all a) s) = (!x. (((MEM x) s) ==> (a x)))))) a)
+T * / ! c= call b0 b1 ! c==> cMEM b2 b1 * b0 b2 f0
++ |- ((((vs = NIL) \/ (?h. (?t. (vs = ((CONS h) t))))) ==> (((~ (vs = NIL)) ==> (isSome (HD vs))) ==> (!x. (((MEM x) (showDups vs)) ==> ((MEM x) ((MAP the) ((filter isSome) vs))))))) = (((~ (vs = NIL)) ==> (isSome (HD vs))) ==> (!x. (((MEM x) (showDups vs)) ==> ((MEM x) ((MAP the) ((filter isSome) vs)))))))
+T c= c==> c\/ c= f0 cNIL c? / c? / c= f0 cCONS b0 b1 c==> c==> c~ c= f0 cNIL cisSome cHD f0 ! c==> cMEM b0 cshowDups f0 cMEM b0 cMAP part cthe cfilter part cisSome f0 c==> c==> c~ c= f0 cNIL cisSome cHD f0 ! c==> cMEM b0 cshowDups f0 cMEM b0 cMAP part cthe cfilter part cisSome f0
++ |- ((\vs. ((vs = ((CONS h) t)) ==> ((isSome h) ==> (((MEM x) ((showDups0 (the h)) ((CONS h) t))) ==> ((~ ((!x. (((MEM x) ((showDups0 (the h)) ((CONS h) t))) ==> ((x = (the h)) \/ ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t))))))) ==> ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t)))))) ==> F))))) vs)
+T * / c==> c= b0 cCONS f0 f1 c==> cisSome f0 c==> cMEM f2 cshowDups0 cthe f0 cCONS f0 f1 c==> c~ c==> ! c==> cMEM b1 cshowDups0 cthe f0 cCONS f0 f1 c\/ c= b1 cthe f0 c\/ c= b1 cthe f0 cMEM b1 cMAP part cthe cfilter part cisSome f1 c\/ c= f2 cthe f0 cMEM f2 cMAP part cthe cfilter part cisSome f1 cF f3
++ |- ((((all (\t. ((t = (the h)) \/ ((MEM t) ((MAP the) ((filter isSome) ((CONS h) t))))))) ((showDups0 (the h)) ((CONS h) t))) ==> ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t))))) = ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t)))))
+T c= c==> call / c\/ c= b0 cthe f0 cMEM b0 cMAP part cthe cfilter part cisSome cCONS f0 f1 cshowDups0 cthe f0 cCONS f0 f1 c\/ c= f2 cthe f0 cMEM f2 cMAP part cthe cfilter part cisSome f1 c\/ c= f2 cthe f0 cMEM f2 cMAP part cthe cfilter part cisSome f1
++ (isSome h) |- ((\x. (((MEM x) ((showDups0 (the h)) ((CONS h) t))) ==> ((\t. ((t = (the h)) \/ ((MEM t) ((MAP the) ((filter isSome) ((CONS h) t)))))) x))) = (\x. (((MEM x) ((showDups0 (the h)) ((CONS h) t))) ==> ((x = (the h)) \/ ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t))))))))
+T c==> cisSome f0 c= / c==> cMEM b0 cshowDups0 cthe f0 cCONS f0 f1 * / c\/ c= b1 cthe f0 cMEM b1 cMAP part cthe cfilter part cisSome cCONS f0 f1 b0 / c==> cMEM b0 cshowDups0 cthe f0 cCONS f0 f1 c\/ c= b0 cthe f0 c\/ c= b0 cthe f0 cMEM b0 cMAP part cthe cfilter part cisSome f1
++ (isSome h), (vs = ((CONS h) t)), ((MEM x) ((showDups0 (the h)) ((CONS h) t))) |- (((MEM x) ((showDups0 (the h)) ((CONS h) t))) /\ ((MEM x) ((MAP the) (((COND (isSome h)) ((CONS h) ((filter isSome) t))) ((filter isSome) t)))))
+T c==> cisSome f0 c==> c= f1 cCONS f0 f2 c==> cMEM f3 cshowDups0 cthe f0 cCONS f0 f2 c/\ cMEM f3 cshowDups0 cthe f0 cCONS f0 f2 cMEM f3 cMAP part cthe cCOND cisSome f0 cCONS f0 cfilter part cisSome f2 cfilter part cisSome f2
++ |- (!h. (((\h. (?t. (vs = ((CONS h) t)))) h) ==> (((~ (vs = NIL)) ==> (isSome (HD vs))) ==> (!x. (((MEM x) (showDups vs)) ==> ((MEM x) ((MAP the) ((filter isSome) vs))))))))
+T c==> * / c? / c= f0 cCONS b0 b1 f1 c==> c==> c~ c= f0 cNIL cisSome cHD f0 ! c==> cMEM b0 cshowDups f0 cMEM b0 cMAP part cthe cfilter part cisSome f0
+- (_10084098 = _10084100) |- ((_10084098 = _10084100) /\ ((~ (_10084099 = _10084101)) \/ (((MAP _10084098) _10084099) = ((MAP _10084100) _10084101))))
+T c==> c= f0 f1 c/\ c= f0 f1 c\/ c~ c= f2 f3 c= cMAP f0 f2 cMAP f1 f3
++ |- (((!vs. ((vs = ((CONS h) t)) ==> ((isSome h) ==> (((MEM x) ((showDups0 (the h)) ((CONS h) t))) ==> ((~ ((!x. (((MEM x) ((showDups0 (the h)) ((CONS h) t))) ==> ((x = (the h)) \/ ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t))))))) ==> ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t)))))) ==> F))))) ==> ((\vs. ((vs = ((CONS h) t)) ==> ((isSome h) ==> (((MEM x) ((showDups0 (the h)) ((CONS h) t))) ==> ((~ ((!x. (((MEM x) ((showDups0 (the h)) ((CONS h) t))) ==> ((x = (the h)) \/ ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t))))))) ==> ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t)))))) ==> F))))) vs)) = ((\vs. ((vs = ((CONS h) t)) ==> ((isSome h) ==> (((MEM x) ((showDups0 (the h)) ((CONS h) t))) ==> ((~ ((!x. (((MEM x) ((showDups0 (the h)) ((CONS h) t))) ==> ((x = (the h)) \/ ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t))))))) ==> ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t)))))) ==> F))))) vs))
+T c= c==> ! c==> c= b0 cCONS f0 f1 c==> cisSome f0 c==> cMEM f2 cshowDups0 cthe f0 cCONS f0 f1 c==> c~ c==> ! c==> cMEM b1 cshowDups0 cthe f0 cCONS f0 f1 c\/ c= b1 cthe f0 c\/ c= b1 cthe f0 cMEM b1 cMAP part cthe cfilter part cisSome f1 c\/ c= f2 cthe f0 cMEM f2 cMAP part cthe cfilter part cisSome f1 cF * / c==> c= b0 cCONS f0 f1 c==> cisSome f0 c==> cMEM f2 cshowDups0 cthe f0 cCONS f0 f1 c==> c~ c==> ! c==> cMEM b1 cshowDups0 cthe f0 cCONS f0 f1 c\/ c= b1 cthe f0 c\/ c= b1 cthe f0 cMEM b1 cMAP part cthe cfilter part cisSome f1 c\/ c= f2 cthe f0 cMEM f2 cMAP part cthe cfilter part cisSome f1 cF f3 * / c==> c= b0 cCONS f0 f1 c==> cisSome f0 c==> cMEM f2 cshowDups0 cthe f0 cCONS f0 f1 c==> c~ c==> ! c==> cMEM b1 cshowDups0 cthe f0 cCONS f0 f1 c\/ c= b1 cthe f0 c\/ c= b1 cthe f0 cMEM b1 cMAP part cthe cfilter part cisSome f1 c\/ c= f2 cthe f0 cMEM f2 cMAP part cthe cfilter part cisSome f1 cF f3
+- |- ((!x. (P \/ (Q x))) = (P \/ (!x. (Q x))))
+T c= ! c\/ f0 * f1 b0 c\/ f0 ! * f1 b0
+- |- (((!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))) ==> ((\t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))) t3)) = ((\t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))) t3))
+T c= c==> ! c= c\/ f0 c\/ f1 b0 c\/ c\/ f0 f1 b0 * / c= c\/ f0 c\/ f1 b0 c\/ c\/ f0 f1 b0 f2 * / c= c\/ f0 c\/ f1 b0 c\/ c\/ f0 f1 b0 f2
+- (?t. (vs = ((CONS h) t))) |- ((?t. (vs = ((CONS h) t))) /\ (((~ (vs = NIL)) ==> (isSome (HD vs))) ==> (!x. (((MEM x) (showDups vs)) ==> ((MEM x) ((MAP the) ((filter isSome) vs)))))))
+T c==> c? / c= f0 cCONS f1 b0 c/\ c? / c= f0 cCONS f1 b0 c==> c==> c~ c= f0 cNIL cisSome cHD f0 ! c==> cMEM b0 cshowDups f0 cMEM b0 cMAP part cthe cfilter part cisSome f0
+- |- ((~ (_10084107 = _10084109)) \/ ((~ (_10084106 = _10084108)) \/ (((CONS _10084106) _10084107) = ((CONS _10084108) _10084109))))
+T c\/ c~ c= f0 f1 c\/ c~ c= f2 f3 c= cCONS f2 f0 cCONS f3 f1
+- (_10084094 = _10084096) |- ((_10084094 = _10084096) /\ ((~ (_10084095 = _10084097)) \/ (((filter _10084094) _10084095) = ((filter _10084096) _10084097))))
+T c==> c= f0 f1 c/\ c= f0 f1 c\/ c~ c= f2 f3 c= cfilter f0 f2 cfilter f1 f3
+- |- ((a = b) ==> (b \/ (~ a)))
+T c==> c= f0 f1 c\/ f1 c~ f0
+- (_10084090 = _10084092) |- ((_10084091 = _10084093) ==> (((I _10084092) _10084093) \/ (~ ((I _10084090) _10084091))))
+T c==> c= f0 f1 c==> c= f2 f3 c\/ cI f1 f3 c~ cI f0 f2
+- ((vs = ((CONS h) t)) ==> ((isSome h) ==> (((MEM x) ((showDups0 (the h)) ((CONS h) t))) ==> ((~ ((!x. (((MEM x) ((showDups0 (the h)) ((CONS h) t))) ==> ((x = (the h)) \/ ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t))))))) ==> ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t)))))) ==> F)))) |- ((((vs = ((CONS h) t)) ==> ((isSome h) ==> (((MEM x) ((showDups0 (the h)) ((CONS h) t))) ==> ((~ ((!x. (((MEM x) ((showDups0 (the h)) ((CONS h) t))) ==> ((x = (the h)) \/ ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t))))))) ==> ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t)))))) ==> F)))) ==> ((vs = ((CONS h) t)) ==> ((isSome h) ==> (((MEM x) ((showDups0 (the h)) ((CONS h) t))) ==> ((~ ((!x. (((MEM x) ((showDups0 (the h)) ((CONS h) t))) ==> ((x = (the h)) \/ ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t))))))) ==> ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t)))))) ==> F))))) ==> ((vs = ((CONS h) t)) ==> ((isSome h) ==> (((MEM x) ((showDups0 (the h)) ((CONS h) t))) ==> ((~ ((!x. (((MEM x) ((showDups0 (the h)) ((CONS h) t))) ==> ((x = (the h)) \/ ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t))))))) ==> ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t)))))) ==> F)))))
+T c==> c==> c= f0 cCONS f1 f2 c==> cisSome f1 c==> cMEM f3 cshowDups0 cthe f1 cCONS f1 f2 c==> c~ c==> ! c==> cMEM b0 cshowDups0 cthe f1 cCONS f1 f2 c\/ c= b0 cthe f1 c\/ c= b0 cthe f1 cMEM b0 cMAP part cthe cfilter part cisSome f2 c\/ c= f3 cthe f1 cMEM f3 cMAP part cthe cfilter part cisSome f2 cF c==> c==> c==> c= f0 cCONS f1 f2 c==> cisSome f1 c==> cMEM f3 cshowDups0 cthe f1 cCONS f1 f2 c==> c~ c==> ! c==> cMEM b0 cshowDups0 cthe f1 cCONS f1 f2 c\/ c= b0 cthe f1 c\/ c= b0 cthe f1 cMEM b0 cMAP part cthe cfilter part cisSome f2 c\/ c= f3 cthe f1 cMEM f3 cMAP part cthe cfilter part cisSome f2 cF c==> c= f0 cCONS f1 f2 c==> cisSome f1 c==> cMEM f3 cshowDups0 cthe f1 cCONS f1 f2 c==> c~ c==> ! c==> cMEM b0 cshowDups0 cthe f1 cCONS f1 f2 c\/ c= b0 cthe f1 c\/ c= b0 cthe f1 cMEM b0 cMAP part cthe cfilter part cisSome f2 c\/ c= f3 cthe f1 cMEM f3 cMAP part cthe cfilter part cisSome f2 cF c==> c= f0 cCONS f1 f2 c==> cisSome f1 c==> cMEM f3 cshowDups0 cthe f1 cCONS f1 f2 c==> c~ c==> ! c==> cMEM b0 cshowDups0 cthe f1 cCONS f1 f2 c\/ c= b0 cthe f1 c\/ c= b0 cthe f1 cMEM b0 cMAP part cthe cfilter part cisSome f2 c\/ c= f3 cthe f1 cMEM f3 cMAP part cthe cfilter part cisSome f2 cF
+- (~ ((!x. (((MEM x) ((showDups0 (the h)) ((CONS h) t))) ==> ((x = (the h)) \/ ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t))))))) ==> ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t)))))), (isSome h), (vs = ((CONS h) t)), ((MEM x) ((showDups0 (the h)) ((CONS h) t))) |- ((~ ((!x. (((MEM x) ((showDups0 (the h)) ((CONS h) t))) ==> ((x = (the h)) \/ ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t))))))) ==> ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t)))))) /\ F)
+T c==> c~ c==> ! c==> cMEM b0 cshowDups0 cthe f0 cCONS f0 f1 c\/ c= b0 cthe f0 c\/ c= b0 cthe f0 cMEM b0 cMAP part cthe cfilter part cisSome f1 c\/ c= f2 cthe f0 cMEM f2 cMAP part cthe cfilter part cisSome f1 c==> cisSome f0 c==> c= f3 cCONS f0 f1 c==> cMEM f2 cshowDups0 cthe f0 cCONS f0 f1 c/\ c~ c==> ! c==> cMEM b0 cshowDups0 cthe f0 cCONS f0 f1 c\/ c= b0 cthe f0 c\/ c= b0 cthe f0 cMEM b0 cMAP part cthe cfilter part cisSome f1 c\/ c= f2 cthe f0 cMEM f2 cMAP part cthe cfilter part cisSome f1 cF
+- |- ((!x'. ((~ ((MEM x') ((showDups0 (the h)) ((CONS h) t)))) \/ ((x = (the h)) \/ ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t))))))) = ((!x. (~ ((MEM x) ((showDups0 (the h)) ((CONS h) t))))) \/ ((x = (the h)) \/ ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t)))))))
+T c= ! c\/ c~ cMEM b0 cshowDups0 cthe f0 cCONS f0 f1 c\/ c= f2 cthe f0 c\/ c= f2 cthe f0 cMEM f2 cMAP part cthe cfilter part cisSome f1 c\/ ! c~ cMEM b0 cshowDups0 cthe f0 cCONS f0 f1 c\/ c= f2 cthe f0 c\/ c= f2 cthe f0 cMEM f2 cMAP part cthe cfilter part cisSome f1
+- (_10084086 = _10084088), (_10084087 = _10084089) |- (((((MEM _10084086) _10084087) = ((MEM _10084088) _10084089)) ==> (((MEM _10084088) _10084089) \/ (~ ((MEM _10084086) _10084087)))) = (((MEM _10084088) _10084089) \/ (~ ((MEM _10084086) _10084087))))
+T c==> c= f0 f1 c==> c= f2 f3 c= c==> c= cMEM f0 f2 cMEM f1 f3 c\/ cMEM f1 f3 c~ cMEM f0 f2 c\/ cMEM f1 f3 c~ cMEM f0 f2
+- (_10084110 = _10084112) |- ((_10084111 = _10084113) ==> (((showDups0 _10084110) _10084111) = ((showDups0 _10084112) _10084113)))
+T c==> c= f0 f1 c==> c= f2 f3 c= cshowDups0 f0 f2 cshowDups0 f1 f3
+- |- ((~ (_10084086 = _10084088)) \/ ((~ (_10084087 = _10084089)) \/ (((MEM _10084088) _10084089) \/ (~ ((MEM _10084086) _10084087)))))
+T c\/ c~ c= f0 f1 c\/ c~ c= f2 f3 c\/ cMEM f1 f3 c~ cMEM f0 f2
+- |- ((NIL = ((CONS h) t)) = F)
+T c= c= cNIL cCONS f0 f1 cF
+- (_10084086 = _10084088) |- ((_10084087 = _10084089) ==> (((MEM _10084088) _10084089) \/ (~ ((MEM _10084086) _10084087))))
+T c==> c= f0 f1 c==> c= f2 f3 c\/ cMEM f1 f3 c~ cMEM f0 f2
+- (_10084094 = _10084096) |- ((_10084095 = _10084097) ==> (((filter _10084094) _10084095) = ((filter _10084096) _10084097)))
+T c==> c= f0 f1 c==> c= f2 f3 c= cfilter f0 f2 cfilter f1 f3
+- (_10084090 = _10084092), (_10084091 = _10084093) |- ((_10084091 = _10084093) /\ (((I _10084092) _10084093) \/ (~ ((I _10084090) _10084091))))
+T c==> c= f0 f1 c==> c= f2 f3 c/\ c= f2 f3 c\/ cI f1 f3 c~ cI f0 f2
+- |- ((!x'. ((~ ((MEM x) ((showDups0 (the h)) ((CONS h) t)))) \/ ((x' = (the h)) \/ ((x' = (the h)) \/ ((MEM x') ((MAP the) ((filter isSome) t))))))) = ((~ ((MEM x) ((showDups0 (the h)) ((CONS h) t)))) \/ (!x. ((x = (the h)) \/ ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t))))))))
+T c= ! c\/ c~ cMEM f0 cshowDups0 cthe f1 cCONS f1 f2 c\/ c= b0 cthe f1 c\/ c= b0 cthe f1 cMEM b0 cMAP part cthe cfilter part cisSome f2 c\/ c~ cMEM f0 cshowDups0 cthe f1 cCONS f1 f2 ! c\/ c= b0 cthe f1 c\/ c= b0 cthe f1 cMEM b0 cMAP part cthe cfilter part cisSome f2
+- (_10084102 = _10084104) |- ((_10084102 = _10084104) /\ ((~ (_10084103 = _10084105)) \/ (((I _10084102) _10084103) = ((I _10084104) _10084105))))
+T c==> c= f0 f1 c/\ c= f0 f1 c\/ c~ c= f2 f3 c= cI f0 f2 cI f1 f3
+- (vs = NIL), ((MEM x) (showDups vs)) |- (((MEM x) (showDups vs)) /\ ((MEM x) ((MAP the) ((filter isSome) vs))))
+T c==> c= f0 cNIL c==> cMEM f1 cshowDups f0 c/\ cMEM f1 cshowDups f0 cMEM f1 cMAP part cthe cfilter part cisSome f0
+- |- ((~ (_10084102 = _10084104)) \/ ((~ (_10084103 = _10084105)) \/ (((I _10084102) _10084103) = ((I _10084104) _10084105))))
+T c\/ c~ c= f0 f1 c\/ c~ c= f2 f3 c= cI f0 f2 cI f1 f3
+- |- ((!vs. (P vs)) = ((P T) /\ (P F)))
+T c= ! * f0 b0 c/\ * f0 cT * f0 cF
+- (_10084102 = _10084104) |- ((_10084103 = _10084105) ==> (((I _10084102) _10084103) = ((I _10084104) _10084105)))
+T c==> c= f0 f1 c==> c= f2 f3 c= cI f0 f2 cI f1 f3
+- (vs = NIL), ((MEM x) (showDups vs)) |- ((MEM x) ((MAP the) ((filter isSome) vs)))
+T c==> c= f0 cNIL c==> cMEM f1 cshowDups f0 cMEM f1 cMAP part cthe cfilter part cisSome f0
+- |- (((!t1. (!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))))) ==> ((\t1. (!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))))) t1)) = ((\t1. (!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))))) t1))
+T c= c==> ! ! ! c= c\/ b0 c\/ b1 b2 c\/ c\/ b0 b1 b2 * / ! ! c= c\/ b0 c\/ b1 b2 c\/ c\/ b0 b1 b2 f0 * / ! ! c= c\/ b0 c\/ b1 b2 c\/ c\/ b0 b1 b2 f0
+- |- ((((vs = ((CONS h) t)) ==> ((isSome h) ==> (((MEM x) ((showDups0 (the h)) ((CONS h) t))) ==> ((~ ((!x. (((MEM x) ((showDups0 (the h)) ((CONS h) t))) ==> ((x = (the h)) \/ ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t))))))) ==> ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t)))))) ==> F)))) ==> ((vs = ((CONS h) t)) ==> ((isSome h) ==> (((MEM x) ((showDups0 (the h)) ((CONS h) t))) ==> ((~ ((!x. (((MEM x) ((showDups0 (the h)) ((CONS h) t))) ==> ((x = (the h)) \/ ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t))))))) ==> ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t)))))) ==> F))))) ==> (((vs = ((CONS h) t)) ==> ((isSome h) ==> (((MEM x) ((showDups0 (the h)) ((CONS h) t))) ==> ((~ ((!x. (((MEM x) ((showDups0 (the h)) ((CONS h) t))) ==> ((x = (the h)) \/ ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t))))))) ==> ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t)))))) ==> F)))) ==> ((vs = ((CONS h) t)) ==> ((isSome h) ==> (((MEM x) ((showDups0 (the h)) ((CONS h) t))) ==> ((~ ((!x. (((MEM x) ((showDups0 (the h)) ((CONS h) t))) ==> ((x = (the h)) \/ ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t))))))) ==> ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t)))))) ==> F))))))
+T c==> c==> c==> c= f0 cCONS f1 f2 c==> cisSome f1 c==> cMEM f3 cshowDups0 cthe f1 cCONS f1 f2 c==> c~ c==> ! c==> cMEM b0 cshowDups0 cthe f1 cCONS f1 f2 c\/ c= b0 cthe f1 c\/ c= b0 cthe f1 cMEM b0 cMAP part cthe cfilter part cisSome f2 c\/ c= f3 cthe f1 cMEM f3 cMAP part cthe cfilter part cisSome f2 cF c==> c= f0 cCONS f1 f2 c==> cisSome f1 c==> cMEM f3 cshowDups0 cthe f1 cCONS f1 f2 c==> c~ c==> ! c==> cMEM b0 cshowDups0 cthe f1 cCONS f1 f2 c\/ c= b0 cthe f1 c\/ c= b0 cthe f1 cMEM b0 cMAP part cthe cfilter part cisSome f2 c\/ c= f3 cthe f1 cMEM f3 cMAP part cthe cfilter part cisSome f2 cF c==> c==> c= f0 cCONS f1 f2 c==> cisSome f1 c==> cMEM f3 cshowDups0 cthe f1 cCONS f1 f2 c==> c~ c==> ! c==> cMEM b0 cshowDups0 cthe f1 cCONS f1 f2 c\/ c= b0 cthe f1 c\/ c= b0 cthe f1 cMEM b0 cMAP part cthe cfilter part cisSome f2 c\/ c= f3 cthe f1 cMEM f3 cMAP part cthe cfilter part cisSome f2 cF c==> c= f0 cCONS f1 f2 c==> cisSome f1 c==> cMEM f3 cshowDups0 cthe f1 cCONS f1 f2 c==> c~ c==> ! c==> cMEM b0 cshowDups0 cthe f1 cCONS f1 f2 c\/ c= b0 cthe f1 c\/ c= b0 cthe f1 cMEM b0 cMAP part cthe cfilter part cisSome f2 c\/ c= f3 cthe f1 cMEM f3 cMAP part cthe cfilter part cisSome f2 cF
+- (vs = NIL) |- (T = (((MEM x) (showDups vs)) ==> ((MEM x) ((MAP the) ((filter isSome) vs)))))
+T c==> c= f0 cNIL c= cT c==> cMEM f1 cshowDups f0 cMEM f1 cMAP part cthe cfilter part cisSome f0
+- (~ ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t))))), (x = ((I the) h)) |- ((x = ((I the) h)) /\ (~ (x = ((I the) h))))
+T c==> c~ c\/ c= f0 cthe f1 cMEM f0 cMAP part cthe cfilter part cisSome f2 c==> c= f0 cI part cthe f1 c/\ c= f0 cI part cthe f1 c~ c= f0 cI part cthe f1
+- ((MEM x) ((showDups0 (the h)) ((CONS h) t))) |- (((MEM x) ((showDups0 (the h)) ((CONS h) t))) = T)
+T c==> cMEM f0 cshowDups0 cthe f1 cCONS f1 f2 c= cMEM f0 cshowDups0 cthe f1 cCONS f1 f2 cT
+- (vs = ((CONS h) t)) |- (F = F)
+T c==> c= f0 cCONS f1 f2 c= cF cF
+- |- (((\t. (f t)) y) = (f y))
+T c= * / * f0 b0 f1 * f0 f1
+- (_10084110 = _10084112) |- ((_10084110 = _10084112) /\ ((~ (_10084111 = _10084113)) \/ (((showDups0 _10084110) _10084111) = ((showDups0 _10084112) _10084113))))
+T c==> c= f0 f1 c/\ c= f0 f1 c\/ c~ c= f2 f3 c= cshowDups0 f0 f2 cshowDups0 f1 f3
+- |- ((~ (_10084110 = _10084112)) \/ ((~ (_10084111 = _10084113)) \/ (((showDups0 _10084110) _10084111) = ((showDups0 _10084112) _10084113))))
+T c\/ c~ c= f0 f1 c\/ c~ c= f2 f3 c= cshowDups0 f0 f2 cshowDups0 f1 f3
+- |- ((_10084094 = _10084096) ==> ((~ (_10084095 = _10084097)) \/ (((filter _10084094) _10084095) = ((filter _10084096) _10084097))))
+T c==> c= f0 f1 c\/ c~ c= f2 f3 c= cfilter f0 f2 cfilter f1 f3
+- ((MEM x) ((showDups0 (the h)) ((CONS h) t))) |- ((~ ((MEM x) ((showDups0 ((I the) h)) ((CONS h) t)))) ==> ((MEM x) ((showDups0 ((I the) h)) ((CONS h) t))))
+T c==> cMEM f0 cshowDups0 cthe f1 cCONS f1 f2 c==> c~ cMEM f0 cshowDups0 cI part cthe f1 cCONS f1 f2 cMEM f0 cshowDups0 cI part cthe f1 cCONS f1 f2
+- (_10084098 = _10084100), (_10084099 = _10084101) |- ((_10084099 = _10084101) /\ (((MAP _10084098) _10084099) = ((MAP _10084100) _10084101)))
+T c==> c= f0 f1 c==> c= f2 f3 c/\ c= f2 f3 c= cMAP f0 f2 cMAP f1 f3
+- ((vs = ((CONS h) t)) ==> ((isSome h) ==> (((MEM x) ((showDups0 (the h)) ((CONS h) t))) ==> ((~ ((!x. (((MEM x) ((showDups0 (the h)) ((CONS h) t))) ==> ((x = (the h)) \/ ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t))))))) ==> ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t)))))) ==> F)))), (((vs = ((CONS h) t)) ==> ((isSome h) ==> (((MEM x) ((showDups0 (the h)) ((CONS h) t))) ==> ((~ ((!x. (((MEM x) ((showDups0 (the h)) ((CONS h) t))) ==> ((x = (the h)) \/ ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t))))))) ==> ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t)))))) ==> F)))) ==> ((vs = ((CONS h) t)) ==> ((isSome h) ==> (((MEM x) ((showDups0 (the h)) ((CONS h) t))) ==> ((~ ((!x. (((MEM x) ((showDups0 (the h)) ((CONS h) t))) ==> ((x = (the h)) \/ ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t))))))) ==> ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t)))))) ==> F))))) |- (((vs = ((CONS h) t)) ==> ((isSome h) ==> (((MEM x) ((showDups0 (the h)) ((CONS h) t))) ==> ((~ ((!x. (((MEM x) ((showDups0 (the h)) ((CONS h) t))) ==> ((x = (the h)) \/ ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t))))))) ==> ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t)))))) ==> F)))) /\ ((vs = ((CONS h) t)) ==> ((isSome h) ==> (((MEM x) ((showDups0 (the h)) ((CONS h) t))) ==> ((~ ((!x. (((MEM x) ((showDups0 (the h)) ((CONS h) t))) ==> ((x = (the h)) \/ ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t))))))) ==> ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t)))))) ==> F)))))
+T c==> c==> c= f0 cCONS f1 f2 c==> cisSome f1 c==> cMEM f3 cshowDups0 cthe f1 cCONS f1 f2 c==> c~ c==> ! c==> cMEM b0 cshowDups0 cthe f1 cCONS f1 f2 c\/ c= b0 cthe f1 c\/ c= b0 cthe f1 cMEM b0 cMAP part cthe cfilter part cisSome f2 c\/ c= f3 cthe f1 cMEM f3 cMAP part cthe cfilter part cisSome f2 cF c==> c==> c==> c= f0 cCONS f1 f2 c==> cisSome f1 c==> cMEM f3 cshowDups0 cthe f1 cCONS f1 f2 c==> c~ c==> ! c==> cMEM b0 cshowDups0 cthe f1 cCONS f1 f2 c\/ c= b0 cthe f1 c\/ c= b0 cthe f1 cMEM b0 cMAP part cthe cfilter part cisSome f2 c\/ c= f3 cthe f1 cMEM f3 cMAP part cthe cfilter part cisSome f2 cF c==> c= f0 cCONS f1 f2 c==> cisSome f1 c==> cMEM f3 cshowDups0 cthe f1 cCONS f1 f2 c==> c~ c==> ! c==> cMEM b0 cshowDups0 cthe f1 cCONS f1 f2 c\/ c= b0 cthe f1 c\/ c= b0 cthe f1 cMEM b0 cMAP part cthe cfilter part cisSome f2 c\/ c= f3 cthe f1 cMEM f3 cMAP part cthe cfilter part cisSome f2 cF c/\ c==> c= f0 cCONS f1 f2 c==> cisSome f1 c==> cMEM f3 cshowDups0 cthe f1 cCONS f1 f2 c==> c~ c==> ! c==> cMEM b0 cshowDups0 cthe f1 cCONS f1 f2 c\/ c= b0 cthe f1 c\/ c= b0 cthe f1 cMEM b0 cMAP part cthe cfilter part cisSome f2 c\/ c= f3 cthe f1 cMEM f3 cMAP part cthe cfilter part cisSome f2 cF c==> c= f0 cCONS f1 f2 c==> cisSome f1 c==> cMEM f3 cshowDups0 cthe f1 cCONS f1 f2 c==> c~ c==> ! c==> cMEM b0 cshowDups0 cthe f1 cCONS f1 f2 c\/ c= b0 cthe f1 c\/ c= b0 cthe f1 cMEM b0 cMAP part cthe cfilter part cisSome f2 c\/ c= f3 cthe f1 cMEM f3 cMAP part cthe cfilter part cisSome f2 cF
+- (vs = ((CONS h) t)) |- (((MEM x) ((showDups0 ((I the) h)) ((CONS h) t))) = ((MEM x) ((showDups0 ((I the) h)) ((CONS h) t))))
+T c==> c= f0 cCONS f1 f2 c= cMEM f3 cshowDups0 cI part cthe f1 cCONS f1 f2 cMEM f3 cshowDups0 cI part cthe f1 cCONS f1 f2
+- (~ ((x = (the h)) \/ ((MEM x) ((MAP the) ((filter isSome) t))))) |- ((x = ((I the) h)) ==> (~ (x = ((I the) h))))
+T c==> c~ c\/ c= f0 cthe f1 cMEM f0 cMAP part cthe cfilter part cisSome f2 c==> c= f0 cI part cthe f1 c~ c= f0 cI part cthe f1

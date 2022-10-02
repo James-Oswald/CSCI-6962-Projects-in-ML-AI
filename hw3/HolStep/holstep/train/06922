@@ -1,0 +1,60 @@
+N MATRIX_ADD_LID
+C |- (!A. (((matrix_add (mat (NUMERAL _0))) A) = A))
+T c= cmatrix_add cmat cNUMERAL c_0 f0 f0
+D TRUTH
+A |- T
+T cT
+D COND_ID
+A |- (!b. (!t. ((((COND b) t) t) = t)))
+T c= cCOND f0 f1 f1 f1
+D REAL_ADD_LID
+A |- (!x. (((real_add (real_of_num (NUMERAL _0))) x) = x))
+T c= creal_add creal_of_num cNUMERAL c_0 f0 f0
+D CART_EQ
+A |- (!x. (!y. ((x = y) = (!i. ((((NUMERAL (BIT1 _0)) <= i) /\ (i <= (dimindex UNIV))) ==> ((x $ i) = (y $ i)))))))
+T c= c= f0 f1 ! c==> c/\ c<= cNUMERAL cBIT1 c_0 b0 c<= b0 cdimindex part cUNIV c= c$ f0 b0 c$ f1 b0
+D LAMBDA_BETA
+A |- (!i. ((((NUMERAL (BIT1 _0)) <= i) /\ (i <= (dimindex UNIV))) ==> (((lambda g) $ i) = (g i))))
+T c==> c/\ c<= cNUMERAL cBIT1 c_0 f0 c<= f0 cdimindex part cUNIV c= c$ clambda f1 f0 * f1 f0
+D matrix_add
+A |- (!A. (!B. (((matrix_add A) B) = (lambdai. (lambdaj. ((real_add ((A $ i) $ j)) ((B $ i) $ j)))))))
+T c= cmatrix_add f0 f1 clambda / clambda / creal_add c$ c$ f0 b0 b1 c$ c$ f1 b0 b1
+D mat
+A |- (!k. ((mat k) = (lambdai. (lambdaj. (((COND (i = j)) (real_of_num k)) (real_of_num (NUMERAL _0)))))))
+T c= cmat f0 clambda / clambda / cCOND c= b0 b1 creal_of_num f0 creal_of_num cNUMERAL c_0
++ |- (((!A. (!B. (((matrix_add A) B) = (lambdai. (lambdaj. ((real_add ((A $ i) $ j)) ((B $ i) $ j))))))) ==> ((\A. (!B. (((matrix_add A) B) = (lambdai. (lambdaj. ((real_add ((A $ i) $ j)) ((B $ i) $ j))))))) A)) = ((\A. (!B. (((matrix_add A) B) = (lambdai. (lambdaj. ((real_add ((A $ i) $ j)) ((B $ i) $ j))))))) A))
+T c= c==> ! ! c= cmatrix_add b0 b1 clambda / clambda / creal_add c$ c$ b0 b2 b3 c$ c$ b1 b2 b3 * / ! c= cmatrix_add b0 b1 clambda / clambda / creal_add c$ c$ b0 b2 b3 c$ c$ b1 b2 b3 f0 * / ! c= cmatrix_add b0 b1 clambda / clambda / creal_add c$ c$ b0 b2 b3 c$ c$ b1 b2 b3 f0
++ |- (((((NUMERAL (BIT1 _0)) <= i) /\ (i <= (dimindex UNIV))) ==> ((((matrix_add (mat (NUMERAL _0))) A) $ i) = (A $ i))) = ((((NUMERAL (BIT1 _0)) <= i) /\ (i <= (dimindex UNIV))) ==> T))
+T c= c==> c/\ c<= cNUMERAL cBIT1 c_0 f0 c<= f0 cdimindex part cUNIV c= c$ cmatrix_add cmat cNUMERAL c_0 f1 f0 c$ f1 f0 c==> c/\ c<= cNUMERAL cBIT1 c_0 f0 c<= f0 cdimindex part cUNIV cT
++ |- ((\A. (!B. (((matrix_add A) B) = (lambdai. (lambdaj. ((real_add ((A $ i) $ j)) ((B $ i) $ j))))))) A)
+T * / ! c= cmatrix_add b0 b1 clambda / clambda / creal_add c$ c$ b0 b2 b3 c$ c$ b1 b2 b3 f0
++ |- ((\q'. (((((NUMERAL (BIT1 _0)) <= i) /\ (i <= (dimindex UNIV))) = p') ==> ((p' ==> (((((matrix_add (mat (NUMERAL _0))) A) $ i) = (A $ i)) = q')) ==> (((((NUMERAL (BIT1 _0)) <= i) /\ (i <= (dimindex UNIV))) ==> ((((matrix_add (mat (NUMERAL _0))) A) $ i) = (A $ i))) = (p' ==> q'))))) q')
+T * / c==> c= c/\ c<= cNUMERAL cBIT1 c_0 f0 c<= f0 cdimindex part cUNIV f1 c==> c==> f1 c= c= c$ cmatrix_add cmat cNUMERAL c_0 f2 f0 c$ f2 f0 b0 c= c==> c/\ c<= cNUMERAL cBIT1 c_0 f0 c<= f0 cdimindex part cUNIV c= c$ cmatrix_add cmat cNUMERAL c_0 f2 f0 c$ f2 f0 c==> f1 b0 f3
++ (((NUMERAL (BIT1 _0)) <= i') /\ (i' <= (dimindex UNIV))) |- (((lambdaj. (real_of_num (NUMERAL _0))) $ i') = ((\j. (real_of_num (NUMERAL _0))) i'))
+T c==> c/\ c<= cNUMERAL cBIT1 c_0 f0 c<= f0 cdimindex part cUNIV c= c$ clambda / creal_of_num cNUMERAL c_0 f0 * / creal_of_num cNUMERAL c_0 f0
++ (((NUMERAL (BIT1 _0)) <= i) /\ (i <= (dimindex UNIV))) |- ((((((NUMERAL (BIT1 _0)) <= i') /\ (i' <= (dimindex UNIV))) ==> ((((((matrix_add (mat (NUMERAL _0))) A) $ i) $ i') = ((A $ i) $ i')) = T)) ==> (((((NUMERAL (BIT1 _0)) <= i') /\ (i' <= (dimindex UNIV))) ==> (((((matrix_add (mat (NUMERAL _0))) A) $ i) $ i') = ((A $ i) $ i'))) = ((((NUMERAL (BIT1 _0)) <= i') /\ (i' <= (dimindex UNIV))) ==> T))) = (((((NUMERAL (BIT1 _0)) <= i') /\ (i' <= (dimindex UNIV))) ==> (((((matrix_add (mat (NUMERAL _0))) A) $ i) $ i') = ((A $ i) $ i'))) = ((((NUMERAL (BIT1 _0)) <= i') /\ (i' <= (dimindex UNIV))) ==> T)))
+T c==> c/\ c<= cNUMERAL cBIT1 c_0 f0 c<= f0 cdimindex part cUNIV c= c==> c==> c/\ c<= cNUMERAL cBIT1 c_0 f1 c<= f1 cdimindex part cUNIV c= c= c$ c$ cmatrix_add cmat cNUMERAL c_0 f2 f0 f1 c$ c$ f2 f0 f1 cT c= c==> c/\ c<= cNUMERAL cBIT1 c_0 f1 c<= f1 cdimindex part cUNIV c= c$ c$ cmatrix_add cmat cNUMERAL c_0 f2 f0 f1 c$ c$ f2 f0 f1 c==> c/\ c<= cNUMERAL cBIT1 c_0 f1 c<= f1 cdimindex part cUNIV cT c= c==> c/\ c<= cNUMERAL cBIT1 c_0 f1 c<= f1 cdimindex part cUNIV c= c$ c$ cmatrix_add cmat cNUMERAL c_0 f2 f0 f1 c$ c$ f2 f0 f1 c==> c/\ c<= cNUMERAL cBIT1 c_0 f1 c<= f1 cdimindex part cUNIV cT
++ |- ((t ==> T) = T)
+T c= c==> f0 cT cT
+- |- ((t ==> t) = T)
+T c= c==> f0 f0 cT
++ |- ((\p'. (!q'. (((((NUMERAL (BIT1 _0)) <= i') /\ (i' <= (dimindex UNIV))) = p') ==> ((p' ==> ((((((matrix_add (mat (NUMERAL _0))) A) $ i) $ i') = ((A $ i) $ i')) = q')) ==> (((((NUMERAL (BIT1 _0)) <= i') /\ (i' <= (dimindex UNIV))) ==> (((((matrix_add (mat (NUMERAL _0))) A) $ i) $ i') = ((A $ i) $ i'))) = (p' ==> q')))))) p')
+T * / ! c==> c= c/\ c<= cNUMERAL cBIT1 c_0 f0 c<= f0 cdimindex part cUNIV b0 c==> c==> b0 c= c= c$ c$ cmatrix_add cmat cNUMERAL c_0 f1 f2 f0 c$ c$ f1 f2 f0 b1 c= c==> c/\ c<= cNUMERAL cBIT1 c_0 f0 c<= f0 cdimindex part cUNIV c= c$ c$ cmatrix_add cmat cNUMERAL c_0 f1 f2 f0 c$ c$ f1 f2 f0 c==> b0 b1 f3
++ (((NUMERAL (BIT1 _0)) <= i) /\ (i <= (dimindex UNIV))) |- (((((NUMERAL (BIT1 _0)) <= i') /\ (i' <= (dimindex UNIV))) ==> (((((matrix_add (mat (NUMERAL _0))) A) $ i) $ i') = ((A $ i) $ i'))) = ((((NUMERAL (BIT1 _0)) <= i') /\ (i' <= (dimindex UNIV))) ==> T))
+T c==> c/\ c<= cNUMERAL cBIT1 c_0 f0 c<= f0 cdimindex part cUNIV c= c==> c/\ c<= cNUMERAL cBIT1 c_0 f1 c<= f1 cdimindex part cUNIV c= c$ c$ cmatrix_add cmat cNUMERAL c_0 f2 f0 f1 c$ c$ f2 f0 f1 c==> c/\ c<= cNUMERAL cBIT1 c_0 f1 c<= f1 cdimindex part cUNIV cT
+- (((NUMERAL (BIT1 _0)) <= i') /\ (i' <= (dimindex UNIV))) |- (((NUMERAL (BIT1 _0)) <= i') = T)
+T c==> c/\ c<= cNUMERAL cBIT1 c_0 f0 c<= f0 cdimindex part cUNIV c= c<= cNUMERAL cBIT1 c_0 f0 cT
+- (((NUMERAL (BIT1 _0)) <= i) /\ (i <= (dimindex UNIV))) |- ((((NUMERAL (BIT1 _0)) <= i) /\ (i <= (dimindex UNIV))) /\ (((lambda g) $ i) = (g i)))
+T c==> c/\ c<= cNUMERAL cBIT1 c_0 f0 c<= f0 cdimindex part cUNIV c/\ c/\ c<= cNUMERAL cBIT1 c_0 f0 c<= f0 cdimindex part cUNIV c= c$ clambda f1 f0 * f1 f0
+- |- ((((COND (x = x)) y) z) = y)
+T c= cCOND c= f0 f0 f1 f2 f1
+- (((NUMERAL (BIT1 _0)) <= i') /\ (i' <= (dimindex UNIV))) |- ((i' <= (dimindex UNIV)) = T)
+T c==> c/\ c<= cNUMERAL cBIT1 c_0 f0 c<= f0 cdimindex part cUNIV c= c<= f0 cdimindex part cUNIV cT
+- |- ((t /\ t) = t)
+T c= c/\ f0 f0 f0
+- |- (((\j. (f j)) y) = (f y))
+T c= * / * f0 b0 f1 * f0 f1
+- (((NUMERAL (BIT1 _0)) <= i') /\ (i' <= (dimindex UNIV))) |- (T = (((NUMERAL (BIT1 _0)) <= i') /\ (i' <= (dimindex UNIV))))
+T c==> c/\ c<= cNUMERAL cBIT1 c_0 f0 c<= f0 cdimindex part cUNIV c= cT c/\ c<= cNUMERAL cBIT1 c_0 f0 c<= f0 cdimindex part cUNIV
+- |- ((T /\ t) = t)
+T c= c/\ cT f0 f0

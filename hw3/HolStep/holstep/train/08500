@@ -1,0 +1,551 @@
+N REAL_MIN_INF
+C |- (!x. (!y. (((real_min x) y) = (inf (x INSERT (y INSERT EMPTY))))))
+T c= creal_min f0 f1 cinf * * part cINSERT f0 * * part cINSERT f1 part cEMPTY
+D TRUTH
+A |- T
+T cT
+D ETA_AX
+A |- (!t. ((\x. (t x)) = t))
+T c= / * f0 b0 f0
+D BOOL_CASES_AX
+A |- (!t. ((t = T) \/ (t = F)))
+T c\/ c= f0 cT c= f0 cF
+D NOT_CLAUSES
+A |- ((!t. ((~ (~ t)) = t)) /\ (((~ T) = F) /\ ((~ F) = T)))
+T c/\ ! c= c~ c~ b0 b0 c/\ c= c~ cT cF c= c~ cF cT
+D NOT_EXISTS_THM
+A |- (!P. ((~ (?x. (P x))) = (!x. (~ (P x)))))
+T c= c~ c? / * f0 b0 ! c~ * f0 b0
+D NOT_FORALL_THM
+A |- (!P. ((~ (!x. (P x))) = (?x. (~ (P x)))))
+T c= c~ ! * f0 b0 c? / c~ * f0 b0
+D REAL_LE_ANTISYM
+A |- (!x. (!y. ((((real_le x) y) /\ ((real_le y) x)) = (x = y))))
+T c= c/\ creal_le f0 f1 creal_le f1 f0 c= f0 f1
+D REAL_LE_TOTAL
+A |- (!x. (!y. (((real_le x) y) \/ ((real_le y) x))))
+T c\/ creal_le f0 f1 creal_le f1 f0
+D REAL_LE_MIN
+A |- (!x. (!y. (!z. (((real_le z) ((real_min x) y)) = (((real_le z) x) /\ ((real_le z) y))))))
+T c= creal_le f0 creal_min f1 f2 c/\ creal_le f0 f1 creal_le f0 f2
+D REAL_MIN_LE
+A |- (!x. (!y. (!z. (((real_le ((real_min x) y)) z) = (((real_le x) z) \/ ((real_le y) z))))))
+T c= creal_le creal_min f0 f1 f2 c\/ creal_le f0 f2 creal_le f1 f2
+D FINITE_RULES
+A |- ((FINITE EMPTY) /\ (!x. (!s. ((FINITE s) ==> (FINITE (x INSERT s))))))
+T c/\ cFINITE part cEMPTY ! ! c==> cFINITE b1 cFINITE * * part cINSERT b0 b1
+D NOT_IN_EMPTY
+A |- (!x. (~ (x IN EMPTY)))
+T c~ cIN f0 part cEMPTY
+D IN_INSERT
+A |- (!x. (!y. (!s. ((x IN (y INSERT s)) = ((x = y) \/ (x IN s))))))
+T c= cIN f0 * * part cINSERT f1 f2 c\/ c= f0 f1 cIN f0 f2
+D NOT_INSERT_EMPTY
+A |- (!x. (!s. (~ ((x INSERT s) = EMPTY))))
+T c~ c= * * part cINSERT f0 f1 part cEMPTY
+D REAL_LE_INF_FINITE
+A |- (!s. (!a. (((FINITE s) /\ (~ (s = EMPTY))) ==> (((real_le a) (inf s)) = (!x. ((x IN s) ==> ((real_le a) x)))))))
+T c==> c/\ cFINITE f0 c~ c= f0 part cEMPTY c= creal_le f1 cinf f0 ! c==> cIN b0 f0 creal_le f1 b0
+D REAL_INF_LE_FINITE
+A |- (!s. (!a. (((FINITE s) /\ (~ (s = EMPTY))) ==> (((real_le (inf s)) a) = (?x. ((x IN s) /\ ((real_le x) a)))))))
+T c==> c/\ cFINITE f0 c~ c= f0 part cEMPTY c= creal_le cinf f0 f1 c? / c/\ cIN b0 f0 creal_le b0 f1
++ (!x'. (((~ (x' = x)) /\ (~ (x' = y))) \/ ((~ ((real_le x') x)) \/ (~ ((real_le x') y))))) |- ((~ (_149559 = x)) \/ ((~ ((real_le _149559) x)) \/ (~ ((real_le _149559) y))))
+T c==> ! c\/ c/\ c~ c= b0 f0 c~ c= b0 f1 c\/ c~ creal_le b0 f0 c~ creal_le b0 f1 c\/ c~ c= f2 f0 c\/ c~ creal_le f2 f0 c~ creal_le f2 f1
+- (!x. (!y. (((real_le x) y) \/ ((real_le y) x)))), (x' = x), ((((x' = x) \/ (x' = y)) /\ (~ ((real_le x) x'))) /\ (((x'' = x) \/ (x'' = y)) /\ (~ ((real_le y) x'')))) |- ((~ F) ==> F)
+T c==> ! ! c\/ creal_le b0 b1 creal_le b1 b0 c==> c= f0 f1 c==> c/\ c/\ c\/ c= f0 f1 c= f0 f2 c~ creal_le f1 f0 c/\ c\/ c= f3 f1 c= f3 f2 c~ creal_le f2 f3 c==> c~ cF cF
++ |- (FINITE EMPTY)
+T cFINITE part cEMPTY
++ |- ((t \/ F) = t)
+T c= c\/ f0 cF f0
+- (!x. (!y. (((real_le x) y) \/ ((real_le y) x)))), (x' = x), (x'' = x), ((((x' = x) \/ (x' = y)) /\ (~ ((real_le x) x'))) /\ (((x'' = x) \/ (x'' = y)) /\ (~ ((real_le y) x'')))) |- ((x'' = x) /\ F)
+T c==> ! ! c\/ creal_le b0 b1 creal_le b1 b0 c==> c= f0 f1 c==> c= f2 f1 c==> c/\ c/\ c\/ c= f0 f1 c= f0 f3 c~ creal_le f1 f0 c/\ c\/ c= f2 f1 c= f2 f3 c~ creal_le f3 f2 c/\ c= f2 f1 cF
++ (FINITE s) |- (FINITE (x INSERT s))
+T c==> cFINITE f0 cFINITE * * part cINSERT f1 f0
+- |- ((((~ (!x. (!y. (((!x'. (((x' = x) \/ (x' = y)) ==> ((real_le x) x'))) \/ (!x'. (((x' = x) \/ (x' = y)) ==> ((real_le y) x')))) /\ (?x'. (((x' = x) \/ (x' = y)) /\ (((real_le x') x) /\ ((real_le x') y)))))))) ==> ((!x. (!y. (((real_le x) y) \/ ((real_le y) x)))) ==> F)) ==> ((~ (!x. (!y. (((!x'. (((x' = x) \/ (x' = y)) ==> ((real_le x) x'))) \/ (!x'. (((x' = x) \/ (x' = y)) ==> ((real_le y) x')))) /\ (?x'. (((x' = x) \/ (x' = y)) /\ (((real_le x') x) /\ ((real_le x') y)))))))) ==> ((!x. (!y. (((real_le x) y) \/ ((real_le y) x)))) ==> F))) = ((~ (!x. (!y. (((!x'. (((x' = x) \/ (x' = y)) ==> ((real_le x) x'))) \/ (!x'. (((x' = x) \/ (x' = y)) ==> ((real_le y) x')))) /\ (?x'. (((x' = x) \/ (x' = y)) /\ (((real_le x') x) /\ ((real_le x') y)))))))) ==> ((!x. (!y. (((real_le x) y) \/ ((real_le y) x)))) ==> F)))
+T c= c==> c==> c~ ! ! c/\ c\/ ! c==> c\/ c= b2 b0 c= b2 b1 creal_le b0 b2 ! c==> c\/ c= b2 b0 c= b2 b1 creal_le b1 b2 c? / c/\ c\/ c= b2 b0 c= b2 b1 c/\ creal_le b2 b0 creal_le b2 b1 c==> ! ! c\/ creal_le b0 b1 creal_le b1 b0 cF c==> c~ ! ! c/\ c\/ ! c==> c\/ c= b2 b0 c= b2 b1 creal_le b0 b2 ! c==> c\/ c= b2 b0 c= b2 b1 creal_le b1 b2 c? / c/\ c\/ c= b2 b0 c= b2 b1 c/\ creal_le b2 b0 creal_le b2 b1 c==> ! ! c\/ creal_le b0 b1 creal_le b1 b0 cF c==> c~ ! ! c/\ c\/ ! c==> c\/ c= b2 b0 c= b2 b1 creal_le b0 b2 ! c==> c\/ c= b2 b0 c= b2 b1 creal_le b1 b2 c? / c/\ c\/ c= b2 b0 c= b2 b1 c/\ creal_le b2 b0 creal_le b2 b1 c==> ! ! c\/ creal_le b0 b1 creal_le b1 b0 cF
++ ((\y. (?x'. (?x''. (((((x' = x) \/ (x' = y)) /\ (~ ((real_le x) x'))) /\ (((x'' = x) \/ (x'' = y)) /\ (~ ((real_le y) x'')))) \/ (!x'. (((~ (x' = x)) /\ (~ (x' = y))) \/ ((~ ((real_le x') x)) \/ (~ ((real_le x') y))))))))) y) |- (((?x'. (?x''. (((((x' = x) \/ (x' = y)) /\ (~ ((real_le x) x'))) /\ (((x'' = x) \/ (x'' = y)) /\ (~ ((real_le y) x'')))) \/ (!x'. (((~ (x' = x)) /\ (~ (x' = y))) \/ ((~ ((real_le x') x)) \/ (~ ((real_le x') y)))))))) ==> F) = F)
+T c==> * / c? / c? / c\/ c/\ c/\ c\/ c= b1 f0 c= b1 b0 c~ creal_le f0 b1 c/\ c\/ c= b2 f0 c= b2 b0 c~ creal_le b0 b2 ! c\/ c/\ c~ c= b3 f0 c~ c= b3 b0 c\/ c~ creal_le b3 f0 c~ creal_le b3 b0 f1 c= c==> c? / c? / c\/ c/\ c/\ c\/ c= b0 f0 c= b0 f1 c~ creal_le f0 b0 c/\ c\/ c= b1 f0 c= b1 f1 c~ creal_le f1 b1 ! c\/ c/\ c~ c= b2 f0 c~ c= b2 f1 c\/ c~ creal_le b2 f0 c~ creal_le b2 f1 cF cF
++ |- (((!z. (((real_le ((real_min x) y)) z) = (((real_le x) z) \/ ((real_le y) z)))) ==> ((\z. (((real_le ((real_min x) y)) z) = (((real_le x) z) \/ ((real_le y) z)))) z)) = ((\z. (((real_le ((real_min x) y)) z) = (((real_le x) z) \/ ((real_le y) z)))) z))
+T c= c==> ! c= creal_le creal_min f0 f1 b0 c\/ creal_le f0 b0 creal_le f1 b0 * / c= creal_le creal_min f0 f1 b0 c\/ creal_le f0 b0 creal_le f1 b0 f2 * / c= creal_le creal_min f0 f1 b0 c\/ creal_le f0 b0 creal_le f1 b0 f2
+- |- ((\t1. (!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))))) t1)
+T * / ! ! c= c\/ b0 c\/ b1 b2 c\/ c\/ b0 b1 b2 f0
+- |- ((~ (x = x)) ==> (x = x))
+T c==> c~ c= f0 f0 c= f0 f0
++ |- ((FINITE (x INSERT (y INSERT EMPTY))) = T)
+T c= cFINITE * * part cINSERT f0 * * part cINSERT f1 part cEMPTY cT
++ (!x. (!y. (((real_le x) y) \/ ((real_le y) x)))), (x'' = x), ((((x' = x) \/ (x' = y)) /\ (~ ((real_le x) x'))) /\ (((x'' = x) \/ (x'' = y)) /\ (~ ((real_le y) x'')))) |- ((((real_le x) y) ==> F) = F)
+T c==> ! ! c\/ creal_le b0 b1 creal_le b1 b0 c==> c= f0 f1 c==> c/\ c/\ c\/ c= f2 f1 c= f2 f3 c~ creal_le f1 f2 c/\ c\/ c= f0 f1 c= f0 f3 c~ creal_le f3 f0 c= c==> creal_le f1 f3 cF cF
+- |- ((((x' IN (x INSERT (y INSERT EMPTY))) ==> (((real_le x) x') = ((real_le x) x'))) ==> (((x' IN (x INSERT (y INSERT EMPTY))) ==> ((real_le x) x')) = ((x' IN (x INSERT (y INSERT EMPTY))) ==> ((real_le x) x')))) = (((x' IN (x INSERT (y INSERT EMPTY))) ==> ((real_le x) x')) = ((x' IN (x INSERT (y INSERT EMPTY))) ==> ((real_le x) x'))))
+T c= c==> c==> cIN f0 * * part cINSERT f1 * * part cINSERT f2 part cEMPTY c= creal_le f1 f0 creal_le f1 f0 c= c==> cIN f0 * * part cINSERT f1 * * part cINSERT f2 part cEMPTY creal_le f1 f0 c==> cIN f0 * * part cINSERT f1 * * part cINSERT f2 part cEMPTY creal_le f1 f0 c= c==> cIN f0 * * part cINSERT f1 * * part cINSERT f2 part cEMPTY creal_le f1 f0 c==> cIN f0 * * part cINSERT f1 * * part cINSERT f2 part cEMPTY creal_le f1 f0
+- (!x. (!y. (((real_le x) y) \/ ((real_le y) x)))), (!x'. (((~ (x' = x)) /\ (~ (x' = y))) \/ ((~ ((real_le x') x)) \/ (~ ((real_le x') y))))), (~ ((real_le y) x)) |- ((~ ((real_le y) x)) /\ ((real_le y) x))
+T c==> ! ! c\/ creal_le b0 b1 creal_le b1 b0 c==> ! c\/ c/\ c~ c= b0 f0 c~ c= b0 f1 c\/ c~ creal_le b0 f0 c~ creal_le b0 f1 c==> c~ creal_le f1 f0 c/\ c~ creal_le f1 f0 creal_le f1 f0
+- |- ((x' IN (x INSERT (y INSERT EMPTY))) ==> (((real_le x) x') = ((real_le x) x')))
+T c==> cIN f0 * * part cINSERT f1 * * part cINSERT f2 part cEMPTY c= creal_le f1 f0 creal_le f1 f0
++ |- ((a \/ b) = ((~ b) ==> a))
+T c= c\/ f0 f1 c==> c~ f1 f0
++ (~ (!x. (!y. (((!x'. (((x' = x) \/ (x' = y)) ==> ((real_le x) x'))) \/ (!x'. (((x' = x) \/ (x' = y)) ==> ((real_le y) x')))) /\ (?x'. (((x' = x) \/ (x' = y)) /\ (((real_le x') x) /\ ((real_le x') y)))))))) |- ((!x. (!y. (((real_le x) y) \/ ((real_le y) x)))) ==> F)
+T c==> c~ ! ! c/\ c\/ ! c==> c\/ c= b2 b0 c= b2 b1 creal_le b0 b2 ! c==> c\/ c= b2 b0 c= b2 b1 creal_le b1 b2 c? / c/\ c\/ c= b2 b0 c= b2 b1 c/\ creal_le b2 b0 creal_le b2 b1 c==> ! ! c\/ creal_le b0 b1 creal_le b1 b0 cF
++ |- (((!y. ((x = y) = (((real_le x) y) /\ ((real_le y) x)))) ==> ((\y. ((x = y) = (((real_le x) y) /\ ((real_le y) x)))) y)) = ((\y. ((x = y) = (((real_le x) y) /\ ((real_le y) x)))) y))
+T c= c==> ! c= c= f0 b0 c/\ creal_le f0 b0 creal_le b0 f0 * / c= c= f0 b0 c/\ creal_le f0 b0 creal_le b0 f0 f1 * / c= c= f0 b0 c/\ creal_le f0 b0 creal_le b0 f0 f1
++ (!x. (!y. (((real_le x) y) \/ ((real_le y) x)))) |- ((((\x. (?y. (?x'. (?x''. (((((x' = x) \/ (x' = y)) /\ (~ ((real_le x) x'))) /\ (((x'' = x) \/ (x'' = y)) /\ (~ ((real_le y) x'')))) \/ (!x'. (((~ (x' = x)) /\ (~ (x' = y))) \/ ((~ ((real_le x') x)) \/ (~ ((real_le x') y)))))))))) x) ==> F) = T)
+T c==> ! ! c\/ creal_le b0 b1 creal_le b1 b0 c= c==> * / c? / c? / c? / c\/ c/\ c/\ c\/ c= b2 b0 c= b2 b1 c~ creal_le b0 b2 c/\ c\/ c= b3 b0 c= b3 b1 c~ creal_le b1 b3 ! c\/ c/\ c~ c= b4 b0 c~ c= b4 b1 c\/ c~ creal_le b4 b0 c~ creal_le b4 b1 f0 cF cT
+- (((~ (!x. (!y. (((!x'. (((x' = x) \/ (x' = y)) ==> ((real_le x) x'))) \/ (!x'. (((x' = x) \/ (x' = y)) ==> ((real_le y) x')))) /\ (?x'. (((x' = x) \/ (x' = y)) /\ (((real_le x') x) /\ ((real_le x') y)))))))) ==> ((!x. (!y. (((real_le x) y) \/ ((real_le y) x)))) ==> F)) ==> ((~ (!x. (!y. (((!x'. (((x' = x) \/ (x' = y)) ==> ((real_le x) x'))) \/ (!x'. (((x' = x) \/ (x' = y)) ==> ((real_le y) x')))) /\ (?x'. (((x' = x) \/ (x' = y)) /\ (((real_le x') x) /\ ((real_le x') y)))))))) ==> ((!x. (!y. (((real_le x) y) \/ ((real_le y) x)))) ==> F))) |- ((((~ (!x. (!y. (((!x'. (((x' = x) \/ (x' = y)) ==> ((real_le x) x'))) \/ (!x'. (((x' = x) \/ (x' = y)) ==> ((real_le y) x')))) /\ (?x'. (((x' = x) \/ (x' = y)) /\ (((real_le x') x) /\ ((real_le x') y)))))))) ==> ((!x. (!y. (((real_le x) y) \/ ((real_le y) x)))) ==> F)) ==> ((~ (!x. (!y. (((!x'. (((x' = x) \/ (x' = y)) ==> ((real_le x) x'))) \/ (!x'. (((x' = x) \/ (x' = y)) ==> ((real_le y) x')))) /\ (?x'. (((x' = x) \/ (x' = y)) /\ (((real_le x') x) /\ ((real_le x') y)))))))) ==> ((!x. (!y. (((real_le x) y) \/ ((real_le y) x)))) ==> F))) /\ (((~ (!x. (!y. (((!x'. (((x' = x) \/ (x' = y)) ==> ((real_le x) x'))) \/ (!x'. (((x' = x) \/ (x' = y)) ==> ((real_le y) x')))) /\ (?x'. (((x' = x) \/ (x' = y)) /\ (((real_le x') x) /\ ((real_le x') y)))))))) ==> ((!x. (!y. (((real_le x) y) \/ ((real_le y) x)))) ==> F)) ==> ((~ (!x. (!y. (((!x'. (((x' = x) \/ (x' = y)) ==> ((real_le x) x'))) \/ (!x'. (((x' = x) \/ (x' = y)) ==> ((real_le y) x')))) /\ (?x'. (((x' = x) \/ (x' = y)) /\ (((real_le x') x) /\ ((real_le x') y)))))))) ==> ((!x. (!y. (((real_le x) y) \/ ((real_le y) x)))) ==> F))))
+T c==> c==> c==> c~ ! ! c/\ c\/ ! c==> c\/ c= b2 b0 c= b2 b1 creal_le b0 b2 ! c==> c\/ c= b2 b0 c= b2 b1 creal_le b1 b2 c? / c/\ c\/ c= b2 b0 c= b2 b1 c/\ creal_le b2 b0 creal_le b2 b1 c==> ! ! c\/ creal_le b0 b1 creal_le b1 b0 cF c==> c~ ! ! c/\ c\/ ! c==> c\/ c= b2 b0 c= b2 b1 creal_le b0 b2 ! c==> c\/ c= b2 b0 c= b2 b1 creal_le b1 b2 c? / c/\ c\/ c= b2 b0 c= b2 b1 c/\ creal_le b2 b0 creal_le b2 b1 c==> ! ! c\/ creal_le b0 b1 creal_le b1 b0 cF c/\ c==> c==> c~ ! ! c/\ c\/ ! c==> c\/ c= b2 b0 c= b2 b1 creal_le b0 b2 ! c==> c\/ c= b2 b0 c= b2 b1 creal_le b1 b2 c? / c/\ c\/ c= b2 b0 c= b2 b1 c/\ creal_le b2 b0 creal_le b2 b1 c==> ! ! c\/ creal_le b0 b1 creal_le b1 b0 cF c==> c~ ! ! c/\ c\/ ! c==> c\/ c= b2 b0 c= b2 b1 creal_le b0 b2 ! c==> c\/ c= b2 b0 c= b2 b1 creal_le b1 b2 c? / c/\ c\/ c= b2 b0 c= b2 b1 c/\ creal_le b2 b0 creal_le b2 b1 c==> ! ! c\/ creal_le b0 b1 creal_le b1 b0 cF c==> c==> c~ ! ! c/\ c\/ ! c==> c\/ c= b2 b0 c= b2 b1 creal_le b0 b2 ! c==> c\/ c= b2 b0 c= b2 b1 creal_le b1 b2 c? / c/\ c\/ c= b2 b0 c= b2 b1 c/\ creal_le b2 b0 creal_le b2 b1 c==> ! ! c\/ creal_le b0 b1 creal_le b1 b0 cF c==> c~ ! ! c/\ c\/ ! c==> c\/ c= b2 b0 c= b2 b1 creal_le b0 b2 ! c==> c\/ c= b2 b0 c= b2 b1 creal_le b1 b2 c? / c/\ c\/ c= b2 b0 c= b2 b1 c/\ creal_le b2 b0 creal_le b2 b1 c==> ! ! c\/ creal_le b0 b1 creal_le b1 b0 cF
++ |- (((?x''. (P x'')) \/ Q) = (?x''. ((P x'') \/ Q)))
+T c= c\/ c? / * f0 b0 f1 c? / c\/ * f0 b0 f1
+- |- (((x' IN (x INSERT (y INSERT EMPTY))) ==> ((real_le y) x')) = ((x' IN (x INSERT (y INSERT EMPTY))) ==> ((real_le y) x')))
+T c= c==> cIN f0 * * part cINSERT f1 * * part cINSERT f2 part cEMPTY creal_le f2 f0 c==> cIN f0 * * part cINSERT f1 * * part cINSERT f2 part cEMPTY creal_le f2 f0
++ |- (((!s. (!a. (((FINITE s) /\ (~ (s = EMPTY))) ==> (((real_le a) (inf s)) = (!x. ((x IN s) ==> ((real_le a) x))))))) ==> ((\s. (!a. (((FINITE s) /\ (~ (s = EMPTY))) ==> (((real_le a) (inf s)) = (!x. ((x IN s) ==> ((real_le a) x))))))) s)) = ((\s. (!a. (((FINITE s) /\ (~ (s = EMPTY))) ==> (((real_le a) (inf s)) = (!x. ((x IN s) ==> ((real_le a) x))))))) s))
+T c= c==> ! ! c==> c/\ cFINITE b0 c~ c= b0 part cEMPTY c= creal_le b1 cinf b0 ! c==> cIN b2 b0 creal_le b1 b2 * / ! c==> c/\ cFINITE b0 c~ c= b0 part cEMPTY c= creal_le b1 cinf b0 ! c==> cIN b2 b0 creal_le b1 b2 f0 * / ! c==> c/\ cFINITE b0 c~ c= b0 part cEMPTY c= creal_le b1 cinf b0 ! c==> cIN b2 b0 creal_le b1 b2 f0
+- |- (((x' IN (x INSERT (y INSERT EMPTY))) = p') ==> ((p' ==> (((real_le y) x') = q')) ==> (((x' IN (x INSERT (y INSERT EMPTY))) ==> ((real_le y) x')) = (p' ==> q'))))
+T c==> c= cIN f0 * * part cINSERT f1 * * part cINSERT f2 part cEMPTY f3 c==> c==> f3 c= creal_le f2 f0 f4 c= c==> cIN f0 * * part cINSERT f1 * * part cINSERT f2 part cEMPTY creal_le f2 f0 c==> f3 f4
++ (~ (!x. (!y. (((!x'. (((x' = x) \/ (x' = y)) ==> ((real_le x) x'))) \/ (!x'. (((x' = x) \/ (x' = y)) ==> ((real_le y) x')))) /\ (?x'. (((x' = x) \/ (x' = y)) /\ (((real_le x') x) /\ ((real_le x') y)))))))) |- ((~ (!x. (!y. (((!x'. (((x' = x) \/ (x' = y)) ==> ((real_le x) x'))) \/ (!x'. (((x' = x) \/ (x' = y)) ==> ((real_le y) x')))) /\ (?x'. (((x' = x) \/ (x' = y)) /\ (((real_le x') x) /\ ((real_le x') y)))))))) /\ F)
+T c==> c~ ! ! c/\ c\/ ! c==> c\/ c= b2 b0 c= b2 b1 creal_le b0 b2 ! c==> c\/ c= b2 b0 c= b2 b1 creal_le b1 b2 c? / c/\ c\/ c= b2 b0 c= b2 b1 c/\ creal_le b2 b0 creal_le b2 b1 c/\ c~ ! ! c/\ c\/ ! c==> c\/ c= b2 b0 c= b2 b1 creal_le b0 b2 ! c==> c\/ c= b2 b0 c= b2 b1 creal_le b1 b2 c? / c/\ c\/ c= b2 b0 c= b2 b1 c/\ creal_le b2 b0 creal_le b2 b1 cF
++ |- (!x. (!y. (((!x'. ((x' IN (x INSERT (y INSERT EMPTY))) ==> ((real_le x) x'))) \/ (!x'. ((x' IN (x INSERT (y INSERT EMPTY))) ==> ((real_le y) x')))) /\ (?x'. ((x' IN (x INSERT (y INSERT EMPTY))) /\ (((real_le x') x) /\ ((real_le x') y)))))))
+T c/\ c\/ ! c==> cIN b0 * * part cINSERT f0 * * part cINSERT f1 part cEMPTY creal_le f0 b0 ! c==> cIN b0 * * part cINSERT f0 * * part cINSERT f1 part cEMPTY creal_le f1 b0 c? / c/\ cIN b0 * * part cINSERT f0 * * part cINSERT f1 part cEMPTY c/\ creal_le b0 f0 creal_le b0 f1
++ (!x. (!y. (((real_le x) y) \/ ((real_le y) x)))) |- ((((\x'. (?x''. (((((x' = x) \/ (x' = y)) /\ (~ ((real_le x) x'))) /\ (((x'' = x) \/ (x'' = y)) /\ (~ ((real_le y) x'')))) \/ (!x'. (((~ (x' = x)) /\ (~ (x' = y))) \/ ((~ ((real_le x') x)) \/ (~ ((real_le x') y)))))))) x') ==> F) = T)
+T c==> ! ! c\/ creal_le b0 b1 creal_le b1 b0 c= c==> * / c? / c\/ c/\ c/\ c\/ c= b0 f0 c= b0 f1 c~ creal_le f0 b0 c/\ c\/ c= b1 f0 c= b1 f1 c~ creal_le f1 b1 ! c\/ c/\ c~ c= b2 f0 c~ c= b2 f1 c\/ c~ creal_le b2 f0 c~ creal_le b2 f1 f2 cF cT
+- (x' = x) |- ((~ ((real_le y) y)) = (~ ((real_le y) y)))
+T c==> c= f0 f1 c= c~ creal_le f2 f2 c~ creal_le f2 f2
+- ((FINITE s) /\ (~ (s = EMPTY))) |- (((FINITE s) /\ (~ (s = EMPTY))) /\ (((real_le (inf s)) a) = (?x. ((x IN s) /\ ((real_le x) a)))))
+T c==> c/\ cFINITE f0 c~ c= f0 part cEMPTY c/\ c/\ cFINITE f0 c~ c= f0 part cEMPTY c= creal_le cinf f0 f1 c? / c/\ cIN b0 f0 creal_le b0 f1
++ (!x. (!y. (((real_le x) y) \/ ((real_le y) x)))) |- (!x''. (((\x''. (((((x' = x) \/ (x' = y)) /\ (~ ((real_le x) x'))) /\ (((x'' = x) \/ (x'' = y)) /\ (~ ((real_le y) x'')))) \/ (!x'. (((~ (x' = x)) /\ (~ (x' = y))) \/ ((~ ((real_le x') x)) \/ (~ ((real_le x') y))))))) x'') ==> F))
+T c==> ! ! c\/ creal_le b0 b1 creal_le b1 b0 ! c==> * / c\/ c/\ c/\ c\/ c= f0 f1 c= f0 f2 c~ creal_le f1 f0 c/\ c\/ c= b1 f1 c= b1 f2 c~ creal_le f2 b1 ! c\/ c/\ c~ c= b1 f1 c~ c= b1 f2 c\/ c~ creal_le b1 f1 c~ creal_le b1 f2 b0 cF
+- (x' = x) |- ((~ ((real_le y) x)) = (~ ((real_le y) x)))
+T c==> c= f0 f1 c= c~ creal_le f2 f1 c~ creal_le f2 f1
+- |- ((?x'. (P x')) = ((P T) \/ (P F)))
+T c= c? / * f0 b0 c\/ * f0 cT * f0 cF
+- (!x. (!y. (((real_le x) y) \/ ((real_le y) x)))), (?y. (?x'. (?x''. (((((x' = x) \/ (x' = y)) /\ (~ ((real_le x) x'))) /\ (((x'' = x) \/ (x'' = y)) /\ (~ ((real_le y) x'')))) \/ (!x'. (((~ (x' = x)) /\ (~ (x' = y))) \/ ((~ ((real_le x') x)) \/ (~ ((real_le x') y))))))))) |- ((?y. (?x'. (?x''. (((((x' = x) \/ (x' = y)) /\ (~ ((real_le x) x'))) /\ (((x'' = x) \/ (x'' = y)) /\ (~ ((real_le y) x'')))) \/ (!x'. (((~ (x' = x)) /\ (~ (x' = y))) \/ ((~ ((real_le x') x)) \/ (~ ((real_le x') y))))))))) /\ F)
+T c==> ! ! c\/ creal_le b0 b1 creal_le b1 b0 c==> c? / c? / c? / c\/ c/\ c/\ c\/ c= b1 f0 c= b1 b0 c~ creal_le f0 b1 c/\ c\/ c= b2 f0 c= b2 b0 c~ creal_le b0 b2 ! c\/ c/\ c~ c= b3 f0 c~ c= b3 b0 c\/ c~ creal_le b3 f0 c~ creal_le b3 b0 c/\ c? / c? / c? / c\/ c/\ c/\ c\/ c= b1 f0 c= b1 b0 c~ creal_le f0 b1 c/\ c\/ c= b2 f0 c= b2 b0 c~ creal_le b0 b2 ! c\/ c/\ c~ c= b3 f0 c~ c= b3 b0 c\/ c~ creal_le b3 f0 c~ creal_le b3 b0 cF
++ (!x. (!y. (((real_le x) y) \/ ((real_le y) x)))), (!x'. (((~ (x' = x)) /\ (~ (x' = y))) \/ ((~ ((real_le x') x)) \/ (~ ((real_le x') y))))) |- ((y = y) /\ (((real_le y) x) /\ ((real_le y) y)))
+T c==> ! ! c\/ creal_le b0 b1 creal_le b1 b0 c==> ! c\/ c/\ c~ c= b0 f0 c~ c= b0 f1 c\/ c~ creal_le b0 f0 c~ creal_le b0 f1 c/\ c= f1 f1 c/\ creal_le f1 f0 creal_le f1 f1
++ (!x. (!y. (((real_le x) y) \/ ((real_le y) x)))) |- ((?x. (?y. (?x'. (?x''. (((((x' = x) \/ (x' = y)) /\ (~ ((real_le x) x'))) /\ (((x'' = x) \/ (x'' = y)) /\ (~ ((real_le y) x'')))) \/ (!x'. (((~ (x' = x)) /\ (~ (x' = y))) \/ ((~ ((real_le x') x)) \/ (~ ((real_le x') y)))))))))) ==> F)
+T c==> ! ! c\/ creal_le b0 b1 creal_le b1 b0 c==> c? / c? / c? / c? / c\/ c/\ c/\ c\/ c= b2 b0 c= b2 b1 c~ creal_le b0 b2 c/\ c\/ c= b3 b0 c= b3 b1 c~ creal_le b1 b3 ! c\/ c/\ c~ c= b4 b0 c~ c= b4 b1 c\/ c~ creal_le b4 b0 c~ creal_le b4 b1 cF
++ (x' = x), ((((x' = x) \/ (x' = y)) /\ (~ ((real_le x) x'))) /\ (((x'' = x) \/ (x'' = y)) /\ (~ ((real_le y) x'')))) |- (((real_le x) x) ==> F)
+T c==> c= f0 f1 c==> c/\ c/\ c\/ c= f0 f1 c= f0 f2 c~ creal_le f1 f0 c/\ c\/ c= f3 f1 c= f3 f2 c~ creal_le f2 f3 c==> creal_le f1 f1 cF
+- (_149632 = _149634), (_149633 = _149635) |- ((_149633 = _149635) /\ (((real_le _149634) _149635) \/ (~ ((real_le _149632) _149633))))
+T c==> c= f0 f1 c==> c= f2 f3 c/\ c= f2 f3 c\/ creal_le f1 f3 c~ creal_le f0 f2
++ |- (((?x'. (P x')) /\ Q) = (?x'. ((P x') /\ Q)))
+T c= c/\ c? / * f0 b0 f1 c? / c/\ * f0 b0 f1
+- |- ((t ==> t) = T)
+T c= c==> f0 f0 cT
+- |- (((((~ (!x. (!y. (((!x'. (((x' = x) \/ (x' = y)) ==> ((real_le x) x'))) \/ (!x'. (((x' = x) \/ (x' = y)) ==> ((real_le y) x')))) /\ (?x'. (((x' = x) \/ (x' = y)) /\ (((real_le x') x) /\ ((real_le x') y)))))))) ==> ((!x. (!y. (((real_le x) y) \/ ((real_le y) x)))) ==> F)) ==> ((~ (!x. (!y. (((!x'. (((x' = x) \/ (x' = y)) ==> ((real_le x) x'))) \/ (!x'. (((x' = x) \/ (x' = y)) ==> ((real_le y) x')))) /\ (?x'. (((x' = x) \/ (x' = y)) /\ (((real_le x') x) /\ ((real_le x') y)))))))) ==> ((!x. (!y. (((real_le x) y) \/ ((real_le y) x)))) ==> F))) ==> (((~ (!x. (!y. (((!x'. (((x' = x) \/ (x' = y)) ==> ((real_le x) x'))) \/ (!x'. (((x' = x) \/ (x' = y)) ==> ((real_le y) x')))) /\ (?x'. (((x' = x) \/ (x' = y)) /\ (((real_le x') x) /\ ((real_le x') y)))))))) ==> ((!x. (!y. (((real_le x) y) \/ ((real_le y) x)))) ==> F)) ==> ((~ (!x. (!y. (((!x'. (((x' = x) \/ (x' = y)) ==> ((real_le x) x'))) \/ (!x'. (((x' = x) \/ (x' = y)) ==> ((real_le y) x')))) /\ (?x'. (((x' = x) \/ (x' = y)) /\ (((real_le x') x) /\ ((real_le x') y)))))))) ==> ((!x. (!y. (((real_le x) y) \/ ((real_le y) x)))) ==> F)))) = (((~ (!x. (!y. (((!x'. (((x' = x) \/ (x' = y)) ==> ((real_le x) x'))) \/ (!x'. (((x' = x) \/ (x' = y)) ==> ((real_le y) x')))) /\ (?x'. (((x' = x) \/ (x' = y)) /\ (((real_le x') x) /\ ((real_le x') y)))))))) ==> ((!x. (!y. (((real_le x) y) \/ ((real_le y) x)))) ==> F)) ==> ((~ (!x. (!y. (((!x'. (((x' = x) \/ (x' = y)) ==> ((real_le x) x'))) \/ (!x'. (((x' = x) \/ (x' = y)) ==> ((real_le y) x')))) /\ (?x'. (((x' = x) \/ (x' = y)) /\ (((real_le x') x) /\ ((real_le x') y)))))))) ==> ((!x. (!y. (((real_le x) y) \/ ((real_le y) x)))) ==> F))))
+T c= c==> c==> c==> c~ ! ! c/\ c\/ ! c==> c\/ c= b2 b0 c= b2 b1 creal_le b0 b2 ! c==> c\/ c= b2 b0 c= b2 b1 creal_le b1 b2 c? / c/\ c\/ c= b2 b0 c= b2 b1 c/\ creal_le b2 b0 creal_le b2 b1 c==> ! ! c\/ creal_le b0 b1 creal_le b1 b0 cF c==> c~ ! ! c/\ c\/ ! c==> c\/ c= b2 b0 c= b2 b1 creal_le b0 b2 ! c==> c\/ c= b2 b0 c= b2 b1 creal_le b1 b2 c? / c/\ c\/ c= b2 b0 c= b2 b1 c/\ creal_le b2 b0 creal_le b2 b1 c==> ! ! c\/ creal_le b0 b1 creal_le b1 b0 cF c==> c==> c~ ! ! c/\ c\/ ! c==> c\/ c= b2 b0 c= b2 b1 creal_le b0 b2 ! c==> c\/ c= b2 b0 c= b2 b1 creal_le b1 b2 c? / c/\ c\/ c= b2 b0 c= b2 b1 c/\ creal_le b2 b0 creal_le b2 b1 c==> ! ! c\/ creal_le b0 b1 creal_le b1 b0 cF c==> c~ ! ! c/\ c\/ ! c==> c\/ c= b2 b0 c= b2 b1 creal_le b0 b2 ! c==> c\/ c= b2 b0 c= b2 b1 creal_le b1 b2 c? / c/\ c\/ c= b2 b0 c= b2 b1 c/\ creal_le b2 b0 creal_le b2 b1 c==> ! ! c\/ creal_le b0 b1 creal_le b1 b0 cF c==> c==> c~ ! ! c/\ c\/ ! c==> c\/ c= b2 b0 c= b2 b1 creal_le b0 b2 ! c==> c\/ c= b2 b0 c= b2 b1 creal_le b1 b2 c? / c/\ c\/ c= b2 b0 c= b2 b1 c/\ creal_le b2 b0 creal_le b2 b1 c==> ! ! c\/ creal_le b0 b1 creal_le b1 b0 cF c==> c~ ! ! c/\ c\/ ! c==> c\/ c= b2 b0 c= b2 b1 creal_le b0 b2 ! c==> c\/ c= b2 b0 c= b2 b1 creal_le b1 b2 c? / c/\ c\/ c= b2 b0 c= b2 b1 c/\ creal_le b2 b0 creal_le b2 b1 c==> ! ! c\/ creal_le b0 b1 creal_le b1 b0 cF
++ |- ((\x. (!y. (!z. (((real_le z) ((real_min x) y)) = (((real_le z) x) /\ ((real_le z) y)))))) x)
+T * / ! ! c= creal_le b2 creal_min b0 b1 c/\ creal_le b2 b0 creal_le b2 b1 f0
++ |- (((?x'. (?x''. ((((x' = x) \/ (x' = y)) /\ (~ ((real_le x) x'))) /\ (((x'' = x) \/ (x'' = y)) /\ (~ ((real_le y) x'')))))) \/ (!x'. (((~ (x' = x)) /\ (~ (x' = y))) \/ ((~ ((real_le x') x)) \/ (~ ((real_le x') y)))))) = (?x'. ((?x''. ((((x' = x) \/ (x' = y)) /\ (~ ((real_le x) x'))) /\ (((x'' = x) \/ (x'' = y)) /\ (~ ((real_le y) x''))))) \/ (!x'. (((~ (x' = x)) /\ (~ (x' = y))) \/ ((~ ((real_le x') x)) \/ (~ ((real_le x') y))))))))
+T c= c\/ c? / c? / c/\ c/\ c\/ c= b0 f0 c= b0 f1 c~ creal_le f0 b0 c/\ c\/ c= b1 f0 c= b1 f1 c~ creal_le f1 b1 ! c\/ c/\ c~ c= b0 f0 c~ c= b0 f1 c\/ c~ creal_le b0 f0 c~ creal_le b0 f1 c? / c\/ c? / c/\ c/\ c\/ c= b0 f0 c= b0 f1 c~ creal_le f0 b0 c/\ c\/ c= b1 f0 c= b1 f1 c~ creal_le f1 b1 ! c\/ c/\ c~ c= b1 f0 c~ c= b1 f1 c\/ c~ creal_le b1 f0 c~ creal_le b1 f1
+- |- ((p \/ p) = p)
+T c= c\/ f0 f0 f0
++ ((\x''. (((((x' = x) \/ (x' = y)) /\ (~ ((real_le x) x'))) /\ (((x'' = x) \/ (x'' = y)) /\ (~ ((real_le y) x'')))) \/ (!x'. (((~ (x' = x)) /\ (~ (x' = y))) \/ ((~ ((real_le x') x)) \/ (~ ((real_le x') y))))))) x'') |- (((((((x' = x) \/ (x' = y)) /\ (~ ((real_le x) x'))) /\ (((x'' = x) \/ (x'' = y)) /\ (~ ((real_le y) x'')))) \/ (!x'. (((~ (x' = x)) /\ (~ (x' = y))) \/ ((~ ((real_le x') x)) \/ (~ ((real_le x') y)))))) ==> F) = F)
+T c==> * / c\/ c/\ c/\ c\/ c= f0 f1 c= f0 f2 c~ creal_le f1 f0 c/\ c\/ c= b0 f1 c= b0 f2 c~ creal_le f2 b0 ! c\/ c/\ c~ c= b1 f1 c~ c= b1 f2 c\/ c~ creal_le b1 f1 c~ creal_le b1 f2 f3 c= c==> c\/ c/\ c/\ c\/ c= f0 f1 c= f0 f2 c~ creal_le f1 f0 c/\ c\/ c= f3 f1 c= f3 f2 c~ creal_le f2 f3 ! c\/ c/\ c~ c= b0 f1 c~ c= b0 f2 c\/ c~ creal_le b0 f1 c~ creal_le b0 f2 cF cF
+- |- ((!y'. ((!x'. (((x' = x) \/ (x' = y')) ==> ((real_le x) x'))) \/ (!x'. (((x' = x) \/ (x' = y)) ==> ((real_le y) x'))))) = ((!y. (!x'. (((x' = x) \/ (x' = y)) ==> ((real_le x) x')))) \/ (!x'. (((x' = x) \/ (x' = y)) ==> ((real_le y) x')))))
+T c= ! c\/ ! c==> c\/ c= b1 f0 c= b1 b0 creal_le f0 b1 ! c==> c\/ c= b1 f0 c= b1 f1 creal_le f1 b1 c\/ ! ! c==> c\/ c= b1 f0 c= b1 b0 creal_le f0 b1 ! c==> c\/ c= b0 f0 c= b0 f1 creal_le f1 b0
++ |- (T = ((FINITE (x INSERT (y INSERT EMPTY))) /\ (~ ((x INSERT (y INSERT EMPTY)) = EMPTY))))
+T c= cT c/\ cFINITE * * part cINSERT f0 * * part cINSERT f1 part cEMPTY c~ c= * * part cINSERT f0 * * part cINSERT f1 part cEMPTY part cEMPTY
+- |- ((\t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))) t3)
+T * / c= c\/ f0 c\/ f1 b0 c\/ c\/ f0 f1 b0 f2
++ |- ((FINITE EMPTY) = T)
+T c= cFINITE part cEMPTY cT
++ (!x. (!y. (((real_le x) y) \/ ((real_le y) x)))) |- ((((\y. (?x'. (?x''. (((((x' = x) \/ (x' = y)) /\ (~ ((real_le x) x'))) /\ (((x'' = x) \/ (x'' = y)) /\ (~ ((real_le y) x'')))) \/ (!x'. (((~ (x' = x)) /\ (~ (x' = y))) \/ ((~ ((real_le x') x)) \/ (~ ((real_le x') y))))))))) y) ==> F) = T)
+T c==> ! ! c\/ creal_le b0 b1 creal_le b1 b0 c= c==> * / c? / c? / c\/ c/\ c/\ c\/ c= b1 f0 c= b1 b0 c~ creal_le f0 b1 c/\ c\/ c= b2 f0 c= b2 b0 c~ creal_le b0 b2 ! c\/ c/\ c~ c= b3 f0 c~ c= b3 b0 c\/ c~ creal_le b3 f0 c~ creal_le b3 b0 f1 cF cT
++ |- (((~ p) ==> p) = p)
+T c= c==> c~ f0 f0 f0
+- |- ((!x'. t) = t)
+T c= ! f0 f0
++ (!x'. (((~ (x' = x)) /\ (~ (x' = y))) \/ ((~ ((real_le x') x)) \/ (~ ((real_le x') y))))) |- (((~ (_149559 = x)) \/ ((~ ((real_le _149559) x)) \/ (~ ((real_le _149559) y)))) /\ ((~ (_149559 = y)) \/ ((~ ((real_le _149559) x)) \/ (~ ((real_le _149559) y)))))
+T c==> ! c\/ c/\ c~ c= b0 f0 c~ c= b0 f1 c\/ c~ creal_le b0 f0 c~ creal_le b0 f1 c/\ c\/ c~ c= f2 f0 c\/ c~ creal_le f2 f0 c~ creal_le f2 f1 c\/ c~ c= f2 f1 c\/ c~ creal_le f2 f0 c~ creal_le f2 f1
++ (~ ((!x. (!y. ((!x'. (((x' = x) \/ (x' = y)) ==> ((real_le x) x'))) \/ (!x'. (((x' = x) \/ (x' = y)) ==> ((real_le y) x')))))) /\ (!x. (!y. (?x'. (((x' = x) \/ (x' = y)) /\ (((real_le x') x) /\ ((real_le x') y)))))))) |- ((!x. (!y. (((real_le x) y) \/ ((real_le y) x)))) ==> F)
+T c==> c~ c/\ ! ! c\/ ! c==> c\/ c= b2 b0 c= b2 b1 creal_le b0 b2 ! c==> c\/ c= b2 b0 c= b2 b1 creal_le b1 b2 ! ! c? / c/\ c\/ c= b2 b0 c= b2 b1 c/\ creal_le b2 b0 creal_le b2 b1 c==> ! ! c\/ creal_le b0 b1 creal_le b1 b0 cF
++ (!x. (!y. (((real_le x) y) \/ ((real_le y) x)))) |- (((!x'. (((\x'. (?x''. (((((x' = x) \/ (x' = y)) /\ (~ ((real_le x) x'))) /\ (((x'' = x) \/ (x'' = y)) /\ (~ ((real_le y) x'')))) \/ (!x'. (((~ (x' = x)) /\ (~ (x' = y))) \/ ((~ ((real_le x') x)) \/ (~ ((real_le x') y)))))))) x') ==> F)) ==> ((?x'. (?x''. (((((x' = x) \/ (x' = y)) /\ (~ ((real_le x) x'))) /\ (((x'' = x) \/ (x'' = y)) /\ (~ ((real_le y) x'')))) \/ (!x'. (((~ (x' = x)) /\ (~ (x' = y))) \/ ((~ ((real_le x') x)) \/ (~ ((real_le x') y)))))))) ==> F)) = ((?x'. (?x''. (((((x' = x) \/ (x' = y)) /\ (~ ((real_le x) x'))) /\ (((x'' = x) \/ (x'' = y)) /\ (~ ((real_le y) x'')))) \/ (!x'. (((~ (x' = x)) /\ (~ (x' = y))) \/ ((~ ((real_le x') x)) \/ (~ ((real_le x') y)))))))) ==> F))
+T c==> ! ! c\/ creal_le b0 b1 creal_le b1 b0 c= c==> ! c==> * / c? / c\/ c/\ c/\ c\/ c= b1 f0 c= b1 f1 c~ creal_le f0 b1 c/\ c\/ c= b1 f0 c= b1 f1 c~ creal_le f1 b1 ! c\/ c/\ c~ c= b2 f0 c~ c= b2 f1 c\/ c~ creal_le b2 f0 c~ creal_le b2 f1 b0 cF c==> c? / c? / c\/ c/\ c/\ c\/ c= b0 f0 c= b0 f1 c~ creal_le f0 b0 c/\ c\/ c= b1 f0 c= b1 f1 c~ creal_le f1 b1 ! c\/ c/\ c~ c= b2 f0 c~ c= b2 f1 c\/ c~ creal_le b2 f0 c~ creal_le b2 f1 cF c==> c? / c? / c\/ c/\ c/\ c\/ c= b0 f0 c= b0 f1 c~ creal_le f0 b0 c/\ c\/ c= b1 f0 c= b1 f1 c~ creal_le f1 b1 ! c\/ c/\ c~ c= b2 f0 c~ c= b2 f1 c\/ c~ creal_le b2 f0 c~ creal_le b2 f1 cF
++ |- (T = (FINITE EMPTY))
+T c= cT cFINITE part cEMPTY
+- ((x INSERT s) = EMPTY) |- (EMPTY = (x INSERT s))
+T c==> c= * * part cINSERT f0 f1 part cEMPTY c= part cEMPTY * * part cINSERT f0 f1
+- (EMPTY = (x INSERT s)) |- ((x INSERT s) = EMPTY)
+T c==> c= part cEMPTY * * part cINSERT f0 f1 c= * * part cINSERT f0 f1 part cEMPTY
++ |- ((\x. (!y. ((x = y) = (((real_le x) y) /\ ((real_le y) x))))) x)
+T * / ! c= c= b0 b1 c/\ creal_le b0 b1 creal_le b1 b0 f0
++ |- (((real_le y) (inf (x INSERT (y INSERT EMPTY)))) = (!x'. ((x' IN (x INSERT (y INSERT EMPTY))) ==> ((real_le y) x'))))
+T c= creal_le f0 cinf * * part cINSERT f1 * * part cINSERT f0 part cEMPTY ! c==> cIN b0 * * part cINSERT f1 * * part cINSERT f0 part cEMPTY creal_le f0 b0
+- (!x. (!y. (((real_le x) y) \/ ((real_le y) x)))), (~ ((real_le x) y)), (x'' = x), ((((x' = x) \/ (x' = y)) /\ (~ ((real_le x) x'))) /\ (((x'' = x) \/ (x'' = y)) /\ (~ ((real_le y) x'')))) |- ((~ ((real_le x) y)) /\ ((real_le x) y))
+T c==> ! ! c\/ creal_le b0 b1 creal_le b1 b0 c==> c~ creal_le f0 f1 c==> c= f2 f0 c==> c/\ c/\ c\/ c= f3 f0 c= f3 f1 c~ creal_le f0 f3 c/\ c\/ c= f2 f0 c= f2 f1 c~ creal_le f1 f2 c/\ c~ creal_le f0 f1 creal_le f0 f1
++ |- ((t ==> F) = (~ t))
+T c= c==> f0 cF c~ f0
++ (!x. (!y. (((real_le x) y) \/ ((real_le y) x)))), ((!x'. (((~ (x' = x)) /\ (~ (x' = y))) \/ ((~ ((real_le x') x)) \/ (~ ((real_le x') y))))) ==> F), (((((x' = x) \/ (x' = y)) /\ (~ ((real_le x) x'))) /\ (((x'' = x) \/ (x'' = y)) /\ (~ ((real_le y) x'')))) \/ (!x'. (((~ (x' = x)) /\ (~ (x' = y))) \/ ((~ ((real_le x') x)) \/ (~ ((real_le x') y)))))) |- F
+T c==> ! ! c\/ creal_le b0 b1 creal_le b1 b0 c==> c==> ! c\/ c/\ c~ c= b0 f0 c~ c= b0 f1 c\/ c~ creal_le b0 f0 c~ creal_le b0 f1 cF c==> c\/ c/\ c/\ c\/ c= f2 f0 c= f2 f1 c~ creal_le f0 f2 c/\ c\/ c= f3 f0 c= f3 f1 c~ creal_le f1 f3 ! c\/ c/\ c~ c= b0 f0 c~ c= b0 f1 c\/ c~ creal_le b0 f0 c~ creal_le b0 f1 cF
++ (!x. (!y. (((real_le x) y) \/ ((real_le y) x)))), (!x'. (((~ (x' = x)) /\ (~ (x' = y))) \/ ((~ ((real_le x') x)) \/ (~ ((real_le x') y))))) |- (((real_le y) y) = (((real_le y) x) /\ ((real_le y) y)))
+T c==> ! ! c\/ creal_le b0 b1 creal_le b1 b0 c==> ! c\/ c/\ c~ c= b0 f0 c~ c= b0 f1 c\/ c~ creal_le b0 f0 c~ creal_le b0 f1 c= creal_le f1 f1 c/\ creal_le f1 f0 creal_le f1 f1
++ |- (((!a. (((FINITE s) /\ (~ (s = EMPTY))) ==> (((real_le (inf s)) a) = (?x. ((x IN s) /\ ((real_le x) a)))))) ==> ((\a. (((FINITE s) /\ (~ (s = EMPTY))) ==> (((real_le (inf s)) a) = (?x. ((x IN s) /\ ((real_le x) a)))))) a)) = ((\a. (((FINITE s) /\ (~ (s = EMPTY))) ==> (((real_le (inf s)) a) = (?x. ((x IN s) /\ ((real_le x) a)))))) a))
+T c= c==> ! c==> c/\ cFINITE f0 c~ c= f0 part cEMPTY c= creal_le cinf f0 b0 c? / c/\ cIN b1 f0 creal_le b1 b0 * / c==> c/\ cFINITE f0 c~ c= f0 part cEMPTY c= creal_le cinf f0 b0 c? / c/\ cIN b1 f0 creal_le b1 b0 f1 * / c==> c/\ cFINITE f0 c~ c= f0 part cEMPTY c= creal_le cinf f0 b0 c? / c/\ cIN b1 f0 creal_le b1 b0 f1
++ |- ((x = y) = (((real_le x) y) /\ ((real_le y) x)))
+T c= c= f0 f1 c/\ creal_le f0 f1 creal_le f1 f0
++ |- (p = ((~ p) ==> F))
+T c= f0 c==> c~ f0 cF
+- |- ((?y. t) = t)
+T c= c? / f0 f0
++ |- ((!x. (!y. (((!x'. (((x' = x) \/ (x' = y)) ==> ((real_le x) x'))) \/ (!x'. (((x' = x) \/ (x' = y)) ==> ((real_le y) x')))) /\ (?x'. (((x' = x) \/ (x' = y)) /\ (((real_le x') x) /\ ((real_le x') y))))))) = (!x. (!y. (((!x'. ((x' IN (x INSERT (y INSERT EMPTY))) ==> ((real_le x) x'))) \/ (!x'. ((x' IN (x INSERT (y INSERT EMPTY))) ==> ((real_le y) x')))) /\ (?x'. ((x' IN (x INSERT (y INSERT EMPTY))) /\ (((real_le x') x) /\ ((real_le x') y))))))))
+T c= ! ! c/\ c\/ ! c==> c\/ c= b2 b0 c= b2 b1 creal_le b0 b2 ! c==> c\/ c= b2 b0 c= b2 b1 creal_le b1 b2 c? / c/\ c\/ c= b2 b0 c= b2 b1 c/\ creal_le b2 b0 creal_le b2 b1 ! ! c/\ c\/ ! c==> cIN b2 * * part cINSERT b0 * * part cINSERT b1 part cEMPTY creal_le b0 b2 ! c==> cIN b2 * * part cINSERT b0 * * part cINSERT b1 part cEMPTY creal_le b1 b2 c? / c/\ cIN b2 * * part cINSERT b0 * * part cINSERT b1 part cEMPTY c/\ creal_le b2 b0 creal_le b2 b1
+- (x'' = x), ((((x' = x) \/ (x' = y)) /\ (~ ((real_le x) x'))) /\ (((x'' = x) \/ (x'' = y)) /\ (~ ((real_le y) x'')))), ((real_le y) x) |- (((real_le y) x) /\ (~ ((real_le y) x)))
+T c==> c= f0 f1 c==> c/\ c/\ c\/ c= f2 f1 c= f2 f3 c~ creal_le f1 f2 c/\ c\/ c= f0 f1 c= f0 f3 c~ creal_le f3 f0 c==> creal_le f3 f1 c/\ creal_le f3 f1 c~ creal_le f3 f1
+- |- ((!y'. (((real_le x) y) \/ ((real_le y') x))) = (((real_le x) y) \/ (!y. ((real_le y) x))))
+T c= ! c\/ creal_le f0 f1 creal_le b0 f0 c\/ creal_le f0 f1 ! creal_le b0 f0
+- |- ((((x' IN (x INSERT (y INSERT EMPTY))) ==> (((real_le y) x') = ((real_le y) x'))) ==> (((x' IN (x INSERT (y INSERT EMPTY))) ==> ((real_le y) x')) = ((x' IN (x INSERT (y INSERT EMPTY))) ==> ((real_le y) x')))) = (((x' IN (x INSERT (y INSERT EMPTY))) ==> ((real_le y) x')) = ((x' IN (x INSERT (y INSERT EMPTY))) ==> ((real_le y) x'))))
+T c= c==> c==> cIN f0 * * part cINSERT f1 * * part cINSERT f2 part cEMPTY c= creal_le f2 f0 creal_le f2 f0 c= c==> cIN f0 * * part cINSERT f1 * * part cINSERT f2 part cEMPTY creal_le f2 f0 c==> cIN f0 * * part cINSERT f1 * * part cINSERT f2 part cEMPTY creal_le f2 f0 c= c==> cIN f0 * * part cINSERT f1 * * part cINSERT f2 part cEMPTY creal_le f2 f0 c==> cIN f0 * * part cINSERT f1 * * part cINSERT f2 part cEMPTY creal_le f2 f0
+- (!x. (!y. (((real_le x) y) \/ ((real_le y) x)))), (x' = x), (x'' = y), ((((x' = x) \/ (x' = y)) /\ (~ ((real_le x) x'))) /\ (((x'' = x) \/ (x'' = y)) /\ (~ ((real_le y) x'')))) |- ((x'' = y) /\ F)
+T c==> ! ! c\/ creal_le b0 b1 creal_le b1 b0 c==> c= f0 f1 c==> c= f2 f3 c==> c/\ c/\ c\/ c= f0 f1 c= f0 f3 c~ creal_le f1 f0 c/\ c\/ c= f2 f1 c= f2 f3 c~ creal_le f3 f2 c/\ c= f2 f3 cF
+- (!x. (!y. (((real_le x) y) \/ ((real_le y) x)))), (x' = y), (x'' = x), ((((x' = x) \/ (x' = y)) /\ (~ ((real_le x) x'))) /\ (((x'' = x) \/ (x'' = y)) /\ (~ ((real_le y) x'')))) |- ((~ F) ==> F)
+T c==> ! ! c\/ creal_le b0 b1 creal_le b1 b0 c==> c= f0 f1 c==> c= f2 f3 c==> c/\ c/\ c\/ c= f0 f3 c= f0 f1 c~ creal_le f3 f0 c/\ c\/ c= f2 f3 c= f2 f1 c~ creal_le f1 f2 c==> c~ cF cF
++ (!x. (!y. (((real_le x) y) \/ ((real_le y) x)))), (((((x' = x) \/ (x' = y)) /\ (~ ((real_le x) x'))) /\ (((x'' = x) \/ (x'' = y)) /\ (~ ((real_le y) x'')))) \/ (!x'. (((~ (x' = x)) /\ (~ (x' = y))) \/ ((~ ((real_le x') x)) \/ (~ ((real_le x') y)))))) |- ((((((x' = x) \/ (x' = y)) /\ (~ ((real_le x) x'))) /\ (((x'' = x) \/ (x'' = y)) /\ (~ ((real_le y) x'')))) \/ (!x'. (((~ (x' = x)) /\ (~ (x' = y))) \/ ((~ ((real_le x') x)) \/ (~ ((real_le x') y)))))) /\ F)
+T c==> ! ! c\/ creal_le b0 b1 creal_le b1 b0 c==> c\/ c/\ c/\ c\/ c= f0 f1 c= f0 f2 c~ creal_le f1 f0 c/\ c\/ c= f3 f1 c= f3 f2 c~ creal_le f2 f3 ! c\/ c/\ c~ c= b0 f1 c~ c= b0 f2 c\/ c~ creal_le b0 f1 c~ creal_le b0 f2 c/\ c\/ c/\ c/\ c\/ c= f0 f1 c= f0 f2 c~ creal_le f1 f0 c/\ c\/ c= f3 f1 c= f3 f2 c~ creal_le f2 f3 ! c\/ c/\ c~ c= b0 f1 c~ c= b0 f2 c\/ c~ creal_le b0 f1 c~ creal_le b0 f2 cF
+- |- ((~ (_149632 = _149634)) \/ ((~ (_149633 = _149635)) \/ (((real_le _149634) _149635) \/ (~ ((real_le _149632) _149633)))))
+T c\/ c~ c= f0 f1 c\/ c~ c= f2 f3 c\/ creal_le f1 f3 c~ creal_le f0 f2
++ (!x. (!y. (((real_le x) y) \/ ((real_le y) x)))), (~ ((!x. (!y. ((!x'. (((x' = x) \/ (x' = y)) ==> ((real_le x) x'))) \/ (!x'. (((x' = x) \/ (x' = y)) ==> ((real_le y) x')))))) /\ (!x. (!y. (?x'. (((x' = x) \/ (x' = y)) /\ (((real_le x') x) /\ ((real_le x') y)))))))) |- ((!x. (!y. (((real_le x) y) \/ ((real_le y) x)))) /\ F)
+T c==> ! ! c\/ creal_le b0 b1 creal_le b1 b0 c==> c~ c/\ ! ! c\/ ! c==> c\/ c= b2 b0 c= b2 b1 creal_le b0 b2 ! c==> c\/ c= b2 b0 c= b2 b1 creal_le b1 b2 ! ! c? / c/\ c\/ c= b2 b0 c= b2 b1 c/\ creal_le b2 b0 creal_le b2 b1 c/\ ! ! c\/ creal_le b0 b1 creal_le b1 b0 cF
++ (!x. (!y. (((real_le x) y) \/ ((real_le y) x)))) |- ((((\x''. (((((x' = x) \/ (x' = y)) /\ (~ ((real_le x) x'))) /\ (((x'' = x) \/ (x'' = y)) /\ (~ ((real_le y) x'')))) \/ (!x'. (((~ (x' = x)) /\ (~ (x' = y))) \/ ((~ ((real_le x') x)) \/ (~ ((real_le x') y))))))) x'') ==> F) = T)
+T c==> ! ! c\/ creal_le b0 b1 creal_le b1 b0 c= c==> * / c\/ c/\ c/\ c\/ c= f0 f1 c= f0 f2 c~ creal_le f1 f0 c/\ c\/ c= b0 f1 c= b0 f2 c~ creal_le f2 b0 ! c\/ c/\ c~ c= b1 f1 c~ c= b1 f2 c\/ c~ creal_le b1 f1 c~ creal_le b1 f2 f3 cF cT
++ (!x'. (((~ (x' = x)) /\ (~ (x' = y))) \/ ((~ ((real_le x') x)) \/ (~ ((real_le x') y))))) |- ((~ (_149559 = y)) \/ ((~ ((real_le _149559) x)) \/ (~ ((real_le _149559) y))))
+T c==> ! c\/ c/\ c~ c= b0 f0 c~ c= b0 f1 c\/ c~ creal_le b0 f0 c~ creal_le b0 f1 c\/ c~ c= f2 f1 c\/ c~ creal_le f2 f0 c~ creal_le f2 f1
++ |- (((~ (_149559 = x)) \/ ((~ ((real_le _149559) x)) \/ (~ ((real_le _149559) y)))) = ((~ ((real_le _149559) y)) \/ ((~ (_149559 = x)) \/ (~ ((real_le _149559) x)))))
+T c= c\/ c~ c= f0 f1 c\/ c~ creal_le f0 f1 c~ creal_le f0 f2 c\/ c~ creal_le f0 f2 c\/ c~ c= f0 f1 c~ creal_le f0 f1
+- (!x. (!y. (((real_le x) y) \/ ((real_le y) x)))), (x' = x), ((((x' = x) \/ (x' = y)) /\ (~ ((real_le x) x'))) /\ (((x'' = x) \/ (x'' = y)) /\ (~ ((real_le y) x'')))) |- ((x'' = y) ==> F)
+T c==> ! ! c\/ creal_le b0 b1 creal_le b1 b0 c==> c= f0 f1 c==> c/\ c/\ c\/ c= f0 f1 c= f0 f2 c~ creal_le f1 f0 c/\ c\/ c= f3 f1 c= f3 f2 c~ creal_le f2 f3 c==> c= f3 f2 cF
++ ((((x' = x) \/ (x' = y)) /\ (~ ((real_le x) x'))) /\ (((x'' = x) \/ (x'' = y)) /\ (~ ((real_le y) x'')))), ((x' = x) ==> F), ((x' = y) ==> F) |- F
+T c==> c/\ c/\ c\/ c= f0 f1 c= f0 f2 c~ creal_le f1 f0 c/\ c\/ c= f3 f1 c= f3 f2 c~ creal_le f2 f3 c==> c==> c= f0 f1 cF c==> c==> c= f0 f2 cF cF
++ |- ((((FINITE (x INSERT (y INSERT EMPTY))) /\ (~ ((x INSERT (y INSERT EMPTY)) = EMPTY))) ==> (((real_le (inf (x INSERT (y INSERT EMPTY)))) ((real_min x) y)) = (?x'. ((x' IN (x INSERT (y INSERT EMPTY))) /\ ((real_le x') ((real_min x) y)))))) = (((real_le (inf (x INSERT (y INSERT EMPTY)))) ((real_min x) y)) = (?x'. ((x' IN (x INSERT (y INSERT EMPTY))) /\ ((real_le x') ((real_min x) y))))))
+T c= c==> c/\ cFINITE * * part cINSERT f0 * * part cINSERT f1 part cEMPTY c~ c= * * part cINSERT f0 * * part cINSERT f1 part cEMPTY part cEMPTY c= creal_le cinf * * part cINSERT f0 * * part cINSERT f1 part cEMPTY creal_min f0 f1 c? / c/\ cIN b0 * * part cINSERT f0 * * part cINSERT f1 part cEMPTY creal_le b0 creal_min f0 f1 c= creal_le cinf * * part cINSERT f0 * * part cINSERT f1 part cEMPTY creal_min f0 f1 c? / c/\ cIN b0 * * part cINSERT f0 * * part cINSERT f1 part cEMPTY creal_le b0 creal_min f0 f1
+- |- ((\q'. (((x' IN (x INSERT (y INSERT EMPTY))) = p') ==> ((p' ==> (((real_le y) x') = q')) ==> (((x' IN (x INSERT (y INSERT EMPTY))) ==> ((real_le y) x')) = (p' ==> q'))))) q')
+T * / c==> c= cIN f0 * * part cINSERT f1 * * part cINSERT f2 part cEMPTY f3 c==> c==> f3 c= creal_le f2 f0 b0 c= c==> cIN f0 * * part cINSERT f1 * * part cINSERT f2 part cEMPTY creal_le f2 f0 c==> f3 b0 f4
++ (!x. (!y. (((real_le x) y) \/ ((real_le y) x)))), ((((x' = x) \/ (x' = y)) /\ (~ ((real_le x) x'))) /\ (((x'' = x) \/ (x'' = y)) /\ (~ ((real_le y) x'')))) |- ((x' = x) ==> F)
+T c==> ! ! c\/ creal_le b0 b1 creal_le b1 b0 c==> c/\ c/\ c\/ c= f0 f1 c= f0 f2 c~ creal_le f1 f0 c/\ c\/ c= f3 f1 c= f3 f2 c~ creal_le f2 f3 c==> c= f0 f1 cF
++ (!x. (!y. (((real_le x) y) \/ ((real_le y) x)))) |- (((\x. (?y. (?x'. (?x''. (((((x' = x) \/ (x' = y)) /\ (~ ((real_le x) x'))) /\ (((x'' = x) \/ (x'' = y)) /\ (~ ((real_le y) x'')))) \/ (!x'. (((~ (x' = x)) /\ (~ (x' = y))) \/ ((~ ((real_le x') x)) \/ (~ ((real_le x') y)))))))))) x) ==> F)
+T c==> ! ! c\/ creal_le b0 b1 creal_le b1 b0 c==> * / c? / c? / c? / c\/ c/\ c/\ c\/ c= b2 b0 c= b2 b1 c~ creal_le b0 b2 c/\ c\/ c= b3 b0 c= b3 b1 c~ creal_le b1 b3 ! c\/ c/\ c~ c= b4 b0 c~ c= b4 b1 c\/ c~ creal_le b4 b0 c~ creal_le b4 b1 f0 cF
++ ((\x'. (?x''. (((((x' = x) \/ (x' = y)) /\ (~ ((real_le x) x'))) /\ (((x'' = x) \/ (x'' = y)) /\ (~ ((real_le y) x'')))) \/ (!x'. (((~ (x' = x)) /\ (~ (x' = y))) \/ ((~ ((real_le x') x)) \/ (~ ((real_le x') y)))))))) x') |- (((?x''. (((((x' = x) \/ (x' = y)) /\ (~ ((real_le x) x'))) /\ (((x'' = x) \/ (x'' = y)) /\ (~ ((real_le y) x'')))) \/ (!x'. (((~ (x' = x)) /\ (~ (x' = y))) \/ ((~ ((real_le x') x)) \/ (~ ((real_le x') y))))))) ==> F) = F)
+T c==> * / c? / c\/ c/\ c/\ c\/ c= b0 f0 c= b0 f1 c~ creal_le f0 b0 c/\ c\/ c= b1 f0 c= b1 f1 c~ creal_le f1 b1 ! c\/ c/\ c~ c= b2 f0 c~ c= b2 f1 c\/ c~ creal_le b2 f0 c~ creal_le b2 f1 f2 c= c==> c? / c\/ c/\ c/\ c\/ c= f2 f0 c= f2 f1 c~ creal_le f0 f2 c/\ c\/ c= b0 f0 c= b0 f1 c~ creal_le f1 b0 ! c\/ c/\ c~ c= b1 f0 c~ c= b1 f1 c\/ c~ creal_le b1 f0 c~ creal_le b1 f1 cF cF
+- |- ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))
+T c= c\/ f0 c\/ f1 f2 c\/ c\/ f0 f1 f2
++ (!x. (!y. (((real_le x) y) \/ ((real_le y) x)))) |- (((!x. (((\x. (?y. (?x'. (?x''. (((((x' = x) \/ (x' = y)) /\ (~ ((real_le x) x'))) /\ (((x'' = x) \/ (x'' = y)) /\ (~ ((real_le y) x'')))) \/ (!x'. (((~ (x' = x)) /\ (~ (x' = y))) \/ ((~ ((real_le x') x)) \/ (~ ((real_le x') y)))))))))) x) ==> F)) ==> ((?x. (?y. (?x'. (?x''. (((((x' = x) \/ (x' = y)) /\ (~ ((real_le x) x'))) /\ (((x'' = x) \/ (x'' = y)) /\ (~ ((real_le y) x'')))) \/ (!x'. (((~ (x' = x)) /\ (~ (x' = y))) \/ ((~ ((real_le x') x)) \/ (~ ((real_le x') y)))))))))) ==> F)) = ((?x. (?y. (?x'. (?x''. (((((x' = x) \/ (x' = y)) /\ (~ ((real_le x) x'))) /\ (((x'' = x) \/ (x'' = y)) /\ (~ ((real_le y) x'')))) \/ (!x'. (((~ (x' = x)) /\ (~ (x' = y))) \/ ((~ ((real_le x') x)) \/ (~ ((real_le x') y)))))))))) ==> F))
+T c==> ! ! c\/ creal_le b0 b1 creal_le b1 b0 c= c==> ! c==> * / c? / c? / c? / c\/ c/\ c/\ c\/ c= b2 b1 c= b2 b1 c~ creal_le b1 b2 c/\ c\/ c= b3 b1 c= b3 b1 c~ creal_le b1 b3 ! c\/ c/\ c~ c= b4 b1 c~ c= b4 b1 c\/ c~ creal_le b4 b1 c~ creal_le b4 b1 b0 cF c==> c? / c? / c? / c? / c\/ c/\ c/\ c\/ c= b2 b0 c= b2 b1 c~ creal_le b0 b2 c/\ c\/ c= b3 b0 c= b3 b1 c~ creal_le b1 b3 ! c\/ c/\ c~ c= b4 b0 c~ c= b4 b1 c\/ c~ creal_le b4 b0 c~ creal_le b4 b1 cF c==> c? / c? / c? / c? / c\/ c/\ c/\ c\/ c= b2 b0 c= b2 b1 c~ creal_le b0 b2 c/\ c\/ c= b3 b0 c= b3 b1 c~ creal_le b1 b3 ! c\/ c/\ c~ c= b4 b0 c~ c= b4 b1 c\/ c~ creal_le b4 b0 c~ creal_le b4 b1 cF
++ (!x. (!y. (((real_le x) y) \/ ((real_le y) x)))), (~ ((!x. (!y. ((!x'. (((x' = x) \/ (x' = y)) ==> ((real_le x) x'))) \/ (!x'. (((x' = x) \/ (x' = y)) ==> ((real_le y) x')))))) /\ (!x. (!y. (?x'. (((x' = x) \/ (x' = y)) /\ (((real_le x') x) /\ ((real_le x') y)))))))) |- F
+T c==> ! ! c\/ creal_le b0 b1 creal_le b1 b0 c==> c~ c/\ ! ! c\/ ! c==> c\/ c= b2 b0 c= b2 b1 creal_le b0 b2 ! c==> c\/ c= b2 b0 c= b2 b1 creal_le b1 b2 ! ! c? / c/\ c\/ c= b2 b0 c= b2 b1 c/\ creal_le b2 b0 creal_le b2 b1 cF
+- (!x. (!y. (((real_le x) y) \/ ((real_le y) x)))), (?x''. (((((x' = x) \/ (x' = y)) /\ (~ ((real_le x) x'))) /\ (((x'' = x) \/ (x'' = y)) /\ (~ ((real_le y) x'')))) \/ (!x'. (((~ (x' = x)) /\ (~ (x' = y))) \/ ((~ ((real_le x') x)) \/ (~ ((real_le x') y))))))) |- ((?x''. (((((x' = x) \/ (x' = y)) /\ (~ ((real_le x) x'))) /\ (((x'' = x) \/ (x'' = y)) /\ (~ ((real_le y) x'')))) \/ (!x'. (((~ (x' = x)) /\ (~ (x' = y))) \/ ((~ ((real_le x') x)) \/ (~ ((real_le x') y))))))) /\ F)
+T c==> ! ! c\/ creal_le b0 b1 creal_le b1 b0 c==> c? / c\/ c/\ c/\ c\/ c= f0 f1 c= f0 f2 c~ creal_le f1 f0 c/\ c\/ c= b0 f1 c= b0 f2 c~ creal_le f2 b0 ! c\/ c/\ c~ c= b1 f1 c~ c= b1 f2 c\/ c~ creal_le b1 f1 c~ creal_le b1 f2 c/\ c? / c\/ c/\ c/\ c\/ c= f0 f1 c= f0 f2 c~ creal_le f1 f0 c/\ c\/ c= b0 f1 c= b0 f2 c~ creal_le f2 b0 ! c\/ c/\ c~ c= b1 f1 c~ c= b1 f2 c\/ c~ creal_le b1 f1 c~ creal_le b1 f2 cF
+- (_149632 = _149634) |- ((_149632 = _149634) /\ ((~ (_149633 = _149635)) \/ (((real_le _149634) _149635) \/ (~ ((real_le _149632) _149633)))))
+T c==> c= f0 f1 c/\ c= f0 f1 c\/ c~ c= f2 f3 c\/ creal_le f1 f3 c~ creal_le f0 f2
++ |- ((\z. (((real_le z) ((real_min x) y)) = (((real_le z) x) /\ ((real_le z) y)))) z)
+T * / c= creal_le b0 creal_min f0 f1 c/\ creal_le b0 f0 creal_le b0 f1 f2
+- |- (((x' IN (x INSERT (y INSERT EMPTY))) ==> (((real_le x) x') = q')) ==> (((x' IN (x INSERT (y INSERT EMPTY))) ==> ((real_le x) x')) = ((x' IN (x INSERT (y INSERT EMPTY))) ==> q')))
+T c==> c==> cIN f0 * * part cINSERT f1 * * part cINSERT f2 part cEMPTY c= creal_le f1 f0 f3 c= c==> cIN f0 * * part cINSERT f1 * * part cINSERT f2 part cEMPTY creal_le f1 f0 c==> cIN f0 * * part cINSERT f1 * * part cINSERT f2 part cEMPTY f3
++ |- (((!x. (~ (x IN EMPTY))) ==> ((\x. (~ (x IN EMPTY))) x)) = ((\x. (~ (x IN EMPTY))) x))
+T c= c==> ! c~ cIN b0 part cEMPTY * / c~ cIN b0 part cEMPTY f0 * / c~ cIN b0 part cEMPTY f0
+- (_149632 = _149634) |- ((_149633 = _149635) ==> (((real_le _149634) _149635) \/ (~ ((real_le _149632) _149633))))
+T c==> c= f0 f1 c==> c= f2 f3 c\/ creal_le f1 f3 c~ creal_le f0 f2
+- (!x. (!y. (((real_le x) y) \/ ((real_le y) x)))), (x' = x), ((((x' = x) \/ (x' = y)) /\ (~ ((real_le x) x'))) /\ (((x'' = x) \/ (x'' = y)) /\ (~ ((real_le y) x'')))), ((x'' = y) ==> F) |- F
+T c==> ! ! c\/ creal_le b0 b1 creal_le b1 b0 c==> c= f0 f1 c==> c/\ c/\ c\/ c= f0 f1 c= f0 f2 c~ creal_le f1 f0 c/\ c\/ c= f3 f1 c= f3 f2 c~ creal_le f2 f3 c==> c==> c= f3 f2 cF cF
++ (!x. (!y. (((real_le x) y) \/ ((real_le y) x)))), ((((x' = x) \/ (x' = y)) /\ (~ ((real_le x) x'))) /\ (((x'' = x) \/ (x'' = y)) /\ (~ ((real_le y) x'')))), ((x' = y) ==> F) |- F
+T c==> ! ! c\/ creal_le b0 b1 creal_le b1 b0 c==> c/\ c/\ c\/ c= f0 f1 c= f0 f2 c~ creal_le f1 f0 c/\ c\/ c= f3 f1 c= f3 f2 c~ creal_le f2 f3 c==> c==> c= f0 f2 cF cF
+- |- (((!p'. (!q'. (((x' IN (x INSERT (y INSERT EMPTY))) = p') ==> ((p' ==> (((real_le x) x') = q')) ==> (((x' IN (x INSERT (y INSERT EMPTY))) ==> ((real_le x) x')) = (p' ==> q')))))) ==> ((\p'. (!q'. (((x' IN (x INSERT (y INSERT EMPTY))) = p') ==> ((p' ==> (((real_le x) x') = q')) ==> (((x' IN (x INSERT (y INSERT EMPTY))) ==> ((real_le x) x')) = (p' ==> q')))))) p')) = ((\p'. (!q'. (((x' IN (x INSERT (y INSERT EMPTY))) = p') ==> ((p' ==> (((real_le x) x') = q')) ==> (((x' IN (x INSERT (y INSERT EMPTY))) ==> ((real_le x) x')) = (p' ==> q')))))) p'))
+T c= c==> ! ! c==> c= cIN f0 * * part cINSERT f1 * * part cINSERT f2 part cEMPTY b0 c==> c==> b0 c= creal_le f1 f0 b1 c= c==> cIN f0 * * part cINSERT f1 * * part cINSERT f2 part cEMPTY creal_le f1 f0 c==> b0 b1 * / ! c==> c= cIN f0 * * part cINSERT f1 * * part cINSERT f2 part cEMPTY b0 c==> c==> b0 c= creal_le f1 f0 b1 c= c==> cIN f0 * * part cINSERT f1 * * part cINSERT f2 part cEMPTY creal_le f1 f0 c==> b0 b1 f3 * / ! c==> c= cIN f0 * * part cINSERT f1 * * part cINSERT f2 part cEMPTY b0 c==> c==> b0 c= creal_le f1 f0 b1 c= c==> cIN f0 * * part cINSERT f1 * * part cINSERT f2 part cEMPTY creal_le f1 f0 c==> b0 b1 f3
+- |- ((!q'. ((p = p') ==> ((p' ==> (q = q')) ==> ((p ==> q) = (p' ==> q'))))) = T)
+T c= ! c==> c= f0 f1 c==> c==> f1 c= f2 b0 c= c==> f0 f2 c==> f1 b0 cT
+- (x'' = x) |- ((x' = y) = (x' = y))
+T c==> c= f0 f1 c= c= f2 f3 c= f2 f3
++ (!x. (!y. (((real_le x) y) \/ ((real_le y) x)))), (!x'. (((~ (x' = x)) /\ (~ (x' = y))) \/ ((~ ((real_le x') x)) \/ (~ ((real_le x') y))))) |- (~ ((real_le x) y))
+T c==> ! ! c\/ creal_le b0 b1 creal_le b1 b0 c==> ! c\/ c/\ c~ c= b0 f0 c~ c= b0 f1 c\/ c~ creal_le b0 f0 c~ creal_le b0 f1 c~ creal_le f0 f1
+- |- (((!q'. (((x' IN (x INSERT (y INSERT EMPTY))) = p') ==> ((p' ==> (((real_le y) x') = q')) ==> (((x' IN (x INSERT (y INSERT EMPTY))) ==> ((real_le y) x')) = (p' ==> q'))))) ==> ((\q'. (((x' IN (x INSERT (y INSERT EMPTY))) = p') ==> ((p' ==> (((real_le y) x') = q')) ==> (((x' IN (x INSERT (y INSERT EMPTY))) ==> ((real_le y) x')) = (p' ==> q'))))) q')) = ((\q'. (((x' IN (x INSERT (y INSERT EMPTY))) = p') ==> ((p' ==> (((real_le y) x') = q')) ==> (((x' IN (x INSERT (y INSERT EMPTY))) ==> ((real_le y) x')) = (p' ==> q'))))) q'))
+T c= c==> ! c==> c= cIN f0 * * part cINSERT f1 * * part cINSERT f2 part cEMPTY f3 c==> c==> f3 c= creal_le f2 f0 b0 c= c==> cIN f0 * * part cINSERT f1 * * part cINSERT f2 part cEMPTY creal_le f2 f0 c==> f3 b0 * / c==> c= cIN f0 * * part cINSERT f1 * * part cINSERT f2 part cEMPTY f3 c==> c==> f3 c= creal_le f2 f0 b0 c= c==> cIN f0 * * part cINSERT f1 * * part cINSERT f2 part cEMPTY creal_le f2 f0 c==> f3 b0 f4 * / c==> c= cIN f0 * * part cINSERT f1 * * part cINSERT f2 part cEMPTY f3 c==> c==> f3 c= creal_le f2 f0 b0 c= c==> cIN f0 * * part cINSERT f1 * * part cINSERT f2 part cEMPTY creal_le f2 f0 c==> f3 b0 f4
++ ((((x' = x) \/ (x' = y)) /\ (~ ((real_le x) x'))) /\ (((x'' = x) \/ (x'' = y)) /\ (~ ((real_le y) x'')))) |- ((x'' = x) \/ (x'' = y))
+T c==> c/\ c/\ c\/ c= f0 f1 c= f0 f2 c~ creal_le f1 f0 c/\ c\/ c= f3 f1 c= f3 f2 c~ creal_le f2 f3 c\/ c= f3 f1 c= f3 f2
+- (x' = y) |- ((((real_le _149555) _149556) \/ ((real_le _149556) _149555)) = (((real_le _149555) _149556) \/ ((real_le _149556) _149555)))
+T c==> c= f0 f1 c= c\/ creal_le f2 f3 creal_le f3 f2 c\/ creal_le f2 f3 creal_le f3 f2
++ (~ ((!x. (!y. ((!x'. (((x' = x) \/ (x' = y)) ==> ((real_le x) x'))) \/ (!x'. (((x' = x) \/ (x' = y)) ==> ((real_le y) x')))))) /\ (!x. (!y. (?x'. (((x' = x) \/ (x' = y)) /\ (((real_le x') x) /\ ((real_le x') y)))))))) |- ((~ ((!x. (!y. ((!x'. (((x' = x) \/ (x' = y)) ==> ((real_le x) x'))) \/ (!x'. (((x' = x) \/ (x' = y)) ==> ((real_le y) x')))))) /\ (!x. (!y. (?x'. (((x' = x) \/ (x' = y)) /\ (((real_le x') x) /\ ((real_le x') y)))))))) /\ (~ (!x. (!y. (((real_le x) y) \/ ((real_le y) x))))))
+T c==> c~ c/\ ! ! c\/ ! c==> c\/ c= b2 b0 c= b2 b1 creal_le b0 b2 ! c==> c\/ c= b2 b0 c= b2 b1 creal_le b1 b2 ! ! c? / c/\ c\/ c= b2 b0 c= b2 b1 c/\ creal_le b2 b0 creal_le b2 b1 c/\ c~ c/\ ! ! c\/ ! c==> c\/ c= b2 b0 c= b2 b1 creal_le b0 b2 ! c==> c\/ c= b2 b0 c= b2 b1 creal_le b1 b2 ! ! c? / c/\ c\/ c= b2 b0 c= b2 b1 c/\ creal_le b2 b0 creal_le b2 b1 c~ ! ! c\/ creal_le b0 b1 creal_le b1 b0
++ (x' = y), ((((x' = x) \/ (x' = y)) /\ (~ ((real_le x) x'))) /\ (((x'' = x) \/ (x'' = y)) /\ (~ ((real_le y) x'')))) |- (((real_le x) y) ==> F)
+T c==> c= f0 f1 c==> c/\ c/\ c\/ c= f0 f2 c= f0 f1 c~ creal_le f2 f0 c/\ c\/ c= f3 f2 c= f3 f1 c~ creal_le f1 f3 c==> creal_le f2 f1 cF
+- |- ((\t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3)))) t2)
+T * / ! c= c\/ f0 c\/ b0 b1 c\/ c\/ f0 b0 b1 f1
+- |- ((!x'. ((P x') \/ Q)) = ((!x'. (P x')) \/ Q))
+T c= ! c\/ * f0 b0 f1 c\/ ! * f0 b0 f1
++ (!x'. (((~ (x' = x)) /\ (~ (x' = y))) \/ ((~ ((real_le x') x)) \/ (~ ((real_le x') y))))) |- (!x'. (((~ (x' = x)) \/ ((~ ((real_le x') x)) \/ (~ ((real_le x') y)))) /\ ((~ (x' = y)) \/ ((~ ((real_le x') x)) \/ (~ ((real_le x') y))))))
+T c==> ! c\/ c/\ c~ c= b0 f0 c~ c= b0 f1 c\/ c~ creal_le b0 f0 c~ creal_le b0 f1 ! c/\ c\/ c~ c= b0 f0 c\/ c~ creal_le b0 f0 c~ creal_le b0 f1 c\/ c~ c= b0 f1 c\/ c~ creal_le b0 f0 c~ creal_le b0 f1
++ |- (((?x. (?y. (?x'. (?x''. ((((x' = x) \/ (x' = y)) /\ (~ ((real_le x) x'))) /\ (((x'' = x) \/ (x'' = y)) /\ (~ ((real_le y) x'')))))))) \/ (?x. (?y. (!x'. (((~ (x' = x)) /\ (~ (x' = y))) \/ ((~ ((real_le x') x)) \/ (~ ((real_le x') y)))))))) = (?x. ((?y. (?x'. (?x''. ((((x' = x) \/ (x' = y)) /\ (~ ((real_le x) x'))) /\ (((x'' = x) \/ (x'' = y)) /\ (~ ((real_le y) x''))))))) \/ (?y. (!x'. (((~ (x' = x)) /\ (~ (x' = y))) \/ ((~ ((real_le x') x)) \/ (~ ((real_le x') y)))))))))
+T c= c\/ c? / c? / c? / c? / c/\ c/\ c\/ c= b2 b0 c= b2 b1 c~ creal_le b0 b2 c/\ c\/ c= b3 b0 c= b3 b1 c~ creal_le b1 b3 c? / c? / ! c\/ c/\ c~ c= b2 b0 c~ c= b2 b1 c\/ c~ creal_le b2 b0 c~ creal_le b2 b1 c? / c\/ c? / c? / c? / c/\ c/\ c\/ c= b2 b0 c= b2 b1 c~ creal_le b0 b2 c/\ c\/ c= b3 b0 c= b3 b1 c~ creal_le b1 b3 c? / ! c\/ c/\ c~ c= b2 b0 c~ c= b2 b1 c\/ c~ creal_le b2 b0 c~ creal_le b2 b1
++ |- (((!s. (~ ((x INSERT s) = EMPTY))) ==> ((\s. (~ ((x INSERT s) = EMPTY))) s)) = ((\s. (~ ((x INSERT s) = EMPTY))) s))
+T c= c==> ! c~ c= * * part cINSERT f0 b0 part cEMPTY * / c~ c= * * part cINSERT f0 b0 part cEMPTY f1 * / c~ c= * * part cINSERT f0 b0 part cEMPTY f1
+- (!x. (!y. (((real_le x) y) \/ ((real_le y) x)))), (!x'. (((~ (x' = x)) /\ (~ (x' = y))) \/ ((~ ((real_le x') x)) \/ (~ ((real_le x') y))))) |- (((real_le x) y) ==> (~ ((real_le x) y)))
+T c==> ! ! c\/ creal_le b0 b1 creal_le b1 b0 c==> ! c\/ c/\ c~ c= b0 f0 c~ c= b0 f1 c\/ c~ creal_le b0 f0 c~ creal_le b0 f1 c==> creal_le f0 f1 c~ creal_le f0 f1
+- |- ((((~ (!x. (!y. (((!x'. (((x' = x) \/ (x' = y)) ==> ((real_le x) x'))) \/ (!x'. (((x' = x) \/ (x' = y)) ==> ((real_le y) x')))) /\ (?x'. (((x' = x) \/ (x' = y)) /\ (((real_le x') x) /\ ((real_le x') y)))))))) ==> ((!x. (!y. (((real_le x) y) \/ ((real_le y) x)))) ==> F)) ==> ((~ (!x. (!y. (((!x'. (((x' = x) \/ (x' = y)) ==> ((real_le x) x'))) \/ (!x'. (((x' = x) \/ (x' = y)) ==> ((real_le y) x')))) /\ (?x'. (((x' = x) \/ (x' = y)) /\ (((real_le x') x) /\ ((real_le x') y)))))))) ==> ((!x. (!y. (((real_le x) y) \/ ((real_le y) x)))) ==> F))) ==> (((~ (!x. (!y. (((!x'. (((x' = x) \/ (x' = y)) ==> ((real_le x) x'))) \/ (!x'. (((x' = x) \/ (x' = y)) ==> ((real_le y) x')))) /\ (?x'. (((x' = x) \/ (x' = y)) /\ (((real_le x') x) /\ ((real_le x') y)))))))) ==> ((!x. (!y. (((real_le x) y) \/ ((real_le y) x)))) ==> F)) ==> ((~ (!x. (!y. (((!x'. (((x' = x) \/ (x' = y)) ==> ((real_le x) x'))) \/ (!x'. (((x' = x) \/ (x' = y)) ==> ((real_le y) x')))) /\ (?x'. (((x' = x) \/ (x' = y)) /\ (((real_le x') x) /\ ((real_le x') y)))))))) ==> ((!x. (!y. (((real_le x) y) \/ ((real_le y) x)))) ==> F))))
+T c==> c==> c==> c~ ! ! c/\ c\/ ! c==> c\/ c= b2 b0 c= b2 b1 creal_le b0 b2 ! c==> c\/ c= b2 b0 c= b2 b1 creal_le b1 b2 c? / c/\ c\/ c= b2 b0 c= b2 b1 c/\ creal_le b2 b0 creal_le b2 b1 c==> ! ! c\/ creal_le b0 b1 creal_le b1 b0 cF c==> c~ ! ! c/\ c\/ ! c==> c\/ c= b2 b0 c= b2 b1 creal_le b0 b2 ! c==> c\/ c= b2 b0 c= b2 b1 creal_le b1 b2 c? / c/\ c\/ c= b2 b0 c= b2 b1 c/\ creal_le b2 b0 creal_le b2 b1 c==> ! ! c\/ creal_le b0 b1 creal_le b1 b0 cF c==> c==> c~ ! ! c/\ c\/ ! c==> c\/ c= b2 b0 c= b2 b1 creal_le b0 b2 ! c==> c\/ c= b2 b0 c= b2 b1 creal_le b1 b2 c? / c/\ c\/ c= b2 b0 c= b2 b1 c/\ creal_le b2 b0 creal_le b2 b1 c==> ! ! c\/ creal_le b0 b1 creal_le b1 b0 cF c==> c~ ! ! c/\ c\/ ! c==> c\/ c= b2 b0 c= b2 b1 creal_le b0 b2 ! c==> c\/ c= b2 b0 c= b2 b1 creal_le b1 b2 c? / c/\ c\/ c= b2 b0 c= b2 b1 c/\ creal_le b2 b0 creal_le b2 b1 c==> ! ! c\/ creal_le b0 b1 creal_le b1 b0 cF
++ (x' = y) |- ((~ ((real_le x) x')) = (~ ((real_le x) y)))
+T c==> c= f0 f1 c= c~ creal_le f2 f0 c~ creal_le f2 f1
+- (x' IN (x INSERT (y INSERT EMPTY))) |- ((x' IN (x INSERT (y INSERT EMPTY))) = T)
+T c==> cIN f0 * * part cINSERT f1 * * part cINSERT f2 part cEMPTY c= cIN f0 * * part cINSERT f1 * * part cINSERT f2 part cEMPTY cT
++ |- (((((x' = x) \/ (x' = y)) /\ (~ ((real_le x) x'))) /\ (?x'. (((x' = x) \/ (x' = y)) /\ (~ ((real_le y) x'))))) = (?x''. ((((x' = x) \/ (x' = y)) /\ (~ ((real_le x) x'))) /\ (((x'' = x) \/ (x'' = y)) /\ (~ ((real_le y) x''))))))
+T c= c/\ c/\ c\/ c= f0 f1 c= f0 f2 c~ creal_le f1 f0 c? / c/\ c\/ c= b0 f1 c= b0 f2 c~ creal_le f2 b0 c? / c/\ c/\ c\/ c= f0 f1 c= f0 f2 c~ creal_le f1 f0 c/\ c\/ c= b0 f1 c= b0 f2 c~ creal_le f2 b0
++ (!x. (!y. (((real_le x) y) \/ ((real_le y) x)))) |- (((\y. (?x'. (?x''. (((((x' = x) \/ (x' = y)) /\ (~ ((real_le x) x'))) /\ (((x'' = x) \/ (x'' = y)) /\ (~ ((real_le y) x'')))) \/ (!x'. (((~ (x' = x)) /\ (~ (x' = y))) \/ ((~ ((real_le x') x)) \/ (~ ((real_le x') y))))))))) y) ==> F)
+T c==> ! ! c\/ creal_le b0 b1 creal_le b1 b0 c==> * / c? / c? / c\/ c/\ c/\ c\/ c= b1 f0 c= b1 b0 c~ creal_le f0 b1 c/\ c\/ c= b2 f0 c= b2 b0 c~ creal_le b0 b2 ! c\/ c/\ c~ c= b3 f0 c~ c= b3 b0 c\/ c~ creal_le b3 f0 c~ creal_le b3 b0 f1 cF
++ (!x'. (((~ (x' = x)) /\ (~ (x' = y))) \/ ((~ ((real_le x') x)) \/ (~ ((real_le x') y))))) |- ((~ ((real_le _149559) y)) \/ ((~ (_149559 = x)) \/ (~ ((real_le _149559) x))))
+T c==> ! c\/ c/\ c~ c= b0 f0 c~ c= b0 f1 c\/ c~ creal_le b0 f0 c~ creal_le b0 f1 c\/ c~ creal_le f2 f1 c\/ c~ c= f2 f0 c~ creal_le f2 f0
++ (!x. (!y. (((real_le x) y) \/ ((real_le y) x)))) |- ((((x = x) /\ ((real_le x) x)) ==> (~ ((real_le x) y))) = (~ ((real_le x) y)))
+T c==> ! ! c\/ creal_le b0 b1 creal_le b1 b0 c= c==> c/\ c= f0 f0 creal_le f0 f0 c~ creal_le f0 f1 c~ creal_le f0 f1
++ |- ((!x. (!y. (((!x'. ((x' IN (x INSERT (y INSERT EMPTY))) ==> ((real_le x) x'))) \/ (!x'. ((x' IN (x INSERT (y INSERT EMPTY))) ==> ((real_le y) x')))) /\ (?x'. ((x' IN (x INSERT (y INSERT EMPTY))) /\ (((real_le x') x) /\ ((real_le x') y))))))) = (!x. (!y. (((real_min x) y) = (inf (x INSERT (y INSERT EMPTY)))))))
+T c= ! ! c/\ c\/ ! c==> cIN b2 * * part cINSERT b0 * * part cINSERT b1 part cEMPTY creal_le b0 b2 ! c==> cIN b2 * * part cINSERT b0 * * part cINSERT b1 part cEMPTY creal_le b1 b2 c? / c/\ cIN b2 * * part cINSERT b0 * * part cINSERT b1 part cEMPTY c/\ creal_le b2 b0 creal_le b2 b1 ! ! c= creal_min b0 b1 cinf * * part cINSERT b0 * * part cINSERT b1 part cEMPTY
+- (!x. (!y. (((real_le x) y) \/ ((real_le y) x)))), (~ F), (x'' = y), ((((x' = x) \/ (x' = y)) /\ (~ ((real_le x) x'))) /\ (((x'' = x) \/ (x'' = y)) /\ (~ ((real_le y) x'')))) |- ((~ F) /\ F)
+T c==> ! ! c\/ creal_le b0 b1 creal_le b1 b0 c==> c~ cF c==> c= f0 f1 c==> c/\ c/\ c\/ c= f2 f3 c= f2 f1 c~ creal_le f3 f2 c/\ c\/ c= f0 f3 c= f0 f1 c~ creal_le f1 f0 c/\ c~ cF cF
++ (!x. (!y. (((real_le x) y) \/ ((real_le y) x)))), ((((x' = x) \/ (x' = y)) /\ (~ ((real_le x) x'))) /\ (((x'' = x) \/ (x'' = y)) /\ (~ ((real_le y) x'')))) |- ((x' = y) ==> F)
+T c==> ! ! c\/ creal_le b0 b1 creal_le b1 b0 c==> c/\ c/\ c\/ c= f0 f1 c= f0 f2 c~ creal_le f1 f0 c/\ c\/ c= f3 f1 c= f3 f2 c~ creal_le f2 f3 c==> c= f0 f2 cF
++ (!x'. (((~ (x' = x)) /\ (~ (x' = y))) \/ ((~ ((real_le x') x)) \/ (~ ((real_le x') y))))) |- (((_149559 = x) /\ ((real_le _149559) x)) ==> (~ ((real_le _149559) y)))
+T c==> ! c\/ c/\ c~ c= b0 f0 c~ c= b0 f1 c\/ c~ creal_le b0 f0 c~ creal_le b0 f1 c==> c/\ c= f2 f0 creal_le f2 f0 c~ creal_le f2 f1
++ ((((x' = x) \/ (x' = y)) /\ (~ ((real_le x) x'))) /\ (((x'' = x) \/ (x'' = y)) /\ (~ ((real_le y) x'')))) |- (~ ((real_le y) x''))
+T c==> c/\ c/\ c\/ c= f0 f1 c= f0 f2 c~ creal_le f1 f0 c/\ c\/ c= f3 f1 c= f3 f2 c~ creal_le f2 f3 c~ creal_le f2 f3
++ |- (((~ (x IN EMPTY)) ==> ((x IN EMPTY) = F)) = ((x IN EMPTY) = F))
+T c= c==> c~ cIN f0 part cEMPTY c= cIN f0 part cEMPTY cF c= cIN f0 part cEMPTY cF
++ ((\x. (?y. (?x'. (?x''. (((((x' = x) \/ (x' = y)) /\ (~ ((real_le x) x'))) /\ (((x'' = x) \/ (x'' = y)) /\ (~ ((real_le y) x'')))) \/ (!x'. (((~ (x' = x)) /\ (~ (x' = y))) \/ ((~ ((real_le x') x)) \/ (~ ((real_le x') y)))))))))) x) |- (((?y. (?x'. (?x''. (((((x' = x) \/ (x' = y)) /\ (~ ((real_le x) x'))) /\ (((x'' = x) \/ (x'' = y)) /\ (~ ((real_le y) x'')))) \/ (!x'. (((~ (x' = x)) /\ (~ (x' = y))) \/ ((~ ((real_le x') x)) \/ (~ ((real_le x') y))))))))) ==> F) = F)
+T c==> * / c? / c? / c? / c\/ c/\ c/\ c\/ c= b2 b0 c= b2 b1 c~ creal_le b0 b2 c/\ c\/ c= b3 b0 c= b3 b1 c~ creal_le b1 b3 ! c\/ c/\ c~ c= b4 b0 c~ c= b4 b1 c\/ c~ creal_le b4 b0 c~ creal_le b4 b1 f0 c= c==> c? / c? / c? / c\/ c/\ c/\ c\/ c= b1 f0 c= b1 b0 c~ creal_le f0 b1 c/\ c\/ c= b2 f0 c= b2 b0 c~ creal_le b0 b2 ! c\/ c/\ c~ c= b3 f0 c~ c= b3 b0 c\/ c~ creal_le b3 f0 c~ creal_le b3 b0 cF cF
++ |- (!x. (!y. (((!x'. (((x' = x) \/ (x' = y)) ==> ((real_le x) x'))) \/ (!x'. (((x' = x) \/ (x' = y)) ==> ((real_le y) x')))) /\ (?x'. (((x' = x) \/ (x' = y)) /\ (((real_le x') x) /\ ((real_le x') y)))))))
+T c/\ c\/ ! c==> c\/ c= b0 f0 c= b0 f1 creal_le f0 b0 ! c==> c\/ c= b0 f0 c= b0 f1 creal_le f1 b0 c? / c/\ c\/ c= b0 f0 c= b0 f1 c/\ creal_le b0 f0 creal_le b0 f1
++ |- (((!x. (!y. (!z. (((real_le ((real_min x) y)) z) = (((real_le x) z) \/ ((real_le y) z)))))) ==> ((\x. (!y. (!z. (((real_le ((real_min x) y)) z) = (((real_le x) z) \/ ((real_le y) z)))))) x)) = ((\x. (!y. (!z. (((real_le ((real_min x) y)) z) = (((real_le x) z) \/ ((real_le y) z)))))) x))
+T c= c==> ! ! ! c= creal_le creal_min b0 b1 b2 c\/ creal_le b0 b2 creal_le b1 b2 * / ! ! c= creal_le creal_min b0 b1 b2 c\/ creal_le b0 b2 creal_le b1 b2 f0 * / ! ! c= creal_le creal_min b0 b1 b2 c\/ creal_le b0 b2 creal_le b1 b2 f0
+- |- (((!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3)))) ==> ((\t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3)))) t2)) = ((\t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3)))) t2))
+T c= c==> ! ! c= c\/ f0 c\/ b0 b1 c\/ c\/ f0 b0 b1 * / ! c= c\/ f0 c\/ b0 b1 c\/ c\/ f0 b0 b1 f1 * / ! c= c\/ f0 c\/ b0 b1 c\/ c\/ f0 b0 b1 f1
+- (x' = y) |- ((~ ((real_le y) x)) = (~ ((real_le y) x)))
+T c==> c= f0 f1 c= c~ creal_le f1 f2 c~ creal_le f1 f2
++ |- ((\x. (!y. (!s. ((x IN (y INSERT s)) = ((x = y) \/ (x IN s)))))) x)
+T * / ! ! c= cIN b0 * * part cINSERT b1 b2 c\/ c= b0 b1 cIN b0 b2 f0
++ (!x. (!y. (((real_le x) y) \/ ((real_le y) x)))) |- ((((((x' = x) \/ (x' = y)) /\ (~ ((real_le x) x'))) /\ (((x'' = x) \/ (x'' = y)) /\ (~ ((real_le y) x'')))) \/ (!x'. (((~ (x' = x)) /\ (~ (x' = y))) \/ ((~ ((real_le x') x)) \/ (~ ((real_le x') y)))))) ==> F)
+T c==> ! ! c\/ creal_le b0 b1 creal_le b1 b0 c==> c\/ c/\ c/\ c\/ c= f0 f1 c= f0 f2 c~ creal_le f1 f0 c/\ c\/ c= f3 f1 c= f3 f2 c~ creal_le f2 f3 ! c\/ c/\ c~ c= b0 f1 c~ c= b0 f2 c\/ c~ creal_le b0 f1 c~ creal_le b0 f2 cF
++ (~ ((!x. (!y. ((!x'. (((x' = x) \/ (x' = y)) ==> ((real_le x) x'))) \/ (!x'. (((x' = x) \/ (x' = y)) ==> ((real_le y) x')))))) /\ (!x. (!y. (?x'. (((x' = x) \/ (x' = y)) /\ (((real_le x') x) /\ ((real_le x') y)))))))) |- (?x. (?y. (?x'. (?x''. (((((x' = x) \/ (x' = y)) /\ (~ ((real_le x) x'))) /\ (((x'' = x) \/ (x'' = y)) /\ (~ ((real_le y) x'')))) \/ (!x'. (((~ (x' = x)) /\ (~ (x' = y))) \/ ((~ ((real_le x') x)) \/ (~ ((real_le x') y))))))))))
+T c==> c~ c/\ ! ! c\/ ! c==> c\/ c= b2 b0 c= b2 b1 creal_le b0 b2 ! c==> c\/ c= b2 b0 c= b2 b1 creal_le b1 b2 ! ! c? / c/\ c\/ c= b2 b0 c= b2 b1 c/\ creal_le b2 b0 creal_le b2 b1 c? / c? / c? / c? / c\/ c/\ c/\ c\/ c= b2 b0 c= b2 b1 c~ creal_le b0 b2 c/\ c\/ c= b3 b0 c= b3 b1 c~ creal_le b1 b3 ! c\/ c/\ c~ c= b4 b0 c~ c= b4 b1 c\/ c~ creal_le b4 b0 c~ creal_le b4 b1
+- |- (((!p'. (!q'. (((x' IN (x INSERT (y INSERT EMPTY))) = p') ==> ((p' ==> (((real_le y) x') = q')) ==> (((x' IN (x INSERT (y INSERT EMPTY))) ==> ((real_le y) x')) = (p' ==> q')))))) ==> ((\p'. (!q'. (((x' IN (x INSERT (y INSERT EMPTY))) = p') ==> ((p' ==> (((real_le y) x') = q')) ==> (((x' IN (x INSERT (y INSERT EMPTY))) ==> ((real_le y) x')) = (p' ==> q')))))) p')) = ((\p'. (!q'. (((x' IN (x INSERT (y INSERT EMPTY))) = p') ==> ((p' ==> (((real_le y) x') = q')) ==> (((x' IN (x INSERT (y INSERT EMPTY))) ==> ((real_le y) x')) = (p' ==> q')))))) p'))
+T c= c==> ! ! c==> c= cIN f0 * * part cINSERT f1 * * part cINSERT f2 part cEMPTY b0 c==> c==> b0 c= creal_le f2 f0 b1 c= c==> cIN f0 * * part cINSERT f1 * * part cINSERT f2 part cEMPTY creal_le f2 f0 c==> b0 b1 * / ! c==> c= cIN f0 * * part cINSERT f1 * * part cINSERT f2 part cEMPTY b0 c==> c==> b0 c= creal_le f2 f0 b1 c= c==> cIN f0 * * part cINSERT f1 * * part cINSERT f2 part cEMPTY creal_le f2 f0 c==> b0 b1 f3 * / ! c==> c= cIN f0 * * part cINSERT f1 * * part cINSERT f2 part cEMPTY b0 c==> c==> b0 c= creal_le f2 f0 b1 c= c==> cIN f0 * * part cINSERT f1 * * part cINSERT f2 part cEMPTY creal_le f2 f0 c==> b0 b1 f3
++ (!x. (!y. (((real_le x) y) \/ ((real_le y) x)))), (!x'. (((~ (x' = x)) /\ (~ (x' = y))) \/ ((~ ((real_le x') x)) \/ (~ ((real_le x') y))))) |- ((real_le y) x)
+T c==> ! ! c\/ creal_le b0 b1 creal_le b1 b0 c==> ! c\/ c/\ c~ c= b0 f0 c~ c= b0 f1 c\/ c~ creal_le b0 f0 c~ creal_le b0 f1 creal_le f1 f0
+- (!x. (!y. (((real_le x) y) \/ ((real_le y) x)))), (!x'. (((~ (x' = x)) /\ (~ (x' = y))) \/ ((~ ((real_le x') x)) \/ (~ ((real_le x') y))))), ((real_le x) y) |- (((real_le x) y) /\ (~ ((real_le x) y)))
+T c==> ! ! c\/ creal_le b0 b1 creal_le b1 b0 c==> ! c\/ c/\ c~ c= b0 f0 c~ c= b0 f1 c\/ c~ creal_le b0 f0 c~ creal_le b0 f1 c==> creal_le f0 f1 c/\ creal_le f0 f1 c~ creal_le f0 f1
++ |- ((((FINITE (x INSERT (y INSERT EMPTY))) /\ (~ ((x INSERT (y INSERT EMPTY)) = EMPTY))) ==> (((real_le y) (inf (x INSERT (y INSERT EMPTY)))) = (!x'. ((x' IN (x INSERT (y INSERT EMPTY))) ==> ((real_le y) x'))))) = (((real_le y) (inf (x INSERT (y INSERT EMPTY)))) = (!x'. ((x' IN (x INSERT (y INSERT EMPTY))) ==> ((real_le y) x')))))
+T c= c==> c/\ cFINITE * * part cINSERT f0 * * part cINSERT f1 part cEMPTY c~ c= * * part cINSERT f0 * * part cINSERT f1 part cEMPTY part cEMPTY c= creal_le f1 cinf * * part cINSERT f0 * * part cINSERT f1 part cEMPTY ! c==> cIN b0 * * part cINSERT f0 * * part cINSERT f1 part cEMPTY creal_le f1 b0 c= creal_le f1 cinf * * part cINSERT f0 * * part cINSERT f1 part cEMPTY ! c==> cIN b0 * * part cINSERT f0 * * part cINSERT f1 part cEMPTY creal_le f1 b0
++ (!x. (!y. (((real_le x) y) \/ ((real_le y) x)))), ((\x''. (((((x' = x) \/ (x' = y)) /\ (~ ((real_le x) x'))) /\ (((x'' = x) \/ (x'' = y)) /\ (~ ((real_le y) x'')))) \/ (!x'. (((~ (x' = x)) /\ (~ (x' = y))) \/ ((~ ((real_le x') x)) \/ (~ ((real_le x') y))))))) x'') |- (((\x''. (((((x' = x) \/ (x' = y)) /\ (~ ((real_le x) x'))) /\ (((x'' = x) \/ (x'' = y)) /\ (~ ((real_le y) x'')))) \/ (!x'. (((~ (x' = x)) /\ (~ (x' = y))) \/ ((~ ((real_le x') x)) \/ (~ ((real_le x') y))))))) x'') /\ F)
+T c==> ! ! c\/ creal_le b0 b1 creal_le b1 b0 c==> * / c\/ c/\ c/\ c\/ c= f0 f1 c= f0 f2 c~ creal_le f1 f0 c/\ c\/ c= b0 f1 c= b0 f2 c~ creal_le f2 b0 ! c\/ c/\ c~ c= b1 f1 c~ c= b1 f2 c\/ c~ creal_le b1 f1 c~ creal_le b1 f2 f3 c/\ * / c\/ c/\ c/\ c\/ c= f0 f1 c= f0 f2 c~ creal_le f1 f0 c/\ c\/ c= b0 f1 c= b0 f2 c~ creal_le f2 b0 ! c\/ c/\ c~ c= b1 f1 c~ c= b1 f2 c\/ c~ creal_le b1 f1 c~ creal_le b1 f2 f3 cF
++ (!x. (!y. (((real_le x) y) \/ ((real_le y) x)))), (x' = y), (x'' = x), ((((x' = x) \/ (x' = y)) /\ (~ ((real_le x) x'))) /\ (((x'' = x) \/ (x'' = y)) /\ (~ ((real_le y) x'')))) |- F
+T c==> ! ! c\/ creal_le b0 b1 creal_le b1 b0 c==> c= f0 f1 c==> c= f2 f3 c==> c/\ c/\ c\/ c= f0 f3 c= f0 f1 c~ creal_le f3 f0 c/\ c\/ c= f2 f3 c= f2 f1 c~ creal_le f1 f2 cF
++ (!x. (!y. (((real_le x) y) \/ ((real_le y) x)))) |- (((((x' = x) \/ (x' = y)) /\ (~ ((real_le x) x'))) /\ (((x'' = x) \/ (x'' = y)) /\ (~ ((real_le y) x'')))) ==> F)
+T c==> ! ! c\/ creal_le b0 b1 creal_le b1 b0 c==> c/\ c/\ c\/ c= f0 f1 c= f0 f2 c~ creal_le f1 f0 c/\ c\/ c= f3 f1 c= f3 f2 c~ creal_le f2 f3 cF
++ (!x'. (((~ (x' = x)) /\ (~ (x' = y))) \/ ((~ ((real_le x') x)) \/ (~ ((real_le x') y))))) |- (((!x'. (((~ (x' = x)) \/ ((~ ((real_le x') x)) \/ (~ ((real_le x') y)))) /\ ((~ (x' = y)) \/ ((~ ((real_le x') x)) \/ (~ ((real_le x') y)))))) ==> ((\x'. (((~ (x' = x)) \/ ((~ ((real_le x') x)) \/ (~ ((real_le x') y)))) /\ ((~ (x' = y)) \/ ((~ ((real_le x') x)) \/ (~ ((real_le x') y)))))) _149559)) = ((\x'. (((~ (x' = x)) \/ ((~ ((real_le x') x)) \/ (~ ((real_le x') y)))) /\ ((~ (x' = y)) \/ ((~ ((real_le x') x)) \/ (~ ((real_le x') y)))))) _149559))
+T c==> ! c\/ c/\ c~ c= b0 f0 c~ c= b0 f1 c\/ c~ creal_le b0 f0 c~ creal_le b0 f1 c= c==> ! c/\ c\/ c~ c= b0 f0 c\/ c~ creal_le b0 f0 c~ creal_le b0 f1 c\/ c~ c= b0 f1 c\/ c~ creal_le b0 f0 c~ creal_le b0 f1 * / c/\ c\/ c~ c= b0 f0 c\/ c~ creal_le b0 f0 c~ creal_le b0 f1 c\/ c~ c= b0 f1 c\/ c~ creal_le b0 f0 c~ creal_le b0 f1 f2 * / c/\ c\/ c~ c= b0 f0 c\/ c~ creal_le b0 f0 c~ creal_le b0 f1 c\/ c~ c= b0 f1 c\/ c~ creal_le b0 f0 c~ creal_le b0 f1 f2
++ |- ((x = x) = T)
+T c= c= f0 f0 cT
+- |- (((x' IN (x INSERT (y INSERT EMPTY))) = p') ==> ((p' ==> (((real_le x) x') = q')) ==> (((x' IN (x INSERT (y INSERT EMPTY))) ==> ((real_le x) x')) = (p' ==> q'))))
+T c==> c= cIN f0 * * part cINSERT f1 * * part cINSERT f2 part cEMPTY f3 c==> c==> f3 c= creal_le f1 f0 f4 c= c==> cIN f0 * * part cINSERT f1 * * part cINSERT f2 part cEMPTY creal_le f1 f0 c==> f3 f4
++ (!x. (!y. (((real_le x) y) \/ ((real_le y) x)))), (x' = x), ((((x' = x) \/ (x' = y)) /\ (~ ((real_le x) x'))) /\ (((x'' = x) \/ (x'' = y)) /\ (~ ((real_le y) x'')))) |- ((x' = x) /\ F)
+T c==> ! ! c\/ creal_le b0 b1 creal_le b1 b0 c==> c= f0 f1 c==> c/\ c/\ c\/ c= f0 f1 c= f0 f2 c~ creal_le f1 f0 c/\ c\/ c= f3 f1 c= f3 f2 c~ creal_le f2 f3 c/\ c= f0 f1 cF
++ |- ((p \/ (q \/ r)) = (q \/ (p \/ r)))
+T c= c\/ f0 c\/ f1 f2 c\/ f1 c\/ f0 f2
++ |- ((\y. (!s. ((x IN (y INSERT s)) = ((x = y) \/ (x IN s))))) y)
+T * / ! c= cIN f0 * * part cINSERT b0 b1 c\/ c= f0 b0 cIN f0 b1 f1
+- |- ((?y'. ((?x'. (((x' = x) \/ (x' = y)) /\ (~ ((real_le x) x')))) /\ (?x'. (((x' = x) \/ (x' = y')) /\ (~ ((real_le y') x')))))) = ((?x'. (((x' = x) \/ (x' = y)) /\ (~ ((real_le x) x')))) /\ (?y. (?x'. (((x' = x) \/ (x' = y)) /\ (~ ((real_le y) x')))))))
+T c= c? / c/\ c? / c/\ c\/ c= b1 f0 c= b1 f1 c~ creal_le f0 b1 c? / c/\ c\/ c= b1 f0 c= b1 b0 c~ creal_le b0 b1 c/\ c? / c/\ c\/ c= b0 f0 c= b0 f1 c~ creal_le f0 b0 c? / c? / c/\ c\/ c= b1 f0 c= b1 b0 c~ creal_le b0 b1
+- |- ((a ==> b) = ((~ a) \/ b))
+T c= c==> f0 f1 c\/ c~ f0 f1
++ (!x. (!y. (((real_le x) y) \/ ((real_le y) x)))) |- (!x'. (((\x'. (?x''. (((((x' = x) \/ (x' = y)) /\ (~ ((real_le x) x'))) /\ (((x'' = x) \/ (x'' = y)) /\ (~ ((real_le y) x'')))) \/ (!x'. (((~ (x' = x)) /\ (~ (x' = y))) \/ ((~ ((real_le x') x)) \/ (~ ((real_le x') y)))))))) x') ==> F))
+T c==> ! ! c\/ creal_le b0 b1 creal_le b1 b0 ! c==> * / c? / c\/ c/\ c/\ c\/ c= b1 f0 c= b1 f1 c~ creal_le f0 b1 c/\ c\/ c= b1 f0 c= b1 f1 c~ creal_le f1 b1 ! c\/ c/\ c~ c= b2 f0 c~ c= b2 f1 c\/ c~ creal_le b2 f0 c~ creal_le b2 f1 b0 cF
++ |- ((((FINITE (x INSERT (y INSERT EMPTY))) /\ (~ ((x INSERT (y INSERT EMPTY)) = EMPTY))) ==> (((real_le x) (inf (x INSERT (y INSERT EMPTY)))) = (!x'. ((x' IN (x INSERT (y INSERT EMPTY))) ==> ((real_le x) x'))))) = (((real_le x) (inf (x INSERT (y INSERT EMPTY)))) = (!x'. ((x' IN (x INSERT (y INSERT EMPTY))) ==> ((real_le x) x')))))
+T c= c==> c/\ cFINITE * * part cINSERT f0 * * part cINSERT f1 part cEMPTY c~ c= * * part cINSERT f0 * * part cINSERT f1 part cEMPTY part cEMPTY c= creal_le f0 cinf * * part cINSERT f0 * * part cINSERT f1 part cEMPTY ! c==> cIN b0 * * part cINSERT f0 * * part cINSERT f1 part cEMPTY creal_le f0 b0 c= creal_le f0 cinf * * part cINSERT f0 * * part cINSERT f1 part cEMPTY ! c==> cIN b0 * * part cINSERT f0 * * part cINSERT f1 part cEMPTY creal_le f0 b0
++ |- ((\s. (!a. (((FINITE s) /\ (~ (s = EMPTY))) ==> (((real_le a) (inf s)) = (!x. ((x IN s) ==> ((real_le a) x))))))) s)
+T * / ! c==> c/\ cFINITE b0 c~ c= b0 part cEMPTY c= creal_le b1 cinf b0 ! c==> cIN b2 b0 creal_le b1 b2 f0
++ |- (((~ a) \/ (~ b)) = (~ (a /\ b)))
+T c= c\/ c~ f0 c~ f1 c~ c/\ f0 f1
+- ((~ (!x. (!y. (((!x'. (((x' = x) \/ (x' = y)) ==> ((real_le x) x'))) \/ (!x'. (((x' = x) \/ (x' = y)) ==> ((real_le y) x')))) /\ (?x'. (((x' = x) \/ (x' = y)) /\ (((real_le x') x) /\ ((real_le x') y)))))))) ==> ((!x. (!y. (((real_le x) y) \/ ((real_le y) x)))) ==> F)) |- (((~ (!x. (!y. (((!x'. (((x' = x) \/ (x' = y)) ==> ((real_le x) x'))) \/ (!x'. (((x' = x) \/ (x' = y)) ==> ((real_le y) x')))) /\ (?x'. (((x' = x) \/ (x' = y)) /\ (((real_le x') x) /\ ((real_le x') y)))))))) ==> ((!x. (!y. (((real_le x) y) \/ ((real_le y) x)))) ==> F)) /\ ((~ (!x. (!y. (((!x'. (((x' = x) \/ (x' = y)) ==> ((real_le x) x'))) \/ (!x'. (((x' = x) \/ (x' = y)) ==> ((real_le y) x')))) /\ (?x'. (((x' = x) \/ (x' = y)) /\ (((real_le x') x) /\ ((real_le x') y)))))))) ==> ((!x. (!y. (((real_le x) y) \/ ((real_le y) x)))) ==> F)))
+T c==> c==> c~ ! ! c/\ c\/ ! c==> c\/ c= b2 b0 c= b2 b1 creal_le b0 b2 ! c==> c\/ c= b2 b0 c= b2 b1 creal_le b1 b2 c? / c/\ c\/ c= b2 b0 c= b2 b1 c/\ creal_le b2 b0 creal_le b2 b1 c==> ! ! c\/ creal_le b0 b1 creal_le b1 b0 cF c/\ c==> c~ ! ! c/\ c\/ ! c==> c\/ c= b2 b0 c= b2 b1 creal_le b0 b2 ! c==> c\/ c= b2 b0 c= b2 b1 creal_le b1 b2 c? / c/\ c\/ c= b2 b0 c= b2 b1 c/\ creal_le b2 b0 creal_le b2 b1 c==> ! ! c\/ creal_le b0 b1 creal_le b1 b0 cF c==> c~ ! ! c/\ c\/ ! c==> c\/ c= b2 b0 c= b2 b1 creal_le b0 b2 ! c==> c\/ c= b2 b0 c= b2 b1 creal_le b1 b2 c? / c/\ c\/ c= b2 b0 c= b2 b1 c/\ creal_le b2 b0 creal_le b2 b1 c==> ! ! c\/ creal_le b0 b1 creal_le b1 b0 cF
+- (!x. (!y. (((real_le x) y) \/ ((real_le y) x)))), (~ F), (x' = x), ((((x' = x) \/ (x' = y)) /\ (~ ((real_le x) x'))) /\ (((x'' = x) \/ (x'' = y)) /\ (~ ((real_le y) x'')))) |- ((~ F) /\ F)
+T c==> ! ! c\/ creal_le b0 b1 creal_le b1 b0 c==> c~ cF c==> c= f0 f1 c==> c/\ c/\ c\/ c= f0 f1 c= f0 f2 c~ creal_le f1 f0 c/\ c\/ c= f3 f1 c= f3 f2 c~ creal_le f2 f3 c/\ c~ cF cF
++ |- (((!x. (!y. (((real_le x) y) \/ ((real_le y) x)))) ==> F) = F)
+T c= c==> ! ! c\/ creal_le b0 b1 creal_le b1 b0 cF cF
+- (!x. (!y. (((real_le x) y) \/ ((real_le y) x)))), (!x'. (((~ (x' = x)) /\ (~ (x' = y))) \/ ((~ ((real_le x') x)) \/ (~ ((real_le x') y))))) |- ((~ ((real_le y) x)) ==> ((real_le y) x))
+T c==> ! ! c\/ creal_le b0 b1 creal_le b1 b0 c==> ! c\/ c/\ c~ c= b0 f0 c~ c= b0 f1 c\/ c~ creal_le b0 f0 c~ creal_le b0 f1 c==> c~ creal_le f1 f0 creal_le f1 f0
+- ((~ (!x. (!y. (((!x'. (((x' = x) \/ (x' = y)) ==> ((real_le x) x'))) \/ (!x'. (((x' = x) \/ (x' = y)) ==> ((real_le y) x')))) /\ (?x'. (((x' = x) \/ (x' = y)) /\ (((real_le x') x) /\ ((real_le x') y)))))))) ==> ((!x. (!y. (((real_le x) y) \/ ((real_le y) x)))) ==> F)), (((~ (!x. (!y. (((!x'. (((x' = x) \/ (x' = y)) ==> ((real_le x) x'))) \/ (!x'. (((x' = x) \/ (x' = y)) ==> ((real_le y) x')))) /\ (?x'. (((x' = x) \/ (x' = y)) /\ (((real_le x') x) /\ ((real_le x') y)))))))) ==> ((!x. (!y. (((real_le x) y) \/ ((real_le y) x)))) ==> F)) ==> ((~ (!x. (!y. (((!x'. (((x' = x) \/ (x' = y)) ==> ((real_le x) x'))) \/ (!x'. (((x' = x) \/ (x' = y)) ==> ((real_le y) x')))) /\ (?x'. (((x' = x) \/ (x' = y)) /\ (((real_le x') x) /\ ((real_le x') y)))))))) ==> ((!x. (!y. (((real_le x) y) \/ ((real_le y) x)))) ==> F))) |- (((~ (!x. (!y. (((!x'. (((x' = x) \/ (x' = y)) ==> ((real_le x) x'))) \/ (!x'. (((x' = x) \/ (x' = y)) ==> ((real_le y) x')))) /\ (?x'. (((x' = x) \/ (x' = y)) /\ (((real_le x') x) /\ ((real_le x') y)))))))) ==> ((!x. (!y. (((real_le x) y) \/ ((real_le y) x)))) ==> F)) /\ ((~ (!x. (!y. (((!x'. (((x' = x) \/ (x' = y)) ==> ((real_le x) x'))) \/ (!x'. (((x' = x) \/ (x' = y)) ==> ((real_le y) x')))) /\ (?x'. (((x' = x) \/ (x' = y)) /\ (((real_le x') x) /\ ((real_le x') y)))))))) ==> ((!x. (!y. (((real_le x) y) \/ ((real_le y) x)))) ==> F)))
+T c==> c==> c~ ! ! c/\ c\/ ! c==> c\/ c= b2 b0 c= b2 b1 creal_le b0 b2 ! c==> c\/ c= b2 b0 c= b2 b1 creal_le b1 b2 c? / c/\ c\/ c= b2 b0 c= b2 b1 c/\ creal_le b2 b0 creal_le b2 b1 c==> ! ! c\/ creal_le b0 b1 creal_le b1 b0 cF c==> c==> c==> c~ ! ! c/\ c\/ ! c==> c\/ c= b2 b0 c= b2 b1 creal_le b0 b2 ! c==> c\/ c= b2 b0 c= b2 b1 creal_le b1 b2 c? / c/\ c\/ c= b2 b0 c= b2 b1 c/\ creal_le b2 b0 creal_le b2 b1 c==> ! ! c\/ creal_le b0 b1 creal_le b1 b0 cF c==> c~ ! ! c/\ c\/ ! c==> c\/ c= b2 b0 c= b2 b1 creal_le b0 b2 ! c==> c\/ c= b2 b0 c= b2 b1 creal_le b1 b2 c? / c/\ c\/ c= b2 b0 c= b2 b1 c/\ creal_le b2 b0 creal_le b2 b1 c==> ! ! c\/ creal_le b0 b1 creal_le b1 b0 cF c/\ c==> c~ ! ! c/\ c\/ ! c==> c\/ c= b2 b0 c= b2 b1 creal_le b0 b2 ! c==> c\/ c= b2 b0 c= b2 b1 creal_le b1 b2 c? / c/\ c\/ c= b2 b0 c= b2 b1 c/\ creal_le b2 b0 creal_le b2 b1 c==> ! ! c\/ creal_le b0 b1 creal_le b1 b0 cF c==> c~ ! ! c/\ c\/ ! c==> c\/ c= b2 b0 c= b2 b1 creal_le b0 b2 ! c==> c\/ c= b2 b0 c= b2 b1 creal_le b1 b2 c? / c/\ c\/ c= b2 b0 c= b2 b1 c/\ creal_le b2 b0 creal_le b2 b1 c==> ! ! c\/ creal_le b0 b1 creal_le b1 b0 cF
++ |- (((?x'. (((x' = x) \/ (x' = y)) /\ (~ ((real_le x) x')))) /\ (?x'. (((x' = x) \/ (x' = y)) /\ (~ ((real_le y) x'))))) = (?x'. ((((x' = x) \/ (x' = y)) /\ (~ ((real_le x) x'))) /\ (?x'. (((x' = x) \/ (x' = y)) /\ (~ ((real_le y) x')))))))
+T c= c/\ c? / c/\ c\/ c= b0 f0 c= b0 f1 c~ creal_le f0 b0 c? / c/\ c\/ c= b0 f0 c= b0 f1 c~ creal_le f1 b0 c? / c/\ c/\ c\/ c= b0 f0 c= b0 f1 c~ creal_le f0 b0 c? / c/\ c\/ c= b1 f0 c= b1 f1 c~ creal_le f1 b1
++ (!x. (!y. (((real_le x) y) \/ ((real_le y) x)))), ((\x. (?y. (?x'. (?x''. (((((x' = x) \/ (x' = y)) /\ (~ ((real_le x) x'))) /\ (((x'' = x) \/ (x'' = y)) /\ (~ ((real_le y) x'')))) \/ (!x'. (((~ (x' = x)) /\ (~ (x' = y))) \/ ((~ ((real_le x') x)) \/ (~ ((real_le x') y)))))))))) x) |- (((\x. (?y. (?x'. (?x''. (((((x' = x) \/ (x' = y)) /\ (~ ((real_le x) x'))) /\ (((x'' = x) \/ (x'' = y)) /\ (~ ((real_le y) x'')))) \/ (!x'. (((~ (x' = x)) /\ (~ (x' = y))) \/ ((~ ((real_le x') x)) \/ (~ ((real_le x') y)))))))))) x) /\ F)
+T c==> ! ! c\/ creal_le b0 b1 creal_le b1 b0 c==> * / c? / c? / c? / c\/ c/\ c/\ c\/ c= b2 b0 c= b2 b1 c~ creal_le b0 b2 c/\ c\/ c= b3 b0 c= b3 b1 c~ creal_le b1 b3 ! c\/ c/\ c~ c= b4 b0 c~ c= b4 b1 c\/ c~ creal_le b4 b0 c~ creal_le b4 b1 f0 c/\ * / c? / c? / c? / c\/ c/\ c/\ c\/ c= b2 b0 c= b2 b1 c~ creal_le b0 b2 c/\ c\/ c= b3 b0 c= b3 b1 c~ creal_le b1 b3 ! c\/ c/\ c~ c= b4 b0 c~ c= b4 b1 c\/ c~ creal_le b4 b0 c~ creal_le b4 b1 f0 cF
++ (FINITE s) |- ((FINITE s) /\ ((FINITE (x INSERT s)) = T))
+T c==> cFINITE f0 c/\ cFINITE f0 c= cFINITE * * part cINSERT f1 f0 cT
++ |- ((\x. (!y. (!z. (((real_le ((real_min x) y)) z) = (((real_le x) z) \/ ((real_le y) z)))))) x)
+T * / ! ! c= creal_le creal_min b0 b1 b2 c\/ creal_le b0 b2 creal_le b1 b2 f0
++ |- ((FINITE (y INSERT EMPTY)) = T)
+T c= cFINITE * * part cINSERT f0 part cEMPTY cT
++ |- ((p \/ q) = (q \/ p))
+T c= c\/ f0 f1 c\/ f1 f0
+- |- ((EMPTY = (x INSERT s)) = F)
+T c= c= part cEMPTY * * part cINSERT f0 f1 cF
+- |- ((p ==> (~ p)) = (~ p))
+T c= c==> f0 c~ f0 c~ f0
+- |- (((~ (EMPTY = (x INSERT s))) ==> ((EMPTY = (x INSERT s)) = F)) = ((EMPTY = (x INSERT s)) = F))
+T c= c==> c~ c= part cEMPTY * * part cINSERT f0 f1 c= c= part cEMPTY * * part cINSERT f0 f1 cF c= c= part cEMPTY * * part cINSERT f0 f1 cF
++ |- (((!a. (((FINITE s) /\ (~ (s = EMPTY))) ==> (((real_le a) (inf s)) = (!x. ((x IN s) ==> ((real_le a) x)))))) ==> ((\a. (((FINITE s) /\ (~ (s = EMPTY))) ==> (((real_le a) (inf s)) = (!x. ((x IN s) ==> ((real_le a) x)))))) a)) = ((\a. (((FINITE s) /\ (~ (s = EMPTY))) ==> (((real_le a) (inf s)) = (!x. ((x IN s) ==> ((real_le a) x)))))) a))
+T c= c==> ! c==> c/\ cFINITE f0 c~ c= f0 part cEMPTY c= creal_le b0 cinf f0 ! c==> cIN b1 f0 creal_le b0 b1 * / c==> c/\ cFINITE f0 c~ c= f0 part cEMPTY c= creal_le b0 cinf f0 ! c==> cIN b1 f0 creal_le b0 b1 f1 * / c==> c/\ cFINITE f0 c~ c= f0 part cEMPTY c= creal_le b0 cinf f0 ! c==> cIN b1 f0 creal_le b0 b1 f1
+- |- (T = ((((real_le _149557) _149558) \/ ((real_le _149558) _149557)) = (((real_le _149558) _149557) \/ ((real_le _149557) _149558))))
+T c= cT c= c\/ creal_le f0 f1 creal_le f1 f0 c\/ creal_le f1 f0 creal_le f0 f1
+- |- ((p \/ (p \/ q)) = (p \/ q))
+T c= c\/ f0 c\/ f0 f1 c\/ f0 f1
++ |- (((!z. (((real_le z) ((real_min x) y)) = (((real_le z) x) /\ ((real_le z) y)))) ==> ((\z. (((real_le z) ((real_min x) y)) = (((real_le z) x) /\ ((real_le z) y)))) z)) = ((\z. (((real_le z) ((real_min x) y)) = (((real_le z) x) /\ ((real_le z) y)))) z))
+T c= c==> ! c= creal_le b0 creal_min f0 f1 c/\ creal_le b0 f0 creal_le b0 f1 * / c= creal_le b0 creal_min f0 f1 c/\ creal_le b0 f0 creal_le b0 f1 f2 * / c= creal_le b0 creal_min f0 f1 c/\ creal_le b0 f0 creal_le b0 f1 f2
+- (x'' = y) |- ((x' = y) = (x' = y))
+T c==> c= f0 f1 c= c= f2 f1 c= f2 f1
++ ((\x'. (?x''. (((((x' = x) \/ (x' = y)) /\ (~ ((real_le x) x'))) /\ (((x'' = x) \/ (x'' = y)) /\ (~ ((real_le y) x'')))) \/ (!x'. (((~ (x' = x)) /\ (~ (x' = y))) \/ ((~ ((real_le x') x)) \/ (~ ((real_le x') y)))))))) x') |- (?x''. (((((x' = x) \/ (x' = y)) /\ (~ ((real_le x) x'))) /\ (((x'' = x) \/ (x'' = y)) /\ (~ ((real_le y) x'')))) \/ (!x'. (((~ (x' = x)) /\ (~ (x' = y))) \/ ((~ ((real_le x') x)) \/ (~ ((real_le x') y)))))))
+T c==> * / c? / c\/ c/\ c/\ c\/ c= b0 f0 c= b0 f1 c~ creal_le f0 b0 c/\ c\/ c= b1 f0 c= b1 f1 c~ creal_le f1 b1 ! c\/ c/\ c~ c= b2 f0 c~ c= b2 f1 c\/ c~ creal_le b2 f0 c~ creal_le b2 f1 f2 c? / c\/ c/\ c/\ c\/ c= f2 f0 c= f2 f1 c~ creal_le f0 f2 c/\ c\/ c= b0 f0 c= b0 f1 c~ creal_le f1 b0 ! c\/ c/\ c~ c= b1 f0 c~ c= b1 f1 c\/ c~ creal_le b1 f0 c~ creal_le b1 f1
+- (x' IN (x INSERT (y INSERT EMPTY))) |- ((x' IN (x INSERT (y INSERT EMPTY))) /\ (((real_le x) x') = ((real_le x) x')))
+T c==> cIN f0 * * part cINSERT f1 * * part cINSERT f2 part cEMPTY c/\ cIN f0 * * part cINSERT f1 * * part cINSERT f2 part cEMPTY c= creal_le f1 f0 creal_le f1 f0
+- (!x. (!y. (((real_le x) y) \/ ((real_le y) x)))), (~ ((real_le y) y)) |- ((real_le y) y)
+T c==> ! ! c\/ creal_le b0 b1 creal_le b1 b0 c==> c~ creal_le f0 f0 creal_le f0 f0
+- (x' = y) |- (F = F)
+T c==> c= f0 f1 c= cF cF
+- |- ((?x''. (((x'' = x) \/ (x'' = y)) /\ (((real_le x') x) /\ ((real_le x') y)))) = ((?x'. ((x' = x) \/ (x' = y))) /\ (((real_le x') x) /\ ((real_le x') y))))
+T c= c? / c/\ c\/ c= b0 f0 c= b0 f1 c/\ creal_le f2 f0 creal_le f2 f1 c/\ c? / c\/ c= b0 f0 c= b0 f1 c/\ creal_le f2 f0 creal_le f2 f1
++ (!x. (!y. (((real_le x) y) \/ ((real_le y) x)))), (!x'. (((~ (x' = x)) /\ (~ (x' = y))) \/ ((~ ((real_le x') x)) \/ (~ ((real_le x') y))))) |- ((!x'. (((~ (x' = x)) /\ (~ (x' = y))) \/ ((~ ((real_le x') x)) \/ (~ ((real_le x') y))))) /\ F)
+T c==> ! ! c\/ creal_le b0 b1 creal_le b1 b0 c==> ! c\/ c/\ c~ c= b0 f0 c~ c= b0 f1 c\/ c~ creal_le b0 f0 c~ creal_le b0 f1 c/\ ! c\/ c/\ c~ c= b0 f0 c~ c= b0 f1 c\/ c~ creal_le b0 f0 c~ creal_le b0 f1 cF
++ |- (((!s. ((x IN (y INSERT s)) = ((x = y) \/ (x IN s)))) ==> ((\s. ((x IN (y INSERT s)) = ((x = y) \/ (x IN s)))) s)) = ((\s. ((x IN (y INSERT s)) = ((x = y) \/ (x IN s)))) s))
+T c= c==> ! c= cIN f0 * * part cINSERT f1 b0 c\/ c= f0 f1 cIN f0 b0 * / c= cIN f0 * * part cINSERT f1 b0 c\/ c= f0 f1 cIN f0 b0 f2 * / c= cIN f0 * * part cINSERT f1 b0 c\/ c= f0 f1 cIN f0 b0 f2
++ |- ((\x. (!s. (~ ((x INSERT s) = EMPTY)))) x)
+T * / ! c~ c= * * part cINSERT b0 b1 part cEMPTY f0
++ |- (((~ ((x INSERT s) = EMPTY)) ==> (((x INSERT s) = EMPTY) = F)) = (((x INSERT s) = EMPTY) = F))
+T c= c==> c~ c= * * part cINSERT f0 f1 part cEMPTY c= c= * * part cINSERT f0 f1 part cEMPTY cF c= c= * * part cINSERT f0 f1 part cEMPTY cF
++ (!x. (!y. (((real_le x) y) \/ ((real_le y) x)))), (x' = y), ((((x' = x) \/ (x' = y)) /\ (~ ((real_le x) x'))) /\ (((x'' = x) \/ (x'' = y)) /\ (~ ((real_le y) x'')))) |- ((x'' = x) ==> F)
+T c==> ! ! c\/ creal_le b0 b1 creal_le b1 b0 c==> c= f0 f1 c==> c/\ c/\ c\/ c= f0 f2 c= f0 f1 c~ creal_le f2 f0 c/\ c\/ c= f3 f2 c= f3 f1 c~ creal_le f1 f3 c==> c= f3 f2 cF
++ |- ((\x. (~ (x IN EMPTY))) x)
+T * / c~ cIN b0 part cEMPTY f0
+- |- (((t1 \/ t2) \/ t3) = (t1 \/ (t2 \/ t3)))
+T c= c\/ c\/ f0 f1 f2 c\/ f0 c\/ f1 f2
++ |- ((~ (a \/ b)) = ((~ a) /\ (~ b)))
+T c= c~ c\/ f0 f1 c/\ c~ f0 c~ f1
++ |- ((~ (!x. (!y. (((!x'. (((x' = x) \/ (x' = y)) ==> ((real_le x) x'))) \/ (!x'. (((x' = x) \/ (x' = y)) ==> ((real_le y) x')))) /\ (?x'. (((x' = x) \/ (x' = y)) /\ (((real_le x') x) /\ ((real_le x') y)))))))) ==> F)
+T c==> c~ ! ! c/\ c\/ ! c==> c\/ c= b2 b0 c= b2 b1 creal_le b0 b2 ! c==> c\/ c= b2 b0 c= b2 b1 creal_le b1 b2 c? / c/\ c\/ c= b2 b0 c= b2 b1 c/\ creal_le b2 b0 creal_le b2 b1 cF
++ (!x. (!y. (((real_le x) y) \/ ((real_le y) x)))), (x'' = y), ((((x' = x) \/ (x' = y)) /\ (~ ((real_le x) x'))) /\ (((x'' = x) \/ (x'' = y)) /\ (~ ((real_le y) x'')))) |- ((x'' = y) /\ F)
+T c==> ! ! c\/ creal_le b0 b1 creal_le b1 b0 c==> c= f0 f1 c==> c/\ c/\ c\/ c= f2 f3 c= f2 f1 c~ creal_le f3 f2 c/\ c\/ c= f0 f3 c= f0 f1 c~ creal_le f1 f0 c/\ c= f0 f1 cF
++ |- (((!s. (!a. (((FINITE s) /\ (~ (s = EMPTY))) ==> (((real_le (inf s)) a) = (?x. ((x IN s) /\ ((real_le x) a))))))) ==> ((\s. (!a. (((FINITE s) /\ (~ (s = EMPTY))) ==> (((real_le (inf s)) a) = (?x. ((x IN s) /\ ((real_le x) a))))))) s)) = ((\s. (!a. (((FINITE s) /\ (~ (s = EMPTY))) ==> (((real_le (inf s)) a) = (?x. ((x IN s) /\ ((real_le x) a))))))) s))
+T c= c==> ! ! c==> c/\ cFINITE b0 c~ c= b0 part cEMPTY c= creal_le cinf b0 b1 c? / c/\ cIN b2 b0 creal_le b2 b1 * / ! c==> c/\ cFINITE b0 c~ c= b0 part cEMPTY c= creal_le cinf b0 b1 c? / c/\ cIN b2 b0 creal_le b2 b1 f0 * / ! c==> c/\ cFINITE b0 c~ c= b0 part cEMPTY c= creal_le cinf b0 b1 c? / c/\ cIN b2 b0 creal_le b2 b1 f0
++ |- ((\s. ((FINITE s) ==> (FINITE (x INSERT s)))) s)
+T * / c==> cFINITE b0 cFINITE * * part cINSERT f0 b0 f1
++ (!x. (!y. (((real_le x) y) \/ ((real_le y) x)))), (x' = y), ((((x' = x) \/ (x' = y)) /\ (~ ((real_le x) x'))) /\ (((x'' = x) \/ (x'' = y)) /\ (~ ((real_le y) x'')))) |- ((x' = y) /\ F)
+T c==> ! ! c\/ creal_le b0 b1 creal_le b1 b0 c==> c= f0 f1 c==> c/\ c/\ c\/ c= f0 f2 c= f0 f1 c~ creal_le f2 f0 c/\ c\/ c= f3 f2 c= f3 f1 c~ creal_le f1 f3 c/\ c= f0 f1 cF
+- |- ((?x''. (((x' = x) \/ (x' = y)) /\ (~ ((real_le y) x'')))) = (((x' = x) \/ (x' = y)) /\ (?x'. (~ ((real_le y) x')))))
+T c= c? / c/\ c\/ c= f0 f1 c= f0 f2 c~ creal_le f2 b0 c/\ c\/ c= f0 f1 c= f0 f2 c? / c~ creal_le f2 b0
++ |- ((\y. (!z. (((real_le ((real_min x) y)) z) = (((real_le x) z) \/ ((real_le y) z))))) y)
+T * / ! c= creal_le creal_min f0 b0 b1 c\/ creal_le f0 b1 creal_le b0 b1 f1
+- (x'' = y) |- ((~ ((real_le x) x')) = (~ ((real_le x) x')))
+T c==> c= f0 f1 c= c~ creal_le f2 f3 c~ creal_le f2 f3
+- |- ((!y'. (((real_le x) y') \/ ((real_le y) x))) = ((!y. ((real_le x) y)) \/ ((real_le y) x)))
+T c= ! c\/ creal_le f0 b0 creal_le f1 f0 c\/ ! creal_le f0 b0 creal_le f1 f0
+- |- ((?x''. (((x'' = x) \/ (x'' = y)) /\ (~ ((real_le y) x')))) = ((?x'. ((x' = x) \/ (x' = y))) /\ (~ ((real_le y) x'))))
+T c= c? / c/\ c\/ c= b0 f0 c= b0 f1 c~ creal_le f1 f2 c/\ c? / c\/ c= b0 f0 c= b0 f1 c~ creal_le f1 f2
+- |- ((!x''. (((~ (x' = x)) /\ (~ (x' = y))) \/ ((~ ((real_le x'') x)) \/ (~ ((real_le x'') y))))) = (((~ (x' = x)) /\ (~ (x' = y))) \/ (!x'. ((~ ((real_le x') x)) \/ (~ ((real_le x') y))))))
+T c= ! c\/ c/\ c~ c= f0 f1 c~ c= f0 f2 c\/ c~ creal_le b0 f1 c~ creal_le b0 f2 c\/ c/\ c~ c= f0 f1 c~ c= f0 f2 ! c\/ c~ creal_le b0 f1 c~ creal_le b0 f2
++ (!x. (!y. (((real_le x) y) \/ ((real_le y) x)))), ((\y. (?x'. (?x''. (((((x' = x) \/ (x' = y)) /\ (~ ((real_le x) x'))) /\ (((x'' = x) \/ (x'' = y)) /\ (~ ((real_le y) x'')))) \/ (!x'. (((~ (x' = x)) /\ (~ (x' = y))) \/ ((~ ((real_le x') x)) \/ (~ ((real_le x') y))))))))) y) |- (((\y. (?x'. (?x''. (((((x' = x) \/ (x' = y)) /\ (~ ((real_le x) x'))) /\ (((x'' = x) \/ (x'' = y)) /\ (~ ((real_le y) x'')))) \/ (!x'. (((~ (x' = x)) /\ (~ (x' = y))) \/ ((~ ((real_le x') x)) \/ (~ ((real_le x') y))))))))) y) /\ F)
+T c==> ! ! c\/ creal_le b0 b1 creal_le b1 b0 c==> * / c? / c? / c\/ c/\ c/\ c\/ c= b1 f0 c= b1 b0 c~ creal_le f0 b1 c/\ c\/ c= b2 f0 c= b2 b0 c~ creal_le b0 b2 ! c\/ c/\ c~ c= b3 f0 c~ c= b3 b0 c\/ c~ creal_le b3 f0 c~ creal_le b3 b0 f1 c/\ * / c? / c? / c\/ c/\ c/\ c\/ c= b1 f0 c= b1 b0 c~ creal_le f0 b1 c/\ c\/ c= b2 f0 c= b2 b0 c~ creal_le b0 b2 ! c\/ c/\ c~ c= b3 f0 c~ c= b3 b0 c\/ c~ creal_le b3 f0 c~ creal_le b3 b0 f1 cF
++ (!x. (!y. (((real_le x) y) \/ ((real_le y) x)))), (x' = x), ((((x' = x) \/ (x' = y)) /\ (~ ((real_le x) x'))) /\ (((x'' = x) \/ (x'' = y)) /\ (~ ((real_le y) x'')))) |- F
+T c==> ! ! c\/ creal_le b0 b1 creal_le b1 b0 c==> c= f0 f1 c==> c/\ c/\ c\/ c= f0 f1 c= f0 f2 c~ creal_le f1 f0 c/\ c\/ c= f3 f1 c= f3 f2 c~ creal_le f2 f3 cF
+- (!x. (!y. (((real_le x) y) \/ ((real_le y) x)))), (!x'. (((~ (x' = x)) /\ (~ (x' = y))) \/ ((~ ((real_le x') x)) \/ (~ ((real_le x') y))))), (~ F) |- ((~ F) /\ F)
+T c==> ! ! c\/ creal_le b0 b1 creal_le b1 b0 c==> ! c\/ c/\ c~ c= b0 f0 c~ c= b0 f1 c\/ c~ creal_le b0 f0 c~ creal_le b0 f1 c==> c~ cF c/\ c~ cF cF
++ ((\x. (?y. (?x'. (?x''. (((((x' = x) \/ (x' = y)) /\ (~ ((real_le x) x'))) /\ (((x'' = x) \/ (x'' = y)) /\ (~ ((real_le y) x'')))) \/ (!x'. (((~ (x' = x)) /\ (~ (x' = y))) \/ ((~ ((real_le x') x)) \/ (~ ((real_le x') y)))))))))) x) |- (?y. (?x'. (?x''. (((((x' = x) \/ (x' = y)) /\ (~ ((real_le x) x'))) /\ (((x'' = x) \/ (x'' = y)) /\ (~ ((real_le y) x'')))) \/ (!x'. (((~ (x' = x)) /\ (~ (x' = y))) \/ ((~ ((real_le x') x)) \/ (~ ((real_le x') y)))))))))
+T c==> * / c? / c? / c? / c\/ c/\ c/\ c\/ c= b2 b0 c= b2 b1 c~ creal_le b0 b2 c/\ c\/ c= b3 b0 c= b3 b1 c~ creal_le b1 b3 ! c\/ c/\ c~ c= b4 b0 c~ c= b4 b1 c\/ c~ creal_le b4 b0 c~ creal_le b4 b1 f0 c? / c? / c? / c\/ c/\ c/\ c\/ c= b1 f0 c= b1 b0 c~ creal_le f0 b1 c/\ c\/ c= b2 f0 c= b2 b0 c~ creal_le b0 b2 ! c\/ c/\ c~ c= b3 f0 c~ c= b3 b0 c\/ c~ creal_le b3 f0 c~ creal_le b3 b0
++ |- (((?x''. ((((x' = x) \/ (x' = y)) /\ (~ ((real_le x) x'))) /\ (((x'' = x) \/ (x'' = y)) /\ (~ ((real_le y) x''))))) \/ (!x'. (((~ (x' = x)) /\ (~ (x' = y))) \/ ((~ ((real_le x') x)) \/ (~ ((real_le x') y)))))) = (?x''. (((((x' = x) \/ (x' = y)) /\ (~ ((real_le x) x'))) /\ (((x'' = x) \/ (x'' = y)) /\ (~ ((real_le y) x'')))) \/ (!x'. (((~ (x' = x)) /\ (~ (x' = y))) \/ ((~ ((real_le x') x)) \/ (~ ((real_le x') y))))))))
+T c= c\/ c? / c/\ c/\ c\/ c= f0 f1 c= f0 f2 c~ creal_le f1 f0 c/\ c\/ c= b0 f1 c= b0 f2 c~ creal_le f2 b0 ! c\/ c/\ c~ c= b0 f1 c~ c= b0 f2 c\/ c~ creal_le b0 f1 c~ creal_le b0 f2 c? / c\/ c/\ c/\ c\/ c= f0 f1 c= f0 f2 c~ creal_le f1 f0 c/\ c\/ c= b0 f1 c= b0 f2 c~ creal_le f2 b0 ! c\/ c/\ c~ c= b1 f1 c~ c= b1 f2 c\/ c~ creal_le b1 f1 c~ creal_le b1 f2
++ (!x. (!y. (((real_le x) y) \/ ((real_le y) x)))) |- ((real_le y) y)
+T c==> ! ! c\/ creal_le b0 b1 creal_le b1 b0 creal_le f0 f0
++ |- (((!x. (!y. ((x = y) = (((real_le x) y) /\ ((real_le y) x))))) ==> ((\x. (!y. ((x = y) = (((real_le x) y) /\ ((real_le y) x))))) x)) = ((\x. (!y. ((x = y) = (((real_le x) y) /\ ((real_le y) x))))) x))
+T c= c==> ! ! c= c= b0 b1 c/\ creal_le b0 b1 creal_le b1 b0 * / ! c= c= b0 b1 c/\ creal_le b0 b1 creal_le b1 b0 f0 * / ! c= c= b0 b1 c/\ creal_le b0 b1 creal_le b1 b0 f0
++ (!x. (!y. (((real_le x) y) \/ ((real_le y) x)))), ((((x' = x) \/ (x' = y)) /\ (~ ((real_le x) x'))) /\ (((x'' = x) \/ (x'' = y)) /\ (~ ((real_le y) x'')))) |- ((x'' = y) ==> F)
+T c==> ! ! c\/ creal_le b0 b1 creal_le b1 b0 c==> c/\ c/\ c\/ c= f0 f1 c= f0 f2 c~ creal_le f1 f0 c/\ c\/ c= f3 f1 c= f3 f2 c~ creal_le f2 f3 c==> c= f3 f2 cF
++ ((((x' = x) \/ (x' = y)) /\ (~ ((real_le x) x'))) /\ (((x'' = x) \/ (x'' = y)) /\ (~ ((real_le y) x'')))), ((x'' = x) ==> F), ((x'' = y) ==> F) |- F
+T c==> c/\ c/\ c\/ c= f0 f1 c= f0 f2 c~ creal_le f1 f0 c/\ c\/ c= f3 f1 c= f3 f2 c~ creal_le f2 f3 c==> c==> c= f3 f1 cF c==> c==> c= f3 f2 cF cF
+- |- (((~ (!x. (!y. (((!x'. (((x' = x) \/ (x' = y)) ==> ((real_le x) x'))) \/ (!x'. (((x' = x) \/ (x' = y)) ==> ((real_le y) x')))) /\ (?x'. (((x' = x) \/ (x' = y)) /\ (((real_le x') x) /\ ((real_le x') y)))))))) ==> ((!x. (!y. (((real_le x) y) \/ ((real_le y) x)))) ==> F)) ==> ((~ (!x. (!y. (((!x'. (((x' = x) \/ (x' = y)) ==> ((real_le x) x'))) \/ (!x'. (((x' = x) \/ (x' = y)) ==> ((real_le y) x')))) /\ (?x'. (((x' = x) \/ (x' = y)) /\ (((real_le x') x) /\ ((real_le x') y)))))))) ==> ((!x. (!y. (((real_le x) y) \/ ((real_le y) x)))) ==> F)))
+T c==> c==> c~ ! ! c/\ c\/ ! c==> c\/ c= b2 b0 c= b2 b1 creal_le b0 b2 ! c==> c\/ c= b2 b0 c= b2 b1 creal_le b1 b2 c? / c/\ c\/ c= b2 b0 c= b2 b1 c/\ creal_le b2 b0 creal_le b2 b1 c==> ! ! c\/ creal_le b0 b1 creal_le b1 b0 cF c==> c~ ! ! c/\ c\/ ! c==> c\/ c= b2 b0 c= b2 b1 creal_le b0 b2 ! c==> c\/ c= b2 b0 c= b2 b1 creal_le b1 b2 c? / c/\ c\/ c= b2 b0 c= b2 b1 c/\ creal_le b2 b0 creal_le b2 b1 c==> ! ! c\/ creal_le b0 b1 creal_le b1 b0 cF
+- |- ((!x'. (P \/ (Q x'))) = (P \/ (!x'. (Q x'))))
+T c= ! c\/ f0 * f1 b0 c\/ f0 ! * f1 b0
+- ((FINITE s) /\ (~ (s = EMPTY))) |- (((FINITE s) /\ (~ (s = EMPTY))) /\ (((real_le a) (inf s)) = (!x. ((x IN s) ==> ((real_le a) x)))))
+T c==> c/\ cFINITE f0 c~ c= f0 part cEMPTY c/\ c/\ cFINITE f0 c~ c= f0 part cEMPTY c= creal_le f1 cinf f0 ! c==> cIN b0 f0 creal_le f1 b0
+- |- (((!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))) ==> ((\t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))) t3)) = ((\t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))) t3))
+T c= c==> ! c= c\/ f0 c\/ f1 b0 c\/ c\/ f0 f1 b0 * / c= c\/ f0 c\/ f1 b0 c\/ c\/ f0 f1 b0 f2 * / c= c\/ f0 c\/ f1 b0 c\/ c\/ f0 f1 b0 f2
+- (_149632 = _149634), (_149633 = _149635) |- (((((real_le _149632) _149633) = ((real_le _149634) _149635)) ==> (((real_le _149634) _149635) \/ (~ ((real_le _149632) _149633)))) = (((real_le _149634) _149635) \/ (~ ((real_le _149632) _149633))))
+T c==> c= f0 f1 c==> c= f2 f3 c= c==> c= creal_le f0 f2 creal_le f1 f3 c\/ creal_le f1 f3 c~ creal_le f0 f2 c\/ creal_le f1 f3 c~ creal_le f0 f2
+- (!x. (!y. (((real_le x) y) \/ ((real_le y) x)))), (x'' = x), ((((x' = x) \/ (x' = y)) /\ (~ ((real_le x) x'))) /\ (((x'' = x) \/ (x'' = y)) /\ (~ ((real_le y) x'')))) |- ((~ ((real_le x) y)) ==> ((real_le x) y))
+T c==> ! ! c\/ creal_le b0 b1 creal_le b1 b0 c==> c= f0 f1 c==> c/\ c/\ c\/ c= f2 f1 c= f2 f3 c~ creal_le f1 f2 c/\ c\/ c= f0 f1 c= f0 f3 c~ creal_le f3 f0 c==> c~ creal_le f1 f3 creal_le f1 f3
+- |- ((t /\ t) = t)
+T c= c/\ f0 f0 f0
+- |- ((a = b) ==> (b \/ (~ a)))
+T c==> c= f0 f1 c\/ f1 c~ f0
+- ((~ (!x. (!y. (((!x'. (((x' = x) \/ (x' = y)) ==> ((real_le x) x'))) \/ (!x'. (((x' = x) \/ (x' = y)) ==> ((real_le y) x')))) /\ (?x'. (((x' = x) \/ (x' = y)) /\ (((real_le x') x) /\ ((real_le x') y)))))))) ==> ((!x. (!y. (((real_le x) y) \/ ((real_le y) x)))) ==> F)) |- ((((~ (!x. (!y. (((!x'. (((x' = x) \/ (x' = y)) ==> ((real_le x) x'))) \/ (!x'. (((x' = x) \/ (x' = y)) ==> ((real_le y) x')))) /\ (?x'. (((x' = x) \/ (x' = y)) /\ (((real_le x') x) /\ ((real_le x') y)))))))) ==> ((!x. (!y. (((real_le x) y) \/ ((real_le y) x)))) ==> F)) ==> ((~ (!x. (!y. (((!x'. (((x' = x) \/ (x' = y)) ==> ((real_le x) x'))) \/ (!x'. (((x' = x) \/ (x' = y)) ==> ((real_le y) x')))) /\ (?x'. (((x' = x) \/ (x' = y)) /\ (((real_le x') x) /\ ((real_le x') y)))))))) ==> ((!x. (!y. (((real_le x) y) \/ ((real_le y) x)))) ==> F))) ==> ((~ (!x. (!y. (((!x'. (((x' = x) \/ (x' = y)) ==> ((real_le x) x'))) \/ (!x'. (((x' = x) \/ (x' = y)) ==> ((real_le y) x')))) /\ (?x'. (((x' = x) \/ (x' = y)) /\ (((real_le x') x) /\ ((real_le x') y)))))))) ==> ((!x. (!y. (((real_le x) y) \/ ((real_le y) x)))) ==> F)))
+T c==> c==> c~ ! ! c/\ c\/ ! c==> c\/ c= b2 b0 c= b2 b1 creal_le b0 b2 ! c==> c\/ c= b2 b0 c= b2 b1 creal_le b1 b2 c? / c/\ c\/ c= b2 b0 c= b2 b1 c/\ creal_le b2 b0 creal_le b2 b1 c==> ! ! c\/ creal_le b0 b1 creal_le b1 b0 cF c==> c==> c==> c~ ! ! c/\ c\/ ! c==> c\/ c= b2 b0 c= b2 b1 creal_le b0 b2 ! c==> c\/ c= b2 b0 c= b2 b1 creal_le b1 b2 c? / c/\ c\/ c= b2 b0 c= b2 b1 c/\ creal_le b2 b0 creal_le b2 b1 c==> ! ! c\/ creal_le b0 b1 creal_le b1 b0 cF c==> c~ ! ! c/\ c\/ ! c==> c\/ c= b2 b0 c= b2 b1 creal_le b0 b2 ! c==> c\/ c= b2 b0 c= b2 b1 creal_le b1 b2 c? / c/\ c\/ c= b2 b0 c= b2 b1 c/\ creal_le b2 b0 creal_le b2 b1 c==> ! ! c\/ creal_le b0 b1 creal_le b1 b0 cF c==> c~ ! ! c/\ c\/ ! c==> c\/ c= b2 b0 c= b2 b1 creal_le b0 b2 ! c==> c\/ c= b2 b0 c= b2 b1 creal_le b1 b2 c? / c/\ c\/ c= b2 b0 c= b2 b1 c/\ creal_le b2 b0 creal_le b2 b1 c==> ! ! c\/ creal_le b0 b1 creal_le b1 b0 cF
+- |- (((!q'. (((x' IN (x INSERT (y INSERT EMPTY))) = p') ==> ((p' ==> (((real_le x) x') = q')) ==> (((x' IN (x INSERT (y INSERT EMPTY))) ==> ((real_le x) x')) = (p' ==> q'))))) ==> ((\q'. (((x' IN (x INSERT (y INSERT EMPTY))) = p') ==> ((p' ==> (((real_le x) x') = q')) ==> (((x' IN (x INSERT (y INSERT EMPTY))) ==> ((real_le x) x')) = (p' ==> q'))))) q')) = ((\q'. (((x' IN (x INSERT (y INSERT EMPTY))) = p') ==> ((p' ==> (((real_le x) x') = q')) ==> (((x' IN (x INSERT (y INSERT EMPTY))) ==> ((real_le x) x')) = (p' ==> q'))))) q'))
+T c= c==> ! c==> c= cIN f0 * * part cINSERT f1 * * part cINSERT f2 part cEMPTY f3 c==> c==> f3 c= creal_le f1 f0 b0 c= c==> cIN f0 * * part cINSERT f1 * * part cINSERT f2 part cEMPTY creal_le f1 f0 c==> f3 b0 * / c==> c= cIN f0 * * part cINSERT f1 * * part cINSERT f2 part cEMPTY f3 c==> c==> f3 c= creal_le f1 f0 b0 c= c==> cIN f0 * * part cINSERT f1 * * part cINSERT f2 part cEMPTY creal_le f1 f0 c==> f3 b0 f4 * / c==> c= cIN f0 * * part cINSERT f1 * * part cINSERT f2 part cEMPTY f3 c==> c==> f3 c= creal_le f1 f0 b0 c= c==> cIN f0 * * part cINSERT f1 * * part cINSERT f2 part cEMPTY creal_le f1 f0 c==> f3 b0 f4
+- |- ((!x''. (((~ (x'' = x)) /\ (~ (x'' = y))) \/ ((~ ((real_le x') x)) \/ (~ ((real_le x') y))))) = ((!x'. ((~ (x' = x)) /\ (~ (x' = y)))) \/ ((~ ((real_le x') x)) \/ (~ ((real_le x') y)))))
+T c= ! c\/ c/\ c~ c= b0 f0 c~ c= b0 f1 c\/ c~ creal_le f2 f0 c~ creal_le f2 f1 c\/ ! c/\ c~ c= b0 f0 c~ c= b0 f1 c\/ c~ creal_le f2 f0 c~ creal_le f2 f1
+- |- ((!y'. ((!x'. (((x' = x) \/ (x' = y)) ==> ((real_le x) x'))) \/ (!x'. (((x' = x) \/ (x' = y')) ==> ((real_le y') x'))))) = ((!x'. (((x' = x) \/ (x' = y)) ==> ((real_le x) x'))) \/ (!y. (!x'. (((x' = x) \/ (x' = y)) ==> ((real_le y) x'))))))
+T c= ! c\/ ! c==> c\/ c= b1 f0 c= b1 f1 creal_le f0 b1 ! c==> c\/ c= b1 f0 c= b1 b0 creal_le b0 b1 c\/ ! c==> c\/ c= b0 f0 c= b0 f1 creal_le f0 b0 ! ! c==> c\/ c= b1 f0 c= b1 b0 creal_le b0 b1
+- |- ((x' IN (x INSERT (y INSERT EMPTY))) ==> (((real_le y) x') = ((real_le y) x')))
+T c==> cIN f0 * * part cINSERT f1 * * part cINSERT f2 part cEMPTY c= creal_le f2 f0 creal_le f2 f0
+- (!x. (!y. (((real_le x) y) \/ ((real_le y) x)))), (!x'. (((~ (x' = x)) /\ (~ (x' = y))) \/ ((~ ((real_le x') x)) \/ (~ ((real_le x') y))))) |- ((~ F) ==> F)
+T c==> ! ! c\/ creal_le b0 b1 creal_le b1 b0 c==> ! c\/ c/\ c~ c= b0 f0 c~ c= b0 f1 c\/ c~ creal_le b0 f0 c~ creal_le b0 f1 c==> c~ cF cF
+- (x' = y) |- ((~ ((real_le y) y)) = (~ ((real_le y) y)))
+T c==> c= f0 f1 c= c~ creal_le f1 f1 c~ creal_le f1 f1
+- |- ((\q'. (((x' IN (x INSERT (y INSERT EMPTY))) = p') ==> ((p' ==> (((real_le x) x') = q')) ==> (((x' IN (x INSERT (y INSERT EMPTY))) ==> ((real_le x) x')) = (p' ==> q'))))) q')
+T * / c==> c= cIN f0 * * part cINSERT f1 * * part cINSERT f2 part cEMPTY f3 c==> c==> f3 c= creal_le f1 f0 b0 c= c==> cIN f0 * * part cINSERT f1 * * part cINSERT f2 part cEMPTY creal_le f1 f0 c==> f3 b0 f4
+- |- ((?x''. (((x' = x) \/ (x' = y)) /\ (((real_le x'') x) /\ ((real_le x'') y)))) = (((x' = x) \/ (x' = y)) /\ (?x'. (((real_le x') x) /\ ((real_le x') y)))))
+T c= c? / c/\ c\/ c= f0 f1 c= f0 f2 c/\ creal_le b0 f1 creal_le b0 f2 c/\ c\/ c= f0 f1 c= f0 f2 c? / c/\ creal_le b0 f1 creal_le b0 f2
+- (x'' = x), ((((x' = x) \/ (x' = y)) /\ (~ ((real_le x) x'))) /\ (((x'' = x) \/ (x'' = y)) /\ (~ ((real_le y) x'')))) |- (((real_le y) x) ==> (~ ((real_le y) x)))
+T c==> c= f0 f1 c==> c/\ c/\ c\/ c= f2 f1 c= f2 f3 c~ creal_le f1 f2 c/\ c\/ c= f0 f1 c= f0 f3 c~ creal_le f3 f0 c==> creal_le f3 f1 c~ creal_le f3 f1
+- |- ((\p'. (!q'. (((x' IN (x INSERT (y INSERT EMPTY))) = p') ==> ((p' ==> (((real_le x) x') = q')) ==> (((x' IN (x INSERT (y INSERT EMPTY))) ==> ((real_le x) x')) = (p' ==> q')))))) p')
+T * / ! c==> c= cIN f0 * * part cINSERT f1 * * part cINSERT f2 part cEMPTY b0 c==> c==> b0 c= creal_le f1 f0 b1 c= c==> cIN f0 * * part cINSERT f1 * * part cINSERT f2 part cEMPTY creal_le f1 f0 c==> b0 b1 f3
+- (!x. (!y. (((real_le x) y) \/ ((real_le y) x)))), (?x'. (?x''. (((((x' = x) \/ (x' = y)) /\ (~ ((real_le x) x'))) /\ (((x'' = x) \/ (x'' = y)) /\ (~ ((real_le y) x'')))) \/ (!x'. (((~ (x' = x)) /\ (~ (x' = y))) \/ ((~ ((real_le x') x)) \/ (~ ((real_le x') y)))))))) |- ((?x'. (?x''. (((((x' = x) \/ (x' = y)) /\ (~ ((real_le x) x'))) /\ (((x'' = x) \/ (x'' = y)) /\ (~ ((real_le y) x'')))) \/ (!x'. (((~ (x' = x)) /\ (~ (x' = y))) \/ ((~ ((real_le x') x)) \/ (~ ((real_le x') y)))))))) /\ F)
+T c==> ! ! c\/ creal_le b0 b1 creal_le b1 b0 c==> c? / c? / c\/ c/\ c/\ c\/ c= b0 f0 c= b0 f1 c~ creal_le f0 b0 c/\ c\/ c= b1 f0 c= b1 f1 c~ creal_le f1 b1 ! c\/ c/\ c~ c= b2 f0 c~ c= b2 f1 c\/ c~ creal_le b2 f0 c~ creal_le b2 f1 c/\ c? / c? / c\/ c/\ c/\ c\/ c= b0 f0 c= b0 f1 c~ creal_le f0 b0 c/\ c\/ c= b1 f0 c= b1 f1 c~ creal_le f1 b1 ! c\/ c/\ c~ c= b2 f0 c~ c= b2 f1 c\/ c~ creal_le b2 f0 c~ creal_le b2 f1 cF
+- (!x. (!y. (((real_le x) y) \/ ((real_le y) x)))), (~ F), (x' = y), (x'' = x), ((((x' = x) \/ (x' = y)) /\ (~ ((real_le x) x'))) /\ (((x'' = x) \/ (x'' = y)) /\ (~ ((real_le y) x'')))) |- ((~ F) /\ F)
+T c==> ! ! c\/ creal_le b0 b1 creal_le b1 b0 c==> c~ cF c==> c= f0 f1 c==> c= f2 f3 c==> c/\ c/\ c\/ c= f0 f3 c= f0 f1 c~ creal_le f3 f0 c/\ c\/ c= f2 f3 c= f2 f1 c~ creal_le f1 f2 c/\ c~ cF cF
+- |- ((!x'. (P x')) = ((P T) /\ (P F)))
+T c= ! * f0 b0 c/\ * f0 cT * f0 cF
+- (~ ((real_le y) y)) |- (((real_le y) y) ==> (~ ((real_le y) y)))
+T c==> c~ creal_le f0 f0 c==> creal_le f0 f0 c~ creal_le f0 f0
+- |- (((x' IN (x INSERT (y INSERT EMPTY))) ==> (((real_le y) x') = q')) ==> (((x' IN (x INSERT (y INSERT EMPTY))) ==> ((real_le y) x')) = ((x' IN (x INSERT (y INSERT EMPTY))) ==> q')))
+T c==> c==> cIN f0 * * part cINSERT f1 * * part cINSERT f2 part cEMPTY c= creal_le f2 f0 f3 c= c==> cIN f0 * * part cINSERT f1 * * part cINSERT f2 part cEMPTY creal_le f2 f0 c==> cIN f0 * * part cINSERT f1 * * part cINSERT f2 part cEMPTY f3
+- |- (((!t1. (!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))))) ==> ((\t1. (!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))))) t1)) = ((\t1. (!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))))) t1))
+T c= c==> ! ! ! c= c\/ b0 c\/ b1 b2 c\/ c\/ b0 b1 b2 * / ! ! c= c\/ b0 c\/ b1 b2 c\/ c\/ b0 b1 b2 f0 * / ! ! c= c\/ b0 c\/ b1 b2 c\/ c\/ b0 b1 b2 f0
+- |- ((\p'. (!q'. (((x' IN (x INSERT (y INSERT EMPTY))) = p') ==> ((p' ==> (((real_le y) x') = q')) ==> (((x' IN (x INSERT (y INSERT EMPTY))) ==> ((real_le y) x')) = (p' ==> q')))))) p')
+T * / ! c==> c= cIN f0 * * part cINSERT f1 * * part cINSERT f2 part cEMPTY b0 c==> c==> b0 c= creal_le f2 f0 b1 c= c==> cIN f0 * * part cINSERT f1 * * part cINSERT f2 part cEMPTY creal_le f2 f0 c==> b0 b1 f3
+- ((~ (!x. (!y. (((!x'. (((x' = x) \/ (x' = y)) ==> ((real_le x) x'))) \/ (!x'. (((x' = x) \/ (x' = y)) ==> ((real_le y) x')))) /\ (?x'. (((x' = x) \/ (x' = y)) /\ (((real_le x') x) /\ ((real_le x') y)))))))) ==> ((!x. (!y. (((real_le x) y) \/ ((real_le y) x)))) ==> F)), (((~ (!x. (!y. (((!x'. (((x' = x) \/ (x' = y)) ==> ((real_le x) x'))) \/ (!x'. (((x' = x) \/ (x' = y)) ==> ((real_le y) x')))) /\ (?x'. (((x' = x) \/ (x' = y)) /\ (((real_le x') x) /\ ((real_le x') y)))))))) ==> ((!x. (!y. (((real_le x) y) \/ ((real_le y) x)))) ==> F)) ==> ((~ (!x. (!y. (((!x'. (((x' = x) \/ (x' = y)) ==> ((real_le x) x'))) \/ (!x'. (((x' = x) \/ (x' = y)) ==> ((real_le y) x')))) /\ (?x'. (((x' = x) \/ (x' = y)) /\ (((real_le x') x) /\ ((real_le x') y)))))))) ==> ((!x. (!y. (((real_le x) y) \/ ((real_le y) x)))) ==> F))) |- ((((~ (!x. (!y. (((!x'. (((x' = x) \/ (x' = y)) ==> ((real_le x) x'))) \/ (!x'. (((x' = x) \/ (x' = y)) ==> ((real_le y) x')))) /\ (?x'. (((x' = x) \/ (x' = y)) /\ (((real_le x') x) /\ ((real_le x') y)))))))) ==> ((!x. (!y. (((real_le x) y) \/ ((real_le y) x)))) ==> F)) ==> ((~ (!x. (!y. (((!x'. (((x' = x) \/ (x' = y)) ==> ((real_le x) x'))) \/ (!x'. (((x' = x) \/ (x' = y)) ==> ((real_le y) x')))) /\ (?x'. (((x' = x) \/ (x' = y)) /\ (((real_le x') x) /\ ((real_le x') y)))))))) ==> ((!x. (!y. (((real_le x) y) \/ ((real_le y) x)))) ==> F))) /\ ((~ (!x. (!y. (((!x'. (((x' = x) \/ (x' = y)) ==> ((real_le x) x'))) \/ (!x'. (((x' = x) \/ (x' = y)) ==> ((real_le y) x')))) /\ (?x'. (((x' = x) \/ (x' = y)) /\ (((real_le x') x) /\ ((real_le x') y)))))))) ==> ((!x. (!y. (((real_le x) y) \/ ((real_le y) x)))) ==> F)))
+T c==> c==> c~ ! ! c/\ c\/ ! c==> c\/ c= b2 b0 c= b2 b1 creal_le b0 b2 ! c==> c\/ c= b2 b0 c= b2 b1 creal_le b1 b2 c? / c/\ c\/ c= b2 b0 c= b2 b1 c/\ creal_le b2 b0 creal_le b2 b1 c==> ! ! c\/ creal_le b0 b1 creal_le b1 b0 cF c==> c==> c==> c~ ! ! c/\ c\/ ! c==> c\/ c= b2 b0 c= b2 b1 creal_le b0 b2 ! c==> c\/ c= b2 b0 c= b2 b1 creal_le b1 b2 c? / c/\ c\/ c= b2 b0 c= b2 b1 c/\ creal_le b2 b0 creal_le b2 b1 c==> ! ! c\/ creal_le b0 b1 creal_le b1 b0 cF c==> c~ ! ! c/\ c\/ ! c==> c\/ c= b2 b0 c= b2 b1 creal_le b0 b2 ! c==> c\/ c= b2 b0 c= b2 b1 creal_le b1 b2 c? / c/\ c\/ c= b2 b0 c= b2 b1 c/\ creal_le b2 b0 creal_le b2 b1 c==> ! ! c\/ creal_le b0 b1 creal_le b1 b0 cF c/\ c==> c==> c~ ! ! c/\ c\/ ! c==> c\/ c= b2 b0 c= b2 b1 creal_le b0 b2 ! c==> c\/ c= b2 b0 c= b2 b1 creal_le b1 b2 c? / c/\ c\/ c= b2 b0 c= b2 b1 c/\ creal_le b2 b0 creal_le b2 b1 c==> ! ! c\/ creal_le b0 b1 creal_le b1 b0 cF c==> c~ ! ! c/\ c\/ ! c==> c\/ c= b2 b0 c= b2 b1 creal_le b0 b2 ! c==> c\/ c= b2 b0 c= b2 b1 creal_le b1 b2 c? / c/\ c\/ c= b2 b0 c= b2 b1 c/\ creal_le b2 b0 creal_le b2 b1 c==> ! ! c\/ creal_le b0 b1 creal_le b1 b0 cF c==> c~ ! ! c/\ c\/ ! c==> c\/ c= b2 b0 c= b2 b1 creal_le b0 b2 ! c==> c\/ c= b2 b0 c= b2 b1 creal_le b1 b2 c? / c/\ c\/ c= b2 b0 c= b2 b1 c/\ creal_le b2 b0 creal_le b2 b1 c==> ! ! c\/ creal_le b0 b1 creal_le b1 b0 cF
+- |- ((?y. (P /\ (Q y))) = (P /\ (?y. (Q y))))
+T c= c? / c/\ f0 * f1 b0 c/\ f0 c? / * f1 b0
+- |- (!p'. (!q'. ((p = p') ==> ((p' ==> (q = q')) ==> ((p ==> q) = (p' ==> q'))))))
+T c==> c= f0 f1 c==> c==> f1 c= f2 f3 c= c==> f0 f2 c==> f1 f3
+- |- ((_149632 = _149634) ==> ((~ (_149633 = _149635)) \/ (((real_le _149634) _149635) \/ (~ ((real_le _149632) _149633)))))
+T c==> c= f0 f1 c\/ c~ c= f2 f3 c\/ creal_le f1 f3 c~ creal_le f0 f2
+- |- ((?x''. (((x'' = x) \/ (x'' = y)) /\ (~ ((real_le x) x')))) = ((?x'. ((x' = x) \/ (x' = y))) /\ (~ ((real_le x) x'))))
+T c= c? / c/\ c\/ c= b0 f0 c= b0 f1 c~ creal_le f0 f2 c/\ c? / c\/ c= b0 f0 c= b0 f1 c~ creal_le f0 f2
+- |- (((p = p') ==> ((p' ==> (q = q')) ==> ((p ==> q) = (p' ==> q')))) = T)
+T c= c==> c= f0 f1 c==> c==> f1 c= f2 f3 c= c==> f0 f2 c==> f1 f3 cT
+- (!x. (!y. (((real_le x) y) \/ ((real_le y) x)))), (~ ((real_le y) y)) |- ((~ ((real_le y) y)) /\ ((real_le y) y))
+T c==> ! ! c\/ creal_le b0 b1 creal_le b1 b0 c==> c~ creal_le f0 f0 c/\ c~ creal_le f0 f0 creal_le f0 f0
+- (~ (x = x)) |- ((~ (x = x)) /\ (x = x))
+T c==> c~ c= f0 f0 c/\ c~ c= f0 f0 c= f0 f0
+- (x' IN (x INSERT (y INSERT EMPTY))) |- ((x' IN (x INSERT (y INSERT EMPTY))) /\ (((real_le y) x') = ((real_le y) x')))
+T c==> cIN f0 * * part cINSERT f1 * * part cINSERT f2 part cEMPTY c/\ cIN f0 * * part cINSERT f1 * * part cINSERT f2 part cEMPTY c= creal_le f2 f0 creal_le f2 f0
+- (!x. (!y. (((real_le x) y) \/ ((real_le y) x)))), (x'' = y), ((((x' = x) \/ (x' = y)) /\ (~ ((real_le x) x'))) /\ (((x'' = x) \/ (x'' = y)) /\ (~ ((real_le y) x'')))) |- ((~ F) ==> F)
+T c==> ! ! c\/ creal_le b0 b1 creal_le b1 b0 c==> c= f0 f1 c==> c/\ c/\ c\/ c= f2 f3 c= f2 f1 c~ creal_le f3 f2 c/\ c\/ c= f0 f3 c= f0 f1 c~ creal_le f1 f0 c==> c~ cF cF
+- |- ((((x' IN (x INSERT (y INSERT EMPTY))) = (x' IN (x INSERT (y INSERT EMPTY)))) ==> (((x' IN (x INSERT (y INSERT EMPTY))) ==> (((real_le y) x') = q')) ==> (((x' IN (x INSERT (y INSERT EMPTY))) ==> ((real_le y) x')) = ((x' IN (x INSERT (y INSERT EMPTY))) ==> q')))) = (((x' IN (x INSERT (y INSERT EMPTY))) ==> (((real_le y) x') = q')) ==> (((x' IN (x INSERT (y INSERT EMPTY))) ==> ((real_le y) x')) = ((x' IN (x INSERT (y INSERT EMPTY))) ==> q'))))
+T c= c==> c= cIN f0 * * part cINSERT f1 * * part cINSERT f2 part cEMPTY cIN f0 * * part cINSERT f1 * * part cINSERT f2 part cEMPTY c==> c==> cIN f0 * * part cINSERT f1 * * part cINSERT f2 part cEMPTY c= creal_le f2 f0 f3 c= c==> cIN f0 * * part cINSERT f1 * * part cINSERT f2 part cEMPTY creal_le f2 f0 c==> cIN f0 * * part cINSERT f1 * * part cINSERT f2 part cEMPTY f3 c==> c==> cIN f0 * * part cINSERT f1 * * part cINSERT f2 part cEMPTY c= creal_le f2 f0 f3 c= c==> cIN f0 * * part cINSERT f1 * * part cINSERT f2 part cEMPTY creal_le f2 f0 c==> cIN f0 * * part cINSERT f1 * * part cINSERT f2 part cEMPTY f3
+- |- (~ (EMPTY = (x INSERT s)))
+T c~ c= part cEMPTY * * part cINSERT f0 f1
+- |- (((x' IN (x INSERT (y INSERT EMPTY))) ==> ((real_le x) x')) = ((x' IN (x INSERT (y INSERT EMPTY))) ==> ((real_le x) x')))
+T c= c==> cIN f0 * * part cINSERT f1 * * part cINSERT f2 part cEMPTY creal_le f1 f0 c==> cIN f0 * * part cINSERT f1 * * part cINSERT f2 part cEMPTY creal_le f1 f0
+- |- ((((x' IN (x INSERT (y INSERT EMPTY))) = (x' IN (x INSERT (y INSERT EMPTY)))) ==> (((x' IN (x INSERT (y INSERT EMPTY))) ==> (((real_le x) x') = q')) ==> (((x' IN (x INSERT (y INSERT EMPTY))) ==> ((real_le x) x')) = ((x' IN (x INSERT (y INSERT EMPTY))) ==> q')))) = (((x' IN (x INSERT (y INSERT EMPTY))) ==> (((real_le x) x') = q')) ==> (((x' IN (x INSERT (y INSERT EMPTY))) ==> ((real_le x) x')) = ((x' IN (x INSERT (y INSERT EMPTY))) ==> q'))))
+T c= c==> c= cIN f0 * * part cINSERT f1 * * part cINSERT f2 part cEMPTY cIN f0 * * part cINSERT f1 * * part cINSERT f2 part cEMPTY c==> c==> cIN f0 * * part cINSERT f1 * * part cINSERT f2 part cEMPTY c= creal_le f1 f0 f3 c= c==> cIN f0 * * part cINSERT f1 * * part cINSERT f2 part cEMPTY creal_le f1 f0 c==> cIN f0 * * part cINSERT f1 * * part cINSERT f2 part cEMPTY f3 c==> c==> cIN f0 * * part cINSERT f1 * * part cINSERT f2 part cEMPTY c= creal_le f1 f0 f3 c= c==> cIN f0 * * part cINSERT f1 * * part cINSERT f2 part cEMPTY creal_le f1 f0 c==> cIN f0 * * part cINSERT f1 * * part cINSERT f2 part cEMPTY f3
+- |- ((?x''. (((x' = x) \/ (x' = y)) /\ (~ ((real_le x) x'')))) = (((x' = x) \/ (x' = y)) /\ (?x'. (~ ((real_le x) x')))))
+T c= c? / c/\ c\/ c= f0 f1 c= f0 f2 c~ creal_le f1 b0 c/\ c\/ c= f0 f1 c= f0 f2 c? / c~ creal_le f1 b0
+- |- ((?y'. ((?x'. (((x' = x) \/ (x' = y')) /\ (~ ((real_le x) x')))) /\ (?x'. (((x' = x) \/ (x' = y)) /\ (~ ((real_le y) x')))))) = ((?y. (?x'. (((x' = x) \/ (x' = y)) /\ (~ ((real_le x) x'))))) /\ (?x'. (((x' = x) \/ (x' = y)) /\ (~ ((real_le y) x'))))))
+T c= c? / c/\ c? / c/\ c\/ c= b1 f0 c= b1 b0 c~ creal_le f0 b1 c? / c/\ c\/ c= b1 f0 c= b1 f1 c~ creal_le f1 b1 c/\ c? / c? / c/\ c\/ c= b1 f0 c= b1 b0 c~ creal_le f0 b1 c? / c/\ c\/ c= b0 f0 c= b0 f1 c~ creal_le f1 b0
+- |- ((?y. ((P y) /\ Q)) = ((?y. (P y)) /\ Q))
+T c= c? / c/\ * f0 b0 f1 c/\ c? / * f0 b0 f1
+- (!x. (!y. (((real_le x) y) \/ ((real_le y) x)))), (x' = x), ((((x' = x) \/ (x' = y)) /\ (~ ((real_le x) x'))) /\ (((x'' = x) \/ (x'' = y)) /\ (~ ((real_le y) x'')))) |- ((x'' = x) ==> F)
+T c==> ! ! c\/ creal_le b0 b1 creal_le b1 b0 c==> c= f0 f1 c==> c/\ c/\ c\/ c= f0 f1 c= f0 f2 c~ creal_le f1 f0 c/\ c\/ c= f3 f1 c= f3 f2 c~ creal_le f2 f3 c==> c= f3 f1 cF
+- (~ ((real_le y) y)), ((real_le y) y) |- (((real_le y) y) /\ (~ ((real_le y) y)))
+T c==> c~ creal_le f0 f0 c==> creal_le f0 f0 c/\ creal_le f0 f0 c~ creal_le f0 f0

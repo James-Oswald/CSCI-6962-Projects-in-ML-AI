@@ -1,0 +1,275 @@
+N CLOSURE_UNION_FRONTIER
+C |- (!s. ((closure s) = (s UNION (frontier s))))
+T c= * part cclosure f0 * * part cUNION f0 * part cfrontier f0
+D TRUTH
+A |- T
+T cT
+D BOOL_CASES_AX
+A |- (!t. ((t = T) \/ (t = F)))
+T c\/ c= f0 cT c= f0 cF
+D NOT_CLAUSES
+A |- ((!t. ((~ (~ t)) = t)) /\ (((~ T) = F) /\ ((~ F) = T)))
+T c/\ ! c= c~ c~ b0 b0 c/\ c= c~ cT cF c= c~ cF cT
+D I_THM
+A |- (!x. ((I x) = x))
+T c= cI f0 f0
+D IN
+A |- (!P. (!x. ((x IN P) = (P x))))
+T c= cIN f0 f1 * f1 f0
+D EXTENSION
+A |- (!s. (!t. ((s = t) = (!x. ((x IN s) = (x IN t))))))
+T c= c= f0 f1 ! c= cIN b0 f0 cIN b0 f1
+D SUBSET
+A |- (!s. (!t. ((s SUBSET t) = (!x. ((x IN s) ==> (x IN t))))))
+T c= cSUBSET f0 f1 ! c==> cIN b0 f0 cIN b0 f1
+D IN_UNION
+A |- (!s. (!t. (!x. ((x IN (s UNION t)) = ((x IN s) \/ (x IN t))))))
+T c= cIN f0 * * part cUNION f1 f2 c\/ cIN f0 f1 cIN f0 f2
+D IN_DIFF
+A |- (!s. (!t. (!x. ((x IN (s DIFF t)) = ((x IN s) /\ (~ (x IN t)))))))
+T c= cIN f0 * * part cDIFF f1 f2 c/\ cIN f0 f1 c~ cIN f0 f2
+D INTERIOR_SUBSET
+A |- (!s. ((interior s) SUBSET s))
+T cSUBSET * part cinterior f0 f0
+D CLOSURE_SUBSET
+A |- (!s. (s SUBSET (closure s)))
+T cSUBSET f0 * part cclosure f0
+D frontier
+A |- (!s. ((frontier s) = ((closure s) DIFF (interior s))))
+T c= * part cfrontier f0 * * part cDIFF * part cclosure f0 * part cinterior f0
+- (~ ((closure s) x)), (((closure s) x) /\ ((~ ((I s) x)) /\ ((~ ((closure s) x)) \/ ((interior s) x)))) |- ((~ F) ==> F)
+T c==> c~ cclosure f0 f1 c==> c/\ cclosure f0 f1 c/\ c~ cI f0 f1 c\/ c~ cclosure f0 f1 cinterior f0 f1 c==> c~ cF cF
++ (((closure s) x) /\ (~ ((interior s) x))) |- ((((closure s) x) ==> F) = F)
+T c==> c/\ cclosure f0 f1 c~ cinterior f0 f1 c= c==> cclosure f0 f1 cF cF
+- (~ ((I s) x)), ((I s) x) |- ((~ ((I s) x)) /\ ((I s) x))
+T c==> c~ cI f0 f1 c==> cI f0 f1 c/\ c~ cI f0 f1 cI f0 f1
++ (!x. ((s x) ==> ((closure s) x))), (!x. (((interior s) x) ==> (s x))) |- ((((closure s) x) = ((s x) \/ (((closure s) x) /\ (~ ((interior s) x))))) = T)
+T c==> ! c==> * f0 b0 cclosure f0 b0 c==> ! c==> cinterior f0 b0 * f0 b0 c= c= cclosure f0 f1 c\/ * f0 f1 c/\ cclosure f0 f1 c~ cinterior f0 f1 cT
+- |- ((\t1. (!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))))) t1)
+T * / ! ! c= c\/ b0 c\/ b1 b2 c\/ c\/ b0 b1 b2 f0
++ |- (((~ (((closure s) x) = ((s x) \/ (((closure s) x) /\ (~ ((interior s) x)))))) ==> F) = (((closure s) x) = ((s x) \/ (((closure s) x) /\ (~ ((interior s) x))))))
+T c= c==> c~ c= cclosure f0 f1 c\/ * f0 f1 c/\ cclosure f0 f1 c~ cinterior f0 f1 cF c= cclosure f0 f1 c\/ * f0 f1 c/\ cclosure f0 f1 c~ cinterior f0 f1
++ (!x. (((interior s) x) ==> (s x))) |- (((I s) _290981) \/ (~ ((interior s) _290981)))
+T c==> ! c==> cinterior f0 b0 * f0 b0 c\/ cI f0 f1 c~ cinterior f0 f1
++ (((closure s) x) /\ ((~ ((I s) x)) /\ ((~ ((closure s) x)) \/ ((interior s) x)))) |- ((((closure s) x) ==> F) = F)
+T c==> c/\ cclosure f0 f1 c/\ c~ cI f0 f1 c\/ c~ cclosure f0 f1 cinterior f0 f1 c= c==> cclosure f0 f1 cF cF
++ (!x. ((s x) ==> ((closure s) x))), (!x. (((interior s) x) ==> (s x))) |- ((!x. (((interior s) x) ==> (s x))) /\ (!x. (((closure s) x) = ((s x) \/ (((closure s) x) /\ (~ ((interior s) x)))))))
+T c==> ! c==> * f0 b0 cclosure f0 b0 c==> ! c==> cinterior f0 b0 * f0 b0 c/\ ! c==> cinterior f0 b0 * f0 b0 ! c= cclosure f0 b0 c\/ * f0 b0 c/\ cclosure f0 b0 c~ cinterior f0 b0
++ |- ((a \/ b) = ((~ b) ==> a))
+T c= c\/ f0 f1 c==> c~ f1 f0
++ (!x. (((interior s) x) ==> (s x))) |- (!x. ((~ ((interior s) x)) \/ ((I s) x)))
+T c==> ! c==> cinterior f0 b0 * f0 b0 ! c\/ c~ cinterior f0 b0 cI f0 b0
+- (~ ((interior s) x)), ((interior s) x) |- ((~ ((interior s) x)) /\ ((interior s) x))
+T c==> c~ cinterior f0 f1 c==> cinterior f0 f1 c/\ c~ cinterior f0 f1 cinterior f0 f1
++ (!x. (((interior s) x) ==> (s x))), (((closure s) x) /\ ((~ ((I s) x)) /\ ((~ ((closure s) x)) \/ ((interior s) x)))) |- ((((closure s) x) /\ ((~ ((I s) x)) /\ ((~ ((closure s) x)) \/ ((interior s) x)))) /\ F)
+T c==> ! c==> cinterior f0 b0 * f0 b0 c==> c/\ cclosure f0 f1 c/\ c~ cI f0 f1 c\/ c~ cclosure f0 f1 cinterior f0 f1 c/\ c/\ cclosure f0 f1 c/\ c~ cI f0 f1 c\/ c~ cclosure f0 f1 cinterior f0 f1 cF
++ (!x. (((interior s) x) ==> (s x))), ((interior s) x) |- ((((I s) x) ==> F) = F)
+T c==> ! c==> cinterior f0 b0 * f0 b0 c==> cinterior f0 f1 c= c==> cI f0 f1 cF cF
++ |- ((!x. ((x IN s) ==> (x IN (closure s)))) ==> ((!x. ((x IN (interior s)) ==> (x IN s))) ==> (!x. ((x IN (closure s)) = (x IN (s UNION ((closure s) DIFF (interior s))))))))
+T c==> ! c==> cIN b0 f0 cIN b0 * part cclosure f0 c==> ! c==> cIN b0 * part cinterior f0 cIN b0 f0 ! c= cIN b0 * part cclosure f0 cIN b0 * * part cUNION f0 * * part cDIFF * part cclosure f0 * part cinterior f0
+- (!x. (((interior s) x) ==> (s x))), (~ ((I s) x)), ((interior s) x) |- ((~ ((I s) x)) /\ ((I s) x))
+T c==> ! c==> cinterior f0 b0 * f0 b0 c==> c~ cI f0 f1 c==> cinterior f0 f1 c/\ c~ cI f0 f1 cI f0 f1
++ (!x. ((s x) ==> ((closure s) x))), ((~ ((closure s) x)) /\ (((I s) x) \/ (((closure s) x) /\ (~ ((interior s) x))))) |- (((~ ((closure s) x)) /\ (((I s) x) \/ (((closure s) x) /\ (~ ((interior s) x))))) /\ F)
+T c==> ! c==> * f0 b0 cclosure f0 b0 c==> c/\ c~ cclosure f0 f1 c\/ cI f0 f1 c/\ cclosure f0 f1 c~ cinterior f0 f1 c/\ c/\ c~ cclosure f0 f1 c\/ cI f0 f1 c/\ cclosure f0 f1 c~ cinterior f0 f1 cF
+- (~ ((closure s) x)), (((closure s) x) /\ ((~ ((I s) x)) /\ ((~ ((closure s) x)) \/ ((interior s) x)))) |- ((~ ((closure s) x)) /\ ((closure s) x))
+T c==> c~ cclosure f0 f1 c==> c/\ cclosure f0 f1 c/\ c~ cI f0 f1 c\/ c~ cclosure f0 f1 cinterior f0 f1 c/\ c~ cclosure f0 f1 cclosure f0 f1
++ (!x. ((s x) ==> ((closure s) x))), ((~ ((closure s) x)) /\ (((I s) x) \/ (((closure s) x) /\ (~ ((interior s) x))))), ((I s) x) |- (((I s) x) /\ F)
+T c==> ! c==> * f0 b0 cclosure f0 b0 c==> c/\ c~ cclosure f0 f1 c\/ cI f0 f1 c/\ cclosure f0 f1 c~ cinterior f0 f1 c==> cI f0 f1 c/\ cI f0 f1 cF
+- |- ((t ==> t) = T)
+T c= c==> f0 f0 cT
+- |- ((p \/ p) = p)
+T c= c\/ f0 f0 f0
+- |- ((\t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))) t3)
+T * / c= c\/ f0 c\/ f1 b0 c\/ c\/ f0 f1 b0 f2
++ |- (((!s. (s SUBSET (closure s))) ==> ((\s. (s SUBSET (closure s))) s)) = ((\s. (s SUBSET (closure s))) s))
+T c= c==> ! cSUBSET b0 * part cclosure b0 * / cSUBSET b0 * part cclosure b0 f0 * / cSUBSET b0 * part cclosure b0 f0
+- |- (((~ p) ==> p) = p)
+T c= c==> c~ f0 f0 f0
+- |- ((!s. t) = t)
+T c= ! f0 f0
+- ((I s) x) |- ((~ ((I s) x)) ==> ((I s) x))
+T c==> cI f0 f1 c==> c~ cI f0 f1 cI f0 f1
+- |- ((!x'. ((~ (s x)) \/ ((closure s) x'))) = ((~ (s x)) \/ (!x. ((closure s) x))))
+T c= ! c\/ c~ * f0 f1 cclosure f0 b0 c\/ c~ * f0 f1 ! cclosure f0 b0
+- |- (((~ ((!x. ((s x) ==> ((closure s) x))) ==> ((!x. (((interior s) x) ==> (s x))) ==> (!x. (((closure s) x) = ((s x) \/ (((closure s) x) /\ (~ ((interior s) x))))))))) ==> F) ==> ((~ ((!x. ((s x) ==> ((closure s) x))) ==> ((!x. (((interior s) x) ==> (s x))) ==> (!x. (((closure s) x) = ((s x) \/ (((closure s) x) /\ (~ ((interior s) x))))))))) ==> F))
+T c==> c==> c~ c==> ! c==> * f0 b0 cclosure f0 b0 c==> ! c==> cinterior f0 b0 * f0 b0 ! c= cclosure f0 b0 c\/ * f0 b0 c/\ cclosure f0 b0 c~ cinterior f0 b0 cF c==> c~ c==> ! c==> * f0 b0 cclosure f0 b0 c==> ! c==> cinterior f0 b0 * f0 b0 ! c= cclosure f0 b0 c\/ * f0 b0 c/\ cclosure f0 b0 c~ cinterior f0 b0 cF
+- (~ F), (~ ((closure s) x)), (((closure s) x) /\ ((~ ((I s) x)) /\ ((~ ((closure s) x)) \/ ((interior s) x)))) |- ((~ F) /\ F)
+T c==> c~ cF c==> c~ cclosure f0 f1 c==> c/\ cclosure f0 f1 c/\ c~ cI f0 f1 c\/ c~ cclosure f0 f1 cinterior f0 f1 c/\ c~ cF cF
++ |- (((!x. ((s x) ==> ((closure s) x))) ==> ((!x. (((interior s) x) ==> (s x))) ==> (!x. (((closure s) x) = ((s x) \/ (((closure s) x) /\ (~ ((interior s) x)))))))) = ((!x. ((x IN s) ==> (x IN (closure s)))) ==> ((!x. ((x IN (interior s)) ==> (x IN s))) ==> (!x. ((x IN (closure s)) = (x IN (s UNION ((closure s) DIFF (interior s)))))))))
+T c= c==> ! c==> * f0 b0 cclosure f0 b0 c==> ! c==> cinterior f0 b0 * f0 b0 ! c= cclosure f0 b0 c\/ * f0 b0 c/\ cclosure f0 b0 c~ cinterior f0 b0 c==> ! c==> cIN b0 f0 cIN b0 * part cclosure f0 c==> ! c==> cIN b0 * part cinterior f0 cIN b0 f0 ! c= cIN b0 * part cclosure f0 cIN b0 * * part cUNION f0 * * part cDIFF * part cclosure f0 * part cinterior f0
++ (!x. ((s x) ==> ((closure s) x))), ((~ ((closure s) x)) /\ (((I s) x) \/ (((closure s) x) /\ (~ ((interior s) x))))) |- (((I s) x) ==> F)
+T c==> ! c==> * f0 b0 cclosure f0 b0 c==> c/\ c~ cclosure f0 f1 c\/ cI f0 f1 c/\ cclosure f0 f1 c~ cinterior f0 f1 c==> cI f0 f1 cF
++ |- ((f x) = ((I f) x))
+T c= * f0 f1 cI f0 f1
++ |- (((interior s) SUBSET s) ==> ((closure s) = (s UNION ((closure s) DIFF (interior s)))))
+T c==> cSUBSET * part cinterior f0 f0 c= * part cclosure f0 * * part cUNION f0 * * part cDIFF * part cclosure f0 * part cinterior f0
+- |- ((t ==> F) = (~ t))
+T c= c==> f0 cF c~ f0
++ |- (((closure s) = (s UNION ((closure s) DIFF (interior s)))) = ((closure s) = (s UNION (frontier s))))
+T c= c= * part cclosure f0 * * part cUNION f0 * * part cDIFF * part cclosure f0 * part cinterior f0 c= * part cclosure f0 * * part cUNION f0 * part cfrontier f0
++ (~ (((closure s) x) = ((s x) \/ (((closure s) x) /\ (~ ((interior s) x)))))) |- ((((closure s) x) /\ ((~ ((I s) x)) /\ ((~ ((closure s) x)) \/ ((interior s) x)))) \/ ((~ ((closure s) x)) /\ (((I s) x) \/ (((closure s) x) /\ (~ ((interior s) x))))))
+T c==> c~ c= cclosure f0 f1 c\/ * f0 f1 c/\ cclosure f0 f1 c~ cinterior f0 f1 c\/ c/\ cclosure f0 f1 c/\ c~ cI f0 f1 c\/ c~ cclosure f0 f1 cinterior f0 f1 c/\ c~ cclosure f0 f1 c\/ cI f0 f1 c/\ cclosure f0 f1 c~ cinterior f0 f1
+- ((~ ((closure s) x)) /\ (((I s) x) \/ (((closure s) x) /\ (~ ((interior s) x))))), (((closure s) x) /\ (~ ((interior s) x))) |- ((~ F) ==> F)
+T c==> c/\ c~ cclosure f0 f1 c\/ cI f0 f1 c/\ cclosure f0 f1 c~ cinterior f0 f1 c==> c/\ cclosure f0 f1 c~ cinterior f0 f1 c==> c~ cF cF
++ |- (p = ((~ p) ==> F))
+T c= f0 c==> c~ f0 cF
+- |- ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))
+T c= c\/ f0 c\/ f1 f2 c\/ c\/ f0 f1 f2
+- ((~ ((!x. ((s x) ==> ((closure s) x))) ==> ((!x. (((interior s) x) ==> (s x))) ==> (!x. (((closure s) x) = ((s x) \/ (((closure s) x) /\ (~ ((interior s) x))))))))) ==> F), (((~ ((!x. ((s x) ==> ((closure s) x))) ==> ((!x. (((interior s) x) ==> (s x))) ==> (!x. (((closure s) x) = ((s x) \/ (((closure s) x) /\ (~ ((interior s) x))))))))) ==> F) ==> ((~ ((!x. ((s x) ==> ((closure s) x))) ==> ((!x. (((interior s) x) ==> (s x))) ==> (!x. (((closure s) x) = ((s x) \/ (((closure s) x) /\ (~ ((interior s) x))))))))) ==> F)) |- ((((~ ((!x. ((s x) ==> ((closure s) x))) ==> ((!x. (((interior s) x) ==> (s x))) ==> (!x. (((closure s) x) = ((s x) \/ (((closure s) x) /\ (~ ((interior s) x))))))))) ==> F) ==> ((~ ((!x. ((s x) ==> ((closure s) x))) ==> ((!x. (((interior s) x) ==> (s x))) ==> (!x. (((closure s) x) = ((s x) \/ (((closure s) x) /\ (~ ((interior s) x))))))))) ==> F)) /\ ((~ ((!x. ((s x) ==> ((closure s) x))) ==> ((!x. (((interior s) x) ==> (s x))) ==> (!x. (((closure s) x) = ((s x) \/ (((closure s) x) /\ (~ ((interior s) x))))))))) ==> F))
+T c==> c==> c~ c==> ! c==> * f0 b0 cclosure f0 b0 c==> ! c==> cinterior f0 b0 * f0 b0 ! c= cclosure f0 b0 c\/ * f0 b0 c/\ cclosure f0 b0 c~ cinterior f0 b0 cF c==> c==> c==> c~ c==> ! c==> * f0 b0 cclosure f0 b0 c==> ! c==> cinterior f0 b0 * f0 b0 ! c= cclosure f0 b0 c\/ * f0 b0 c/\ cclosure f0 b0 c~ cinterior f0 b0 cF c==> c~ c==> ! c==> * f0 b0 cclosure f0 b0 c==> ! c==> cinterior f0 b0 * f0 b0 ! c= cclosure f0 b0 c\/ * f0 b0 c/\ cclosure f0 b0 c~ cinterior f0 b0 cF c/\ c==> c==> c~ c==> ! c==> * f0 b0 cclosure f0 b0 c==> ! c==> cinterior f0 b0 * f0 b0 ! c= cclosure f0 b0 c\/ * f0 b0 c/\ cclosure f0 b0 c~ cinterior f0 b0 cF c==> c~ c==> ! c==> * f0 b0 cclosure f0 b0 c==> ! c==> cinterior f0 b0 * f0 b0 ! c= cclosure f0 b0 c\/ * f0 b0 c/\ cclosure f0 b0 c~ cinterior f0 b0 cF c==> c~ c==> ! c==> * f0 b0 cclosure f0 b0 c==> ! c==> cinterior f0 b0 * f0 b0 ! c= cclosure f0 b0 c\/ * f0 b0 c/\ cclosure f0 b0 c~ cinterior f0 b0 cF
+- |- (((~ ((!x. ((s x) ==> ((closure s) x))) ==> ((!x. (((interior s) x) ==> (s x))) ==> (!x. (((closure s) x) = ((s x) \/ (((closure s) x) /\ (~ ((interior s) x))))))))) ==> F) = ((!x. ((s x) ==> ((closure s) x))) ==> ((!x. (((interior s) x) ==> (s x))) ==> (!x. (((closure s) x) = ((s x) \/ (((closure s) x) /\ (~ ((interior s) x)))))))))
+T c= c==> c~ c==> ! c==> * f0 b0 cclosure f0 b0 c==> ! c==> cinterior f0 b0 * f0 b0 ! c= cclosure f0 b0 c\/ * f0 b0 c/\ cclosure f0 b0 c~ cinterior f0 b0 cF c==> ! c==> * f0 b0 cclosure f0 b0 c==> ! c==> cinterior f0 b0 * f0 b0 ! c= cclosure f0 b0 c\/ * f0 b0 c/\ cclosure f0 b0 c~ cinterior f0 b0
++ (((closure s) x) /\ ((~ ((I s) x)) /\ ((~ ((closure s) x)) \/ ((interior s) x)))), ((~ ((closure s) x)) ==> F), (((interior s) x) ==> F) |- F
+T c==> c/\ cclosure f0 f1 c/\ c~ cI f0 f1 c\/ c~ cclosure f0 f1 cinterior f0 f1 c==> c==> c~ cclosure f0 f1 cF c==> c==> cinterior f0 f1 cF cF
+- (!x. (((interior s) x) ==> (s x))), ((interior s) x) |- ((~ ((I s) x)) ==> ((I s) x))
+T c==> ! c==> cinterior f0 b0 * f0 b0 c==> cinterior f0 f1 c==> c~ cI f0 f1 cI f0 f1
++ (~ ((closure s) x)) |- (((closure s) x) ==> F)
+T c==> c~ cclosure f0 f1 c==> cclosure f0 f1 cF
++ |- ((\s. (s SUBSET (closure s))) s)
+T * / cSUBSET b0 * part cclosure b0 f0
+- |- ((\t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3)))) t2)
+T * / ! c= c\/ f0 c\/ b0 b1 c\/ c\/ f0 b0 b1 f1
+- |- ((!x. ((P x) \/ Q)) = ((!x. (P x)) \/ Q))
+T c= ! c\/ * f0 b0 f1 c\/ ! * f0 b0 f1
++ (!x. (((interior s) x) ==> (s x))), (((closure s) x) /\ ((~ ((I s) x)) /\ ((~ ((closure s) x)) \/ ((interior s) x)))), ((interior s) x) |- (((interior s) x) /\ F)
+T c==> ! c==> cinterior f0 b0 * f0 b0 c==> c/\ cclosure f0 f1 c/\ c~ cI f0 f1 c\/ c~ cclosure f0 f1 cinterior f0 f1 c==> cinterior f0 f1 c/\ cinterior f0 f1 cF
+- ((~ ((!x. ((s x) ==> ((closure s) x))) ==> ((!x. (((interior s) x) ==> (s x))) ==> (!x. (((closure s) x) = ((s x) \/ (((closure s) x) /\ (~ ((interior s) x))))))))) ==> F) |- (((~ ((!x. ((s x) ==> ((closure s) x))) ==> ((!x. (((interior s) x) ==> (s x))) ==> (!x. (((closure s) x) = ((s x) \/ (((closure s) x) /\ (~ ((interior s) x))))))))) ==> F) /\ ((~ ((!x. ((s x) ==> ((closure s) x))) ==> ((!x. (((interior s) x) ==> (s x))) ==> (!x. (((closure s) x) = ((s x) \/ (((closure s) x) /\ (~ ((interior s) x))))))))) ==> F))
+T c==> c==> c~ c==> ! c==> * f0 b0 cclosure f0 b0 c==> ! c==> cinterior f0 b0 * f0 b0 ! c= cclosure f0 b0 c\/ * f0 b0 c/\ cclosure f0 b0 c~ cinterior f0 b0 cF c/\ c==> c~ c==> ! c==> * f0 b0 cclosure f0 b0 c==> ! c==> cinterior f0 b0 * f0 b0 ! c= cclosure f0 b0 c\/ * f0 b0 c/\ cclosure f0 b0 c~ cinterior f0 b0 cF c==> c~ c==> ! c==> * f0 b0 cclosure f0 b0 c==> ! c==> cinterior f0 b0 * f0 b0 ! c= cclosure f0 b0 c\/ * f0 b0 c/\ cclosure f0 b0 c~ cinterior f0 b0 cF
+- (((~ ((!x. ((s x) ==> ((closure s) x))) ==> ((!x. (((interior s) x) ==> (s x))) ==> (!x. (((closure s) x) = ((s x) \/ (((closure s) x) /\ (~ ((interior s) x))))))))) ==> F) ==> ((~ ((!x. ((s x) ==> ((closure s) x))) ==> ((!x. (((interior s) x) ==> (s x))) ==> (!x. (((closure s) x) = ((s x) \/ (((closure s) x) /\ (~ ((interior s) x))))))))) ==> F)) |- ((((~ ((!x. ((s x) ==> ((closure s) x))) ==> ((!x. (((interior s) x) ==> (s x))) ==> (!x. (((closure s) x) = ((s x) \/ (((closure s) x) /\ (~ ((interior s) x))))))))) ==> F) ==> ((~ ((!x. ((s x) ==> ((closure s) x))) ==> ((!x. (((interior s) x) ==> (s x))) ==> (!x. (((closure s) x) = ((s x) \/ (((closure s) x) /\ (~ ((interior s) x))))))))) ==> F)) /\ (((~ ((!x. ((s x) ==> ((closure s) x))) ==> ((!x. (((interior s) x) ==> (s x))) ==> (!x. (((closure s) x) = ((s x) \/ (((closure s) x) /\ (~ ((interior s) x))))))))) ==> F) ==> ((~ ((!x. ((s x) ==> ((closure s) x))) ==> ((!x. (((interior s) x) ==> (s x))) ==> (!x. (((closure s) x) = ((s x) \/ (((closure s) x) /\ (~ ((interior s) x))))))))) ==> F)))
+T c==> c==> c==> c~ c==> ! c==> * f0 b0 cclosure f0 b0 c==> ! c==> cinterior f0 b0 * f0 b0 ! c= cclosure f0 b0 c\/ * f0 b0 c/\ cclosure f0 b0 c~ cinterior f0 b0 cF c==> c~ c==> ! c==> * f0 b0 cclosure f0 b0 c==> ! c==> cinterior f0 b0 * f0 b0 ! c= cclosure f0 b0 c\/ * f0 b0 c/\ cclosure f0 b0 c~ cinterior f0 b0 cF c/\ c==> c==> c~ c==> ! c==> * f0 b0 cclosure f0 b0 c==> ! c==> cinterior f0 b0 * f0 b0 ! c= cclosure f0 b0 c\/ * f0 b0 c/\ cclosure f0 b0 c~ cinterior f0 b0 cF c==> c~ c==> ! c==> * f0 b0 cclosure f0 b0 c==> ! c==> cinterior f0 b0 * f0 b0 ! c= cclosure f0 b0 c\/ * f0 b0 c/\ cclosure f0 b0 c~ cinterior f0 b0 cF c==> c==> c~ c==> ! c==> * f0 b0 cclosure f0 b0 c==> ! c==> cinterior f0 b0 * f0 b0 ! c= cclosure f0 b0 c\/ * f0 b0 c/\ cclosure f0 b0 c~ cinterior f0 b0 cF c==> c~ c==> ! c==> * f0 b0 cclosure f0 b0 c==> ! c==> cinterior f0 b0 * f0 b0 ! c= cclosure f0 b0 c\/ * f0 b0 c/\ cclosure f0 b0 c~ cinterior f0 b0 cF
+- |- (((!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3)))) ==> ((\t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3)))) t2)) = ((\t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3)))) t2))
+T c= c==> ! ! c= c\/ f0 c\/ b0 b1 c\/ c\/ f0 b0 b1 * / ! c= c\/ f0 c\/ b0 b1 c\/ c\/ f0 b0 b1 f1 * / ! c= c\/ f0 c\/ b0 b1 c\/ c\/ f0 b0 b1 f1
++ |- (((!x. ((x IN s) ==> (x IN (closure s)))) ==> ((!x. ((x IN (interior s)) ==> (x IN s))) ==> (!x. ((x IN (closure s)) = (x IN (s UNION ((closure s) DIFF (interior s)))))))) = ((s SUBSET (closure s)) ==> (((interior s) SUBSET s) ==> ((closure s) = (s UNION ((closure s) DIFF (interior s)))))))
+T c= c==> ! c==> cIN b0 f0 cIN b0 * part cclosure f0 c==> ! c==> cIN b0 * part cinterior f0 cIN b0 f0 ! c= cIN b0 * part cclosure f0 cIN b0 * * part cUNION f0 * * part cDIFF * part cclosure f0 * part cinterior f0 c==> cSUBSET f0 * part cclosure f0 c==> cSUBSET * part cinterior f0 f0 c= * part cclosure f0 * * part cUNION f0 * * part cDIFF * part cclosure f0 * part cinterior f0
++ ((~ ((closure s) x)) /\ (((I s) x) \/ (((closure s) x) /\ (~ ((interior s) x))))), ((((closure s) x) /\ (~ ((interior s) x))) ==> F), (((I s) x) ==> F) |- F
+T c==> c/\ c~ cclosure f0 f1 c\/ cI f0 f1 c/\ cclosure f0 f1 c~ cinterior f0 f1 c==> c==> c/\ cclosure f0 f1 c~ cinterior f0 f1 cF c==> c==> cI f0 f1 cF cF
++ (~ ((closure s) x)), (((closure s) x) /\ ((~ ((I s) x)) /\ ((~ ((closure s) x)) \/ ((interior s) x)))) |- ((~ ((closure s) x)) /\ F)
+T c==> c~ cclosure f0 f1 c==> c/\ cclosure f0 f1 c/\ c~ cI f0 f1 c\/ c~ cclosure f0 f1 cinterior f0 f1 c/\ c~ cclosure f0 f1 cF
++ (!x. ((s x) ==> ((closure s) x))), (!x. (((interior s) x) ==> (s x))) |- ((~ (((closure s) x) = ((s x) \/ (((closure s) x) /\ (~ ((interior s) x)))))) ==> F)
+T c==> ! c==> * f0 b0 cclosure f0 b0 c==> ! c==> cinterior f0 b0 * f0 b0 c==> c~ c= cclosure f0 f1 c\/ * f0 f1 c/\ cclosure f0 f1 c~ cinterior f0 f1 cF
++ (!x. (((interior s) x) ==> (s x))), (((closure s) x) /\ ((~ ((I s) x)) /\ ((~ ((closure s) x)) \/ ((interior s) x)))) |- (((interior s) x) ==> F)
+T c==> ! c==> cinterior f0 b0 * f0 b0 c==> c/\ cclosure f0 f1 c/\ c~ cI f0 f1 c\/ c~ cclosure f0 f1 cinterior f0 f1 c==> cinterior f0 f1 cF
++ |- ((\s. ((interior s) SUBSET s)) s)
+T * / cSUBSET * part cinterior b0 b0 f0
+- |- ((x = x) = T)
+T c= c= f0 f0 cT
+- (!x. (((interior s) x) ==> (s x))), (((closure s) x) /\ ((~ ((I s) x)) /\ ((~ ((closure s) x)) \/ ((interior s) x)))), ((interior s) x) |- ((~ F) ==> F)
+T c==> ! c==> cinterior f0 b0 * f0 b0 c==> c/\ cclosure f0 f1 c/\ c~ cI f0 f1 c\/ c~ cclosure f0 f1 cinterior f0 f1 c==> cinterior f0 f1 c==> c~ cF cF
++ |- (((!s. ((interior s) SUBSET s)) ==> ((\s. ((interior s) SUBSET s)) s)) = ((\s. ((interior s) SUBSET s)) s))
+T c= c==> ! cSUBSET * part cinterior b0 b0 * / cSUBSET * part cinterior b0 b0 f0 * / cSUBSET * part cinterior b0 b0 f0
++ |- (((!s. ((frontier s) = ((closure s) DIFF (interior s)))) ==> ((\s. ((frontier s) = ((closure s) DIFF (interior s)))) s)) = ((\s. ((frontier s) = ((closure s) DIFF (interior s)))) s))
+T c= c==> ! c= * part cfrontier b0 * * part cDIFF * part cclosure b0 * part cinterior b0 * / c= * part cfrontier b0 * * part cDIFF * part cclosure b0 * part cinterior b0 f0 * / c= * part cfrontier b0 * * part cDIFF * part cclosure b0 * part cinterior b0 f0
+- |- ((((~ ((!x. ((s x) ==> ((closure s) x))) ==> ((!x. (((interior s) x) ==> (s x))) ==> (!x. (((closure s) x) = ((s x) \/ (((closure s) x) /\ (~ ((interior s) x))))))))) ==> F) ==> ((~ ((!x. ((s x) ==> ((closure s) x))) ==> ((!x. (((interior s) x) ==> (s x))) ==> (!x. (((closure s) x) = ((s x) \/ (((closure s) x) /\ (~ ((interior s) x))))))))) ==> F)) = ((~ ((!x. ((s x) ==> ((closure s) x))) ==> ((!x. (((interior s) x) ==> (s x))) ==> (!x. (((closure s) x) = ((s x) \/ (((closure s) x) /\ (~ ((interior s) x))))))))) ==> F))
+T c= c==> c==> c~ c==> ! c==> * f0 b0 cclosure f0 b0 c==> ! c==> cinterior f0 b0 * f0 b0 ! c= cclosure f0 b0 c\/ * f0 b0 c/\ cclosure f0 b0 c~ cinterior f0 b0 cF c==> c~ c==> ! c==> * f0 b0 cclosure f0 b0 c==> ! c==> cinterior f0 b0 * f0 b0 ! c= cclosure f0 b0 c\/ * f0 b0 c/\ cclosure f0 b0 c~ cinterior f0 b0 cF c==> c~ c==> ! c==> * f0 b0 cclosure f0 b0 c==> ! c==> cinterior f0 b0 * f0 b0 ! c= cclosure f0 b0 c\/ * f0 b0 c/\ cclosure f0 b0 c~ cinterior f0 b0 cF
++ (~ ((closure s) x)), (((closure s) x) /\ ((~ ((I s) x)) /\ ((~ ((closure s) x)) \/ ((interior s) x)))) |- F
+T c==> c~ cclosure f0 f1 c==> c/\ cclosure f0 f1 c/\ c~ cI f0 f1 c\/ c~ cclosure f0 f1 cinterior f0 f1 cF
++ (((closure s) x) /\ ((~ ((I s) x)) /\ ((~ ((closure s) x)) \/ ((interior s) x)))) |- ((~ ((closure s) x)) \/ ((interior s) x))
+T c==> c/\ cclosure f0 f1 c/\ c~ cI f0 f1 c\/ c~ cclosure f0 f1 cinterior f0 f1 c\/ c~ cclosure f0 f1 cinterior f0 f1
+- (~ ((!x. ((s x) ==> ((closure s) x))) ==> ((!x. (((interior s) x) ==> (s x))) ==> (!x. (((closure s) x) = ((s x) \/ (((closure s) x) /\ (~ ((interior s) x))))))))) |- F
+T c==> c~ c==> ! c==> * f0 b0 cclosure f0 b0 c==> ! c==> cinterior f0 b0 * f0 b0 ! c= cclosure f0 b0 c\/ * f0 b0 c/\ cclosure f0 b0 c~ cinterior f0 b0 cF
++ |- ((p \/ q) = (q \/ p))
+T c= c\/ f0 f1 c\/ f1 f0
+- (~ F), ((~ ((closure s) x)) /\ (((I s) x) \/ (((closure s) x) /\ (~ ((interior s) x))))), (((closure s) x) /\ (~ ((interior s) x))) |- ((~ F) /\ F)
+T c==> c~ cF c==> c/\ c~ cclosure f0 f1 c\/ cI f0 f1 c/\ cclosure f0 f1 c~ cinterior f0 f1 c==> c/\ cclosure f0 f1 c~ cinterior f0 f1 c/\ c~ cF cF
++ (((closure s) x) /\ ((~ ((I s) x)) /\ ((~ ((closure s) x)) \/ ((interior s) x)))) |- ((~ ((closure s) x)) ==> F)
+T c==> c/\ cclosure f0 f1 c/\ c~ cI f0 f1 c\/ c~ cclosure f0 f1 cinterior f0 f1 c==> c~ cclosure f0 f1 cF
++ ((~ ((closure s) x)) /\ (((I s) x) \/ (((closure s) x) /\ (~ ((interior s) x))))) |- (((closure s) x) ==> F)
+T c==> c/\ c~ cclosure f0 f1 c\/ cI f0 f1 c/\ cclosure f0 f1 c~ cinterior f0 f1 c==> cclosure f0 f1 cF
++ (!x. ((s x) ==> ((closure s) x))), (!x. (((interior s) x) ==> (s x))) |- (((closure s) x) = ((s x) \/ (((closure s) x) /\ (~ ((interior s) x)))))
+T c==> ! c==> * f0 b0 cclosure f0 b0 c==> ! c==> cinterior f0 b0 * f0 b0 c= cclosure f0 f1 c\/ * f0 f1 c/\ cclosure f0 f1 c~ cinterior f0 f1
++ (!x. (((interior s) x) ==> (s x))) |- (!x. ((~ ((interior s) x)) \/ (s x)))
+T c==> ! c==> cinterior f0 b0 * f0 b0 ! c\/ c~ cinterior f0 b0 * f0 b0
++ (((closure s) x) /\ ((~ ((I s) x)) /\ ((~ ((closure s) x)) \/ ((interior s) x)))) |- (((I s) x) ==> F)
+T c==> c/\ cclosure f0 f1 c/\ c~ cI f0 f1 c\/ c~ cclosure f0 f1 cinterior f0 f1 c==> cI f0 f1 cF
+- |- (((t1 \/ t2) \/ t3) = (t1 \/ (t2 \/ t3)))
+T c= c\/ c\/ f0 f1 f2 c\/ f0 c\/ f1 f2
+- |- (T = (((~ ((I s) _290982)) \/ ((closure s) _290982)) = (((closure s) _290982) \/ (~ ((I s) _290982)))))
+T c= cT c= c\/ c~ cI f0 f1 cclosure f0 f1 c\/ cclosure f0 f1 c~ cI f0 f1
++ (!x. ((s x) ==> ((closure s) x))), (!x. (((interior s) x) ==> (s x))), (~ (((closure s) x) = ((s x) \/ (((closure s) x) /\ (~ ((interior s) x)))))) |- ((~ (((closure s) x) = ((s x) \/ (((closure s) x) /\ (~ ((interior s) x)))))) /\ F)
+T c==> ! c==> * f0 b0 cclosure f0 b0 c==> ! c==> cinterior f0 b0 * f0 b0 c==> c~ c= cclosure f0 f1 c\/ * f0 f1 c/\ cclosure f0 f1 c~ cinterior f0 f1 c/\ c~ c= cclosure f0 f1 c\/ * f0 f1 c/\ cclosure f0 f1 c~ cinterior f0 f1 cF
+- |- (((!s. ((~ ((!x. ((s x) ==> ((closure s) x))) ==> ((!x. (((interior s) x) ==> (s x))) ==> (!x. (((closure s) x) = ((s x) \/ (((closure s) x) /\ (~ ((interior s) x))))))))) ==> F)) ==> ((\s. ((~ ((!x. ((s x) ==> ((closure s) x))) ==> ((!x. (((interior s) x) ==> (s x))) ==> (!x. (((closure s) x) = ((s x) \/ (((closure s) x) /\ (~ ((interior s) x))))))))) ==> F)) s)) = ((\s. ((~ ((!x. ((s x) ==> ((closure s) x))) ==> ((!x. (((interior s) x) ==> (s x))) ==> (!x. (((closure s) x) = ((s x) \/ (((closure s) x) /\ (~ ((interior s) x))))))))) ==> F)) s))
+T c= c==> ! c==> c~ c==> ! c==> * b0 b1 cclosure b0 b1 c==> ! c==> cinterior b0 b1 * b0 b1 ! c= cclosure b0 b1 c\/ * b0 b1 c/\ cclosure b0 b1 c~ cinterior b0 b1 cF * / c==> c~ c==> ! c==> * b0 b1 cclosure b0 b1 c==> ! c==> cinterior b0 b1 * b0 b1 ! c= cclosure b0 b1 c\/ * b0 b1 c/\ cclosure b0 b1 c~ cinterior b0 b1 cF f0 * / c==> c~ c==> ! c==> * b0 b1 cclosure b0 b1 c==> ! c==> cinterior b0 b1 * b0 b1 ! c= cclosure b0 b1 c\/ * b0 b1 c/\ cclosure b0 b1 c~ cinterior b0 b1 cF f0
+- |- ((((~ ((!x. ((s x) ==> ((closure s) x))) ==> ((!x. (((interior s) x) ==> (s x))) ==> (!x. (((closure s) x) = ((s x) \/ (((closure s) x) /\ (~ ((interior s) x))))))))) ==> F) ==> ((~ ((!x. ((s x) ==> ((closure s) x))) ==> ((!x. (((interior s) x) ==> (s x))) ==> (!x. (((closure s) x) = ((s x) \/ (((closure s) x) /\ (~ ((interior s) x))))))))) ==> F)) ==> (((~ ((!x. ((s x) ==> ((closure s) x))) ==> ((!x. (((interior s) x) ==> (s x))) ==> (!x. (((closure s) x) = ((s x) \/ (((closure s) x) /\ (~ ((interior s) x))))))))) ==> F) ==> ((~ ((!x. ((s x) ==> ((closure s) x))) ==> ((!x. (((interior s) x) ==> (s x))) ==> (!x. (((closure s) x) = ((s x) \/ (((closure s) x) /\ (~ ((interior s) x))))))))) ==> F)))
+T c==> c==> c==> c~ c==> ! c==> * f0 b0 cclosure f0 b0 c==> ! c==> cinterior f0 b0 * f0 b0 ! c= cclosure f0 b0 c\/ * f0 b0 c/\ cclosure f0 b0 c~ cinterior f0 b0 cF c==> c~ c==> ! c==> * f0 b0 cclosure f0 b0 c==> ! c==> cinterior f0 b0 * f0 b0 ! c= cclosure f0 b0 c\/ * f0 b0 c/\ cclosure f0 b0 c~ cinterior f0 b0 cF c==> c==> c~ c==> ! c==> * f0 b0 cclosure f0 b0 c==> ! c==> cinterior f0 b0 * f0 b0 ! c= cclosure f0 b0 c\/ * f0 b0 c/\ cclosure f0 b0 c~ cinterior f0 b0 cF c==> c~ c==> ! c==> * f0 b0 cclosure f0 b0 c==> ! c==> cinterior f0 b0 * f0 b0 ! c= cclosure f0 b0 c\/ * f0 b0 c/\ cclosure f0 b0 c~ cinterior f0 b0 cF
++ (!x. ((s x) ==> ((closure s) x))) |- (!x. ((~ ((I s) x)) \/ ((closure s) x)))
+T c==> ! c==> * f0 b0 cclosure f0 b0 ! c\/ c~ cI f0 b0 cclosure f0 b0
+- |- ((\s. ((~ ((!x. ((s x) ==> ((closure s) x))) ==> ((!x. (((interior s) x) ==> (s x))) ==> (!x. (((closure s) x) = ((s x) \/ (((closure s) x) /\ (~ ((interior s) x))))))))) ==> F)) s)
+T * / c==> c~ c==> ! c==> * b0 b1 cclosure b0 b1 c==> ! c==> cinterior b0 b1 * b0 b1 ! c= cclosure b0 b1 c\/ * b0 b1 c/\ cclosure b0 b1 c~ cinterior b0 b1 cF f0
+- (~ ((!x. ((s x) ==> ((closure s) x))) ==> ((!x. (((interior s) x) ==> (s x))) ==> (!x. (((closure s) x) = ((s x) \/ (((closure s) x) /\ (~ ((interior s) x))))))))) |- ((~ ((!x. ((s x) ==> ((closure s) x))) ==> ((!x. (((interior s) x) ==> (s x))) ==> (!x. (((closure s) x) = ((s x) \/ (((closure s) x) /\ (~ ((interior s) x))))))))) /\ F)
+T c==> c~ c==> ! c==> * f0 b0 cclosure f0 b0 c==> ! c==> cinterior f0 b0 * f0 b0 ! c= cclosure f0 b0 c\/ * f0 b0 c/\ cclosure f0 b0 c~ cinterior f0 b0 c/\ c~ c==> ! c==> * f0 b0 cclosure f0 b0 c==> ! c==> cinterior f0 b0 * f0 b0 ! c= cclosure f0 b0 c\/ * f0 b0 c/\ cclosure f0 b0 c~ cinterior f0 b0 cF
+- (!x. ((s x) ==> ((closure s) x))), ((I s) x) |- ((~ ((closure s) x)) ==> ((closure s) x))
+T c==> ! c==> * f0 b0 cclosure f0 b0 c==> cI f0 f1 c==> c~ cclosure f0 f1 cclosure f0 f1
+- |- ((!x. (P \/ (Q x))) = (P \/ (!x. (Q x))))
+T c= ! c\/ f0 * f1 b0 c\/ f0 ! * f1 b0
+- |- (((!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))) ==> ((\t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))) t3)) = ((\t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))) t3))
+T c= c==> ! c= c\/ f0 c\/ f1 b0 c\/ c\/ f0 f1 b0 * / c= c\/ f0 c\/ f1 b0 c\/ c\/ f0 f1 b0 f2 * / c= c\/ f0 c\/ f1 b0 c\/ c\/ f0 f1 b0 f2
++ (!x. (((interior s) x) ==> (s x))), (~ (((closure s) x) = ((s x) \/ (((closure s) x) /\ (~ ((interior s) x)))))), (((~ ((closure s) x)) /\ (((I s) x) \/ (((closure s) x) /\ (~ ((interior s) x))))) ==> F) |- F
+T c==> ! c==> cinterior f0 b0 * f0 b0 c==> c~ c= cclosure f0 f1 c\/ * f0 f1 c/\ cclosure f0 f1 c~ cinterior f0 f1 c==> c==> c/\ c~ cclosure f0 f1 c\/ cI f0 f1 c/\ cclosure f0 f1 c~ cinterior f0 f1 cF cF
+- (!x. (((interior s) x) ==> (s x))), (~ F), (((closure s) x) /\ ((~ ((I s) x)) /\ ((~ ((closure s) x)) \/ ((interior s) x)))), ((interior s) x) |- ((~ F) /\ F)
+T c==> ! c==> cinterior f0 b0 * f0 b0 c==> c~ cF c==> c/\ cclosure f0 f1 c/\ c~ cI f0 f1 c\/ c~ cclosure f0 f1 cinterior f0 f1 c==> cinterior f0 f1 c/\ c~ cF cF
+- |- ((t /\ t) = t)
+T c= c/\ f0 f0 f0
+- (!x. ((s x) ==> ((closure s) x))), ((~ ((closure s) x)) /\ (((I s) x) \/ (((closure s) x) /\ (~ ((interior s) x))))), ((I s) x) |- ((~ F) ==> F)
+T c==> ! c==> * f0 b0 cclosure f0 b0 c==> c/\ c~ cclosure f0 f1 c\/ cI f0 f1 c/\ cclosure f0 f1 c~ cinterior f0 f1 c==> cI f0 f1 c==> c~ cF cF
++ (~ (((closure s) x) = ((s x) \/ (((closure s) x) /\ (~ ((interior s) x)))))), (((~ ((closure s) x)) /\ (((I s) x) \/ (((closure s) x) /\ (~ ((interior s) x))))) ==> F), ((((closure s) x) /\ ((~ ((I s) x)) /\ ((~ ((closure s) x)) \/ ((interior s) x)))) ==> F) |- F
+T c==> c~ c= cclosure f0 f1 c\/ * f0 f1 c/\ cclosure f0 f1 c~ cinterior f0 f1 c==> c==> c/\ c~ cclosure f0 f1 c\/ cI f0 f1 c/\ cclosure f0 f1 c~ cinterior f0 f1 cF c==> c==> c/\ cclosure f0 f1 c/\ c~ cI f0 f1 c\/ c~ cclosure f0 f1 cinterior f0 f1 cF cF
+- |- (((((~ ((!x. ((s x) ==> ((closure s) x))) ==> ((!x. (((interior s) x) ==> (s x))) ==> (!x. (((closure s) x) = ((s x) \/ (((closure s) x) /\ (~ ((interior s) x))))))))) ==> F) ==> ((~ ((!x. ((s x) ==> ((closure s) x))) ==> ((!x. (((interior s) x) ==> (s x))) ==> (!x. (((closure s) x) = ((s x) \/ (((closure s) x) /\ (~ ((interior s) x))))))))) ==> F)) ==> (((~ ((!x. ((s x) ==> ((closure s) x))) ==> ((!x. (((interior s) x) ==> (s x))) ==> (!x. (((closure s) x) = ((s x) \/ (((closure s) x) /\ (~ ((interior s) x))))))))) ==> F) ==> ((~ ((!x. ((s x) ==> ((closure s) x))) ==> ((!x. (((interior s) x) ==> (s x))) ==> (!x. (((closure s) x) = ((s x) \/ (((closure s) x) /\ (~ ((interior s) x))))))))) ==> F))) = (((~ ((!x. ((s x) ==> ((closure s) x))) ==> ((!x. (((interior s) x) ==> (s x))) ==> (!x. (((closure s) x) = ((s x) \/ (((closure s) x) /\ (~ ((interior s) x))))))))) ==> F) ==> ((~ ((!x. ((s x) ==> ((closure s) x))) ==> ((!x. (((interior s) x) ==> (s x))) ==> (!x. (((closure s) x) = ((s x) \/ (((closure s) x) /\ (~ ((interior s) x))))))))) ==> F)))
+T c= c==> c==> c==> c~ c==> ! c==> * f0 b0 cclosure f0 b0 c==> ! c==> cinterior f0 b0 * f0 b0 ! c= cclosure f0 b0 c\/ * f0 b0 c/\ cclosure f0 b0 c~ cinterior f0 b0 cF c==> c~ c==> ! c==> * f0 b0 cclosure f0 b0 c==> ! c==> cinterior f0 b0 * f0 b0 ! c= cclosure f0 b0 c\/ * f0 b0 c/\ cclosure f0 b0 c~ cinterior f0 b0 cF c==> c==> c~ c==> ! c==> * f0 b0 cclosure f0 b0 c==> ! c==> cinterior f0 b0 * f0 b0 ! c= cclosure f0 b0 c\/ * f0 b0 c/\ cclosure f0 b0 c~ cinterior f0 b0 cF c==> c~ c==> ! c==> * f0 b0 cclosure f0 b0 c==> ! c==> cinterior f0 b0 * f0 b0 ! c= cclosure f0 b0 c\/ * f0 b0 c/\ cclosure f0 b0 c~ cinterior f0 b0 cF c==> c==> c~ c==> ! c==> * f0 b0 cclosure f0 b0 c==> ! c==> cinterior f0 b0 * f0 b0 ! c= cclosure f0 b0 c\/ * f0 b0 c/\ cclosure f0 b0 c~ cinterior f0 b0 cF c==> c~ c==> ! c==> * f0 b0 cclosure f0 b0 c==> ! c==> cinterior f0 b0 * f0 b0 ! c= cclosure f0 b0 c\/ * f0 b0 c/\ cclosure f0 b0 c~ cinterior f0 b0 cF
++ (!x. ((s x) ==> ((closure s) x))) |- (!x. ((~ (s x)) \/ ((closure s) x)))
+T c==> ! c==> * f0 b0 cclosure f0 b0 ! c\/ c~ * f0 b0 cclosure f0 b0
++ (!x. ((s x) ==> ((closure s) x))), ((~ ((closure s) x)) /\ (((I s) x) \/ (((closure s) x) /\ (~ ((interior s) x))))), ((((closure s) x) /\ (~ ((interior s) x))) ==> F) |- F
+T c==> ! c==> * f0 b0 cclosure f0 b0 c==> c/\ c~ cclosure f0 f1 c\/ cI f0 f1 c/\ cclosure f0 f1 c~ cinterior f0 f1 c==> c==> c/\ cclosure f0 f1 c~ cinterior f0 f1 cF cF
++ |- ((closure s) = (s UNION ((closure s) DIFF (interior s))))
+T c= * part cclosure f0 * * part cUNION f0 * * part cDIFF * part cclosure f0 * part cinterior f0
++ (!x. ((s x) ==> ((closure s) x))), ((I s) x) |- ((closure s) x)
+T c==> ! c==> * f0 b0 cclosure f0 b0 c==> cI f0 f1 cclosure f0 f1
++ |- (((s SUBSET (closure s)) ==> (((interior s) SUBSET s) ==> ((closure s) = (s UNION ((closure s) DIFF (interior s)))))) = (((interior s) SUBSET s) ==> ((closure s) = (s UNION ((closure s) DIFF (interior s))))))
+T c= c==> cSUBSET f0 * part cclosure f0 c==> cSUBSET * part cinterior f0 f0 c= * part cclosure f0 * * part cUNION f0 * * part cDIFF * part cclosure f0 * part cinterior f0 c==> cSUBSET * part cinterior f0 f0 c= * part cclosure f0 * * part cUNION f0 * * part cDIFF * part cclosure f0 * part cinterior f0
++ |- ((\s. ((frontier s) = ((closure s) DIFF (interior s)))) s)
+T * / c= * part cfrontier b0 * * part cDIFF * part cclosure b0 * part cinterior b0 f0
++ (!x. ((s x) ==> ((closure s) x))), ((I s) x) |- ((((closure s) x) ==> F) = F)
+T c==> ! c==> * f0 b0 cclosure f0 b0 c==> cI f0 f1 c= c==> cclosure f0 f1 cF cF
+- ((~ ((!x. ((s x) ==> ((closure s) x))) ==> ((!x. (((interior s) x) ==> (s x))) ==> (!x. (((closure s) x) = ((s x) \/ (((closure s) x) /\ (~ ((interior s) x))))))))) ==> F), (((~ ((!x. ((s x) ==> ((closure s) x))) ==> ((!x. (((interior s) x) ==> (s x))) ==> (!x. (((closure s) x) = ((s x) \/ (((closure s) x) /\ (~ ((interior s) x))))))))) ==> F) ==> ((~ ((!x. ((s x) ==> ((closure s) x))) ==> ((!x. (((interior s) x) ==> (s x))) ==> (!x. (((closure s) x) = ((s x) \/ (((closure s) x) /\ (~ ((interior s) x))))))))) ==> F)) |- (((~ ((!x. ((s x) ==> ((closure s) x))) ==> ((!x. (((interior s) x) ==> (s x))) ==> (!x. (((closure s) x) = ((s x) \/ (((closure s) x) /\ (~ ((interior s) x))))))))) ==> F) /\ ((~ ((!x. ((s x) ==> ((closure s) x))) ==> ((!x. (((interior s) x) ==> (s x))) ==> (!x. (((closure s) x) = ((s x) \/ (((closure s) x) /\ (~ ((interior s) x))))))))) ==> F))
+T c==> c==> c~ c==> ! c==> * f0 b0 cclosure f0 b0 c==> ! c==> cinterior f0 b0 * f0 b0 ! c= cclosure f0 b0 c\/ * f0 b0 c/\ cclosure f0 b0 c~ cinterior f0 b0 cF c==> c==> c==> c~ c==> ! c==> * f0 b0 cclosure f0 b0 c==> ! c==> cinterior f0 b0 * f0 b0 ! c= cclosure f0 b0 c\/ * f0 b0 c/\ cclosure f0 b0 c~ cinterior f0 b0 cF c==> c~ c==> ! c==> * f0 b0 cclosure f0 b0 c==> ! c==> cinterior f0 b0 * f0 b0 ! c= cclosure f0 b0 c\/ * f0 b0 c/\ cclosure f0 b0 c~ cinterior f0 b0 cF c/\ c==> c~ c==> ! c==> * f0 b0 cclosure f0 b0 c==> ! c==> cinterior f0 b0 * f0 b0 ! c= cclosure f0 b0 c\/ * f0 b0 c/\ cclosure f0 b0 c~ cinterior f0 b0 cF c==> c~ c==> ! c==> * f0 b0 cclosure f0 b0 c==> ! c==> cinterior f0 b0 * f0 b0 ! c= cclosure f0 b0 c\/ * f0 b0 c/\ cclosure f0 b0 c~ cinterior f0 b0 cF
+- (!x. ((s x) ==> ((closure s) x))), (~ F), ((~ ((closure s) x)) /\ (((I s) x) \/ (((closure s) x) /\ (~ ((interior s) x))))), ((I s) x) |- ((~ F) /\ F)
+T c==> ! c==> * f0 b0 cclosure f0 b0 c==> c~ cF c==> c/\ c~ cclosure f0 f1 c\/ cI f0 f1 c/\ cclosure f0 f1 c~ cinterior f0 f1 c==> cI f0 f1 c/\ c~ cF cF
+- |- ((!x'. ((~ (s x')) \/ ((closure s) x))) = ((!x. (~ (s x))) \/ ((closure s) x)))
+T c= ! c\/ c~ * f0 b0 cclosure f0 f1 c\/ ! c~ * f0 b0 cclosure f0 f1
++ (((closure s) x) /\ ((~ ((I s) x)) /\ ((~ ((closure s) x)) \/ ((interior s) x)))) |- (~ ((I s) x))
+T c==> c/\ cclosure f0 f1 c/\ c~ cI f0 f1 c\/ c~ cclosure f0 f1 cinterior f0 f1 c~ cI f0 f1
++ (((closure s) x) /\ ((~ ((I s) x)) /\ ((~ ((closure s) x)) \/ ((interior s) x)))), (((interior s) x) ==> F) |- F
+T c==> c/\ cclosure f0 f1 c/\ c~ cI f0 f1 c\/ c~ cclosure f0 f1 cinterior f0 f1 c==> c==> cinterior f0 f1 cF cF
++ (!x. ((s x) ==> ((closure s) x))) |- (((~ ((closure s) x)) /\ (((I s) x) \/ (((closure s) x) /\ (~ ((interior s) x))))) ==> F)
+T c==> ! c==> * f0 b0 cclosure f0 b0 c==> c/\ c~ cclosure f0 f1 c\/ cI f0 f1 c/\ cclosure f0 f1 c~ cinterior f0 f1 cF
++ (!x. (((interior s) x) ==> (s x))) |- ((((closure s) x) /\ ((~ ((I s) x)) /\ ((~ ((closure s) x)) \/ ((interior s) x)))) ==> F)
+T c==> ! c==> cinterior f0 b0 * f0 b0 c==> c/\ cclosure f0 f1 c/\ c~ cI f0 f1 c\/ c~ cclosure f0 f1 cinterior f0 f1 cF
+- |- ((!x. (P x)) = ((P T) /\ (P F)))
+T c= ! * f0 b0 c/\ * f0 cT * f0 cF
++ |- ((((interior s) SUBSET s) ==> ((closure s) = (s UNION ((closure s) DIFF (interior s))))) = ((closure s) = (s UNION ((closure s) DIFF (interior s)))))
+T c= c==> cSUBSET * part cinterior f0 f0 c= * part cclosure f0 * * part cUNION f0 * * part cDIFF * part cclosure f0 * part cinterior f0 c= * part cclosure f0 * * part cUNION f0 * * part cDIFF * part cclosure f0 * part cinterior f0
+- ((interior s) x) |- ((~ ((interior s) x)) ==> ((interior s) x))
+T c==> cinterior f0 f1 c==> c~ cinterior f0 f1 cinterior f0 f1
+- |- (((!t1. (!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))))) ==> ((\t1. (!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))))) t1)) = ((\t1. (!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))))) t1))
+T c= c==> ! ! ! c= c\/ b0 c\/ b1 b2 c\/ c\/ b0 b1 b2 * / ! ! c= c\/ b0 c\/ b1 b2 c\/ c\/ b0 b1 b2 f0 * / ! ! c= c\/ b0 c\/ b1 b2 c\/ c\/ b0 b1 b2 f0
++ (!x. ((s x) ==> ((closure s) x))) |- (((closure s) _290982) \/ (~ ((I s) _290982)))
+T c==> ! c==> * f0 b0 cclosure f0 b0 c\/ cclosure f0 f1 c~ cI f0 f1
++ (!x. (((interior s) x) ==> (s x))), ((interior s) x) |- ((I s) x)
+T c==> ! c==> cinterior f0 b0 * f0 b0 c==> cinterior f0 f1 cI f0 f1
+- |- ((!x'. ((~ ((interior s) x')) \/ (s x))) = ((!x. (~ ((interior s) x))) \/ (s x)))
+T c= ! c\/ c~ cinterior f0 b0 * f0 f1 c\/ ! c~ cinterior f0 b0 * f0 f1
+- (!x. ((s x) ==> ((closure s) x))), (~ ((closure s) x)), ((I s) x) |- ((~ ((closure s) x)) /\ ((closure s) x))
+T c==> ! c==> * f0 b0 cclosure f0 b0 c==> c~ cclosure f0 f1 c==> cI f0 f1 c/\ c~ cclosure f0 f1 cclosure f0 f1
+- |- ((!s. ((!x. ((s x) ==> ((closure s) x))) ==> ((!x. (((interior s) x) ==> (s x))) ==> (!x. (((closure s) x) = ((s x) \/ (((closure s) x) /\ (~ ((interior s) x))))))))) = (!s. ((~ ((!x. ((s x) ==> ((closure s) x))) ==> ((!x. (((interior s) x) ==> (s x))) ==> (!x. (((closure s) x) = ((s x) \/ (((closure s) x) /\ (~ ((interior s) x))))))))) ==> F)))
+T c= ! c==> ! c==> * b0 b1 cclosure b0 b1 c==> ! c==> cinterior b0 b1 * b0 b1 ! c= cclosure b0 b1 c\/ * b0 b1 c/\ cclosure b0 b1 c~ cinterior b0 b1 ! c==> c~ c==> ! c==> * b0 b1 cclosure b0 b1 c==> ! c==> cinterior b0 b1 * b0 b1 ! c= cclosure b0 b1 c\/ * b0 b1 c/\ cclosure b0 b1 c~ cinterior b0 b1 cF
+- (((closure s) x) /\ ((~ ((I s) x)) /\ ((~ ((closure s) x)) \/ ((interior s) x)))) |- ((~ ((closure s) x)) ==> ((closure s) x))
+T c==> c/\ cclosure f0 f1 c/\ c~ cI f0 f1 c\/ c~ cclosure f0 f1 cinterior f0 f1 c==> c~ cclosure f0 f1 cclosure f0 f1
+- (~ ((closure s) x)), (((closure s) x) /\ (~ ((interior s) x))) |- ((~ ((closure s) x)) /\ ((closure s) x))
+T c==> c~ cclosure f0 f1 c==> c/\ cclosure f0 f1 c~ cinterior f0 f1 c/\ c~ cclosure f0 f1 cclosure f0 f1
+- (((closure s) x) /\ (~ ((interior s) x))) |- ((~ ((closure s) x)) ==> ((closure s) x))
+T c==> c/\ cclosure f0 f1 c~ cinterior f0 f1 c==> c~ cclosure f0 f1 cclosure f0 f1
+- |- (((!x. ((s x) ==> ((closure s) x))) ==> ((!x. (((interior s) x) ==> (s x))) ==> (!x. (((closure s) x) = ((s x) \/ (((closure s) x) /\ (~ ((interior s) x)))))))) = T)
+T c= c==> ! c==> * f0 b0 cclosure f0 b0 c==> ! c==> cinterior f0 b0 * f0 b0 ! c= cclosure f0 b0 c\/ * f0 b0 c/\ cclosure f0 b0 c~ cinterior f0 b0 cT
+- ((~ ((!x. ((s x) ==> ((closure s) x))) ==> ((!x. (((interior s) x) ==> (s x))) ==> (!x. (((closure s) x) = ((s x) \/ (((closure s) x) /\ (~ ((interior s) x))))))))) ==> F) |- ((((~ ((!x. ((s x) ==> ((closure s) x))) ==> ((!x. (((interior s) x) ==> (s x))) ==> (!x. (((closure s) x) = ((s x) \/ (((closure s) x) /\ (~ ((interior s) x))))))))) ==> F) ==> ((~ ((!x. ((s x) ==> ((closure s) x))) ==> ((!x. (((interior s) x) ==> (s x))) ==> (!x. (((closure s) x) = ((s x) \/ (((closure s) x) /\ (~ ((interior s) x))))))))) ==> F)) ==> ((~ ((!x. ((s x) ==> ((closure s) x))) ==> ((!x. (((interior s) x) ==> (s x))) ==> (!x. (((closure s) x) = ((s x) \/ (((closure s) x) /\ (~ ((interior s) x))))))))) ==> F))
+T c==> c==> c~ c==> ! c==> * f0 b0 cclosure f0 b0 c==> ! c==> cinterior f0 b0 * f0 b0 ! c= cclosure f0 b0 c\/ * f0 b0 c/\ cclosure f0 b0 c~ cinterior f0 b0 cF c==> c==> c==> c~ c==> ! c==> * f0 b0 cclosure f0 b0 c==> ! c==> cinterior f0 b0 * f0 b0 ! c= cclosure f0 b0 c\/ * f0 b0 c/\ cclosure f0 b0 c~ cinterior f0 b0 cF c==> c~ c==> ! c==> * f0 b0 cclosure f0 b0 c==> ! c==> cinterior f0 b0 * f0 b0 ! c= cclosure f0 b0 c\/ * f0 b0 c/\ cclosure f0 b0 c~ cinterior f0 b0 cF c==> c~ c==> ! c==> * f0 b0 cclosure f0 b0 c==> ! c==> cinterior f0 b0 * f0 b0 ! c= cclosure f0 b0 c\/ * f0 b0 c/\ cclosure f0 b0 c~ cinterior f0 b0 cF
+- |- (T = (((~ ((interior s) _290981)) \/ ((I s) _290981)) = (((I s) _290981) \/ (~ ((interior s) _290981)))))
+T c= cT c= c\/ c~ cinterior f0 f1 cI f0 f1 c\/ cI f0 f1 c~ cinterior f0 f1

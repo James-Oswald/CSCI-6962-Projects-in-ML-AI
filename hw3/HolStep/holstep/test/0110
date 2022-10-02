@@ -1,0 +1,158 @@
+N Seq.has_mask_cons
+C |- (!a. (!b. (!m. (!x. (!s. (((has a) ((mask ((CONS b) m)) ((CONS x) s))) = ((b /\ (a x)) \/ ((has a) ((mask m) s)))))))))
+T c= chas f0 cmask cCONS f1 f2 cCONS f3 f4 c\/ c/\ f1 * f0 f3 chas f0 cmask f2 f4
+D TRUTH
+A |- T
+T cT
+D COND_CLAUSES
+A |- (!t1. (!t2. (((((COND T) t1) t2) = t1) /\ ((((COND F) t1) t2) = t2))))
+T c/\ c= cCOND cT f0 f1 f0 c= cCOND cF f0 f1 f1
+D bool_elim
+A |- (!P. (((P T) /\ (P F)) ==> (!x. (P x))))
+T c==> c/\ * f0 cT * f0 cF ! * f0 b0
+D Seq.has
+A |- (!a. (!x. (!s'. ((((has a) NIL) = F) /\ (((has a) ((CONS x) s')) = ((a x) \/ ((has a) s')))))))
+T c/\ c= chas f0 cNIL cF c= chas f0 cCONS f1 f2 c\/ * f0 f1 chas f0 f2
+D Seq.mask
+A |- ((((mask NIL) s') = NIL) /\ ((((mask m') NIL) = NIL) /\ (((mask ((CONS b) m')) ((CONS x) s')) = (((COND b) ((CONS x) ((mask m') s'))) ((mask m') s')))))
+T c/\ c= cmask cNIL f0 cNIL c/\ c= cmask f1 cNIL cNIL c= cmask cCONS f2 f1 cCONS f3 f0 cCOND f2 cCONS f3 cmask f1 f0 cmask f1 f0
++ |- (((!s'. ((((has a) NIL) = F) /\ (((has a) ((CONS x) s')) = ((a x) \/ ((has a) s'))))) ==> ((\s'. ((((has a) NIL) = F) /\ (((has a) ((CONS x) s')) = ((a x) \/ ((has a) s'))))) s')) = ((\s'. ((((has a) NIL) = F) /\ (((has a) ((CONS x) s')) = ((a x) \/ ((has a) s'))))) s'))
+T c= c==> ! c/\ c= chas f0 cNIL cF c= chas f0 cCONS f1 b0 c\/ * f0 f1 chas f0 b0 * / c/\ c= chas f0 cNIL cF c= chas f0 cCONS f1 b0 c\/ * f0 f1 chas f0 b0 f2 * / c/\ c= chas f0 cNIL cF c= chas f0 cCONS f1 b0 c\/ * f0 f1 chas f0 b0 f2
++ ((\b1. (b = b1)) b1) |- (((\b1. (b = b1)) b1) /\ (((has a) ((mask ((CONS b) m)) ((CONS x) s))) = ((b /\ (a x)) \/ ((has a) ((mask m) s)))))
+T c==> * / c= f0 b0 f1 c/\ * / c= f0 b0 f1 c= chas f2 cmask cCONS f0 f3 cCONS f4 f5 c\/ c/\ f0 * f2 f4 chas f2 cmask f3 f5
++ |- ((\b. (((has a) ((mask ((CONS b) m)) ((CONS x) s))) = ((b /\ (a x)) \/ ((has a) ((mask m) s))))) b1)
+T * / c= chas f0 cmask cCONS b0 f1 cCONS f2 f3 c\/ c/\ b0 * f0 f2 chas f0 cmask f1 f3 f4
+- ((P T) /\ (P F)) |- ((!P. (((P T) /\ (P F)) ==> (!x. (P x)))) ==> (!x. (P x)))
+T c==> c/\ * f0 cT * f0 cF c==> ! c==> c/\ * b0 cT * b0 cF ! * b0 b1 ! * f0 b0
+- ((!x. (P ==> (Q x))) = (P ==> (!x. (Q x)))) |- ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))
+T c==> c= ! c==> f0 * f1 b0 c==> f0 ! * f1 b0 c= c==> f0 ! * f1 b0 ! c==> f0 * f1 b0
++ |- ((!s. (((has a) ((mask ((CONS b) m)) ((CONS x) s))) = ((b /\ (a x)) \/ ((has a) ((mask m) s))))) = T)
+T c= ! c= chas f0 cmask cCONS f1 f2 cCONS f3 b0 c\/ c/\ f1 * f0 f3 chas f0 cmask f2 b0 cT
++ |- ((((has a) (((COND F) ((CONS x) ((mask m) s))) ((mask m) s))) = (F \/ ((has a) ((mask m) s)))) = (((has a) ((mask ((CONS F) m)) ((CONS x) s))) = ((F /\ (a x)) \/ ((has a) ((mask m) s)))))
+T c= c= chas f0 cCOND cF cCONS f1 cmask f2 f3 cmask f2 f3 c\/ cF chas f0 cmask f2 f3 c= chas f0 cmask cCONS cF f2 cCONS f1 f3 c\/ c/\ cF * f0 f1 chas f0 cmask f2 f3
+- |- ((\P. (!Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x)))))) P)
+T * / ! c= c==> b0 ! * b1 b2 ! c==> b0 * b1 b2 f0
++ (b = b1) |- ((b = b1) /\ (((has a) ((mask ((CONS b) m)) ((CONS x) s))) = ((b /\ (a x)) \/ ((has a) ((mask m) s)))))
+T c==> c= f0 f1 c/\ c= f0 f1 c= chas f2 cmask cCONS f0 f3 cCONS f4 f5 c\/ c/\ f0 * f2 f4 chas f2 cmask f3 f5
++ |- (T = (((has a) (((COND F) ((CONS x) ((mask m) s))) ((mask m) s))) = (F \/ ((has a) ((mask m) s)))))
+T c= cT c= chas f0 cCOND cF cCONS f1 cmask f2 f3 cmask f2 f3 c\/ cF chas f0 cmask f2 f3
++ |- (((!a. (!x. (!s'. ((((has a) NIL) = F) /\ (((has a) ((CONS x) s')) = ((a x) \/ ((has a) s'))))))) ==> ((\a. (!x. (!s'. ((((has a) NIL) = F) /\ (((has a) ((CONS x) s')) = ((a x) \/ ((has a) s'))))))) a)) = ((\a. (!x. (!s'. ((((has a) NIL) = F) /\ (((has a) ((CONS x) s')) = ((a x) \/ ((has a) s'))))))) a))
+T c= c==> ! ! ! c/\ c= chas b0 cNIL cF c= chas b0 cCONS b1 b2 c\/ * b0 b1 chas b0 b2 * / ! ! c/\ c= chas b0 cNIL cF c= chas b0 cCONS b1 b2 c\/ * b0 b1 chas b0 b2 f0 * / ! ! c/\ c= chas b0 cNIL cF c= chas b0 cCONS b1 b2 c\/ * b0 b1 chas b0 b2 f0
+- |- ((t \/ t) = t)
+T c= c\/ f0 f0 f0
++ (b = b1) |- (((has a) ((mask ((CONS b1) m)) ((CONS x) s))) = ((b /\ (a x)) \/ ((has a) ((mask m) s))))
+T c==> c= f0 f1 c= chas f2 cmask cCONS f1 f3 cCONS f4 f5 c\/ c/\ f0 * f2 f4 chas f2 cmask f3 f5
++ |- ((b = b1) ==> (((has a) ((mask ((CONS b) m)) ((CONS x) s))) = ((b /\ (a x)) \/ ((has a) ((mask m) s)))))
+T c==> c= f0 f1 c= chas f2 cmask cCONS f0 f3 cCONS f4 f5 c\/ c/\ f0 * f2 f4 chas f2 cmask f3 f5
+- (!P. (((P T) /\ (P F)) ==> (!x. (P x)))) |- ((\P. (((P T) /\ (P F)) ==> (!x. (P x)))) P)
+T c==> ! c==> c/\ * b0 cT * b0 cF ! * b0 b1 * / c==> c/\ * b0 cT * b0 cF ! * b0 b1 f0
++ |- ((((has a) ((mask ((CONS b) m)) ((CONS x) s))) = ((b /\ (a x)) \/ ((has a) ((mask m) s)))) = T)
+T c= c= chas f0 cmask cCONS f1 f2 cCONS f3 f4 c\/ c/\ f1 * f0 f3 chas f0 cmask f2 f4 cT
++ |- ((\a. (!x. (!s'. ((((has a) NIL) = F) /\ (((has a) ((CONS x) s')) = ((a x) \/ ((has a) s'))))))) a)
+T * / ! ! c/\ c= chas b0 cNIL cF c= chas b0 cCONS b1 b2 c\/ * b0 b1 chas b0 b2 f0
+- |- (!b1. (((\b1. (b = b1)) b1) ==> (?b1. (b = b1))))
+T c==> * / c= f0 b0 f1 c? / c= f0 b0
++ |- ((\b1. (b = b1)) b)
+T * / c= f0 b0 f0
++ (b = b1) |- ((((has a) ((mask ((CONS b1) m)) ((CONS x) s))) = ((b1 /\ (a x)) \/ ((has a) ((mask m) s)))) = (((has a) ((mask ((CONS b1) m)) ((CONS x) s))) = ((b /\ (a x)) \/ ((has a) ((mask m) s)))))
+T c==> c= f0 f1 c= c= chas f2 cmask cCONS f1 f3 cCONS f4 f5 c\/ c/\ f1 * f2 f4 chas f2 cmask f3 f5 c= chas f2 cmask cCONS f1 f3 cCONS f4 f5 c\/ c/\ f0 * f2 f4 chas f2 cmask f3 f5
++ |- ((((has a) ((CONS x) ((mask m) s))) = ((a x) \/ ((has a) ((mask m) s)))) = (((has a) (((COND T) ((CONS x) ((mask m) s))) ((mask m) s))) = ((a x) \/ ((has a) ((mask m) s)))))
+T c= c= chas f0 cCONS f1 cmask f2 f3 c\/ * f0 f1 chas f0 cmask f2 f3 c= chas f0 cCOND cT cCONS f1 cmask f2 f3 cmask f2 f3 c\/ * f0 f1 chas f0 cmask f2 f3
+- |- ((((a x) \/ ((has a) ((mask m) s))) = ((a x) \/ ((has a) ((mask m) s)))) = (((has a) ((CONS x) ((mask m) s))) = ((a x) \/ ((has a) ((mask m) s)))))
+T c= c= c\/ * f0 f1 chas f0 cmask f2 f3 c\/ * f0 f1 chas f0 cmask f2 f3 c= chas f0 cCONS f1 cmask f2 f3 c\/ * f0 f1 chas f0 cmask f2 f3
+- (!P. (((P T) /\ (P F)) ==> (!x. (P x)))), ((P T) /\ (P F)) |- (!x. (P x))
+T c==> ! c==> c/\ * b0 cT * b0 cF ! * b0 b1 c==> c/\ * f0 cT * f0 cF ! * f0 b0
+- |- ((b = b1) = ((\b1. (b = b1)) b1))
+T c= c= f0 f1 * / c= f0 b0 f1
++ |- (((!x. (((\b1. (b = b1)) x) ==> (((has a) ((mask ((CONS b) m)) ((CONS x) s))) = ((b /\ (a x)) \/ ((has a) ((mask m) s)))))) ==> ((?b1. (b = b1)) ==> (((has a) ((mask ((CONS b) m)) ((CONS x) s))) = ((b /\ (a x)) \/ ((has a) ((mask m) s)))))) = ((?b1. (b = b1)) ==> (((has a) ((mask ((CONS b) m)) ((CONS x) s))) = ((b /\ (a x)) \/ ((has a) ((mask m) s))))))
+T c= c==> ! c==> * / c= f0 b1 b0 c= chas f1 cmask cCONS f0 f2 cCONS f3 f4 c\/ c/\ f0 * f1 f3 chas f1 cmask f2 f4 c==> c? / c= f0 b0 c= chas f1 cmask cCONS f0 f2 cCONS f3 f4 c\/ c/\ f0 * f1 f3 chas f1 cmask f2 f4 c==> c? / c= f0 b0 c= chas f1 cmask cCONS f0 f2 cCONS f3 f4 c\/ c/\ f0 * f1 f3 chas f1 cmask f2 f4
++ |- ((((has a) (((COND T) ((CONS x) ((mask m) s))) ((mask m) s))) = ((a x) \/ ((has a) ((mask m) s)))) = (((has a) ((mask ((CONS T) m)) ((CONS x) s))) = ((T /\ (a x)) \/ ((has a) ((mask m) s)))))
+T c= c= chas f0 cCOND cT cCONS f1 cmask f2 f3 cmask f2 f3 c\/ * f0 f1 chas f0 cmask f2 f3 c= chas f0 cmask cCONS cT f2 cCONS f1 f3 c\/ c/\ cT * f0 f1 chas f0 cmask f2 f3
++ |- ((!m. (!x. (!s. (((has a) ((mask ((CONS b) m)) ((CONS x) s))) = ((b /\ (a x)) \/ ((has a) ((mask m) s))))))) = T)
+T c= ! ! ! c= chas f0 cmask cCONS f1 b0 cCONS b1 b2 c\/ c/\ f1 * f0 b1 chas f0 cmask b0 b2 cT
++ |- (((mask ((CONS b) m')) ((CONS x) s')) = (((COND b) ((CONS x) ((mask m') s'))) ((mask m') s')))
+T c= cmask cCONS f0 f1 cCONS f2 f3 cCOND f0 cCONS f2 cmask f1 f3 cmask f1 f3
+- (b = b1) |- (((has a) ((mask ((CONS b1) m)) ((CONS x) s))) = ((b1 /\ (a x)) \/ ((has a) ((mask m) s))))
+T c==> c= f0 f1 c= chas f2 cmask cCONS f1 f3 cCONS f4 f5 c\/ c/\ f1 * f2 f4 chas f2 cmask f3 f5
++ |- ((\P. (((P T) /\ (P F)) ==> (!x. (P x)))) P)
+T * / c==> c/\ * b0 cT * b0 cF ! * b0 b1 f0
+- |- ((?b1. (b = b1)) ==> (?b1. (b = b1)))
+T c==> c? / c= f0 b0 c? / c= f0 b0
++ |- (((has a) (((COND F) ((CONS x) ((mask m) s))) ((mask m) s))) = (F \/ ((has a) ((mask m) s))))
+T c= chas f0 cCOND cF cCONS f1 cmask f2 f3 cmask f2 f3 c\/ cF chas f0 cmask f2 f3
++ |- ((x = x) = T)
+T c= c= f0 f0 cT
+- |- ((\Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))) Q)
+T * / c= c==> f0 ! * b0 b1 ! c==> f0 * b0 b1 f1
+- (b = b1) |- (b1 = b)
+T c==> c= f0 f1 c= f1 f0
++ |- ((!b. (!m. (!x. (!s. (((has a) ((mask ((CONS b) m)) ((CONS x) s))) = ((b /\ (a x)) \/ ((has a) ((mask m) s)))))))) = T)
+T c= ! ! ! ! c= chas f0 cmask cCONS b0 b1 cCONS b2 b3 c\/ c/\ b0 * f0 b2 chas f0 cmask b1 b3 cT
++ |- ((((\b1. (b = b1)) b1) ==> (((has a) ((mask ((CONS b) m)) ((CONS x) s))) = ((b /\ (a x)) \/ ((has a) ((mask m) s))))) = T)
+T c= c==> * / c= f0 b0 f1 c= chas f2 cmask cCONS f0 f3 cCONS f4 f5 c\/ c/\ f0 * f2 f4 chas f2 cmask f3 f5 cT
++ (b = b1) |- ((((has a) ((mask ((CONS b1) m)) ((CONS x) s))) = ((b /\ (a x)) \/ ((has a) ((mask m) s)))) = (((has a) ((mask ((CONS b) m)) ((CONS x) s))) = ((b /\ (a x)) \/ ((has a) ((mask m) s)))))
+T c==> c= f0 f1 c= c= chas f2 cmask cCONS f1 f3 cCONS f4 f5 c\/ c/\ f0 * f2 f4 chas f2 cmask f3 f5 c= chas f2 cmask cCONS f0 f3 cCONS f4 f5 c\/ c/\ f0 * f2 f4 chas f2 cmask f3 f5
+- ((\b1. (b = b1)) b1) |- (((b = b1) ==> (?b1. (b = b1))) = (?b1. (b = b1)))
+T c==> * / c= f0 b0 f1 c= c==> c= f0 f1 c? / c= f0 b0 c? / c= f0 b0
++ ((\b1. (b = b1)) b1) |- (((b = b1) ==> (((has a) ((mask ((CONS b) m)) ((CONS x) s))) = ((b /\ (a x)) \/ ((has a) ((mask m) s))))) = (((has a) ((mask ((CONS b) m)) ((CONS x) s))) = ((b /\ (a x)) \/ ((has a) ((mask m) s)))))
+T c==> * / c= f0 b0 f1 c= c==> c= f0 f1 c= chas f2 cmask cCONS f0 f3 cCONS f4 f5 c\/ c/\ f0 * f2 f4 chas f2 cmask f3 f5 c= chas f2 cmask cCONS f0 f3 cCONS f4 f5 c\/ c/\ f0 * f2 f4 chas f2 cmask f3 f5
+- |- (((has a) NIL) = F)
+T c= chas f0 cNIL cF
++ |- (!b1. (((\b1. (b = b1)) b1) ==> (((has a) ((mask ((CONS b) m)) ((CONS x) s))) = ((b /\ (a x)) \/ ((has a) ((mask m) s))))))
+T c==> * / c= f0 b0 f1 c= chas f2 cmask cCONS f0 f3 cCONS f4 f5 c\/ c/\ f0 * f2 f4 chas f2 cmask f3 f5
++ |- ((b = b) = ((\b1. (b = b1)) b))
+T c= c= f0 f0 * / c= f0 b0 f0
+- |- (((mask NIL) s') = NIL)
+T c= cmask cNIL f0 cNIL
++ |- ((\x. (!s'. ((((has a) NIL) = F) /\ (((has a) ((CONS x) s')) = ((a x) \/ ((has a) s')))))) x)
+T * / ! c/\ c= chas f0 cNIL cF c= chas f0 cCONS b0 b1 c\/ * f0 b0 chas f0 b1 f1
++ |- ((((has a) ((mask ((CONS T) m)) ((CONS x) s))) = ((T /\ (a x)) \/ ((has a) ((mask m) s)))) /\ (((has a) ((mask ((CONS F) m)) ((CONS x) s))) = ((F /\ (a x)) \/ ((has a) ((mask m) s)))))
+T c/\ c= chas f0 cmask cCONS cT f1 cCONS f2 f3 c\/ c/\ cT * f0 f2 chas f0 cmask f1 f3 c= chas f0 cmask cCONS cF f1 cCONS f2 f3 c\/ c/\ cF * f0 f2 chas f0 cmask f1 f3
+- (!P. (((P T) /\ (P F)) ==> (!x. (P x)))) |- ((((P T) /\ (P F)) ==> (!x. (P x))) = T)
+T c==> ! c==> c/\ * b0 cT * b0 cF ! * b0 b1 c= c==> c/\ * f0 cT * f0 cF ! * f0 b0 cT
+- |- (((!P. (!Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x)))))) ==> ((\P. (!Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x)))))) P)) = ((\P. (!Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x)))))) P))
+T c= c==> ! ! c= c==> b0 ! * b1 b2 ! c==> b0 * b1 b2 * / ! c= c==> b0 ! * b1 b2 ! c==> b0 * b1 b2 f0 * / ! c= c==> b0 ! * b1 b2 ! c==> b0 * b1 b2 f0
++ |- (((has a) ((mask ((CONS T) m)) ((CONS x) s))) = ((T /\ (a x)) \/ ((has a) ((mask m) s))))
+T c= chas f0 cmask cCONS cT f1 cCONS f2 f3 c\/ c/\ cT * f0 f2 chas f0 cmask f1 f3
++ |- ((((has a) ((mask ((CONS F) m)) ((CONS x) s))) = ((F /\ (a x)) \/ ((has a) ((mask m) s)))) = ((((has a) ((mask ((CONS T) m)) ((CONS x) s))) = ((T /\ (a x)) \/ ((has a) ((mask m) s)))) /\ (((has a) ((mask ((CONS F) m)) ((CONS x) s))) = ((F /\ (a x)) \/ ((has a) ((mask m) s))))))
+T c= c= chas f0 cmask cCONS cF f1 cCONS f2 f3 c\/ c/\ cF * f0 f2 chas f0 cmask f1 f3 c/\ c= chas f0 cmask cCONS cT f1 cCONS f2 f3 c\/ c/\ cT * f0 f2 chas f0 cmask f1 f3 c= chas f0 cmask cCONS cF f1 cCONS f2 f3 c\/ c/\ cF * f0 f2 chas f0 cmask f1 f3
++ ((\b1. (b = b1)) b1) |- (b = b1)
+T c==> * / c= f0 b0 f1 c= f0 f1
+- (b = b1) |- ((b = b1) /\ (?b1. (b = b1)))
+T c==> c= f0 f1 c/\ c= f0 f1 c? / c= f0 b0
+- ((\b1. (b = b1)) b1) |- (((\b1. (b = b1)) b1) /\ (?b1. (b = b1)))
+T c==> * / c= f0 b0 f1 c/\ * / c= f0 b0 f1 c? / c= f0 b0
++ |- (((?b1. (b = b1)) ==> (((has a) ((mask ((CONS b) m)) ((CONS x) s))) = ((b /\ (a x)) \/ ((has a) ((mask m) s))))) = (((has a) ((mask ((CONS b) m)) ((CONS x) s))) = ((b /\ (a x)) \/ ((has a) ((mask m) s)))))
+T c= c==> c? / c= f0 b0 c= chas f1 cmask cCONS f0 f2 cCONS f3 f4 c\/ c/\ f0 * f1 f3 chas f1 cmask f2 f4 c= chas f1 cmask cCONS f0 f2 cCONS f3 f4 c\/ c/\ f0 * f1 f3 chas f1 cmask f2 f4
++ |- (((!P. (((P T) /\ (P F)) ==> (!x. (P x)))) ==> ((\P. (((P T) /\ (P F)) ==> (!x. (P x)))) P)) = ((\P. (((P T) /\ (P F)) ==> (!x. (P x)))) P))
+T c= c==> ! c==> c/\ * b0 cT * b0 cF ! * b0 b1 * / c==> c/\ * b0 cT * b0 cF ! * b0 b1 f0 * / c==> c/\ * b0 cT * b0 cF ! * b0 b1 f0
+- |- (((!P. (((P T) /\ (P F)) ==> (!x. (P x)))) ==> (!P. (((P T) /\ (P F)) ==> (!x. (P x))))) = (!P. (((P T) /\ (P F)) ==> (!x. (P x)))))
+T c= c==> ! c==> c/\ * b0 cT * b0 cF ! * b0 b1 ! c==> c/\ * b0 cT * b0 cF ! * b0 b1 ! c==> c/\ * b0 cT * b0 cF ! * b0 b1
+- (!P. (((P T) /\ (P F)) ==> (!x. (P x)))) |- ((!P. (((P T) /\ (P F)) ==> (!x. (P x)))) /\ (!P. (((P T) /\ (P F)) ==> (!x. (P x)))))
+T c==> ! c==> c/\ * b0 cT * b0 cF ! * b0 b1 c/\ ! c==> c/\ * b0 cT * b0 cF ! * b0 b1 ! c==> c/\ * b0 cT * b0 cF ! * b0 b1
+- |- (((!x. (((\b1. (b = b1)) x) ==> (?b1. (b = b1)))) ==> ((?b1. (b = b1)) ==> (?b1. (b = b1)))) = ((?b1. (b = b1)) ==> (?b1. (b = b1))))
+T c= c==> ! c==> * / c= f0 b1 b0 c? / c= f0 b1 c==> c? / c= f0 b0 c? / c= f0 b0 c==> c? / c= f0 b0 c? / c= f0 b0
+- |- (T = (((a x) \/ ((has a) ((mask m) s))) = ((a x) \/ ((has a) ((mask m) s)))))
+T c= cT c= c\/ * f0 f1 chas f0 cmask f2 f3 c\/ * f0 f1 chas f0 cmask f2 f3
+- |- (((mask m') NIL) = NIL)
+T c= cmask f0 cNIL cNIL
+- |- ((b = b1) ==> (?b1. (b = b1)))
+T c==> c= f0 f1 c? / c= f0 b0
+- |- ((!P. (((P T) /\ (P F)) ==> (!x. (P x)))) ==> (!P. (((P T) /\ (P F)) ==> (!x. (P x)))))
+T c==> ! c==> c/\ * b0 cT * b0 cF ! * b0 b1 ! c==> c/\ * b0 cT * b0 cF ! * b0 b1
+- (!P. (((P T) /\ (P F)) ==> (!x. (P x)))), ((P T) /\ (P F)) |- (((P T) /\ (P F)) /\ (!x. (P x)))
+T c==> ! c==> c/\ * b0 cT * b0 cF ! * b0 b1 c==> c/\ * f0 cT * f0 cF c/\ c/\ * f0 cT * f0 cF ! * f0 b0
+- ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x)))) |- ((!x. (P ==> (Q x))) = (P ==> (!x. (Q x))))
+T c==> c= c==> f0 ! * f1 b0 ! c==> f0 * f1 b0 c= ! c==> f0 * f1 b0 c==> f0 ! * f1 b0
+- (b = b1) |- ((\b1. (b = b1)) b1)
+T c==> c= f0 f1 * / c= f0 b0 f1
+- |- ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))
+T c= c==> f0 ! * f1 b0 ! c==> f0 * f1 b0
+- (!P. (((P T) /\ (P F)) ==> (!x. (P x)))), ((P T) /\ (P F)) |- ((!P. (((P T) /\ (P F)) ==> (!x. (P x)))) /\ (!x. (P x)))
+T c==> ! c==> c/\ * b0 cT * b0 cF ! * b0 b1 c==> c/\ * f0 cT * f0 cF c/\ ! c==> c/\ * b0 cT * b0 cF ! * b0 b1 ! * f0 b0
+- (b = b1) |- ((((has a) ((mask ((CONS b1) m)) ((CONS x) s))) = ((b1 /\ (a x)) \/ ((has a) ((mask m) s)))) = (((has a) ((mask ((CONS b) m)) ((CONS x) s))) = ((b /\ (a x)) \/ ((has a) ((mask m) s)))))
+T c==> c= f0 f1 c= c= chas f2 cmask cCONS f1 f3 cCONS f4 f5 c\/ c/\ f1 * f2 f4 chas f2 cmask f3 f5 c= chas f2 cmask cCONS f0 f3 cCONS f4 f5 c\/ c/\ f0 * f2 f4 chas f2 cmask f3 f5
+- |- (((!Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))) ==> ((\Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))) Q)) = ((\Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))) Q))
+T c= c==> ! c= c==> f0 ! * b0 b1 ! c==> f0 * b0 b1 * / c= c==> f0 ! * b0 b1 ! c==> f0 * b0 b1 f1 * / c= c==> f0 ! * b0 b1 ! c==> f0 * b0 b1 f1
+- |- ((((\b1. (b = b1)) b1) ==> (?b1. (b = b1))) = T)
+T c= c==> * / c= f0 b0 f1 c? / c= f0 b0 cT

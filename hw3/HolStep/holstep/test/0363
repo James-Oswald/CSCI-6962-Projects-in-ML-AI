@@ -1,0 +1,161 @@
+N Seq.mask_cons
+C |- (!b. (!m. (!x. (!s. (((mask ((CONS b) m)) ((CONS x) s)) = ((cat ((nseq (((COND b) (NUMERAL (BIT1 _0))) (NUMERAL _0))) x)) ((mask m) s)))))))
+T c= cmask cCONS f0 f1 cCONS f2 f3 ccat cnseq cCOND f0 cNUMERAL cBIT1 c_0 cNUMERAL c_0 f2 cmask f1 f3
+D TRUTH
+A |- T
+T cT
+D COND_CLAUSES
+A |- (!t1. (!t2. (((((COND T) t1) t2) = t1) /\ ((((COND F) t1) t2) = t2))))
+T c/\ c= cCOND cT f0 f1 f0 c= cCOND cF f0 f1 f1
+D ONE
+A |- ((NUMERAL (BIT1 _0)) = (SUC (NUMERAL _0)))
+T c= cNUMERAL cBIT1 c_0 cSUC cNUMERAL c_0
+D bool_elim
+A |- (!P. (((P T) /\ (P F)) ==> (!x. (P x))))
+T c==> c/\ * f0 cT * f0 cF ! * f0 b0
+D Ssrnat.iter
+A |- (((((iter (SUC n)) f) x) = (f (((iter n) f) x))) /\ ((((iter (NUMERAL _0)) f) x) = x))
+T c/\ c= citer cSUC f0 f1 f2 * f1 citer f0 f1 f2 c= citer cNUMERAL c_0 f1 f2 f2
+D Seq.ncons
+A |- (!n. (!x. (((ncons n) x) = ((iter n) (CONS x)))))
+T c= * * part cncons f0 f1 * * part citer f0 * part cCONS f1
+D Seq.nseq
+A |- (!n. (!x. (((nseq n) x) = (((ncons n) x) NIL))))
+T c= cnseq f0 f1 cncons f0 f1 cNIL
+D Seq.cat0s
+A |- (!s. (((cat NIL) s) = s))
+T c= ccat cNIL f0 f0
+D Seq.cat1s
+A |- (!x. (!s. (((cat ((CONS x) NIL)) s) = ((CONS x) s))))
+T c= ccat cCONS f0 cNIL f1 cCONS f0 f1
+D Seq.mask
+A |- ((((mask NIL) s') = NIL) /\ ((((mask m') NIL) = NIL) /\ (((mask ((CONS b) m')) ((CONS x) s')) = (((COND b) ((CONS x) ((mask m') s'))) ((mask m') s')))))
+T c/\ c= cmask cNIL f0 cNIL c/\ c= cmask f1 cNIL cNIL c= cmask cCONS f2 f1 cCONS f3 f0 cCOND f2 cCONS f3 cmask f1 f0 cmask f1 f0
++ |- (((CONS x) ((mask m) s)) = ((cat (((iter (NUMERAL (BIT1 _0))) (CONS x)) NIL)) ((mask m) s)))
+T c= cCONS f0 cmask f1 f2 ccat citer cNUMERAL cBIT1 c_0 * part cCONS f0 cNIL cmask f1 f2
++ |- ((((CONS x) ((mask m) s)) = ((cat ((CONS x) NIL)) ((mask m) s))) = (((CONS x) ((mask m) s)) = ((cat ((CONS x) (((iter (NUMERAL _0)) (CONS x)) NIL))) ((mask m) s))))
+T c= c= cCONS f0 cmask f1 f2 ccat cCONS f0 cNIL cmask f1 f2 c= cCONS f0 cmask f1 f2 ccat cCONS f0 citer cNUMERAL c_0 * part cCONS f0 cNIL cmask f1 f2
+- ((P T) /\ (P F)) |- ((!P. (((P T) /\ (P F)) ==> (!x. (P x)))) ==> (!x. (P x)))
+T c==> c/\ * f0 cT * f0 cF c==> ! c==> c/\ * b0 cT * b0 cF ! * b0 b1 ! * f0 b0
+- ((!x. (P ==> (Q x))) = (P ==> (!x. (Q x)))) |- ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))
+T c==> c= ! c==> f0 * f1 b0 c==> f0 ! * f1 b0 c= c==> f0 ! * f1 b0 ! c==> f0 * f1 b0
+- |- ((\P. (!Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x)))))) P)
+T * / ! c= c==> b0 ! * b1 b2 ! c==> b0 * b1 b2 f0
+- (b = b1) |- ((((mask ((CONS b1) m)) ((CONS x) s)) = ((cat ((nseq (((COND b1) (NUMERAL (BIT1 _0))) (NUMERAL _0))) x)) ((mask m) s))) = (((mask ((CONS b) m)) ((CONS x) s)) = ((cat ((nseq (((COND b) (NUMERAL (BIT1 _0))) (NUMERAL _0))) x)) ((mask m) s))))
+T c==> c= f0 f1 c= c= cmask cCONS f1 f2 cCONS f3 f4 ccat cnseq cCOND f1 cNUMERAL cBIT1 c_0 cNUMERAL c_0 f3 cmask f2 f4 c= cmask cCONS f0 f2 cCONS f3 f4 ccat cnseq cCOND f0 cNUMERAL cBIT1 c_0 cNUMERAL c_0 f3 cmask f2 f4
++ (b = b1) |- ((((mask ((CONS b1) m)) ((CONS x) s)) = ((cat ((nseq (((COND b) (NUMERAL (BIT1 _0))) (NUMERAL _0))) x)) ((mask m) s))) = (((mask ((CONS b) m)) ((CONS x) s)) = ((cat ((nseq (((COND b) (NUMERAL (BIT1 _0))) (NUMERAL _0))) x)) ((mask m) s))))
+T c==> c= f0 f1 c= c= cmask cCONS f1 f2 cCONS f3 f4 ccat cnseq cCOND f0 cNUMERAL cBIT1 c_0 cNUMERAL c_0 f3 cmask f2 f4 c= cmask cCONS f0 f2 cCONS f3 f4 ccat cnseq cCOND f0 cNUMERAL cBIT1 c_0 cNUMERAL c_0 f3 cmask f2 f4
+- (!P. (((P T) /\ (P F)) ==> (!x. (P x)))) |- ((\P. (((P T) /\ (P F)) ==> (!x. (P x)))) P)
+T c==> ! c==> c/\ * b0 cT * b0 cF ! * b0 b1 * / c==> c/\ * b0 cT * b0 cF ! * b0 b1 f0
++ |- ((!x. (!s. (((mask ((CONS b) m)) ((CONS x) s)) = ((cat ((nseq (((COND b) (NUMERAL (BIT1 _0))) (NUMERAL _0))) x)) ((mask m) s))))) = T)
+T c= ! ! c= cmask cCONS f0 f1 cCONS b0 b1 ccat cnseq cCOND f0 cNUMERAL cBIT1 c_0 cNUMERAL c_0 b0 cmask f1 b1 cT
++ |- (((!b. (((mask ((CONS b) m)) ((CONS x) s)) = ((cat ((nseq (((COND b) (NUMERAL (BIT1 _0))) (NUMERAL _0))) x)) ((mask m) s)))) ==> ((\b. (((mask ((CONS b) m)) ((CONS x) s)) = ((cat ((nseq (((COND b) (NUMERAL (BIT1 _0))) (NUMERAL _0))) x)) ((mask m) s)))) b1)) = ((\b. (((mask ((CONS b) m)) ((CONS x) s)) = ((cat ((nseq (((COND b) (NUMERAL (BIT1 _0))) (NUMERAL _0))) x)) ((mask m) s)))) b1))
+T c= c==> ! c= cmask cCONS b0 f0 cCONS f1 f2 ccat cnseq cCOND b0 cNUMERAL cBIT1 c_0 cNUMERAL c_0 f1 cmask f0 f2 * / c= cmask cCONS b0 f0 cCONS f1 f2 ccat cnseq cCOND b0 cNUMERAL cBIT1 c_0 cNUMERAL c_0 f1 cmask f0 f2 f3 * / c= cmask cCONS b0 f0 cCONS f1 f2 ccat cnseq cCOND b0 cNUMERAL cBIT1 c_0 cNUMERAL c_0 f1 cmask f0 f2 f3
+- |- (!b1. (((\b1. (b = b1)) b1) ==> (?b1. (b = b1))))
+T c==> * / c= f0 b0 f1 c? / c= f0 b0
++ |- ((\x. (((ncons n) x) = ((iter n) (CONS x)))) x)
+T * / c= * * part cncons f0 b0 * * part citer f0 * part cCONS b0 f1
++ |- ((\b1. (b = b1)) b)
+T * / c= f0 b0 f0
++ |- ((\s. (((cat ((CONS x) NIL)) s) = ((CONS x) s))) s)
+T * / c= ccat cCONS f0 cNIL b0 cCONS f0 b0 f1
++ |- (((!x. (!s. (((cat ((CONS x) NIL)) s) = ((CONS x) s)))) ==> ((\x. (!s. (((cat ((CONS x) NIL)) s) = ((CONS x) s)))) x)) = ((\x. (!s. (((cat ((CONS x) NIL)) s) = ((CONS x) s)))) x))
+T c= c==> ! ! c= ccat cCONS b0 cNIL b1 cCONS b0 b1 * / ! c= ccat cCONS b0 cNIL b1 cCONS b0 b1 f0 * / ! c= ccat cCONS b0 cNIL b1 cCONS b0 b1 f0
++ |- ((((mask ((CONS b) m)) ((CONS x) s)) = ((cat ((nseq (((COND b) (NUMERAL (BIT1 _0))) (NUMERAL _0))) x)) ((mask m) s))) = T)
+T c= c= cmask cCONS f0 f1 cCONS f2 f3 ccat cnseq cCOND f0 cNUMERAL cBIT1 c_0 cNUMERAL c_0 f2 cmask f1 f3 cT
++ |- (((CONS x) ((mask m) s)) = ((cat (((iter (SUC (NUMERAL _0))) (CONS x)) NIL)) ((mask m) s)))
+T c= cCONS f0 cmask f1 f2 ccat citer cSUC cNUMERAL c_0 * part cCONS f0 cNIL cmask f1 f2
+- (!P. (((P T) /\ (P F)) ==> (!x. (P x)))), ((P T) /\ (P F)) |- (!x. (P x))
+T c==> ! c==> c/\ * b0 cT * b0 cF ! * b0 b1 c==> c/\ * f0 cT * f0 cF ! * f0 b0
++ |- ((!s. (((mask ((CONS b) m)) ((CONS x) s)) = ((cat ((nseq (((COND b) (NUMERAL (BIT1 _0))) (NUMERAL _0))) x)) ((mask m) s)))) = T)
+T c= ! c= cmask cCONS f0 f1 cCONS f2 b0 ccat cnseq cCOND f0 cNUMERAL cBIT1 c_0 cNUMERAL c_0 f2 cmask f1 b0 cT
++ |- ((\x. (!s. (((cat ((CONS x) NIL)) s) = ((CONS x) s)))) x)
+T * / ! c= ccat cCONS b0 cNIL b1 cCONS b0 b1 f0
++ |- (((CONS x) ((mask m) s)) = ((cat ((CONS x) NIL)) ((mask m) s)))
+T c= cCONS f0 cmask f1 f2 ccat cCONS f0 cNIL cmask f1 f2
+- |- ((b = b1) = ((\b1. (b = b1)) b1))
+T c= c= f0 f1 * / c= f0 b0 f1
++ (b = b1) |- ((b = b1) /\ (((mask ((CONS b) m)) ((CONS x) s)) = ((cat ((nseq (((COND b) (NUMERAL (BIT1 _0))) (NUMERAL _0))) x)) ((mask m) s))))
+T c==> c= f0 f1 c/\ c= f0 f1 c= cmask cCONS f0 f2 cCONS f3 f4 ccat cnseq cCOND f0 cNUMERAL cBIT1 c_0 cNUMERAL c_0 f3 cmask f2 f4
++ |- (((!x. (((\b1. (b = b1)) x) ==> (((mask ((CONS b) m)) ((CONS x) s)) = ((cat ((nseq (((COND b) (NUMERAL (BIT1 _0))) (NUMERAL _0))) x)) ((mask m) s))))) ==> ((?b1. (b = b1)) ==> (((mask ((CONS b) m)) ((CONS x) s)) = ((cat ((nseq (((COND b) (NUMERAL (BIT1 _0))) (NUMERAL _0))) x)) ((mask m) s))))) = ((?b1. (b = b1)) ==> (((mask ((CONS b) m)) ((CONS x) s)) = ((cat ((nseq (((COND b) (NUMERAL (BIT1 _0))) (NUMERAL _0))) x)) ((mask m) s)))))
+T c= c==> ! c==> * / c= f0 b1 b0 c= cmask cCONS f0 f1 cCONS f2 f3 ccat cnseq cCOND f0 cNUMERAL cBIT1 c_0 cNUMERAL c_0 f2 cmask f1 f3 c==> c? / c= f0 b0 c= cmask cCONS f0 f1 cCONS f2 f3 ccat cnseq cCOND f0 cNUMERAL cBIT1 c_0 cNUMERAL c_0 f2 cmask f1 f3 c==> c? / c= f0 b0 c= cmask cCONS f0 f1 cCONS f2 f3 ccat cnseq cCOND f0 cNUMERAL cBIT1 c_0 cNUMERAL c_0 f2 cmask f1 f3
++ |- ((\n. (!x. (((ncons n) x) = ((iter n) (CONS x))))) n)
+T * / ! c= * * part cncons b0 b1 * * part citer b0 * part cCONS b1 f0
++ |- (((mask ((CONS b) m')) ((CONS x) s')) = (((COND b) ((CONS x) ((mask m') s'))) ((mask m') s')))
+T c= cmask cCONS f0 f1 cCONS f2 f3 cCOND f0 cCONS f2 cmask f1 f3 cmask f1 f3
++ |- ((((COND F) ((CONS x) ((mask m) s))) ((mask m) s)) = ((cat ((nseq (NUMERAL _0)) x)) ((mask m) s)))
+T c= cCOND cF cCONS f0 cmask f1 f2 cmask f1 f2 ccat cnseq cNUMERAL c_0 f0 cmask f1 f2
++ |- (((mask m) s) = ((cat NIL) ((mask m) s)))
+T c= cmask f0 f1 ccat cNIL cmask f0 f1
++ |- ((\P. (((P T) /\ (P F)) ==> (!x. (P x)))) P)
+T * / c==> c/\ * b0 cT * b0 cF ! * b0 b1 f0
+- (b = b1) |- (((mask ((CONS b1) m)) ((CONS x) s)) = ((cat ((nseq (((COND b1) (NUMERAL (BIT1 _0))) (NUMERAL _0))) x)) ((mask m) s)))
+T c==> c= f0 f1 c= cmask cCONS f1 f2 cCONS f3 f4 ccat cnseq cCOND f1 cNUMERAL cBIT1 c_0 cNUMERAL c_0 f3 cmask f2 f4
++ |- (((!x. (((nseq n) x) = (((ncons n) x) NIL))) ==> ((\x. (((nseq n) x) = (((ncons n) x) NIL))) x)) = ((\x. (((nseq n) x) = (((ncons n) x) NIL))) x))
+T c= c==> ! c= cnseq f0 b0 cncons f0 b0 cNIL * / c= cnseq f0 b0 cncons f0 b0 cNIL f1 * / c= cnseq f0 b0 cncons f0 b0 cNIL f1
++ |- ((b = b1) ==> (((mask ((CONS b) m)) ((CONS x) s)) = ((cat ((nseq (((COND b) (NUMERAL (BIT1 _0))) (NUMERAL _0))) x)) ((mask m) s))))
+T c==> c= f0 f1 c= cmask cCONS f0 f2 cCONS f3 f4 ccat cnseq cCOND f0 cNUMERAL cBIT1 c_0 cNUMERAL c_0 f3 cmask f2 f4
+- |- ((?b1. (b = b1)) ==> (?b1. (b = b1)))
+T c==> c? / c= f0 b0 c? / c= f0 b0
++ |- ((x = x) = T)
+T c= c= f0 f0 cT
++ |- ((((CONS x) ((mask m) s)) = ((cat ((nseq (NUMERAL (BIT1 _0))) x)) ((mask m) s))) = ((((COND T) ((CONS x) ((mask m) s))) ((mask m) s)) = ((cat ((nseq (NUMERAL (BIT1 _0))) x)) ((mask m) s))))
+T c= c= cCONS f0 cmask f1 f2 ccat cnseq cNUMERAL cBIT1 c_0 f0 cmask f1 f2 c= cCOND cT cCONS f0 cmask f1 f2 cmask f1 f2 ccat cnseq cNUMERAL cBIT1 c_0 f0 cmask f1 f2
++ |- (((((COND F) ((CONS x) ((mask m) s))) ((mask m) s)) = ((cat ((nseq (NUMERAL _0)) x)) ((mask m) s))) = (((mask ((CONS F) m)) ((CONS x) s)) = ((cat ((nseq (((COND F) (NUMERAL (BIT1 _0))) (NUMERAL _0))) x)) ((mask m) s))))
+T c= c= cCOND cF cCONS f0 cmask f1 f2 cmask f1 f2 ccat cnseq cNUMERAL c_0 f0 cmask f1 f2 c= cmask cCONS cF f1 cCONS f0 f2 ccat cnseq cCOND cF cNUMERAL cBIT1 c_0 cNUMERAL c_0 f0 cmask f1 f2
++ |- ((((CONS x) ((mask m) s)) = ((CONS x) ((mask m) s))) = (((CONS x) ((mask m) s)) = ((cat ((CONS x) NIL)) ((mask m) s))))
+T c= c= cCONS f0 cmask f1 f2 cCONS f0 cmask f1 f2 c= cCONS f0 cmask f1 f2 ccat cCONS f0 cNIL cmask f1 f2
+- |- ((\Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))) Q)
+T * / c= c==> f0 ! * b0 b1 ! c==> f0 * b0 b1 f1
++ |- ((\x. (((nseq n) x) = (((ncons n) x) NIL))) x)
+T * / c= cnseq f0 b0 cncons f0 b0 cNIL f1
+- (b = b1) |- (b1 = b)
+T c==> c= f0 f1 c= f1 f0
++ |- (((?b1. (b = b1)) ==> (((mask ((CONS b) m)) ((CONS x) s)) = ((cat ((nseq (((COND b) (NUMERAL (BIT1 _0))) (NUMERAL _0))) x)) ((mask m) s)))) = (((mask ((CONS b) m)) ((CONS x) s)) = ((cat ((nseq (((COND b) (NUMERAL (BIT1 _0))) (NUMERAL _0))) x)) ((mask m) s))))
+T c= c==> c? / c= f0 b0 c= cmask cCONS f0 f1 cCONS f2 f3 ccat cnseq cCOND f0 cNUMERAL cBIT1 c_0 cNUMERAL c_0 f2 cmask f1 f3 c= cmask cCONS f0 f1 cCONS f2 f3 ccat cnseq cCOND f0 cNUMERAL cBIT1 c_0 cNUMERAL c_0 f2 cmask f1 f3
++ |- ((\b. (((mask ((CONS b) m)) ((CONS x) s)) = ((cat ((nseq (((COND b) (NUMERAL (BIT1 _0))) (NUMERAL _0))) x)) ((mask m) s)))) b1)
+T * / c= cmask cCONS b0 f0 cCONS f1 f2 ccat cnseq cCOND b0 cNUMERAL cBIT1 c_0 cNUMERAL c_0 f1 cmask f0 f2 f3
++ |- ((((mask ((CONS T) m)) ((CONS x) s)) = ((cat ((nseq (((COND T) (NUMERAL (BIT1 _0))) (NUMERAL _0))) x)) ((mask m) s))) /\ (((mask ((CONS F) m)) ((CONS x) s)) = ((cat ((nseq (((COND F) (NUMERAL (BIT1 _0))) (NUMERAL _0))) x)) ((mask m) s))))
+T c/\ c= cmask cCONS cT f0 cCONS f1 f2 ccat cnseq cCOND cT cNUMERAL cBIT1 c_0 cNUMERAL c_0 f1 cmask f0 f2 c= cmask cCONS cF f0 cCONS f1 f2 ccat cnseq cCOND cF cNUMERAL cBIT1 c_0 cNUMERAL c_0 f1 cmask f0 f2
+- ((\b1. (b = b1)) b1) |- (((b = b1) ==> (?b1. (b = b1))) = (?b1. (b = b1)))
+T c==> * / c= f0 b0 f1 c= c==> c= f0 f1 c? / c= f0 b0 c? / c= f0 b0
++ |- (((!n. (!x. (((nseq n) x) = (((ncons n) x) NIL)))) ==> ((\n. (!x. (((nseq n) x) = (((ncons n) x) NIL)))) n)) = ((\n. (!x. (((nseq n) x) = (((ncons n) x) NIL)))) n))
+T c= c==> ! ! c= cnseq b0 b1 cncons b0 b1 cNIL * / ! c= cnseq b0 b1 cncons b0 b1 cNIL f0 * / ! c= cnseq b0 b1 cncons b0 b1 cNIL f0
+- |- (((mask NIL) s') = NIL)
+T c= cmask cNIL f0 cNIL
+- (!P. (((P T) /\ (P F)) ==> (!x. (P x)))) |- ((((P T) /\ (P F)) ==> (!x. (P x))) = T)
+T c==> ! c==> c/\ * b0 cT * b0 cF ! * b0 b1 c= c==> c/\ * f0 cT * f0 cF ! * f0 b0 cT
+- |- (((!P. (!Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x)))))) ==> ((\P. (!Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x)))))) P)) = ((\P. (!Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x)))))) P))
+T c= c==> ! ! c= c==> b0 ! * b1 b2 ! c==> b0 * b1 b2 * / ! c= c==> b0 ! * b1 b2 ! c==> b0 * b1 b2 f0 * / ! c= c==> b0 ! * b1 b2 ! c==> b0 * b1 b2 f0
+- (b = b1) |- ((b = b1) /\ (?b1. (b = b1)))
+T c==> c= f0 f1 c/\ c= f0 f1 c? / c= f0 b0
+- ((\b1. (b = b1)) b1) |- (((\b1. (b = b1)) b1) /\ (?b1. (b = b1)))
+T c==> * / c= f0 b0 f1 c/\ * / c= f0 b0 f1 c? / c= f0 b0
+- |- (((!P. (((P T) /\ (P F)) ==> (!x. (P x)))) ==> (!P. (((P T) /\ (P F)) ==> (!x. (P x))))) = (!P. (((P T) /\ (P F)) ==> (!x. (P x)))))
+T c= c==> ! c==> c/\ * b0 cT * b0 cF ! * b0 b1 ! c==> c/\ * b0 cT * b0 cF ! * b0 b1 ! c==> c/\ * b0 cT * b0 cF ! * b0 b1
+- (!P. (((P T) /\ (P F)) ==> (!x. (P x)))) |- ((!P. (((P T) /\ (P F)) ==> (!x. (P x)))) /\ (!P. (((P T) /\ (P F)) ==> (!x. (P x)))))
+T c==> ! c==> c/\ * b0 cT * b0 cF ! * b0 b1 c/\ ! c==> c/\ * b0 cT * b0 cF ! * b0 b1 ! c==> c/\ * b0 cT * b0 cF ! * b0 b1
+- |- (((!x. (((\b1. (b = b1)) x) ==> (?b1. (b = b1)))) ==> ((?b1. (b = b1)) ==> (?b1. (b = b1)))) = ((?b1. (b = b1)) ==> (?b1. (b = b1))))
+T c= c==> ! c==> * / c= f0 b1 b0 c? / c= f0 b1 c==> c? / c= f0 b0 c? / c= f0 b0 c==> c? / c= f0 b0 c? / c= f0 b0
+- |- (((mask m') NIL) = NIL)
+T c= cmask f0 cNIL cNIL
+- |- ((b = b1) ==> (?b1. (b = b1)))
+T c==> c= f0 f1 c? / c= f0 b0
+- |- ((!P. (((P T) /\ (P F)) ==> (!x. (P x)))) ==> (!P. (((P T) /\ (P F)) ==> (!x. (P x)))))
+T c==> ! c==> c/\ * b0 cT * b0 cF ! * b0 b1 ! c==> c/\ * b0 cT * b0 cF ! * b0 b1
+- (!P. (((P T) /\ (P F)) ==> (!x. (P x)))), ((P T) /\ (P F)) |- (((P T) /\ (P F)) /\ (!x. (P x)))
+T c==> ! c==> c/\ * b0 cT * b0 cF ! * b0 b1 c==> c/\ * f0 cT * f0 cF c/\ c/\ * f0 cT * f0 cF ! * f0 b0
+- ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x)))) |- ((!x. (P ==> (Q x))) = (P ==> (!x. (Q x))))
+T c==> c= c==> f0 ! * f1 b0 ! c==> f0 * f1 b0 c= ! c==> f0 * f1 b0 c==> f0 ! * f1 b0
+- (b = b1) |- ((\b1. (b = b1)) b1)
+T c==> c= f0 f1 * / c= f0 b0 f1
+- |- ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))
+T c= c==> f0 ! * f1 b0 ! c==> f0 * f1 b0
+- (!P. (((P T) /\ (P F)) ==> (!x. (P x)))), ((P T) /\ (P F)) |- ((!P. (((P T) /\ (P F)) ==> (!x. (P x)))) /\ (!x. (P x)))
+T c==> ! c==> c/\ * b0 cT * b0 cF ! * b0 b1 c==> c/\ * f0 cT * f0 cF c/\ ! c==> c/\ * b0 cT * b0 cF ! * b0 b1 ! * f0 b0
+- |- (T = (((mask m) s) = ((mask m) s)))
+T c= cT c= cmask f0 f1 cmask f0 f1
+- |- (((!Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))) ==> ((\Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))) Q)) = ((\Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))) Q))
+T c= c==> ! c= c==> f0 ! * b0 b1 ! c==> f0 * b0 b1 * / c= c==> f0 ! * b0 b1 ! c==> f0 * b0 b1 f1 * / c= c==> f0 ! * b0 b1 ! c==> f0 * b0 b1 f1
+- |- ((((\b1. (b = b1)) b1) ==> (?b1. (b = b1))) = T)
+T c= c==> * / c= f0 b0 f1 c? / c= f0 b0 cT

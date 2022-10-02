@@ -1,0 +1,180 @@
+N Dangeyj.not_betwn
+C |- (((~ ((MEM ram1) r)) /\ (~ ((MEM ram2) r))) ==> ((((betwn r) ram1) ram2) = r))
+T c==> c/\ c~ cMEM f0 f1 c~ cMEM f2 f1 c= cbetwn f1 f0 f2 f1
+D TRUTH
+A |- T
+T cT
+D ETA_AX
+A |- (!t. ((\x. (t x)) = t))
+T c= / * f0 b0 f0
+D SELECT_AX
+A |- (!P. (!x. ((P x) ==> (P (@ P)))))
+T c==> * f0 f1 * f0 c@ f0
+D BOOL_CASES_AX
+A |- (!t. ((t = T) \/ (t = F)))
+T c\/ c= f0 cT c= f0 cF
+D COND_CLAUSES
+A |- (!t1. (!t2. (((((COND T) t1) t2) = t1) /\ ((((COND F) t1) t2) = t2))))
+T c/\ c= cCOND cT f0 f1 f0 c= cCOND cF f0 f1 f1
+D LET_DEF
+A |- (!f. (!x. (((LET f) x) = (f x))))
+T c= cLET f0 f1 * f0 f1
+D LET_END_DEF
+A |- (!t. ((LET_END t) = t))
+T c= cLET_END f0 f0
+D GABS_DEF
+A |- (!P. ((GABS P) = (@ P)))
+T c= cGABS f0 c@ f0
+D GEQ_DEF
+A |- (!a. (!b. (((GEQ a) b) = (a = b))))
+T c= cGEQ f0 f1 c= f0 f1
+D pair_RECURSION
+A |- (!PAIR'. (?fn. (!a0. (!a1. ((fn (a0 , a1)) = ((PAIR' a0) a1))))))
+T c? / ! ! c= * b0 c, b1 b2 * * f0 b1 b2
+D APPEND
+A |- ((!l. (((APPEND NIL) l) = l)) /\ (!h. (!t. (!l. (((APPEND ((CONS h) t)) l) = ((CONS h) ((APPEND t) l)))))))
+T c/\ ! c= cAPPEND cNIL b0 b0 ! ! ! c= cAPPEND cCONS b0 b1 b2 cCONS b0 cAPPEND b1 b2
+D NOT_IN_EMPTY
+A |- (!x. (~ (x IN EMPTY)))
+T c~ cIN f0 part cEMPTY
+D set_of_list
+A |- (((set_of_list NIL) = EMPTY) /\ ((set_of_list ((CONS h) t)) = (h INSERT (set_of_list t))))
+T c/\ c= * part cset_of_list cNIL part cEMPTY c= * part cset_of_list cCONS f0 f1 * * part cINSERT f0 * part cset_of_list f1
+D Tame_defs.betwn
+A |- (!ram2. (!ram1. (!vs. ((((betwn vs) ram1) ram2) = ((LET (GABS (\f. (!pre1. (!post1. ((GEQ (f (pre1 , post1))) (LET_END (((COND (ram2 IN (set_of_list post1))) ((LET (GABS (\f. (!pre2. (!post2. ((GEQ (f (pre2 , post2))) (LET_END pre2))))))) ((split_at ram2) post1))) ((LET (GABS (\f. (!pre2. (!post2. ((GEQ (f (pre2 , post2))) (LET_END ((APPEND post1) pre2)))))))) ((split_at ram2) pre1)))))))))) ((split_at ram1) vs))))))
+T c= cbetwn f0 f1 f2 cLET * part cGABS / ! ! cGEQ * b0 c, b1 b2 cLET_END cCOND cIN f2 * part cset_of_list b2 cLET * part cGABS / ! ! cGEQ * b3 c, b3 b4 cLET_END b3 csplit_at f2 b2 cLET * part cGABS / ! ! cGEQ * b3 c, b3 b4 cLET_END cAPPEND b2 b3 csplit_at f2 b1 csplit_at f1 f0
+D Dangeyj.not_mem_split_at
+A |- (!r. ((~ ((MEM ram1) r)) ==> (((split_at ram1) r) = (r , NIL))))
+T c==> c~ cMEM f0 f1 c= csplit_at f0 f1 c, f1 cNIL
++ (~ ((MEM ram2) r)) |- ((((~ F) ==> (((GABS (\f. (!pre2. (!post2. ((GEQ (f (pre2 , post2))) ((APPEND NIL) pre2)))))) ((split_at ram2) r)) = r)) ==> ((((COND (ram2 IN (set_of_list NIL))) ((GABS (\f. (!pre2. (!post2. ((GEQ (f (pre2 , post2))) pre2))))) ((split_at ram2) NIL))) ((GABS (\f. (!pre2. (!post2. ((GEQ (f (pre2 , post2))) ((APPEND NIL) pre2)))))) ((split_at ram2) r))) = (((COND F) ((GABS (\f. (!pre2. (!post2. ((GEQ (f (pre2 , post2))) pre2))))) ((split_at ram2) NIL))) r))) = ((((COND (ram2 IN (set_of_list NIL))) ((GABS (\f. (!pre2. (!post2. ((GEQ (f (pre2 , post2))) pre2))))) ((split_at ram2) NIL))) ((GABS (\f. (!pre2. (!post2. ((GEQ (f (pre2 , post2))) ((APPEND NIL) pre2)))))) ((split_at ram2) r))) = (((COND F) ((GABS (\f. (!pre2. (!post2. ((GEQ (f (pre2 , post2))) pre2))))) ((split_at ram2) NIL))) r)))
+T c==> c~ cMEM f0 f1 c= c==> c==> c~ cF c= cGABS / ! ! cGEQ * b0 c, b1 b2 cAPPEND cNIL b1 csplit_at f0 f1 f1 c= cCOND cIN f0 * part cset_of_list cNIL cGABS / ! ! cGEQ * b0 c, b1 b2 b1 csplit_at f0 cNIL cGABS / ! ! cGEQ * b0 c, b1 b2 cAPPEND cNIL b1 csplit_at f0 f1 cCOND cF cGABS / ! ! cGEQ * b0 c, b1 b2 b1 csplit_at f0 cNIL f1 c= cCOND cIN f0 * part cset_of_list cNIL cGABS / ! ! cGEQ * b0 c, b1 b2 b1 csplit_at f0 cNIL cGABS / ! ! cGEQ * b0 c, b1 b2 cAPPEND cNIL b1 csplit_at f0 f1 cCOND cF cGABS / ! ! cGEQ * b0 c, b1 b2 b1 csplit_at f0 cNIL f1
++ ((~ ((MEM ram1) r)) /\ (~ ((MEM ram2) r))) |- (((~ ((MEM ram1) r)) /\ (~ ((MEM ram2) r))) /\ (((GABS (\f. (!pre1. (!post1. ((GEQ (f (pre1 , post1))) (((COND (ram2 IN (set_of_list post1))) ((GABS (\f. (!pre2. (!post2. ((GEQ (f (pre2 , post2))) pre2))))) ((split_at ram2) post1))) ((GABS (\f. (!pre2. (!post2. ((GEQ (f (pre2 , post2))) ((APPEND post1) pre2)))))) ((split_at ram2) pre1)))))))) ((split_at ram1) r)) = r))
+T c==> c/\ c~ cMEM f0 f1 c~ cMEM f2 f1 c/\ c/\ c~ cMEM f0 f1 c~ cMEM f2 f1 c= cGABS / ! ! cGEQ * b0 c, b1 b2 cCOND cIN f2 * part cset_of_list b2 cGABS / ! ! cGEQ * b3 c, b3 b4 b3 csplit_at f2 b2 cGABS / ! ! cGEQ * b3 c, b3 b4 cAPPEND b2 b3 csplit_at f2 b1 csplit_at f0 f1 f1
++ |- (((!t'. (!e'. (((ram2 IN (set_of_list post1)) = g') ==> ((g' ==> (((GABS (\f. (!pre2. (!post2. ((GEQ (f (pre2 , post2))) pre2))))) ((split_at ram2) post1)) = t')) ==> (((~ g') ==> (((GABS (\f. (!pre2. (!post2. ((GEQ (f (pre2 , post2))) ((APPEND post1) pre2)))))) ((split_at ram2) pre1)) = e')) ==> ((((COND (ram2 IN (set_of_list post1))) ((GABS (\f. (!pre2. (!post2. ((GEQ (f (pre2 , post2))) pre2))))) ((split_at ram2) post1))) ((GABS (\f. (!pre2. (!post2. ((GEQ (f (pre2 , post2))) ((APPEND post1) pre2)))))) ((split_at ram2) pre1))) = (((COND g') t') e'))))))) ==> ((\t'. (!e'. (((ram2 IN (set_of_list post1)) = g') ==> ((g' ==> (((GABS (\f. (!pre2. (!post2. ((GEQ (f (pre2 , post2))) pre2))))) ((split_at ram2) post1)) = t')) ==> (((~ g') ==> (((GABS (\f. (!pre2. (!post2. ((GEQ (f (pre2 , post2))) ((APPEND post1) pre2)))))) ((split_at ram2) pre1)) = e')) ==> ((((COND (ram2 IN (set_of_list post1))) ((GABS (\f. (!pre2. (!post2. ((GEQ (f (pre2 , post2))) pre2))))) ((split_at ram2) post1))) ((GABS (\f. (!pre2. (!post2. ((GEQ (f (pre2 , post2))) ((APPEND post1) pre2)))))) ((split_at ram2) pre1))) = (((COND g') t') e'))))))) t')) = ((\t'. (!e'. (((ram2 IN (set_of_list post1)) = g') ==> ((g' ==> (((GABS (\f. (!pre2. (!post2. ((GEQ (f (pre2 , post2))) pre2))))) ((split_at ram2) post1)) = t')) ==> (((~ g') ==> (((GABS (\f. (!pre2. (!post2. ((GEQ (f (pre2 , post2))) ((APPEND post1) pre2)))))) ((split_at ram2) pre1)) = e')) ==> ((((COND (ram2 IN (set_of_list post1))) ((GABS (\f. (!pre2. (!post2. ((GEQ (f (pre2 , post2))) pre2))))) ((split_at ram2) post1))) ((GABS (\f. (!pre2. (!post2. ((GEQ (f (pre2 , post2))) ((APPEND post1) pre2)))))) ((split_at ram2) pre1))) = (((COND g') t') e'))))))) t'))
+T c= c==> ! ! c==> c= cIN f0 * part cset_of_list f1 f2 c==> c==> f2 c= cGABS / ! ! cGEQ * b2 c, b3 b4 b3 csplit_at f0 f1 b0 c==> c==> c~ f2 c= cGABS / ! ! cGEQ * b2 c, b3 b4 cAPPEND f1 b3 csplit_at f0 f3 b1 c= cCOND cIN f0 * part cset_of_list f1 cGABS / ! ! cGEQ * b2 c, b3 b4 b3 csplit_at f0 f1 cGABS / ! ! cGEQ * b2 c, b3 b4 cAPPEND f1 b3 csplit_at f0 f3 cCOND f2 b0 b1 * / ! c==> c= cIN f0 * part cset_of_list f1 f2 c==> c==> f2 c= cGABS / ! ! cGEQ * b2 c, b3 b4 b3 csplit_at f0 f1 b0 c==> c==> c~ f2 c= cGABS / ! ! cGEQ * b2 c, b3 b4 cAPPEND f1 b3 csplit_at f0 f3 b1 c= cCOND cIN f0 * part cset_of_list f1 cGABS / ! ! cGEQ * b2 c, b3 b4 b3 csplit_at f0 f1 cGABS / ! ! cGEQ * b2 c, b3 b4 cAPPEND f1 b3 csplit_at f0 f3 cCOND f2 b0 b1 f4 * / ! c==> c= cIN f0 * part cset_of_list f1 f2 c==> c==> f2 c= cGABS / ! ! cGEQ * b2 c, b3 b4 b3 csplit_at f0 f1 b0 c==> c==> c~ f2 c= cGABS / ! ! cGEQ * b2 c, b3 b4 cAPPEND f1 b3 csplit_at f0 f3 b1 c= cCOND cIN f0 * part cset_of_list f1 cGABS / ! ! cGEQ * b2 c, b3 b4 b3 csplit_at f0 f1 cGABS / ! ! cGEQ * b2 c, b3 b4 cAPPEND f1 b3 csplit_at f0 f3 cCOND f2 b0 b1 f4
++ |- (((@fn. (!a0. (!a1. ((fn (a0 , a1)) = a0)))) (pre2 , post2)) = pre2)
+T c= c@ / ! ! c= * b0 c, b1 b2 b1 c, f0 f1 f0
++ |- ((\x. (((LET f) x) = (f x))) x)
+T * / c= cLET f0 b0 * f0 b0 f1
++ |- (?_10302218. (!pre2. (!post2. ((_10302218 (pre2 , post2)) = pre2))))
+T c? / ! ! c= * b0 c, b1 b2 b1
+- |- ((\t1. (!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))))) t1)
+T * / ! ! c= c\/ b0 c\/ b1 b2 c\/ c\/ b0 b1 b2 f0
++ |- (((!x. (((LET f) x) = (f x))) ==> ((\x. (((LET f) x) = (f x))) x)) = ((\x. (((LET f) x) = (f x))) x))
+T c= c==> ! c= cLET f0 b0 * f0 b0 * / c= cLET f0 b0 * f0 b0 f1 * / c= cLET f0 b0 * f0 b0 f1
++ |- ((\vs. ((((betwn vs) ram1) ram2) = ((LET (GABS (\f. (!pre1. (!post1. ((GEQ (f (pre1 , post1))) (LET_END (((COND (ram2 IN (set_of_list post1))) ((LET (GABS (\f. (!pre2. (!post2. ((GEQ (f (pre2 , post2))) (LET_END pre2))))))) ((split_at ram2) post1))) ((LET (GABS (\f. (!pre2. (!post2. ((GEQ (f (pre2 , post2))) (LET_END ((APPEND post1) pre2)))))))) ((split_at ram2) pre1)))))))))) ((split_at ram1) vs)))) vs)
+T * / c= cbetwn b0 f0 f1 cLET * part cGABS / ! ! cGEQ * b1 c, b2 b3 cLET_END cCOND cIN f1 * part cset_of_list b3 cLET * part cGABS / ! ! cGEQ * b4 c, b4 b5 cLET_END b4 csplit_at f1 b3 cLET * part cGABS / ! ! cGEQ * b4 c, b4 b5 cLET_END cAPPEND b3 b4 csplit_at f1 b2 csplit_at f0 b0 f2
++ (~ F), (~ ((MEM ram2) r)) |- ((~ F) /\ (((GABS (\f. (!pre2. (!post2. ((GEQ (f (pre2 , post2))) ((APPEND NIL) pre2)))))) ((split_at ram2) r)) = r))
+T c==> c~ cF c==> c~ cMEM f0 f1 c/\ c~ cF c= cGABS / ! ! cGEQ * b0 c, b1 b2 cAPPEND cNIL b1 csplit_at f0 f1 f1
++ |- (!pre1. (!post1. (((\_10302204. (((COND (ram2 IN (set_of_list ((@fn. (!a0. (!a1. ((fn (a0 , a1)) = a1)))) _10302204)))) ((GABS (\f. (!pre2. (!post2. ((GEQ (f (pre2 , post2))) pre2))))) ((split_at ram2) ((@fn. (!a0. (!a1. ((fn (a0 , a1)) = a1)))) _10302204)))) ((GABS (\f. (!pre2. (!post2. ((GEQ (f (pre2 , post2))) ((APPEND ((@fn. (!a0. (!a1. ((fn (a0 , a1)) = a1)))) _10302204)) pre2)))))) ((split_at ram2) ((@fn. (!a0. (!a1. ((fn (a0 , a1)) = a0)))) _10302204))))) (pre1 , post1)) = (((COND (ram2 IN (set_of_list post1))) ((GABS (\f. (!pre2. (!post2. ((GEQ (f (pre2 , post2))) pre2))))) ((split_at ram2) post1))) ((GABS (\f. (!pre2. (!post2. ((GEQ (f (pre2 , post2))) ((APPEND post1) pre2)))))) ((split_at ram2) pre1))))))
+T c= * / cCOND cIN f0 * part cset_of_list c@ / ! ! c= * b1 c, b2 b3 b3 b0 cGABS / ! ! cGEQ * b1 c, b2 b3 b2 csplit_at f0 c@ / ! ! c= * b1 c, b2 b3 b3 b0 cGABS / ! ! cGEQ * b1 c, b2 b3 cAPPEND c@ / ! ! c= * b4 c, b5 b6 b6 b0 b2 csplit_at f0 c@ / ! ! c= * b1 c, b2 b3 b2 b0 c, f1 f2 cCOND cIN f0 * part cset_of_list f2 cGABS / ! ! cGEQ * b0 c, b1 b2 b1 csplit_at f0 f2 cGABS / ! ! cGEQ * b0 c, b1 b2 cAPPEND f2 b1 csplit_at f0 f1
++ |- ((\pre2. (!post2. ((GEQ ((GABS (\_10302218. (!pre2. (!post2. ((GEQ (_10302218 (pre2 , post2))) pre2))))) (pre2 , post2))) pre2))) pre2)
+T * / ! cGEQ cGABS / ! ! cGEQ * b2 c, b3 b3 b3 c, b0 b1 b0 f0
++ (~ ((MEM ram1) r)), ((~ ((MEM ram1) r)) /\ (~ ((MEM ram2) r))) |- (((GABS (\f. (!pre1. (!post1. ((GEQ (f (pre1 , post1))) (((COND (ram2 IN (set_of_list post1))) ((GABS (\f. (!pre2. (!post2. ((GEQ (f (pre2 , post2))) pre2))))) ((split_at ram2) post1))) ((GABS (\f. (!pre2. (!post2. ((GEQ (f (pre2 , post2))) ((APPEND post1) pre2)))))) ((split_at ram2) pre1)))))))) ((split_at ram1) r)) = r)
+T c==> c~ cMEM f0 f1 c==> c/\ c~ cMEM f0 f1 c~ cMEM f2 f1 c= cGABS / ! ! cGEQ * b0 c, b1 b2 cCOND cIN f2 * part cset_of_list b2 cGABS / ! ! cGEQ * b3 c, b3 b4 b3 csplit_at f2 b2 cGABS / ! ! cGEQ * b3 c, b3 b4 cAPPEND b2 b3 csplit_at f2 b1 csplit_at f0 f1 f1
+- |- ((t ==> t) = T)
+T c= c==> f0 f0 cT
++ |- ((~ (ram2 IN (set_of_list post1))) ==> (((GABS (\f. (!pre2. (!post2. ((GEQ (f (pre2 , post2))) ((APPEND post1) pre2)))))) ((split_at ram2) pre1)) = ((GABS (\f. (!pre2. (!post2. ((GEQ (f (pre2 , post2))) ((APPEND post1) pre2)))))) ((split_at ram2) pre1))))
+T c==> c~ cIN f0 * part cset_of_list f1 c= cGABS / ! ! cGEQ * b0 c, b1 b2 cAPPEND f1 b1 csplit_at f0 f2 cGABS / ! ! cGEQ * b0 c, b1 b2 cAPPEND f1 b1 csplit_at f0 f2
+- |- ((\t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))) t3)
+T * / c= c\/ f0 c\/ f1 b0 c\/ c\/ f0 f1 b0 f2
++ |- (((!post1. ((GEQ ((GABS (\_10302206. (!pre1. (!post1. ((GEQ (_10302206 (pre1 , post1))) (((COND (ram2 IN (set_of_list post1))) ((GABS (\f. (!pre2. (!post2. ((GEQ (f (pre2 , post2))) pre2))))) ((split_at ram2) post1))) ((GABS (\f. (!pre2. (!post2. ((GEQ (f (pre2 , post2))) ((APPEND post1) pre2)))))) ((split_at ram2) pre1)))))))) (pre1 , post1))) (((COND (ram2 IN (set_of_list post1))) ((GABS (\f. (!pre2. (!post2. ((GEQ (f (pre2 , post2))) pre2))))) ((split_at ram2) post1))) ((GABS (\f. (!pre2. (!post2. ((GEQ (f (pre2 , post2))) ((APPEND post1) pre2)))))) ((split_at ram2) pre1))))) ==> ((\post1. ((GEQ ((GABS (\_10302206. (!pre1. (!post1. ((GEQ (_10302206 (pre1 , post1))) (((COND (ram2 IN (set_of_list post1))) ((GABS (\f. (!pre2. (!post2. ((GEQ (f (pre2 , post2))) pre2))))) ((split_at ram2) post1))) ((GABS (\f. (!pre2. (!post2. ((GEQ (f (pre2 , post2))) ((APPEND post1) pre2)))))) ((split_at ram2) pre1)))))))) (pre1 , post1))) (((COND (ram2 IN (set_of_list post1))) ((GABS (\f. (!pre2. (!post2. ((GEQ (f (pre2 , post2))) pre2))))) ((split_at ram2) post1))) ((GABS (\f. (!pre2. (!post2. ((GEQ (f (pre2 , post2))) ((APPEND post1) pre2)))))) ((split_at ram2) pre1))))) post1)) = ((\post1. ((GEQ ((GABS (\_10302206. (!pre1. (!post1. ((GEQ (_10302206 (pre1 , post1))) (((COND (ram2 IN (set_of_list post1))) ((GABS (\f. (!pre2. (!post2. ((GEQ (f (pre2 , post2))) pre2))))) ((split_at ram2) post1))) ((GABS (\f. (!pre2. (!post2. ((GEQ (f (pre2 , post2))) ((APPEND post1) pre2)))))) ((split_at ram2) pre1)))))))) (pre1 , post1))) (((COND (ram2 IN (set_of_list post1))) ((GABS (\f. (!pre2. (!post2. ((GEQ (f (pre2 , post2))) pre2))))) ((split_at ram2) post1))) ((GABS (\f. (!pre2. (!post2. ((GEQ (f (pre2 , post2))) ((APPEND post1) pre2)))))) ((split_at ram2) pre1))))) post1))
+T c= c==> ! cGEQ cGABS / ! ! cGEQ * b1 c, b2 b3 cCOND cIN f0 * part cset_of_list b3 cGABS / ! ! cGEQ * b3 c, b4 b5 b4 csplit_at f0 b3 cGABS / ! ! cGEQ * b3 c, b4 b5 cAPPEND b3 b4 csplit_at f0 b2 c, f1 b0 cCOND cIN f0 * part cset_of_list b0 cGABS / ! ! cGEQ * b1 c, b2 b3 b2 csplit_at f0 b0 cGABS / ! ! cGEQ * b1 c, b2 b3 cAPPEND b0 b2 csplit_at f0 f1 * / cGEQ cGABS / ! ! cGEQ * b1 c, b2 b3 cCOND cIN f0 * part cset_of_list b3 cGABS / ! ! cGEQ * b3 c, b4 b5 b4 csplit_at f0 b3 cGABS / ! ! cGEQ * b3 c, b4 b5 cAPPEND b3 b4 csplit_at f0 b2 c, f1 b0 cCOND cIN f0 * part cset_of_list b0 cGABS / ! ! cGEQ * b1 c, b2 b3 b2 csplit_at f0 b0 cGABS / ! ! cGEQ * b1 c, b2 b3 cAPPEND b0 b2 csplit_at f0 f1 f2 * / cGEQ cGABS / ! ! cGEQ * b1 c, b2 b3 cCOND cIN f0 * part cset_of_list b3 cGABS / ! ! cGEQ * b3 c, b4 b5 b4 csplit_at f0 b3 cGABS / ! ! cGEQ * b3 c, b4 b5 cAPPEND b3 b4 csplit_at f0 b2 c, f1 b0 cCOND cIN f0 * part cset_of_list b0 cGABS / ! ! cGEQ * b1 c, b2 b3 b2 csplit_at f0 b0 cGABS / ! ! cGEQ * b1 c, b2 b3 cAPPEND b0 b2 csplit_at f0 f1 f2
++ |- ((!post1. (((\_10302204. (((COND (ram2 IN (set_of_list ((@fn. (!a0. (!a1. ((fn (a0 , a1)) = a1)))) _10302204)))) ((GABS (\f. (!pre2. (!post2. ((GEQ (f (pre2 , post2))) pre2))))) ((split_at ram2) ((@fn. (!a0. (!a1. ((fn (a0 , a1)) = a1)))) _10302204)))) ((GABS (\f. (!pre2. (!post2. ((GEQ (f (pre2 , post2))) ((APPEND ((@fn. (!a0. (!a1. ((fn (a0 , a1)) = a1)))) _10302204)) pre2)))))) ((split_at ram2) ((@fn. (!a0. (!a1. ((fn (a0 , a1)) = a0)))) _10302204))))) (pre1 , post1)) = (((COND (ram2 IN (set_of_list post1))) ((GABS (\f. (!pre2. (!post2. ((GEQ (f (pre2 , post2))) pre2))))) ((split_at ram2) post1))) ((GABS (\f. (!pre2. (!post2. ((GEQ (f (pre2 , post2))) ((APPEND post1) pre2)))))) ((split_at ram2) pre1))))) = T)
+T c= ! c= * / cCOND cIN f0 * part cset_of_list c@ / ! ! c= * b2 c, b3 b4 b4 b1 cGABS / ! ! cGEQ * b2 c, b3 b4 b3 csplit_at f0 c@ / ! ! c= * b2 c, b3 b4 b4 b1 cGABS / ! ! cGEQ * b2 c, b3 b4 cAPPEND c@ / ! ! c= * b5 c, b6 b7 b7 b1 b3 csplit_at f0 c@ / ! ! c= * b2 c, b3 b4 b3 b1 c, f1 b0 cCOND cIN f0 * part cset_of_list b0 cGABS / ! ! cGEQ * b1 c, b2 b3 b2 csplit_at f0 b0 cGABS / ! ! cGEQ * b1 c, b2 b3 cAPPEND b0 b2 csplit_at f0 f1 cT
++ |- ((\post1. ((GEQ ((GABS (\_10302206. (!pre1. (!post1. ((GEQ (_10302206 (pre1 , post1))) (((COND (ram2 IN (set_of_list post1))) ((GABS (\f. (!pre2. (!post2. ((GEQ (f (pre2 , post2))) pre2))))) ((split_at ram2) post1))) ((GABS (\f. (!pre2. (!post2. ((GEQ (f (pre2 , post2))) ((APPEND post1) pre2)))))) ((split_at ram2) pre1)))))))) (pre1 , post1))) (((COND (ram2 IN (set_of_list post1))) ((GABS (\f. (!pre2. (!post2. ((GEQ (f (pre2 , post2))) pre2))))) ((split_at ram2) post1))) ((GABS (\f. (!pre2. (!post2. ((GEQ (f (pre2 , post2))) ((APPEND post1) pre2)))))) ((split_at ram2) pre1))))) post1)
+T * / cGEQ cGABS / ! ! cGEQ * b1 c, b2 b3 cCOND cIN f0 * part cset_of_list b3 cGABS / ! ! cGEQ * b3 c, b4 b5 b4 csplit_at f0 b3 cGABS / ! ! cGEQ * b3 c, b4 b5 cAPPEND b3 b4 csplit_at f0 b2 c, f1 b0 cCOND cIN f0 * part cset_of_list b0 cGABS / ! ! cGEQ * b1 c, b2 b3 b2 csplit_at f0 b0 cGABS / ! ! cGEQ * b1 c, b2 b3 cAPPEND b0 b2 csplit_at f0 f1 f2
++ |- ((\post2. ((GEQ ((GABS (\_10302218. (!pre2. (!post2. ((GEQ (_10302218 (pre2 , post2))) pre2))))) (pre2 , post2))) pre2)) post2)
+T * / cGEQ cGABS / ! ! cGEQ * b1 c, b2 b3 b2 c, f0 b0 f0 f1
++ |- (((!r. ((~ ((MEM ram1) r)) ==> (((split_at ram1) r) = (r , NIL)))) ==> ((\r. ((~ ((MEM ram1) r)) ==> (((split_at ram1) r) = (r , NIL)))) r)) = ((\r. ((~ ((MEM ram1) r)) ==> (((split_at ram1) r) = (r , NIL)))) r))
+T c= c==> ! c==> c~ cMEM f0 b0 c= csplit_at f0 b0 c, b0 cNIL * / c==> c~ cMEM f0 b0 c= csplit_at f0 b0 c, b0 cNIL f1 * / c==> c~ cMEM f0 b0 c= csplit_at f0 b0 c, b0 cNIL f1
+- |- ((!post2. t) = t)
+T c= ! f0 f0
++ |- ((\f. (!x. (((LET f) x) = (f x)))) f)
+T * / ! c= cLET b0 b1 * b0 b1 f0
++ |- (((!t. ((LET_END t) = t)) ==> ((\t. ((LET_END t) = t)) t)) = ((\t. ((LET_END t) = t)) t))
+T c= c==> ! c= cLET_END b0 b0 * / c= cLET_END b0 b0 f0 * / c= cLET_END b0 b0 f0
+- (~ ((MEM ram2) r)) |- (T = (~ ((MEM ram2) r)))
+T c==> c~ cMEM f0 f1 c= cT c~ cMEM f0 f1
++ |- ((a = b) = ((GEQ a) b))
+T c= c= f0 f1 cGEQ f0 f1
++ |- (((!pre2. (!post2. ((GEQ ((GABS (\_10302218. (!pre2. (!post2. ((GEQ (_10302218 (pre2 , post2))) pre2))))) (pre2 , post2))) pre2))) ==> ((\pre2. (!post2. ((GEQ ((GABS (\_10302218. (!pre2. (!post2. ((GEQ (_10302218 (pre2 , post2))) pre2))))) (pre2 , post2))) pre2))) pre2)) = ((\pre2. (!post2. ((GEQ ((GABS (\_10302218. (!pre2. (!post2. ((GEQ (_10302218 (pre2 , post2))) pre2))))) (pre2 , post2))) pre2))) pre2))
+T c= c==> ! ! cGEQ cGABS / ! ! cGEQ * b2 c, b3 b3 b3 c, b0 b1 b0 * / ! cGEQ cGABS / ! ! cGEQ * b2 c, b3 b3 b3 c, b0 b1 b0 f0 * / ! cGEQ cGABS / ! ! cGEQ * b2 c, b3 b3 b3 c, b0 b1 b0 f0
++ |- ((!pre1. (!post1. (((\_10302204. (((COND (ram2 IN (set_of_list ((@fn. (!a0. (!a1. ((fn (a0 , a1)) = a1)))) _10302204)))) ((GABS (\f. (!pre2. (!post2. ((GEQ (f (pre2 , post2))) pre2))))) ((split_at ram2) ((@fn. (!a0. (!a1. ((fn (a0 , a1)) = a1)))) _10302204)))) ((GABS (\f. (!pre2. (!post2. ((GEQ (f (pre2 , post2))) ((APPEND ((@fn. (!a0. (!a1. ((fn (a0 , a1)) = a1)))) _10302204)) pre2)))))) ((split_at ram2) ((@fn. (!a0. (!a1. ((fn (a0 , a1)) = a0)))) _10302204))))) (pre1 , post1)) = (((COND (ram2 IN (set_of_list post1))) ((GABS (\f. (!pre2. (!post2. ((GEQ (f (pre2 , post2))) pre2))))) ((split_at ram2) post1))) ((GABS (\f. (!pre2. (!post2. ((GEQ (f (pre2 , post2))) ((APPEND post1) pre2)))))) ((split_at ram2) pre1)))))) = ((\_10302206. (!pre1. (!post1. ((_10302206 (pre1 , post1)) = (((COND (ram2 IN (set_of_list post1))) ((GABS (\f. (!pre2. (!post2. ((GEQ (f (pre2 , post2))) pre2))))) ((split_at ram2) post1))) ((GABS (\f. (!pre2. (!post2. ((GEQ (f (pre2 , post2))) ((APPEND post1) pre2)))))) ((split_at ram2) pre1))))))) (\_10302204. (((COND (ram2 IN (set_of_list ((@fn. (!a0. (!a1. ((fn (a0 , a1)) = a1)))) _10302204)))) ((GABS (\f. (!pre2. (!post2. ((GEQ (f (pre2 , post2))) pre2))))) ((split_at ram2) ((@fn. (!a0. (!a1. ((fn (a0 , a1)) = a1)))) _10302204)))) ((GABS (\f. (!pre2. (!post2. ((GEQ (f (pre2 , post2))) ((APPEND ((@fn. (!a0. (!a1. ((fn (a0 , a1)) = a1)))) _10302204)) pre2)))))) ((split_at ram2) ((@fn. (!a0. (!a1. ((fn (a0 , a1)) = a0)))) _10302204)))))))
+T c= ! ! c= * / cCOND cIN f0 * part cset_of_list c@ / ! ! c= * b3 c, b4 b5 b5 b2 cGABS / ! ! cGEQ * b3 c, b4 b5 b4 csplit_at f0 c@ / ! ! c= * b3 c, b4 b5 b5 b2 cGABS / ! ! cGEQ * b3 c, b4 b5 cAPPEND c@ / ! ! c= * b6 c, b7 b8 b8 b2 b4 csplit_at f0 c@ / ! ! c= * b3 c, b4 b5 b4 b2 c, b0 b1 cCOND cIN f0 * part cset_of_list b1 cGABS / ! ! cGEQ * b2 c, b3 b4 b3 csplit_at f0 b1 cGABS / ! ! cGEQ * b2 c, b3 b4 cAPPEND b1 b3 csplit_at f0 b0 * / ! ! c= * b0 c, b1 b2 cCOND cIN f0 * part cset_of_list b2 cGABS / ! ! cGEQ * b3 c, b4 b5 b4 csplit_at f0 b2 cGABS / ! ! cGEQ * b3 c, b4 b5 cAPPEND b2 b4 csplit_at f0 b1 / cCOND cIN f0 * part cset_of_list c@ / ! ! c= * b1 c, b2 b3 b3 b0 cGABS / ! ! cGEQ * b1 c, b2 b3 b2 csplit_at f0 c@ / ! ! c= * b1 c, b2 b3 b3 b0 cGABS / ! ! cGEQ * b1 c, b2 b3 cAPPEND c@ / ! ! c= * b4 c, b5 b6 b6 b0 b2 csplit_at f0 c@ / ! ! c= * b1 c, b2 b3 b2 b0
++ |- ((F ==> (((GABS (\f. (!pre2. (!post2. ((GEQ (f (pre2 , post2))) pre2))))) ((split_at ram2) NIL)) = t')) ==> (((~ F) ==> (((GABS (\f. (!pre2. (!post2. ((GEQ (f (pre2 , post2))) ((APPEND NIL) pre2)))))) ((split_at ram2) r)) = e')) ==> ((((COND (ram2 IN (set_of_list NIL))) ((GABS (\f. (!pre2. (!post2. ((GEQ (f (pre2 , post2))) pre2))))) ((split_at ram2) NIL))) ((GABS (\f. (!pre2. (!post2. ((GEQ (f (pre2 , post2))) ((APPEND NIL) pre2)))))) ((split_at ram2) r))) = (((COND F) t') e'))))
+T c==> c==> cF c= cGABS / ! ! cGEQ * b0 c, b1 b2 b1 csplit_at f0 cNIL f1 c==> c==> c~ cF c= cGABS / ! ! cGEQ * b0 c, b1 b2 cAPPEND cNIL b1 csplit_at f0 f2 f3 c= cCOND cIN f0 * part cset_of_list cNIL cGABS / ! ! cGEQ * b0 c, b1 b2 b1 csplit_at f0 cNIL cGABS / ! ! cGEQ * b0 c, b1 b2 cAPPEND cNIL b1 csplit_at f0 f2 cCOND cF f1 f3
+- |- ((\l. (((APPEND ((CONS h) t)) l) = ((CONS h) ((APPEND t) l)))) l)
+T * / c= cAPPEND cCONS f0 f1 b0 cCONS f0 cAPPEND f1 b0 f2
+- |- (((!h. (!t. (!l. (((APPEND ((CONS h) t)) l) = ((CONS h) ((APPEND t) l)))))) ==> ((\h. (!t. (!l. (((APPEND ((CONS h) t)) l) = ((CONS h) ((APPEND t) l)))))) h)) = ((\h. (!t. (!l. (((APPEND ((CONS h) t)) l) = ((CONS h) ((APPEND t) l)))))) h))
+T c= c==> ! ! ! c= cAPPEND cCONS b0 b1 b2 cCONS b0 cAPPEND b1 b2 * / ! ! c= cAPPEND cCONS b0 b1 b2 cCONS b0 cAPPEND b1 b2 f0 * / ! ! c= cAPPEND cCONS b0 b1 b2 cCONS b0 cAPPEND b1 b2 f0
++ |- ((((ram2 IN (set_of_list post1)) ==> (((GABS (\f. (!pre2. (!post2. ((GEQ (f (pre2 , post2))) pre2))))) ((split_at ram2) post1)) = ((GABS (\f. (!pre2. (!post2. ((GEQ (f (pre2 , post2))) pre2))))) ((split_at ram2) post1)))) ==> (((~ (ram2 IN (set_of_list post1))) ==> (((GABS (\f. (!pre2. (!post2. ((GEQ (f (pre2 , post2))) ((APPEND post1) pre2)))))) ((split_at ram2) pre1)) = e')) ==> ((((COND (ram2 IN (set_of_list post1))) ((GABS (\f. (!pre2. (!post2. ((GEQ (f (pre2 , post2))) pre2))))) ((split_at ram2) post1))) ((GABS (\f. (!pre2. (!post2. ((GEQ (f (pre2 , post2))) ((APPEND post1) pre2)))))) ((split_at ram2) pre1))) = (((COND (ram2 IN (set_of_list post1))) ((GABS (\f. (!pre2. (!post2. ((GEQ (f (pre2 , post2))) pre2))))) ((split_at ram2) post1))) e')))) = (((~ (ram2 IN (set_of_list post1))) ==> (((GABS (\f. (!pre2. (!post2. ((GEQ (f (pre2 , post2))) ((APPEND post1) pre2)))))) ((split_at ram2) pre1)) = e')) ==> ((((COND (ram2 IN (set_of_list post1))) ((GABS (\f. (!pre2. (!post2. ((GEQ (f (pre2 , post2))) pre2))))) ((split_at ram2) post1))) ((GABS (\f. (!pre2. (!post2. ((GEQ (f (pre2 , post2))) ((APPEND post1) pre2)))))) ((split_at ram2) pre1))) = (((COND (ram2 IN (set_of_list post1))) ((GABS (\f. (!pre2. (!post2. ((GEQ (f (pre2 , post2))) pre2))))) ((split_at ram2) post1))) e'))))
+T c= c==> c==> cIN f0 * part cset_of_list f1 c= cGABS / ! ! cGEQ * b0 c, b1 b2 b1 csplit_at f0 f1 cGABS / ! ! cGEQ * b0 c, b1 b2 b1 csplit_at f0 f1 c==> c==> c~ cIN f0 * part cset_of_list f1 c= cGABS / ! ! cGEQ * b0 c, b1 b2 cAPPEND f1 b1 csplit_at f0 f2 f3 c= cCOND cIN f0 * part cset_of_list f1 cGABS / ! ! cGEQ * b0 c, b1 b2 b1 csplit_at f0 f1 cGABS / ! ! cGEQ * b0 c, b1 b2 cAPPEND f1 b1 csplit_at f0 f2 cCOND cIN f0 * part cset_of_list f1 cGABS / ! ! cGEQ * b0 c, b1 b2 b1 csplit_at f0 f1 f3 c==> c==> c~ cIN f0 * part cset_of_list f1 c= cGABS / ! ! cGEQ * b0 c, b1 b2 cAPPEND f1 b1 csplit_at f0 f2 f3 c= cCOND cIN f0 * part cset_of_list f1 cGABS / ! ! cGEQ * b0 c, b1 b2 b1 csplit_at f0 f1 cGABS / ! ! cGEQ * b0 c, b1 b2 cAPPEND f1 b1 csplit_at f0 f2 cCOND cIN f0 * part cset_of_list f1 cGABS / ! ! cGEQ * b0 c, b1 b2 b1 csplit_at f0 f1 f3
++ |- ((!post2. (((\_10302216. ((@fn. (!a0. (!a1. ((fn (a0 , a1)) = a0)))) _10302216)) (pre2 , post2)) = pre2)) = T)
+T c= ! c= * / c@ / ! ! c= * b2 c, b3 b4 b3 b1 c, f0 b0 f0 cT
++ |- ((\l. (((APPEND NIL) l) = l)) l)
+T * / c= cAPPEND cNIL b0 b0 f0
+- |- ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))
+T c= c\/ f0 c\/ f1 f2 c\/ c\/ f0 f1 f2
++ |- ((\e'. (((ram2 IN (set_of_list NIL)) = g') ==> ((g' ==> (((GABS (\f. (!pre2. (!post2. ((GEQ (f (pre2 , post2))) pre2))))) ((split_at ram2) NIL)) = t')) ==> (((~ g') ==> (((GABS (\f. (!pre2. (!post2. ((GEQ (f (pre2 , post2))) ((APPEND NIL) pre2)))))) ((split_at ram2) r)) = e')) ==> ((((COND (ram2 IN (set_of_list NIL))) ((GABS (\f. (!pre2. (!post2. ((GEQ (f (pre2 , post2))) pre2))))) ((split_at ram2) NIL))) ((GABS (\f. (!pre2. (!post2. ((GEQ (f (pre2 , post2))) ((APPEND NIL) pre2)))))) ((split_at ram2) r))) = (((COND g') t') e')))))) e')
+T * / c==> c= cIN f0 * part cset_of_list cNIL f1 c==> c==> f1 c= cGABS / ! ! cGEQ * b1 c, b2 b3 b2 csplit_at f0 cNIL f2 c==> c==> c~ f1 c= cGABS / ! ! cGEQ * b1 c, b2 b3 cAPPEND cNIL b2 csplit_at f0 f3 b0 c= cCOND cIN f0 * part cset_of_list cNIL cGABS / ! ! cGEQ * b1 c, b2 b3 b2 csplit_at f0 cNIL cGABS / ! ! cGEQ * b1 c, b2 b3 cAPPEND cNIL b2 csplit_at f0 f3 cCOND f1 f2 b0 f4
+- (~ (ram2 IN (set_of_list post1))) |- ((ram2 IN (set_of_list post1)) = F)
+T c==> c~ cIN f0 * part cset_of_list f1 c= cIN f0 * part cset_of_list f1 cF
++ |- (((!g'. (!t'. (!e'. (((ram2 IN (set_of_list NIL)) = g') ==> ((g' ==> (((GABS (\f. (!pre2. (!post2. ((GEQ (f (pre2 , post2))) pre2))))) ((split_at ram2) NIL)) = t')) ==> (((~ g') ==> (((GABS (\f. (!pre2. (!post2. ((GEQ (f (pre2 , post2))) ((APPEND NIL) pre2)))))) ((split_at ram2) r)) = e')) ==> ((((COND (ram2 IN (set_of_list NIL))) ((GABS (\f. (!pre2. (!post2. ((GEQ (f (pre2 , post2))) pre2))))) ((split_at ram2) NIL))) ((GABS (\f. (!pre2. (!post2. ((GEQ (f (pre2 , post2))) ((APPEND NIL) pre2)))))) ((split_at ram2) r))) = (((COND g') t') e')))))))) ==> ((\g'. (!t'. (!e'. (((ram2 IN (set_of_list NIL)) = g') ==> ((g' ==> (((GABS (\f. (!pre2. (!post2. ((GEQ (f (pre2 , post2))) pre2))))) ((split_at ram2) NIL)) = t')) ==> (((~ g') ==> (((GABS (\f. (!pre2. (!post2. ((GEQ (f (pre2 , post2))) ((APPEND NIL) pre2)))))) ((split_at ram2) r)) = e')) ==> ((((COND (ram2 IN (set_of_list NIL))) ((GABS (\f. (!pre2. (!post2. ((GEQ (f (pre2 , post2))) pre2))))) ((split_at ram2) NIL))) ((GABS (\f. (!pre2. (!post2. ((GEQ (f (pre2 , post2))) ((APPEND NIL) pre2)))))) ((split_at ram2) r))) = (((COND g') t') e')))))))) g')) = ((\g'. (!t'. (!e'. (((ram2 IN (set_of_list NIL)) = g') ==> ((g' ==> (((GABS (\f. (!pre2. (!post2. ((GEQ (f (pre2 , post2))) pre2))))) ((split_at ram2) NIL)) = t')) ==> (((~ g') ==> (((GABS (\f. (!pre2. (!post2. ((GEQ (f (pre2 , post2))) ((APPEND NIL) pre2)))))) ((split_at ram2) r)) = e')) ==> ((((COND (ram2 IN (set_of_list NIL))) ((GABS (\f. (!pre2. (!post2. ((GEQ (f (pre2 , post2))) pre2))))) ((split_at ram2) NIL))) ((GABS (\f. (!pre2. (!post2. ((GEQ (f (pre2 , post2))) ((APPEND NIL) pre2)))))) ((split_at ram2) r))) = (((COND g') t') e')))))))) g'))
+T c= c==> ! ! ! c==> c= cIN f0 * part cset_of_list cNIL b0 c==> c==> b0 c= cGABS / ! ! cGEQ * b3 c, b4 b5 b4 csplit_at f0 cNIL b1 c==> c==> c~ b0 c= cGABS / ! ! cGEQ * b3 c, b4 b5 cAPPEND cNIL b4 csplit_at f0 f1 b2 c= cCOND cIN f0 * part cset_of_list cNIL cGABS / ! ! cGEQ * b3 c, b4 b5 b4 csplit_at f0 cNIL cGABS / ! ! cGEQ * b3 c, b4 b5 cAPPEND cNIL b4 csplit_at f0 f1 cCOND b0 b1 b2 * / ! ! c==> c= cIN f0 * part cset_of_list cNIL b0 c==> c==> b0 c= cGABS / ! ! cGEQ * b3 c, b4 b5 b4 csplit_at f0 cNIL b1 c==> c==> c~ b0 c= cGABS / ! ! cGEQ * b3 c, b4 b5 cAPPEND cNIL b4 csplit_at f0 f1 b2 c= cCOND cIN f0 * part cset_of_list cNIL cGABS / ! ! cGEQ * b3 c, b4 b5 b4 csplit_at f0 cNIL cGABS / ! ! cGEQ * b3 c, b4 b5 cAPPEND cNIL b4 csplit_at f0 f1 cCOND b0 b1 b2 f2 * / ! ! c==> c= cIN f0 * part cset_of_list cNIL b0 c==> c==> b0 c= cGABS / ! ! cGEQ * b3 c, b4 b5 b4 csplit_at f0 cNIL b1 c==> c==> c~ b0 c= cGABS / ! ! cGEQ * b3 c, b4 b5 cAPPEND cNIL b4 csplit_at f0 f1 b2 c= cCOND cIN f0 * part cset_of_list cNIL cGABS / ! ! cGEQ * b3 c, b4 b5 b4 csplit_at f0 cNIL cGABS / ! ! cGEQ * b3 c, b4 b5 cAPPEND cNIL b4 csplit_at f0 f1 cCOND b0 b1 b2 f2
++ |- ((\_10302206. (!pre1. (!post1. ((_10302206 (pre1 , post1)) = (((COND (ram2 IN (set_of_list post1))) ((GABS (\f. (!pre2. (!post2. ((GEQ (f (pre2 , post2))) pre2))))) ((split_at ram2) post1))) ((GABS (\f. (!pre2. (!post2. ((GEQ (f (pre2 , post2))) ((APPEND post1) pre2)))))) ((split_at ram2) pre1))))))) (\_10302204. (((COND (ram2 IN (set_of_list ((@fn. (!a0. (!a1. ((fn (a0 , a1)) = a1)))) _10302204)))) ((GABS (\f. (!pre2. (!post2. ((GEQ (f (pre2 , post2))) pre2))))) ((split_at ram2) ((@fn. (!a0. (!a1. ((fn (a0 , a1)) = a1)))) _10302204)))) ((GABS (\f. (!pre2. (!post2. ((GEQ (f (pre2 , post2))) ((APPEND ((@fn. (!a0. (!a1. ((fn (a0 , a1)) = a1)))) _10302204)) pre2)))))) ((split_at ram2) ((@fn. (!a0. (!a1. ((fn (a0 , a1)) = a0)))) _10302204))))))
+T * / ! ! c= * b0 c, b1 b2 cCOND cIN f0 * part cset_of_list b2 cGABS / ! ! cGEQ * b3 c, b4 b5 b4 csplit_at f0 b2 cGABS / ! ! cGEQ * b3 c, b4 b5 cAPPEND b2 b4 csplit_at f0 b1 / cCOND cIN f0 * part cset_of_list c@ / ! ! c= * b1 c, b2 b3 b3 b0 cGABS / ! ! cGEQ * b1 c, b2 b3 b2 csplit_at f0 c@ / ! ! c= * b1 c, b2 b3 b3 b0 cGABS / ! ! cGEQ * b1 c, b2 b3 cAPPEND c@ / ! ! c= * b4 c, b5 b6 b6 b0 b2 csplit_at f0 c@ / ! ! c= * b1 c, b2 b3 b2 b0
++ (~ ((MEM ram2) r)) |- ((((COND (ram2 IN (set_of_list NIL))) ((GABS (\f. (!pre2. (!post2. ((GEQ (f (pre2 , post2))) pre2))))) ((split_at ram2) NIL))) ((GABS (\f. (!pre2. (!post2. ((GEQ (f (pre2 , post2))) ((APPEND NIL) pre2)))))) ((split_at ram2) r))) = (((COND F) ((GABS (\f. (!pre2. (!post2. ((GEQ (f (pre2 , post2))) pre2))))) ((split_at ram2) NIL))) r))
+T c==> c~ cMEM f0 f1 c= cCOND cIN f0 * part cset_of_list cNIL cGABS / ! ! cGEQ * b0 c, b1 b2 b1 csplit_at f0 cNIL cGABS / ! ! cGEQ * b0 c, b1 b2 cAPPEND cNIL b1 csplit_at f0 f1 cCOND cF cGABS / ! ! cGEQ * b0 c, b1 b2 b1 csplit_at f0 cNIL f1
++ |- (((g = g') ==> ((g' ==> (t = t')) ==> (((~ g') ==> (e = e')) ==> ((((COND g) t) e) = (((COND g') t') e'))))) = T)
+T c= c==> c= f0 f1 c==> c==> f1 c= f2 f3 c==> c==> c~ f1 c= f4 f5 c= cCOND f0 f2 f4 cCOND f1 f3 f5 cT
++ |- (((ram2 IN (set_of_list post1)) = g') ==> ((g' ==> (((GABS (\f. (!pre2. (!post2. ((GEQ (f (pre2 , post2))) pre2))))) ((split_at ram2) post1)) = t')) ==> (((~ g') ==> (((GABS (\f. (!pre2. (!post2. ((GEQ (f (pre2 , post2))) ((APPEND post1) pre2)))))) ((split_at ram2) pre1)) = e')) ==> ((((COND (ram2 IN (set_of_list post1))) ((GABS (\f. (!pre2. (!post2. ((GEQ (f (pre2 , post2))) pre2))))) ((split_at ram2) post1))) ((GABS (\f. (!pre2. (!post2. ((GEQ (f (pre2 , post2))) ((APPEND post1) pre2)))))) ((split_at ram2) pre1))) = (((COND g') t') e')))))
+T c==> c= cIN f0 * part cset_of_list f1 f2 c==> c==> f2 c= cGABS / ! ! cGEQ * b0 c, b1 b2 b1 csplit_at f0 f1 f3 c==> c==> c~ f2 c= cGABS / ! ! cGEQ * b0 c, b1 b2 cAPPEND f1 b1 csplit_at f0 f4 f5 c= cCOND cIN f0 * part cset_of_list f1 cGABS / ! ! cGEQ * b0 c, b1 b2 b1 csplit_at f0 f1 cGABS / ! ! cGEQ * b0 c, b1 b2 cAPPEND f1 b1 csplit_at f0 f4 cCOND f2 f3 f5
+- |- ((\t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3)))) t2)
+T * / ! c= c\/ f0 c\/ b0 b1 c\/ c\/ f0 b0 b1 f1
+- |- (((!t. (!l. (((APPEND ((CONS h) t)) l) = ((CONS h) ((APPEND t) l))))) ==> ((\t. (!l. (((APPEND ((CONS h) t)) l) = ((CONS h) ((APPEND t) l))))) t)) = ((\t. (!l. (((APPEND ((CONS h) t)) l) = ((CONS h) ((APPEND t) l))))) t))
+T c= c==> ! ! c= cAPPEND cCONS f0 b0 b1 cCONS f0 cAPPEND b0 b1 * / ! c= cAPPEND cCONS f0 b0 b1 cCONS f0 cAPPEND b0 b1 f1 * / ! c= cAPPEND cCONS f0 b0 b1 cCONS f0 cAPPEND b0 b1 f1
+- |- (((~ (A IN EMPTY)) ==> ((A IN EMPTY) = F)) = ((A IN EMPTY) = F))
+T c= c==> c~ cIN f0 part cEMPTY c= cIN f0 part cEMPTY cF c= cIN f0 part cEMPTY cF
+- |- (((!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3)))) ==> ((\t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3)))) t2)) = ((\t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3)))) t2))
+T c= c==> ! ! c= c\/ f0 c\/ b0 b1 c\/ c\/ f0 b0 b1 * / ! c= c\/ f0 c\/ b0 b1 c\/ c\/ f0 b0 b1 f1 * / ! c= c\/ f0 c\/ b0 b1 c\/ c\/ f0 b0 b1 f1
+- (~ F) |- ((F = F) = T)
+T c==> c~ cF c= c= cF cF cT
+- |- ((x = x) = T)
+T c= c= f0 f0 cT
+- F |- (F = T)
+T c==> cF c= cF cT
+- |- ((\_10302213. pre2) = (\_10302213. ((@fn. (!a0. (!a1. ((fn (a0 , a1)) = a0)))) (pre2 , post2))))
+T c= / f0 / c@ / ! ! c= * b1 c, b2 b3 b2 c, f0 f1
+- |- (((t1 \/ t2) \/ t3) = (t1 \/ (t2 \/ t3)))
+T c= c\/ c\/ f0 f1 f2 c\/ f0 c\/ f1 f2
+- (ram2 IN (set_of_list post1)) |- ((ram2 IN (set_of_list post1)) = T)
+T c==> cIN f0 * part cset_of_list f1 c= cIN f0 * part cset_of_list f1 cT
+- |- ((\h. (!t. (!l. (((APPEND ((CONS h) t)) l) = ((CONS h) ((APPEND t) l)))))) h)
+T * / ! ! c= cAPPEND cCONS b0 b1 b2 cCONS b0 cAPPEND b1 b2 f0
+- |- (((!l. (((APPEND ((CONS h) t)) l) = ((CONS h) ((APPEND t) l)))) ==> ((\l. (((APPEND ((CONS h) t)) l) = ((CONS h) ((APPEND t) l)))) l)) = ((\l. (((APPEND ((CONS h) t)) l) = ((CONS h) ((APPEND t) l)))) l))
+T c= c==> ! c= cAPPEND cCONS f0 f1 b0 cCONS f0 cAPPEND f1 b0 * / c= cAPPEND cCONS f0 f1 b0 cCONS f0 cAPPEND f1 b0 f2 * / c= cAPPEND cCONS f0 f1 b0 cCONS f0 cAPPEND f1 b0 f2
+- |- (((!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))) ==> ((\t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))) t3)) = ((\t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))) t3))
+T c= c==> ! c= c\/ f0 c\/ f1 b0 c\/ c\/ f0 f1 b0 * / c= c\/ f0 c\/ f1 b0 c\/ c\/ f0 f1 b0 f2 * / c= c\/ f0 c\/ f1 b0 c\/ c\/ f0 f1 b0 f2
+- |- ((t /\ t) = t)
+T c= c/\ f0 f0 f0
+- |- (((APPEND ((CONS h) t)) l) = ((CONS h) ((APPEND t) l)))
+T c= cAPPEND cCONS f0 f1 f2 cCONS f0 cAPPEND f1 f2
+- (~ ((MEM ram1) r)), (~ ((MEM ram2) r)) |- (T = (((GABS (\f. (!pre1. (!post1. ((GEQ (f (pre1 , post1))) (((COND (ram2 IN (set_of_list post1))) ((GABS (\f. (!pre2. (!post2. ((GEQ (f (pre2 , post2))) pre2))))) ((split_at ram2) post1))) ((GABS (\f. (!pre2. (!post2. ((GEQ (f (pre2 , post2))) ((APPEND post1) pre2)))))) ((split_at ram2) pre1)))))))) ((split_at ram1) r)) = r))
+T c==> c~ cMEM f0 f1 c==> c~ cMEM f2 f1 c= cT c= cGABS / ! ! cGEQ * b0 c, b1 b2 cCOND cIN f2 * part cset_of_list b2 cGABS / ! ! cGEQ * b3 c, b3 b4 b3 csplit_at f2 b2 cGABS / ! ! cGEQ * b3 c, b3 b4 cAPPEND b2 b3 csplit_at f2 b1 csplit_at f0 f1 f1
+- (~ F) |- (F = F)
+T c==> c~ cF c= cF cF
+- |- ((\t. (!l. (((APPEND ((CONS h) t)) l) = ((CONS h) ((APPEND t) l))))) t)
+T * / ! c= cAPPEND cCONS f0 b0 b1 cCONS f0 cAPPEND b0 b1 f1
+- |- ((~ F) = T)
+T c= c~ cF cT
+- |- (((!t1. (!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))))) ==> ((\t1. (!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))))) t1)) = ((\t1. (!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))))) t1))
+T c= c==> ! ! ! c= c\/ b0 c\/ b1 b2 c\/ c\/ b0 b1 b2 * / ! ! c= c\/ b0 c\/ b1 b2 c\/ c\/ b0 b1 b2 f0 * / ! ! c= c\/ b0 c\/ b1 b2 c\/ c\/ b0 b1 b2 f0
+- |- ((set_of_list ((CONS h) t)) = (h INSERT (set_of_list t)))
+T c= * part cset_of_list cCONS f0 f1 * * part cINSERT f0 * part cset_of_list f1
+- (~ ((MEM ram1) r)) |- ((~ ((MEM ram1) r)) /\ (((split_at ram1) r) = (r , NIL)))
+T c==> c~ cMEM f0 f1 c/\ c~ cMEM f0 f1 c= csplit_at f0 f1 c, f1 cNIL
+- (~ ((MEM ram2) r)) |- (((MEM ram2) r) = F)
+T c==> c~ cMEM f0 f1 c= cMEM f0 f1 cF
+- |- (T = (~ (A IN EMPTY)))
+T c= cT c~ cIN f0 part cEMPTY

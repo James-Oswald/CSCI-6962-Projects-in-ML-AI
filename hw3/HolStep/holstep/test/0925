@@ -1,0 +1,107 @@
+N Seq.all_predI
+C |- (!a1. (!a2. (!s. (((all ((predI a1) a2)) s) = (((all a1) s) /\ ((all a2) s))))))
+T c= call * * part cpredI f0 f1 f2 c/\ call f0 f2 call f1 f2
+D Ssrbool.negbK
+A |- (!b. ((~ (~ b)) = b))
+T c= c~ c~ f0 f0
+D Ssrbool.negb_and
+A |- (!a. (!b. ((~ (a /\ b)) = ((~ a) \/ (~ b)))))
+T c= c~ c/\ f0 f1 c\/ c~ f0 c~ f1
+D Ssrbool.predI
+A |- (!p1. (!p2. (((predI p1) p2) = (\x. ((p1 x) /\ (p2 x))))))
+T c= * * part cpredI f0 f1 / c/\ * f0 b0 * f1 b0
+D Ssrbool.predU
+A |- (!p1. (!p2. (((predU p1) p2) = (\x. ((p1 x) \/ (p2 x))))))
+T c= * * part cpredU f0 f1 / c\/ * f0 b0 * f1 b0
+D Ssrbool.predC
+A |- (!p. ((predC p) = (\x. (~ (p x)))))
+T c= * part cpredC f0 / c~ * f0 b0
+D Seq.has_predC
+A |- (!a. (!s. (((has (predC a)) s) = (~ ((all a) s)))))
+T c= chas * part cpredC f0 f1 c~ call f0 f1
+D Seq.has_predU
+A |- (!a1. (!a2. (!s. (((has ((predU a1) a2)) s) = (((has a1) s) \/ ((has a2) s))))))
+T c= chas * * part cpredU f0 f1 f2 c\/ chas f0 f2 chas f1 f2
+D Seq.can_inj
+A |- (!f. (!g. ((!x. ((g (f x)) = x)) ==> (!x. (!y. (((f x) = (f y)) ==> (x = y)))))))
+T c==> ! c= * f0 * f1 b0 b0 ! ! c==> c= * f1 b0 * f1 b1 c= b0 b1
++ |- ((((has (predC ((predI a1) a2))) s) = ((has (\x. (((predC a1) x) \/ ((predC a2) x)))) s)) = (((has (predC ((predI a1) a2))) s) = ((has ((predU (predC a1)) (predC a2))) s)))
+T c= c= chas * part cpredC * * part cpredI f0 f1 f2 chas / c\/ cpredC f0 b0 cpredC f1 b0 f2 c= chas * part cpredC * * part cpredI f0 f1 f2 chas * * part cpredU * part cpredC f0 * part cpredC f1 f2
++ |- (((!a. (!s. ((~ ((all a) s)) = ((has (predC a)) s)))) ==> ((\a. (!s. ((~ ((all a) s)) = ((has (predC a)) s)))) a)) = ((\a. (!s. ((~ ((all a) s)) = ((has (predC a)) s)))) a))
+T c= c==> ! ! c= c~ call b0 b1 chas * part cpredC b0 b1 * / ! c= c~ call b0 b1 chas * part cpredC b0 b1 f0 * / ! c= c~ call b0 b1 chas * part cpredC b0 b1 f0
++ |- (((!s. ((((has a1) s) \/ ((has a2) s)) = ((has ((predU a1) a2)) s))) ==> ((\s. ((((has a1) s) \/ ((has a2) s)) = ((has ((predU a1) a2)) s))) s)) = ((\s. ((((has a1) s) \/ ((has a2) s)) = ((has ((predU a1) a2)) s))) s))
+T c= c==> ! c= c\/ chas f0 b0 chas f1 b0 chas * * part cpredU f0 f1 b0 * / c= c\/ chas f0 b0 chas f1 b0 chas * * part cpredU f0 f1 b0 f2 * / c= c\/ chas f0 b0 chas f1 b0 chas * * part cpredU f0 f1 b0 f2
+- ((!x. (P ==> (Q x))) = (P ==> (!x. (Q x)))) |- ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))
+T c==> c= ! c==> f0 * f1 b0 c==> f0 ! * f1 b0 c= c==> f0 ! * f1 b0 ! c==> f0 * f1 b0
++ |- ((((has (\x. (~ ((\x. ((a1 x) /\ (a2 x))) x)))) s) = ((has (\x. (((\x. (~ (a1 x))) x) \/ ((\x. (~ (a2 x))) x)))) s)) = (((has (\x. (~ ((\x. ((a1 x) /\ (a2 x))) x)))) s) = ((has (\x. (((\x. (~ (a1 x))) x) \/ ((predC a2) x)))) s)))
+T c= c= chas / c~ * / c/\ * f0 b1 * f1 b1 b0 f2 chas / c\/ * / c~ * f0 b1 b0 * / c~ * f1 b1 b0 f2 c= chas / c~ * / c/\ * f0 b1 * f1 b1 b0 f2 chas / c\/ * / c~ * f0 b1 b0 cpredC f1 b0 f2
+- |- ((\P. (!Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x)))))) P)
+T * / ! c= c==> b0 ! * b1 b2 ! c==> b0 * b1 b2 f0
++ (((has (predC a)) s) = (~ ((all a) s))) |- ((~ ((all a) s)) = ((has (predC a)) s))
+T c==> c= chas * part cpredC f0 f1 c~ call f0 f1 c= c~ call f0 f1 chas * part cpredC f0 f1
++ |- ((((~ ((all ((predI a1) a2)) s)) = (~ (((all a1) s) /\ ((all a2) s)))) ==> (((all ((predI a1) a2)) s) = (((all a1) s) /\ ((all a2) s)))) = (((all ((predI a1) a2)) s) = (((all a1) s) /\ ((all a2) s))))
+T c= c==> c= c~ call * * part cpredI f0 f1 f2 c~ c/\ call f0 f2 call f1 f2 c= call * * part cpredI f0 f1 f2 c/\ call f0 f2 call f1 f2 c= call * * part cpredI f0 f1 f2 c/\ call f0 f2 call f1 f2
++ |- ((!b. (!y. (((~ b) = (~ y)) ==> (b = y)))) ==> (((all ((predI a1) a2)) s) = (((all a1) s) /\ ((all a2) s))))
+T c==> ! ! c==> c= c~ b0 c~ b1 c= b0 b1 c= call * * part cpredI f0 f1 f2 c/\ call f0 f2 call f1 f2
++ |- (((!p2. (((predI p1) p2) = (\x. ((p1 x) /\ (p2 x))))) ==> ((\p2. (((predI p1) p2) = (\x. ((p1 x) /\ (p2 x))))) p2)) = ((\p2. (((predI p1) p2) = (\x. ((p1 x) /\ (p2 x))))) p2))
+T c= c==> ! c= * * part cpredI f0 b0 / c/\ * f0 b1 * b0 b1 * / c= * * part cpredI f0 b0 / c/\ * f0 b1 * b0 b1 f1 * / c= * * part cpredI f0 b0 / c/\ * f0 b1 * b0 b1 f1
++ |- ((!a2. (!s. (((all ((predI a1) a2)) s) = (((all a1) s) /\ ((all a2) s))))) = T)
+T c= ! ! c= call * * part cpredI f0 b0 b1 c/\ call f0 b1 call b0 b1 cT
++ |- (((!b. ((~ (a /\ b)) = ((~ a) \/ (~ b)))) ==> ((\b. ((~ (a /\ b)) = ((~ a) \/ (~ b)))) b)) = ((\b. ((~ (a /\ b)) = ((~ a) \/ (~ b)))) b))
+T c= c==> ! c= c~ c/\ f0 b0 c\/ c~ f0 c~ b0 * / c= c~ c/\ f0 b0 c\/ c~ f0 c~ b0 f1 * / c= c~ c/\ f0 b0 c\/ c~ f0 c~ b0 f1
++ ((((has a1) s) \/ ((has a2) s)) = ((has ((predU a1) a2)) s)) |- (((has ((predU a1) a2)) s) = (((has a1) s) \/ ((has a2) s)))
+T c==> c= c\/ chas f0 f1 chas f2 f1 chas * * part cpredU f0 f2 f1 c= chas * * part cpredU f0 f2 f1 c\/ chas f0 f1 chas f2 f1
+- |- ((t \/ t) = t)
+T c= c\/ f0 f0 f0
++ |- ((((has (predC ((predI a1) a2))) s) = ((~ ((all a1) s)) \/ (~ ((all a2) s)))) = ((~ ((all ((predI a1) a2)) s)) = ((~ ((all a1) s)) \/ (~ ((all a2) s)))))
+T c= c= chas * part cpredC * * part cpredI f0 f1 f2 c\/ c~ call f0 f2 c~ call f1 f2 c= c~ call * * part cpredI f0 f1 f2 c\/ c~ call f0 f2 c~ call f1 f2
+- |- ((((has (\x. ((~ (a1 x)) \/ (~ (a2 x))))) s) = ((has (\x. ((~ (a1 x)) \/ (~ (a2 x))))) s)) = (((has (\x. (~ ((a1 x) /\ (a2 x))))) s) = ((has (\x. ((~ (a1 x)) \/ (~ (a2 x))))) s)))
+T c= c= chas / c\/ c~ * f0 b0 c~ * f1 b0 f2 chas / c\/ c~ * f0 b0 c~ * f1 b0 f2 c= chas / c~ c/\ * f0 b0 * f1 b0 f2 chas / c\/ c~ * f0 b0 c~ * f1 b0 f2
++ (!b. (!y. (((~ b) = (~ y)) ==> (b = y)))) |- (!y. (((~ b) = (~ y)) ==> (b = y)))
+T c==> ! ! c==> c= c~ b0 c~ b1 c= b0 b1 ! c==> c= c~ f0 c~ b0 c= f0 b0
++ |- (((has (predC ((predI a1) a2))) s) = ((~ ((all a1) s)) \/ (~ ((all a2) s))))
+T c= chas * part cpredC * * part cpredI f0 f1 f2 c\/ c~ call f0 f2 c~ call f1 f2
++ |- ((\f. (!g. ((!x. ((g (f x)) = x)) ==> (!x. (!y. (((f x) = (f y)) ==> (x = y))))))) f)
+T * / ! c==> ! c= * b1 * b0 b2 b2 ! ! c==> c= * b0 b2 * b0 b3 c= b2 b3 f0
++ |- ((\b. ((~ (a /\ b)) = ((~ a) \/ (~ b)))) b)
+T * / c= c~ c/\ f0 b0 c\/ c~ f0 c~ b0 f1
++ |- (((!a. (!b. ((~ (a /\ b)) = ((~ a) \/ (~ b))))) ==> ((\a. (!b. ((~ (a /\ b)) = ((~ a) \/ (~ b))))) a)) = ((\a. (!b. ((~ (a /\ b)) = ((~ a) \/ (~ b))))) a))
+T c= c==> ! ! c= c~ c/\ b0 b1 c\/ c~ b0 c~ b1 * / ! c= c~ c/\ b0 b1 c\/ c~ b0 c~ b1 f0 * / ! c= c~ c/\ b0 b1 c\/ c~ b0 c~ b1 f0
++ |- (((has (\x. (~ ((\x. ((a1 x) /\ (a2 x))) x)))) s) = ((has (\x. (((\x. (~ (a1 x))) x) \/ ((\x. (~ (a2 x))) x)))) s))
+T c= chas / c~ * / c/\ * f0 b1 * f1 b1 b0 f2 chas / c\/ * / c~ * f0 b1 b0 * / c~ * f1 b1 b0 f2
++ |- (((!s. ((~ ((all a) s)) = ((has (predC a)) s))) ==> ((\s. ((~ ((all a) s)) = ((has (predC a)) s))) s)) = ((\s. ((~ ((all a) s)) = ((has (predC a)) s))) s))
+T c= c==> ! c= c~ call f0 b0 chas * part cpredC f0 b0 * / c= c~ call f0 b0 chas * part cpredC f0 b0 f1 * / c= c~ call f0 b0 chas * part cpredC f0 b0 f1
++ |- (((has (predC ((predI a1) a2))) s) = (((has (predC a1)) s) \/ ((has (predC a2)) s)))
+T c= chas * part cpredC * * part cpredI f0 f1 f2 c\/ chas * part cpredC f0 f2 chas * part cpredC f1 f2
+- ((~ b) = (~ y)) |- ((!b. (!y. (((~ b) = (~ y)) ==> (b = y)))) ==> (b = y))
+T c==> c= c~ f0 c~ f1 c==> ! ! c==> c= c~ b0 c~ b1 c= b0 b1 c= f0 f1
+- |- (T = (((has (\x. ((~ (a1 x)) \/ (~ (a2 x))))) s) = ((has (\x. ((~ (a1 x)) \/ (~ (a2 x))))) s)))
+T c= cT c= chas / c\/ c~ * f0 b0 c~ * f1 b0 f2 chas / c\/ c~ * f0 b0 c~ * f1 b0 f2
+- |- ((x = x) = T)
+T c= c= f0 f0 cT
+- |- ((\Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))) Q)
+T * / c= c==> f0 ! * b0 b1 ! c==> f0 * b0 b1 f1
+- (!b. (!y. (((~ b) = (~ y)) ==> (b = y)))) |- ((!y. (((~ b) = (~ y)) ==> (b = y))) = T)
+T c==> ! ! c==> c= c~ b0 c~ b1 c= b0 b1 c= ! c==> c= c~ f0 c~ b0 c= f0 b0 cT
+- |- (((!P. (!Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x)))))) ==> ((\P. (!Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x)))))) P)) = ((\P. (!Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x)))))) P))
+T c= c==> ! ! c= c==> b0 ! * b1 b2 ! c==> b0 * b1 b2 * / ! c= c==> b0 ! * b1 b2 ! c==> b0 * b1 b2 f0 * / ! c= c==> b0 ! * b1 b2 ! c==> b0 * b1 b2 f0
+- (!b. (!y. (((~ b) = (~ y)) ==> (b = y)))), ((~ b) = (~ y)) |- ((!b. (!y. (((~ b) = (~ y)) ==> (b = y)))) /\ (b = y))
+T c==> ! ! c==> c= c~ b0 c~ b1 c= b0 b1 c==> c= c~ f0 c~ f1 c/\ ! ! c==> c= c~ b0 c~ b1 c= b0 b1 c= f0 f1
+- |- ((t /\ t) = t)
+T c= c/\ f0 f0 f0
+- (!b. (!y. (((~ b) = (~ y)) ==> (b = y)))), ((~ b) = (~ y)) |- (((~ b) = (~ y)) /\ (b = y))
+T c==> ! ! c==> c= c~ b0 c~ b1 c= b0 b1 c==> c= c~ f0 c~ f1 c/\ c= c~ f0 c~ f1 c= f0 f1
+- ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x)))) |- ((!x. (P ==> (Q x))) = (P ==> (!x. (Q x))))
+T c==> c= c==> f0 ! * f1 b0 ! c==> f0 * f1 b0 c= ! c==> f0 * f1 b0 c==> f0 ! * f1 b0
+- (!b. (!y. (((~ b) = (~ y)) ==> (b = y)))) |- ((((~ b) = (~ y)) ==> (b = y)) = T)
+T c==> ! ! c==> c= c~ b0 c~ b1 c= b0 b1 c= c==> c= c~ f0 c~ f1 c= f0 f1 cT
+- |- ((!b. (!y. (((~ b) = (~ y)) ==> (b = y)))) ==> (!b. (!y. (((~ b) = (~ y)) ==> (b = y)))))
+T c==> ! ! c==> c= c~ b0 c~ b1 c= b0 b1 ! ! c==> c= c~ b0 c~ b1 c= b0 b1
+- |- ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))
+T c= c==> f0 ! * f1 b0 ! c==> f0 * f1 b0
+- |- (((\x. (f x)) y) = (f y))
+T c= * / * f0 b0 f1 * f0 f1
+- (!b. (!y. (((~ b) = (~ y)) ==> (b = y)))) |- ((!b. (!y. (((~ b) = (~ y)) ==> (b = y)))) /\ (!b. (!y. (((~ b) = (~ y)) ==> (b = y)))))
+T c==> ! ! c==> c= c~ b0 c~ b1 c= b0 b1 c/\ ! ! c==> c= c~ b0 c~ b1 c= b0 b1 ! ! c==> c= c~ b0 c~ b1 c= b0 b1
+- |- (((!Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))) ==> ((\Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))) Q)) = ((\Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))) Q))
+T c= c==> ! c= c==> f0 ! * b0 b1 ! c==> f0 * b0 b1 * / c= c==> f0 ! * b0 b1 ! c==> f0 * b0 b1 f1 * / c= c==> f0 ! * b0 b1 ! c==> f0 * b0 b1 f1

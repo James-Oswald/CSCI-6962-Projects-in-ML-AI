@@ -1,0 +1,49 @@
+N Tame_list.normal_list_nil
+C |- (!L. ((normal_list L) NIL))
+T cnormal_list f0 cNIL
+D TRUTH
+A |- T
+T cT
+D MEM
+A |- ((((MEM x) NIL) = F) /\ (((MEM x) ((CONS h) t)) = ((x = h) \/ ((MEM x) t))))
+T c/\ c= cMEM f0 cNIL cF c= cMEM f0 cCONS f1 f2 c\/ c= f0 f1 cMEM f0 f2
+D Seq.all
+A |- (!a. (!x. (!s'. ((((all a) NIL) = T) /\ (((all a) ((CONS x) s')) = ((a x) /\ ((all a) s')))))))
+T c/\ c= call f0 cNIL cT c= call f0 cCONS f1 f2 c/\ * f0 f1 call f0 f2
+D Seq.uniq
+A |- (((uniq NIL) = T) /\ ((uniq ((CONS x) s')) = ((~ ((MEM x) s')) /\ (uniq s'))))
+T c/\ c= cuniq cNIL cT c= cuniq cCONS f0 f1 c/\ c~ cMEM f0 f1 cuniq f1
+D Tame_defs2.normal_list
+A |- (!L. (!N. (((normal_list L) N) = ((uniq (flatten N)) /\ (((all (\s. (~ (s = NIL)))) N) /\ (((all (f_last L)) N) /\ (((all (loop_list L)) N) /\ (!d. (((MEM d) (flatten N)) ==> (((node (hypermap_of_list L)) d) SUBSET (set_of_list (flatten N))))))))))))
+T c= cnormal_list f0 f1 c/\ cuniq cflatten f1 c/\ call / c~ c= b0 cNIL f1 c/\ call * part cf_last f0 f1 c/\ call * part cloop_list f0 f1 ! c==> cMEM b0 cflatten f1 cSUBSET * * part cnode chypermap_of_list f0 b0 * part cset_of_list cflatten f1
+D Tame_list.concat_flatten
+A |- (!x. (!xs. (((flatten NIL) = NIL) /\ ((flatten ((CONS x) xs)) = ((APPEND x) (flatten xs))))))
+T c/\ c= cflatten cNIL cNIL c= cflatten cCONS f0 f1 cAPPEND f0 cflatten f1
++ |- (((!L. (!N. (((normal_list L) N) = ((uniq (flatten N)) /\ (((all (\s. (~ (s = NIL)))) N) /\ (((all (f_last L)) N) /\ (((all (loop_list L)) N) /\ (!d. (((MEM d) (flatten N)) ==> (((node (hypermap_of_list L)) d) SUBSET (set_of_list (flatten N)))))))))))) ==> ((\L. (!N. (((normal_list L) N) = ((uniq (flatten N)) /\ (((all (\s. (~ (s = NIL)))) N) /\ (((all (f_last L)) N) /\ (((all (loop_list L)) N) /\ (!d. (((MEM d) (flatten N)) ==> (((node (hypermap_of_list L)) d) SUBSET (set_of_list (flatten N)))))))))))) L)) = ((\L. (!N. (((normal_list L) N) = ((uniq (flatten N)) /\ (((all (\s. (~ (s = NIL)))) N) /\ (((all (f_last L)) N) /\ (((all (loop_list L)) N) /\ (!d. (((MEM d) (flatten N)) ==> (((node (hypermap_of_list L)) d) SUBSET (set_of_list (flatten N)))))))))))) L))
+T c= c==> ! ! c= cnormal_list b0 b1 c/\ cuniq cflatten b1 c/\ call / c~ c= b2 cNIL b1 c/\ call * part cf_last b0 b1 c/\ call * part cloop_list b0 b1 ! c==> cMEM b2 cflatten b1 cSUBSET * * part cnode chypermap_of_list b0 b2 * part cset_of_list cflatten b1 * / ! c= cnormal_list b0 b1 c/\ cuniq cflatten b1 c/\ call / c~ c= b2 cNIL b1 c/\ call * part cf_last b0 b1 c/\ call * part cloop_list b0 b1 ! c==> cMEM b2 cflatten b1 cSUBSET * * part cnode chypermap_of_list b0 b2 * part cset_of_list cflatten b1 f0 * / ! c= cnormal_list b0 b1 c/\ cuniq cflatten b1 c/\ call / c~ c= b2 cNIL b1 c/\ call * part cf_last b0 b1 c/\ call * part cloop_list b0 b1 ! c==> cMEM b2 cflatten b1 cSUBSET * * part cnode chypermap_of_list b0 b2 * part cset_of_list cflatten b1 f0
++ |- ((flatten NIL) = NIL)
+T c= cflatten cNIL cNIL
+- |- ((t ==> t) = T)
+T c= c==> f0 f0 cT
+- |- ((flatten ((CONS x) xs)) = ((APPEND x) (flatten xs)))
+T c= cflatten cCONS f0 f1 cAPPEND f0 cflatten f1
++ |- ((!d. t) = t)
+T c= ! f0 f0
++ |- (((!x. (!xs. (((flatten NIL) = NIL) /\ ((flatten ((CONS x) xs)) = ((APPEND x) (flatten xs)))))) ==> ((\x. (!xs. (((flatten NIL) = NIL) /\ ((flatten ((CONS x) xs)) = ((APPEND x) (flatten xs)))))) x)) = ((\x. (!xs. (((flatten NIL) = NIL) /\ ((flatten ((CONS x) xs)) = ((APPEND x) (flatten xs)))))) x))
+T c= c==> ! ! c/\ c= cflatten cNIL cNIL c= cflatten cCONS b0 b1 cAPPEND b0 cflatten b1 * / ! c/\ c= cflatten cNIL cNIL c= cflatten cCONS b0 b1 cAPPEND b0 cflatten b1 f0 * / ! c/\ c= cflatten cNIL cNIL c= cflatten cCONS b0 b1 cAPPEND b0 cflatten b1 f0
++ |- (((!xs. (((flatten NIL) = NIL) /\ ((flatten ((CONS x) xs)) = ((APPEND x) (flatten xs))))) ==> ((\xs. (((flatten NIL) = NIL) /\ ((flatten ((CONS x) xs)) = ((APPEND x) (flatten xs))))) xs)) = ((\xs. (((flatten NIL) = NIL) /\ ((flatten ((CONS x) xs)) = ((APPEND x) (flatten xs))))) xs))
+T c= c==> ! c/\ c= cflatten cNIL cNIL c= cflatten cCONS f0 b0 cAPPEND f0 cflatten b0 * / c/\ c= cflatten cNIL cNIL c= cflatten cCONS f0 b0 cAPPEND f0 cflatten b0 f1 * / c/\ c= cflatten cNIL cNIL c= cflatten cCONS f0 b0 cAPPEND f0 cflatten b0 f1
+- |- (((MEM x) ((CONS h) t)) = ((x = h) \/ ((MEM x) t)))
+T c= cMEM f0 cCONS f1 f2 c\/ c= f0 f1 cMEM f0 f2
++ |- ((uniq NIL) = T)
+T c= cuniq cNIL cT
++ |- ((\x. (!xs. (((flatten NIL) = NIL) /\ ((flatten ((CONS x) xs)) = ((APPEND x) (flatten xs)))))) x)
+T * / ! c/\ c= cflatten cNIL cNIL c= cflatten cCONS b0 b1 cAPPEND b0 cflatten b1 f0
+- |- ((x = x) = T)
+T c= c= f0 f0 cT
+- |- ((uniq ((CONS x) s')) = ((~ ((MEM x) s')) /\ (uniq s')))
+T c= cuniq cCONS f0 f1 c/\ c~ cMEM f0 f1 cuniq f1
+- |- ((t /\ t) = t)
+T c= c/\ f0 f0 f0
+- |- (((all a) ((CONS x) s')) = ((a x) /\ ((all a) s')))
+T c= call f0 cCONS f1 f2 c/\ * f0 f1 call f0 f2

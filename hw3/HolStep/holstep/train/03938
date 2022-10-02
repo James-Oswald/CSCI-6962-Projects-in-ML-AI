@@ -1,0 +1,149 @@
+N Reduction4.HD_flatten
+C |- (!s. (((~ (s = NIL)) /\ (~ ((HD s) = NIL))) ==> ((HD (flatten s)) = (HD (HD s)))))
+T c==> c/\ c~ c= f0 cNIL c~ c= cHD f0 cNIL c= cHD cflatten f0 cHD cHD f0
+D TRUTH
+A |- T
+T cT
+D list_INDUCT
+A |- (!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x))))
+T c==> c/\ * f0 cNIL ! ! c==> * f0 b1 * f0 cCONS b0 b1 ! * f0 b0
+D HD
+A |- ((HD ((CONS h) t)) = h)
+T c= cHD cCONS f0 f1 f0
+D NOT_CONS_NIL
+A |- (!h. (!t. (~ (((CONS h) t) = NIL))))
+T c~ c= cCONS f0 f1 cNIL
+D Seq.flatten_cons
+A |- (!s. (!ss. ((flatten ((CONS s) ss)) = ((cat s) (flatten ss)))))
+T c= cflatten cCONS f0 f1 ccat f0 cflatten f1
+D Tame_list.hd_cat
+A |- (!a. (!b. ((~ (a = NIL)) ==> ((HD ((cat a) b)) = (HD a)))))
+T c==> c~ c= f0 cNIL c= cHD ccat f0 f1 cHD f0
+- |- (~ (NIL = ((CONS h) t)))
+T c~ c= cNIL cCONS f0 f1
++ |- ((\a. (!b. ((~ (a = NIL)) ==> ((HD ((cat a) b)) = (HD a))))) a)
+T * / ! c==> c~ c= b0 cNIL c= cHD ccat b0 b1 cHD b0 f0
+- (~ (h = NIL)) |- ((NIL = h) = F)
+T c==> c~ c= f0 cNIL c= c= cNIL f0 cF
++ |- (T = (((~ (NIL = NIL)) /\ (~ ((HD NIL) = NIL))) ==> ((HD (flatten NIL)) = (HD (HD NIL)))))
+T c= cT c==> c/\ c~ c= cNIL cNIL c~ c= cHD cNIL cNIL c= cHD cflatten cNIL cHD cHD cNIL
++ |- ((((CONS h) t) = NIL) = F)
+T c= c= cCONS f0 f1 cNIL cF
+- |- ((t ==> T) = T)
+T c= c==> f0 cT cT
++ |- (((!b. ((~ (a = NIL)) ==> ((HD ((cat a) b)) = (HD a)))) ==> ((\b. ((~ (a = NIL)) ==> ((HD ((cat a) b)) = (HD a)))) b)) = ((\b. ((~ (a = NIL)) ==> ((HD ((cat a) b)) = (HD a)))) b))
+T c= c==> ! c==> c~ c= f0 cNIL c= cHD ccat f0 b0 cHD f0 * / c==> c~ c= f0 cNIL c= cHD ccat f0 b0 cHD f0 f1 * / c==> c~ c= f0 cNIL c= cHD ccat f0 b0 cHD f0 f1
+- |- ((t ==> t) = T)
+T c= c==> f0 f0 cT
++ |- ((\h. (!t. (~ (((CONS h) t) = NIL)))) h)
+T * / ! c~ c= cCONS b0 b1 cNIL f0
+- |- (((!q'. (((~ (h = NIL)) = p') ==> ((p' ==> (((HD ((cat h) (flatten t))) = (HD h)) = q')) ==> (((~ (h = NIL)) ==> ((HD ((cat h) (flatten t))) = (HD h))) = (p' ==> q'))))) ==> ((\q'. (((~ (h = NIL)) = p') ==> ((p' ==> (((HD ((cat h) (flatten t))) = (HD h)) = q')) ==> (((~ (h = NIL)) ==> ((HD ((cat h) (flatten t))) = (HD h))) = (p' ==> q'))))) q')) = ((\q'. (((~ (h = NIL)) = p') ==> ((p' ==> (((HD ((cat h) (flatten t))) = (HD h)) = q')) ==> (((~ (h = NIL)) ==> ((HD ((cat h) (flatten t))) = (HD h))) = (p' ==> q'))))) q'))
+T c= c==> ! c==> c= c~ c= f0 cNIL f1 c==> c==> f1 c= c= cHD ccat f0 cflatten f2 cHD f0 b0 c= c==> c~ c= f0 cNIL c= cHD ccat f0 cflatten f2 cHD f0 c==> f1 b0 * / c==> c= c~ c= f0 cNIL f1 c==> c==> f1 c= c= cHD ccat f0 cflatten f2 cHD f0 b0 c= c==> c~ c= f0 cNIL c= cHD ccat f0 cflatten f2 cHD f0 c==> f1 b0 f3 * / c==> c= c~ c= f0 cNIL f1 c==> c==> f1 c= c= cHD ccat f0 cflatten f2 cHD f0 b0 c= c==> c~ c= f0 cNIL c= cHD ccat f0 cflatten f2 cHD f0 c==> f1 b0 f3
++ |- (((~ (NIL = NIL)) /\ (~ ((HD NIL) = NIL))) ==> ((HD (flatten NIL)) = (HD (HD NIL))))
+T c==> c/\ c~ c= cNIL cNIL c~ c= cHD cNIL cNIL c= cHD cflatten cNIL cHD cHD cNIL
++ |- (((((~ (t = NIL)) /\ (~ ((HD t) = NIL))) ==> ((HD (flatten t)) = (HD (HD t)))) ==> (((~ (((CONS h) t) = NIL)) /\ (~ ((HD ((CONS h) t)) = NIL))) ==> ((HD (flatten ((CONS h) t))) = (HD (HD ((CONS h) t)))))) = T)
+T c= c==> c==> c/\ c~ c= f0 cNIL c~ c= cHD f0 cNIL c= cHD cflatten f0 cHD cHD f0 c==> c/\ c~ c= cCONS f1 f0 cNIL c~ c= cHD cCONS f1 f0 cNIL c= cHD cflatten cCONS f1 f0 cHD cHD cCONS f1 f0 cT
++ |- (((!t. (~ (((CONS h) t) = NIL))) ==> ((\t. (~ (((CONS h) t) = NIL))) t)) = ((\t. (~ (((CONS h) t) = NIL))) t))
+T c= c==> ! c~ c= cCONS f0 b0 cNIL * / c~ c= cCONS f0 b0 cNIL f1 * / c~ c= cCONS f0 b0 cNIL f1
+- |- ((!q'. ((p = p') ==> ((p' ==> (q = q')) ==> ((p ==> q) = (p' ==> q'))))) = T)
+T c= ! c==> c= f0 f1 c==> c==> f1 c= f2 b0 c= c==> f0 f2 c==> f1 b0 cT
++ |- ((\b. ((~ (a = NIL)) ==> ((HD ((cat a) b)) = (HD a)))) b)
+T * / c==> c~ c= f0 cNIL c= cHD ccat f0 b0 cHD f0 f1
++ |- (((!s. (!ss. ((flatten ((CONS s) ss)) = ((cat s) (flatten ss))))) ==> ((\s. (!ss. ((flatten ((CONS s) ss)) = ((cat s) (flatten ss))))) s)) = ((\s. (!ss. ((flatten ((CONS s) ss)) = ((cat s) (flatten ss))))) s))
+T c= c==> ! ! c= cflatten cCONS b0 b1 ccat b0 cflatten b1 * / ! c= cflatten cCONS b0 b1 ccat b0 cflatten b1 f0 * / ! c= cflatten cCONS b0 b1 ccat b0 cflatten b1 f0
+- (~ (h = NIL)) |- (T = (~ (h = NIL)))
+T c==> c~ c= f0 cNIL c= cT c~ c= f0 cNIL
++ |- (((((~ (NIL = NIL)) /\ (~ ((HD NIL) = NIL))) ==> ((HD (flatten NIL)) = (HD (HD NIL)))) /\ (!h. (!t. ((((~ (t = NIL)) /\ (~ ((HD t) = NIL))) ==> ((HD (flatten t)) = (HD (HD t)))) ==> (((~ (((CONS h) t) = NIL)) /\ (~ ((HD ((CONS h) t)) = NIL))) ==> ((HD (flatten ((CONS h) t))) = (HD (HD ((CONS h) t))))))))) ==> (!s. (((~ (s = NIL)) /\ (~ ((HD s) = NIL))) ==> ((HD (flatten s)) = (HD (HD s))))))
+T c==> c/\ c==> c/\ c~ c= cNIL cNIL c~ c= cHD cNIL cNIL c= cHD cflatten cNIL cHD cHD cNIL ! ! c==> c==> c/\ c~ c= b1 cNIL c~ c= cHD b1 cNIL c= cHD cflatten b1 cHD cHD b1 c==> c/\ c~ c= cCONS b0 b1 cNIL c~ c= cHD cCONS b0 b1 cNIL c= cHD cflatten cCONS b0 b1 cHD cHD cCONS b0 b1 ! c==> c/\ c~ c= b0 cNIL c~ c= cHD b0 cNIL c= cHD cflatten b0 cHD cHD b0
+- |- (((~ (NIL = ((CONS h) t))) ==> ((NIL = ((CONS h) t)) = F)) = ((NIL = ((CONS h) t)) = F))
+T c= c==> c~ c= cNIL cCONS f0 f1 c= c= cNIL cCONS f0 f1 cF c= c= cNIL cCONS f0 f1 cF
++ |- (((!h. (!t. (~ (((CONS h) t) = NIL)))) ==> ((\h. (!t. (~ (((CONS h) t) = NIL)))) h)) = ((\h. (!t. (~ (((CONS h) t) = NIL)))) h))
+T c= c==> ! ! c~ c= cCONS b0 b1 cNIL * / ! c~ c= cCONS b0 b1 cNIL f0 * / ! c~ c= cCONS b0 b1 cNIL f0
++ (((~ (t = NIL)) /\ (~ ((HD t) = NIL))) ==> ((HD (flatten t)) = (HD (HD t)))) |- ((((~ (t = NIL)) /\ (~ ((HD t) = NIL))) ==> ((HD (flatten t)) = (HD (HD t)))) /\ (((~ (((CONS h) t) = NIL)) /\ (~ ((HD ((CONS h) t)) = NIL))) ==> ((HD (flatten ((CONS h) t))) = (HD (HD ((CONS h) t))))))
+T c==> c==> c/\ c~ c= f0 cNIL c~ c= cHD f0 cNIL c= cHD cflatten f0 cHD cHD f0 c/\ c==> c/\ c~ c= f0 cNIL c~ c= cHD f0 cNIL c= cHD cflatten f0 cHD cHD f0 c==> c/\ c~ c= cCONS f1 f0 cNIL c~ c= cHD cCONS f1 f0 cNIL c= cHD cflatten cCONS f1 f0 cHD cHD cCONS f1 f0
+- (NIL = h) |- (h = NIL)
+T c==> c= cNIL f0 c= f0 cNIL
+- (NIL = ((CONS h) t)) |- (((CONS h) t) = NIL)
+T c==> c= cNIL cCONS f0 f1 c= cCONS f0 f1 cNIL
+- |- (((~ (h = NIL)) ==> ((HD ((cat h) (flatten t))) = (HD h))) = ((~ (h = NIL)) ==> T))
+T c= c==> c~ c= f0 cNIL c= cHD ccat f0 cflatten f1 cHD f0 c==> c~ c= f0 cNIL cT
++ |- ((x = x) = T)
+T c= c= f0 f0 cT
++ |- (((~ (((CONS h) t) = NIL)) ==> ((((CONS h) t) = NIL) = F)) = ((((CONS h) t) = NIL) = F))
+T c= c==> c~ c= cCONS f0 f1 cNIL c= c= cCONS f0 f1 cNIL cF c= c= cCONS f0 f1 cNIL cF
++ |- ((\t. (~ (((CONS h) t) = NIL))) t)
+T * / c~ c= cCONS f0 b0 cNIL f1
+- (~ (h = NIL)) |- (~ (NIL = h))
+T c==> c~ c= f0 cNIL c~ c= cNIL f0
++ |- (((~ (h = NIL)) ==> ((HD ((cat h) (flatten t))) = (HD h))) = (((~ (((CONS h) t) = NIL)) /\ (~ ((HD ((CONS h) t)) = NIL))) ==> ((HD (flatten ((CONS h) t))) = (HD (HD ((CONS h) t))))))
+T c= c==> c~ c= f0 cNIL c= cHD ccat f0 cflatten f1 cHD f0 c==> c/\ c~ c= cCONS f0 f1 cNIL c~ c= cHD cCONS f0 f1 cNIL c= cHD cflatten cCONS f0 f1 cHD cHD cCONS f0 f1
+- (((CONS h) t) = NIL) |- (NIL = ((CONS h) t))
+T c==> c= cCONS f0 f1 cNIL c= cNIL cCONS f0 f1
++ |- (((~ (((CONS h) t) = NIL)) /\ (~ ((HD ((CONS h) t)) = NIL))) ==> ((HD (flatten ((CONS h) t))) = (HD (HD ((CONS h) t)))))
+T c==> c/\ c~ c= cCONS f0 f1 cNIL c~ c= cHD cCONS f0 f1 cNIL c= cHD cflatten cCONS f0 f1 cHD cHD cCONS f0 f1
+- (~ (h = NIL)) |- (((~ (NIL = h)) ==> ((NIL = h) = F)) = ((NIL = h) = F))
+T c==> c~ c= f0 cNIL c= c==> c~ c= cNIL f0 c= c= cNIL f0 cF c= c= cNIL f0 cF
+- |- (((!p'. (!q'. (((~ (h = NIL)) = p') ==> ((p' ==> (((HD ((cat h) (flatten t))) = (HD h)) = q')) ==> (((~ (h = NIL)) ==> ((HD ((cat h) (flatten t))) = (HD h))) = (p' ==> q')))))) ==> ((\p'. (!q'. (((~ (h = NIL)) = p') ==> ((p' ==> (((HD ((cat h) (flatten t))) = (HD h)) = q')) ==> (((~ (h = NIL)) ==> ((HD ((cat h) (flatten t))) = (HD h))) = (p' ==> q')))))) p')) = ((\p'. (!q'. (((~ (h = NIL)) = p') ==> ((p' ==> (((HD ((cat h) (flatten t))) = (HD h)) = q')) ==> (((~ (h = NIL)) ==> ((HD ((cat h) (flatten t))) = (HD h))) = (p' ==> q')))))) p'))
+T c= c==> ! ! c==> c= c~ c= f0 cNIL b0 c==> c==> b0 c= c= cHD ccat f0 cflatten f1 cHD f0 b1 c= c==> c~ c= f0 cNIL c= cHD ccat f0 cflatten f1 cHD f0 c==> b0 b1 * / ! c==> c= c~ c= f0 cNIL b0 c==> c==> b0 c= c= cHD ccat f0 cflatten f1 cHD f0 b1 c= c==> c~ c= f0 cNIL c= cHD ccat f0 cflatten f1 cHD f0 c==> b0 b1 f2 * / ! c==> c= c~ c= f0 cNIL b0 c==> c==> b0 c= c= cHD ccat f0 cflatten f1 cHD f0 b1 c= c==> c~ c= f0 cNIL c= cHD ccat f0 cflatten f1 cHD f0 c==> b0 b1 f2
++ |- ((((((~ (NIL = NIL)) /\ (~ ((HD NIL) = NIL))) ==> ((HD (flatten NIL)) = (HD (HD NIL)))) /\ (!h. (!t. ((((~ (t = NIL)) /\ (~ ((HD t) = NIL))) ==> ((HD (flatten t)) = (HD (HD t)))) ==> (((~ (((CONS h) t) = NIL)) /\ (~ ((HD ((CONS h) t)) = NIL))) ==> ((HD (flatten ((CONS h) t))) = (HD (HD ((CONS h) t))))))))) ==> (!s. (((~ (s = NIL)) /\ (~ ((HD s) = NIL))) ==> ((HD (flatten s)) = (HD (HD s)))))) = (!s. (((~ (s = NIL)) /\ (~ ((HD s) = NIL))) ==> ((HD (flatten s)) = (HD (HD s))))))
+T c= c==> c/\ c==> c/\ c~ c= cNIL cNIL c~ c= cHD cNIL cNIL c= cHD cflatten cNIL cHD cHD cNIL ! ! c==> c==> c/\ c~ c= b1 cNIL c~ c= cHD b1 cNIL c= cHD cflatten b1 cHD cHD b1 c==> c/\ c~ c= cCONS b0 b1 cNIL c~ c= cHD cCONS b0 b1 cNIL c= cHD cflatten cCONS b0 b1 cHD cHD cCONS b0 b1 ! c==> c/\ c~ c= b0 cNIL c~ c= cHD b0 cNIL c= cHD cflatten b0 cHD cHD b0 ! c==> c/\ c~ c= b0 cNIL c~ c= cHD b0 cNIL c= cHD cflatten b0 cHD cHD b0
++ |- ((!t. ((((~ (t = NIL)) /\ (~ ((HD t) = NIL))) ==> ((HD (flatten t)) = (HD (HD t)))) ==> (((~ (((CONS h) t) = NIL)) /\ (~ ((HD ((CONS h) t)) = NIL))) ==> ((HD (flatten ((CONS h) t))) = (HD (HD ((CONS h) t))))))) = T)
+T c= ! c==> c==> c/\ c~ c= b0 cNIL c~ c= cHD b0 cNIL c= cHD cflatten b0 cHD cHD b0 c==> c/\ c~ c= cCONS f0 b0 cNIL c~ c= cHD cCONS f0 b0 cNIL c= cHD cflatten cCONS f0 b0 cHD cHD cCONS f0 b0 cT
++ |- ((((~ (NIL = NIL)) /\ (~ ((HD NIL) = NIL))) ==> ((HD (flatten NIL)) = (HD (HD NIL)))) /\ (!h. (!t. ((((~ (t = NIL)) /\ (~ ((HD t) = NIL))) ==> ((HD (flatten t)) = (HD (HD t)))) ==> (((~ (((CONS h) t) = NIL)) /\ (~ ((HD ((CONS h) t)) = NIL))) ==> ((HD (flatten ((CONS h) t))) = (HD (HD ((CONS h) t)))))))))
+T c/\ c==> c/\ c~ c= cNIL cNIL c~ c= cHD cNIL cNIL c= cHD cflatten cNIL cHD cHD cNIL ! ! c==> c==> c/\ c~ c= b1 cNIL c~ c= cHD b1 cNIL c= cHD cflatten b1 cHD cHD b1 c==> c/\ c~ c= cCONS b0 b1 cNIL c~ c= cHD cCONS b0 b1 cNIL c= cHD cflatten cCONS b0 b1 cHD cHD cCONS b0 b1
++ |- ((\s. (!ss. ((flatten ((CONS s) ss)) = ((cat s) (flatten ss))))) s)
+T * / ! c= cflatten cCONS b0 b1 ccat b0 cflatten b1 f0
++ |- ((F ==> t) = T)
+T c= c==> cF f0 cT
+- |- ((t /\ t) = t)
+T c= c/\ f0 f0 f0
++ |- ((F /\ t) = F)
+T c= c/\ cF f0 cF
+- |- (((~ (h = NIL)) = p') ==> ((p' ==> (((HD ((cat h) (flatten t))) = (HD h)) = q')) ==> (((~ (h = NIL)) ==> ((HD ((cat h) (flatten t))) = (HD h))) = (p' ==> q'))))
+T c==> c= c~ c= f0 cNIL f1 c==> c==> f1 c= c= cHD ccat f0 cflatten f2 cHD f0 f3 c= c==> c~ c= f0 cNIL c= cHD ccat f0 cflatten f2 cHD f0 c==> f1 f3
+- |- ((NIL = ((CONS h) t)) = F)
+T c= c= cNIL cCONS f0 f1 cF
++ |- (!h. (!t. ((((~ (t = NIL)) /\ (~ ((HD t) = NIL))) ==> ((HD (flatten t)) = (HD (HD t)))) ==> (((~ (((CONS h) t) = NIL)) /\ (~ ((HD ((CONS h) t)) = NIL))) ==> ((HD (flatten ((CONS h) t))) = (HD (HD ((CONS h) t))))))))
+T c==> c==> c/\ c~ c= f0 cNIL c~ c= cHD f0 cNIL c= cHD cflatten f0 cHD cHD f0 c==> c/\ c~ c= cCONS f1 f0 cNIL c~ c= cHD cCONS f1 f0 cNIL c= cHD cflatten cCONS f1 f0 cHD cHD cCONS f1 f0
++ |- ((~ T) = F)
+T c= c~ cT cF
+- |- ((\q'. (((~ (h = NIL)) = p') ==> ((p' ==> (((HD ((cat h) (flatten t))) = (HD h)) = q')) ==> (((~ (h = NIL)) ==> ((HD ((cat h) (flatten t))) = (HD h))) = (p' ==> q'))))) q')
+T * / c==> c= c~ c= f0 cNIL f1 c==> c==> f1 c= c= cHD ccat f0 cflatten f2 cHD f0 b0 c= c==> c~ c= f0 cNIL c= cHD ccat f0 cflatten f2 cHD f0 c==> f1 b0 f3
+- (~ (h = NIL)) |- ((h = NIL) = F)
+T c==> c~ c= f0 cNIL c= c= f0 cNIL cF
++ |- (((!ss. ((flatten ((CONS s) ss)) = ((cat s) (flatten ss)))) ==> ((\ss. ((flatten ((CONS s) ss)) = ((cat s) (flatten ss)))) ss)) = ((\ss. ((flatten ((CONS s) ss)) = ((cat s) (flatten ss)))) ss))
+T c= c==> ! c= cflatten cCONS f0 b0 ccat f0 cflatten b0 * / c= cflatten cCONS f0 b0 ccat f0 cflatten b0 f1 * / c= cflatten cCONS f0 b0 ccat f0 cflatten b0 f1
++ |- ((~ F) = T)
+T c= c~ cF cT
+- (~ (h = NIL)) |- ((HD ((cat h) (flatten t))) = (HD h))
+T c==> c~ c= f0 cNIL c= cHD ccat f0 cflatten f1 cHD f0
+- |- ((\p'. (!q'. (((~ (h = NIL)) = p') ==> ((p' ==> (((HD ((cat h) (flatten t))) = (HD h)) = q')) ==> (((~ (h = NIL)) ==> ((HD ((cat h) (flatten t))) = (HD h))) = (p' ==> q')))))) p')
+T * / ! c==> c= c~ c= f0 cNIL b0 c==> c==> b0 c= c= cHD ccat f0 cflatten f1 cHD f0 b1 c= c==> c~ c= f0 cNIL c= cHD ccat f0 cflatten f1 cHD f0 c==> b0 b1 f2
+- |- ((((~ (h = NIL)) ==> (((HD ((cat h) (flatten t))) = (HD h)) = T)) ==> (((~ (h = NIL)) ==> ((HD ((cat h) (flatten t))) = (HD h))) = ((~ (h = NIL)) ==> T))) = (((~ (h = NIL)) ==> ((HD ((cat h) (flatten t))) = (HD h))) = ((~ (h = NIL)) ==> T)))
+T c= c==> c==> c~ c= f0 cNIL c= c= cHD ccat f0 cflatten f1 cHD f0 cT c= c==> c~ c= f0 cNIL c= cHD ccat f0 cflatten f1 cHD f0 c==> c~ c= f0 cNIL cT c= c==> c~ c= f0 cNIL c= cHD ccat f0 cflatten f1 cHD f0 c==> c~ c= f0 cNIL cT
++ |- ((!h. (!t. ((((~ (t = NIL)) /\ (~ ((HD t) = NIL))) ==> ((HD (flatten t)) = (HD (HD t)))) ==> (((~ (((CONS h) t) = NIL)) /\ (~ ((HD ((CONS h) t)) = NIL))) ==> ((HD (flatten ((CONS h) t))) = (HD (HD ((CONS h) t)))))))) = ((((~ (NIL = NIL)) /\ (~ ((HD NIL) = NIL))) ==> ((HD (flatten NIL)) = (HD (HD NIL)))) /\ (!h. (!t. ((((~ (t = NIL)) /\ (~ ((HD t) = NIL))) ==> ((HD (flatten t)) = (HD (HD t)))) ==> (((~ (((CONS h) t) = NIL)) /\ (~ ((HD ((CONS h) t)) = NIL))) ==> ((HD (flatten ((CONS h) t))) = (HD (HD ((CONS h) t))))))))))
+T c= ! ! c==> c==> c/\ c~ c= b1 cNIL c~ c= cHD b1 cNIL c= cHD cflatten b1 cHD cHD b1 c==> c/\ c~ c= cCONS b0 b1 cNIL c~ c= cHD cCONS b0 b1 cNIL c= cHD cflatten cCONS b0 b1 cHD cHD cCONS b0 b1 c/\ c==> c/\ c~ c= cNIL cNIL c~ c= cHD cNIL cNIL c= cHD cflatten cNIL cHD cHD cNIL ! ! c==> c==> c/\ c~ c= b1 cNIL c~ c= cHD b1 cNIL c= cHD cflatten b1 cHD cHD b1 c==> c/\ c~ c= cCONS b0 b1 cNIL c~ c= cHD cCONS b0 b1 cNIL c= cHD cflatten cCONS b0 b1 cHD cHD cCONS b0 b1
+- |- (!p'. (!q'. ((p = p') ==> ((p' ==> (q = q')) ==> ((p ==> q) = (p' ==> q'))))))
+T c==> c= f0 f1 c==> c==> f1 c= f2 f3 c= c==> f0 f2 c==> f1 f3
+- |- (((p = p') ==> ((p' ==> (q = q')) ==> ((p ==> q) = (p' ==> q')))) = T)
+T c= c==> c= f0 f1 c==> c==> f1 c= f2 f3 c= c==> f0 f2 c==> f1 f3 cT
+- (~ (h = NIL)) |- ((~ (h = NIL)) /\ (((HD ((cat h) (flatten t))) = (HD h)) = T))
+T c==> c~ c= f0 cNIL c/\ c~ c= f0 cNIL c= c= cHD ccat f0 cflatten f1 cHD f0 cT
++ |- ((T /\ t) = t)
+T c= c/\ cT f0 f0
+- |- (((~ (h = NIL)) ==> (((HD ((cat h) (flatten t))) = (HD h)) = q')) ==> (((~ (h = NIL)) ==> ((HD ((cat h) (flatten t))) = (HD h))) = ((~ (h = NIL)) ==> q')))
+T c==> c==> c~ c= f0 cNIL c= c= cHD ccat f0 cflatten f1 cHD f0 f2 c= c==> c~ c= f0 cNIL c= cHD ccat f0 cflatten f1 cHD f0 c==> c~ c= f0 cNIL f2
++ |- (((!a. (!b. ((~ (a = NIL)) ==> ((HD ((cat a) b)) = (HD a))))) ==> ((\a. (!b. ((~ (a = NIL)) ==> ((HD ((cat a) b)) = (HD a))))) a)) = ((\a. (!b. ((~ (a = NIL)) ==> ((HD ((cat a) b)) = (HD a))))) a))
+T c= c==> ! ! c==> c~ c= b0 cNIL c= cHD ccat b0 b1 cHD b0 * / ! c==> c~ c= b0 cNIL c= cHD ccat b0 b1 cHD b0 f0 * / ! c==> c~ c= b0 cNIL c= cHD ccat b0 b1 cHD b0 f0
+- |- (T = ((~ (h = NIL)) ==> ((HD ((cat h) (flatten t))) = (HD h))))
+T c= cT c==> c~ c= f0 cNIL c= cHD ccat f0 cflatten f1 cHD f0
++ |- ((\ss. ((flatten ((CONS s) ss)) = ((cat s) (flatten ss)))) ss)
+T * / c= cflatten cCONS f0 b0 ccat f0 cflatten b0 f1
+- (h = NIL) |- (NIL = h)
+T c==> c= f0 cNIL c= cNIL f0
+- |- ((((~ (h = NIL)) = (~ (h = NIL))) ==> (((~ (h = NIL)) ==> (((HD ((cat h) (flatten t))) = (HD h)) = q')) ==> (((~ (h = NIL)) ==> ((HD ((cat h) (flatten t))) = (HD h))) = ((~ (h = NIL)) ==> q')))) = (((~ (h = NIL)) ==> (((HD ((cat h) (flatten t))) = (HD h)) = q')) ==> (((~ (h = NIL)) ==> ((HD ((cat h) (flatten t))) = (HD h))) = ((~ (h = NIL)) ==> q'))))
+T c= c==> c= c~ c= f0 cNIL c~ c= f0 cNIL c==> c==> c~ c= f0 cNIL c= c= cHD ccat f0 cflatten f1 cHD f0 f2 c= c==> c~ c= f0 cNIL c= cHD ccat f0 cflatten f1 cHD f0 c==> c~ c= f0 cNIL f2 c==> c==> c~ c= f0 cNIL c= c= cHD ccat f0 cflatten f1 cHD f0 f2 c= c==> c~ c= f0 cNIL c= cHD ccat f0 cflatten f1 cHD f0 c==> c~ c= f0 cNIL f2
+- |- ((~ (h = NIL)) ==> (((HD ((cat h) (flatten t))) = (HD h)) = T))
+T c==> c~ c= f0 cNIL c= c= cHD ccat f0 cflatten f1 cHD f0 cT
+- (~ (a = NIL)) |- ((~ (a = NIL)) /\ ((HD ((cat a) b)) = (HD a)))
+T c==> c~ c= f0 cNIL c/\ c~ c= f0 cNIL c= cHD ccat f0 f1 cHD f0

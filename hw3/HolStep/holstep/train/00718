@@ -1,0 +1,591 @@
+N OPEN_INSIDE
+C |- (!s. ((closed s) ==> (open (inside s))))
+T c==> cclosed f0 copen * part cinside f0
+D TRUTH
+A |- T
+T cT
+D BOOL_CASES_AX
+A |- (!t. ((t = T) \/ (t = F)))
+T c\/ c= f0 cT c= f0 cF
+D NOT_CLAUSES
+A |- ((!t. ((~ (~ t)) = t)) /\ (((~ T) = F) /\ ((~ F) = T)))
+T c/\ ! c= c~ c~ b0 b0 c/\ c= c~ cT cF c= c~ cF cT
+D I_THM
+A |- (!x. ((I x) = x))
+T c= cI f0 f0
+D IN
+A |- (!P. (!x. ((x IN P) = (P x))))
+T c= cIN f0 f1 * f1 f0
+D EXTENSION
+A |- (!s. (!t. ((s = t) = (!x. ((x IN s) = (x IN t))))))
+T c= c= f0 f1 ! c= cIN b0 f0 cIN b0 f1
+D SUBSET
+A |- (!s. (!t. ((s SUBSET t) = (!x. ((x IN s) ==> (x IN t))))))
+T c= cSUBSET f0 f1 ! c==> cIN b0 f0 cIN b0 f1
+D NOT_IN_EMPTY
+A |- (!x. (~ (x IN EMPTY)))
+T c~ cIN f0 part cEMPTY
+D IN_UNIV
+A |- (!x. (x IN UNIV))
+T cIN f0 part cUNIV
+D IN_INTER
+A |- (!s. (!t. (!x. ((x IN (s INTER t)) = ((x IN s) /\ (x IN t))))))
+T c= cIN f0 * * part cINTER f1 f2 c/\ cIN f0 f1 cIN f0 f2
+D IN_DIFF
+A |- (!s. (!t. (!x. ((x IN (s DIFF t)) = ((x IN s) /\ (~ (x IN t)))))))
+T c= cIN f0 * * part cDIFF f1 f2 c/\ cIN f0 f1 c~ cIN f0 f2
+D DIST_SYM
+A |- (!x. (!y. ((distance (x , y)) = (distance (y , x)))))
+T c= cdistance c, f0 f1 cdistance c, f1 f0
+D open_def
+A |- (!s. ((open s) = (!x. ((x IN s) ==> (?e. (((real_lt (real_of_num (NUMERAL _0))) e) /\ (!x'. (((real_lt (distance (x' , x))) e) ==> (x' IN s)))))))))
+T c= copen f0 ! c==> cIN b0 f0 c? / c/\ creal_lt creal_of_num cNUMERAL c_0 b1 ! c==> creal_lt cdistance c, b2 b0 b1 cIN b2 f0
+D closed
+A |- (!s. ((closed s) = (open (UNIV DIFF s))))
+T c= cclosed f0 copen * * part cDIFF part cUNIV f0
+D IN_BALL
+A |- (!x. (!y. (!e. ((y IN (ball (x , e))) = ((real_lt (distance (x , y))) e)))))
+T c= cIN f0 * part cball c, f1 f2 creal_lt cdistance c, f1 f0 f2
+D OPEN_CONTAINS_BALL
+A |- (!s. ((open s) = (!x. ((x IN s) ==> (?e. (((real_lt (real_of_num (NUMERAL _0))) e) /\ ((ball (x , e)) SUBSET s)))))))
+T c= copen f0 ! c==> cIN b0 f0 c? / c/\ creal_lt creal_of_num cNUMERAL c_0 b1 cSUBSET * part cball c, b0 b1 f0
+D CONNECTED_COMPONENT_REFL_EQ
+A |- (!s. (!x. ((((connected_component s) x) x) = (x IN s))))
+T c= cconnected_component f0 f1 f1 cIN f1 f0
+D OPEN_CONNECTED_COMPONENT
+A |- (!s. (!x. ((open s) ==> (open ((connected_component s) x)))))
+T c==> copen f0 copen * * part cconnected_component f0 f1
+D INSIDE_NO_OVERLAP
+A |- (!s. (((inside s) INTER s) = EMPTY))
+T c= * * part cINTER * part cinside f0 f0 part cEMPTY
+D INSIDE_SAME_COMPONENT
+A |- (!s. (!x. (!y. (((((connected_component (UNIV DIFF s)) x) y) /\ (x IN (inside s))) ==> (y IN (inside s))))))
+T c==> c/\ cconnected_component * * part cDIFF part cUNIV f0 f1 f2 cIN f1 * part cinside f0 cIN f2 * part cinside f0
++ (!x''. (((real_lt (distance (x'' , x))) e) ==> (x'' IN ((connected_component (UNIV DIFF s)) x)))), (closed s), ((real_lt (real_of_num (NUMERAL _0))) e), ((real_lt (distance (x , y))) e), (x IN (inside s)) |- (((?x. ((((connected_component (UNIV DIFF s)) x) y) /\ (x IN (inside s)))) ==> (y IN (inside s))) = (y IN (inside s)))
+T c==> ! c==> creal_lt cdistance c, b0 f0 f1 cIN b0 * * part cconnected_component * * part cDIFF part cUNIV f2 f0 c==> cclosed f2 c==> creal_lt creal_of_num cNUMERAL c_0 f1 c==> creal_lt cdistance c, f0 f3 f1 c==> cIN f0 * part cinside f2 c= c==> c? / c/\ cconnected_component * * part cDIFF part cUNIV f2 b0 f3 cIN b0 * part cinside f2 cIN f3 * part cinside f2 cIN f3 * part cinside f2
+- (!x. (!y. ((distance (x , y)) = (distance (y , x))))), (~ ((real_lt (distance (y , x))) e)), ((real_lt (distance (x , y))) e) |- ((~ ((real_lt (distance (y , x))) e)) /\ ((real_lt (distance (y , x))) e))
+T c==> ! ! c= cdistance c, b0 b1 cdistance c, b1 b0 c==> c~ creal_lt cdistance c, f0 f1 f2 c==> creal_lt cdistance c, f1 f0 f2 c/\ c~ creal_lt cdistance c, f0 f1 f2 creal_lt cdistance c, f0 f1 f2
++ (!x. (~ (((inside s) x) /\ (s x)))), (s x), (((inside s) x) /\ (closed s)) |- ((s x) /\ F)
+T c==> ! c~ c/\ cinside f0 b0 * f0 b0 c==> * f0 f1 c==> c/\ cinside f0 f1 cclosed f0 c/\ * f0 f1 cF
+- ((real_lt (distance (x , y))) e) |- ((~ ((real_lt (distance (x , y))) e)) ==> ((real_lt (distance (x , y))) e))
+T c==> creal_lt cdistance c, f0 f1 f2 c==> c~ creal_lt cdistance c, f0 f1 f2 creal_lt cdistance c, f0 f1 f2
+- (((inside s) x) /\ (closed s)) |- ((~ ((inside s) x)) ==> ((inside s) x))
+T c==> c/\ cinside f0 f1 cclosed f0 c==> c~ cinside f0 f1 cinside f0 f1
++ |- ((t = F) = (~ t))
+T c= c= f0 cF c~ f0
++ (closed s), (x IN (inside s)) |- ((x IN (inside s)) /\ (?e. (((real_lt (real_of_num (NUMERAL _0))) e) /\ ((ball (x , e)) SUBSET (inside s)))))
+T c==> cclosed f0 c==> cIN f1 * part cinside f0 c/\ cIN f1 * part cinside f0 c? / c/\ creal_lt creal_of_num cNUMERAL c_0 b0 cSUBSET * part cball c, f1 b0 * part cinside f0
++ |- ((\s. ((open s) = (!x. ((x IN s) ==> (?e. (((real_lt (real_of_num (NUMERAL _0))) e) /\ ((ball (x , e)) SUBSET s))))))) s)
+T * / c= copen b0 ! c==> cIN b1 b0 c? / c/\ creal_lt creal_of_num cNUMERAL c_0 b2 cSUBSET * part cball c, b1 b2 b0 f0
++ (closed s) |- ((x IN (inside s)) ==> (?e. (((real_lt (real_of_num (NUMERAL _0))) e) /\ ((ball (x , e)) SUBSET (inside s)))))
+T c==> cclosed f0 c==> cIN f1 * part cinside f0 c? / c/\ creal_lt creal_of_num cNUMERAL c_0 b0 cSUBSET * part cball c, f1 b0 * part cinside f0
++ |- ((t /\ T) = t)
+T c= c/\ f0 cT f0
++ |- ((\y. (!s. ((closed s) ==> (((inside s) x) ==> (((real_lt (real_of_num (NUMERAL _0))) e) ==> (((real_lt (distance (x , y))) e) ==> ((~ ((real_lt (distance (y , x))) e)) ==> ((!x. (!y. ((distance (x , y)) = (distance (y , x))))) ==> F)))))))) y)
+T * / ! c==> cclosed b1 c==> cinside b1 f0 c==> creal_lt creal_of_num cNUMERAL c_0 f1 c==> creal_lt cdistance c, f0 b0 f1 c==> c~ creal_lt cdistance c, b0 f0 f1 c==> ! ! c= cdistance c, b2 b3 cdistance c, b3 b2 cF f2
++ (!x''. (((real_lt (distance (x'' , x))) e) ==> (x'' IN ((connected_component (UNIV DIFF s)) x)))), (closed s), ((real_lt (real_of_num (NUMERAL _0))) e), (x IN (inside s)) |- (((real_lt (distance (x , y))) e) ==> (y IN (inside s)))
+T c==> ! c==> creal_lt cdistance c, b0 f0 f1 cIN b0 * * part cconnected_component * * part cDIFF part cUNIV f2 f0 c==> cclosed f2 c==> creal_lt creal_of_num cNUMERAL c_0 f1 c==> cIN f0 * part cinside f2 c==> creal_lt cdistance c, f0 f3 f1 cIN f3 * part cinside f2
+- |- (((~ ((((inside s) x) /\ (closed s)) ==> ((!x. (~ (((inside s) x) /\ (s x)))) ==> (~ (s x))))) ==> F) ==> ((~ ((((inside s) x) /\ (closed s)) ==> ((!x. (~ (((inside s) x) /\ (s x)))) ==> (~ (s x))))) ==> F))
+T c==> c==> c~ c==> c/\ cinside f0 f1 cclosed f0 c==> ! c~ c/\ cinside f0 b0 * f0 b0 c~ * f0 f1 cF c==> c~ c==> c/\ cinside f0 f1 cclosed f0 c==> ! c~ c/\ cinside f0 b0 * f0 b0 c~ * f0 f1 cF
++ (!s. (!x. (!y. (((((connected_component (UNIV DIFF s)) x) y) /\ (x IN (inside s))) ==> (y IN (inside s)))))), ((((connected_component (UNIV DIFF s)) x) y) /\ (x IN (inside s))) |- ((!s. (!x. (!y. (((((connected_component (UNIV DIFF s)) x) y) /\ (x IN (inside s))) ==> (y IN (inside s)))))) /\ (y IN (inside s)))
+T c==> ! ! ! c==> c/\ cconnected_component * * part cDIFF part cUNIV b0 b1 b2 cIN b1 * part cinside b0 cIN b2 * part cinside b0 c==> c/\ cconnected_component * * part cDIFF part cUNIV f0 f1 f2 cIN f1 * part cinside f0 c/\ ! ! ! c==> c/\ cconnected_component * * part cDIFF part cUNIV b0 b1 b2 cIN b1 * part cinside b0 cIN b2 * part cinside b0 cIN f2 * part cinside f0
+- (!s. (!x. ((open s) ==> (open ((connected_component s) x))))), (open s) |- ((open s) /\ (open ((connected_component s) x)))
+T c==> ! ! c==> copen b0 copen * * part cconnected_component b0 b1 c==> copen f0 c/\ copen f0 copen * * part cconnected_component f0 f1
+- (!x. (~ (((inside s) x) /\ (s x)))), (~ F), (s x), (((inside s) x) /\ (closed s)) |- ((~ F) /\ F)
+T c==> ! c~ c/\ cinside f0 b0 * f0 b0 c==> c~ cF c==> * f0 f1 c==> c/\ cinside f0 f1 cclosed f0 c/\ c~ cF cF
++ |- ((\x. (x IN UNIV)) x)
+T * / cIN b0 part cUNIV f0
++ |- (((!s. (!t. ((s SUBSET t) = (!x. ((x IN s) ==> (x IN t)))))) ==> ((\s. (!t. ((s SUBSET t) = (!x. ((x IN s) ==> (x IN t)))))) s)) = ((\s. (!t. ((s SUBSET t) = (!x. ((x IN s) ==> (x IN t)))))) s))
+T c= c==> ! ! c= cSUBSET b0 b1 ! c==> cIN b2 b0 cIN b2 b1 * / ! c= cSUBSET b0 b1 ! c==> cIN b2 b0 cIN b2 b1 f0 * / ! c= cSUBSET b0 b1 ! c==> cIN b2 b0 cIN b2 b1 f0
+- (!s. (!x. ((open s) ==> (open ((connected_component s) x))))) |- ((!s. (!x. ((open s) ==> (open ((connected_component s) x))))) /\ (!s. (!x. ((open s) ==> (open ((connected_component s) x))))))
+T c==> ! ! c==> copen b0 copen * * part cconnected_component b0 b1 c/\ ! ! c==> copen b0 copen * * part cconnected_component b0 b1 ! ! c==> copen b0 copen * * part cconnected_component b0 b1
++ |- (((inside s) x) ==> (((real_lt (real_of_num (NUMERAL _0))) e) ==> (((real_lt (distance (x , y))) e) ==> ((~ ((real_lt (distance (y , x))) e)) ==> (~ (!x. (!y. ((distance (x , y)) = (distance (y , x))))))))))
+T c==> cinside f0 f1 c==> creal_lt creal_of_num cNUMERAL c_0 f2 c==> creal_lt cdistance c, f1 f3 f2 c==> c~ creal_lt cdistance c, f3 f1 f2 c~ ! ! c= cdistance c, b0 b1 cdistance c, b1 b0
+- |- ((\t1. (!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))))) t1)
+T * / ! ! c= c\/ b0 c\/ b1 b2 c\/ c\/ b0 b1 b2 f0
+- |- ((~ (e = e)) ==> (e = e))
+T c==> c~ c= f0 f0 c= f0 f0
++ (!x''. (((real_lt (distance (x'' , x))) e) ==> (x'' IN ((connected_component (UNIV DIFF s)) x)))), (closed s), ((real_lt (real_of_num (NUMERAL _0))) e), (x IN (inside s)) |- ((((real_lt (distance (x , y))) e) ==> (y IN (inside s))) = T)
+T c==> ! c==> creal_lt cdistance c, b0 f0 f1 cIN b0 * * part cconnected_component * * part cDIFF part cUNIV f2 f0 c==> cclosed f2 c==> creal_lt creal_of_num cNUMERAL c_0 f1 c==> cIN f0 * part cinside f2 c= c==> creal_lt cdistance c, f0 f3 f1 cIN f3 * part cinside f2 cT
++ (closed s), (((real_lt (real_of_num (NUMERAL _0))) e) /\ (!x''. (((real_lt (distance (x'' , x))) e) ==> (x'' IN ((connected_component (UNIV DIFF s)) x))))), ((real_lt (real_of_num (NUMERAL _0))) e), (x IN (inside s)) |- (((real_lt (real_of_num (NUMERAL _0))) e) /\ ((ball (x , e)) SUBSET (inside s)))
+T c==> cclosed f0 c==> c/\ creal_lt creal_of_num cNUMERAL c_0 f1 ! c==> creal_lt cdistance c, b0 f2 f1 cIN b0 * * part cconnected_component * * part cDIFF part cUNIV f0 f2 c==> creal_lt creal_of_num cNUMERAL c_0 f1 c==> cIN f2 * part cinside f0 c/\ creal_lt creal_of_num cNUMERAL c_0 f1 cSUBSET * part cball c, f2 f1 * part cinside f0
++ |- ((\s. ((open s) = (!x. ((x IN s) ==> (?e. (((real_lt (real_of_num (NUMERAL _0))) e) /\ (!x'. (((real_lt (distance (x' , x))) e) ==> (x' IN s))))))))) s)
+T * / c= copen b0 ! c==> cIN b1 b0 c? / c/\ creal_lt creal_of_num cNUMERAL c_0 b2 ! c==> creal_lt cdistance c, b3 b1 b2 cIN b3 b0 f0
+- (~ ((real_lt (distance (x , y))) e)), ((real_lt (distance (x , y))) e) |- ((~ ((real_lt (distance (x , y))) e)) /\ ((real_lt (distance (x , y))) e))
+T c==> c~ creal_lt cdistance c, f0 f1 f2 c==> creal_lt cdistance c, f0 f1 f2 c/\ c~ creal_lt cdistance c, f0 f1 f2 creal_lt cdistance c, f0 f1 f2
++ |- (((!x. (!y. ((distance (x , y)) = (distance (y , x))))) ==> F) = F)
+T c= c==> ! ! c= cdistance c, b0 b1 cdistance c, b1 b0 cF cF
+- |- ((\s. ((~ ((((inside s) x) /\ (closed s)) ==> ((!x. (~ (((inside s) x) /\ (s x)))) ==> (~ (s x))))) ==> F)) s)
+T * / c==> c~ c==> c/\ cinside b0 f0 cclosed b0 c==> ! c~ c/\ cinside b0 b1 * b0 b1 c~ * b0 f0 cF f1
+- (!x. (!y. ((distance (x , y)) = (distance (y , x))))), ((real_lt (distance (x , y))) e) |- ((~ ((real_lt (distance (y , x))) e)) ==> ((real_lt (distance (y , x))) e))
+T c==> ! ! c= cdistance c, b0 b1 cdistance c, b1 b0 c==> creal_lt cdistance c, f0 f1 f2 c==> c~ creal_lt cdistance c, f1 f0 f2 creal_lt cdistance c, f1 f0 f2
+- |- ((_724474 = _724476) ==> ((~ (_724475 = _724477)) \/ ((_724474 , _724475) = (_724476 , _724477))))
+T c==> c= f0 f1 c\/ c~ c= f2 f3 c= c, f0 f2 c, f1 f3
++ |- (((!x. (((\x. ((((connected_component (UNIV DIFF s)) x) y) /\ (x IN (inside s)))) x) ==> ((!s. (!x. (!y. (((((connected_component (UNIV DIFF s)) x) y) /\ (x IN (inside s))) ==> (y IN (inside s)))))) ==> (y IN (inside s))))) ==> ((?x. ((((connected_component (UNIV DIFF s)) x) y) /\ (x IN (inside s)))) ==> ((!s. (!x. (!y. (((((connected_component (UNIV DIFF s)) x) y) /\ (x IN (inside s))) ==> (y IN (inside s)))))) ==> (y IN (inside s))))) = ((?x. ((((connected_component (UNIV DIFF s)) x) y) /\ (x IN (inside s)))) ==> ((!s. (!x. (!y. (((((connected_component (UNIV DIFF s)) x) y) /\ (x IN (inside s))) ==> (y IN (inside s)))))) ==> (y IN (inside s)))))
+T c= c==> ! c==> * / c/\ cconnected_component * * part cDIFF part cUNIV f0 b1 f1 cIN b1 * part cinside f0 b0 c==> ! ! ! c==> c/\ cconnected_component * * part cDIFF part cUNIV b1 b2 b2 cIN b2 * part cinside b1 cIN b2 * part cinside b1 cIN f1 * part cinside f0 c==> c? / c/\ cconnected_component * * part cDIFF part cUNIV f0 b0 f1 cIN b0 * part cinside f0 c==> ! ! ! c==> c/\ cconnected_component * * part cDIFF part cUNIV b0 b1 b2 cIN b1 * part cinside b0 cIN b2 * part cinside b0 cIN f1 * part cinside f0 c==> c? / c/\ cconnected_component * * part cDIFF part cUNIV f0 b0 f1 cIN b0 * part cinside f0 c==> ! ! ! c==> c/\ cconnected_component * * part cDIFF part cUNIV b0 b1 b2 cIN b1 * part cinside b0 cIN b2 * part cinside b0 cIN f1 * part cinside f0
++ |- (((!s. ((?x. ((((connected_component (UNIV DIFF s)) x) y) /\ (x IN (inside s)))) ==> (y IN (inside s)))) ==> ((\s. ((?x. ((((connected_component (UNIV DIFF s)) x) y) /\ (x IN (inside s)))) ==> (y IN (inside s)))) s)) = ((\s. ((?x. ((((connected_component (UNIV DIFF s)) x) y) /\ (x IN (inside s)))) ==> (y IN (inside s)))) s))
+T c= c==> ! c==> c? / c/\ cconnected_component * * part cDIFF part cUNIV b0 b1 f0 cIN b1 * part cinside b0 cIN f0 * part cinside b0 * / c==> c? / c/\ cconnected_component * * part cDIFF part cUNIV b0 b1 f0 cIN b1 * part cinside b0 cIN f0 * part cinside b0 f1 * / c==> c? / c/\ cconnected_component * * part cDIFF part cUNIV b0 b1 f0 cIN b1 * part cinside b0 cIN f0 * part cinside b0 f1
++ (!x. (~ (((inside s) x) /\ (s x)))) |- ((~ ((inside s) _724461)) \/ (~ ((I s) _724461)))
+T c==> ! c~ c/\ cinside f0 b0 * f0 b0 c\/ c~ cinside f0 f1 c~ cI f0 f1
++ |- ((a \/ b) = ((~ b) ==> a))
+T c= c\/ f0 f1 c==> c~ f1 f0
++ (?x. ((((connected_component (UNIV DIFF s)) x) y) /\ (x IN (inside s)))) |- ((!s. (!x. (!y. (((((connected_component (UNIV DIFF s)) x) y) /\ (x IN (inside s))) ==> (y IN (inside s)))))) ==> (y IN (inside s)))
+T c==> c? / c/\ cconnected_component * * part cDIFF part cUNIV f0 b0 f1 cIN b0 * part cinside f0 c==> ! ! ! c==> c/\ cconnected_component * * part cDIFF part cUNIV b0 b1 b2 cIN b1 * part cinside b0 cIN b2 * part cinside b0 cIN f1 * part cinside f0
++ |- (((!s. (!x. ((open s) ==> (open ((connected_component s) x))))) ==> ((\s. (!x. ((open s) ==> (open ((connected_component s) x))))) s)) = ((\s. (!x. ((open s) ==> (open ((connected_component s) x))))) s))
+T c= c==> ! ! c==> copen b0 copen * * part cconnected_component b0 b1 * / ! c==> copen b0 copen * * part cconnected_component b0 b1 f0 * / ! c==> copen b0 copen * * part cconnected_component b0 b1 f0
++ (~ ((real_lt (distance (y , x))) e)), ((real_lt (distance (x , y))) e) |- ((!x. (!y. ((distance (x , y)) = (distance (y , x))))) ==> F)
+T c==> c~ creal_lt cdistance c, f0 f1 f2 c==> creal_lt cdistance c, f1 f0 f2 c==> ! ! c= cdistance c, b0 b1 cdistance c, b1 b0 cF
+- |- ((~ (_724472 = _724473)) \/ ((closed _724473) \/ (~ (closed _724472))))
+T c\/ c~ c= f0 f1 c\/ cclosed f1 c~ cclosed f0
++ |- ((\x. ((open s) ==> (open ((connected_component s) x)))) x)
+T * / c==> copen f0 copen * * part cconnected_component f0 b0 f1
++ |- (((real_lt (real_of_num (NUMERAL _0))) e) ==> (((real_lt (distance (x , y))) e) ==> ((~ ((real_lt (distance (y , x))) e)) ==> (~ (!x. (!y. ((distance (x , y)) = (distance (y , x)))))))))
+T c==> creal_lt creal_of_num cNUMERAL c_0 f0 c==> creal_lt cdistance c, f1 f2 f0 c==> c~ creal_lt cdistance c, f2 f1 f0 c~ ! ! c= cdistance c, b0 b1 cdistance c, b1 b0
++ |- ((\s. ((?x. ((((connected_component (UNIV DIFF s)) x) y) /\ (x IN (inside s)))) ==> (y IN (inside s)))) s)
+T * / c==> c? / c/\ cconnected_component * * part cDIFF part cUNIV b0 b1 f0 cIN b1 * part cinside b0 cIN f0 * part cinside b0 f1
+- (!s. (!x. ((open s) ==> (open ((connected_component s) x))))) |- ((!x. ((open s) ==> (open ((connected_component s) x)))) = T)
+T c==> ! ! c==> copen b0 copen * * part cconnected_component b0 b1 c= ! c==> copen f0 copen * * part cconnected_component f0 b0 cT
++ (closed s), (x IN (inside s)) |- ((((x IN (inside s)) /\ (closed s)) ==> ((((inside s) INTER s) = EMPTY) ==> (~ (x IN s)))) = ((((inside s) INTER s) = EMPTY) ==> (~ (x IN s))))
+T c==> cclosed f0 c==> cIN f1 * part cinside f0 c= c==> c/\ cIN f1 * part cinside f0 cclosed f0 c==> c= * * part cINTER * part cinside f0 f0 part cEMPTY c~ cIN f1 f0 c==> c= * * part cINTER * part cinside f0 f0 part cEMPTY c~ cIN f1 f0
+- |- (((~ ((((inside s) x) /\ (closed s)) ==> ((!x. (~ (((inside s) x) /\ (s x)))) ==> (~ (s x))))) ==> F) = ((((inside s) x) /\ (closed s)) ==> ((!x. (~ (((inside s) x) /\ (s x)))) ==> (~ (s x)))))
+T c= c==> c~ c==> c/\ cinside f0 f1 cclosed f0 c==> ! c~ c/\ cinside f0 b0 * f0 b0 c~ * f0 f1 cF c==> c/\ cinside f0 f1 cclosed f0 c==> ! c~ c/\ cinside f0 b0 * f0 b0 c~ * f0 f1
++ (!s. (!x. (!y. (((((connected_component (UNIV DIFF s)) x) y) /\ (x IN (inside s))) ==> (y IN (inside s)))))), (?x. ((((connected_component (UNIV DIFF s)) x) y) /\ (x IN (inside s)))) |- ((?x. ((((connected_component (UNIV DIFF s)) x) y) /\ (x IN (inside s)))) /\ (y IN (inside s)))
+T c==> ! ! ! c==> c/\ cconnected_component * * part cDIFF part cUNIV b0 b1 b2 cIN b1 * part cinside b0 cIN b2 * part cinside b0 c==> c? / c/\ cconnected_component * * part cDIFF part cUNIV f0 b0 f1 cIN b0 * part cinside f0 c/\ c? / c/\ cconnected_component * * part cDIFF part cUNIV f0 b0 f1 cIN b0 * part cinside f0 cIN f1 * part cinside f0
+- (~ ((I s) x)), (s x) |- ((~ ((I s) x)) /\ ((I s) x))
+T c==> c~ cI f0 f1 c==> * f0 f1 c/\ c~ cI f0 f1 cI f0 f1
++ (!x. (!y. ((distance (x , y)) = (distance (y , x))))), ((real_lt (distance (x , y))) e) |- (((distance (x , y)) = (distance (y , x))) /\ ((e = e) /\ ((real_lt (distance (x , y))) e)))
+T c==> ! ! c= cdistance c, b0 b1 cdistance c, b1 b0 c==> creal_lt cdistance c, f0 f1 f2 c/\ c= cdistance c, f0 f1 cdistance c, f1 f0 c/\ c= f2 f2 creal_lt cdistance c, f0 f1 f2
++ |- (((!x. (!y. (!s. ((closed s) ==> (((inside s) x) ==> (((real_lt (real_of_num (NUMERAL _0))) e) ==> (((real_lt (distance (x , y))) e) ==> ((~ ((real_lt (distance (y , x))) e)) ==> ((!x. (!y. ((distance (x , y)) = (distance (y , x))))) ==> F))))))))) ==> ((\x. (!y. (!s. ((closed s) ==> (((inside s) x) ==> (((real_lt (real_of_num (NUMERAL _0))) e) ==> (((real_lt (distance (x , y))) e) ==> ((~ ((real_lt (distance (y , x))) e)) ==> ((!x. (!y. ((distance (x , y)) = (distance (y , x))))) ==> F))))))))) x)) = ((\x. (!y. (!s. ((closed s) ==> (((inside s) x) ==> (((real_lt (real_of_num (NUMERAL _0))) e) ==> (((real_lt (distance (x , y))) e) ==> ((~ ((real_lt (distance (y , x))) e)) ==> ((!x. (!y. ((distance (x , y)) = (distance (y , x))))) ==> F))))))))) x))
+T c= c==> ! ! ! c==> cclosed b2 c==> cinside b2 b0 c==> creal_lt creal_of_num cNUMERAL c_0 f0 c==> creal_lt cdistance c, b0 b1 f0 c==> c~ creal_lt cdistance c, b1 b0 f0 c==> ! ! c= cdistance c, b3 b3 cdistance c, b3 b3 cF * / ! ! c==> cclosed b2 c==> cinside b2 b0 c==> creal_lt creal_of_num cNUMERAL c_0 f0 c==> creal_lt cdistance c, b0 b1 f0 c==> c~ creal_lt cdistance c, b1 b0 f0 c==> ! ! c= cdistance c, b3 b3 cdistance c, b3 b3 cF f1 * / ! ! c==> cclosed b2 c==> cinside b2 b0 c==> creal_lt creal_of_num cNUMERAL c_0 f0 c==> creal_lt cdistance c, b0 b1 f0 c==> c~ creal_lt cdistance c, b1 b0 f0 c==> ! ! c= cdistance c, b3 b3 cdistance c, b3 b3 cF f1
+- (_724472 = _724473) |- ((((closed _724472) = (closed _724473)) ==> ((closed _724473) \/ (~ (closed _724472)))) = ((closed _724473) \/ (~ (closed _724472))))
+T c==> c= f0 f1 c= c==> c= cclosed f0 cclosed f1 c\/ cclosed f1 c~ cclosed f0 c\/ cclosed f1 c~ cclosed f0
++ |- ((((x IN (inside s)) /\ (closed s)) ==> ((!x. ((x IN ((inside s) INTER s)) = (x IN EMPTY))) ==> (~ (x IN s)))) = (((x IN (inside s)) /\ (closed s)) ==> ((((inside s) INTER s) = EMPTY) ==> (~ (x IN s)))))
+T c= c==> c/\ cIN f0 * part cinside f1 cclosed f1 c==> ! c= cIN b0 * * part cINTER * part cinside f1 f1 cIN b0 part cEMPTY c~ cIN f0 f1 c==> c/\ cIN f0 * part cinside f1 cclosed f1 c==> c= * * part cINTER * part cinside f1 f1 part cEMPTY c~ cIN f0 f1
++ (closed s), (x IN (inside s)) |- (((x IN ((connected_component (UNIV DIFF s)) x)) ==> (?e. (((real_lt (real_of_num (NUMERAL _0))) e) /\ (!x''. (((real_lt (distance (x'' , x))) e) ==> (x'' IN ((connected_component (UNIV DIFF s)) x))))))) ==> (?e. (((real_lt (real_of_num (NUMERAL _0))) e) /\ ((ball (x , e)) SUBSET (inside s)))))
+T c==> cclosed f0 c==> cIN f1 * part cinside f0 c==> c==> cIN f1 * * part cconnected_component * * part cDIFF part cUNIV f0 f1 c? / c/\ creal_lt creal_of_num cNUMERAL c_0 b0 ! c==> creal_lt cdistance c, b1 f1 b0 cIN b1 * * part cconnected_component * * part cDIFF part cUNIV f0 f1 c? / c/\ creal_lt creal_of_num cNUMERAL c_0 b0 cSUBSET * part cball c, f1 b0 * part cinside f0
++ |- (((closed s) ==> (((inside s) x) ==> (((real_lt (real_of_num (NUMERAL _0))) e) ==> (((real_lt (distance (x , y))) e) ==> ((~ ((real_lt (distance (y , x))) e)) ==> (~ (!x. (!y. ((distance (x , y)) = (distance (y , x))))))))))) = T)
+T c= c==> cclosed f0 c==> cinside f0 f1 c==> creal_lt creal_of_num cNUMERAL c_0 f2 c==> creal_lt cdistance c, f1 f3 f2 c==> c~ creal_lt cdistance c, f3 f1 f2 c~ ! ! c= cdistance c, b0 b1 cdistance c, b1 b0 cT
++ |- (((!s. (!x. ((((connected_component s) x) x) = (x IN s)))) ==> ((\s. (!x. ((((connected_component s) x) x) = (x IN s)))) s)) = ((\s. (!x. ((((connected_component s) x) x) = (x IN s)))) s))
+T c= c==> ! ! c= cconnected_component b0 b1 b1 cIN b1 b0 * / ! c= cconnected_component b0 b1 b1 cIN b1 b0 f0 * / ! c= cconnected_component b0 b1 b1 cIN b1 b0 f0
++ |- (((!y. (!e. ((y IN (ball (x , e))) = ((real_lt (distance (x , y))) e)))) ==> ((\y. (!e. ((y IN (ball (x , e))) = ((real_lt (distance (x , y))) e)))) y)) = ((\y. (!e. ((y IN (ball (x , e))) = ((real_lt (distance (x , y))) e)))) y))
+T c= c==> ! ! c= cIN b0 * part cball c, f0 b1 creal_lt cdistance c, f0 b0 b1 * / ! c= cIN b0 * part cball c, f0 b1 creal_lt cdistance c, f0 b0 b1 f1 * / ! c= cIN b0 * part cball c, f0 b1 creal_lt cdistance c, f0 b0 b1 f1
++ (closed s), (((real_lt (real_of_num (NUMERAL _0))) e) /\ (!x''. (((real_lt (distance (x'' , x))) e) ==> (x'' IN ((connected_component (UNIV DIFF s)) x))))), (x IN (inside s)) |- ((((real_lt (real_of_num (NUMERAL _0))) e) /\ (!x''. (((real_lt (distance (x'' , x))) e) ==> (x'' IN ((connected_component (UNIV DIFF s)) x))))) /\ (((real_lt (real_of_num (NUMERAL _0))) e) /\ ((ball (x , e)) SUBSET (inside s))))
+T c==> cclosed f0 c==> c/\ creal_lt creal_of_num cNUMERAL c_0 f1 ! c==> creal_lt cdistance c, b0 f2 f1 cIN b0 * * part cconnected_component * * part cDIFF part cUNIV f0 f2 c==> cIN f2 * part cinside f0 c/\ c/\ creal_lt creal_of_num cNUMERAL c_0 f1 ! c==> creal_lt cdistance c, b0 f2 f1 cIN b0 * * part cconnected_component * * part cDIFF part cUNIV f0 f2 c/\ creal_lt creal_of_num cNUMERAL c_0 f1 cSUBSET * part cball c, f2 f1 * part cinside f0
++ (!x. (~ (((inside s) x) /\ (s x)))) |- (((!x. ((~ ((inside s) x)) \/ (~ ((I s) x)))) ==> ((\x. ((~ ((inside s) x)) \/ (~ ((I s) x)))) _724461)) = ((\x. ((~ ((inside s) x)) \/ (~ ((I s) x)))) _724461))
+T c==> ! c~ c/\ cinside f0 b0 * f0 b0 c= c==> ! c\/ c~ cinside f0 b0 c~ cI f0 b0 * / c\/ c~ cinside f0 b0 c~ cI f0 b0 f1 * / c\/ c~ cinside f0 b0 c~ cI f0 b0 f1
+- |- ((!x. (!s. ((((inside s) x) /\ (closed s)) ==> ((!x. (~ (((inside s) x) /\ (s x)))) ==> (~ (s x)))))) = (!x. (!s. ((~ ((((inside s) x) /\ (closed s)) ==> ((!x. (~ (((inside s) x) /\ (s x)))) ==> (~ (s x))))) ==> F))))
+T c= ! ! c==> c/\ cinside b1 b0 cclosed b1 c==> ! c~ c/\ cinside b1 b2 * b1 b2 c~ * b1 b0 ! ! c==> c~ c==> c/\ cinside b1 b0 cclosed b1 c==> ! c~ c/\ cinside b1 b2 * b1 b2 c~ * b1 b0 cF
++ (!x''. (((real_lt (distance (x'' , x))) e) ==> (x'' IN ((connected_component (UNIV DIFF s)) x)))), (closed s), ((real_lt (real_of_num (NUMERAL _0))) e), ((real_lt (distance (x , y))) e), (x IN (inside s)) |- (?x. ((((connected_component (UNIV DIFF s)) x) y) /\ (x IN (inside s))))
+T c==> ! c==> creal_lt cdistance c, b0 f0 f1 cIN b0 * * part cconnected_component * * part cDIFF part cUNIV f2 f0 c==> cclosed f2 c==> creal_lt creal_of_num cNUMERAL c_0 f1 c==> creal_lt cdistance c, f0 f3 f1 c==> cIN f0 * part cinside f2 c? / c/\ cconnected_component * * part cDIFF part cUNIV f2 b0 f3 cIN b0 * part cinside f2
+- (~ ((((inside s) x) /\ (closed s)) ==> ((!x. (~ (((inside s) x) /\ (s x)))) ==> (~ (s x))))) |- F
+T c==> c~ c==> c/\ cinside f0 f1 cclosed f0 c==> ! c~ c/\ cinside f0 b0 * f0 b0 c~ * f0 f1 cF
+- |- ((t ==> t) = T)
+T c= c==> f0 f0 cT
++ |- (((((inside s) INTER s) = EMPTY) ==> (~ (x IN s))) = (~ (x IN s)))
+T c= c==> c= * * part cINTER * part cinside f0 f0 part cEMPTY c~ cIN f1 f0 c~ cIN f1 f0
++ |- (((!e. (!x. (!y. (!s. ((closed s) ==> (((inside s) x) ==> (((real_lt (real_of_num (NUMERAL _0))) e) ==> (((real_lt (distance (x , y))) e) ==> ((~ ((real_lt (distance (y , x))) e)) ==> ((!x. (!y. ((distance (x , y)) = (distance (y , x))))) ==> F)))))))))) ==> ((\e. (!x. (!y. (!s. ((closed s) ==> (((inside s) x) ==> (((real_lt (real_of_num (NUMERAL _0))) e) ==> (((real_lt (distance (x , y))) e) ==> ((~ ((real_lt (distance (y , x))) e)) ==> ((!x. (!y. ((distance (x , y)) = (distance (y , x))))) ==> F)))))))))) e)) = ((\e. (!x. (!y. (!s. ((closed s) ==> (((inside s) x) ==> (((real_lt (real_of_num (NUMERAL _0))) e) ==> (((real_lt (distance (x , y))) e) ==> ((~ ((real_lt (distance (y , x))) e)) ==> ((!x. (!y. ((distance (x , y)) = (distance (y , x))))) ==> F)))))))))) e))
+T c= c==> ! ! ! ! c==> cclosed b3 c==> cinside b3 b1 c==> creal_lt creal_of_num cNUMERAL c_0 b0 c==> creal_lt cdistance c, b1 b2 b0 c==> c~ creal_lt cdistance c, b2 b1 b0 c==> ! ! c= cdistance c, b4 b4 cdistance c, b4 b4 cF * / ! ! ! c==> cclosed b3 c==> cinside b3 b1 c==> creal_lt creal_of_num cNUMERAL c_0 b0 c==> creal_lt cdistance c, b1 b2 b0 c==> c~ creal_lt cdistance c, b2 b1 b0 c==> ! ! c= cdistance c, b4 b4 cdistance c, b4 b4 cF f0 * / ! ! ! c==> cclosed b3 c==> cinside b3 b1 c==> creal_lt creal_of_num cNUMERAL c_0 b0 c==> creal_lt cdistance c, b1 b2 b0 c==> c~ creal_lt cdistance c, b2 b1 b0 c==> ! ! c= cdistance c, b4 b4 cdistance c, b4 b4 cF f0
+- |- ((p \/ p) = p)
+T c= c\/ f0 f0 f0
+- (_724474 = _724476), (_724475 = _724477) |- ((_724475 = _724477) /\ ((_724474 , _724475) = (_724476 , _724477)))
+T c==> c= f0 f1 c==> c= f2 f3 c/\ c= f2 f3 c= c, f0 f2 c, f1 f3
++ |- (((x IN (inside s)) /\ (closed s)) ==> ((!x. ((x IN ((inside s) INTER s)) = (x IN EMPTY))) ==> (~ (x IN s))))
+T c==> c/\ cIN f0 * part cinside f1 cclosed f1 c==> ! c= cIN b0 * * part cINTER * part cinside f1 f1 cIN b0 part cEMPTY c~ cIN f0 f1
+- (_724468 = _724470), (_724469 = _724471) |- ((_724468 = _724470) /\ (((inside _724470) _724471) \/ (~ ((inside _724468) _724469))))
+T c==> c= f0 f1 c==> c= f2 f3 c/\ c= f0 f1 c\/ cinside f1 f3 c~ cinside f0 f2
+- |- ((\t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))) t3)
+T * / c= c\/ f0 c\/ f1 b0 c\/ c\/ f0 f1 b0 f2
+- |- (((~ p) ==> p) = p)
+T c= c==> c~ f0 f0 f0
+- |- (((!x. ((P x) ==> (Q x))) ==> ((?x. (P x)) ==> (?x. (Q x)))) ==> ((!x. ((P x) ==> (Q x))) ==> ((?x. (P x)) ==> (?x. (Q x)))))
+T c==> c==> ! c==> * f0 b0 * f1 b0 c==> c? / * f0 b0 c? / * f1 b0 c==> ! c==> * f0 b0 * f1 b0 c==> c? / * f0 b0 c? / * f1 b0
+- |- (((x = x) ==> p) = p)
+T c= c==> c= f0 f0 f1 f1
+- |- ((!y. t) = t)
+T c= ! f0 f0
+- |- ((~ (_724482 = _724483)) \/ ((real_of_num _724482) = (real_of_num _724483)))
+T c\/ c~ c= f0 f1 c= creal_of_num f0 creal_of_num f1
++ (closed s) |- (((inside s) x) ==> (((real_lt (real_of_num (NUMERAL _0))) e) ==> (((real_lt (distance (x , y))) e) ==> ((~ ((real_lt (distance (y , x))) e)) ==> ((!x. (!y. ((distance (x , y)) = (distance (y , x))))) ==> F)))))
+T c==> cclosed f0 c==> cinside f0 f1 c==> creal_lt creal_of_num cNUMERAL c_0 f2 c==> creal_lt cdistance c, f1 f3 f2 c==> c~ creal_lt cdistance c, f3 f1 f2 c==> ! ! c= cdistance c, b0 b1 cdistance c, b1 b0 cF
+- |- (((!x. ((P x) = (x IN P))) ==> ((\x. ((P x) = (x IN P))) x)) = ((\x. ((P x) = (x IN P))) x))
+T c= c==> ! c= * f0 b0 cIN b0 f0 * / c= * f0 b0 cIN b0 f0 f1 * / c= * f0 b0 cIN b0 f0 f1
+- (!x''. (((real_lt (distance (x'' , x))) e) ==> (((connected_component (UNIV DIFF s)) x) x''))) |- ((\x''. (((real_lt (distance (x'' , x))) e) ==> (((connected_component (UNIV DIFF s)) x) x''))) x'')
+T c==> ! c==> creal_lt cdistance c, b0 f0 f1 cconnected_component * * part cDIFF part cUNIV f2 f0 b0 * / c==> creal_lt cdistance c, b0 f0 f1 cconnected_component * * part cDIFF part cUNIV f2 f0 b0 f3
++ |- ((((\x. ((((connected_component (UNIV DIFF s)) x) y) /\ (x IN (inside s)))) x) ==> ((!s. (!x. (!y. (((((connected_component (UNIV DIFF s)) x) y) /\ (x IN (inside s))) ==> (y IN (inside s)))))) ==> (y IN (inside s)))) = T)
+T c= c==> * / c/\ cconnected_component * * part cDIFF part cUNIV f0 b0 f1 cIN b0 * part cinside f0 f2 c==> ! ! ! c==> c/\ cconnected_component * * part cDIFF part cUNIV b0 b1 b2 cIN b1 * part cinside b0 cIN b2 * part cinside b0 cIN f1 * part cinside f0 cT
+- |- ((!s. (!x. ((open s) ==> (open ((connected_component s) x))))) ==> (!s. (!x. ((open s) ==> (open ((connected_component s) x))))))
+T c==> ! ! c==> copen b0 copen * * part cconnected_component b0 b1 ! ! c==> copen b0 copen * * part cconnected_component b0 b1
++ (!x. (!y. ((distance (x , y)) = (distance (y , x))))) |- (((e = e) /\ ((real_lt (distance (x , y))) e)) = (((distance (x , y)) = (distance (y , x))) /\ ((e = e) /\ ((real_lt (distance (x , y))) e))))
+T c==> ! ! c= cdistance c, b0 b1 cdistance c, b1 b0 c= c/\ c= f0 f0 creal_lt cdistance c, f1 f2 f0 c/\ c= cdistance c, f1 f2 cdistance c, f2 f1 c/\ c= f0 f0 creal_lt cdistance c, f1 f2 f0
++ |- (((!x. ((x IN P) = (P x))) ==> ((\x. ((x IN P) = (P x))) x)) = ((\x. ((x IN P) = (P x))) x))
+T c= c==> ! c= cIN b0 f0 * f0 b0 * / c= cIN b0 f0 * f0 b0 f1 * / c= cIN b0 f0 * f0 b0 f1
++ |- (((!y. (!s. ((?x. ((((connected_component (UNIV DIFF s)) x) y) /\ (x IN (inside s)))) ==> (y IN (inside s))))) ==> ((\y. (!s. ((?x. ((((connected_component (UNIV DIFF s)) x) y) /\ (x IN (inside s)))) ==> (y IN (inside s))))) y)) = ((\y. (!s. ((?x. ((((connected_component (UNIV DIFF s)) x) y) /\ (x IN (inside s)))) ==> (y IN (inside s))))) y))
+T c= c==> ! ! c==> c? / c/\ cconnected_component * * part cDIFF part cUNIV b1 b2 b0 cIN b2 * part cinside b1 cIN b0 * part cinside b1 * / ! c==> c? / c/\ cconnected_component * * part cDIFF part cUNIV b1 b2 b0 cIN b2 * part cinside b1 cIN b0 * part cinside b1 f0 * / ! c==> c? / c/\ cconnected_component * * part cDIFF part cUNIV b1 b2 b0 cIN b2 * part cinside b1 cIN b0 * part cinside b1 f0
++ |- ((f x) = ((I f) x))
+T c= * f0 f1 cI f0 f1
++ |- ((t ==> F) = (~ t))
+T c= c==> f0 cF c~ f0
+- ((real_lt (distance (x'' , x))) e) |- ((!x''. (((real_lt (distance (x'' , x))) e) ==> (((connected_component (UNIV DIFF s)) x) x''))) ==> (((connected_component (UNIV DIFF s)) x) x''))
+T c==> creal_lt cdistance c, f0 f1 f2 c==> ! c==> creal_lt cdistance c, b0 f1 f2 cconnected_component * * part cDIFF part cUNIV f3 f1 b0 cconnected_component * * part cDIFF part cUNIV f3 f1 f0
++ |- ((!e. ((((real_lt (real_of_num (NUMERAL _0))) e) /\ (!x''. (((real_lt (distance (x'' , x))) e) ==> (x'' IN ((connected_component (UNIV DIFF s)) x))))) ==> (((real_lt (real_of_num (NUMERAL _0))) e) /\ ((ball (x , e)) SUBSET (inside s))))) ==> ((?e. (((real_lt (real_of_num (NUMERAL _0))) e) /\ (!x''. (((real_lt (distance (x'' , x))) e) ==> (x'' IN ((connected_component (UNIV DIFF s)) x)))))) ==> (?e. (((real_lt (real_of_num (NUMERAL _0))) e) /\ ((ball (x , e)) SUBSET (inside s))))))
+T c==> ! c==> c/\ creal_lt creal_of_num cNUMERAL c_0 b0 ! c==> creal_lt cdistance c, b1 f0 b0 cIN b1 * * part cconnected_component * * part cDIFF part cUNIV f1 f0 c/\ creal_lt creal_of_num cNUMERAL c_0 b0 cSUBSET * part cball c, f0 b0 * part cinside f1 c==> c? / c/\ creal_lt creal_of_num cNUMERAL c_0 b0 ! c==> creal_lt cdistance c, b1 f0 b0 cIN b1 * * part cconnected_component * * part cDIFF part cUNIV f1 f0 c? / c/\ creal_lt creal_of_num cNUMERAL c_0 b0 cSUBSET * part cball c, f0 b0 * part cinside f1
+- |- ((!s. ((((inside s) x) /\ (closed s)) ==> ((!x. (~ (((inside s) x) /\ (s x)))) ==> (~ (s x))))) = T)
+T c= ! c==> c/\ cinside b0 f0 cclosed b0 c==> ! c~ c/\ cinside b0 b1 * b0 b1 c~ * b0 f0 cT
++ (!x. (~ (((inside s) x) /\ (s x)))) |- ((\x. ((~ ((inside s) x)) \/ (~ ((I s) x)))) _724461)
+T c==> ! c~ c/\ cinside f0 b0 * f0 b0 * / c\/ c~ cinside f0 b0 c~ cI f0 b0 f1
++ |- (((((connected_component (UNIV DIFF s)) x) y) /\ (x IN (inside s))) ==> ((!s. (!x. (!y. (((((connected_component (UNIV DIFF s)) x) y) /\ (x IN (inside s))) ==> (y IN (inside s)))))) ==> (y IN (inside s))))
+T c==> c/\ cconnected_component * * part cDIFF part cUNIV f0 f1 f2 cIN f1 * part cinside f0 c==> ! ! ! c==> c/\ cconnected_component * * part cDIFF part cUNIV b0 b1 b2 cIN b1 * part cinside b0 cIN b2 * part cinside b0 cIN f2 * part cinside f0
++ |- (p = ((~ p) ==> F))
+T c= f0 c==> c~ f0 cF
+- |- ((?e. t) = t)
+T c= c? / f0 f0
++ (!s. (!x. (!y. (((((connected_component (UNIV DIFF s)) x) y) /\ (x IN (inside s))) ==> (y IN (inside s)))))) |- (((!y. (((((connected_component (UNIV DIFF s)) x) y) /\ (x IN (inside s))) ==> (y IN (inside s)))) ==> ((\y. (((((connected_component (UNIV DIFF s)) x) y) /\ (x IN (inside s))) ==> (y IN (inside s)))) y)) = ((\y. (((((connected_component (UNIV DIFF s)) x) y) /\ (x IN (inside s))) ==> (y IN (inside s)))) y))
+T c==> ! ! ! c==> c/\ cconnected_component * * part cDIFF part cUNIV b0 b1 b2 cIN b1 * part cinside b0 cIN b2 * part cinside b0 c= c==> ! c==> c/\ cconnected_component * * part cDIFF part cUNIV f0 f1 b0 cIN f1 * part cinside f0 cIN b0 * part cinside f0 * / c==> c/\ cconnected_component * * part cDIFF part cUNIV f0 f1 b0 cIN f1 * part cinside f0 cIN b0 * part cinside f0 f2 * / c==> c/\ cconnected_component * * part cDIFF part cUNIV f0 f1 b0 cIN f1 * part cinside f0 cIN b0 * part cinside f0 f2
+- |- ((((~ ((((inside s) x) /\ (closed s)) ==> ((!x. (~ (((inside s) x) /\ (s x)))) ==> (~ (s x))))) ==> F) ==> ((~ ((((inside s) x) /\ (closed s)) ==> ((!x. (~ (((inside s) x) /\ (s x)))) ==> (~ (s x))))) ==> F)) ==> (((~ ((((inside s) x) /\ (closed s)) ==> ((!x. (~ (((inside s) x) /\ (s x)))) ==> (~ (s x))))) ==> F) ==> ((~ ((((inside s) x) /\ (closed s)) ==> ((!x. (~ (((inside s) x) /\ (s x)))) ==> (~ (s x))))) ==> F)))
+T c==> c==> c==> c~ c==> c/\ cinside f0 f1 cclosed f0 c==> ! c~ c/\ cinside f0 b0 * f0 b0 c~ * f0 f1 cF c==> c~ c==> c/\ cinside f0 f1 cclosed f0 c==> ! c~ c/\ cinside f0 b0 * f0 b0 c~ * f0 f1 cF c==> c==> c~ c==> c/\ cinside f0 f1 cclosed f0 c==> ! c~ c/\ cinside f0 b0 * f0 b0 c~ * f0 f1 cF c==> c~ c==> c/\ cinside f0 f1 cclosed f0 c==> ! c~ c/\ cinside f0 b0 * f0 b0 c~ * f0 f1 cF
++ (x IN (inside s)) |- ((inside s) x)
+T c==> cIN f0 * part cinside f1 cinside f1 f0
+- (!x. (!y. ((distance (x , y)) = (distance (y , x))))) |- ((~ ((distance (x , y)) = (distance (y , x)))) ==> ((distance (x , y)) = (distance (y , x))))
+T c==> ! ! c= cdistance c, b0 b1 cdistance c, b1 b0 c==> c~ c= cdistance c, f0 f1 cdistance c, f1 f0 c= cdistance c, f0 f1 cdistance c, f1 f0
+- ((closed s) ==> (((inside s) x) ==> (((real_lt (real_of_num (NUMERAL _0))) e) ==> (((real_lt (distance (x , y))) e) ==> ((~ ((real_lt (distance (y , x))) e)) ==> ((!x. (!y. ((distance (x , y)) = (distance (y , x))))) ==> F)))))) |- (((closed s) ==> (((inside s) x) ==> (((real_lt (real_of_num (NUMERAL _0))) e) ==> (((real_lt (distance (x , y))) e) ==> ((~ ((real_lt (distance (y , x))) e)) ==> ((!x. (!y. ((distance (x , y)) = (distance (y , x))))) ==> F)))))) /\ ((closed s) ==> (((inside s) x) ==> (((real_lt (real_of_num (NUMERAL _0))) e) ==> (((real_lt (distance (x , y))) e) ==> ((~ ((real_lt (distance (y , x))) e)) ==> ((!x. (!y. ((distance (x , y)) = (distance (y , x))))) ==> F)))))))
+T c==> c==> cclosed f0 c==> cinside f0 f1 c==> creal_lt creal_of_num cNUMERAL c_0 f2 c==> creal_lt cdistance c, f1 f3 f2 c==> c~ creal_lt cdistance c, f3 f1 f2 c==> ! ! c= cdistance c, b0 b1 cdistance c, b1 b0 cF c/\ c==> cclosed f0 c==> cinside f0 f1 c==> creal_lt creal_of_num cNUMERAL c_0 f2 c==> creal_lt cdistance c, f1 f3 f2 c==> c~ creal_lt cdistance c, f3 f1 f2 c==> ! ! c= cdistance c, b0 b1 cdistance c, b1 b0 cF c==> cclosed f0 c==> cinside f0 f1 c==> creal_lt creal_of_num cNUMERAL c_0 f2 c==> creal_lt cdistance c, f1 f3 f2 c==> c~ creal_lt cdistance c, f3 f1 f2 c==> ! ! c= cdistance c, b0 b1 cdistance c, b1 b0 cF
++ |- ((!x. ((x IN (inside s)) ==> (?e. (((real_lt (real_of_num (NUMERAL _0))) e) /\ ((ball (x , e)) SUBSET (inside s)))))) = (open (inside s)))
+T c= ! c==> cIN b0 * part cinside f0 c? / c/\ creal_lt creal_of_num cNUMERAL c_0 b1 cSUBSET * part cball c, b0 b1 * part cinside f0 copen * part cinside f0
+- |- (((((closed s) ==> (((inside s) x) ==> (((real_lt (real_of_num (NUMERAL _0))) e) ==> (((real_lt (distance (x , y))) e) ==> ((~ ((real_lt (distance (y , x))) e)) ==> ((!x. (!y. ((distance (x , y)) = (distance (y , x))))) ==> F)))))) ==> ((closed s) ==> (((inside s) x) ==> (((real_lt (real_of_num (NUMERAL _0))) e) ==> (((real_lt (distance (x , y))) e) ==> ((~ ((real_lt (distance (y , x))) e)) ==> ((!x. (!y. ((distance (x , y)) = (distance (y , x))))) ==> F))))))) ==> (((closed s) ==> (((inside s) x) ==> (((real_lt (real_of_num (NUMERAL _0))) e) ==> (((real_lt (distance (x , y))) e) ==> ((~ ((real_lt (distance (y , x))) e)) ==> ((!x. (!y. ((distance (x , y)) = (distance (y , x))))) ==> F)))))) ==> ((closed s) ==> (((inside s) x) ==> (((real_lt (real_of_num (NUMERAL _0))) e) ==> (((real_lt (distance (x , y))) e) ==> ((~ ((real_lt (distance (y , x))) e)) ==> ((!x. (!y. ((distance (x , y)) = (distance (y , x))))) ==> F)))))))) = (((closed s) ==> (((inside s) x) ==> (((real_lt (real_of_num (NUMERAL _0))) e) ==> (((real_lt (distance (x , y))) e) ==> ((~ ((real_lt (distance (y , x))) e)) ==> ((!x. (!y. ((distance (x , y)) = (distance (y , x))))) ==> F)))))) ==> ((closed s) ==> (((inside s) x) ==> (((real_lt (real_of_num (NUMERAL _0))) e) ==> (((real_lt (distance (x , y))) e) ==> ((~ ((real_lt (distance (y , x))) e)) ==> ((!x. (!y. ((distance (x , y)) = (distance (y , x))))) ==> F))))))))
+T c= c==> c==> c==> cclosed f0 c==> cinside f0 f1 c==> creal_lt creal_of_num cNUMERAL c_0 f2 c==> creal_lt cdistance c, f1 f3 f2 c==> c~ creal_lt cdistance c, f3 f1 f2 c==> ! ! c= cdistance c, b0 b1 cdistance c, b1 b0 cF c==> cclosed f0 c==> cinside f0 f1 c==> creal_lt creal_of_num cNUMERAL c_0 f2 c==> creal_lt cdistance c, f1 f3 f2 c==> c~ creal_lt cdistance c, f3 f1 f2 c==> ! ! c= cdistance c, b0 b1 cdistance c, b1 b0 cF c==> c==> cclosed f0 c==> cinside f0 f1 c==> creal_lt creal_of_num cNUMERAL c_0 f2 c==> creal_lt cdistance c, f1 f3 f2 c==> c~ creal_lt cdistance c, f3 f1 f2 c==> ! ! c= cdistance c, b0 b1 cdistance c, b1 b0 cF c==> cclosed f0 c==> cinside f0 f1 c==> creal_lt creal_of_num cNUMERAL c_0 f2 c==> creal_lt cdistance c, f1 f3 f2 c==> c~ creal_lt cdistance c, f3 f1 f2 c==> ! ! c= cdistance c, b0 b1 cdistance c, b1 b0 cF c==> c==> cclosed f0 c==> cinside f0 f1 c==> creal_lt creal_of_num cNUMERAL c_0 f2 c==> creal_lt cdistance c, f1 f3 f2 c==> c~ creal_lt cdistance c, f3 f1 f2 c==> ! ! c= cdistance c, b0 b1 cdistance c, b1 b0 cF c==> cclosed f0 c==> cinside f0 f1 c==> creal_lt creal_of_num cNUMERAL c_0 f2 c==> creal_lt cdistance c, f1 f3 f2 c==> c~ creal_lt cdistance c, f3 f1 f2 c==> ! ! c= cdistance c, b0 b1 cdistance c, b1 b0 cF
++ |- ((\P. (!x. ((x IN P) = (P x)))) P)
+T * / ! c= cIN b1 b0 * b0 b1 f0
++ (closed s) |- (!x. ((x IN (inside s)) ==> (?e. (((real_lt (real_of_num (NUMERAL _0))) e) /\ ((ball (x , e)) SUBSET (inside s))))))
+T c==> cclosed f0 ! c==> cIN b0 * part cinside f0 c? / c/\ creal_lt creal_of_num cNUMERAL c_0 b1 cSUBSET * part cball c, b0 b1 * part cinside f0
++ |- (((((connected_component (UNIV DIFF s)) x) y) /\ (x IN (inside s))) = ((\x. ((((connected_component (UNIV DIFF s)) x) y) /\ (x IN (inside s)))) x))
+T c= c/\ cconnected_component * * part cDIFF part cUNIV f0 f1 f2 cIN f1 * part cinside f0 * / c/\ cconnected_component * * part cDIFF part cUNIV f0 b0 f2 cIN b0 * part cinside f0 f1
+- |- ((_724478 = _724479) ==> ((distance _724478) = (distance _724479)))
+T c==> c= f0 f1 c= cdistance f0 cdistance f1
+- |- ((!x''. (((real_lt (distance (x'' , x))) e) ==> (((connected_component (UNIV DIFF s)) x) x''))) ==> (!x''. (((real_lt (distance (x'' , x))) e) ==> (((connected_component (UNIV DIFF s)) x) x''))))
+T c==> ! c==> creal_lt cdistance c, b0 f0 f1 cconnected_component * * part cDIFF part cUNIV f2 f0 b0 ! c==> creal_lt cdistance c, b0 f0 f1 cconnected_component * * part cDIFF part cUNIV f2 f0 b0
+- |- ((~ (_724474 = _724476)) \/ ((~ (_724475 = _724477)) \/ ((_724474 , _724475) = (_724476 , _724477))))
+T c\/ c~ c= f0 f1 c\/ c~ c= f2 f3 c= c, f0 f2 c, f1 f3
+- |- (T = (((~ (_724464 = _724466)) \/ ((~ (_724465 = _724467)) \/ (((real_lt _724466) _724467) \/ (~ ((real_lt _724464) _724465))))) = (((real_lt _724466) _724467) \/ ((~ (_724464 = _724466)) \/ ((~ (_724465 = _724467)) \/ (~ ((real_lt _724464) _724465)))))))
+T c= cT c= c\/ c~ c= f0 f1 c\/ c~ c= f2 f3 c\/ creal_lt f1 f3 c~ creal_lt f0 f2 c\/ creal_lt f1 f3 c\/ c~ c= f0 f1 c\/ c~ c= f2 f3 c~ creal_lt f0 f2
++ (!x. (~ (((inside s) x) /\ (s x)))) |- (!x. ((~ ((inside s) x)) \/ (~ (s x))))
+T c==> ! c~ c/\ cinside f0 b0 * f0 b0 ! c\/ c~ cinside f0 b0 c~ * f0 b0
+- (!s. (!x. ((open s) ==> (open ((connected_component s) x))))), (open s) |- ((!s. (!x. ((open s) ==> (open ((connected_component s) x))))) /\ (open ((connected_component s) x)))
+T c==> ! ! c==> copen b0 copen * * part cconnected_component b0 b1 c==> copen f0 c/\ ! ! c==> copen b0 copen * * part cconnected_component b0 b1 copen * * part cconnected_component f0 f1
+- |- (((!P. (!x. ((P x) = (x IN P)))) ==> ((\P. (!x. ((P x) = (x IN P)))) P)) = ((\P. (!x. ((P x) = (x IN P)))) P))
+T c= c==> ! ! c= * b0 b1 cIN b1 b0 * / ! c= * b0 b1 cIN b1 b0 f0 * / ! c= * b0 b1 cIN b1 b0 f0
++ (closed s) |- ((closed s) /\ (((inside s) x) ==> (((real_lt (real_of_num (NUMERAL _0))) e) ==> (((real_lt (distance (x , y))) e) ==> ((~ ((real_lt (distance (y , x))) e)) ==> (~ (!x. (!y. ((distance (x , y)) = (distance (y , x)))))))))))
+T c==> cclosed f0 c/\ cclosed f0 c==> cinside f0 f1 c==> creal_lt creal_of_num cNUMERAL c_0 f2 c==> creal_lt cdistance c, f1 f3 f2 c==> c~ creal_lt cdistance c, f3 f1 f2 c~ ! ! c= cdistance c, b0 b1 cdistance c, b1 b0
++ |- ((\y. (!s. ((?x. ((((connected_component (UNIV DIFF s)) x) y) /\ (x IN (inside s)))) ==> (y IN (inside s))))) y)
+T * / ! c==> c? / c/\ cconnected_component * * part cDIFF part cUNIV b1 b2 b0 cIN b2 * part cinside b1 cIN b0 * part cinside b1 f0
+- |- ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))
+T c= c\/ f0 c\/ f1 f2 c\/ c\/ f0 f1 f2
+- (!x''. (((real_lt (distance (x'' , x))) e) ==> (x'' IN ((connected_component (UNIV DIFF s)) x)))) |- (((!x''. (((real_lt (distance (x'' , x))) e) ==> (((connected_component (UNIV DIFF s)) x) x''))) ==> (!x''. (((real_lt (distance (x'' , x))) e) ==> (((connected_component (UNIV DIFF s)) x) x'')))) = (!x''. (((real_lt (distance (x'' , x))) e) ==> (((connected_component (UNIV DIFF s)) x) x''))))
+T c==> ! c==> creal_lt cdistance c, b0 f0 f1 cIN b0 * * part cconnected_component * * part cDIFF part cUNIV f2 f0 c= c==> ! c==> creal_lt cdistance c, b0 f0 f1 cconnected_component * * part cDIFF part cUNIV f2 f0 b0 ! c==> creal_lt cdistance c, b0 f0 f1 cconnected_component * * part cDIFF part cUNIV f2 f0 b0 ! c==> creal_lt cdistance c, b0 f0 f1 cconnected_component * * part cDIFF part cUNIV f2 f0 b0
++ (!x. (~ (((inside s) x) /\ (s x)))) |- ((((inside s) _724461) /\ ((I s) _724461)) ==> F)
+T c==> ! c~ c/\ cinside f0 b0 * f0 b0 c==> c/\ cinside f0 f1 cI f0 f1 cF
+- (!x''. (((real_lt (distance (x'' , x))) e) ==> (x'' IN ((connected_component (UNIV DIFF s)) x)))) |- ((((real_lt (distance (x'' , x))) e) ==> (x'' IN ((connected_component (UNIV DIFF s)) x))) = T)
+T c==> ! c==> creal_lt cdistance c, b0 f0 f1 cIN b0 * * part cconnected_component * * part cDIFF part cUNIV f2 f0 c= c==> creal_lt cdistance c, f3 f0 f1 cIN f3 * * part cconnected_component * * part cDIFF part cUNIV f2 f0 cT
++ |- ((\s. ((open (UNIV DIFF s)) = (closed s))) s)
+T * / c= copen * * part cDIFF part cUNIV b0 cclosed b0 f0
++ (!x. (!y. ((distance (x , y)) = (distance (y , x))))) |- ((distance (_724462 , _724463)) = (distance (_724463 , _724462)))
+T c==> ! ! c= cdistance c, b0 b1 cdistance c, b1 b0 c= cdistance c, f0 f1 cdistance c, f1 f0
++ (!s. (!x. (!y. (((((connected_component (UNIV DIFF s)) x) y) /\ (x IN (inside s))) ==> (y IN (inside s)))))) |- ((!s. ((?x. ((((connected_component (UNIV DIFF s)) x) y) /\ (x IN (inside s)))) ==> (y IN (inside s)))) = T)
+T c==> ! ! ! c==> c/\ cconnected_component * * part cDIFF part cUNIV b0 b1 b2 cIN b1 * part cinside b0 cIN b2 * part cinside b0 c= ! c==> c? / c/\ cconnected_component * * part cDIFF part cUNIV b0 b1 f0 cIN b1 * part cinside b0 cIN f0 * part cinside b0 cT
+- ((~ ((((inside s) x) /\ (closed s)) ==> ((!x. (~ (((inside s) x) /\ (s x)))) ==> (~ (s x))))) ==> F) |- ((((~ ((((inside s) x) /\ (closed s)) ==> ((!x. (~ (((inside s) x) /\ (s x)))) ==> (~ (s x))))) ==> F) ==> ((~ ((((inside s) x) /\ (closed s)) ==> ((!x. (~ (((inside s) x) /\ (s x)))) ==> (~ (s x))))) ==> F)) ==> ((~ ((((inside s) x) /\ (closed s)) ==> ((!x. (~ (((inside s) x) /\ (s x)))) ==> (~ (s x))))) ==> F))
+T c==> c==> c~ c==> c/\ cinside f0 f1 cclosed f0 c==> ! c~ c/\ cinside f0 b0 * f0 b0 c~ * f0 f1 cF c==> c==> c==> c~ c==> c/\ cinside f0 f1 cclosed f0 c==> ! c~ c/\ cinside f0 b0 * f0 b0 c~ * f0 f1 cF c==> c~ c==> c/\ cinside f0 f1 cclosed f0 c==> ! c~ c/\ cinside f0 b0 * f0 b0 c~ * f0 f1 cF c==> c~ c==> c/\ cinside f0 f1 cclosed f0 c==> ! c~ c/\ cinside f0 b0 * f0 b0 c~ * f0 f1 cF
++ |- ((\s. (!t. ((s SUBSET t) = (!x. ((x IN s) ==> (x IN t)))))) s)
+T * / ! c= cSUBSET b0 b1 ! c==> cIN b2 b0 cIN b2 b1 f0
++ (closed s) |- (((x IN (inside s)) ==> (?e. (((real_lt (real_of_num (NUMERAL _0))) e) /\ ((ball (x , e)) SUBSET (inside s))))) = T)
+T c==> cclosed f0 c= c==> cIN f1 * part cinside f0 c? / c/\ creal_lt creal_of_num cNUMERAL c_0 b0 cSUBSET * part cball c, f1 b0 * part cinside f0 cT
+- |- ((P x) = (x IN P))
+T c= * f0 f1 cIN f1 f0
++ |- (((!x. ((x IN (s DIFF t)) = ((x IN s) /\ (~ (x IN t))))) ==> ((\x. ((x IN (s DIFF t)) = ((x IN s) /\ (~ (x IN t))))) x)) = ((\x. ((x IN (s DIFF t)) = ((x IN s) /\ (~ (x IN t))))) x))
+T c= c==> ! c= cIN b0 * * part cDIFF f0 f1 c/\ cIN b0 f0 c~ cIN b0 f1 * / c= cIN b0 * * part cDIFF f0 f1 c/\ cIN b0 f0 c~ cIN b0 f1 f2 * / c= cIN b0 * * part cDIFF f0 f1 c/\ cIN b0 f0 c~ cIN b0 f1 f2
+- |- (((!s. ((~ ((((inside s) x) /\ (closed s)) ==> ((!x. (~ (((inside s) x) /\ (s x)))) ==> (~ (s x))))) ==> F)) ==> ((\s. ((~ ((((inside s) x) /\ (closed s)) ==> ((!x. (~ (((inside s) x) /\ (s x)))) ==> (~ (s x))))) ==> F)) s)) = ((\s. ((~ ((((inside s) x) /\ (closed s)) ==> ((!x. (~ (((inside s) x) /\ (s x)))) ==> (~ (s x))))) ==> F)) s))
+T c= c==> ! c==> c~ c==> c/\ cinside b0 f0 cclosed b0 c==> ! c~ c/\ cinside b0 b1 * b0 b1 c~ * b0 f0 cF * / c==> c~ c==> c/\ cinside b0 f0 cclosed b0 c==> ! c~ c/\ cinside b0 b1 * b0 b1 c~ * b0 f0 cF f1 * / c==> c~ c==> c/\ cinside b0 f0 cclosed b0 c==> ! c~ c/\ cinside b0 b1 * b0 b1 c~ * b0 f0 cF f1
++ ((real_lt (distance (x , y))) e) |- (((real_lt (distance (x , y))) e) /\ ((~ ((real_lt (distance (y , x))) e)) ==> (~ (!x. (!y. ((distance (x , y)) = (distance (y , x))))))))
+T c==> creal_lt cdistance c, f0 f1 f2 c/\ creal_lt cdistance c, f0 f1 f2 c==> c~ creal_lt cdistance c, f1 f0 f2 c~ ! ! c= cdistance c, b0 b1 cdistance c, b1 b0
++ (s x), (((inside s) x) /\ (closed s)) |- (((((inside s) x) /\ ((I s) x)) ==> F) = F)
+T c==> * f0 f1 c==> c/\ cinside f0 f1 cclosed f0 c= c==> c/\ cinside f0 f1 cI f0 f1 cF cF
++ |- (((real_lt _724466) _724467) \/ ((~ (_724464 = _724466)) \/ ((~ (_724465 = _724467)) \/ (~ ((real_lt _724464) _724465)))))
+T c\/ creal_lt f0 f1 c\/ c~ c= f2 f0 c\/ c~ c= f3 f1 c~ creal_lt f2 f3
+- |- ((\x. (!s. ((~ ((((inside s) x) /\ (closed s)) ==> ((!x. (~ (((inside s) x) /\ (s x)))) ==> (~ (s x))))) ==> F))) x)
+T * / ! c==> c~ c==> c/\ cinside b1 b0 cclosed b1 c==> ! c~ c/\ cinside b1 b2 * b1 b2 c~ * b1 b0 cF f0
++ |- (((((inside s) x) /\ (closed s)) ==> ((!x. (~ (((inside s) x) /\ (s x)))) ==> (~ (s x)))) = (((x IN (inside s)) /\ (closed s)) ==> ((!x. ((x IN ((inside s) INTER s)) = (x IN EMPTY))) ==> (~ (x IN s)))))
+T c= c==> c/\ cinside f0 f1 cclosed f0 c==> ! c~ c/\ cinside f0 b0 * f0 b0 c~ * f0 f1 c==> c/\ cIN f1 * part cinside f0 cclosed f0 c==> ! c= cIN b0 * * part cINTER * part cinside f0 f0 cIN b0 part cEMPTY c~ cIN f1 f0
++ (closed s), (x IN (inside s)) |- ((x IN (inside s)) /\ (closed s))
+T c==> cclosed f0 c==> cIN f1 * part cinside f0 c/\ cIN f1 * part cinside f0 cclosed f0
+- (~ ((((inside s) x) /\ (closed s)) ==> ((!x. (~ (((inside s) x) /\ (s x)))) ==> (~ (s x))))) |- ((~ ((((inside s) x) /\ (closed s)) ==> ((!x. (~ (((inside s) x) /\ (s x)))) ==> (~ (s x))))) /\ F)
+T c==> c~ c==> c/\ cinside f0 f1 cclosed f0 c==> ! c~ c/\ cinside f0 b0 * f0 b0 c~ * f0 f1 c/\ c~ c==> c/\ cinside f0 f1 cclosed f0 c==> ! c~ c/\ cinside f0 b0 * f0 b0 c~ * f0 f1 cF
++ (~ ((real_lt (distance (y , x))) e)), (closed s), ((real_lt (real_of_num (NUMERAL _0))) e), ((real_lt (distance (x , y))) e), (x IN (inside s)) |- F
+T c==> c~ creal_lt cdistance c, f0 f1 f2 c==> cclosed f3 c==> creal_lt creal_of_num cNUMERAL c_0 f2 c==> creal_lt cdistance c, f1 f0 f2 c==> cIN f1 * part cinside f3 cF
+- |- ((\t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3)))) t2)
+T * / ! c= c\/ f0 c\/ b0 b1 c\/ c\/ f0 b0 b1 f1
+- |- ((!x. ((P x) \/ Q)) = ((!x. (P x)) \/ Q))
+T c= ! c\/ * f0 b0 f1 c\/ ! * f0 b0 f1
++ (!x''. (((real_lt (distance (x'' , x))) e) ==> (x'' IN ((connected_component (UNIV DIFF s)) x)))), (closed s), ((real_lt (real_of_num (NUMERAL _0))) e), ((real_lt (distance (x , y))) e), (x IN (inside s)) |- (((connected_component (UNIV DIFF s)) x) y)
+T c==> ! c==> creal_lt cdistance c, b0 f0 f1 cIN b0 * * part cconnected_component * * part cDIFF part cUNIV f2 f0 c==> cclosed f2 c==> creal_lt creal_of_num cNUMERAL c_0 f1 c==> creal_lt cdistance c, f0 f3 f1 c==> cIN f0 * part cinside f2 cconnected_component * * part cDIFF part cUNIV f2 f0 f3
++ |- (!x. (((\x. ((((connected_component (UNIV DIFF s)) x) y) /\ (x IN (inside s)))) x) ==> ((!s. (!x. (!y. (((((connected_component (UNIV DIFF s)) x) y) /\ (x IN (inside s))) ==> (y IN (inside s)))))) ==> (y IN (inside s)))))
+T c==> * / c/\ cconnected_component * * part cDIFF part cUNIV f0 b0 f1 cIN b0 * part cinside f0 f2 c==> ! ! ! c==> c/\ cconnected_component * * part cDIFF part cUNIV b0 b1 b2 cIN b1 * part cinside b0 cIN b2 * part cinside b0 cIN f1 * part cinside f0
++ (((inside s) x) /\ (closed s)) |- (((I s) x) = (((inside s) x) /\ ((I s) x)))
+T c==> c/\ cinside f0 f1 cclosed f0 c= cI f0 f1 c/\ cinside f0 f1 cI f0 f1
++ (closed s), (x IN (inside s)) |- ((((x IN ((connected_component (UNIV DIFF s)) x)) /\ ((?e. (((real_lt (real_of_num (NUMERAL _0))) e) /\ (!x''. (((real_lt (distance (x'' , x))) e) ==> (x'' IN ((connected_component (UNIV DIFF s)) x)))))) ==> (?e. (((real_lt (real_of_num (NUMERAL _0))) e) /\ ((ball (x , e)) SUBSET (inside s)))))) ==> (((x IN ((connected_component (UNIV DIFF s)) x)) ==> (?e. (((real_lt (real_of_num (NUMERAL _0))) e) /\ (!x''. (((real_lt (distance (x'' , x))) e) ==> (x'' IN ((connected_component (UNIV DIFF s)) x))))))) ==> (?e. (((real_lt (real_of_num (NUMERAL _0))) e) /\ ((ball (x , e)) SUBSET (inside s)))))) = (((x IN ((connected_component (UNIV DIFF s)) x)) ==> (?e. (((real_lt (real_of_num (NUMERAL _0))) e) /\ (!x''. (((real_lt (distance (x'' , x))) e) ==> (x'' IN ((connected_component (UNIV DIFF s)) x))))))) ==> (?e. (((real_lt (real_of_num (NUMERAL _0))) e) /\ ((ball (x , e)) SUBSET (inside s))))))
+T c==> cclosed f0 c==> cIN f1 * part cinside f0 c= c==> c/\ cIN f1 * * part cconnected_component * * part cDIFF part cUNIV f0 f1 c==> c? / c/\ creal_lt creal_of_num cNUMERAL c_0 b0 ! c==> creal_lt cdistance c, b1 f1 b0 cIN b1 * * part cconnected_component * * part cDIFF part cUNIV f0 f1 c? / c/\ creal_lt creal_of_num cNUMERAL c_0 b0 cSUBSET * part cball c, f1 b0 * part cinside f0 c==> c==> cIN f1 * * part cconnected_component * * part cDIFF part cUNIV f0 f1 c? / c/\ creal_lt creal_of_num cNUMERAL c_0 b0 ! c==> creal_lt cdistance c, b1 f1 b0 cIN b1 * * part cconnected_component * * part cDIFF part cUNIV f0 f1 c? / c/\ creal_lt creal_of_num cNUMERAL c_0 b0 cSUBSET * part cball c, f1 b0 * part cinside f0 c==> c==> cIN f1 * * part cconnected_component * * part cDIFF part cUNIV f0 f1 c? / c/\ creal_lt creal_of_num cNUMERAL c_0 b0 ! c==> creal_lt cdistance c, b1 f1 b0 cIN b1 * * part cconnected_component * * part cDIFF part cUNIV f0 f1 c? / c/\ creal_lt creal_of_num cNUMERAL c_0 b0 cSUBSET * part cball c, f1 b0 * part cinside f0
+- (!x''. (((real_lt (distance (x'' , x))) e) ==> (((connected_component (UNIV DIFF s)) x) x''))), ((real_lt (distance (x'' , x))) e) |- (((connected_component (UNIV DIFF s)) x) x'')
+T c==> ! c==> creal_lt cdistance c, b0 f0 f1 cconnected_component * * part cDIFF part cUNIV f2 f0 b0 c==> creal_lt cdistance c, f3 f0 f1 cconnected_component * * part cDIFF part cUNIV f2 f0 f3
+- ((!x. ((P x) ==> (Q x))) ==> ((?x. (P x)) ==> (?x. (Q x)))) |- (((!x. ((P x) ==> (Q x))) ==> ((?x. (P x)) ==> (?x. (Q x)))) /\ ((!x. ((P x) ==> (Q x))) ==> ((?x. (P x)) ==> (?x. (Q x)))))
+T c==> c==> ! c==> * f0 b0 * f1 b0 c==> c? / * f0 b0 c? / * f1 b0 c/\ c==> ! c==> * f0 b0 * f1 b0 c==> c? / * f0 b0 c? / * f1 b0 c==> ! c==> * f0 b0 * f1 b0 c==> c? / * f0 b0 c? / * f1 b0
++ |- (((!s. ((closed s) ==> (((inside s) x) ==> (((real_lt (real_of_num (NUMERAL _0))) e) ==> (((real_lt (distance (x , y))) e) ==> ((~ ((real_lt (distance (y , x))) e)) ==> ((!x. (!y. ((distance (x , y)) = (distance (y , x))))) ==> F))))))) ==> ((\s. ((closed s) ==> (((inside s) x) ==> (((real_lt (real_of_num (NUMERAL _0))) e) ==> (((real_lt (distance (x , y))) e) ==> ((~ ((real_lt (distance (y , x))) e)) ==> ((!x. (!y. ((distance (x , y)) = (distance (y , x))))) ==> F))))))) s)) = ((\s. ((closed s) ==> (((inside s) x) ==> (((real_lt (real_of_num (NUMERAL _0))) e) ==> (((real_lt (distance (x , y))) e) ==> ((~ ((real_lt (distance (y , x))) e)) ==> ((!x. (!y. ((distance (x , y)) = (distance (y , x))))) ==> F))))))) s))
+T c= c==> ! c==> cclosed b0 c==> cinside b0 f0 c==> creal_lt creal_of_num cNUMERAL c_0 f1 c==> creal_lt cdistance c, f0 f2 f1 c==> c~ creal_lt cdistance c, f2 f0 f1 c==> ! ! c= cdistance c, b1 b2 cdistance c, b2 b1 cF * / c==> cclosed b0 c==> cinside b0 f0 c==> creal_lt creal_of_num cNUMERAL c_0 f1 c==> creal_lt cdistance c, f0 f2 f1 c==> c~ creal_lt cdistance c, f2 f0 f1 c==> ! ! c= cdistance c, b1 b2 cdistance c, b2 b1 cF f3 * / c==> cclosed b0 c==> cinside b0 f0 c==> creal_lt creal_of_num cNUMERAL c_0 f1 c==> creal_lt cdistance c, f0 f2 f1 c==> c~ creal_lt cdistance c, f2 f0 f1 c==> ! ! c= cdistance c, b1 b2 cdistance c, b2 b1 cF f3
++ |- ((\s. (!x. ((((connected_component s) x) x) = (x IN s)))) s)
+T * / ! c= cconnected_component b0 b1 b1 cIN b1 b0 f0
++ ((real_lt (real_of_num (NUMERAL _0))) e) |- ((!x'. (((real_lt (distance (x , x'))) e) ==> (x' IN (inside s)))) = (((real_lt (real_of_num (NUMERAL _0))) e) /\ ((ball (x , e)) SUBSET (inside s))))
+T c==> creal_lt creal_of_num cNUMERAL c_0 f0 c= ! c==> creal_lt cdistance c, f1 b0 f0 cIN b0 * part cinside f2 c/\ creal_lt creal_of_num cNUMERAL c_0 f0 cSUBSET * part cball c, f1 f0 * part cinside f2
+- (!s. (!x. ((open s) ==> (open ((connected_component s) x))))) |- ((\s. (!x. ((open s) ==> (open ((connected_component s) x))))) s)
+T c==> ! ! c==> copen b0 copen * * part cconnected_component b0 b1 * / ! c==> copen b0 copen * * part cconnected_component b0 b1 f0
++ (!s. (!x. (!y. (((((connected_component (UNIV DIFF s)) x) y) /\ (x IN (inside s))) ==> (y IN (inside s)))))) |- (!s. ((?x. ((((connected_component (UNIV DIFF s)) x) y) /\ (x IN (inside s)))) ==> (y IN (inside s))))
+T c==> ! ! ! c==> c/\ cconnected_component * * part cDIFF part cUNIV b0 b1 b2 cIN b1 * part cinside b0 cIN b2 * part cinside b0 ! c==> c? / c/\ cconnected_component * * part cDIFF part cUNIV b0 b1 f0 cIN b1 * part cinside b0 cIN f0 * part cinside b0
+- |- ((((closed s) ==> (((inside s) x) ==> (((real_lt (real_of_num (NUMERAL _0))) e) ==> (((real_lt (distance (x , y))) e) ==> ((~ ((real_lt (distance (y , x))) e)) ==> ((!x. (!y. ((distance (x , y)) = (distance (y , x))))) ==> F)))))) ==> ((closed s) ==> (((inside s) x) ==> (((real_lt (real_of_num (NUMERAL _0))) e) ==> (((real_lt (distance (x , y))) e) ==> ((~ ((real_lt (distance (y , x))) e)) ==> ((!x. (!y. ((distance (x , y)) = (distance (y , x))))) ==> F))))))) ==> (((closed s) ==> (((inside s) x) ==> (((real_lt (real_of_num (NUMERAL _0))) e) ==> (((real_lt (distance (x , y))) e) ==> ((~ ((real_lt (distance (y , x))) e)) ==> ((!x. (!y. ((distance (x , y)) = (distance (y , x))))) ==> F)))))) ==> ((closed s) ==> (((inside s) x) ==> (((real_lt (real_of_num (NUMERAL _0))) e) ==> (((real_lt (distance (x , y))) e) ==> ((~ ((real_lt (distance (y , x))) e)) ==> ((!x. (!y. ((distance (x , y)) = (distance (y , x))))) ==> F))))))))
+T c==> c==> c==> cclosed f0 c==> cinside f0 f1 c==> creal_lt creal_of_num cNUMERAL c_0 f2 c==> creal_lt cdistance c, f1 f3 f2 c==> c~ creal_lt cdistance c, f3 f1 f2 c==> ! ! c= cdistance c, b0 b1 cdistance c, b1 b0 cF c==> cclosed f0 c==> cinside f0 f1 c==> creal_lt creal_of_num cNUMERAL c_0 f2 c==> creal_lt cdistance c, f1 f3 f2 c==> c~ creal_lt cdistance c, f3 f1 f2 c==> ! ! c= cdistance c, b0 b1 cdistance c, b1 b0 cF c==> c==> cclosed f0 c==> cinside f0 f1 c==> creal_lt creal_of_num cNUMERAL c_0 f2 c==> creal_lt cdistance c, f1 f3 f2 c==> c~ creal_lt cdistance c, f3 f1 f2 c==> ! ! c= cdistance c, b0 b1 cdistance c, b1 b0 cF c==> cclosed f0 c==> cinside f0 f1 c==> creal_lt creal_of_num cNUMERAL c_0 f2 c==> creal_lt cdistance c, f1 f3 f2 c==> c~ creal_lt cdistance c, f3 f1 f2 c==> ! ! c= cdistance c, b0 b1 cdistance c, b1 b0 cF
++ (!s. (!x. (!y. (((((connected_component (UNIV DIFF s)) x) y) /\ (x IN (inside s))) ==> (y IN (inside s)))))) |- ((\s. (!x. (!y. (((((connected_component (UNIV DIFF s)) x) y) /\ (x IN (inside s))) ==> (y IN (inside s)))))) s)
+T c==> ! ! ! c==> c/\ cconnected_component * * part cDIFF part cUNIV b0 b1 b2 cIN b1 * part cinside b0 cIN b2 * part cinside b0 * / ! ! c==> c/\ cconnected_component * * part cDIFF part cUNIV b0 b1 b2 cIN b1 * part cinside b0 cIN b2 * part cinside b0 f0
++ |- (((!y. (!s. ((closed s) ==> (((inside s) x) ==> (((real_lt (real_of_num (NUMERAL _0))) e) ==> (((real_lt (distance (x , y))) e) ==> ((~ ((real_lt (distance (y , x))) e)) ==> ((!x. (!y. ((distance (x , y)) = (distance (y , x))))) ==> F)))))))) ==> ((\y. (!s. ((closed s) ==> (((inside s) x) ==> (((real_lt (real_of_num (NUMERAL _0))) e) ==> (((real_lt (distance (x , y))) e) ==> ((~ ((real_lt (distance (y , x))) e)) ==> ((!x. (!y. ((distance (x , y)) = (distance (y , x))))) ==> F)))))))) y)) = ((\y. (!s. ((closed s) ==> (((inside s) x) ==> (((real_lt (real_of_num (NUMERAL _0))) e) ==> (((real_lt (distance (x , y))) e) ==> ((~ ((real_lt (distance (y , x))) e)) ==> ((!x. (!y. ((distance (x , y)) = (distance (y , x))))) ==> F)))))))) y))
+T c= c==> ! ! c==> cclosed b1 c==> cinside b1 f0 c==> creal_lt creal_of_num cNUMERAL c_0 f1 c==> creal_lt cdistance c, f0 b0 f1 c==> c~ creal_lt cdistance c, b0 f0 f1 c==> ! ! c= cdistance c, b2 b3 cdistance c, b3 b2 cF * / ! c==> cclosed b1 c==> cinside b1 f0 c==> creal_lt creal_of_num cNUMERAL c_0 f1 c==> creal_lt cdistance c, f0 b0 f1 c==> c~ creal_lt cdistance c, b0 f0 f1 c==> ! ! c= cdistance c, b2 b3 cdistance c, b3 b2 cF f2 * / ! c==> cclosed b1 c==> cinside b1 f0 c==> creal_lt creal_of_num cNUMERAL c_0 f1 c==> creal_lt cdistance c, f0 b0 f1 c==> c~ creal_lt cdistance c, b0 f0 f1 c==> ! ! c= cdistance c, b2 b3 cdistance c, b3 b2 cF f2
+- ((closed s) ==> (((inside s) x) ==> (((real_lt (real_of_num (NUMERAL _0))) e) ==> (((real_lt (distance (x , y))) e) ==> ((~ ((real_lt (distance (y , x))) e)) ==> ((!x. (!y. ((distance (x , y)) = (distance (y , x))))) ==> F)))))), (((closed s) ==> (((inside s) x) ==> (((real_lt (real_of_num (NUMERAL _0))) e) ==> (((real_lt (distance (x , y))) e) ==> ((~ ((real_lt (distance (y , x))) e)) ==> ((!x. (!y. ((distance (x , y)) = (distance (y , x))))) ==> F)))))) ==> ((closed s) ==> (((inside s) x) ==> (((real_lt (real_of_num (NUMERAL _0))) e) ==> (((real_lt (distance (x , y))) e) ==> ((~ ((real_lt (distance (y , x))) e)) ==> ((!x. (!y. ((distance (x , y)) = (distance (y , x))))) ==> F))))))) |- ((((closed s) ==> (((inside s) x) ==> (((real_lt (real_of_num (NUMERAL _0))) e) ==> (((real_lt (distance (x , y))) e) ==> ((~ ((real_lt (distance (y , x))) e)) ==> ((!x. (!y. ((distance (x , y)) = (distance (y , x))))) ==> F)))))) ==> ((closed s) ==> (((inside s) x) ==> (((real_lt (real_of_num (NUMERAL _0))) e) ==> (((real_lt (distance (x , y))) e) ==> ((~ ((real_lt (distance (y , x))) e)) ==> ((!x. (!y. ((distance (x , y)) = (distance (y , x))))) ==> F))))))) /\ ((closed s) ==> (((inside s) x) ==> (((real_lt (real_of_num (NUMERAL _0))) e) ==> (((real_lt (distance (x , y))) e) ==> ((~ ((real_lt (distance (y , x))) e)) ==> ((!x. (!y. ((distance (x , y)) = (distance (y , x))))) ==> F)))))))
+T c==> c==> cclosed f0 c==> cinside f0 f1 c==> creal_lt creal_of_num cNUMERAL c_0 f2 c==> creal_lt cdistance c, f1 f3 f2 c==> c~ creal_lt cdistance c, f3 f1 f2 c==> ! ! c= cdistance c, b0 b1 cdistance c, b1 b0 cF c==> c==> c==> cclosed f0 c==> cinside f0 f1 c==> creal_lt creal_of_num cNUMERAL c_0 f2 c==> creal_lt cdistance c, f1 f3 f2 c==> c~ creal_lt cdistance c, f3 f1 f2 c==> ! ! c= cdistance c, b0 b1 cdistance c, b1 b0 cF c==> cclosed f0 c==> cinside f0 f1 c==> creal_lt creal_of_num cNUMERAL c_0 f2 c==> creal_lt cdistance c, f1 f3 f2 c==> c~ creal_lt cdistance c, f3 f1 f2 c==> ! ! c= cdistance c, b0 b1 cdistance c, b1 b0 cF c/\ c==> c==> cclosed f0 c==> cinside f0 f1 c==> creal_lt creal_of_num cNUMERAL c_0 f2 c==> creal_lt cdistance c, f1 f3 f2 c==> c~ creal_lt cdistance c, f3 f1 f2 c==> ! ! c= cdistance c, b0 b1 cdistance c, b1 b0 cF c==> cclosed f0 c==> cinside f0 f1 c==> creal_lt creal_of_num cNUMERAL c_0 f2 c==> creal_lt cdistance c, f1 f3 f2 c==> c~ creal_lt cdistance c, f3 f1 f2 c==> ! ! c= cdistance c, b0 b1 cdistance c, b1 b0 cF c==> cclosed f0 c==> cinside f0 f1 c==> creal_lt creal_of_num cNUMERAL c_0 f2 c==> creal_lt cdistance c, f1 f3 f2 c==> c~ creal_lt cdistance c, f3 f1 f2 c==> ! ! c= cdistance c, b0 b1 cdistance c, b1 b0 cF
+- |- (((!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3)))) ==> ((\t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3)))) t2)) = ((\t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3)))) t2))
+T c= c==> ! ! c= c\/ f0 c\/ b0 b1 c\/ c\/ f0 b0 b1 * / ! c= c\/ f0 c\/ b0 b1 c\/ c\/ f0 b0 b1 f1 * / ! c= c\/ f0 c\/ b0 b1 c\/ c\/ f0 b0 b1 f1
+- |- ((!x'. ((~ ((inside s) x)) \/ (~ (s x')))) = ((~ ((inside s) x)) \/ (!x. (~ (s x)))))
+T c= ! c\/ c~ cinside f0 f1 c~ * f0 b0 c\/ c~ cinside f0 f1 ! c~ * f0 b0
+- (!x''. (((real_lt (distance (x'' , x))) e) ==> (((connected_component (UNIV DIFF s)) x) x''))), ((real_lt (distance (x'' , x))) e) |- (((real_lt (distance (x'' , x))) e) /\ (((connected_component (UNIV DIFF s)) x) x''))
+T c==> ! c==> creal_lt cdistance c, b0 f0 f1 cconnected_component * * part cDIFF part cUNIV f2 f0 b0 c==> creal_lt cdistance c, f3 f0 f1 c/\ creal_lt cdistance c, f3 f0 f1 cconnected_component * * part cDIFF part cUNIV f2 f0 f3
++ |- (((_724464 = _724466) /\ ((_724465 = _724467) /\ ((real_lt _724464) _724465))) ==> ((real_lt _724466) _724467))
+T c==> c/\ c= f0 f1 c/\ c= f2 f3 creal_lt f0 f2 creal_lt f1 f3
++ |- (((real_lt (distance (x , y))) e) ==> ((~ ((real_lt (distance (y , x))) e)) ==> (~ (!x. (!y. ((distance (x , y)) = (distance (y , x))))))))
+T c==> creal_lt cdistance c, f0 f1 f2 c==> c~ creal_lt cdistance c, f1 f0 f2 c~ ! ! c= cdistance c, b0 b1 cdistance c, b1 b0
++ |- ((open (UNIV DIFF s)) = (closed s))
+T c= copen * * part cDIFF part cUNIV f0 cclosed f0
+- (_724480 = _724481) |- ((_724480 = _724481) /\ ((NUMERAL _724480) = (NUMERAL _724481)))
+T c==> c= f0 f1 c/\ c= f0 f1 c= cNUMERAL f0 cNUMERAL f1
++ |- ((!s. (!x. (!y. (((((connected_component (UNIV DIFF s)) x) y) /\ (x IN (inside s))) ==> (y IN (inside s)))))) ==> (!y. (!s. ((?x. ((((connected_component (UNIV DIFF s)) x) y) /\ (x IN (inside s)))) ==> (y IN (inside s))))))
+T c==> ! ! ! c==> c/\ cconnected_component * * part cDIFF part cUNIV b0 b1 b2 cIN b1 * part cinside b0 cIN b2 * part cinside b0 ! ! c==> c? / c/\ cconnected_component * * part cDIFF part cUNIV b1 b2 b0 cIN b2 * part cinside b1 cIN b0 * part cinside b1
++ (closed s) |- (open (UNIV DIFF s))
+T c==> cclosed f0 copen * * part cDIFF part cUNIV f0
++ |- (((x IN (inside s)) /\ (closed s)) ==> ((((inside s) INTER s) = EMPTY) ==> (~ (x IN s))))
+T c==> c/\ cIN f0 * part cinside f1 cclosed f1 c==> c= * * part cINTER * part cinside f1 f1 part cEMPTY c~ cIN f0 f1
++ (!x''. (((real_lt (distance (x'' , x))) e) ==> (x'' IN ((connected_component (UNIV DIFF s)) x)))), (closed s), ((real_lt (real_of_num (NUMERAL _0))) e), (x IN (inside s)) |- (!x'. (((real_lt (distance (x , x'))) e) ==> (x' IN (inside s))))
+T c==> ! c==> creal_lt cdistance c, b0 f0 f1 cIN b0 * * part cconnected_component * * part cDIFF part cUNIV f2 f0 c==> cclosed f2 c==> creal_lt creal_of_num cNUMERAL c_0 f1 c==> cIN f0 * part cinside f2 ! c==> creal_lt cdistance c, f0 b0 f1 cIN b0 * part cinside f2
++ (_724464 = _724466), (_724465 = _724467) |- ((_724465 = _724467) /\ (((real_lt _724466) _724467) \/ (~ ((real_lt _724464) _724465))))
+T c==> c= f0 f1 c==> c= f2 f3 c/\ c= f2 f3 c\/ creal_lt f1 f3 c~ creal_lt f0 f2
++ |- ((\x. (!y. (!s. ((closed s) ==> (((inside s) x) ==> (((real_lt (real_of_num (NUMERAL _0))) e) ==> (((real_lt (distance (x , y))) e) ==> ((~ ((real_lt (distance (y , x))) e)) ==> ((!x. (!y. ((distance (x , y)) = (distance (y , x))))) ==> F))))))))) x)
+T * / ! ! c==> cclosed b2 c==> cinside b2 b0 c==> creal_lt creal_of_num cNUMERAL c_0 f0 c==> creal_lt cdistance c, b0 b1 f0 c==> c~ creal_lt cdistance c, b1 b0 f0 c==> ! ! c= cdistance c, b3 b3 cdistance c, b3 b3 cF f1
+- ((~ ((((inside s) x) /\ (closed s)) ==> ((!x. (~ (((inside s) x) /\ (s x)))) ==> (~ (s x))))) ==> F) |- (((~ ((((inside s) x) /\ (closed s)) ==> ((!x. (~ (((inside s) x) /\ (s x)))) ==> (~ (s x))))) ==> F) /\ ((~ ((((inside s) x) /\ (closed s)) ==> ((!x. (~ (((inside s) x) /\ (s x)))) ==> (~ (s x))))) ==> F))
+T c==> c==> c~ c==> c/\ cinside f0 f1 cclosed f0 c==> ! c~ c/\ cinside f0 b0 * f0 b0 c~ * f0 f1 cF c/\ c==> c~ c==> c/\ cinside f0 f1 cclosed f0 c==> ! c~ c/\ cinside f0 b0 * f0 b0 c~ * f0 f1 cF c==> c~ c==> c/\ cinside f0 f1 cclosed f0 c==> ! c~ c/\ cinside f0 b0 * f0 b0 c~ * f0 f1 cF
+- (_724468 = _724470), (_724469 = _724471) |- (((((inside _724468) _724469) = ((inside _724470) _724471)) ==> (((inside _724470) _724471) \/ (~ ((inside _724468) _724469)))) = (((inside _724470) _724471) \/ (~ ((inside _724468) _724469))))
+T c==> c= f0 f1 c==> c= f2 f3 c= c==> c= cinside f0 f2 cinside f1 f3 c\/ cinside f1 f3 c~ cinside f0 f2 c\/ cinside f1 f3 c~ cinside f0 f2
++ (!x. (!y. ((distance (x , y)) = (distance (y , x))))), (~ ((real_lt (distance (y , x))) e)), ((real_lt (distance (x , y))) e) |- F
+T c==> ! ! c= cdistance c, b0 b1 cdistance c, b1 b0 c==> c~ creal_lt cdistance c, f0 f1 f2 c==> creal_lt cdistance c, f1 f0 f2 cF
++ (closed s), (x IN (inside s)) |- (!e. ((((real_lt (real_of_num (NUMERAL _0))) e) /\ (!x''. (((real_lt (distance (x'' , x))) e) ==> (x'' IN ((connected_component (UNIV DIFF s)) x))))) ==> (((real_lt (real_of_num (NUMERAL _0))) e) /\ ((ball (x , e)) SUBSET (inside s)))))
+T c==> cclosed f0 c==> cIN f1 * part cinside f0 ! c==> c/\ creal_lt creal_of_num cNUMERAL c_0 b0 ! c==> creal_lt cdistance c, b1 f1 b0 cIN b1 * * part cconnected_component * * part cDIFF part cUNIV f0 f1 c/\ creal_lt creal_of_num cNUMERAL c_0 b0 cSUBSET * part cball c, f1 b0 * part cinside f0
++ (!x''. (((real_lt (distance (x'' , x))) e) ==> (x'' IN ((connected_component (UNIV DIFF s)) x)))), (closed s), ((real_lt (real_of_num (NUMERAL _0))) e), (x IN (inside s)) |- (((real_lt (real_of_num (NUMERAL _0))) e) /\ ((ball (x , e)) SUBSET (inside s)))
+T c==> ! c==> creal_lt cdistance c, b0 f0 f1 cIN b0 * * part cconnected_component * * part cDIFF part cUNIV f2 f0 c==> cclosed f2 c==> creal_lt creal_of_num cNUMERAL c_0 f1 c==> cIN f0 * part cinside f2 c/\ creal_lt creal_of_num cNUMERAL c_0 f1 cSUBSET * part cball c, f0 f1 * part cinside f2
++ (!x''. (((real_lt (distance (x'' , x))) e) ==> (x'' IN ((connected_component (UNIV DIFF s)) x)))), (closed s), ((real_lt (real_of_num (NUMERAL _0))) e), ((real_lt (distance (x , y))) e), (x IN (inside s)) |- (((real_lt (distance (x , y))) e) /\ (y IN (inside s)))
+T c==> ! c==> creal_lt cdistance c, b0 f0 f1 cIN b0 * * part cconnected_component * * part cDIFF part cUNIV f2 f0 c==> cclosed f2 c==> creal_lt creal_of_num cNUMERAL c_0 f1 c==> creal_lt cdistance c, f0 f3 f1 c==> cIN f0 * part cinside f2 c/\ creal_lt cdistance c, f0 f3 f1 cIN f3 * part cinside f2
+- |- ((~ (_724480 = _724481)) \/ ((NUMERAL _724480) = (NUMERAL _724481)))
+T c\/ c~ c= f0 f1 c= cNUMERAL f0 cNUMERAL f1
++ (closed s), (x IN (inside s)) |- (((!e. ((((real_lt (real_of_num (NUMERAL _0))) e) /\ (!x''. (((real_lt (distance (x'' , x))) e) ==> (x'' IN ((connected_component (UNIV DIFF s)) x))))) ==> (((real_lt (real_of_num (NUMERAL _0))) e) /\ ((ball (x , e)) SUBSET (inside s))))) ==> ((?e. (((real_lt (real_of_num (NUMERAL _0))) e) /\ (!x''. (((real_lt (distance (x'' , x))) e) ==> (x'' IN ((connected_component (UNIV DIFF s)) x)))))) ==> (?e. (((real_lt (real_of_num (NUMERAL _0))) e) /\ ((ball (x , e)) SUBSET (inside s)))))) = ((?e. (((real_lt (real_of_num (NUMERAL _0))) e) /\ (!x''. (((real_lt (distance (x'' , x))) e) ==> (x'' IN ((connected_component (UNIV DIFF s)) x)))))) ==> (?e. (((real_lt (real_of_num (NUMERAL _0))) e) /\ ((ball (x , e)) SUBSET (inside s))))))
+T c==> cclosed f0 c==> cIN f1 * part cinside f0 c= c==> ! c==> c/\ creal_lt creal_of_num cNUMERAL c_0 b0 ! c==> creal_lt cdistance c, b1 f1 b0 cIN b1 * * part cconnected_component * * part cDIFF part cUNIV f0 f1 c/\ creal_lt creal_of_num cNUMERAL c_0 b0 cSUBSET * part cball c, f1 b0 * part cinside f0 c==> c? / c/\ creal_lt creal_of_num cNUMERAL c_0 b0 ! c==> creal_lt cdistance c, b1 f1 b0 cIN b1 * * part cconnected_component * * part cDIFF part cUNIV f0 f1 c? / c/\ creal_lt creal_of_num cNUMERAL c_0 b0 cSUBSET * part cball c, f1 b0 * part cinside f0 c==> c? / c/\ creal_lt creal_of_num cNUMERAL c_0 b0 ! c==> creal_lt cdistance c, b1 f1 b0 cIN b1 * * part cconnected_component * * part cDIFF part cUNIV f0 f1 c? / c/\ creal_lt creal_of_num cNUMERAL c_0 b0 cSUBSET * part cball c, f1 b0 * part cinside f0
+- (~ ((inside s) x)), (((inside s) x) /\ (closed s)) |- ((~ ((inside s) x)) /\ ((inside s) x))
+T c==> c~ cinside f0 f1 c==> c/\ cinside f0 f1 cclosed f0 c/\ c~ cinside f0 f1 cinside f0 f1
++ |- (((!x. (!y. (!e. ((y IN (ball (x , e))) = ((real_lt (distance (x , y))) e))))) ==> ((\x. (!y. (!e. ((y IN (ball (x , e))) = ((real_lt (distance (x , y))) e))))) x)) = ((\x. (!y. (!e. ((y IN (ball (x , e))) = ((real_lt (distance (x , y))) e))))) x))
+T c= c==> ! ! ! c= cIN b1 * part cball c, b0 b2 creal_lt cdistance c, b0 b1 b2 * / ! ! c= cIN b1 * part cball c, b0 b2 creal_lt cdistance c, b0 b1 b2 f0 * / ! ! c= cIN b1 * part cball c, b0 b2 creal_lt cdistance c, b0 b1 b2 f0
+- ((x IN P) = (P x)) |- ((P x) = (x IN P))
+T c==> c= cIN f0 f1 * f1 f0 c= * f1 f0 cIN f0 f1
+- |- ((x = x) = T)
+T c= c= f0 f0 cT
++ (_724464 = _724466) |- ((_724464 = _724466) /\ ((~ (_724465 = _724467)) \/ (((real_lt _724466) _724467) \/ (~ ((real_lt _724464) _724465)))))
+T c==> c= f0 f1 c/\ c= f0 f1 c\/ c~ c= f2 f3 c\/ creal_lt f1 f3 c~ creal_lt f0 f2
++ |- ((!y. (!s. ((closed s) ==> (((inside s) x) ==> (((real_lt (real_of_num (NUMERAL _0))) e) ==> (((real_lt (distance (x , y))) e) ==> ((~ ((real_lt (distance (y , x))) e)) ==> (~ (!x. (!y. ((distance (x , y)) = (distance (y , x))))))))))))) = T)
+T c= ! ! c==> cclosed b1 c==> cinside b1 f0 c==> creal_lt creal_of_num cNUMERAL c_0 f1 c==> creal_lt cdistance c, f0 b0 f1 c==> c~ creal_lt cdistance c, b0 f0 f1 c~ ! ! c= cdistance c, b2 b3 cdistance c, b3 b2 cT
++ (closed s), (x IN (inside s)) |- ((?e. (((real_lt (real_of_num (NUMERAL _0))) e) /\ (!x''. (((real_lt (distance (x'' , x))) e) ==> (x'' IN ((connected_component (UNIV DIFF s)) x)))))) ==> (?e. (((real_lt (real_of_num (NUMERAL _0))) e) /\ ((ball (x , e)) SUBSET (inside s)))))
+T c==> cclosed f0 c==> cIN f1 * part cinside f0 c==> c? / c/\ creal_lt creal_of_num cNUMERAL c_0 b0 ! c==> creal_lt cdistance c, b1 f1 b0 cIN b1 * * part cconnected_component * * part cDIFF part cUNIV f0 f1 c? / c/\ creal_lt creal_of_num cNUMERAL c_0 b0 cSUBSET * part cball c, f1 b0 * part cinside f0
+- (!x. (~ (((inside s) x) /\ (s x)))), (s x), (((inside s) x) /\ (closed s)) |- ((~ F) ==> F)
+T c==> ! c~ c/\ cinside f0 b0 * f0 b0 c==> * f0 f1 c==> c/\ cinside f0 f1 cclosed f0 c==> c~ cF cF
++ |- ((p \/ (q \/ r)) = (q \/ (p \/ r)))
+T c= c\/ f0 c\/ f1 f2 c\/ f1 c\/ f0 f2
++ (closed s), (x IN (inside s)) |- (x IN ((connected_component (UNIV DIFF s)) x))
+T c==> cclosed f0 c==> cIN f1 * part cinside f0 cIN f1 * * part cconnected_component * * part cDIFF part cUNIV f0 f1
++ (!x'. ((x' IN ((connected_component (UNIV DIFF s)) x)) ==> (?e. (((real_lt (real_of_num (NUMERAL _0))) e) /\ (!x''. (((real_lt (distance (x'' , x'))) e) ==> (x'' IN ((connected_component (UNIV DIFF s)) x)))))))) |- ((x IN ((connected_component (UNIV DIFF s)) x)) ==> (?e. (((real_lt (real_of_num (NUMERAL _0))) e) /\ (!x''. (((real_lt (distance (x'' , x))) e) ==> (x'' IN ((connected_component (UNIV DIFF s)) x)))))))
+T c==> ! c==> cIN b0 * * part cconnected_component * * part cDIFF part cUNIV f0 f1 c? / c/\ creal_lt creal_of_num cNUMERAL c_0 b1 ! c==> creal_lt cdistance c, b2 b0 b1 cIN b2 * * part cconnected_component * * part cDIFF part cUNIV f0 f1 c==> cIN f1 * * part cconnected_component * * part cDIFF part cUNIV f0 f1 c? / c/\ creal_lt creal_of_num cNUMERAL c_0 b0 ! c==> creal_lt cdistance c, b1 f1 b0 cIN b1 * * part cconnected_component * * part cDIFF part cUNIV f0 f1
+- (!x''. (((real_lt (distance (x'' , x))) e) ==> (((connected_component (UNIV DIFF s)) x) x''))) |- ((((real_lt (distance (x'' , x))) e) ==> (((connected_component (UNIV DIFF s)) x) x'')) = T)
+T c==> ! c==> creal_lt cdistance c, b0 f0 f1 cconnected_component * * part cDIFF part cUNIV f2 f0 b0 c= c==> creal_lt cdistance c, f3 f0 f1 cconnected_component * * part cDIFF part cUNIV f2 f0 f3 cT
++ |- (((~ ((real_lt (distance (y , x))) e)) ==> F) = ((real_lt (distance (y , x))) e))
+T c= c==> c~ creal_lt cdistance c, f0 f1 f2 cF creal_lt cdistance c, f0 f1 f2
++ |- ((a ==> b) = ((~ a) \/ b))
+T c= c==> f0 f1 c\/ c~ f0 f1
++ (!x. (~ (((inside s) x) /\ (s x)))), (((inside s) x) /\ (closed s)) |- (~ (s x))
+T c==> ! c~ c/\ cinside f0 b0 * f0 b0 c==> c/\ cinside f0 f1 cclosed f0 c~ * f0 f1
++ |- (((UNIV DIFF s) x) = (x IN ((connected_component (UNIV DIFF s)) x)))
+T c= cDIFF part cUNIV f0 f1 cIN f1 * * part cconnected_component * * part cDIFF part cUNIV f0 f1
++ |- ((!e. ((P e) ==> (Q e))) ==> ((?e. (P e)) ==> (?e. (Q e))))
+T c==> ! c==> * f0 b0 * f1 b0 c==> c? / * f0 b0 c? / * f1 b0
++ (closed s), ((real_lt (real_of_num (NUMERAL _0))) e), ((real_lt (distance (x , y))) e), (x IN (inside s)) |- ((((real_lt (distance (y , x))) e) ==> (((connected_component (UNIV DIFF s)) x) y)) = (((connected_component (UNIV DIFF s)) x) y))
+T c==> cclosed f0 c==> creal_lt creal_of_num cNUMERAL c_0 f1 c==> creal_lt cdistance c, f2 f3 f1 c==> cIN f2 * part cinside f0 c= c==> creal_lt cdistance c, f3 f2 f1 cconnected_component * * part cDIFF part cUNIV f0 f2 f3 cconnected_component * * part cDIFF part cUNIV f0 f2 f3
+- |- ((_724480 = _724481) ==> ((NUMERAL _724480) = (NUMERAL _724481)))
+T c==> c= f0 f1 c= cNUMERAL f0 cNUMERAL f1
++ |- (((~ a) \/ (~ b)) = (~ (a /\ b)))
+T c= c\/ c~ f0 c~ f1 c~ c/\ f0 f1
++ |- (((!P. (!x. ((x IN P) = (P x)))) ==> ((\P. (!x. ((x IN P) = (P x)))) P)) = ((\P. (!x. ((x IN P) = (P x)))) P))
+T c= c==> ! ! c= cIN b1 b0 * b0 b1 * / ! c= cIN b1 b0 * b0 b1 f0 * / ! c= cIN b1 b0 * b0 b1 f0
++ |- ((x IN UNIV) = T)
+T c= cIN f0 part cUNIV cT
++ ((\x. ((((connected_component (UNIV DIFF s)) x) y) /\ (x IN (inside s)))) x) |- ((((((connected_component (UNIV DIFF s)) x) y) /\ (x IN (inside s))) ==> ((!s. (!x. (!y. (((((connected_component (UNIV DIFF s)) x) y) /\ (x IN (inside s))) ==> (y IN (inside s)))))) ==> (y IN (inside s)))) = ((!s. (!x. (!y. (((((connected_component (UNIV DIFF s)) x) y) /\ (x IN (inside s))) ==> (y IN (inside s)))))) ==> (y IN (inside s))))
+T c==> * / c/\ cconnected_component * * part cDIFF part cUNIV f0 b0 f1 cIN b0 * part cinside f0 f2 c= c==> c/\ cconnected_component * * part cDIFF part cUNIV f0 f2 f1 cIN f2 * part cinside f0 c==> ! ! ! c==> c/\ cconnected_component * * part cDIFF part cUNIV b0 b1 b2 cIN b1 * part cinside b0 cIN b2 * part cinside b0 cIN f1 * part cinside f0 c==> ! ! ! c==> c/\ cconnected_component * * part cDIFF part cUNIV b0 b1 b2 cIN b1 * part cinside b0 cIN b2 * part cinside b0 cIN f1 * part cinside f0
+- |- ((~ (_724478 = _724479)) \/ ((distance _724478) = (distance _724479)))
+T c\/ c~ c= f0 f1 c= cdistance f0 cdistance f1
+- (!x. ((P x) ==> (Q x))), ((!x. ((P x) ==> (Q x))) ==> ((?x. (P x)) ==> (?x. (Q x)))) |- (((!x. ((P x) ==> (Q x))) ==> ((?x. (P x)) ==> (?x. (Q x)))) /\ ((?x. (P x)) ==> (?x. (Q x))))
+T c==> ! c==> * f0 b0 * f1 b0 c==> c==> ! c==> * f0 b0 * f1 b0 c==> c? / * f0 b0 c? / * f1 b0 c/\ c==> ! c==> * f0 b0 * f1 b0 c==> c? / * f0 b0 c? / * f1 b0 c==> c? / * f0 b0 c? / * f1 b0
++ (!x. (~ (((inside s) x) /\ (s x)))), (((inside s) x) /\ (closed s)) |- ((!x. (~ (((inside s) x) /\ (s x)))) /\ (~ (s x)))
+T c==> ! c~ c/\ cinside f0 b0 * f0 b0 c==> c/\ cinside f0 f1 cclosed f0 c/\ ! c~ c/\ cinside f0 b0 * f0 b0 c~ * f0 f1
++ (open ((connected_component (UNIV DIFF s)) x)), (closed s), (x IN (inside s)) |- (?e. (((real_lt (real_of_num (NUMERAL _0))) e) /\ ((ball (x , e)) SUBSET (inside s))))
+T c==> copen * * part cconnected_component * * part cDIFF part cUNIV f0 f1 c==> cclosed f0 c==> cIN f1 * part cinside f0 c? / c/\ creal_lt creal_of_num cNUMERAL c_0 b0 cSUBSET * part cball c, f1 b0 * part cinside f0
++ (closed s), (x IN (inside s)) |- ((open ((connected_component (UNIV DIFF s)) x)) ==> (?e. (((real_lt (real_of_num (NUMERAL _0))) e) /\ ((ball (x , e)) SUBSET (inside s)))))
+T c==> cclosed f0 c==> cIN f1 * part cinside f0 c==> copen * * part cconnected_component * * part cDIFF part cUNIV f0 f1 c? / c/\ creal_lt creal_of_num cNUMERAL c_0 b0 cSUBSET * part cball c, f1 b0 * part cinside f0
+- (((closed s) ==> (((inside s) x) ==> (((real_lt (real_of_num (NUMERAL _0))) e) ==> (((real_lt (distance (x , y))) e) ==> ((~ ((real_lt (distance (y , x))) e)) ==> ((!x. (!y. ((distance (x , y)) = (distance (y , x))))) ==> F)))))) ==> ((closed s) ==> (((inside s) x) ==> (((real_lt (real_of_num (NUMERAL _0))) e) ==> (((real_lt (distance (x , y))) e) ==> ((~ ((real_lt (distance (y , x))) e)) ==> ((!x. (!y. ((distance (x , y)) = (distance (y , x))))) ==> F))))))) |- ((((closed s) ==> (((inside s) x) ==> (((real_lt (real_of_num (NUMERAL _0))) e) ==> (((real_lt (distance (x , y))) e) ==> ((~ ((real_lt (distance (y , x))) e)) ==> ((!x. (!y. ((distance (x , y)) = (distance (y , x))))) ==> F)))))) ==> ((closed s) ==> (((inside s) x) ==> (((real_lt (real_of_num (NUMERAL _0))) e) ==> (((real_lt (distance (x , y))) e) ==> ((~ ((real_lt (distance (y , x))) e)) ==> ((!x. (!y. ((distance (x , y)) = (distance (y , x))))) ==> F))))))) /\ (((closed s) ==> (((inside s) x) ==> (((real_lt (real_of_num (NUMERAL _0))) e) ==> (((real_lt (distance (x , y))) e) ==> ((~ ((real_lt (distance (y , x))) e)) ==> ((!x. (!y. ((distance (x , y)) = (distance (y , x))))) ==> F)))))) ==> ((closed s) ==> (((inside s) x) ==> (((real_lt (real_of_num (NUMERAL _0))) e) ==> (((real_lt (distance (x , y))) e) ==> ((~ ((real_lt (distance (y , x))) e)) ==> ((!x. (!y. ((distance (x , y)) = (distance (y , x))))) ==> F))))))))
+T c==> c==> c==> cclosed f0 c==> cinside f0 f1 c==> creal_lt creal_of_num cNUMERAL c_0 f2 c==> creal_lt cdistance c, f1 f3 f2 c==> c~ creal_lt cdistance c, f3 f1 f2 c==> ! ! c= cdistance c, b0 b1 cdistance c, b1 b0 cF c==> cclosed f0 c==> cinside f0 f1 c==> creal_lt creal_of_num cNUMERAL c_0 f2 c==> creal_lt cdistance c, f1 f3 f2 c==> c~ creal_lt cdistance c, f3 f1 f2 c==> ! ! c= cdistance c, b0 b1 cdistance c, b1 b0 cF c/\ c==> c==> cclosed f0 c==> cinside f0 f1 c==> creal_lt creal_of_num cNUMERAL c_0 f2 c==> creal_lt cdistance c, f1 f3 f2 c==> c~ creal_lt cdistance c, f3 f1 f2 c==> ! ! c= cdistance c, b0 b1 cdistance c, b1 b0 cF c==> cclosed f0 c==> cinside f0 f1 c==> creal_lt creal_of_num cNUMERAL c_0 f2 c==> creal_lt cdistance c, f1 f3 f2 c==> c~ creal_lt cdistance c, f3 f1 f2 c==> ! ! c= cdistance c, b0 b1 cdistance c, b1 b0 cF c==> c==> cclosed f0 c==> cinside f0 f1 c==> creal_lt creal_of_num cNUMERAL c_0 f2 c==> creal_lt cdistance c, f1 f3 f2 c==> c~ creal_lt cdistance c, f3 f1 f2 c==> ! ! c= cdistance c, b0 b1 cdistance c, b1 b0 cF c==> cclosed f0 c==> cinside f0 f1 c==> creal_lt creal_of_num cNUMERAL c_0 f2 c==> creal_lt cdistance c, f1 f3 f2 c==> c~ creal_lt cdistance c, f3 f1 f2 c==> ! ! c= cdistance c, b0 b1 cdistance c, b1 b0 cF
+- |- (((!s. (!x. ((open s) ==> (open ((connected_component s) x))))) ==> (!s. (!x. ((open s) ==> (open ((connected_component s) x)))))) = (!s. (!x. ((open s) ==> (open ((connected_component s) x))))))
+T c= c==> ! ! c==> copen b0 copen * * part cconnected_component b0 b1 ! ! c==> copen b0 copen * * part cconnected_component b0 b1 ! ! c==> copen b0 copen * * part cconnected_component b0 b1
+- |- ((p \/ q) = (q \/ p))
+T c= c\/ f0 f1 c\/ f1 f0
+- |- ((p \/ (p \/ q)) = (p \/ q))
+T c= c\/ f0 c\/ f0 f1 c\/ f0 f1
++ |- ((\s. ((closed s) ==> (((inside s) x) ==> (((real_lt (real_of_num (NUMERAL _0))) e) ==> (((real_lt (distance (x , y))) e) ==> ((~ ((real_lt (distance (y , x))) e)) ==> ((!x. (!y. ((distance (x , y)) = (distance (y , x))))) ==> F))))))) s)
+T * / c==> cclosed b0 c==> cinside b0 f0 c==> creal_lt creal_of_num cNUMERAL c_0 f1 c==> creal_lt cdistance c, f0 f2 f1 c==> c~ creal_lt cdistance c, f2 f0 f1 c==> ! ! c= cdistance c, b1 b2 cdistance c, b2 b1 cF f3
++ (!x. (!y. ((distance (x , y)) = (distance (y , x))))), ((real_lt (distance (x , y))) e) |- ((real_lt (distance (y , x))) e)
+T c==> ! ! c= cdistance c, b0 b1 cdistance c, b1 b0 c==> creal_lt cdistance c, f0 f1 f2 creal_lt cdistance c, f1 f0 f2
++ (closed s), (((real_lt (real_of_num (NUMERAL _0))) e) /\ (!x''. (((real_lt (distance (x'' , x))) e) ==> (x'' IN ((connected_component (UNIV DIFF s)) x))))), (x IN (inside s)) |- (((real_lt (real_of_num (NUMERAL _0))) e) /\ ((ball (x , e)) SUBSET (inside s)))
+T c==> cclosed f0 c==> c/\ creal_lt creal_of_num cNUMERAL c_0 f1 ! c==> creal_lt cdistance c, b0 f2 f1 cIN b0 * * part cconnected_component * * part cDIFF part cUNIV f0 f2 c==> cIN f2 * part cinside f0 c/\ creal_lt creal_of_num cNUMERAL c_0 f1 cSUBSET * part cball c, f2 f1 * part cinside f0
++ |- ((\x. ((x IN (s DIFF t)) = ((x IN s) /\ (~ (x IN t))))) x)
+T * / c= cIN b0 * * part cDIFF f0 f1 c/\ cIN b0 f0 c~ cIN b0 f1 f2
++ |- ((\x. (!y. (!e. ((y IN (ball (x , e))) = ((real_lt (distance (x , y))) e))))) x)
+T * / ! ! c= cIN b1 * part cball c, b0 b2 creal_lt cdistance c, b0 b1 b2 f0
+- |- ((~ (_724469 = _724471)) \/ ((~ (_724468 = _724470)) \/ (((inside _724470) _724471) \/ (~ ((inside _724468) _724469)))))
+T c\/ c~ c= f0 f1 c\/ c~ c= f2 f3 c\/ cinside f3 f1 c~ cinside f2 f0
+- (!x''. (((real_lt (distance (x'' , x))) e) ==> (((connected_component (UNIV DIFF s)) x) x''))), ((real_lt (distance (x'' , x))) e) |- ((!x''. (((real_lt (distance (x'' , x))) e) ==> (((connected_component (UNIV DIFF s)) x) x''))) /\ (((connected_component (UNIV DIFF s)) x) x''))
+T c==> ! c==> creal_lt cdistance c, b0 f0 f1 cconnected_component * * part cDIFF part cUNIV f2 f0 b0 c==> creal_lt cdistance c, f3 f0 f1 c/\ ! c==> creal_lt cdistance c, b0 f0 f1 cconnected_component * * part cDIFF part cUNIV f2 f0 b0 cconnected_component * * part cDIFF part cUNIV f2 f0 f3
++ (!x''. (((real_lt (distance (x'' , x))) e) ==> (x'' IN ((connected_component (UNIV DIFF s)) x)))), (closed s), ((real_lt (real_of_num (NUMERAL _0))) e), ((real_lt (distance (x , y))) e), (x IN (inside s)) |- (y IN (inside s))
+T c==> ! c==> creal_lt cdistance c, b0 f0 f1 cIN b0 * * part cconnected_component * * part cDIFF part cUNIV f2 f0 c==> cclosed f2 c==> creal_lt creal_of_num cNUMERAL c_0 f1 c==> creal_lt cdistance c, f0 f3 f1 c==> cIN f0 * part cinside f2 cIN f3 * part cinside f2
++ (!x''. (((real_lt (distance (x'' , x))) e) ==> (x'' IN ((connected_component (UNIV DIFF s)) x)))) |- (((real_lt (distance (x'' , x))) e) ==> (((connected_component (UNIV DIFF s)) x) x''))
+T c==> ! c==> creal_lt cdistance c, b0 f0 f1 cIN b0 * * part cconnected_component * * part cDIFF part cUNIV f2 f0 c==> creal_lt cdistance c, f3 f0 f1 cconnected_component * * part cDIFF part cUNIV f2 f0 f3
+- ((closed s) ==> (((inside s) x) ==> (((real_lt (real_of_num (NUMERAL _0))) e) ==> (((real_lt (distance (x , y))) e) ==> ((~ ((real_lt (distance (y , x))) e)) ==> ((!x. (!y. ((distance (x , y)) = (distance (y , x))))) ==> F)))))) |- ((((closed s) ==> (((inside s) x) ==> (((real_lt (real_of_num (NUMERAL _0))) e) ==> (((real_lt (distance (x , y))) e) ==> ((~ ((real_lt (distance (y , x))) e)) ==> ((!x. (!y. ((distance (x , y)) = (distance (y , x))))) ==> F)))))) ==> ((closed s) ==> (((inside s) x) ==> (((real_lt (real_of_num (NUMERAL _0))) e) ==> (((real_lt (distance (x , y))) e) ==> ((~ ((real_lt (distance (y , x))) e)) ==> ((!x. (!y. ((distance (x , y)) = (distance (y , x))))) ==> F))))))) ==> ((closed s) ==> (((inside s) x) ==> (((real_lt (real_of_num (NUMERAL _0))) e) ==> (((real_lt (distance (x , y))) e) ==> ((~ ((real_lt (distance (y , x))) e)) ==> ((!x. (!y. ((distance (x , y)) = (distance (y , x))))) ==> F)))))))
+T c==> c==> cclosed f0 c==> cinside f0 f1 c==> creal_lt creal_of_num cNUMERAL c_0 f2 c==> creal_lt cdistance c, f1 f3 f2 c==> c~ creal_lt cdistance c, f3 f1 f2 c==> ! ! c= cdistance c, b0 b1 cdistance c, b1 b0 cF c==> c==> c==> cclosed f0 c==> cinside f0 f1 c==> creal_lt creal_of_num cNUMERAL c_0 f2 c==> creal_lt cdistance c, f1 f3 f2 c==> c~ creal_lt cdistance c, f3 f1 f2 c==> ! ! c= cdistance c, b0 b1 cdistance c, b1 b0 cF c==> cclosed f0 c==> cinside f0 f1 c==> creal_lt creal_of_num cNUMERAL c_0 f2 c==> creal_lt cdistance c, f1 f3 f2 c==> c~ creal_lt cdistance c, f3 f1 f2 c==> ! ! c= cdistance c, b0 b1 cdistance c, b1 b0 cF c==> cclosed f0 c==> cinside f0 f1 c==> creal_lt creal_of_num cNUMERAL c_0 f2 c==> creal_lt cdistance c, f1 f3 f2 c==> c~ creal_lt cdistance c, f3 f1 f2 c==> ! ! c= cdistance c, b0 b1 cdistance c, b1 b0 cF
+- (!x''. (((real_lt (distance (x'' , x))) e) ==> (x'' IN ((connected_component (UNIV DIFF s)) x)))) |- ((\x''. (((real_lt (distance (x'' , x))) e) ==> (x'' IN ((connected_component (UNIV DIFF s)) x)))) x'')
+T c==> ! c==> creal_lt cdistance c, b0 f0 f1 cIN b0 * * part cconnected_component * * part cDIFF part cUNIV f2 f0 * / c==> creal_lt cdistance c, b0 f0 f1 cIN b0 * * part cconnected_component * * part cDIFF part cUNIV f2 f0 f3
+- |- ((\P. (!x. ((P x) = (x IN P)))) P)
+T * / ! c= * b0 b1 cIN b1 b0 f0
++ ((closed s) = (open (UNIV DIFF s))) |- ((open (UNIV DIFF s)) = (closed s))
+T c==> c= cclosed f0 copen * * part cDIFF part cUNIV f0 c= copen * * part cDIFF part cUNIV f0 cclosed f0
+- |- ((((~ ((((inside s) x) /\ (closed s)) ==> ((!x. (~ (((inside s) x) /\ (s x)))) ==> (~ (s x))))) ==> F) ==> ((~ ((((inside s) x) /\ (closed s)) ==> ((!x. (~ (((inside s) x) /\ (s x)))) ==> (~ (s x))))) ==> F)) = ((~ ((((inside s) x) /\ (closed s)) ==> ((!x. (~ (((inside s) x) /\ (s x)))) ==> (~ (s x))))) ==> F))
+T c= c==> c==> c~ c==> c/\ cinside f0 f1 cclosed f0 c==> ! c~ c/\ cinside f0 b0 * f0 b0 c~ * f0 f1 cF c==> c~ c==> c/\ cinside f0 f1 cclosed f0 c==> ! c~ c/\ cinside f0 b0 * f0 b0 c~ * f0 f1 cF c==> c~ c==> c/\ cinside f0 f1 cclosed f0 c==> ! c~ c/\ cinside f0 b0 * f0 b0 c~ * f0 f1 cF
++ |- (((!s. (!t. (!x. ((x IN (s DIFF t)) = ((x IN s) /\ (~ (x IN t))))))) ==> ((\s. (!t. (!x. ((x IN (s DIFF t)) = ((x IN s) /\ (~ (x IN t))))))) s)) = ((\s. (!t. (!x. ((x IN (s DIFF t)) = ((x IN s) /\ (~ (x IN t))))))) s))
+T c= c==> ! ! ! c= cIN b2 * * part cDIFF b0 b1 c/\ cIN b2 b0 c~ cIN b2 b1 * / ! ! c= cIN b2 * * part cDIFF b0 b1 c/\ cIN b2 b0 c~ cIN b2 b1 f0 * / ! ! c= cIN b2 * * part cDIFF b0 b1 c/\ cIN b2 b0 c~ cIN b2 b1 f0
++ (!x. (!y. ((distance (x , y)) = (distance (y , x))))), ((real_lt (distance (x , y))) e) |- ((((real_lt (distance (y , x))) e) ==> F) = F)
+T c==> ! ! c= cdistance c, b0 b1 cdistance c, b1 b0 c==> creal_lt cdistance c, f0 f1 f2 c= c==> creal_lt cdistance c, f1 f0 f2 cF cF
++ (!x''. (((real_lt (distance (x'' , x))) e) ==> (x'' IN ((connected_component (UNIV DIFF s)) x)))) |- (((!x''. (((real_lt (distance (x'' , x))) e) ==> (((connected_component (UNIV DIFF s)) x) x''))) ==> ((\x''. (((real_lt (distance (x'' , x))) e) ==> (((connected_component (UNIV DIFF s)) x) x''))) x'')) = ((\x''. (((real_lt (distance (x'' , x))) e) ==> (((connected_component (UNIV DIFF s)) x) x''))) x''))
+T c==> ! c==> creal_lt cdistance c, b0 f0 f1 cIN b0 * * part cconnected_component * * part cDIFF part cUNIV f2 f0 c= c==> ! c==> creal_lt cdistance c, b0 f0 f1 cconnected_component * * part cDIFF part cUNIV f2 f0 b0 * / c==> creal_lt cdistance c, b0 f0 f1 cconnected_component * * part cDIFF part cUNIV f2 f0 b0 f3 * / c==> creal_lt cdistance c, b0 f0 f1 cconnected_component * * part cDIFF part cUNIV f2 f0 b0 f3
+- |- ((_724472 = _724473) ==> ((closed _724473) \/ (~ (closed _724472))))
+T c==> c= f0 f1 c\/ cclosed f1 c~ cclosed f0
+- |- (((t1 \/ t2) \/ t3) = (t1 \/ (t2 \/ t3)))
+T c= c\/ c\/ f0 f1 f2 c\/ f0 c\/ f1 f2
++ |- ((~ (a \/ b)) = ((~ a) /\ (~ b)))
+T c= c~ c\/ f0 f1 c/\ c~ f0 c~ f1
+- (!x. (!y. ((distance (x , y)) = (distance (y , x))))), (~ ((distance (x , y)) = (distance (y , x)))) |- ((~ ((distance (x , y)) = (distance (y , x)))) /\ ((distance (x , y)) = (distance (y , x))))
+T c==> ! ! c= cdistance c, b0 b1 cdistance c, b1 b0 c==> c~ c= cdistance c, f0 f1 cdistance c, f1 f0 c/\ c~ c= cdistance c, f0 f1 cdistance c, f1 f0 c= cdistance c, f0 f1 cdistance c, f1 f0
+- (!s. (!x. ((open s) ==> (open ((connected_component s) x))))) |- (((open s) ==> (open ((connected_component s) x))) = T)
+T c==> ! ! c==> copen b0 copen * * part cconnected_component b0 b1 c= c==> copen f0 copen * * part cconnected_component f0 f1 cT
++ |- ((!x. (!y. (!s. ((closed s) ==> (((inside s) x) ==> (((real_lt (real_of_num (NUMERAL _0))) e) ==> (((real_lt (distance (x , y))) e) ==> ((~ ((real_lt (distance (y , x))) e)) ==> (~ (!x. (!y. ((distance (x , y)) = (distance (y , x)))))))))))))) = T)
+T c= ! ! ! c==> cclosed b2 c==> cinside b2 b0 c==> creal_lt creal_of_num cNUMERAL c_0 f0 c==> creal_lt cdistance c, b0 b1 f0 c==> c~ creal_lt cdistance c, b1 b0 f0 c~ ! ! c= cdistance c, b3 b3 cdistance c, b3 b3 cT
+- (!s. (!x. ((open s) ==> (open ((connected_component s) x))))) |- (!x. ((open s) ==> (open ((connected_component s) x))))
+T c==> ! ! c==> copen b0 copen * * part cconnected_component b0 b1 ! c==> copen f0 copen * * part cconnected_component f0 b0
+- (!x. (!y. ((distance (x , y)) = (distance (y , x))))), (~ F), (~ ((real_lt (distance (y , x))) e)), ((real_lt (distance (x , y))) e) |- ((~ F) /\ F)
+T c==> ! ! c= cdistance c, b0 b1 cdistance c, b1 b0 c==> c~ cF c==> c~ creal_lt cdistance c, f0 f1 f2 c==> creal_lt cdistance c, f1 f0 f2 c/\ c~ cF cF
+- (!x. (!y. ((distance (x , y)) = (distance (y , x))))), (~ ((real_lt (distance (y , x))) e)), ((real_lt (distance (x , y))) e) |- ((~ F) ==> F)
+T c==> ! ! c= cdistance c, b0 b1 cdistance c, b1 b0 c==> c~ creal_lt cdistance c, f0 f1 f2 c==> creal_lt cdistance c, f1 f0 f2 c==> c~ cF cF
+- ((P x) = (x IN P)) |- ((x IN P) = (P x))
+T c==> c= * f0 f1 cIN f1 f0 c= cIN f1 f0 * f0 f1
+- |- (((closed s) ==> (((inside s) x) ==> (((real_lt (real_of_num (NUMERAL _0))) e) ==> (((real_lt (distance (x , y))) e) ==> ((~ ((real_lt (distance (y , x))) e)) ==> ((!x. (!y. ((distance (x , y)) = (distance (y , x))))) ==> F)))))) ==> ((closed s) ==> (((inside s) x) ==> (((real_lt (real_of_num (NUMERAL _0))) e) ==> (((real_lt (distance (x , y))) e) ==> ((~ ((real_lt (distance (y , x))) e)) ==> ((!x. (!y. ((distance (x , y)) = (distance (y , x))))) ==> F)))))))
+T c==> c==> cclosed f0 c==> cinside f0 f1 c==> creal_lt creal_of_num cNUMERAL c_0 f2 c==> creal_lt cdistance c, f1 f3 f2 c==> c~ creal_lt cdistance c, f3 f1 f2 c==> ! ! c= cdistance c, b0 b1 cdistance c, b1 b0 cF c==> cclosed f0 c==> cinside f0 f1 c==> creal_lt creal_of_num cNUMERAL c_0 f2 c==> creal_lt cdistance c, f1 f3 f2 c==> c~ creal_lt cdistance c, f3 f1 f2 c==> ! ! c= cdistance c, b0 b1 cdistance c, b1 b0 cF
+- (_724469 = _724471) |- ((_724469 = _724471) /\ ((~ (_724468 = _724470)) \/ (((inside _724470) _724471) \/ (~ ((inside _724468) _724469)))))
+T c==> c= f0 f1 c/\ c= f0 f1 c\/ c~ c= f2 f3 c\/ cinside f3 f1 c~ cinside f2 f0
+- (!x''. (((real_lt (distance (x'' , x))) e) ==> (x'' IN ((connected_component (UNIV DIFF s)) x)))) |- (((real_lt (distance (x'' , x))) e) ==> (x'' IN ((connected_component (UNIV DIFF s)) x)))
+T c==> ! c==> creal_lt cdistance c, b0 f0 f1 cIN b0 * * part cconnected_component * * part cDIFF part cUNIV f2 f0 c==> creal_lt cdistance c, f3 f0 f1 cIN f3 * * part cconnected_component * * part cDIFF part cUNIV f2 f0
+- |- ((!x. (P \/ (Q x))) = (P \/ (!x. (Q x))))
+T c= ! c\/ f0 * f1 b0 c\/ f0 ! * f1 b0
+- (((~ ((((inside s) x) /\ (closed s)) ==> ((!x. (~ (((inside s) x) /\ (s x)))) ==> (~ (s x))))) ==> F) ==> ((~ ((((inside s) x) /\ (closed s)) ==> ((!x. (~ (((inside s) x) /\ (s x)))) ==> (~ (s x))))) ==> F)) |- ((((~ ((((inside s) x) /\ (closed s)) ==> ((!x. (~ (((inside s) x) /\ (s x)))) ==> (~ (s x))))) ==> F) ==> ((~ ((((inside s) x) /\ (closed s)) ==> ((!x. (~ (((inside s) x) /\ (s x)))) ==> (~ (s x))))) ==> F)) /\ (((~ ((((inside s) x) /\ (closed s)) ==> ((!x. (~ (((inside s) x) /\ (s x)))) ==> (~ (s x))))) ==> F) ==> ((~ ((((inside s) x) /\ (closed s)) ==> ((!x. (~ (((inside s) x) /\ (s x)))) ==> (~ (s x))))) ==> F)))
+T c==> c==> c==> c~ c==> c/\ cinside f0 f1 cclosed f0 c==> ! c~ c/\ cinside f0 b0 * f0 b0 c~ * f0 f1 cF c==> c~ c==> c/\ cinside f0 f1 cclosed f0 c==> ! c~ c/\ cinside f0 b0 * f0 b0 c~ * f0 f1 cF c/\ c==> c==> c~ c==> c/\ cinside f0 f1 cclosed f0 c==> ! c~ c/\ cinside f0 b0 * f0 b0 c~ * f0 f1 cF c==> c~ c==> c/\ cinside f0 f1 cclosed f0 c==> ! c~ c/\ cinside f0 b0 * f0 b0 c~ * f0 f1 cF c==> c==> c~ c==> c/\ cinside f0 f1 cclosed f0 c==> ! c~ c/\ cinside f0 b0 * f0 b0 c~ * f0 f1 cF c==> c~ c==> c/\ cinside f0 f1 cclosed f0 c==> ! c~ c/\ cinside f0 b0 * f0 b0 c~ * f0 f1 cF
+- |- (((!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))) ==> ((\t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))) t3)) = ((\t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))) t3))
+T c= c==> ! c= c\/ f0 c\/ f1 b0 c\/ c\/ f0 f1 b0 * / c= c\/ f0 c\/ f1 b0 c\/ c\/ f0 f1 b0 f2 * / c= c\/ f0 c\/ f1 b0 c\/ c\/ f0 f1 b0 f2
+- (_724469 = _724471) |- ((_724468 = _724470) ==> (((inside _724470) _724471) \/ (~ ((inside _724468) _724469))))
+T c==> c= f0 f1 c==> c= f2 f3 c\/ cinside f3 f1 c~ cinside f2 f0
+- |- ((t /\ t) = t)
+T c= c/\ f0 f0 f0
+- (s x) |- ((~ ((I s) x)) ==> ((I s) x))
+T c==> * f0 f1 c==> c~ cI f0 f1 cI f0 f1
+- |- ((_724482 = _724483) ==> ((real_of_num _724482) = (real_of_num _724483)))
+T c==> c= f0 f1 c= creal_of_num f0 creal_of_num f1
+- ((~ ((((inside s) x) /\ (closed s)) ==> ((!x. (~ (((inside s) x) /\ (s x)))) ==> (~ (s x))))) ==> F), (((~ ((((inside s) x) /\ (closed s)) ==> ((!x. (~ (((inside s) x) /\ (s x)))) ==> (~ (s x))))) ==> F) ==> ((~ ((((inside s) x) /\ (closed s)) ==> ((!x. (~ (((inside s) x) /\ (s x)))) ==> (~ (s x))))) ==> F)) |- ((((~ ((((inside s) x) /\ (closed s)) ==> ((!x. (~ (((inside s) x) /\ (s x)))) ==> (~ (s x))))) ==> F) ==> ((~ ((((inside s) x) /\ (closed s)) ==> ((!x. (~ (((inside s) x) /\ (s x)))) ==> (~ (s x))))) ==> F)) /\ ((~ ((((inside s) x) /\ (closed s)) ==> ((!x. (~ (((inside s) x) /\ (s x)))) ==> (~ (s x))))) ==> F))
+T c==> c==> c~ c==> c/\ cinside f0 f1 cclosed f0 c==> ! c~ c/\ cinside f0 b0 * f0 b0 c~ * f0 f1 cF c==> c==> c==> c~ c==> c/\ cinside f0 f1 cclosed f0 c==> ! c~ c/\ cinside f0 b0 * f0 b0 c~ * f0 f1 cF c==> c~ c==> c/\ cinside f0 f1 cclosed f0 c==> ! c~ c/\ cinside f0 b0 * f0 b0 c~ * f0 f1 cF c/\ c==> c==> c~ c==> c/\ cinside f0 f1 cclosed f0 c==> ! c~ c/\ cinside f0 b0 * f0 b0 c~ * f0 f1 cF c==> c~ c==> c/\ cinside f0 f1 cclosed f0 c==> ! c~ c/\ cinside f0 b0 * f0 b0 c~ * f0 f1 cF c==> c~ c==> c/\ cinside f0 f1 cclosed f0 c==> ! c~ c/\ cinside f0 b0 * f0 b0 c~ * f0 f1 cF
+- (_724474 = _724476) |- ((_724474 = _724476) /\ ((~ (_724475 = _724477)) \/ ((_724474 , _724475) = (_724476 , _724477))))
+T c==> c= f0 f1 c/\ c= f0 f1 c\/ c~ c= f2 f3 c= c, f0 f2 c, f1 f3
+- |- ((\x. ((P x) = (x IN P))) x)
+T * / c= * f0 b0 cIN b0 f0 f1
+- |- ((_724469 = _724471) ==> ((~ (_724468 = _724470)) \/ (((inside _724470) _724471) \/ (~ ((inside _724468) _724469)))))
+T c==> c= f0 f1 c\/ c~ c= f2 f3 c\/ cinside f3 f1 c~ cinside f2 f0
+- |- ((((closed s) ==> (((inside s) x) ==> (((real_lt (real_of_num (NUMERAL _0))) e) ==> (((real_lt (distance (x , y))) e) ==> ((~ ((real_lt (distance (y , x))) e)) ==> ((!x. (!y. ((distance (x , y)) = (distance (y , x))))) ==> F)))))) ==> ((closed s) ==> (((inside s) x) ==> (((real_lt (real_of_num (NUMERAL _0))) e) ==> (((real_lt (distance (x , y))) e) ==> ((~ ((real_lt (distance (y , x))) e)) ==> ((!x. (!y. ((distance (x , y)) = (distance (y , x))))) ==> F))))))) = ((closed s) ==> (((inside s) x) ==> (((real_lt (real_of_num (NUMERAL _0))) e) ==> (((real_lt (distance (x , y))) e) ==> ((~ ((real_lt (distance (y , x))) e)) ==> ((!x. (!y. ((distance (x , y)) = (distance (y , x))))) ==> F)))))))
+T c= c==> c==> cclosed f0 c==> cinside f0 f1 c==> creal_lt creal_of_num cNUMERAL c_0 f2 c==> creal_lt cdistance c, f1 f3 f2 c==> c~ creal_lt cdistance c, f3 f1 f2 c==> ! ! c= cdistance c, b0 b1 cdistance c, b1 b0 cF c==> cclosed f0 c==> cinside f0 f1 c==> creal_lt creal_of_num cNUMERAL c_0 f2 c==> creal_lt cdistance c, f1 f3 f2 c==> c~ creal_lt cdistance c, f3 f1 f2 c==> ! ! c= cdistance c, b0 b1 cdistance c, b1 b0 cF c==> cclosed f0 c==> cinside f0 f1 c==> creal_lt creal_of_num cNUMERAL c_0 f2 c==> creal_lt cdistance c, f1 f3 f2 c==> c~ creal_lt cdistance c, f3 f1 f2 c==> ! ! c= cdistance c, b0 b1 cdistance c, b1 b0 cF
+- (open s) |- ((!s. (!x. ((open s) ==> (open ((connected_component s) x))))) ==> (open ((connected_component s) x)))
+T c==> copen f0 c==> ! ! c==> copen b0 copen * * part cconnected_component b0 b1 copen * * part cconnected_component f0 f1
+- ((closed s) ==> (((inside s) x) ==> (((real_lt (real_of_num (NUMERAL _0))) e) ==> (((real_lt (distance (x , y))) e) ==> ((~ ((real_lt (distance (y , x))) e)) ==> ((!x. (!y. ((distance (x , y)) = (distance (y , x))))) ==> F)))))), (((closed s) ==> (((inside s) x) ==> (((real_lt (real_of_num (NUMERAL _0))) e) ==> (((real_lt (distance (x , y))) e) ==> ((~ ((real_lt (distance (y , x))) e)) ==> ((!x. (!y. ((distance (x , y)) = (distance (y , x))))) ==> F)))))) ==> ((closed s) ==> (((inside s) x) ==> (((real_lt (real_of_num (NUMERAL _0))) e) ==> (((real_lt (distance (x , y))) e) ==> ((~ ((real_lt (distance (y , x))) e)) ==> ((!x. (!y. ((distance (x , y)) = (distance (y , x))))) ==> F))))))) |- (((closed s) ==> (((inside s) x) ==> (((real_lt (real_of_num (NUMERAL _0))) e) ==> (((real_lt (distance (x , y))) e) ==> ((~ ((real_lt (distance (y , x))) e)) ==> ((!x. (!y. ((distance (x , y)) = (distance (y , x))))) ==> F)))))) /\ ((closed s) ==> (((inside s) x) ==> (((real_lt (real_of_num (NUMERAL _0))) e) ==> (((real_lt (distance (x , y))) e) ==> ((~ ((real_lt (distance (y , x))) e)) ==> ((!x. (!y. ((distance (x , y)) = (distance (y , x))))) ==> F)))))))
+T c==> c==> cclosed f0 c==> cinside f0 f1 c==> creal_lt creal_of_num cNUMERAL c_0 f2 c==> creal_lt cdistance c, f1 f3 f2 c==> c~ creal_lt cdistance c, f3 f1 f2 c==> ! ! c= cdistance c, b0 b1 cdistance c, b1 b0 cF c==> c==> c==> cclosed f0 c==> cinside f0 f1 c==> creal_lt creal_of_num cNUMERAL c_0 f2 c==> creal_lt cdistance c, f1 f3 f2 c==> c~ creal_lt cdistance c, f3 f1 f2 c==> ! ! c= cdistance c, b0 b1 cdistance c, b1 b0 cF c==> cclosed f0 c==> cinside f0 f1 c==> creal_lt creal_of_num cNUMERAL c_0 f2 c==> creal_lt cdistance c, f1 f3 f2 c==> c~ creal_lt cdistance c, f3 f1 f2 c==> ! ! c= cdistance c, b0 b1 cdistance c, b1 b0 cF c/\ c==> cclosed f0 c==> cinside f0 f1 c==> creal_lt creal_of_num cNUMERAL c_0 f2 c==> creal_lt cdistance c, f1 f3 f2 c==> c~ creal_lt cdistance c, f3 f1 f2 c==> ! ! c= cdistance c, b0 b1 cdistance c, b1 b0 cF c==> cclosed f0 c==> cinside f0 f1 c==> creal_lt creal_of_num cNUMERAL c_0 f2 c==> creal_lt cdistance c, f1 f3 f2 c==> c~ creal_lt cdistance c, f3 f1 f2 c==> ! ! c= cdistance c, b0 b1 cdistance c, b1 b0 cF
+- (_724478 = _724479) |- ((_724478 = _724479) /\ ((distance _724478) = (distance _724479)))
+T c==> c= f0 f1 c/\ c= f0 f1 c= cdistance f0 cdistance f1
+- |- ((!y. (P y)) = ((P T) /\ (P F)))
+T c= ! * f0 b0 c/\ * f0 cT * f0 cF
+- |- (((!t1. (!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))))) ==> ((\t1. (!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))))) t1)) = ((\t1. (!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))))) t1))
+T c= c==> ! ! ! c= c\/ b0 c\/ b1 b2 c\/ c\/ b0 b1 b2 * / ! ! c= c\/ b0 c\/ b1 b2 c\/ c\/ b0 b1 b2 f0 * / ! ! c= c\/ b0 c\/ b1 b2 c\/ c\/ b0 b1 b2 f0
+- ((~ ((((inside s) x) /\ (closed s)) ==> ((!x. (~ (((inside s) x) /\ (s x)))) ==> (~ (s x))))) ==> F), (((~ ((((inside s) x) /\ (closed s)) ==> ((!x. (~ (((inside s) x) /\ (s x)))) ==> (~ (s x))))) ==> F) ==> ((~ ((((inside s) x) /\ (closed s)) ==> ((!x. (~ (((inside s) x) /\ (s x)))) ==> (~ (s x))))) ==> F)) |- (((~ ((((inside s) x) /\ (closed s)) ==> ((!x. (~ (((inside s) x) /\ (s x)))) ==> (~ (s x))))) ==> F) /\ ((~ ((((inside s) x) /\ (closed s)) ==> ((!x. (~ (((inside s) x) /\ (s x)))) ==> (~ (s x))))) ==> F))
+T c==> c==> c~ c==> c/\ cinside f0 f1 cclosed f0 c==> ! c~ c/\ cinside f0 b0 * f0 b0 c~ * f0 f1 cF c==> c==> c==> c~ c==> c/\ cinside f0 f1 cclosed f0 c==> ! c~ c/\ cinside f0 b0 * f0 b0 c~ * f0 f1 cF c==> c~ c==> c/\ cinside f0 f1 cclosed f0 c==> ! c~ c/\ cinside f0 b0 * f0 b0 c~ * f0 f1 cF c/\ c==> c~ c==> c/\ cinside f0 f1 cclosed f0 c==> ! c~ c/\ cinside f0 b0 * f0 b0 c~ * f0 f1 cF c==> c~ c==> c/\ cinside f0 f1 cclosed f0 c==> ! c~ c/\ cinside f0 b0 * f0 b0 c~ * f0 f1 cF
+- (!s. (!x. ((open s) ==> (open ((connected_component s) x))))), (open s) |- (open ((connected_component s) x))
+T c==> ! ! c==> copen b0 copen * * part cconnected_component b0 b1 c==> copen f0 copen * * part cconnected_component f0 f1
+- |- ((((!x. ((P x) ==> (Q x))) ==> ((?x. (P x)) ==> (?x. (Q x)))) ==> ((!x. ((P x) ==> (Q x))) ==> ((?x. (P x)) ==> (?x. (Q x))))) = ((!x. ((P x) ==> (Q x))) ==> ((?x. (P x)) ==> (?x. (Q x)))))
+T c= c==> c==> ! c==> * f0 b0 * f1 b0 c==> c? / * f0 b0 c? / * f1 b0 c==> ! c==> * f0 b0 * f1 b0 c==> c? / * f0 b0 c? / * f1 b0 c==> ! c==> * f0 b0 * f1 b0 c==> c? / * f0 b0 c? / * f1 b0
+- (_724482 = _724483) |- ((_724482 = _724483) /\ ((real_of_num _724482) = (real_of_num _724483)))
+T c==> c= f0 f1 c/\ c= f0 f1 c= creal_of_num f0 creal_of_num f1
+- (!x. ((P x) ==> (Q x))) |- (((!x. ((P x) ==> (Q x))) ==> ((?x. (P x)) ==> (?x. (Q x)))) ==> ((?x. (P x)) ==> (?x. (Q x))))
+T c==> ! c==> * f0 b0 * f1 b0 c==> c==> ! c==> * f0 b0 * f1 b0 c==> c? / * f0 b0 c? / * f1 b0 c==> c? / * f0 b0 c? / * f1 b0
+- (!x. ((P x) ==> (Q x))), ((!x. ((P x) ==> (Q x))) ==> ((?x. (P x)) ==> (?x. (Q x)))) |- ((!x. ((P x) ==> (Q x))) /\ ((?x. (P x)) ==> (?x. (Q x))))
+T c==> ! c==> * f0 b0 * f1 b0 c==> c==> ! c==> * f0 b0 * f1 b0 c==> c? / * f0 b0 c? / * f1 b0 c/\ ! c==> * f0 b0 * f1 b0 c==> c? / * f0 b0 c? / * f1 b0
+- (_724468 = _724470), (_724469 = _724471) |- (((inside _724470) _724471) \/ (~ ((inside _724468) _724469)))
+T c==> c= f0 f1 c==> c= f2 f3 c\/ cinside f1 f3 c~ cinside f0 f2
+- (~ (e = e)) |- ((~ (e = e)) /\ (e = e))
+T c==> c~ c= f0 f0 c/\ c~ c= f0 f0 c= f0 f0
+- (!x''. (((real_lt (distance (x'' , x))) e) ==> (((connected_component (UNIV DIFF s)) x) x''))) |- ((!x''. (((real_lt (distance (x'' , x))) e) ==> (((connected_component (UNIV DIFF s)) x) x''))) /\ (!x''. (((real_lt (distance (x'' , x))) e) ==> (((connected_component (UNIV DIFF s)) x) x''))))
+T c==> ! c==> creal_lt cdistance c, b0 f0 f1 cconnected_component * * part cDIFF part cUNIV f2 f0 b0 c/\ ! c==> creal_lt cdistance c, b0 f0 f1 cconnected_component * * part cDIFF part cUNIV f2 f0 b0 ! c==> creal_lt cdistance c, b0 f0 f1 cconnected_component * * part cDIFF part cUNIV f2 f0 b0
+- (!s. (!x. ((open s) ==> (open ((connected_component s) x))))) |- (((!x. ((open s) ==> (open ((connected_component s) x)))) ==> ((\x. ((open s) ==> (open ((connected_component s) x)))) x)) = ((\x. ((open s) ==> (open ((connected_component s) x)))) x))
+T c==> ! ! c==> copen b0 copen * * part cconnected_component b0 b1 c= c==> ! c==> copen f0 copen * * part cconnected_component f0 b0 * / c==> copen f0 copen * * part cconnected_component f0 b0 f1 * / c==> copen f0 copen * * part cconnected_component f0 b0 f1
+- (!s. (!x. ((open s) ==> (open ((connected_component s) x))))) |- ((\x. ((open s) ==> (open ((connected_component s) x)))) x)
+T c==> ! ! c==> copen b0 copen * * part cconnected_component b0 b1 * / c==> copen f0 copen * * part cconnected_component f0 b0 f1
+- (_724472 = _724473) |- ((_724472 = _724473) /\ ((closed _724473) \/ (~ (closed _724472))))
+T c==> c= f0 f1 c/\ c= f0 f1 c\/ cclosed f1 c~ cclosed f0
+- |- (((((~ ((((inside s) x) /\ (closed s)) ==> ((!x. (~ (((inside s) x) /\ (s x)))) ==> (~ (s x))))) ==> F) ==> ((~ ((((inside s) x) /\ (closed s)) ==> ((!x. (~ (((inside s) x) /\ (s x)))) ==> (~ (s x))))) ==> F)) ==> (((~ ((((inside s) x) /\ (closed s)) ==> ((!x. (~ (((inside s) x) /\ (s x)))) ==> (~ (s x))))) ==> F) ==> ((~ ((((inside s) x) /\ (closed s)) ==> ((!x. (~ (((inside s) x) /\ (s x)))) ==> (~ (s x))))) ==> F))) = (((~ ((((inside s) x) /\ (closed s)) ==> ((!x. (~ (((inside s) x) /\ (s x)))) ==> (~ (s x))))) ==> F) ==> ((~ ((((inside s) x) /\ (closed s)) ==> ((!x. (~ (((inside s) x) /\ (s x)))) ==> (~ (s x))))) ==> F)))
+T c= c==> c==> c==> c~ c==> c/\ cinside f0 f1 cclosed f0 c==> ! c~ c/\ cinside f0 b0 * f0 b0 c~ * f0 f1 cF c==> c~ c==> c/\ cinside f0 f1 cclosed f0 c==> ! c~ c/\ cinside f0 b0 * f0 b0 c~ * f0 f1 cF c==> c==> c~ c==> c/\ cinside f0 f1 cclosed f0 c==> ! c~ c/\ cinside f0 b0 * f0 b0 c~ * f0 f1 cF c==> c~ c==> c/\ cinside f0 f1 cclosed f0 c==> ! c~ c/\ cinside f0 b0 * f0 b0 c~ * f0 f1 cF c==> c==> c~ c==> c/\ cinside f0 f1 cclosed f0 c==> ! c~ c/\ cinside f0 b0 * f0 b0 c~ * f0 f1 cF c==> c~ c==> c/\ cinside f0 f1 cclosed f0 c==> ! c~ c/\ cinside f0 b0 * f0 b0 c~ * f0 f1 cF
+- (_724474 = _724476) |- ((_724475 = _724477) ==> ((_724474 , _724475) = (_724476 , _724477)))
+T c==> c= f0 f1 c==> c= f2 f3 c= c, f0 f2 c, f1 f3
+- |- (((((inside s) x) /\ (closed s)) ==> ((!x. (~ (((inside s) x) /\ (s x)))) ==> (~ (s x)))) = T)
+T c= c==> c/\ cinside f0 f1 cclosed f0 c==> ! c~ c/\ cinside f0 b0 * f0 b0 c~ * f0 f1 cT
+- ((real_lt (distance (x , y))) e) |- (((real_lt (distance (x , y))) e) = T)
+T c==> creal_lt cdistance c, f0 f1 f2 c= creal_lt cdistance c, f0 f1 f2 cT
+- |- ((!x'. ((~ ((inside s) x')) \/ (~ (s x)))) = ((!x. (~ ((inside s) x))) \/ (~ (s x))))
+T c= ! c\/ c~ cinside f0 b0 c~ * f0 f1 c\/ ! c~ cinside f0 b0 c~ * f0 f1
+- |- (((!x. (!s. ((~ ((((inside s) x) /\ (closed s)) ==> ((!x. (~ (((inside s) x) /\ (s x)))) ==> (~ (s x))))) ==> F))) ==> ((\x. (!s. ((~ ((((inside s) x) /\ (closed s)) ==> ((!x. (~ (((inside s) x) /\ (s x)))) ==> (~ (s x))))) ==> F))) x)) = ((\x. (!s. ((~ ((((inside s) x) /\ (closed s)) ==> ((!x. (~ (((inside s) x) /\ (s x)))) ==> (~ (s x))))) ==> F))) x))
+T c= c==> ! ! c==> c~ c==> c/\ cinside b1 b0 cclosed b1 c==> ! c~ c/\ cinside b1 b2 * b1 b2 c~ * b1 b0 cF * / ! c==> c~ c==> c/\ cinside b1 b0 cclosed b1 c==> ! c~ c/\ cinside b1 b2 * b1 b2 c~ * b1 b0 cF f0 * / ! c==> c~ c==> c/\ cinside b1 b0 cclosed b1 c==> ! c~ c/\ cinside b1 b2 * b1 b2 c~ * b1 b0 cF f0

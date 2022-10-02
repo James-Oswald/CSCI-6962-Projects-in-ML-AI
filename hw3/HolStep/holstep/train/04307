@@ -1,0 +1,326 @@
+N Seq.size_mask
+C |- (!m. (!s. (((sizel m) = (sizel s)) ==> ((sizel ((mask m) s)) = ((count I) m)))))
+T c==> c= csizel f0 csizel f1 c= csizel cmask f0 f1 ccount part cI f0
+D TRUTH
+A |- T
+T cT
+D COND_CLAUSES
+A |- (!t1. (!t2. (((((COND T) t1) t2) = t1) /\ ((((COND F) t1) t2) = t2))))
+T c/\ c= cCOND cT f0 f1 f0 c= cCOND cF f0 f1 f1
+D I_THM
+A |- (!x. ((I x) = x))
+T c= cI f0 f0
+D Hypermap.EQ_SUC
+A |- (!m. (!n. (((SUC m) = (SUC n)) = (m = n))))
+T c= c= cSUC f0 cSUC f1 c= f0 f1
+D Ssrnat.add0n
+A |- (!n. (((NUMERAL _0) + n) = n))
+T c= c+ cNUMERAL c_0 f0 f0
+D list_INDUCT
+A |- (!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x))))
+T c==> c/\ * f0 cNIL ! ! c==> * f0 b1 * f0 cCONS b0 b1 ! * f0 b0
+D bool_elim
+A |- (!P. (((P T) /\ (P F)) ==> (!x. (P x))))
+T c==> c/\ * f0 cT * f0 cF ! * f0 b0
+D Ssrnat.add1n
+A |- (!n. (((NUMERAL (BIT1 _0)) + n) = (SUC n)))
+T c= c+ cNUMERAL cBIT1 c_0 f0 cSUC f0
+D Seq.size_nil
+A |- ((sizel NIL) = (NUMERAL _0))
+T c= csizel cNIL cNUMERAL c_0
+D Seq.size_cons
+A |- (!h. (!t. ((sizel ((CONS h) t)) = (SUC (sizel t)))))
+T c= csizel cCONS f0 f1 cSUC csizel f1
+D Seq.eqS0
+A |- (!n. (((SUC n) = (NUMERAL _0)) = F))
+T c= c= cSUC f0 cNUMERAL c_0 cF
+D Seq.count
+A |- (!a. (!x. (!s'. ((((count a) NIL) = (NUMERAL _0)) /\ (((count a) ((CONS x) s')) = ((((COND (a x)) (NUMERAL (BIT1 _0))) (NUMERAL _0)) + ((count a) s')))))))
+T c/\ c= ccount f0 cNIL cNUMERAL c_0 c= ccount f0 cCONS f1 f2 c+ cCOND * f0 f1 cNUMERAL cBIT1 c_0 cNUMERAL c_0 ccount f0 f2
+D Seq.mask
+A |- ((((mask NIL) s') = NIL) /\ ((((mask m') NIL) = NIL) /\ (((mask ((CONS b) m')) ((CONS x) s')) = (((COND b) ((CONS x) ((mask m') s'))) ((mask m') s')))))
+T c/\ c= cmask cNIL f0 cNIL c/\ c= cmask f1 cNIL cNIL c= cmask cCONS f2 f1 cCONS f3 f0 cCOND f2 cCONS f3 cmask f1 f0 cmask f1 f0
++ |- (((!x. ((I x) = x)) ==> ((\x. ((I x) = x)) x)) = ((\x. ((I x) = x)) x))
+T c= c==> ! c= cI b0 b0 * / c= cI b0 b0 f0 * / c= cI b0 b0 f0
++ |- (((sizel m) = (sizel s)) ==> (((sizel (((COND T) ((CONS x) ((mask m) s))) ((mask m) s))) = ((((COND T) (NUMERAL (BIT1 _0))) (NUMERAL _0)) + ((count I) m))) = ((sizel ((CONS x) ((mask m) s))) = ((NUMERAL (BIT1 _0)) + ((count I) m)))))
+T c==> c= csizel f0 csizel f1 c= c= csizel cCOND cT cCONS f2 cmask f0 f1 cmask f0 f1 c+ cCOND cT cNUMERAL cBIT1 c_0 cNUMERAL c_0 ccount part cI f0 c= csizel cCONS f2 cmask f0 f1 c+ cNUMERAL cBIT1 c_0 ccount part cI f0
++ |- ((sizel ((mask m) s)) = ((NUMERAL _0) + (sizel ((mask m) s))))
+T c= csizel cmask f0 f1 c+ cNUMERAL c_0 csizel cmask f0 f1
++ |- ((((sizel NIL) = (sizel NIL)) ==> ((sizel NIL) = (NUMERAL _0))) = (((sizel NIL) = (sizel NIL)) ==> ((sizel NIL) = ((count I) NIL))))
+T c= c==> c= csizel cNIL csizel cNIL c= csizel cNIL cNUMERAL c_0 c==> c= csizel cNIL csizel cNIL c= csizel cNIL ccount part cI cNIL
+- |- (((((sizel m) = (sizel s)) = ((sizel m) = (sizel s))) ==> ((((sizel m) = (sizel s)) ==> (((sizel ((mask m) s)) = ((NUMERAL _0) + ((count I) m))) = q')) ==> ((((sizel m) = (sizel s)) ==> ((sizel ((mask m) s)) = ((NUMERAL _0) + ((count I) m)))) = (((sizel m) = (sizel s)) ==> q')))) = ((((sizel m) = (sizel s)) ==> (((sizel ((mask m) s)) = ((NUMERAL _0) + ((count I) m))) = q')) ==> ((((sizel m) = (sizel s)) ==> ((sizel ((mask m) s)) = ((NUMERAL _0) + ((count I) m)))) = (((sizel m) = (sizel s)) ==> q'))))
+T c= c==> c= c= csizel f0 csizel f1 c= csizel f0 csizel f1 c==> c==> c= csizel f0 csizel f1 c= c= csizel cmask f0 f1 c+ cNUMERAL c_0 ccount part cI f0 f2 c= c==> c= csizel f0 csizel f1 c= csizel cmask f0 f1 c+ cNUMERAL c_0 ccount part cI f0 c==> c= csizel f0 csizel f1 f2 c==> c==> c= csizel f0 csizel f1 c= c= csizel cmask f0 f1 c+ cNUMERAL c_0 ccount part cI f0 f2 c= c==> c= csizel f0 csizel f1 c= csizel cmask f0 f1 c+ cNUMERAL c_0 ccount part cI f0 c==> c= csizel f0 csizel f1 f2
+- (m = m1) |- ((!s. (((sizel m1) = (sizel s)) ==> ((sizel ((mask m1) s)) = ((count I) m)))) = (!s. (((sizel m1) = (sizel s)) ==> ((sizel ((mask m) s)) = ((count I) m)))))
+T c==> c= f0 f1 c= ! c==> c= csizel f1 csizel b0 c= csizel cmask f1 b0 ccount part cI f0 ! c==> c= csizel f1 csizel b0 c= csizel cmask f0 b0 ccount part cI f0
+- ((P T) /\ (P F)) |- ((!P. (((P T) /\ (P F)) ==> (!x. (P x)))) ==> (!x. (P x)))
+T c==> c/\ * f0 cT * f0 cF c==> ! c==> c/\ * b0 cT * b0 cF ! * b0 b1 ! * f0 b0
+- |- ((\q'. ((((sizel m) = (sizel s)) = p') ==> ((p' ==> (((sizel ((CONS x) ((mask m) s))) = ((NUMERAL (BIT1 _0)) + ((count I) m))) = q')) ==> ((((sizel m) = (sizel s)) ==> ((sizel ((CONS x) ((mask m) s))) = ((NUMERAL (BIT1 _0)) + ((count I) m)))) = (p' ==> q'))))) q')
+T * / c==> c= c= csizel f0 csizel f1 f2 c==> c==> f2 c= c= csizel cCONS f3 cmask f0 f1 c+ cNUMERAL cBIT1 c_0 ccount part cI f0 b0 c= c==> c= csizel f0 csizel f1 c= csizel cCONS f3 cmask f0 f1 c+ cNUMERAL cBIT1 c_0 ccount part cI f0 c==> f2 b0 f4
++ (!s. (((sizel m) = (sizel s)) ==> ((sizel ((mask m) s)) = ((count I) m)))) |- (((sizel m) = (sizel s)) ==> ((sizel ((mask m) s)) = ((NUMERAL _0) + ((count I) m))))
+T c==> ! c==> c= csizel f0 csizel b0 c= csizel cmask f0 b0 ccount part cI f0 c==> c= csizel f0 csizel f1 c= csizel cmask f0 f1 c+ cNUMERAL c_0 ccount part cI f0
+- ((!x. (P ==> (Q x))) = (P ==> (!x. (Q x)))) |- ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))
+T c==> c= ! c==> f0 * f1 b0 c==> f0 ! * f1 b0 c= c==> f0 ! * f1 b0 ! c==> f0 * f1 b0
++ |- ((\p'. (!q'. ((((sizel m) = (sizel s)) = p') ==> ((p' ==> (((sizel (((COND T) ((CONS x) ((mask m) s))) ((mask m) s))) = ((((COND T) (NUMERAL (BIT1 _0))) (NUMERAL _0)) + ((count I) m))) = q')) ==> ((((sizel m) = (sizel s)) ==> ((sizel (((COND T) ((CONS x) ((mask m) s))) ((mask m) s))) = ((((COND T) (NUMERAL (BIT1 _0))) (NUMERAL _0)) + ((count I) m)))) = (p' ==> q')))))) p')
+T * / ! c==> c= c= csizel f0 csizel f1 b0 c==> c==> b0 c= c= csizel cCOND cT cCONS f2 cmask f0 f1 cmask f0 f1 c+ cCOND cT cNUMERAL cBIT1 c_0 cNUMERAL c_0 ccount part cI f0 b1 c= c==> c= csizel f0 csizel f1 c= csizel cCOND cT cCONS f2 cmask f0 f1 cmask f0 f1 c+ cCOND cT cNUMERAL cBIT1 c_0 cNUMERAL c_0 ccount part cI f0 c==> b0 b1 f3
++ (!s. (((sizel m) = (sizel s)) ==> ((sizel ((mask m) s)) = ((count I) m)))) |- (((SUC (sizel m)) = (SUC (sizel s))) ==> ((sizel (((COND b) ((CONS x) ((mask m) s))) ((mask m) s))) = ((((COND (I b)) (NUMERAL (BIT1 _0))) (NUMERAL _0)) + ((count I) m))))
+T c==> ! c==> c= csizel f0 csizel b0 c= csizel cmask f0 b0 ccount part cI f0 c==> c= cSUC csizel f0 cSUC csizel f1 c= csizel cCOND f2 cCONS f3 cmask f0 f1 cmask f0 f1 c+ cCOND cI f2 cNUMERAL cBIT1 c_0 cNUMERAL c_0 ccount part cI f0
++ (!s. (((sizel m) = (sizel s)) ==> ((sizel ((mask m) s)) = ((count I) m)))), ((sizel m) = (sizel s)) |- (((sizel m) = (sizel s)) /\ ((sizel ((CONS x) ((mask m) s))) = ((NUMERAL (BIT1 _0)) + ((count I) m))))
+T c==> ! c==> c= csizel f0 csizel b0 c= csizel cmask f0 b0 ccount part cI f0 c==> c= csizel f0 csizel f1 c/\ c= csizel f0 csizel f1 c= csizel cCONS f2 cmask f0 f1 c+ cNUMERAL cBIT1 c_0 ccount part cI f0
++ |- ((!a0. (!a1. ((!s. (((sizel a1) = (sizel s)) ==> ((sizel ((mask a1) s)) = ((count I) a1)))) ==> (!s. (((sizel ((CONS a0) a1)) = (sizel s)) ==> ((sizel ((mask ((CONS a0) a1)) s)) = ((count I) ((CONS a0) a1)))))))) = ((!s. (((sizel NIL) = (sizel s)) ==> ((sizel ((mask NIL) s)) = ((count I) NIL)))) /\ (!a0. (!a1. ((!s. (((sizel a1) = (sizel s)) ==> ((sizel ((mask a1) s)) = ((count I) a1)))) ==> (!s. (((sizel ((CONS a0) a1)) = (sizel s)) ==> ((sizel ((mask ((CONS a0) a1)) s)) = ((count I) ((CONS a0) a1))))))))))
+T c= ! ! c==> ! c==> c= csizel b1 csizel b2 c= csizel cmask b1 b2 ccount part cI b1 ! c==> c= csizel cCONS b0 b1 csizel b2 c= csizel cmask cCONS b0 b1 b2 ccount part cI cCONS b0 b1 c/\ ! c==> c= csizel cNIL csizel b0 c= csizel cmask cNIL b0 ccount part cI cNIL ! ! c==> ! c==> c= csizel b1 csizel b2 c= csizel cmask b1 b2 ccount part cI b1 ! c==> c= csizel cCONS b0 b1 csizel b2 c= csizel cmask cCONS b0 b1 b2 ccount part cI cCONS b0 b1
++ |- ((sizel ((CONS x) ((mask m) s))) = ((NUMERAL (BIT1 _0)) + (sizel ((mask m) s))))
+T c= csizel cCONS f0 cmask f1 f2 c+ cNUMERAL cBIT1 c_0 csizel cmask f1 f2
++ |- (((SUC (sizel m)) = (NUMERAL _0)) ==> ((NUMERAL _0) = ((((COND (I b)) (NUMERAL (BIT1 _0))) (NUMERAL _0)) + ((count I) m))))
+T c==> c= cSUC csizel f0 cNUMERAL c_0 c= cNUMERAL c_0 c+ cCOND cI f1 cNUMERAL cBIT1 c_0 cNUMERAL c_0 ccount part cI f0
++ |- (((!a. (!x. (!s'. ((((count a) NIL) = (NUMERAL _0)) /\ (((count a) ((CONS x) s')) = ((((COND (a x)) (NUMERAL (BIT1 _0))) (NUMERAL _0)) + ((count a) s'))))))) ==> ((\a. (!x. (!s'. ((((count a) NIL) = (NUMERAL _0)) /\ (((count a) ((CONS x) s')) = ((((COND (a x)) (NUMERAL (BIT1 _0))) (NUMERAL _0)) + ((count a) s'))))))) a)) = ((\a. (!x. (!s'. ((((count a) NIL) = (NUMERAL _0)) /\ (((count a) ((CONS x) s')) = ((((COND (a x)) (NUMERAL (BIT1 _0))) (NUMERAL _0)) + ((count a) s'))))))) a))
+T c= c==> ! ! ! c/\ c= ccount b0 cNIL cNUMERAL c_0 c= ccount b0 cCONS b1 b2 c+ cCOND * b0 b1 cNUMERAL cBIT1 c_0 cNUMERAL c_0 ccount b0 b2 * / ! ! c/\ c= ccount b0 cNIL cNUMERAL c_0 c= ccount b0 cCONS b1 b2 c+ cCOND * b0 b1 cNUMERAL cBIT1 c_0 cNUMERAL c_0 ccount b0 b2 f0 * / ! ! c/\ c= ccount b0 cNIL cNUMERAL c_0 c= ccount b0 cCONS b1 b2 c+ cCOND * b0 b1 cNUMERAL cBIT1 c_0 cNUMERAL c_0 ccount b0 b2 f0
++ |- ((SUC (sizel ((mask m) s))) = (SUC (sizel ((mask m) s))))
+T c= cSUC csizel cmask f0 f1 cSUC csizel cmask f0 f1
+- |- ((\P. (!Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x)))))) P)
+T * / ! c= c==> b0 ! * b1 b2 ! c==> b0 * b1 b2 f0
+- |- ((((sizel m) = (sizel s)) ==> (((sizel ((mask m) s)) = ((NUMERAL _0) + ((count I) m))) = q')) ==> ((((sizel m) = (sizel s)) ==> ((sizel ((mask m) s)) = ((NUMERAL _0) + ((count I) m)))) = (((sizel m) = (sizel s)) ==> q')))
+T c==> c==> c= csizel f0 csizel f1 c= c= csizel cmask f0 f1 c+ cNUMERAL c_0 ccount part cI f0 f2 c= c==> c= csizel f0 csizel f1 c= csizel cmask f0 f1 c+ cNUMERAL c_0 ccount part cI f0 c==> c= csizel f0 csizel f1 f2
++ (!s. (((sizel m) = (sizel s)) ==> ((sizel ((mask m) s)) = ((count I) m)))) |- (((sizel m) = (sizel s)) ==> ((sizel (((COND F) ((CONS x) ((mask m) s))) ((mask m) s))) = ((((COND F) (NUMERAL (BIT1 _0))) (NUMERAL _0)) + ((count I) m))))
+T c==> ! c==> c= csizel f0 csizel b0 c= csizel cmask f0 b0 ccount part cI f0 c==> c= csizel f0 csizel f1 c= csizel cCOND cF cCONS f2 cmask f0 f1 cmask f0 f1 c+ cCOND cF cNUMERAL cBIT1 c_0 cNUMERAL c_0 ccount part cI f0
++ |- (((!h. (!t. ((sizel ((CONS h) t)) = (SUC (sizel t))))) ==> ((\h. (!t. ((sizel ((CONS h) t)) = (SUC (sizel t))))) h)) = ((\h. (!t. ((sizel ((CONS h) t)) = (SUC (sizel t))))) h))
+T c= c==> ! ! c= csizel cCONS b0 b1 cSUC csizel b1 * / ! c= csizel cCONS b0 b1 cSUC csizel b1 f0 * / ! c= csizel cCONS b0 b1 cSUC csizel b1 f0
++ |- ((((NUMERAL _0) = (sizel ((CONS x) s))) ==> ((NUMERAL _0) = (NUMERAL _0))) = (((sizel NIL) = (sizel ((CONS x) s))) ==> ((sizel NIL) = (NUMERAL _0))))
+T c= c==> c= cNUMERAL c_0 csizel cCONS f0 f1 c= cNUMERAL c_0 cNUMERAL c_0 c==> c= csizel cNIL csizel cCONS f0 f1 c= csizel cNIL cNUMERAL c_0
++ |- (((!m. (!n. (((SUC m) = (SUC n)) = (m = n)))) ==> ((\m. (!n. (((SUC m) = (SUC n)) = (m = n)))) m)) = ((\m. (!n. (((SUC m) = (SUC n)) = (m = n)))) m))
+T c= c==> ! ! c= c= cSUC b0 cSUC b1 c= b0 b1 * / ! c= c= cSUC b0 cSUC b1 c= b0 b1 f0 * / ! c= c= cSUC b0 cSUC b1 c= b0 b1 f0
++ |- (((((sizel m) = (sizel s)) = ((sizel m) = (sizel s))) ==> ((((sizel m) = (sizel s)) ==> (((sizel (((COND T) ((CONS x) ((mask m) s))) ((mask m) s))) = ((((COND T) (NUMERAL (BIT1 _0))) (NUMERAL _0)) + ((count I) m))) = q')) ==> ((((sizel m) = (sizel s)) ==> ((sizel (((COND T) ((CONS x) ((mask m) s))) ((mask m) s))) = ((((COND T) (NUMERAL (BIT1 _0))) (NUMERAL _0)) + ((count I) m)))) = (((sizel m) = (sizel s)) ==> q')))) = ((((sizel m) = (sizel s)) ==> (((sizel (((COND T) ((CONS x) ((mask m) s))) ((mask m) s))) = ((((COND T) (NUMERAL (BIT1 _0))) (NUMERAL _0)) + ((count I) m))) = q')) ==> ((((sizel m) = (sizel s)) ==> ((sizel (((COND T) ((CONS x) ((mask m) s))) ((mask m) s))) = ((((COND T) (NUMERAL (BIT1 _0))) (NUMERAL _0)) + ((count I) m)))) = (((sizel m) = (sizel s)) ==> q'))))
+T c= c==> c= c= csizel f0 csizel f1 c= csizel f0 csizel f1 c==> c==> c= csizel f0 csizel f1 c= c= csizel cCOND cT cCONS f2 cmask f0 f1 cmask f0 f1 c+ cCOND cT cNUMERAL cBIT1 c_0 cNUMERAL c_0 ccount part cI f0 f3 c= c==> c= csizel f0 csizel f1 c= csizel cCOND cT cCONS f2 cmask f0 f1 cmask f0 f1 c+ cCOND cT cNUMERAL cBIT1 c_0 cNUMERAL c_0 ccount part cI f0 c==> c= csizel f0 csizel f1 f3 c==> c==> c= csizel f0 csizel f1 c= c= csizel cCOND cT cCONS f2 cmask f0 f1 cmask f0 f1 c+ cCOND cT cNUMERAL cBIT1 c_0 cNUMERAL c_0 ccount part cI f0 f3 c= c==> c= csizel f0 csizel f1 c= csizel cCOND cT cCONS f2 cmask f0 f1 cmask f0 f1 c+ cCOND cT cNUMERAL cBIT1 c_0 cNUMERAL c_0 ccount part cI f0 c==> c= csizel f0 csizel f1 f3
++ |- (((?b1. (b = b1)) ==> (((sizel m) = (sizel s)) ==> ((sizel (((COND b) ((CONS x) ((mask m) s))) ((mask m) s))) = ((((COND b) (NUMERAL (BIT1 _0))) (NUMERAL _0)) + ((count I) m))))) = (((sizel m) = (sizel s)) ==> ((sizel (((COND b) ((CONS x) ((mask m) s))) ((mask m) s))) = ((((COND b) (NUMERAL (BIT1 _0))) (NUMERAL _0)) + ((count I) m)))))
+T c= c==> c? / c= f0 b0 c==> c= csizel f1 csizel f2 c= csizel cCOND f0 cCONS f3 cmask f1 f2 cmask f1 f2 c+ cCOND f0 cNUMERAL cBIT1 c_0 cNUMERAL c_0 ccount part cI f1 c==> c= csizel f1 csizel f2 c= csizel cCOND f0 cCONS f3 cmask f1 f2 cmask f1 f2 c+ cCOND f0 cNUMERAL cBIT1 c_0 cNUMERAL c_0 ccount part cI f1
++ |- (((!p'. (!q'. ((((sizel m) = (sizel s)) = p') ==> ((p' ==> (((sizel (((COND T) ((CONS x) ((mask m) s))) ((mask m) s))) = ((((COND T) (NUMERAL (BIT1 _0))) (NUMERAL _0)) + ((count I) m))) = q')) ==> ((((sizel m) = (sizel s)) ==> ((sizel (((COND T) ((CONS x) ((mask m) s))) ((mask m) s))) = ((((COND T) (NUMERAL (BIT1 _0))) (NUMERAL _0)) + ((count I) m)))) = (p' ==> q')))))) ==> ((\p'. (!q'. ((((sizel m) = (sizel s)) = p') ==> ((p' ==> (((sizel (((COND T) ((CONS x) ((mask m) s))) ((mask m) s))) = ((((COND T) (NUMERAL (BIT1 _0))) (NUMERAL _0)) + ((count I) m))) = q')) ==> ((((sizel m) = (sizel s)) ==> ((sizel (((COND T) ((CONS x) ((mask m) s))) ((mask m) s))) = ((((COND T) (NUMERAL (BIT1 _0))) (NUMERAL _0)) + ((count I) m)))) = (p' ==> q')))))) p')) = ((\p'. (!q'. ((((sizel m) = (sizel s)) = p') ==> ((p' ==> (((sizel (((COND T) ((CONS x) ((mask m) s))) ((mask m) s))) = ((((COND T) (NUMERAL (BIT1 _0))) (NUMERAL _0)) + ((count I) m))) = q')) ==> ((((sizel m) = (sizel s)) ==> ((sizel (((COND T) ((CONS x) ((mask m) s))) ((mask m) s))) = ((((COND T) (NUMERAL (BIT1 _0))) (NUMERAL _0)) + ((count I) m)))) = (p' ==> q')))))) p'))
+T c= c==> ! ! c==> c= c= csizel f0 csizel f1 b0 c==> c==> b0 c= c= csizel cCOND cT cCONS f2 cmask f0 f1 cmask f0 f1 c+ cCOND cT cNUMERAL cBIT1 c_0 cNUMERAL c_0 ccount part cI f0 b1 c= c==> c= csizel f0 csizel f1 c= csizel cCOND cT cCONS f2 cmask f0 f1 cmask f0 f1 c+ cCOND cT cNUMERAL cBIT1 c_0 cNUMERAL c_0 ccount part cI f0 c==> b0 b1 * / ! c==> c= c= csizel f0 csizel f1 b0 c==> c==> b0 c= c= csizel cCOND cT cCONS f2 cmask f0 f1 cmask f0 f1 c+ cCOND cT cNUMERAL cBIT1 c_0 cNUMERAL c_0 ccount part cI f0 b1 c= c==> c= csizel f0 csizel f1 c= csizel cCOND cT cCONS f2 cmask f0 f1 cmask f0 f1 c+ cCOND cT cNUMERAL cBIT1 c_0 cNUMERAL c_0 ccount part cI f0 c==> b0 b1 f3 * / ! c==> c= c= csizel f0 csizel f1 b0 c==> c==> b0 c= c= csizel cCOND cT cCONS f2 cmask f0 f1 cmask f0 f1 c+ cCOND cT cNUMERAL cBIT1 c_0 cNUMERAL c_0 ccount part cI f0 b1 c= c==> c= csizel f0 csizel f1 c= csizel cCOND cT cCONS f2 cmask f0 f1 cmask f0 f1 c+ cCOND cT cNUMERAL cBIT1 c_0 cNUMERAL c_0 ccount part cI f0 c==> b0 b1 f3
++ |- ((t ==> T) = T)
+T c= c==> f0 cT cT
++ |- ((\h. (!t. ((sizel ((CONS h) t)) = (SUC (sizel t))))) h)
+T * / ! c= csizel cCONS b0 b1 cSUC csizel b1 f0
++ |- (((((sizel NIL) = (sizel NIL)) ==> ((sizel ((mask NIL) NIL)) = ((count I) NIL))) /\ (!a0. (!a1. ((((sizel NIL) = (sizel a1)) ==> ((sizel ((mask NIL) a1)) = ((count I) NIL))) ==> (((sizel NIL) = (sizel ((CONS a0) a1))) ==> ((sizel ((mask NIL) ((CONS a0) a1))) = ((count I) NIL))))))) ==> (!s. (((sizel NIL) = (sizel s)) ==> ((sizel ((mask NIL) s)) = ((count I) NIL)))))
+T c==> c/\ c==> c= csizel cNIL csizel cNIL c= csizel cmask cNIL cNIL ccount part cI cNIL ! ! c==> c==> c= csizel cNIL csizel b1 c= csizel cmask cNIL b1 ccount part cI cNIL c==> c= csizel cNIL csizel cCONS b0 b1 c= csizel cmask cNIL cCONS b0 b1 ccount part cI cNIL ! c==> c= csizel cNIL csizel b0 c= csizel cmask cNIL b0 ccount part cI cNIL
+- |- (((((sizel m) = (sizel s)) ==> (((sizel ((CONS x) ((mask m) s))) = ((NUMERAL (BIT1 _0)) + ((count I) m))) = ((sizel ((CONS x) ((mask m) s))) = ((NUMERAL (BIT1 _0)) + ((count I) m))))) ==> ((((sizel m) = (sizel s)) ==> ((sizel ((CONS x) ((mask m) s))) = ((NUMERAL (BIT1 _0)) + ((count I) m)))) = (((sizel m) = (sizel s)) ==> ((sizel ((CONS x) ((mask m) s))) = ((NUMERAL (BIT1 _0)) + ((count I) m)))))) = ((((sizel m) = (sizel s)) ==> ((sizel ((CONS x) ((mask m) s))) = ((NUMERAL (BIT1 _0)) + ((count I) m)))) = (((sizel m) = (sizel s)) ==> ((sizel ((CONS x) ((mask m) s))) = ((NUMERAL (BIT1 _0)) + ((count I) m))))))
+T c= c==> c==> c= csizel f0 csizel f1 c= c= csizel cCONS f2 cmask f0 f1 c+ cNUMERAL cBIT1 c_0 ccount part cI f0 c= csizel cCONS f2 cmask f0 f1 c+ cNUMERAL cBIT1 c_0 ccount part cI f0 c= c==> c= csizel f0 csizel f1 c= csizel cCONS f2 cmask f0 f1 c+ cNUMERAL cBIT1 c_0 ccount part cI f0 c==> c= csizel f0 csizel f1 c= csizel cCONS f2 cmask f0 f1 c+ cNUMERAL cBIT1 c_0 ccount part cI f0 c= c==> c= csizel f0 csizel f1 c= csizel cCONS f2 cmask f0 f1 c+ cNUMERAL cBIT1 c_0 ccount part cI f0 c==> c= csizel f0 csizel f1 c= csizel cCONS f2 cmask f0 f1 c+ cNUMERAL cBIT1 c_0 ccount part cI f0
+- |- (((!p'. (!q'. ((((sizel m) = (sizel s)) = p') ==> ((p' ==> (((sizel ((CONS x) ((mask m) s))) = ((NUMERAL (BIT1 _0)) + ((count I) m))) = q')) ==> ((((sizel m) = (sizel s)) ==> ((sizel ((CONS x) ((mask m) s))) = ((NUMERAL (BIT1 _0)) + ((count I) m)))) = (p' ==> q')))))) ==> ((\p'. (!q'. ((((sizel m) = (sizel s)) = p') ==> ((p' ==> (((sizel ((CONS x) ((mask m) s))) = ((NUMERAL (BIT1 _0)) + ((count I) m))) = q')) ==> ((((sizel m) = (sizel s)) ==> ((sizel ((CONS x) ((mask m) s))) = ((NUMERAL (BIT1 _0)) + ((count I) m)))) = (p' ==> q')))))) p')) = ((\p'. (!q'. ((((sizel m) = (sizel s)) = p') ==> ((p' ==> (((sizel ((CONS x) ((mask m) s))) = ((NUMERAL (BIT1 _0)) + ((count I) m))) = q')) ==> ((((sizel m) = (sizel s)) ==> ((sizel ((CONS x) ((mask m) s))) = ((NUMERAL (BIT1 _0)) + ((count I) m)))) = (p' ==> q')))))) p'))
+T c= c==> ! ! c==> c= c= csizel f0 csizel f1 b0 c==> c==> b0 c= c= csizel cCONS f2 cmask f0 f1 c+ cNUMERAL cBIT1 c_0 ccount part cI f0 b1 c= c==> c= csizel f0 csizel f1 c= csizel cCONS f2 cmask f0 f1 c+ cNUMERAL cBIT1 c_0 ccount part cI f0 c==> b0 b1 * / ! c==> c= c= csizel f0 csizel f1 b0 c==> c==> b0 c= c= csizel cCONS f2 cmask f0 f1 c+ cNUMERAL cBIT1 c_0 ccount part cI f0 b1 c= c==> c= csizel f0 csizel f1 c= csizel cCONS f2 cmask f0 f1 c+ cNUMERAL cBIT1 c_0 ccount part cI f0 c==> b0 b1 f3 * / ! c==> c= c= csizel f0 csizel f1 b0 c==> c==> b0 c= c= csizel cCONS f2 cmask f0 f1 c+ cNUMERAL cBIT1 c_0 ccount part cI f0 b1 c= c==> c= csizel f0 csizel f1 c= csizel cCONS f2 cmask f0 f1 c+ cNUMERAL cBIT1 c_0 ccount part cI f0 c==> b0 b1 f3
++ |- ((\P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))) P)
+T * / c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 f0
++ |- (((!n. (((NUMERAL _0) + n) = n)) ==> ((\n. (((NUMERAL _0) + n) = n)) n)) = ((\n. (((NUMERAL _0) + n) = n)) n))
+T c= c==> ! c= c+ cNUMERAL c_0 b0 b0 * / c= c+ cNUMERAL c_0 b0 b0 f0 * / c= c+ cNUMERAL c_0 b0 b0 f0
+- |- ((t ==> t) = T)
+T c= c==> f0 f0 cT
++ (!s. (((sizel m) = (sizel s)) ==> ((sizel ((mask m) s)) = ((count I) m)))) |- ((((((sizel m) = (sizel s)) ==> ((sizel (((COND T) ((CONS x) ((mask m) s))) ((mask m) s))) = ((((COND T) (NUMERAL (BIT1 _0))) (NUMERAL _0)) + ((count I) m)))) /\ (((sizel m) = (sizel s)) ==> ((sizel (((COND F) ((CONS x) ((mask m) s))) ((mask m) s))) = ((((COND F) (NUMERAL (BIT1 _0))) (NUMERAL _0)) + ((count I) m))))) ==> (!b. (((sizel m) = (sizel s)) ==> ((sizel (((COND b) ((CONS x) ((mask m) s))) ((mask m) s))) = ((((COND b) (NUMERAL (BIT1 _0))) (NUMERAL _0)) + ((count I) m)))))) = (!b. (((sizel m) = (sizel s)) ==> ((sizel (((COND b) ((CONS x) ((mask m) s))) ((mask m) s))) = ((((COND b) (NUMERAL (BIT1 _0))) (NUMERAL _0)) + ((count I) m))))))
+T c==> ! c==> c= csizel f0 csizel b0 c= csizel cmask f0 b0 ccount part cI f0 c= c==> c/\ c==> c= csizel f0 csizel f1 c= csizel cCOND cT cCONS f2 cmask f0 f1 cmask f0 f1 c+ cCOND cT cNUMERAL cBIT1 c_0 cNUMERAL c_0 ccount part cI f0 c==> c= csizel f0 csizel f1 c= csizel cCOND cF cCONS f2 cmask f0 f1 cmask f0 f1 c+ cCOND cF cNUMERAL cBIT1 c_0 cNUMERAL c_0 ccount part cI f0 ! c==> c= csizel f0 csizel f1 c= csizel cCOND b0 cCONS f2 cmask f0 f1 cmask f0 f1 c+ cCOND b0 cNUMERAL cBIT1 c_0 cNUMERAL c_0 ccount part cI f0 ! c==> c= csizel f0 csizel f1 c= csizel cCOND b0 cCONS f2 cmask f0 f1 cmask f0 f1 c+ cCOND b0 cNUMERAL cBIT1 c_0 cNUMERAL c_0 ccount part cI f0
++ (!s. (((sizel m) = (sizel s)) ==> ((sizel ((mask m) s)) = ((count I) m)))) |- ((b = b1) ==> (((sizel m) = (sizel s)) ==> ((sizel (((COND b) ((CONS x) ((mask m) s))) ((mask m) s))) = ((((COND b) (NUMERAL (BIT1 _0))) (NUMERAL _0)) + ((count I) m)))))
+T c==> ! c==> c= csizel f0 csizel b0 c= csizel cmask f0 b0 ccount part cI f0 c==> c= f1 f2 c==> c= csizel f0 csizel f3 c= csizel cCOND f1 cCONS f4 cmask f0 f3 cmask f0 f3 c+ cCOND f1 cNUMERAL cBIT1 c_0 cNUMERAL c_0 ccount part cI f0
++ |- (((SUC (sizel ((mask m) s))) = ((NUMERAL (BIT1 _0)) + (sizel ((mask m) s)))) = ((sizel ((CONS x) ((mask m) s))) = ((NUMERAL (BIT1 _0)) + (sizel ((mask m) s)))))
+T c= c= cSUC csizel cmask f0 f1 c+ cNUMERAL cBIT1 c_0 csizel cmask f0 f1 c= csizel cCONS f2 cmask f0 f1 c+ cNUMERAL cBIT1 c_0 csizel cmask f0 f1
++ |- (((!n. (((SUC m) = (SUC n)) = (m = n))) ==> ((\n. (((SUC m) = (SUC n)) = (m = n))) n)) = ((\n. (((SUC m) = (SUC n)) = (m = n))) n))
+T c= c==> ! c= c= cSUC f0 cSUC b0 c= f0 b0 * / c= c= cSUC f0 cSUC b0 c= f0 b0 f1 * / c= c= cSUC f0 cSUC b0 c= f0 b0 f1
++ |- ((((sizel NIL) = (sizel ((CONS x) s))) ==> ((sizel NIL) = (NUMERAL _0))) = (((sizel NIL) = (sizel ((CONS x) s))) ==> ((sizel NIL) = ((count I) NIL))))
+T c= c==> c= csizel cNIL csizel cCONS f0 f1 c= csizel cNIL cNUMERAL c_0 c==> c= csizel cNIL csizel cCONS f0 f1 c= csizel cNIL ccount part cI cNIL
++ (!s. (((sizel m) = (sizel s)) ==> ((sizel ((mask m) s)) = ((count I) m)))), ((sizel m) = (sizel s)) |- ((((sizel ((mask m) s)) = ((count I) m)) ==> ((sizel ((CONS x) ((mask m) s))) = ((NUMERAL (BIT1 _0)) + ((count I) m)))) = ((sizel ((CONS x) ((mask m) s))) = ((NUMERAL (BIT1 _0)) + ((count I) m))))
+T c==> ! c==> c= csizel f0 csizel b0 c= csizel cmask f0 b0 ccount part cI f0 c==> c= csizel f0 csizel f1 c= c==> c= csizel cmask f0 f1 ccount part cI f0 c= csizel cCONS f2 cmask f0 f1 c+ cNUMERAL cBIT1 c_0 ccount part cI f0 c= csizel cCONS f2 cmask f0 f1 c+ cNUMERAL cBIT1 c_0 ccount part cI f0
++ ((\b1. (b = b1)) b1) |- (((b = b1) ==> (((sizel m) = (sizel s)) ==> ((sizel (((COND b) ((CONS x) ((mask m) s))) ((mask m) s))) = ((((COND b) (NUMERAL (BIT1 _0))) (NUMERAL _0)) + ((count I) m))))) = (((sizel m) = (sizel s)) ==> ((sizel (((COND b) ((CONS x) ((mask m) s))) ((mask m) s))) = ((((COND b) (NUMERAL (BIT1 _0))) (NUMERAL _0)) + ((count I) m)))))
+T c==> * / c= f0 b0 f1 c= c==> c= f0 f1 c==> c= csizel f2 csizel f3 c= csizel cCOND f0 cCONS f4 cmask f2 f3 cmask f2 f3 c+ cCOND f0 cNUMERAL cBIT1 c_0 cNUMERAL c_0 ccount part cI f2 c==> c= csizel f2 csizel f3 c= csizel cCOND f0 cCONS f4 cmask f2 f3 cmask f2 f3 c+ cCOND f0 cNUMERAL cBIT1 c_0 cNUMERAL c_0 ccount part cI f2
+- (!P. (((P T) /\ (P F)) ==> (!x. (P x)))) |- ((\P. (((P T) /\ (P F)) ==> (!x. (P x)))) P)
+T c==> ! c==> c/\ * b0 cT * b0 cF ! * b0 b1 * / c==> c/\ * b0 cT * b0 cF ! * b0 b1 f0
++ |- ((\q'. ((((sizel m) = (sizel s)) = p') ==> ((p' ==> (((sizel (((COND F) ((CONS x) ((mask m) s))) ((mask m) s))) = ((((COND F) (NUMERAL (BIT1 _0))) (NUMERAL _0)) + ((count I) m))) = q')) ==> ((((sizel m) = (sizel s)) ==> ((sizel (((COND F) ((CONS x) ((mask m) s))) ((mask m) s))) = ((((COND F) (NUMERAL (BIT1 _0))) (NUMERAL _0)) + ((count I) m)))) = (p' ==> q'))))) q')
+T * / c==> c= c= csizel f0 csizel f1 f2 c==> c==> f2 c= c= csizel cCOND cF cCONS f3 cmask f0 f1 cmask f0 f1 c+ cCOND cF cNUMERAL cBIT1 c_0 cNUMERAL c_0 ccount part cI f0 b0 c= c==> c= csizel f0 csizel f1 c= csizel cCOND cF cCONS f3 cmask f0 f1 cmask f0 f1 c+ cCOND cF cNUMERAL cBIT1 c_0 cNUMERAL c_0 ccount part cI f0 c==> f2 b0 f4
++ |- (((((sizel m) = (sizel s)) ==> (((sizel (((COND T) ((CONS x) ((mask m) s))) ((mask m) s))) = ((((COND T) (NUMERAL (BIT1 _0))) (NUMERAL _0)) + ((count I) m))) = ((sizel ((CONS x) ((mask m) s))) = ((NUMERAL (BIT1 _0)) + ((count I) m))))) ==> ((((sizel m) = (sizel s)) ==> ((sizel (((COND T) ((CONS x) ((mask m) s))) ((mask m) s))) = ((((COND T) (NUMERAL (BIT1 _0))) (NUMERAL _0)) + ((count I) m)))) = (((sizel m) = (sizel s)) ==> ((sizel ((CONS x) ((mask m) s))) = ((NUMERAL (BIT1 _0)) + ((count I) m)))))) = ((((sizel m) = (sizel s)) ==> ((sizel (((COND T) ((CONS x) ((mask m) s))) ((mask m) s))) = ((((COND T) (NUMERAL (BIT1 _0))) (NUMERAL _0)) + ((count I) m)))) = (((sizel m) = (sizel s)) ==> ((sizel ((CONS x) ((mask m) s))) = ((NUMERAL (BIT1 _0)) + ((count I) m))))))
+T c= c==> c==> c= csizel f0 csizel f1 c= c= csizel cCOND cT cCONS f2 cmask f0 f1 cmask f0 f1 c+ cCOND cT cNUMERAL cBIT1 c_0 cNUMERAL c_0 ccount part cI f0 c= csizel cCONS f2 cmask f0 f1 c+ cNUMERAL cBIT1 c_0 ccount part cI f0 c= c==> c= csizel f0 csizel f1 c= csizel cCOND cT cCONS f2 cmask f0 f1 cmask f0 f1 c+ cCOND cT cNUMERAL cBIT1 c_0 cNUMERAL c_0 ccount part cI f0 c==> c= csizel f0 csizel f1 c= csizel cCONS f2 cmask f0 f1 c+ cNUMERAL cBIT1 c_0 ccount part cI f0 c= c==> c= csizel f0 csizel f1 c= csizel cCOND cT cCONS f2 cmask f0 f1 cmask f0 f1 c+ cCOND cT cNUMERAL cBIT1 c_0 cNUMERAL c_0 ccount part cI f0 c==> c= csizel f0 csizel f1 c= csizel cCONS f2 cmask f0 f1 c+ cNUMERAL cBIT1 c_0 ccount part cI f0
++ |- (((x = x) ==> p) = p)
+T c= c==> c= f0 f0 f1 f1
+- |- (((!q'. ((((sizel m) = (sizel s)) = p') ==> ((p' ==> (((sizel ((mask m) s)) = ((NUMERAL _0) + ((count I) m))) = q')) ==> ((((sizel m) = (sizel s)) ==> ((sizel ((mask m) s)) = ((NUMERAL _0) + ((count I) m)))) = (p' ==> q'))))) ==> ((\q'. ((((sizel m) = (sizel s)) = p') ==> ((p' ==> (((sizel ((mask m) s)) = ((NUMERAL _0) + ((count I) m))) = q')) ==> ((((sizel m) = (sizel s)) ==> ((sizel ((mask m) s)) = ((NUMERAL _0) + ((count I) m)))) = (p' ==> q'))))) q')) = ((\q'. ((((sizel m) = (sizel s)) = p') ==> ((p' ==> (((sizel ((mask m) s)) = ((NUMERAL _0) + ((count I) m))) = q')) ==> ((((sizel m) = (sizel s)) ==> ((sizel ((mask m) s)) = ((NUMERAL _0) + ((count I) m)))) = (p' ==> q'))))) q'))
+T c= c==> ! c==> c= c= csizel f0 csizel f1 f2 c==> c==> f2 c= c= csizel cmask f0 f1 c+ cNUMERAL c_0 ccount part cI f0 b0 c= c==> c= csizel f0 csizel f1 c= csizel cmask f0 f1 c+ cNUMERAL c_0 ccount part cI f0 c==> f2 b0 * / c==> c= c= csizel f0 csizel f1 f2 c==> c==> f2 c= c= csizel cmask f0 f1 c+ cNUMERAL c_0 ccount part cI f0 b0 c= c==> c= csizel f0 csizel f1 c= csizel cmask f0 f1 c+ cNUMERAL c_0 ccount part cI f0 c==> f2 b0 f3 * / c==> c= c= csizel f0 csizel f1 f2 c==> c==> f2 c= c= csizel cmask f0 f1 c+ cNUMERAL c_0 ccount part cI f0 b0 c= c==> c= csizel f0 csizel f1 c= csizel cmask f0 f1 c+ cNUMERAL c_0 ccount part cI f0 c==> f2 b0 f3
++ (!s. (((sizel m) = (sizel s)) ==> ((sizel ((mask m) s)) = ((count I) m)))) |- ((\s. (((sizel m) = (sizel s)) ==> ((sizel ((mask m) s)) = ((count I) m)))) s)
+T c==> ! c==> c= csizel f0 csizel b0 c= csizel cmask f0 b0 ccount part cI f0 * / c==> c= csizel f0 csizel b0 c= csizel cmask f0 b0 ccount part cI f0 f1
++ (!s. (((sizel m) = (sizel s)) ==> ((sizel ((mask m) s)) = ((count I) m)))) |- (((sizel m) = (sizel s)) ==> ((sizel (((COND b) ((CONS x) ((mask m) s))) ((mask m) s))) = ((((COND (I b)) (NUMERAL (BIT1 _0))) (NUMERAL _0)) + ((count I) m))))
+T c==> ! c==> c= csizel f0 csizel b0 c= csizel cmask f0 b0 ccount part cI f0 c==> c= csizel f0 csizel f1 c= csizel cCOND f2 cCONS f3 cmask f0 f1 cmask f0 f1 c+ cCOND cI f2 cNUMERAL cBIT1 c_0 cNUMERAL c_0 ccount part cI f0
+- |- (!b1. (((\b1. (b = b1)) b1) ==> (?b1. (b = b1))))
+T c==> * / c= f0 b0 f1 c? / c= f0 b0
++ ((sizel ((mask m) s)) = ((count I) m)) |- (((sizel ((mask m) s)) = ((count I) m)) /\ ((sizel ((CONS x) ((mask m) s))) = ((NUMERAL (BIT1 _0)) + ((count I) m))))
+T c==> c= csizel cmask f0 f1 ccount part cI f0 c/\ c= csizel cmask f0 f1 ccount part cI f0 c= csizel cCONS f2 cmask f0 f1 c+ cNUMERAL cBIT1 c_0 ccount part cI f0
++ |- (T = (((NUMERAL _0) = (NUMERAL _0)) ==> ((NUMERAL _0) = (NUMERAL _0))))
+T c= cT c==> c= cNUMERAL c_0 cNUMERAL c_0 c= cNUMERAL c_0 cNUMERAL c_0
++ |- ((\s'. ((((count a) NIL) = (NUMERAL _0)) /\ (((count a) ((CONS x) s')) = ((((COND (a x)) (NUMERAL (BIT1 _0))) (NUMERAL _0)) + ((count a) s'))))) s')
+T * / c/\ c= ccount f0 cNIL cNUMERAL c_0 c= ccount f0 cCONS f1 b0 c+ cCOND * f0 f1 cNUMERAL cBIT1 c_0 cNUMERAL c_0 ccount f0 b0 f2
++ |- (((NUMERAL _0) = (NUMERAL _0)) ==> ((NUMERAL _0) = (NUMERAL _0)))
+T c==> c= cNUMERAL c_0 cNUMERAL c_0 c= cNUMERAL c_0 cNUMERAL c_0
+- |- ((((sizel m) = (sizel s)) = p') ==> ((p' ==> (((sizel ((CONS x) ((mask m) s))) = ((NUMERAL (BIT1 _0)) + ((count I) m))) = q')) ==> ((((sizel m) = (sizel s)) ==> ((sizel ((CONS x) ((mask m) s))) = ((NUMERAL (BIT1 _0)) + ((count I) m)))) = (p' ==> q'))))
+T c==> c= c= csizel f0 csizel f1 f2 c==> c==> f2 c= c= csizel cCONS f3 cmask f0 f1 c+ cNUMERAL cBIT1 c_0 ccount part cI f0 f4 c= c==> c= csizel f0 csizel f1 c= csizel cCONS f3 cmask f0 f1 c+ cNUMERAL cBIT1 c_0 ccount part cI f0 c==> f2 f4
+- |- (T = ((sizel ((mask m) s)) = (sizel ((mask m) s))))
+T c= cT c= csizel cmask f0 f1 csizel cmask f0 f1
++ |- ((\q'. ((((sizel m) = (sizel s)) = p') ==> ((p' ==> (((sizel (((COND T) ((CONS x) ((mask m) s))) ((mask m) s))) = ((((COND T) (NUMERAL (BIT1 _0))) (NUMERAL _0)) + ((count I) m))) = q')) ==> ((((sizel m) = (sizel s)) ==> ((sizel (((COND T) ((CONS x) ((mask m) s))) ((mask m) s))) = ((((COND T) (NUMERAL (BIT1 _0))) (NUMERAL _0)) + ((count I) m)))) = (p' ==> q'))))) q')
+T * / c==> c= c= csizel f0 csizel f1 f2 c==> c==> f2 c= c= csizel cCOND cT cCONS f3 cmask f0 f1 cmask f0 f1 c+ cCOND cT cNUMERAL cBIT1 c_0 cNUMERAL c_0 ccount part cI f0 b0 c= c==> c= csizel f0 csizel f1 c= csizel cCOND cT cCONS f3 cmask f0 f1 cmask f0 f1 c+ cCOND cT cNUMERAL cBIT1 c_0 cNUMERAL c_0 ccount part cI f0 c==> f2 b0 f4
++ |- (((sizel ((mask m) s)) = ((count I) m)) ==> ((sizel ((CONS x) ((mask m) s))) = ((NUMERAL (BIT1 _0)) + ((count I) m))))
+T c==> c= csizel cmask f0 f1 ccount part cI f0 c= csizel cCONS f2 cmask f0 f1 c+ cNUMERAL cBIT1 c_0 ccount part cI f0
+- (!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))), ((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) |- ((!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))) /\ (!x. (P x)))
+T c==> ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 c==> c/\ * f0 cNIL ! ! c==> * f0 b1 * f0 cCONS b0 b1 c/\ ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 ! * f0 b0
++ |- (((!n. (((SUC n) = (NUMERAL _0)) = F)) ==> ((\n. (((SUC n) = (NUMERAL _0)) = F)) n)) = ((\n. (((SUC n) = (NUMERAL _0)) = F)) n))
+T c= c==> ! c= c= cSUC b0 cNUMERAL c_0 cF * / c= c= cSUC b0 cNUMERAL c_0 cF f0 * / c= c= cSUC b0 cNUMERAL c_0 cF f0
++ |- (((!x. (!s'. ((((count a) NIL) = (NUMERAL _0)) /\ (((count a) ((CONS x) s')) = ((((COND (a x)) (NUMERAL (BIT1 _0))) (NUMERAL _0)) + ((count a) s')))))) ==> ((\x. (!s'. ((((count a) NIL) = (NUMERAL _0)) /\ (((count a) ((CONS x) s')) = ((((COND (a x)) (NUMERAL (BIT1 _0))) (NUMERAL _0)) + ((count a) s')))))) x)) = ((\x. (!s'. ((((count a) NIL) = (NUMERAL _0)) /\ (((count a) ((CONS x) s')) = ((((COND (a x)) (NUMERAL (BIT1 _0))) (NUMERAL _0)) + ((count a) s')))))) x))
+T c= c==> ! ! c/\ c= ccount f0 cNIL cNUMERAL c_0 c= ccount f0 cCONS b0 b1 c+ cCOND * f0 b0 cNUMERAL cBIT1 c_0 cNUMERAL c_0 ccount f0 b1 * / ! c/\ c= ccount f0 cNIL cNUMERAL c_0 c= ccount f0 cCONS b0 b1 c+ cCOND * f0 b0 cNUMERAL cBIT1 c_0 cNUMERAL c_0 ccount f0 b1 f1 * / ! c/\ c= ccount f0 cNIL cNUMERAL c_0 c= ccount f0 cCONS b0 b1 c+ cCOND * f0 b0 cNUMERAL cBIT1 c_0 cNUMERAL c_0 ccount f0 b1 f1
++ |- ((((sizel ((CONS b) m)) = (sizel NIL)) ==> ((sizel NIL) = ((count I) ((CONS b) m)))) = (((sizel ((CONS b) m)) = (sizel NIL)) ==> ((sizel ((mask ((CONS b) m)) NIL)) = ((count I) ((CONS b) m)))))
+T c= c==> c= csizel cCONS f0 f1 csizel cNIL c= csizel cNIL ccount part cI cCONS f0 f1 c==> c= csizel cCONS f0 f1 csizel cNIL c= csizel cmask cCONS f0 f1 cNIL ccount part cI cCONS f0 f1
++ |- (((sizel NIL) = (sizel NIL)) ==> ((sizel NIL) = ((count I) NIL)))
+T c==> c= csizel cNIL csizel cNIL c= csizel cNIL ccount part cI cNIL
++ (!s. (((sizel m) = (sizel s)) ==> ((sizel ((mask m) s)) = ((count I) m)))) |- ((((((sizel ((CONS b) m)) = (sizel NIL)) ==> ((sizel ((mask ((CONS b) m)) NIL)) = ((count I) ((CONS b) m)))) /\ (!a0. (!a1. ((((sizel ((CONS b) m)) = (sizel a1)) ==> ((sizel ((mask ((CONS b) m)) a1)) = ((count I) ((CONS b) m)))) ==> (((sizel ((CONS b) m)) = (sizel ((CONS a0) a1))) ==> ((sizel ((mask ((CONS b) m)) ((CONS a0) a1))) = ((count I) ((CONS b) m)))))))) ==> (!s. (((sizel ((CONS b) m)) = (sizel s)) ==> ((sizel ((mask ((CONS b) m)) s)) = ((count I) ((CONS b) m)))))) = (!s. (((sizel ((CONS b) m)) = (sizel s)) ==> ((sizel ((mask ((CONS b) m)) s)) = ((count I) ((CONS b) m))))))
+T c==> ! c==> c= csizel f0 csizel b0 c= csizel cmask f0 b0 ccount part cI f0 c= c==> c/\ c==> c= csizel cCONS f1 f0 csizel cNIL c= csizel cmask cCONS f1 f0 cNIL ccount part cI cCONS f1 f0 ! ! c==> c==> c= csizel cCONS f1 f0 csizel b1 c= csizel cmask cCONS f1 f0 b1 ccount part cI cCONS f1 f0 c==> c= csizel cCONS f1 f0 csizel cCONS b0 b1 c= csizel cmask cCONS f1 f0 cCONS b0 b1 ccount part cI cCONS f1 f0 ! c==> c= csizel cCONS f1 f0 csizel b0 c= csizel cmask cCONS f1 f0 b0 ccount part cI cCONS f1 f0 ! c==> c= csizel cCONS f1 f0 csizel b0 c= csizel cmask cCONS f1 f0 b0 ccount part cI cCONS f1 f0
++ |- ((\n. (((NUMERAL _0) + n) = n)) n)
+T * / c= c+ cNUMERAL c_0 b0 b0 f0
+- |- ((((sizel m) = (sizel s)) ==> (((sizel ((CONS x) ((mask m) s))) = ((NUMERAL (BIT1 _0)) + ((count I) m))) = q')) ==> ((((sizel m) = (sizel s)) ==> ((sizel ((CONS x) ((mask m) s))) = ((NUMERAL (BIT1 _0)) + ((count I) m)))) = (((sizel m) = (sizel s)) ==> q')))
+T c==> c==> c= csizel f0 csizel f1 c= c= csizel cCONS f2 cmask f0 f1 c+ cNUMERAL cBIT1 c_0 ccount part cI f0 f3 c= c==> c= csizel f0 csizel f1 c= csizel cCONS f2 cmask f0 f1 c+ cNUMERAL cBIT1 c_0 ccount part cI f0 c==> c= csizel f0 csizel f1 f3
++ |- ((\n. (((SUC n) = (NUMERAL _0)) = F)) n)
+T * / c= c= cSUC b0 cNUMERAL c_0 cF f0
++ |- (((!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))) ==> ((\P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))) P)) = ((\P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))) P))
+T c= c==> ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 * / c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 f0 * / c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 f0
+- (!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))), ((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) |- (!x. (P x))
+T c==> ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 c==> c/\ * f0 cNIL ! ! c==> * f0 b1 * f0 cCONS b0 b1 ! * f0 b0
++ |- ((\x. ((I x) = x)) x)
+T * / c= cI b0 b0 f0
++ |- (((sizel ((mask m) s)) = ((count I) m)) ==> ((sizel ((mask m) s)) = ((NUMERAL _0) + ((count I) m))))
+T c==> c= csizel cmask f0 f1 ccount part cI f0 c= csizel cmask f0 f1 c+ cNUMERAL c_0 ccount part cI f0
++ (!s. (((sizel m) = (sizel s)) ==> ((sizel ((mask m) s)) = ((count I) m)))) |- (!b. (((sizel m) = (sizel s)) ==> ((sizel (((COND b) ((CONS x) ((mask m) s))) ((mask m) s))) = ((((COND b) (NUMERAL (BIT1 _0))) (NUMERAL _0)) + ((count I) m)))))
+T c==> ! c==> c= csizel f0 csizel b0 c= csizel cmask f0 b0 ccount part cI f0 ! c==> c= csizel f0 csizel f1 c= csizel cCOND b0 cCONS f2 cmask f0 f1 cmask f0 f1 c+ cCOND b0 cNUMERAL cBIT1 c_0 cNUMERAL c_0 ccount part cI f0
++ |- (((sizel NIL) = (sizel ((CONS x) s))) ==> ((sizel NIL) = ((count I) NIL)))
+T c==> c= csizel cNIL csizel cCONS f0 f1 c= csizel cNIL ccount part cI cNIL
++ |- ((((sizel ((CONS b) m)) = (sizel NIL)) ==> ((sizel NIL) = ((((COND (I b)) (NUMERAL (BIT1 _0))) (NUMERAL _0)) + ((count I) m)))) = (((sizel ((CONS b) m)) = (sizel NIL)) ==> ((sizel NIL) = ((count I) ((CONS b) m)))))
+T c= c==> c= csizel cCONS f0 f1 csizel cNIL c= csizel cNIL c+ cCOND cI f0 cNUMERAL cBIT1 c_0 cNUMERAL c_0 ccount part cI f1 c==> c= csizel cCONS f0 f1 csizel cNIL c= csizel cNIL ccount part cI cCONS f0 f1
++ (!s. (((sizel m) = (sizel s)) ==> ((sizel ((mask m) s)) = ((count I) m)))) |- ((((sizel m) = (sizel s)) ==> ((sizel (((COND T) ((CONS x) ((mask m) s))) ((mask m) s))) = ((((COND T) (NUMERAL (BIT1 _0))) (NUMERAL _0)) + ((count I) m)))) /\ (((sizel m) = (sizel s)) ==> ((sizel (((COND F) ((CONS x) ((mask m) s))) ((mask m) s))) = ((((COND F) (NUMERAL (BIT1 _0))) (NUMERAL _0)) + ((count I) m)))))
+T c==> ! c==> c= csizel f0 csizel b0 c= csizel cmask f0 b0 ccount part cI f0 c/\ c==> c= csizel f0 csizel f1 c= csizel cCOND cT cCONS f2 cmask f0 f1 cmask f0 f1 c+ cCOND cT cNUMERAL cBIT1 c_0 cNUMERAL c_0 ccount part cI f0 c==> c= csizel f0 csizel f1 c= csizel cCOND cF cCONS f2 cmask f0 f1 cmask f0 f1 c+ cCOND cF cNUMERAL cBIT1 c_0 cNUMERAL c_0 ccount part cI f0
++ |- ((!a1. ((((sizel NIL) = (sizel a1)) ==> ((sizel ((mask NIL) a1)) = ((count I) NIL))) ==> (((sizel NIL) = (sizel ((CONS x) a1))) ==> ((sizel ((mask NIL) ((CONS x) a1))) = ((count I) NIL))))) = T)
+T c= ! c==> c==> c= csizel cNIL csizel b0 c= csizel cmask cNIL b0 ccount part cI cNIL c==> c= csizel cNIL csizel cCONS f0 b0 c= csizel cmask cNIL cCONS f0 b0 ccount part cI cNIL cT
++ |- (((((sizel m) = (sizel s)) = ((sizel m) = (sizel s))) ==> ((((sizel m) = (sizel s)) ==> (((sizel (((COND F) ((CONS x) ((mask m) s))) ((mask m) s))) = ((((COND F) (NUMERAL (BIT1 _0))) (NUMERAL _0)) + ((count I) m))) = q')) ==> ((((sizel m) = (sizel s)) ==> ((sizel (((COND F) ((CONS x) ((mask m) s))) ((mask m) s))) = ((((COND F) (NUMERAL (BIT1 _0))) (NUMERAL _0)) + ((count I) m)))) = (((sizel m) = (sizel s)) ==> q')))) = ((((sizel m) = (sizel s)) ==> (((sizel (((COND F) ((CONS x) ((mask m) s))) ((mask m) s))) = ((((COND F) (NUMERAL (BIT1 _0))) (NUMERAL _0)) + ((count I) m))) = q')) ==> ((((sizel m) = (sizel s)) ==> ((sizel (((COND F) ((CONS x) ((mask m) s))) ((mask m) s))) = ((((COND F) (NUMERAL (BIT1 _0))) (NUMERAL _0)) + ((count I) m)))) = (((sizel m) = (sizel s)) ==> q'))))
+T c= c==> c= c= csizel f0 csizel f1 c= csizel f0 csizel f1 c==> c==> c= csizel f0 csizel f1 c= c= csizel cCOND cF cCONS f2 cmask f0 f1 cmask f0 f1 c+ cCOND cF cNUMERAL cBIT1 c_0 cNUMERAL c_0 ccount part cI f0 f3 c= c==> c= csizel f0 csizel f1 c= csizel cCOND cF cCONS f2 cmask f0 f1 cmask f0 f1 c+ cCOND cF cNUMERAL cBIT1 c_0 cNUMERAL c_0 ccount part cI f0 c==> c= csizel f0 csizel f1 f3 c==> c==> c= csizel f0 csizel f1 c= c= csizel cCOND cF cCONS f2 cmask f0 f1 cmask f0 f1 c+ cCOND cF cNUMERAL cBIT1 c_0 cNUMERAL c_0 ccount part cI f0 f3 c= c==> c= csizel f0 csizel f1 c= csizel cCOND cF cCONS f2 cmask f0 f1 cmask f0 f1 c+ cCOND cF cNUMERAL cBIT1 c_0 cNUMERAL c_0 ccount part cI f0 c==> c= csizel f0 csizel f1 f3
++ (!s. (((sizel m) = (sizel s)) ==> ((sizel ((mask m) s)) = ((count I) m)))) |- (((((sizel ((CONS b) m)) = (sizel s)) ==> ((sizel ((mask ((CONS b) m)) s)) = ((count I) ((CONS b) m)))) ==> (((sizel ((CONS b) m)) = (sizel ((CONS x) s))) ==> ((sizel ((mask ((CONS b) m)) ((CONS x) s))) = ((count I) ((CONS b) m))))) = T)
+T c==> ! c==> c= csizel f0 csizel b0 c= csizel cmask f0 b0 ccount part cI f0 c= c==> c==> c= csizel cCONS f1 f0 csizel f2 c= csizel cmask cCONS f1 f0 f2 ccount part cI cCONS f1 f0 c==> c= csizel cCONS f1 f0 csizel cCONS f3 f2 c= csizel cmask cCONS f1 f0 cCONS f3 f2 ccount part cI cCONS f1 f0 cT
++ |- (T = ((SUC (sizel ((mask m) s))) = (SUC (sizel ((mask m) s)))))
+T c= cT c= cSUC csizel cmask f0 f1 cSUC csizel cmask f0 f1
+- (!P. (((P T) /\ (P F)) ==> (!x. (P x)))), ((P T) /\ (P F)) |- (!x. (P x))
+T c==> ! c==> c/\ * b0 cT * b0 cF ! * b0 b1 c==> c/\ * f0 cT * f0 cF ! * f0 b0
++ |- (((((sizel NIL) = (sizel s)) ==> ((sizel ((mask NIL) s)) = ((count I) NIL))) ==> (((sizel NIL) = (sizel ((CONS x) s))) ==> ((sizel ((mask NIL) ((CONS x) s))) = ((count I) NIL)))) = T)
+T c= c==> c==> c= csizel cNIL csizel f0 c= csizel cmask cNIL f0 ccount part cI cNIL c==> c= csizel cNIL csizel cCONS f1 f0 c= csizel cmask cNIL cCONS f1 f0 ccount part cI cNIL cT
++ (!s. (((sizel m) = (sizel s)) ==> ((sizel ((mask m) s)) = ((count I) m)))) |- ((((sizel ((CONS b) m)) = (sizel s)) ==> ((sizel ((mask ((CONS b) m)) s)) = ((count I) ((CONS b) m)))) ==> (((sizel ((CONS b) m)) = (sizel ((CONS x) s))) ==> ((sizel ((mask ((CONS b) m)) ((CONS x) s))) = ((count I) ((CONS b) m)))))
+T c==> ! c==> c= csizel f0 csizel b0 c= csizel cmask f0 b0 ccount part cI f0 c==> c==> c= csizel cCONS f1 f0 csizel f2 c= csizel cmask cCONS f1 f0 f2 ccount part cI cCONS f1 f0 c==> c= csizel cCONS f1 f0 csizel cCONS f3 f2 c= csizel cmask cCONS f1 f0 cCONS f3 f2 ccount part cI cCONS f1 f0
++ |- (T = (((NUMERAL _0) = (sizel ((CONS x) s))) ==> ((NUMERAL _0) = (NUMERAL _0))))
+T c= cT c==> c= cNUMERAL c_0 csizel cCONS f0 f1 c= cNUMERAL c_0 cNUMERAL c_0
++ |- ((!q'. ((p = p') ==> ((p' ==> (q = q')) ==> ((p ==> q) = (p' ==> q'))))) = T)
+T c= ! c==> c= f0 f1 c==> c==> f1 c= f2 b0 c= c==> f0 f2 c==> f1 b0 cT
++ |- ((((sizel m) = (sizel s)) = p') ==> ((p' ==> (((sizel (((COND T) ((CONS x) ((mask m) s))) ((mask m) s))) = ((((COND T) (NUMERAL (BIT1 _0))) (NUMERAL _0)) + ((count I) m))) = q')) ==> ((((sizel m) = (sizel s)) ==> ((sizel (((COND T) ((CONS x) ((mask m) s))) ((mask m) s))) = ((((COND T) (NUMERAL (BIT1 _0))) (NUMERAL _0)) + ((count I) m)))) = (p' ==> q'))))
+T c==> c= c= csizel f0 csizel f1 f2 c==> c==> f2 c= c= csizel cCOND cT cCONS f3 cmask f0 f1 cmask f0 f1 c+ cCOND cT cNUMERAL cBIT1 c_0 cNUMERAL c_0 ccount part cI f0 f4 c= c==> c= csizel f0 csizel f1 c= csizel cCOND cT cCONS f3 cmask f0 f1 cmask f0 f1 c+ cCOND cT cNUMERAL cBIT1 c_0 cNUMERAL c_0 ccount part cI f0 c==> f2 f4
+- (s = s1) |- ((((sizel m) = (sizel s1)) ==> ((sizel ((mask m) s1)) = ((count I) m))) = (((sizel m) = (sizel s)) ==> ((sizel ((mask m) s)) = ((count I) m))))
+T c==> c= f0 f1 c= c==> c= csizel f2 csizel f1 c= csizel cmask f2 f1 ccount part cI f2 c==> c= csizel f2 csizel f0 c= csizel cmask f2 f0 ccount part cI f2
++ |- ((\x. (!s'. ((((count a) NIL) = (NUMERAL _0)) /\ (((count a) ((CONS x) s')) = ((((COND (a x)) (NUMERAL (BIT1 _0))) (NUMERAL _0)) + ((count a) s')))))) x)
+T * / ! c/\ c= ccount f0 cNIL cNUMERAL c_0 c= ccount f0 cCONS b0 b1 c+ cCOND * f0 b0 cNUMERAL cBIT1 c_0 cNUMERAL c_0 ccount f0 b1 f1
+- |- ((b = b1) = ((\b1. (b = b1)) b1))
+T c= c= f0 f1 * / c= f0 b0 f1
++ (!s. (((sizel m) = (sizel s)) ==> ((sizel ((mask m) s)) = ((count I) m)))), (b = b1) |- ((b = b1) /\ (((sizel m) = (sizel s)) ==> ((sizel (((COND b) ((CONS x) ((mask m) s))) ((mask m) s))) = ((((COND b) (NUMERAL (BIT1 _0))) (NUMERAL _0)) + ((count I) m)))))
+T c==> ! c==> c= csizel f0 csizel b0 c= csizel cmask f0 b0 ccount part cI f0 c==> c= f1 f2 c/\ c= f1 f2 c==> c= csizel f0 csizel f3 c= csizel cCOND f1 cCONS f4 cmask f0 f3 cmask f0 f3 c+ cCOND f1 cNUMERAL cBIT1 c_0 cNUMERAL c_0 ccount part cI f0
++ |- ((\p'. (!q'. ((((sizel m) = (sizel s)) = p') ==> ((p' ==> (((sizel (((COND F) ((CONS x) ((mask m) s))) ((mask m) s))) = ((((COND F) (NUMERAL (BIT1 _0))) (NUMERAL _0)) + ((count I) m))) = q')) ==> ((((sizel m) = (sizel s)) ==> ((sizel (((COND F) ((CONS x) ((mask m) s))) ((mask m) s))) = ((((COND F) (NUMERAL (BIT1 _0))) (NUMERAL _0)) + ((count I) m)))) = (p' ==> q')))))) p')
+T * / ! c==> c= c= csizel f0 csizel f1 b0 c==> c==> b0 c= c= csizel cCOND cF cCONS f2 cmask f0 f1 cmask f0 f1 c+ cCOND cF cNUMERAL cBIT1 c_0 cNUMERAL c_0 ccount part cI f0 b1 c= c==> c= csizel f0 csizel f1 c= csizel cCOND cF cCONS f2 cmask f0 f1 cmask f0 f1 c+ cCOND cF cNUMERAL cBIT1 c_0 cNUMERAL c_0 ccount part cI f0 c==> b0 b1 f3
+- |- ((\p'. (!q'. ((((sizel m) = (sizel s)) = p') ==> ((p' ==> (((sizel ((CONS x) ((mask m) s))) = ((NUMERAL (BIT1 _0)) + ((count I) m))) = q')) ==> ((((sizel m) = (sizel s)) ==> ((sizel ((CONS x) ((mask m) s))) = ((NUMERAL (BIT1 _0)) + ((count I) m)))) = (p' ==> q')))))) p')
+T * / ! c==> c= c= csizel f0 csizel f1 b0 c==> c==> b0 c= c= csizel cCONS f2 cmask f0 f1 c+ cNUMERAL cBIT1 c_0 ccount part cI f0 b1 c= c==> c= csizel f0 csizel f1 c= csizel cCONS f2 cmask f0 f1 c+ cNUMERAL cBIT1 c_0 ccount part cI f0 c==> b0 b1 f3
++ |- (!s. (((sizel NIL) = (sizel s)) ==> ((sizel ((mask NIL) s)) = ((count I) NIL))))
+T c==> c= csizel cNIL csizel f0 c= csizel cmask cNIL f0 ccount part cI cNIL
++ |- (((SUC (sizel ((mask m) s))) = (SUC (sizel ((mask m) s)))) = ((SUC (sizel ((mask m) s))) = ((NUMERAL (BIT1 _0)) + (sizel ((mask m) s)))))
+T c= c= cSUC csizel cmask f0 f1 cSUC csizel cmask f0 f1 c= cSUC csizel cmask f0 f1 c+ cNUMERAL cBIT1 c_0 csizel cmask f0 f1
+- |- (((!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))) ==> (!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x))))) = (!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))))
+T c= c==> ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1
+- (!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))), ((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) |- (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) /\ (!x. (P x)))
+T c==> ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 c==> c/\ * f0 cNIL ! ! c==> * f0 b1 * f0 cCONS b0 b1 c/\ c/\ * f0 cNIL ! ! c==> * f0 b1 * f0 cCONS b0 b1 ! * f0 b0
+- |- (((((sizel m) = (sizel s)) = ((sizel m) = (sizel s))) ==> ((((sizel m) = (sizel s)) ==> (((sizel ((CONS x) ((mask m) s))) = ((NUMERAL (BIT1 _0)) + ((count I) m))) = q')) ==> ((((sizel m) = (sizel s)) ==> ((sizel ((CONS x) ((mask m) s))) = ((NUMERAL (BIT1 _0)) + ((count I) m)))) = (((sizel m) = (sizel s)) ==> q')))) = ((((sizel m) = (sizel s)) ==> (((sizel ((CONS x) ((mask m) s))) = ((NUMERAL (BIT1 _0)) + ((count I) m))) = q')) ==> ((((sizel m) = (sizel s)) ==> ((sizel ((CONS x) ((mask m) s))) = ((NUMERAL (BIT1 _0)) + ((count I) m)))) = (((sizel m) = (sizel s)) ==> q'))))
+T c= c==> c= c= csizel f0 csizel f1 c= csizel f0 csizel f1 c==> c==> c= csizel f0 csizel f1 c= c= csizel cCONS f2 cmask f0 f1 c+ cNUMERAL cBIT1 c_0 ccount part cI f0 f3 c= c==> c= csizel f0 csizel f1 c= csizel cCONS f2 cmask f0 f1 c+ cNUMERAL cBIT1 c_0 ccount part cI f0 c==> c= csizel f0 csizel f1 f3 c==> c==> c= csizel f0 csizel f1 c= c= csizel cCONS f2 cmask f0 f1 c+ cNUMERAL cBIT1 c_0 ccount part cI f0 f3 c= c==> c= csizel f0 csizel f1 c= csizel cCONS f2 cmask f0 f1 c+ cNUMERAL cBIT1 c_0 ccount part cI f0 c==> c= csizel f0 csizel f1 f3
+- ((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) |- ((!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))) ==> (!x. (P x)))
+T c==> c/\ * f0 cNIL ! ! c==> * f0 b1 * f0 cCONS b0 b1 c==> ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 ! * f0 b0
+- (m = m1) |- ((!s. (((sizel m1) = (sizel s)) ==> ((sizel ((mask m) s)) = ((count I) m)))) = (!s. (((sizel m) = (sizel s)) ==> ((sizel ((mask m) s)) = ((count I) m)))))
+T c==> c= f0 f1 c= ! c==> c= csizel f1 csizel b0 c= csizel cmask f0 b0 ccount part cI f0 ! c==> c= csizel f0 csizel b0 c= csizel cmask f0 b0 ccount part cI f0
+- (s = s1) |- ((((sizel m) = (sizel s1)) ==> ((sizel ((mask m) s)) = ((count I) m))) = (((sizel m) = (sizel s)) ==> ((sizel ((mask m) s)) = ((count I) m))))
+T c==> c= f0 f1 c= c==> c= csizel f2 csizel f1 c= csizel cmask f2 f0 ccount part cI f2 c==> c= csizel f2 csizel f0 c= csizel cmask f2 f0 ccount part cI f2
+- |- ((((sizel m) = (sizel s)) ==> ((sizel ((CONS x) ((mask m) s))) = ((NUMERAL (BIT1 _0)) + ((count I) m)))) = (((sizel m) = (sizel s)) ==> ((sizel ((CONS x) ((mask m) s))) = ((NUMERAL (BIT1 _0)) + ((count I) m)))))
+T c= c==> c= csizel f0 csizel f1 c= csizel cCONS f2 cmask f0 f1 c+ cNUMERAL cBIT1 c_0 ccount part cI f0 c==> c= csizel f0 csizel f1 c= csizel cCONS f2 cmask f0 f1 c+ cNUMERAL cBIT1 c_0 ccount part cI f0
+- |- (((sizel m) = (sizel s)) ==> (((sizel ((CONS x) ((mask m) s))) = ((NUMERAL (BIT1 _0)) + ((count I) m))) = ((sizel ((CONS x) ((mask m) s))) = ((NUMERAL (BIT1 _0)) + ((count I) m)))))
+T c==> c= csizel f0 csizel f1 c= c= csizel cCONS f2 cmask f0 f1 c+ cNUMERAL cBIT1 c_0 ccount part cI f0 c= csizel cCONS f2 cmask f0 f1 c+ cNUMERAL cBIT1 c_0 ccount part cI f0
+- |- ((?b1. (b = b1)) ==> (?b1. (b = b1)))
+T c==> c? / c= f0 b0 c? / c= f0 b0
+- |- ((\Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))) Q)
+T * / c= c==> f0 ! * b0 b1 ! c==> f0 * b0 b1 f1
+- |- (((!p'. (!q'. ((((sizel m) = (sizel s)) = p') ==> ((p' ==> (((sizel ((mask m) s)) = ((NUMERAL _0) + ((count I) m))) = q')) ==> ((((sizel m) = (sizel s)) ==> ((sizel ((mask m) s)) = ((NUMERAL _0) + ((count I) m)))) = (p' ==> q')))))) ==> ((\p'. (!q'. ((((sizel m) = (sizel s)) = p') ==> ((p' ==> (((sizel ((mask m) s)) = ((NUMERAL _0) + ((count I) m))) = q')) ==> ((((sizel m) = (sizel s)) ==> ((sizel ((mask m) s)) = ((NUMERAL _0) + ((count I) m)))) = (p' ==> q')))))) p')) = ((\p'. (!q'. ((((sizel m) = (sizel s)) = p') ==> ((p' ==> (((sizel ((mask m) s)) = ((NUMERAL _0) + ((count I) m))) = q')) ==> ((((sizel m) = (sizel s)) ==> ((sizel ((mask m) s)) = ((NUMERAL _0) + ((count I) m)))) = (p' ==> q')))))) p'))
+T c= c==> ! ! c==> c= c= csizel f0 csizel f1 b0 c==> c==> b0 c= c= csizel cmask f0 f1 c+ cNUMERAL c_0 ccount part cI f0 b1 c= c==> c= csizel f0 csizel f1 c= csizel cmask f0 f1 c+ cNUMERAL c_0 ccount part cI f0 c==> b0 b1 * / ! c==> c= c= csizel f0 csizel f1 b0 c==> c==> b0 c= c= csizel cmask f0 f1 c+ cNUMERAL c_0 ccount part cI f0 b1 c= c==> c= csizel f0 csizel f1 c= csizel cmask f0 f1 c+ cNUMERAL c_0 ccount part cI f0 c==> b0 b1 f2 * / ! c==> c= c= csizel f0 csizel f1 b0 c==> c==> b0 c= c= csizel cmask f0 f1 c+ cNUMERAL c_0 ccount part cI f0 b1 c= c==> c= csizel f0 csizel f1 c= csizel cmask f0 f1 c+ cNUMERAL c_0 ccount part cI f0 c==> b0 b1 f2
+- |- ((((sizel m) = (sizel s)) ==> ((sizel ((mask m) s)) = ((NUMERAL _0) + ((count I) m)))) = (((sizel m) = (sizel s)) ==> ((sizel ((mask m) s)) = ((NUMERAL _0) + ((count I) m)))))
+T c= c==> c= csizel f0 csizel f1 c= csizel cmask f0 f1 c+ cNUMERAL c_0 ccount part cI f0 c==> c= csizel f0 csizel f1 c= csizel cmask f0 f1 c+ cNUMERAL c_0 ccount part cI f0
+- (!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))) |- ((\P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))) P)
+T c==> ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 * / c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 f0
+- |- (((((sizel m) = (sizel s)) ==> (((sizel ((mask m) s)) = ((NUMERAL _0) + ((count I) m))) = ((sizel ((mask m) s)) = ((NUMERAL _0) + ((count I) m))))) ==> ((((sizel m) = (sizel s)) ==> ((sizel ((mask m) s)) = ((NUMERAL _0) + ((count I) m)))) = (((sizel m) = (sizel s)) ==> ((sizel ((mask m) s)) = ((NUMERAL _0) + ((count I) m)))))) = ((((sizel m) = (sizel s)) ==> ((sizel ((mask m) s)) = ((NUMERAL _0) + ((count I) m)))) = (((sizel m) = (sizel s)) ==> ((sizel ((mask m) s)) = ((NUMERAL _0) + ((count I) m))))))
+T c= c==> c==> c= csizel f0 csizel f1 c= c= csizel cmask f0 f1 c+ cNUMERAL c_0 ccount part cI f0 c= csizel cmask f0 f1 c+ cNUMERAL c_0 ccount part cI f0 c= c==> c= csizel f0 csizel f1 c= csizel cmask f0 f1 c+ cNUMERAL c_0 ccount part cI f0 c==> c= csizel f0 csizel f1 c= csizel cmask f0 f1 c+ cNUMERAL c_0 ccount part cI f0 c= c==> c= csizel f0 csizel f1 c= csizel cmask f0 f1 c+ cNUMERAL c_0 ccount part cI f0 c==> c= csizel f0 csizel f1 c= csizel cmask f0 f1 c+ cNUMERAL c_0 ccount part cI f0
+- (b = b1) |- (b1 = b)
+T c==> c= f0 f1 c= f1 f0
+- ((\b1. (b = b1)) b1) |- (((b = b1) ==> (?b1. (b = b1))) = (?b1. (b = b1)))
+T c==> * / c= f0 b0 f1 c= c==> c= f0 f1 c? / c= f0 b0 c? / c= f0 b0
+- |- ((!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))) ==> (!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))))
+T c==> ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1
+- (m = m1) |- ((!s. (((sizel m1) = (sizel s)) ==> ((sizel ((mask m1) s)) = ((count I) m1)))) = (!s. (((sizel m1) = (sizel s)) ==> ((sizel ((mask m1) s)) = ((count I) m)))))
+T c==> c= f0 f1 c= ! c==> c= csizel f1 csizel b0 c= csizel cmask f1 b0 ccount part cI f1 ! c==> c= csizel f1 csizel b0 c= csizel cmask f1 b0 ccount part cI f0
+- (!P. (((P T) /\ (P F)) ==> (!x. (P x)))) |- ((((P T) /\ (P F)) ==> (!x. (P x))) = T)
+T c==> ! c==> c/\ * b0 cT * b0 cF ! * b0 b1 c= c==> c/\ * f0 cT * f0 cF ! * f0 b0 cT
+- |- (((!P. (!Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x)))))) ==> ((\P. (!Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x)))))) P)) = ((\P. (!Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x)))))) P))
+T c= c==> ! ! c= c==> b0 ! * b1 b2 ! c==> b0 * b1 b2 * / ! c= c==> b0 ! * b1 b2 ! c==> b0 * b1 b2 f0 * / ! c= c==> b0 ! * b1 b2 ! c==> b0 * b1 b2 f0
+- |- ((\q'. ((((sizel m) = (sizel s)) = p') ==> ((p' ==> (((sizel ((mask m) s)) = ((NUMERAL _0) + ((count I) m))) = q')) ==> ((((sizel m) = (sizel s)) ==> ((sizel ((mask m) s)) = ((NUMERAL _0) + ((count I) m)))) = (p' ==> q'))))) q')
+T * / c==> c= c= csizel f0 csizel f1 f2 c==> c==> f2 c= c= csizel cmask f0 f1 c+ cNUMERAL c_0 ccount part cI f0 b0 c= c==> c= csizel f0 csizel f1 c= csizel cmask f0 f1 c+ cNUMERAL c_0 ccount part cI f0 c==> f2 b0 f3
+- (b = b1) |- ((b = b1) /\ (?b1. (b = b1)))
+T c==> c= f0 f1 c/\ c= f0 f1 c? / c= f0 b0
+- (b = b1) |- ((((sizel m) = (sizel s)) ==> ((sizel (((COND b1) ((CONS x) ((mask m) s))) ((mask m) s))) = ((((COND b1) (NUMERAL (BIT1 _0))) (NUMERAL _0)) + ((count I) m)))) = (((sizel m) = (sizel s)) ==> ((sizel (((COND b) ((CONS x) ((mask m) s))) ((mask m) s))) = ((((COND b) (NUMERAL (BIT1 _0))) (NUMERAL _0)) + ((count I) m)))))
+T c==> c= f0 f1 c= c==> c= csizel f2 csizel f3 c= csizel cCOND f1 cCONS f4 cmask f2 f3 cmask f2 f3 c+ cCOND f1 cNUMERAL cBIT1 c_0 cNUMERAL c_0 ccount part cI f2 c==> c= csizel f2 csizel f3 c= csizel cCOND f0 cCONS f4 cmask f2 f3 cmask f2 f3 c+ cCOND f0 cNUMERAL cBIT1 c_0 cNUMERAL c_0 ccount part cI f2
+- |- (((!q'. ((((sizel m) = (sizel s)) = p') ==> ((p' ==> (((sizel ((CONS x) ((mask m) s))) = ((NUMERAL (BIT1 _0)) + ((count I) m))) = q')) ==> ((((sizel m) = (sizel s)) ==> ((sizel ((CONS x) ((mask m) s))) = ((NUMERAL (BIT1 _0)) + ((count I) m)))) = (p' ==> q'))))) ==> ((\q'. ((((sizel m) = (sizel s)) = p') ==> ((p' ==> (((sizel ((CONS x) ((mask m) s))) = ((NUMERAL (BIT1 _0)) + ((count I) m))) = q')) ==> ((((sizel m) = (sizel s)) ==> ((sizel ((CONS x) ((mask m) s))) = ((NUMERAL (BIT1 _0)) + ((count I) m)))) = (p' ==> q'))))) q')) = ((\q'. ((((sizel m) = (sizel s)) = p') ==> ((p' ==> (((sizel ((CONS x) ((mask m) s))) = ((NUMERAL (BIT1 _0)) + ((count I) m))) = q')) ==> ((((sizel m) = (sizel s)) ==> ((sizel ((CONS x) ((mask m) s))) = ((NUMERAL (BIT1 _0)) + ((count I) m)))) = (p' ==> q'))))) q'))
+T c= c==> ! c==> c= c= csizel f0 csizel f1 f2 c==> c==> f2 c= c= csizel cCONS f3 cmask f0 f1 c+ cNUMERAL cBIT1 c_0 ccount part cI f0 b0 c= c==> c= csizel f0 csizel f1 c= csizel cCONS f3 cmask f0 f1 c+ cNUMERAL cBIT1 c_0 ccount part cI f0 c==> f2 b0 * / c==> c= c= csizel f0 csizel f1 f2 c==> c==> f2 c= c= csizel cCONS f3 cmask f0 f1 c+ cNUMERAL cBIT1 c_0 ccount part cI f0 b0 c= c==> c= csizel f0 csizel f1 c= csizel cCONS f3 cmask f0 f1 c+ cNUMERAL cBIT1 c_0 ccount part cI f0 c==> f2 b0 f4 * / c==> c= c= csizel f0 csizel f1 f2 c==> c==> f2 c= c= csizel cCONS f3 cmask f0 f1 c+ cNUMERAL cBIT1 c_0 ccount part cI f0 b0 c= c==> c= csizel f0 csizel f1 c= csizel cCONS f3 cmask f0 f1 c+ cNUMERAL cBIT1 c_0 ccount part cI f0 c==> f2 b0 f4
+- ((\b1. (b = b1)) b1) |- (((\b1. (b = b1)) b1) /\ (?b1. (b = b1)))
+T c==> * / c= f0 b0 f1 c/\ * / c= f0 b0 f1 c? / c= f0 b0
+- (s = s1) |- ((((sizel m) = (sizel s1)) ==> ((sizel ((mask m) s1)) = ((count I) m))) = (((sizel m) = (sizel s1)) ==> ((sizel ((mask m) s)) = ((count I) m))))
+T c==> c= f0 f1 c= c==> c= csizel f2 csizel f1 c= csizel cmask f2 f1 ccount part cI f2 c==> c= csizel f2 csizel f1 c= csizel cmask f2 f0 ccount part cI f2
+- |- (((!P. (((P T) /\ (P F)) ==> (!x. (P x)))) ==> (!P. (((P T) /\ (P F)) ==> (!x. (P x))))) = (!P. (((P T) /\ (P F)) ==> (!x. (P x)))))
+T c= c==> ! c==> c/\ * b0 cT * b0 cF ! * b0 b1 ! c==> c/\ * b0 cT * b0 cF ! * b0 b1 ! c==> c/\ * b0 cT * b0 cF ! * b0 b1
+- (!P. (((P T) /\ (P F)) ==> (!x. (P x)))) |- ((!P. (((P T) /\ (P F)) ==> (!x. (P x)))) /\ (!P. (((P T) /\ (P F)) ==> (!x. (P x)))))
+T c==> ! c==> c/\ * b0 cT * b0 cF ! * b0 b1 c/\ ! c==> c/\ * b0 cT * b0 cF ! * b0 b1 ! c==> c/\ * b0 cT * b0 cF ! * b0 b1
+- |- ((\p'. (!q'. ((((sizel m) = (sizel s)) = p') ==> ((p' ==> (((sizel ((mask m) s)) = ((NUMERAL _0) + ((count I) m))) = q')) ==> ((((sizel m) = (sizel s)) ==> ((sizel ((mask m) s)) = ((NUMERAL _0) + ((count I) m)))) = (p' ==> q')))))) p')
+T * / ! c==> c= c= csizel f0 csizel f1 b0 c==> c==> b0 c= c= csizel cmask f0 f1 c+ cNUMERAL c_0 ccount part cI f0 b1 c= c==> c= csizel f0 csizel f1 c= csizel cmask f0 f1 c+ cNUMERAL c_0 ccount part cI f0 c==> b0 b1 f2
+- |- (((!x. (((\b1. (b = b1)) x) ==> (?b1. (b = b1)))) ==> ((?b1. (b = b1)) ==> (?b1. (b = b1)))) = ((?b1. (b = b1)) ==> (?b1. (b = b1))))
+T c= c==> ! c==> * / c= f0 b1 b0 c? / c= f0 b1 c==> c? / c= f0 b0 c? / c= f0 b0 c==> c? / c= f0 b0 c? / c= f0 b0
+- |- ((b = b1) ==> (?b1. (b = b1)))
+T c==> c= f0 f1 c? / c= f0 b0
+- |- ((!P. (((P T) /\ (P F)) ==> (!x. (P x)))) ==> (!P. (((P T) /\ (P F)) ==> (!x. (P x)))))
+T c==> ! c==> c/\ * b0 cT * b0 cF ! * b0 b1 ! c==> c/\ * b0 cT * b0 cF ! * b0 b1
+- (!P. (((P T) /\ (P F)) ==> (!x. (P x)))), ((P T) /\ (P F)) |- (((P T) /\ (P F)) /\ (!x. (P x)))
+T c==> ! c==> c/\ * b0 cT * b0 cF ! * b0 b1 c==> c/\ * f0 cT * f0 cF c/\ c/\ * f0 cT * f0 cF ! * f0 b0
+- ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x)))) |- ((!x. (P ==> (Q x))) = (P ==> (!x. (Q x))))
+T c==> c= c==> f0 ! * f1 b0 ! c==> f0 * f1 b0 c= ! c==> f0 * f1 b0 c==> f0 ! * f1 b0
+- (!s. (((sizel m) = (sizel s)) ==> ((sizel ((mask m) s)) = ((count I) m)))), (b = b1) |- (((sizel m) = (sizel s)) ==> ((sizel (((COND b1) ((CONS x) ((mask m) s))) ((mask m) s))) = ((((COND b1) (NUMERAL (BIT1 _0))) (NUMERAL _0)) + ((count I) m))))
+T c==> ! c==> c= csizel f0 csizel b0 c= csizel cmask f0 b0 ccount part cI f0 c==> c= f1 f2 c==> c= csizel f0 csizel f3 c= csizel cCOND f2 cCONS f4 cmask f0 f3 cmask f0 f3 c+ cCOND f2 cNUMERAL cBIT1 c_0 cNUMERAL c_0 ccount part cI f0
+- (!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))) |- ((((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x))) = T)
+T c==> ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 c= c==> c/\ * f0 cNIL ! ! c==> * f0 b1 * f0 cCONS b0 b1 ! * f0 b0 cT
+- |- ((((sizel m) = (sizel s)) = p') ==> ((p' ==> (((sizel ((mask m) s)) = ((NUMERAL _0) + ((count I) m))) = q')) ==> ((((sizel m) = (sizel s)) ==> ((sizel ((mask m) s)) = ((NUMERAL _0) + ((count I) m)))) = (p' ==> q'))))
+T c==> c= c= csizel f0 csizel f1 f2 c==> c==> f2 c= c= csizel cmask f0 f1 c+ cNUMERAL c_0 ccount part cI f0 f3 c= c==> c= csizel f0 csizel f1 c= csizel cmask f0 f1 c+ cNUMERAL c_0 ccount part cI f0 c==> f2 f3
+- (b = b1) |- ((\b1. (b = b1)) b1)
+T c==> c= f0 f1 * / c= f0 b0 f1
+- (m = m1) |- ((!s. (((sizel m1) = (sizel s)) ==> ((sizel ((mask m1) s)) = ((count I) m1)))) = (!s. (((sizel m) = (sizel s)) ==> ((sizel ((mask m) s)) = ((count I) m)))))
+T c==> c= f0 f1 c= ! c==> c= csizel f1 csizel b0 c= csizel cmask f1 b0 ccount part cI f1 ! c==> c= csizel f0 csizel b0 c= csizel cmask f0 b0 ccount part cI f0
+- |- ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))
+T c= c==> f0 ! * f1 b0 ! c==> f0 * f1 b0
+- (!s. (((sizel m) = (sizel s)) ==> ((sizel ((mask m) s)) = ((count I) m)))) |- ((((sizel m) = (sizel s)) ==> ((sizel ((mask m) s)) = ((count I) m))) = T)
+T c==> ! c==> c= csizel f0 csizel b0 c= csizel cmask f0 b0 ccount part cI f0 c= c==> c= csizel f0 csizel f1 c= csizel cmask f0 f1 ccount part cI f0 cT
+- ((sizel m) = (sizel s)) |- (((sizel m) = (sizel s)) /\ (((sizel ((mask m) s)) = ((NUMERAL _0) + ((count I) m))) = ((sizel ((mask m) s)) = ((NUMERAL _0) + ((count I) m)))))
+T c==> c= csizel f0 csizel f1 c/\ c= csizel f0 csizel f1 c= c= csizel cmask f0 f1 c+ cNUMERAL c_0 ccount part cI f0 c= csizel cmask f0 f1 c+ cNUMERAL c_0 ccount part cI f0
+- (!P. (((P T) /\ (P F)) ==> (!x. (P x)))), ((P T) /\ (P F)) |- ((!P. (((P T) /\ (P F)) ==> (!x. (P x)))) /\ (!x. (P x)))
+T c==> ! c==> c/\ * b0 cT * b0 cF ! * b0 b1 c==> c/\ * f0 cT * f0 cF c/\ ! c==> c/\ * b0 cT * b0 cF ! * b0 b1 ! * f0 b0
+- (((count I) m) = (sizel ((mask m) s))) |- ((sizel ((mask m) s)) = ((count I) m))
+T c==> c= ccount part cI f0 csizel cmask f0 f1 c= csizel cmask f0 f1 ccount part cI f0
+- ((sizel m) = (sizel s)) |- (((sizel m) = (sizel s)) /\ (((sizel ((CONS x) ((mask m) s))) = ((NUMERAL (BIT1 _0)) + ((count I) m))) = ((sizel ((CONS x) ((mask m) s))) = ((NUMERAL (BIT1 _0)) + ((count I) m)))))
+T c==> c= csizel f0 csizel f1 c/\ c= csizel f0 csizel f1 c= c= csizel cCONS f2 cmask f0 f1 c+ cNUMERAL cBIT1 c_0 ccount part cI f0 c= csizel cCONS f2 cmask f0 f1 c+ cNUMERAL cBIT1 c_0 ccount part cI f0
+- |- (((!Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))) ==> ((\Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))) Q)) = ((\Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))) Q))
+T c= c==> ! c= c==> f0 ! * b0 b1 ! c==> f0 * b0 b1 * / c= c==> f0 ! * b0 b1 ! c==> f0 * b0 b1 f1 * / c= c==> f0 ! * b0 b1 ! c==> f0 * b0 b1 f1
+- |- ((((\b1. (b = b1)) b1) ==> (?b1. (b = b1))) = T)
+T c= c==> * / c= f0 b0 f1 c? / c= f0 b0 cT
+- |- (((sizel m) = (sizel s)) ==> (((sizel ((mask m) s)) = ((NUMERAL _0) + ((count I) m))) = ((sizel ((mask m) s)) = ((NUMERAL _0) + ((count I) m)))))
+T c==> c= csizel f0 csizel f1 c= c= csizel cmask f0 f1 c+ cNUMERAL c_0 ccount part cI f0 c= csizel cmask f0 f1 c+ cNUMERAL c_0 ccount part cI f0
+- (!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))) |- ((!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))) /\ (!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))))
+T c==> ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 c/\ ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1

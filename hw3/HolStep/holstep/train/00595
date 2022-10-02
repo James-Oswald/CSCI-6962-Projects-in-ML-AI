@@ -1,0 +1,909 @@
+N CONNECTED_INSERT
+C |- (!s. (!a. ((connected s) ==> ((connected (a INSERT s)) = ((s = EMPTY) \/ (a IN (closure s)))))))
+T c==> cconnected f0 c= cconnected * * part cINSERT f1 f0 c\/ c= f0 part cEMPTY cIN f1 * part cclosure f0
+D TRUTH
+A |- T
+T cT
+D ETA_AX
+A |- (!t. ((\x. (t x)) = t))
+T c= / * f0 b0 f0
+D EXCLUDED_MIDDLE
+A |- (!t. (t \/ (~ t)))
+T c\/ f0 c~ f0
+D BOOL_CASES_AX
+A |- (!t. ((t = T) \/ (t = F)))
+T c\/ c= f0 cT c= f0 cF
+D NOT_CLAUSES
+A |- ((!t. ((~ (~ t)) = t)) /\ (((~ T) = F) /\ ((~ F) = T)))
+T c/\ ! c= c~ c~ b0 b0 c/\ c= c~ cT cF c= c~ cF cT
+D NOT_EXISTS_THM
+A |- (!P. ((~ (?x. (P x))) = (!x. (~ (P x)))))
+T c= c~ c? / * f0 b0 ! c~ * f0 b0
+D NOT_FORALL_THM
+A |- (!P. ((~ (!x. (P x))) = (?x. (~ (P x)))))
+T c= c~ ! * f0 b0 c? / c~ * f0 b0
+D I_THM
+A |- (!x. ((I x) = x))
+T c= cI f0 f0
+D IN
+A |- (!P. (!x. ((x IN P) = (P x))))
+T c= cIN f0 f1 * f1 f0
+D EXTENSION
+A |- (!s. (!t. ((s = t) = (!x. ((x IN s) = (x IN t))))))
+T c= c= f0 f1 ! c= cIN b0 f0 cIN b0 f1
+D SUBSET
+A |- (!s. (!t. ((s SUBSET t) = (!x. ((x IN s) ==> (x IN t))))))
+T c= cSUBSET f0 f1 ! c==> cIN b0 f0 cIN b0 f1
+D NOT_IN_EMPTY
+A |- (!x. (~ (x IN EMPTY)))
+T c~ cIN f0 part cEMPTY
+D IN_UNION
+A |- (!s. (!t. (!x. ((x IN (s UNION t)) = ((x IN s) \/ (x IN t))))))
+T c= cIN f0 * * part cUNION f1 f2 c\/ cIN f0 f1 cIN f0 f2
+D IN_INTER
+A |- (!s. (!t. (!x. ((x IN (s INTER t)) = ((x IN s) /\ (x IN t))))))
+T c= cIN f0 * * part cINTER f1 f2 c/\ cIN f0 f1 cIN f0 f2
+D IN_INSERT
+A |- (!x. (!y. (!s. ((x IN (y INSERT s)) = ((x = y) \/ (x IN s))))))
+T c= cIN f0 * * part cINSERT f1 f2 c\/ c= f0 f1 cIN f0 f2
+D CONNECTED_CLOSED
+A |- (!s. ((connected s) = (~ (?e1. (?e2. ((closed e1) /\ ((closed e2) /\ ((s SUBSET (e1 UNION e2)) /\ (((e1 INTER (e2 INTER s)) = EMPTY) /\ ((~ ((e1 INTER s) = EMPTY)) /\ (~ ((e2 INTER s) = EMPTY))))))))))))
+T c= cconnected f0 c~ c? / c? / c/\ cclosed b0 c/\ cclosed b1 c/\ cSUBSET f0 * * part cUNION b0 b1 c/\ c= * * part cINTER b0 * * part cINTER b1 f0 part cEMPTY c/\ c~ c= * * part cINTER b0 f0 part cEMPTY c~ c= * * part cINTER b1 f0 part cEMPTY
+D CONNECTED_SING
+A |- (!a. (connected (a INSERT EMPTY)))
+T cconnected * * part cINSERT f0 part cEMPTY
+D CLOSED_SING
+A |- (!a. (closed (a INSERT EMPTY)))
+T cclosed * * part cINSERT f0 part cEMPTY
+D CLOSED_CLOSURE
+A |- (!s. (closed (closure s)))
+T cclosed * part cclosure f0
+D CLOSURE_SUBSET
+A |- (!s. (s SUBSET (closure s)))
+T cSUBSET f0 * part cclosure f0
+D CLOSURE_EMPTY
+A |- ((closure EMPTY) = EMPTY)
+T c= * part cclosure part cEMPTY part cEMPTY
+D CONNECTED_UNION_STRONG
+A |- (!s. (!t. (((connected s) /\ ((connected t) /\ (~ (((closure s) INTER t) = EMPTY)))) ==> (connected (s UNION t)))))
+T c==> c/\ cconnected f0 c/\ cconnected f1 c~ c= * * part cINTER * part cclosure f0 f1 part cEMPTY cconnected * * part cUNION f0 f1
+- |- (((!a. (!s. ((~ (((connected s) /\ (~ (!x. (~ (s x))))) ==> ((!x. ((s x) ==> ((closure s) x))) ==> ((~ ((!x. (((x = a) \/ (s x)) ==> ((x = a) \/ ((closure s) x)))) /\ ((!x. (~ ((x = a) /\ (((closure s) x) /\ ((x = a) \/ (s x)))))) /\ ((~ (!x. (~ ((x = a) /\ ((x = a) \/ (s x)))))) /\ (~ (!x. (~ (((closure s) x) /\ ((x = a) \/ (s x)))))))))) ==> ((closure s) a))))) ==> F))) ==> ((\a. (!s. ((~ (((connected s) /\ (~ (!x. (~ (s x))))) ==> ((!x. ((s x) ==> ((closure s) x))) ==> ((~ ((!x. (((x = a) \/ (s x)) ==> ((x = a) \/ ((closure s) x)))) /\ ((!x. (~ ((x = a) /\ (((closure s) x) /\ ((x = a) \/ (s x)))))) /\ ((~ (!x. (~ ((x = a) /\ ((x = a) \/ (s x)))))) /\ (~ (!x. (~ (((closure s) x) /\ ((x = a) \/ (s x)))))))))) ==> ((closure s) a))))) ==> F))) a)) = ((\a. (!s. ((~ (((connected s) /\ (~ (!x. (~ (s x))))) ==> ((!x. ((s x) ==> ((closure s) x))) ==> ((~ ((!x. (((x = a) \/ (s x)) ==> ((x = a) \/ ((closure s) x)))) /\ ((!x. (~ ((x = a) /\ (((closure s) x) /\ ((x = a) \/ (s x)))))) /\ ((~ (!x. (~ ((x = a) /\ ((x = a) \/ (s x)))))) /\ (~ (!x. (~ (((closure s) x) /\ ((x = a) \/ (s x)))))))))) ==> ((closure s) a))))) ==> F))) a))
+T c= c==> ! ! c==> c~ c==> c/\ cconnected b1 c~ ! c~ * b1 b2 c==> ! c==> * b1 b2 cclosure b1 b2 c==> c~ c/\ ! c==> c\/ c= b2 b0 * b1 b2 c\/ c= b2 b0 cclosure b1 b2 c/\ ! c~ c/\ c= b2 b0 c/\ cclosure b1 b2 c\/ c= b2 b0 * b1 b2 c/\ c~ ! c~ c/\ c= b2 b0 c\/ c= b2 b0 * b1 b2 c~ ! c~ c/\ cclosure b1 b2 c\/ c= b2 b0 * b1 b2 cclosure b1 b0 cF * / ! c==> c~ c==> c/\ cconnected b1 c~ ! c~ * b1 b2 c==> ! c==> * b1 b2 cclosure b1 b2 c==> c~ c/\ ! c==> c\/ c= b2 b0 * b1 b2 c\/ c= b2 b0 cclosure b1 b2 c/\ ! c~ c/\ c= b2 b0 c/\ cclosure b1 b2 c\/ c= b2 b0 * b1 b2 c/\ c~ ! c~ c/\ c= b2 b0 c\/ c= b2 b0 * b1 b2 c~ ! c~ c/\ cclosure b1 b2 c\/ c= b2 b0 * b1 b2 cclosure b1 b0 cF f0 * / ! c==> c~ c==> c/\ cconnected b1 c~ ! c~ * b1 b2 c==> ! c==> * b1 b2 cclosure b1 b2 c==> c~ c/\ ! c==> c\/ c= b2 b0 * b1 b2 c\/ c= b2 b0 cclosure b1 b2 c/\ ! c~ c/\ c= b2 b0 c/\ cclosure b1 b2 c\/ c= b2 b0 * b1 b2 c/\ c~ ! c~ c/\ c= b2 b0 c\/ c= b2 b0 * b1 b2 c~ ! c~ c/\ cclosure b1 b2 c\/ c= b2 b0 * b1 b2 cclosure b1 b0 cF f0
+- |- ((\s. ((~ ((((closure s) a) /\ ((connected s) /\ (~ (!x. (~ (s x)))))) ==> (~ (!x. (~ (((closure s) x) /\ (x = a))))))) ==> F)) s)
+T * / c==> c~ c==> c/\ cclosure b0 f0 c/\ cconnected b0 c~ ! c~ * b0 b1 c~ ! c~ c/\ cclosure b0 b1 c= b1 f0 cF f1
+- (!x. ((s x) ==> ((closure s) x))), (~ F), (((x = a) \/ ((I s) x)) /\ ((~ (x = a)) /\ (~ ((closure s) x)))), ((I s) x) |- ((~ F) /\ F)
+T c==> ! c==> * f0 b0 cclosure f0 b0 c==> c~ cF c==> c/\ c\/ c= f1 f2 cI f0 f1 c/\ c~ c= f1 f2 c~ cclosure f0 f1 c==> cI f0 f1 c/\ c~ cF cF
++ |- ((t = F) = (~ t))
+T c= c= f0 cF c~ f0
++ (!e1. (!e2. (~ ((closed e1) /\ ((closed e2) /\ (((a INSERT s) SUBSET (e1 UNION e2)) /\ (((e1 INTER (e2 INTER (a INSERT s))) = EMPTY) /\ ((~ ((e1 INTER (a INSERT s)) = EMPTY)) /\ (~ ((e2 INTER (a INSERT s)) = EMPTY)))))))))) |- (~ ((closed (a INSERT EMPTY)) /\ ((closed (closure s)) /\ (((a INSERT s) SUBSET ((a INSERT EMPTY) UNION (closure s))) /\ ((((a INSERT EMPTY) INTER ((closure s) INTER (a INSERT s))) = EMPTY) /\ ((~ (((a INSERT EMPTY) INTER (a INSERT s)) = EMPTY)) /\ (~ (((closure s) INTER (a INSERT s)) = EMPTY))))))))
+T c==> ! ! c~ c/\ cclosed b0 c/\ cclosed b1 c/\ cSUBSET * * part cINSERT f0 f1 * * part cUNION b0 b1 c/\ c= * * part cINTER b0 * * part cINTER b1 * * part cINSERT f0 f1 part cEMPTY c/\ c~ c= * * part cINTER b0 * * part cINSERT f0 f1 part cEMPTY c~ c= * * part cINTER b1 * * part cINSERT f0 f1 part cEMPTY c~ c/\ cclosed * * part cINSERT f0 part cEMPTY c/\ cclosed * part cclosure f1 c/\ cSUBSET * * part cINSERT f0 f1 * * part cUNION * * part cINSERT f0 part cEMPTY * part cclosure f1 c/\ c= * * part cINTER * * part cINSERT f0 part cEMPTY * * part cINTER * part cclosure f1 * * part cINSERT f0 f1 part cEMPTY c/\ c~ c= * * part cINTER * * part cINSERT f0 part cEMPTY * * part cINSERT f0 f1 part cEMPTY c~ c= * * part cINTER * part cclosure f1 * * part cINSERT f0 f1 part cEMPTY
+- ((x = a) /\ (((closure s) x) /\ ((x = a) \/ ((I s) x)))) |- (((~ ((I s) _288566)) \/ ((closure s) _288566)) = ((~ ((I s) _288566)) \/ ((closure s) _288566)))
+T c==> c/\ c= f0 f1 c/\ cclosure f2 f0 c\/ c= f0 f1 cI f2 f0 c= c\/ c~ cI f2 f3 cclosure f2 f3 c\/ c~ cI f2 f3 cclosure f2 f3
+- (~ ((I s) x)), ((I s) x) |- ((~ ((I s) x)) /\ ((I s) x))
+T c==> c~ cI f0 f1 c==> cI f0 f1 c/\ c~ cI f0 f1 cI f0 f1
++ |- (((!a. (connected (a INSERT EMPTY))) ==> ((\a. (connected (a INSERT EMPTY))) a)) = ((\a. (connected (a INSERT EMPTY))) a))
+T c= c==> ! cconnected * * part cINSERT b0 part cEMPTY * / cconnected * * part cINSERT b0 part cEMPTY f0 * / cconnected * * part cINSERT b0 part cEMPTY f0
++ |- ((t \/ F) = t)
+T c= c\/ f0 cF f0
++ (!x. (~ (((closure s) x) /\ (x = a)))) |- (!x. (((\x. (((closure s) a) /\ ((connected s) /\ (s x)))) x) ==> F))
+T c==> ! c~ c/\ cclosure f0 b0 c= b0 f1 ! c==> * / c/\ cclosure f0 f1 c/\ cconnected f0 * f0 b1 b0 cF
+- |- ((\a. (!s. ((~ (((connected s) /\ (~ (!x. (~ (s x))))) ==> ((!x. ((s x) ==> ((closure s) x))) ==> ((~ ((!x. (((x = a) \/ (s x)) ==> ((x = a) \/ ((closure s) x)))) /\ ((!x. (~ ((x = a) /\ (((closure s) x) /\ ((x = a) \/ (s x)))))) /\ ((~ (!x. (~ ((x = a) /\ ((x = a) \/ (s x)))))) /\ (~ (!x. (~ (((closure s) x) /\ ((x = a) \/ (s x)))))))))) ==> ((closure s) a))))) ==> F))) a)
+T * / ! c==> c~ c==> c/\ cconnected b1 c~ ! c~ * b1 b2 c==> ! c==> * b1 b2 cclosure b1 b2 c==> c~ c/\ ! c==> c\/ c= b2 b0 * b1 b2 c\/ c= b2 b0 cclosure b1 b2 c/\ ! c~ c/\ c= b2 b0 c/\ cclosure b1 b2 c\/ c= b2 b0 * b1 b2 c/\ c~ ! c~ c/\ c= b2 b0 c\/ c= b2 b0 * b1 b2 c~ ! c~ c/\ cclosure b1 b2 c\/ c= b2 b0 * b1 b2 cclosure b1 b0 cF f0
+- (~ (((connected s) /\ (~ (!x. (~ (s x))))) ==> ((!x. ((s x) ==> ((closure s) x))) ==> ((~ ((!x. (((x = a) \/ (s x)) ==> ((x = a) \/ ((closure s) x)))) /\ ((!x. (~ ((x = a) /\ (((closure s) x) /\ ((x = a) \/ (s x)))))) /\ ((~ (!x. (~ ((x = a) /\ ((x = a) \/ (s x)))))) /\ (~ (!x. (~ (((closure s) x) /\ ((x = a) \/ (s x)))))))))) ==> ((closure s) a))))) |- ((~ (((connected s) /\ (~ (!x. (~ (s x))))) ==> ((!x. ((s x) ==> ((closure s) x))) ==> ((~ ((!x. (((x = a) \/ (s x)) ==> ((x = a) \/ ((closure s) x)))) /\ ((!x. (~ ((x = a) /\ (((closure s) x) /\ ((x = a) \/ (s x)))))) /\ ((~ (!x. (~ ((x = a) /\ ((x = a) \/ (s x)))))) /\ (~ (!x. (~ (((closure s) x) /\ ((x = a) \/ (s x)))))))))) ==> ((closure s) a))))) /\ F)
+T c==> c~ c==> c/\ cconnected f0 c~ ! c~ * f0 b0 c==> ! c==> * f0 b0 cclosure f0 b0 c==> c~ c/\ ! c==> c\/ c= b0 f1 * f0 b0 c\/ c= b0 f1 cclosure f0 b0 c/\ ! c~ c/\ c= b0 f1 c/\ cclosure f0 b0 c\/ c= b0 f1 * f0 b0 c/\ c~ ! c~ c/\ c= b0 f1 c\/ c= b0 f1 * f0 b0 c~ ! c~ c/\ cclosure f0 b0 c\/ c= b0 f1 * f0 b0 cclosure f0 f1 c/\ c~ c==> c/\ cconnected f0 c~ ! c~ * f0 b0 c==> ! c==> * f0 b0 cclosure f0 b0 c==> c~ c/\ ! c==> c\/ c= b0 f1 * f0 b0 c\/ c= b0 f1 cclosure f0 b0 c/\ ! c~ c/\ c= b0 f1 c/\ cclosure f0 b0 c\/ c= b0 f1 * f0 b0 c/\ c~ ! c~ c/\ c= b0 f1 c\/ c= b0 f1 * f0 b0 c~ ! c~ c/\ cclosure f0 b0 c\/ c= b0 f1 * f0 b0 cclosure f0 f1 cF
++ (connected s) |- ((~ (((closure s) INTER (a INSERT EMPTY)) = EMPTY)) = ((connected s) /\ ((connected (a INSERT EMPTY)) /\ (~ (((closure s) INTER (a INSERT EMPTY)) = EMPTY)))))
+T c==> cconnected f0 c= c~ c= * * part cINTER * part cclosure f0 * * part cINSERT f1 part cEMPTY part cEMPTY c/\ cconnected f0 c/\ cconnected * * part cINSERT f1 part cEMPTY c~ c= * * part cINTER * part cclosure f0 * * part cINSERT f1 part cEMPTY part cEMPTY
+- (~ ((((closure s) a) /\ ((connected s) /\ (~ (!x. (~ (s x)))))) ==> (~ (!x. (~ (((closure s) x) /\ (x = a))))))) |- ((~ ((((closure s) a) /\ ((connected s) /\ (~ (!x. (~ (s x)))))) ==> (~ (!x. (~ (((closure s) x) /\ (x = a))))))) /\ F)
+T c==> c~ c==> c/\ cclosure f0 f1 c/\ cconnected f0 c~ ! c~ * f0 b0 c~ ! c~ c/\ cclosure f0 b0 c= b0 f1 c/\ c~ c==> c/\ cclosure f0 f1 c/\ cconnected f0 c~ ! c~ * f0 b0 c~ ! c~ c/\ cclosure f0 b0 c= b0 f1 cF
+- |- ((\t1. (!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))))) t1)
+T * / ! ! c= c\/ b0 c\/ b1 b2 c\/ c\/ b0 b1 b2 f0
+- |- (((~ (((connected s) /\ (~ (!x. (~ (s x))))) ==> ((!x. ((s x) ==> ((closure s) x))) ==> ((~ ((!x. (((x = a) \/ (s x)) ==> ((x = a) \/ ((closure s) x)))) /\ ((!x. (~ ((x = a) /\ (((closure s) x) /\ ((x = a) \/ (s x)))))) /\ ((~ (!x. (~ ((x = a) /\ ((x = a) \/ (s x)))))) /\ (~ (!x. (~ (((closure s) x) /\ ((x = a) \/ (s x)))))))))) ==> ((closure s) a))))) ==> F) ==> ((~ (((connected s) /\ (~ (!x. (~ (s x))))) ==> ((!x. ((s x) ==> ((closure s) x))) ==> ((~ ((!x. (((x = a) \/ (s x)) ==> ((x = a) \/ ((closure s) x)))) /\ ((!x. (~ ((x = a) /\ (((closure s) x) /\ ((x = a) \/ (s x)))))) /\ ((~ (!x. (~ ((x = a) /\ ((x = a) \/ (s x)))))) /\ (~ (!x. (~ (((closure s) x) /\ ((x = a) \/ (s x)))))))))) ==> ((closure s) a))))) ==> F))
+T c==> c==> c~ c==> c/\ cconnected f0 c~ ! c~ * f0 b0 c==> ! c==> * f0 b0 cclosure f0 b0 c==> c~ c/\ ! c==> c\/ c= b0 f1 * f0 b0 c\/ c= b0 f1 cclosure f0 b0 c/\ ! c~ c/\ c= b0 f1 c/\ cclosure f0 b0 c\/ c= b0 f1 * f0 b0 c/\ c~ ! c~ c/\ c= b0 f1 c\/ c= b0 f1 * f0 b0 c~ ! c~ c/\ cclosure f0 b0 c\/ c= b0 f1 * f0 b0 cclosure f0 f1 cF c==> c~ c==> c/\ cconnected f0 c~ ! c~ * f0 b0 c==> ! c==> * f0 b0 cclosure f0 b0 c==> c~ c/\ ! c==> c\/ c= b0 f1 * f0 b0 c\/ c= b0 f1 cclosure f0 b0 c/\ ! c~ c/\ c= b0 f1 c/\ cclosure f0 b0 c\/ c= b0 f1 * f0 b0 c/\ c~ ! c~ c/\ c= b0 f1 c\/ c= b0 f1 * f0 b0 c~ ! c~ c/\ cclosure f0 b0 c\/ c= b0 f1 * f0 b0 cclosure f0 f1 cF
+- |- ((~ (a = a)) ==> (a = a))
+T c==> c~ c= f0 f0 c= f0 f0
+- ((connected s) /\ (s x')) |- ((~ ((I s) x')) ==> ((I s) x'))
+T c==> c/\ cconnected f0 * f0 f1 c==> c~ cI f0 f1 cI f0 f1
++ (!x. ((s x) ==> ((closure s) x))), (~ ((closure s) a)), ((connected s) /\ (~ (!x. (~ (s x))))) |- ((((\x. ((((x = a) \/ (s x)) /\ ((~ (x = a)) /\ (~ ((closure s) x)))) \/ (((x = a) /\ (((closure s) x) /\ ((x = a) \/ (s x)))) \/ ((!x. ((~ (x = a)) \/ ((~ (x = a)) /\ (~ (s x))))) \/ (!x. ((~ ((closure s) x)) \/ ((~ (x = a)) /\ (~ (s x))))))))) x) ==> F) = T)
+T c==> ! c==> * f0 b0 cclosure f0 b0 c==> c~ cclosure f0 f1 c==> c/\ cconnected f0 c~ ! c~ * f0 b0 c= c==> * / c\/ c/\ c\/ c= b0 f1 * f0 b0 c/\ c~ c= b0 f1 c~ cclosure f0 b0 c\/ c/\ c= b0 f1 c/\ cclosure f0 b0 c\/ c= b0 f1 * f0 b0 c\/ ! c\/ c~ c= b1 f1 c/\ c~ c= b1 f1 c~ * f0 b1 ! c\/ c~ cclosure f0 b1 c/\ c~ c= b1 f1 c~ * f0 b1 f2 cF cT
++ (!x. (~ (((closure s) x) /\ (x = a)))) |- (((!x. ((~ ((closure s) x)) \/ (~ (x = a)))) ==> ((\x. ((~ ((closure s) x)) \/ (~ (x = a)))) _288653)) = ((\x. ((~ ((closure s) x)) \/ (~ (x = a)))) _288653))
+T c==> ! c~ c/\ cclosure f0 b0 c= b0 f1 c= c==> ! c\/ c~ cclosure f0 b0 c~ c= b0 f1 * / c\/ c~ cclosure f0 b0 c~ c= b0 f1 f2 * / c\/ c~ cclosure f0 b0 c~ c= b0 f1 f2
++ (((~ (x = a)) /\ (~ (s x))) /\ ((s x) \/ (x = a))), ((s x) ==> F), ((x = a) ==> F) |- F
+T c==> c/\ c/\ c~ c= f0 f1 c~ * f2 f0 c\/ * f2 f0 c= f0 f1 c==> c==> * f2 f0 cF c==> c==> c= f0 f1 cF cF
+- (~ F), (x = a), (((~ (x = a)) /\ (~ (s x))) /\ ((s x) \/ (x = a))) |- ((~ F) /\ F)
+T c==> c~ cF c==> c= f0 f1 c==> c/\ c/\ c~ c= f0 f1 c~ * f2 f0 c\/ * f2 f0 c= f0 f1 c/\ c~ cF cF
++ |- ((\P. ((~ (?x. (P x))) = (!x. (~ (P x))))) P)
+T * / c= c~ c? / * b0 b1 ! c~ * b0 b1 f0
++ |- ((a \/ b) = ((~ b) ==> a))
+T c= c\/ f0 f1 c==> c~ f1 f0
++ (((x = a) \/ (s x)) /\ ((~ (s x)) /\ (~ (x = a)))) |- ((x = a) ==> F)
+T c==> c/\ c\/ c= f0 f1 * f2 f0 c/\ c~ * f2 f0 c~ c= f0 f1 c==> c= f0 f1 cF
+- (x = a), ((x = a) /\ (((closure s) x) /\ ((x = a) \/ ((I s) x)))) |- ((((closure s) a) ==> F) = F)
+T c==> c= f0 f1 c==> c/\ c= f0 f1 c/\ cclosure f2 f0 c\/ c= f0 f1 cI f2 f0 c= c==> cclosure f2 f1 cF cF
+- |- ((?x'. (((x = a) \/ (s x)) /\ ((~ (x' = a)) /\ (~ ((closure s) x'))))) = (((x = a) \/ (s x)) /\ (?x. ((~ (x = a)) /\ (~ ((closure s) x))))))
+T c= c? / c/\ c\/ c= f0 f1 * f2 f0 c/\ c~ c= b0 f1 c~ cclosure f2 b0 c/\ c\/ c= f0 f1 * f2 f0 c? / c/\ c~ c= b0 f1 c~ cclosure f2 b0
++ |- (((!t. (t \/ (~ t))) ==> ((\t. (t \/ (~ t))) (s = EMPTY))) = ((\t. (t \/ (~ t))) (s = EMPTY)))
+T c= c==> ! c\/ b0 c~ b0 * / c\/ b0 c~ b0 c= f0 part cEMPTY * / c\/ b0 c~ b0 c= f0 part cEMPTY
++ |- ((((x = a) \/ (s x)) = ((s x) \/ (x = a))) = T)
+T c= c= c\/ c= f0 f1 * f2 f0 c\/ * f2 f0 c= f0 f1 cT
+- (~ ((closure s) a)), (x = a), ((x = a) /\ (((closure s) x) /\ ((x = a) \/ ((I s) x)))) |- ((~ F) ==> F)
+T c==> c~ cclosure f0 f1 c==> c= f2 f1 c==> c/\ c= f2 f1 c/\ cclosure f0 f2 c\/ c= f2 f1 cI f0 f2 c==> c~ cF cF
+- |- ((_288658 = _288659) ==> ((connected _288659) \/ (~ (connected _288658))))
+T c==> c= f0 f1 c\/ cconnected f1 c~ cconnected f0
++ |- (((?x. (P x)) \/ Q) = (?x. ((P x) \/ Q)))
+T c= c\/ c? / * f0 b0 f1 c? / c\/ * f0 b0 f1
+- (EMPTY = s) |- (s = EMPTY)
+T c==> c= part cEMPTY f0 c= f0 part cEMPTY
++ (~ (((x = a) \/ (s x)) = ((s x) \/ (x = a)))) |- ((((x = a) \/ (s x)) /\ ((~ (s x)) /\ (~ (x = a)))) \/ (((~ (x = a)) /\ (~ (s x))) /\ ((s x) \/ (x = a))))
+T c==> c~ c= c\/ c= f0 f1 * f2 f0 c\/ * f2 f0 c= f0 f1 c\/ c/\ c\/ c= f0 f1 * f2 f0 c/\ c~ * f2 f0 c~ c= f0 f1 c/\ c/\ c~ c= f0 f1 c~ * f2 f0 c\/ * f2 f0 c= f0 f1
+- |- ((\a. (!s. ((~ ((((closure s) a) /\ ((connected s) /\ (~ (!x. (~ (s x)))))) ==> (~ (!x. (~ (((closure s) x) /\ (x = a))))))) ==> F))) a)
+T * / ! c==> c~ c==> c/\ cclosure b1 b0 c/\ cconnected b1 c~ ! c~ * b1 b2 c~ ! c~ c/\ cclosure b1 b2 c= b2 b0 cF f0
++ (~ ((closure s) a)) |- (((x = a) /\ (((closure s) x) /\ ((x = a) \/ ((I s) x)))) ==> F)
+T c==> c~ cclosure f0 f1 c==> c/\ c= f2 f1 c/\ cclosure f0 f2 c\/ c= f2 f1 cI f0 f2 cF
+- |- ((((~ (((connected s) /\ (~ (!x. (~ (s x))))) ==> ((!x. ((s x) ==> ((closure s) x))) ==> ((~ ((!x. (((x = a) \/ (s x)) ==> ((x = a) \/ ((closure s) x)))) /\ ((!x. (~ ((x = a) /\ (((closure s) x) /\ ((x = a) \/ (s x)))))) /\ ((~ (!x. (~ ((x = a) /\ ((x = a) \/ (s x)))))) /\ (~ (!x. (~ (((closure s) x) /\ ((x = a) \/ (s x)))))))))) ==> ((closure s) a))))) ==> F) ==> ((~ (((connected s) /\ (~ (!x. (~ (s x))))) ==> ((!x. ((s x) ==> ((closure s) x))) ==> ((~ ((!x. (((x = a) \/ (s x)) ==> ((x = a) \/ ((closure s) x)))) /\ ((!x. (~ ((x = a) /\ (((closure s) x) /\ ((x = a) \/ (s x)))))) /\ ((~ (!x. (~ ((x = a) /\ ((x = a) \/ (s x)))))) /\ (~ (!x. (~ (((closure s) x) /\ ((x = a) \/ (s x)))))))))) ==> ((closure s) a))))) ==> F)) = ((~ (((connected s) /\ (~ (!x. (~ (s x))))) ==> ((!x. ((s x) ==> ((closure s) x))) ==> ((~ ((!x. (((x = a) \/ (s x)) ==> ((x = a) \/ ((closure s) x)))) /\ ((!x. (~ ((x = a) /\ (((closure s) x) /\ ((x = a) \/ (s x)))))) /\ ((~ (!x. (~ ((x = a) /\ ((x = a) \/ (s x)))))) /\ (~ (!x. (~ (((closure s) x) /\ ((x = a) \/ (s x)))))))))) ==> ((closure s) a))))) ==> F))
+T c= c==> c==> c~ c==> c/\ cconnected f0 c~ ! c~ * f0 b0 c==> ! c==> * f0 b0 cclosure f0 b0 c==> c~ c/\ ! c==> c\/ c= b0 f1 * f0 b0 c\/ c= b0 f1 cclosure f0 b0 c/\ ! c~ c/\ c= b0 f1 c/\ cclosure f0 b0 c\/ c= b0 f1 * f0 b0 c/\ c~ ! c~ c/\ c= b0 f1 c\/ c= b0 f1 * f0 b0 c~ ! c~ c/\ cclosure f0 b0 c\/ c= b0 f1 * f0 b0 cclosure f0 f1 cF c==> c~ c==> c/\ cconnected f0 c~ ! c~ * f0 b0 c==> ! c==> * f0 b0 cclosure f0 b0 c==> c~ c/\ ! c==> c\/ c= b0 f1 * f0 b0 c\/ c= b0 f1 cclosure f0 b0 c/\ ! c~ c/\ c= b0 f1 c/\ cclosure f0 b0 c\/ c= b0 f1 * f0 b0 c/\ c~ ! c~ c/\ c= b0 f1 c\/ c= b0 f1 * f0 b0 c~ ! c~ c/\ cclosure f0 b0 c\/ c= b0 f1 * f0 b0 cclosure f0 f1 cF c==> c~ c==> c/\ cconnected f0 c~ ! c~ * f0 b0 c==> ! c==> * f0 b0 cclosure f0 b0 c==> c~ c/\ ! c==> c\/ c= b0 f1 * f0 b0 c\/ c= b0 f1 cclosure f0 b0 c/\ ! c~ c/\ c= b0 f1 c/\ cclosure f0 b0 c\/ c= b0 f1 * f0 b0 c/\ c~ ! c~ c/\ c= b0 f1 c\/ c= b0 f1 * f0 b0 c~ ! c~ c/\ cclosure f0 b0 c\/ c= b0 f1 * f0 b0 cclosure f0 f1 cF
+- (((~ ((((closure s) a) /\ ((connected s) /\ (~ (!x. (~ (s x)))))) ==> (~ (!x. (~ (((closure s) x) /\ (x = a))))))) ==> F) ==> ((~ ((((closure s) a) /\ ((connected s) /\ (~ (!x. (~ (s x)))))) ==> (~ (!x. (~ (((closure s) x) /\ (x = a))))))) ==> F)) |- ((((~ ((((closure s) a) /\ ((connected s) /\ (~ (!x. (~ (s x)))))) ==> (~ (!x. (~ (((closure s) x) /\ (x = a))))))) ==> F) ==> ((~ ((((closure s) a) /\ ((connected s) /\ (~ (!x. (~ (s x)))))) ==> (~ (!x. (~ (((closure s) x) /\ (x = a))))))) ==> F)) /\ (((~ ((((closure s) a) /\ ((connected s) /\ (~ (!x. (~ (s x)))))) ==> (~ (!x. (~ (((closure s) x) /\ (x = a))))))) ==> F) ==> ((~ ((((closure s) a) /\ ((connected s) /\ (~ (!x. (~ (s x)))))) ==> (~ (!x. (~ (((closure s) x) /\ (x = a))))))) ==> F)))
+T c==> c==> c==> c~ c==> c/\ cclosure f0 f1 c/\ cconnected f0 c~ ! c~ * f0 b0 c~ ! c~ c/\ cclosure f0 b0 c= b0 f1 cF c==> c~ c==> c/\ cclosure f0 f1 c/\ cconnected f0 c~ ! c~ * f0 b0 c~ ! c~ c/\ cclosure f0 b0 c= b0 f1 cF c/\ c==> c==> c~ c==> c/\ cclosure f0 f1 c/\ cconnected f0 c~ ! c~ * f0 b0 c~ ! c~ c/\ cclosure f0 b0 c= b0 f1 cF c==> c~ c==> c/\ cclosure f0 f1 c/\ cconnected f0 c~ ! c~ * f0 b0 c~ ! c~ c/\ cclosure f0 b0 c= b0 f1 cF c==> c==> c~ c==> c/\ cclosure f0 f1 c/\ cconnected f0 c~ ! c~ * f0 b0 c~ ! c~ c/\ cclosure f0 b0 c= b0 f1 cF c==> c~ c==> c/\ cclosure f0 f1 c/\ cconnected f0 c~ ! c~ * f0 b0 c~ ! c~ c/\ cclosure f0 b0 c= b0 f1 cF
+- (~ F), (~ ((closure s) a)), ((x = a) /\ (((closure s) x) /\ ((x = a) \/ ((I s) x)))) |- ((~ F) /\ F)
+T c==> c~ cF c==> c~ cclosure f0 f1 c==> c/\ c= f2 f1 c/\ cclosure f0 f2 c\/ c= f2 f1 cI f0 f2 c/\ c~ cF cF
+- (!s. (!t. (((connected s) /\ ((connected t) /\ (~ (((closure s) INTER t) = EMPTY)))) ==> (connected (s UNION t))))) |- (!t. (((connected s) /\ ((connected t) /\ (~ (((closure s) INTER t) = EMPTY)))) ==> (connected (s UNION t))))
+T c==> ! ! c==> c/\ cconnected b0 c/\ cconnected b1 c~ c= * * part cINTER * part cclosure b0 b1 part cEMPTY cconnected * * part cUNION b0 b1 ! c==> c/\ cconnected f0 c/\ cconnected b0 c~ c= * * part cINTER * part cclosure f0 b0 part cEMPTY cconnected * * part cUNION f0 b0
+- (~ ((closure s) a)), (x = a), ((x = a) /\ (((closure s) x) /\ ((x = a) \/ ((I s) x)))) |- ((~ ((closure s) a)) /\ ((closure s) a))
+T c==> c~ cclosure f0 f1 c==> c= f2 f1 c==> c/\ c= f2 f1 c/\ cclosure f0 f2 c\/ c= f2 f1 cI f0 f2 c/\ c~ cclosure f0 f1 cclosure f0 f1
++ (!x. ((s x) ==> ((closure s) x))), (~ ((!x. (((x = a) \/ (s x)) ==> ((x = a) \/ ((closure s) x)))) /\ ((!x. (~ ((x = a) /\ (((closure s) x) /\ ((x = a) \/ (s x)))))) /\ ((~ (!x. (~ ((x = a) /\ ((x = a) \/ (s x)))))) /\ (~ (!x. (~ (((closure s) x) /\ ((x = a) \/ (s x)))))))))), ((connected s) /\ (~ (!x. (~ (s x))))) |- ((closure s) a)
+T c==> ! c==> * f0 b0 cclosure f0 b0 c==> c~ c/\ ! c==> c\/ c= b0 f1 * f0 b0 c\/ c= b0 f1 cclosure f0 b0 c/\ ! c~ c/\ c= b0 f1 c/\ cclosure f0 b0 c\/ c= b0 f1 * f0 b0 c/\ c~ ! c~ c/\ c= b0 f1 c\/ c= b0 f1 * f0 b0 c~ ! c~ c/\ cclosure f0 b0 c\/ c= b0 f1 * f0 b0 c==> c/\ cconnected f0 c~ ! c~ * f0 b0 cclosure f0 f1
++ |- ((t ==> T) = T)
+T c= c==> f0 cT cT
+- (_288658 = _288659) |- ((_288658 = _288659) /\ ((connected _288659) \/ (~ (connected _288658))))
+T c==> c= f0 f1 c/\ c= f0 f1 c\/ cconnected f1 c~ cconnected f0
++ (~ (s = EMPTY)), (connected s) |- ((!e1. (!e2. (~ ((closed e1) /\ ((closed e2) /\ (((a INSERT s) SUBSET (e1 UNION e2)) /\ (((e1 INTER (e2 INTER (a INSERT s))) = EMPTY) /\ ((~ ((e1 INTER (a INSERT s)) = EMPTY)) /\ (~ ((e2 INTER (a INSERT s)) = EMPTY)))))))))) ==> (a IN (closure s)))
+T c==> c~ c= f0 part cEMPTY c==> cconnected f0 c==> ! ! c~ c/\ cclosed b0 c/\ cclosed b1 c/\ cSUBSET * * part cINSERT f1 f0 * * part cUNION b0 b1 c/\ c= * * part cINTER b0 * * part cINTER b1 * * part cINSERT f1 f0 part cEMPTY c/\ c~ c= * * part cINTER b0 * * part cINSERT f1 f0 part cEMPTY c~ c= * * part cINTER b1 * * part cINSERT f1 f0 part cEMPTY cIN f1 * part cclosure f0
++ (((x = a) \/ ((I s) x)) /\ ((~ (x = a)) /\ (~ ((closure s) x)))) |- ((x = a) ==> F)
+T c==> c/\ c\/ c= f0 f1 cI f2 f0 c/\ c~ c= f0 f1 c~ cclosure f2 f0 c==> c= f0 f1 cF
++ (!x. (~ (((closure s) x) /\ (x = a)))) |- ((?x. (((closure s) a) /\ ((connected s) /\ (s x)))) ==> F)
+T c==> ! c~ c/\ cclosure f0 b0 c= b0 f1 c==> c? / c/\ cclosure f0 f1 c/\ cconnected f0 * f0 b0 cF
+- (~ (!x. (((x = a) \/ (s x)) = ((s x) \/ (x = a))))) |- F
+T c==> c~ ! c= c\/ c= b0 f0 * f1 b0 c\/ * f1 b0 c= b0 f0 cF
+- (!s. (!t. (((connected s) /\ ((connected t) /\ (~ (((closure s) INTER t) = EMPTY)))) ==> (connected (s UNION t))))) |- ((\t. (((connected s) /\ ((connected t) /\ (~ (((closure s) INTER t) = EMPTY)))) ==> (connected (s UNION t)))) t)
+T c==> ! ! c==> c/\ cconnected b0 c/\ cconnected b1 c~ c= * * part cINTER * part cclosure b0 b1 part cEMPTY cconnected * * part cUNION b0 b1 * / c==> c/\ cconnected f0 c/\ cconnected b0 c~ c= * * part cINTER * part cclosure f0 b0 part cEMPTY cconnected * * part cUNION f0 b0 f1
+- |- ((!s. (!x. (((x = a) \/ (s x)) = ((s x) \/ (x = a))))) = T)
+T c= ! ! c= c\/ c= b1 f0 * b0 b1 c\/ * b0 b1 c= b1 f0 cT
+- |- ((t ==> t) = T)
+T c= c==> f0 f0 cT
++ (!x. ((~ (x = a)) \/ ((~ (x = a)) /\ (~ ((I s) x))))) |- ((\x. (((~ (x = a)) \/ (~ (x = a))) /\ ((~ (x = a)) \/ (~ ((I s) x))))) _288568)
+T c==> ! c\/ c~ c= b0 f0 c/\ c~ c= b0 f0 c~ cI f1 b0 * / c/\ c\/ c~ c= b0 f0 c~ c= b0 f0 c\/ c~ c= b0 f0 c~ cI f1 b0 f2
++ (!x. ((s x) ==> ((closure s) x))), (((x = a) \/ ((I s) x)) /\ ((~ (x = a)) /\ (~ ((closure s) x)))), ((I s) x) |- (((I s) x) /\ F)
+T c==> ! c==> * f0 b0 cclosure f0 b0 c==> c/\ c\/ c= f1 f2 cI f0 f1 c/\ c~ c= f1 f2 c~ cclosure f0 f1 c==> cI f0 f1 c/\ cI f0 f1 cF
+- |- ((p \/ p) = p)
+T c= c\/ f0 f0 f0
+- (((closure s) a) /\ ((connected s) /\ (s x))) |- ((I s) x)
+T c==> c/\ cclosure f0 f1 c/\ cconnected f0 * f0 f2 cI f0 f2
++ (((closure s) a) /\ ((connected s) /\ (~ (!x. (~ (s x)))))) |- ((((closure s) a) /\ ((connected s) /\ (~ (!x. (~ (s x)))))) /\ (~ (!x. (~ (((closure s) x) /\ (x = a))))))
+T c==> c/\ cclosure f0 f1 c/\ cconnected f0 c~ ! c~ * f0 b0 c/\ c/\ cclosure f0 f1 c/\ cconnected f0 c~ ! c~ * f0 b0 c~ ! c~ c/\ cclosure f0 b0 c= b0 f1
+- |- (((!a. (!s. ((~ ((((closure s) a) /\ ((connected s) /\ (~ (!x. (~ (s x)))))) ==> (~ (!x. (~ (((closure s) x) /\ (x = a))))))) ==> F))) ==> ((\a. (!s. ((~ ((((closure s) a) /\ ((connected s) /\ (~ (!x. (~ (s x)))))) ==> (~ (!x. (~ (((closure s) x) /\ (x = a))))))) ==> F))) a)) = ((\a. (!s. ((~ ((((closure s) a) /\ ((connected s) /\ (~ (!x. (~ (s x)))))) ==> (~ (!x. (~ (((closure s) x) /\ (x = a))))))) ==> F))) a))
+T c= c==> ! ! c==> c~ c==> c/\ cclosure b1 b0 c/\ cconnected b1 c~ ! c~ * b1 b2 c~ ! c~ c/\ cclosure b1 b2 c= b2 b0 cF * / ! c==> c~ c==> c/\ cclosure b1 b0 c/\ cconnected b1 c~ ! c~ * b1 b2 c~ ! c~ c/\ cclosure b1 b2 c= b2 b0 cF f0 * / ! c==> c~ c==> c/\ cclosure b1 b0 c/\ cconnected b1 c~ ! c~ * b1 b2 c~ ! c~ c/\ cclosure b1 b2 c= b2 b0 cF f0
++ (!x. ((s x) ==> ((closure s) x))), (~ ((closure s) a)), ((((x = a) \/ (s x)) /\ ((~ (x = a)) /\ (~ ((closure s) x)))) \/ (((x = a) /\ (((closure s) x) /\ ((x = a) \/ (s x)))) \/ ((!x. ((~ (x = a)) \/ ((~ (x = a)) /\ (~ (s x))))) \/ (!x. ((~ ((closure s) x)) \/ ((~ (x = a)) /\ (~ (s x)))))))) |- (((!x. (((\x. ((connected s) /\ (s x))) x) ==> F)) ==> ((?x. ((connected s) /\ (s x))) ==> F)) = ((?x. ((connected s) /\ (s x))) ==> F))
+T c==> ! c==> * f0 b0 cclosure f0 b0 c==> c~ cclosure f0 f1 c==> c\/ c/\ c\/ c= f2 f1 * f0 f2 c/\ c~ c= f2 f1 c~ cclosure f0 f2 c\/ c/\ c= f2 f1 c/\ cclosure f0 f2 c\/ c= f2 f1 * f0 f2 c\/ ! c\/ c~ c= b0 f1 c/\ c~ c= b0 f1 c~ * f0 b0 ! c\/ c~ cclosure f0 b0 c/\ c~ c= b0 f1 c~ * f0 b0 c= c==> ! c==> * / c/\ cconnected f0 * f0 b1 b0 cF c==> c? / c/\ cconnected f0 * f0 b0 cF c==> c? / c/\ cconnected f0 * f0 b0 cF
++ (!x. ((s x) ==> ((closure s) x))), (~ ((!x. (((x = a) \/ (s x)) ==> ((x = a) \/ ((closure s) x)))) /\ ((!x. (~ ((x = a) /\ (((closure s) x) /\ ((x = a) \/ (s x)))))) /\ ((~ (!x. (~ ((x = a) /\ ((x = a) \/ (s x)))))) /\ (~ (!x. (~ (((closure s) x) /\ ((x = a) \/ (s x)))))))))), ((connected s) /\ (~ (!x. (~ (s x))))) |- ((~ ((closure s) a)) ==> F)
+T c==> ! c==> * f0 b0 cclosure f0 b0 c==> c~ c/\ ! c==> c\/ c= b0 f1 * f0 b0 c\/ c= b0 f1 cclosure f0 b0 c/\ ! c~ c/\ c= b0 f1 c/\ cclosure f0 b0 c\/ c= b0 f1 * f0 b0 c/\ c~ ! c~ c/\ c= b0 f1 c\/ c= b0 f1 * f0 b0 c~ ! c~ c/\ cclosure f0 b0 c\/ c= b0 f1 * f0 b0 c==> c/\ cconnected f0 c~ ! c~ * f0 b0 c==> c~ cclosure f0 f1 cF
++ ((connected s) /\ (s x')) |- ((((I s) x') ==> ((closure s) x')) = ((closure s) x'))
+T c==> c/\ cconnected f0 * f0 f1 c= c==> cI f0 f1 cclosure f0 f1 cclosure f0 f1
+- (_288654 = _288656), (_288655 = _288657) |- (((((I _288654) _288655) = ((I _288656) _288657)) ==> (((I _288656) _288657) \/ (~ ((I _288654) _288655)))) = (((I _288656) _288657) \/ (~ ((I _288654) _288655))))
+T c==> c= f0 f1 c==> c= f2 f3 c= c==> c= cI f0 f2 cI f1 f3 c\/ cI f1 f3 c~ cI f0 f2 c\/ cI f1 f3 c~ cI f0 f2
++ ((\x. ((((x = a) \/ (s x)) /\ ((~ (x = a)) /\ (~ ((closure s) x)))) \/ (((x = a) /\ (((closure s) x) /\ ((x = a) \/ (s x)))) \/ ((!x. ((~ (x = a)) \/ ((~ (x = a)) /\ (~ (s x))))) \/ (!x. ((~ ((closure s) x)) \/ ((~ (x = a)) /\ (~ (s x))))))))) x) |- ((((x = a) \/ (s x)) /\ ((~ (x = a)) /\ (~ ((closure s) x)))) \/ (((x = a) /\ (((closure s) x) /\ ((x = a) \/ (s x)))) \/ ((!x. ((~ (x = a)) \/ ((~ (x = a)) /\ (~ (s x))))) \/ (!x. ((~ ((closure s) x)) \/ ((~ (x = a)) /\ (~ (s x))))))))
+T c==> * / c\/ c/\ c\/ c= b0 f0 * f1 b0 c/\ c~ c= b0 f0 c~ cclosure f1 b0 c\/ c/\ c= b0 f0 c/\ cclosure f1 b0 c\/ c= b0 f0 * f1 b0 c\/ ! c\/ c~ c= b1 f0 c/\ c~ c= b1 f0 c~ * f1 b1 ! c\/ c~ cclosure f1 b1 c/\ c~ c= b1 f0 c~ * f1 b1 f2 c\/ c/\ c\/ c= f2 f0 * f1 f2 c/\ c~ c= f2 f0 c~ cclosure f1 f2 c\/ c/\ c= f2 f0 c/\ cclosure f1 f2 c\/ c= f2 f0 * f1 f2 c\/ ! c\/ c~ c= b0 f0 c/\ c~ c= b0 f0 c~ * f1 b0 ! c\/ c~ cclosure f1 b0 c/\ c~ c= b0 f0 c~ * f1 b0
++ ((connected s) /\ (s x')) |- ((I s) x')
+T c==> c/\ cconnected f0 * f0 f1 cI f0 f1
++ |- (((connected s) /\ (~ (s = EMPTY))) ==> ((s SUBSET (closure s)) ==> ((~ (((a INSERT s) SUBSET ((a INSERT EMPTY) UNION (closure s))) /\ ((((a INSERT EMPTY) INTER ((closure s) INTER (a INSERT s))) = EMPTY) /\ ((~ (((a INSERT EMPTY) INTER (a INSERT s)) = EMPTY)) /\ (~ (((closure s) INTER (a INSERT s)) = EMPTY)))))) ==> (a IN (closure s)))))
+T c==> c/\ cconnected f0 c~ c= f0 part cEMPTY c==> cSUBSET f0 * part cclosure f0 c==> c~ c/\ cSUBSET * * part cINSERT f1 f0 * * part cUNION * * part cINSERT f1 part cEMPTY * part cclosure f0 c/\ c= * * part cINTER * * part cINSERT f1 part cEMPTY * * part cINTER * part cclosure f0 * * part cINSERT f1 f0 part cEMPTY c/\ c~ c= * * part cINTER * * part cINSERT f1 part cEMPTY * * part cINSERT f1 f0 part cEMPTY c~ c= * * part cINTER * part cclosure f0 * * part cINSERT f1 f0 part cEMPTY cIN f1 * part cclosure f0
+- (!s. (!t. (((connected s) /\ ((connected t) /\ (~ (((closure s) INTER t) = EMPTY)))) ==> (connected (s UNION t))))) |- ((!s. (!t. (((connected s) /\ ((connected t) /\ (~ (((closure s) INTER t) = EMPTY)))) ==> (connected (s UNION t))))) /\ (!s. (!t. (((connected s) /\ ((connected t) /\ (~ (((closure s) INTER t) = EMPTY)))) ==> (connected (s UNION t))))))
+T c==> ! ! c==> c/\ cconnected b0 c/\ cconnected b1 c~ c= * * part cINTER * part cclosure b0 b1 part cEMPTY cconnected * * part cUNION b0 b1 c/\ ! ! c==> c/\ cconnected b0 c/\ cconnected b1 c~ c= * * part cINTER * part cclosure b0 b1 part cEMPTY cconnected * * part cUNION b0 b1 ! ! c==> c/\ cconnected b0 c/\ cconnected b1 c~ c= * * part cINTER * part cclosure b0 b1 part cEMPTY cconnected * * part cUNION b0 b1
+- |- ((\t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))) t3)
+T * / c= c\/ f0 c\/ f1 b0 c\/ c\/ f0 f1 b0 f2
++ (x = a), (((x = a) \/ (s x)) /\ ((~ (s x)) /\ (~ (x = a)))) |- (~ (a = a))
+T c==> c= f0 f1 c==> c/\ c\/ c= f0 f1 * f2 f0 c/\ c~ * f2 f0 c~ c= f0 f1 c~ c= f1 f1
+- |- (((((~ (!x. (((x = a) \/ (s x)) = ((s x) \/ (x = a))))) ==> F) ==> ((~ (!x. (((x = a) \/ (s x)) = ((s x) \/ (x = a))))) ==> F)) ==> (((~ (!x. (((x = a) \/ (s x)) = ((s x) \/ (x = a))))) ==> F) ==> ((~ (!x. (((x = a) \/ (s x)) = ((s x) \/ (x = a))))) ==> F))) = (((~ (!x. (((x = a) \/ (s x)) = ((s x) \/ (x = a))))) ==> F) ==> ((~ (!x. (((x = a) \/ (s x)) = ((s x) \/ (x = a))))) ==> F)))
+T c= c==> c==> c==> c~ ! c= c\/ c= b0 f0 * f1 b0 c\/ * f1 b0 c= b0 f0 cF c==> c~ ! c= c\/ c= b0 f0 * f1 b0 c\/ * f1 b0 c= b0 f0 cF c==> c==> c~ ! c= c\/ c= b0 f0 * f1 b0 c\/ * f1 b0 c= b0 f0 cF c==> c~ ! c= c\/ c= b0 f0 * f1 b0 c\/ * f1 b0 c= b0 f0 cF c==> c==> c~ ! c= c\/ c= b0 f0 * f1 b0 c\/ * f1 b0 c= b0 f0 cF c==> c~ ! c= c\/ c= b0 f0 * f1 b0 c\/ * f1 b0 c= b0 f0 cF
++ |- (((?x. (((x = a) \/ (s x)) /\ ((~ (x = a)) /\ (~ ((closure s) x))))) \/ (?x. (((x = a) /\ (((closure s) x) /\ ((x = a) \/ (s x)))) \/ ((!x. ((~ (x = a)) \/ ((~ (x = a)) /\ (~ (s x))))) \/ (!x. ((~ ((closure s) x)) \/ ((~ (x = a)) /\ (~ (s x))))))))) = (?x. ((((x = a) \/ (s x)) /\ ((~ (x = a)) /\ (~ ((closure s) x)))) \/ (((x = a) /\ (((closure s) x) /\ ((x = a) \/ (s x)))) \/ ((!x. ((~ (x = a)) \/ ((~ (x = a)) /\ (~ (s x))))) \/ (!x. ((~ ((closure s) x)) \/ ((~ (x = a)) /\ (~ (s x))))))))))
+T c= c\/ c? / c/\ c\/ c= b0 f0 * f1 b0 c/\ c~ c= b0 f0 c~ cclosure f1 b0 c? / c\/ c/\ c= b0 f0 c/\ cclosure f1 b0 c\/ c= b0 f0 * f1 b0 c\/ ! c\/ c~ c= b1 f0 c/\ c~ c= b1 f0 c~ * f1 b1 ! c\/ c~ cclosure f1 b1 c/\ c~ c= b1 f0 c~ * f1 b1 c? / c\/ c/\ c\/ c= b0 f0 * f1 b0 c/\ c~ c= b0 f0 c~ cclosure f1 b0 c\/ c/\ c= b0 f0 c/\ cclosure f1 b0 c\/ c= b0 f0 * f1 b0 c\/ ! c\/ c~ c= b1 f0 c/\ c~ c= b1 f0 c~ * f1 b1 ! c\/ c~ cclosure f1 b1 c/\ c~ c= b1 f0 c~ * f1 b1
++ (!x. (~ (((closure s) x) /\ (x = a)))) |- (!x. ((~ ((closure s) x)) \/ (~ (x = a))))
+T c==> ! c~ c/\ cclosure f0 b0 c= b0 f1 ! c\/ c~ cclosure f0 b0 c~ c= b0 f1
+- ((x = a) /\ (((closure s) x) /\ ((x = a) \/ ((I s) x)))) |- (((I s) x') = ((I s) x'))
+T c==> c/\ c= f0 f1 c/\ cclosure f2 f0 c\/ c= f0 f1 cI f2 f0 c= cI f2 f3 cI f2 f3
++ (((x = a) \/ (s x)) /\ ((~ (s x)) /\ (~ (x = a)))), ((s x) ==> F), ((x = a) ==> F) |- F
+T c==> c/\ c\/ c= f0 f1 * f2 f0 c/\ c~ * f2 f0 c~ c= f0 f1 c==> c==> * f2 f0 cF c==> c==> c= f0 f1 cF cF
++ |- (((!s. (s SUBSET (closure s))) ==> ((\s. (s SUBSET (closure s))) s)) = ((\s. (s SUBSET (closure s))) s))
+T c= c==> ! cSUBSET b0 * part cclosure b0 * / cSUBSET b0 * part cclosure b0 f0 * / cSUBSET b0 * part cclosure b0 f0
+- |- (((~ p) ==> p) = p)
+T c= c==> c~ f0 f0 f0
++ |- (((s SUBSET (closure s)) ==> ((~ (((a INSERT s) SUBSET ((a INSERT EMPTY) UNION (closure s))) /\ ((((a INSERT EMPTY) INTER ((closure s) INTER (a INSERT s))) = EMPTY) /\ ((~ (((a INSERT EMPTY) INTER (a INSERT s)) = EMPTY)) /\ (~ (((closure s) INTER (a INSERT s)) = EMPTY)))))) ==> (a IN (closure s)))) = ((~ (((a INSERT s) SUBSET ((a INSERT EMPTY) UNION (closure s))) /\ ((((a INSERT EMPTY) INTER ((closure s) INTER (a INSERT s))) = EMPTY) /\ ((~ (((a INSERT EMPTY) INTER (a INSERT s)) = EMPTY)) /\ (~ (((closure s) INTER (a INSERT s)) = EMPTY)))))) ==> (a IN (closure s))))
+T c= c==> cSUBSET f0 * part cclosure f0 c==> c~ c/\ cSUBSET * * part cINSERT f1 f0 * * part cUNION * * part cINSERT f1 part cEMPTY * part cclosure f0 c/\ c= * * part cINTER * * part cINSERT f1 part cEMPTY * * part cINTER * part cclosure f0 * * part cINSERT f1 f0 part cEMPTY c/\ c~ c= * * part cINTER * * part cINSERT f1 part cEMPTY * * part cINSERT f1 f0 part cEMPTY c~ c= * * part cINTER * part cclosure f0 * * part cINSERT f1 f0 part cEMPTY cIN f1 * part cclosure f0 c==> c~ c/\ cSUBSET * * part cINSERT f1 f0 * * part cUNION * * part cINSERT f1 part cEMPTY * part cclosure f0 c/\ c= * * part cINTER * * part cINSERT f1 part cEMPTY * * part cINTER * part cclosure f0 * * part cINSERT f1 f0 part cEMPTY c/\ c~ c= * * part cINTER * * part cINSERT f1 part cEMPTY * * part cINSERT f1 f0 part cEMPTY c~ c= * * part cINTER * part cclosure f0 * * part cINSERT f1 f0 part cEMPTY cIN f1 * part cclosure f0
++ |- ((a = a) = ((a = a) /\ (a = a)))
+T c= c= f0 f0 c/\ c= f0 f0 c= f0 f0
+- |- ((!e2. t) = t)
+T c= ! f0 f0
+- ((I s) x) |- ((~ ((I s) x)) ==> ((I s) x))
+T c==> cI f0 f1 c==> c~ cI f0 f1 cI f0 f1
+- |- ((!x'. ((~ (s x)) \/ ((closure s) x'))) = ((~ (s x)) \/ (!x. ((closure s) x))))
+T c= ! c\/ c~ * f0 f1 cclosure f0 b0 c\/ c~ * f0 f1 ! cclosure f0 b0
++ |- ((!a. ((connected s) ==> ((connected (a INSERT s)) = ((s = EMPTY) \/ (a IN (closure s)))))) = T)
+T c= ! c==> cconnected f0 c= cconnected * * part cINSERT b0 f0 c\/ c= f0 part cEMPTY cIN b0 * part cclosure f0 cT
+- (~ ((closure s) a)), (x = a), ((x = a) /\ (((closure s) x) /\ ((x = a) \/ ((I s) x)))) |- ((x = a) /\ F)
+T c==> c~ cclosure f0 f1 c==> c= f2 f1 c==> c/\ c= f2 f1 c/\ cclosure f0 f2 c\/ c= f2 f1 cI f0 f2 c/\ c= f2 f1 cF
+- |- ((((~ (!x. (((x = a) \/ (s x)) = ((s x) \/ (x = a))))) ==> F) ==> ((~ (!x. (((x = a) \/ (s x)) = ((s x) \/ (x = a))))) ==> F)) ==> (((~ (!x. (((x = a) \/ (s x)) = ((s x) \/ (x = a))))) ==> F) ==> ((~ (!x. (((x = a) \/ (s x)) = ((s x) \/ (x = a))))) ==> F)))
+T c==> c==> c==> c~ ! c= c\/ c= b0 f0 * f1 b0 c\/ * f1 b0 c= b0 f0 cF c==> c~ ! c= c\/ c= b0 f0 * f1 b0 c\/ * f1 b0 c= b0 f0 cF c==> c==> c~ ! c= c\/ c= b0 f0 * f1 b0 c\/ * f1 b0 c= b0 f0 cF c==> c~ ! c= c\/ c= b0 f0 * f1 b0 c\/ * f1 b0 c= b0 f0 cF
+- |- (((~ (!x. (((x = a) \/ (s x)) = ((s x) \/ (x = a))))) ==> F) ==> ((~ (!x. (((x = a) \/ (s x)) = ((s x) \/ (x = a))))) ==> F))
+T c==> c==> c~ ! c= c\/ c= b0 f0 * f1 b0 c\/ * f1 b0 c= b0 f0 cF c==> c~ ! c= c\/ c= b0 f0 * f1 b0 c\/ * f1 b0 c= b0 f0 cF
++ (!x. ((s x) ==> ((closure s) x))), (~ ((closure s) a)), ((connected s) /\ (~ (!x. (~ (s x))))) |- (((\x. ((((x = a) \/ (s x)) /\ ((~ (x = a)) /\ (~ ((closure s) x)))) \/ (((x = a) /\ (((closure s) x) /\ ((x = a) \/ (s x)))) \/ ((!x. ((~ (x = a)) \/ ((~ (x = a)) /\ (~ (s x))))) \/ (!x. ((~ ((closure s) x)) \/ ((~ (x = a)) /\ (~ (s x))))))))) x) ==> F)
+T c==> ! c==> * f0 b0 cclosure f0 b0 c==> c~ cclosure f0 f1 c==> c/\ cconnected f0 c~ ! c~ * f0 b0 c==> * / c\/ c/\ c\/ c= b0 f1 * f0 b0 c/\ c~ c= b0 f1 c~ cclosure f0 b0 c\/ c/\ c= b0 f1 c/\ cclosure f0 b0 c\/ c= b0 f1 * f0 b0 c\/ ! c\/ c~ c= b1 f1 c/\ c~ c= b1 f1 c~ * f0 b1 ! c\/ c~ cclosure f0 b1 c/\ c~ c= b1 f1 c~ * f0 b1 f2 cF
+- (x = a) |- ((connected s) = (connected s))
+T c==> c= f0 f1 c= cconnected f2 cconnected f2
+- (x = a), ((x = a) /\ (((closure s) x) /\ ((x = a) \/ ((I s) x)))) |- ((closure s) a)
+T c==> c= f0 f1 c==> c/\ c= f0 f1 c/\ cclosure f2 f0 c\/ c= f0 f1 cI f2 f0 cclosure f2 f1
+- (x = a) |- ((x = a) = (a = a))
+T c==> c= f0 f1 c= c= f0 f1 c= f1 f1
+- (((closure s) a) /\ ((connected s) /\ (s x))) |- ((connected s) /\ ((I s) x))
+T c==> c/\ cclosure f0 f1 c/\ cconnected f0 * f0 f2 c/\ cconnected f0 cI f0 f2
+- (~ ((I s) x')), ((connected s) /\ (s x')) |- ((~ ((I s) x')) /\ ((I s) x'))
+T c==> c~ cI f0 f1 c==> c/\ cconnected f0 * f0 f1 c/\ c~ cI f0 f1 cI f0 f1
+- |- ((!x'. ((~ (x = a)) \/ ((~ (x' = a)) /\ (~ (s x'))))) = ((~ (x = a)) \/ (!x. ((~ (x = a)) /\ (~ (s x))))))
+T c= ! c\/ c~ c= f0 f1 c/\ c~ c= b0 f1 c~ * f2 b0 c\/ c~ c= f0 f1 ! c/\ c~ c= b0 f1 c~ * f2 b0
++ |- ((f x) = ((I f) x))
+T c= * f0 f1 cI f0 f1
+- (!x. ((s x) ==> ((closure s) x))), (~ ((closure s) x')), ((connected s) /\ (s x')) |- ((~ ((closure s) x')) /\ ((closure s) x'))
+T c==> ! c==> * f0 b0 cclosure f0 b0 c==> c~ cclosure f0 f1 c==> c/\ cconnected f0 * f0 f1 c/\ c~ cclosure f0 f1 cclosure f0 f1
++ (!x. ((s x) ==> ((closure s) x))), (!x. ((~ ((closure s) x)) \/ ((~ (x = a)) /\ (~ ((I s) x))))), ((connected s) /\ (s x')) |- F
+T c==> ! c==> * f0 b0 cclosure f0 b0 c==> ! c\/ c~ cclosure f0 b0 c/\ c~ c= b0 f1 c~ cI f0 b0 c==> c/\ cconnected f0 * f0 f2 cF
++ |- (((!e1. (!e2. (~ ((closed e1) /\ ((closed e2) /\ (((a INSERT s) SUBSET (e1 UNION e2)) /\ (((e1 INTER (e2 INTER (a INSERT s))) = EMPTY) /\ ((~ ((e1 INTER (a INSERT s)) = EMPTY)) /\ (~ ((e2 INTER (a INSERT s)) = EMPTY)))))))))) ==> (a IN (closure s))) = ((connected (a INSERT s)) ==> (a IN (closure s))))
+T c= c==> ! ! c~ c/\ cclosed b0 c/\ cclosed b1 c/\ cSUBSET * * part cINSERT f0 f1 * * part cUNION b0 b1 c/\ c= * * part cINTER b0 * * part cINTER b1 * * part cINSERT f0 f1 part cEMPTY c/\ c~ c= * * part cINTER b0 * * part cINSERT f0 f1 part cEMPTY c~ c= * * part cINTER b1 * * part cINSERT f0 f1 part cEMPTY cIN f0 * part cclosure f1 c==> cconnected * * part cINSERT f0 f1 cIN f0 * part cclosure f1
+- |- ((t ==> F) = (~ t))
+T c= c==> f0 cF c~ f0
+- |- ((~ (_288655 = _288657)) \/ ((~ (_288654 = _288656)) \/ (((I _288656) _288657) \/ (~ ((I _288654) _288655)))))
+T c\/ c~ c= f0 f1 c\/ c~ c= f2 f3 c\/ cI f3 f1 c~ cI f2 f0
+- (~ F), (s x), (((x = a) \/ (s x)) /\ ((~ (s x)) /\ (~ (x = a)))) |- ((~ F) /\ F)
+T c==> c~ cF c==> * f0 f1 c==> c/\ c\/ c= f1 f2 * f0 f1 c/\ c~ * f0 f1 c~ c= f1 f2 c/\ c~ cF cF
+- (!x. ((s x) ==> ((closure s) x))), (!x. ((~ ((closure s) x)) \/ ((~ (x = a)) /\ (~ ((I s) x))))), (~ F), ((connected s) /\ (s x')) |- ((~ F) /\ F)
+T c==> ! c==> * f0 b0 cclosure f0 b0 c==> ! c\/ c~ cclosure f0 b0 c/\ c~ c= b0 f1 c~ cI f0 b0 c==> c~ cF c==> c/\ cconnected f0 * f0 f2 c/\ c~ cF cF
++ |- (((!s. ((connected s) = (~ (?e1. (?e2. ((closed e1) /\ ((closed e2) /\ ((s SUBSET (e1 UNION e2)) /\ (((e1 INTER (e2 INTER s)) = EMPTY) /\ ((~ ((e1 INTER s) = EMPTY)) /\ (~ ((e2 INTER s) = EMPTY)))))))))))) ==> ((\s. ((connected s) = (~ (?e1. (?e2. ((closed e1) /\ ((closed e2) /\ ((s SUBSET (e1 UNION e2)) /\ (((e1 INTER (e2 INTER s)) = EMPTY) /\ ((~ ((e1 INTER s) = EMPTY)) /\ (~ ((e2 INTER s) = EMPTY)))))))))))) s)) = ((\s. ((connected s) = (~ (?e1. (?e2. ((closed e1) /\ ((closed e2) /\ ((s SUBSET (e1 UNION e2)) /\ (((e1 INTER (e2 INTER s)) = EMPTY) /\ ((~ ((e1 INTER s) = EMPTY)) /\ (~ ((e2 INTER s) = EMPTY)))))))))))) s))
+T c= c==> ! c= cconnected b0 c~ c? / c? / c/\ cclosed b1 c/\ cclosed b2 c/\ cSUBSET b0 * * part cUNION b1 b2 c/\ c= * * part cINTER b1 * * part cINTER b2 b0 part cEMPTY c/\ c~ c= * * part cINTER b1 b0 part cEMPTY c~ c= * * part cINTER b2 b0 part cEMPTY * / c= cconnected b0 c~ c? / c? / c/\ cclosed b1 c/\ cclosed b2 c/\ cSUBSET b0 * * part cUNION b1 b2 c/\ c= * * part cINTER b1 * * part cINTER b2 b0 part cEMPTY c/\ c~ c= * * part cINTER b1 b0 part cEMPTY c~ c= * * part cINTER b2 b0 part cEMPTY f0 * / c= cconnected b0 c~ c? / c? / c/\ cclosed b1 c/\ cclosed b2 c/\ cSUBSET b0 * * part cUNION b1 b2 c/\ c= * * part cINTER b1 * * part cINTER b2 b0 part cEMPTY c/\ c~ c= * * part cINTER b1 b0 part cEMPTY c~ c= * * part cINTER b2 b0 part cEMPTY f0
+- (!x. ((~ (x = a)) \/ ((~ (x = a)) /\ (~ ((I s) x))))) |- ((~ (_288568 = a)) \/ (~ ((I s) _288568)))
+T c==> ! c\/ c~ c= b0 f0 c/\ c~ c= b0 f0 c~ cI f1 b0 c\/ c~ c= f2 f0 c~ cI f1 f2
++ |- ((\s. (closed (closure s))) s)
+T * / cclosed * part cclosure b0 f0
++ (~ ((!x. (((x = a) \/ (s x)) ==> ((x = a) \/ ((closure s) x)))) /\ ((!x. (~ ((x = a) /\ (((closure s) x) /\ ((x = a) \/ (s x)))))) /\ ((~ (!x. (~ ((x = a) /\ ((x = a) \/ (s x)))))) /\ (~ (!x. (~ (((closure s) x) /\ ((x = a) \/ (s x)))))))))) |- (((?x. ((((x = a) \/ (s x)) /\ ((~ (x = a)) /\ (~ ((closure s) x)))) \/ (((x = a) /\ (((closure s) x) /\ ((x = a) \/ (s x)))) \/ ((!x. ((~ (x = a)) \/ ((~ (x = a)) /\ (~ (s x))))) \/ (!x. ((~ ((closure s) x)) \/ ((~ (x = a)) /\ (~ (s x))))))))) ==> F) = F)
+T c==> c~ c/\ ! c==> c\/ c= b0 f0 * f1 b0 c\/ c= b0 f0 cclosure f1 b0 c/\ ! c~ c/\ c= b0 f0 c/\ cclosure f1 b0 c\/ c= b0 f0 * f1 b0 c/\ c~ ! c~ c/\ c= b0 f0 c\/ c= b0 f0 * f1 b0 c~ ! c~ c/\ cclosure f1 b0 c\/ c= b0 f0 * f1 b0 c= c==> c? / c\/ c/\ c\/ c= b0 f0 * f1 b0 c/\ c~ c= b0 f0 c~ cclosure f1 b0 c\/ c/\ c= b0 f0 c/\ cclosure f1 b0 c\/ c= b0 f0 * f1 b0 c\/ ! c\/ c~ c= b1 f0 c/\ c~ c= b1 f0 c~ * f1 b1 ! c\/ c~ cclosure f1 b1 c/\ c~ c= b1 f0 c~ * f1 b1 cF cF
+- |- (((!s. ((~ (((connected s) /\ (~ (!x. (~ (s x))))) ==> ((!x. ((s x) ==> ((closure s) x))) ==> ((~ ((!x. (((x = a) \/ (s x)) ==> ((x = a) \/ ((closure s) x)))) /\ ((!x. (~ ((x = a) /\ (((closure s) x) /\ ((x = a) \/ (s x)))))) /\ ((~ (!x. (~ ((x = a) /\ ((x = a) \/ (s x)))))) /\ (~ (!x. (~ (((closure s) x) /\ ((x = a) \/ (s x)))))))))) ==> ((closure s) a))))) ==> F)) ==> ((\s. ((~ (((connected s) /\ (~ (!x. (~ (s x))))) ==> ((!x. ((s x) ==> ((closure s) x))) ==> ((~ ((!x. (((x = a) \/ (s x)) ==> ((x = a) \/ ((closure s) x)))) /\ ((!x. (~ ((x = a) /\ (((closure s) x) /\ ((x = a) \/ (s x)))))) /\ ((~ (!x. (~ ((x = a) /\ ((x = a) \/ (s x)))))) /\ (~ (!x. (~ (((closure s) x) /\ ((x = a) \/ (s x)))))))))) ==> ((closure s) a))))) ==> F)) s)) = ((\s. ((~ (((connected s) /\ (~ (!x. (~ (s x))))) ==> ((!x. ((s x) ==> ((closure s) x))) ==> ((~ ((!x. (((x = a) \/ (s x)) ==> ((x = a) \/ ((closure s) x)))) /\ ((!x. (~ ((x = a) /\ (((closure s) x) /\ ((x = a) \/ (s x)))))) /\ ((~ (!x. (~ ((x = a) /\ ((x = a) \/ (s x)))))) /\ (~ (!x. (~ (((closure s) x) /\ ((x = a) \/ (s x)))))))))) ==> ((closure s) a))))) ==> F)) s))
+T c= c==> ! c==> c~ c==> c/\ cconnected b0 c~ ! c~ * b0 b1 c==> ! c==> * b0 b1 cclosure b0 b1 c==> c~ c/\ ! c==> c\/ c= b1 f0 * b0 b1 c\/ c= b1 f0 cclosure b0 b1 c/\ ! c~ c/\ c= b1 f0 c/\ cclosure b0 b1 c\/ c= b1 f0 * b0 b1 c/\ c~ ! c~ c/\ c= b1 f0 c\/ c= b1 f0 * b0 b1 c~ ! c~ c/\ cclosure b0 b1 c\/ c= b1 f0 * b0 b1 cclosure b0 f0 cF * / c==> c~ c==> c/\ cconnected b0 c~ ! c~ * b0 b1 c==> ! c==> * b0 b1 cclosure b0 b1 c==> c~ c/\ ! c==> c\/ c= b1 f0 * b0 b1 c\/ c= b1 f0 cclosure b0 b1 c/\ ! c~ c/\ c= b1 f0 c/\ cclosure b0 b1 c\/ c= b1 f0 * b0 b1 c/\ c~ ! c~ c/\ c= b1 f0 c\/ c= b1 f0 * b0 b1 c~ ! c~ c/\ cclosure b0 b1 c\/ c= b1 f0 * b0 b1 cclosure b0 f0 cF f1 * / c==> c~ c==> c/\ cconnected b0 c~ ! c~ * b0 b1 c==> ! c==> * b0 b1 cclosure b0 b1 c==> c~ c/\ ! c==> c\/ c= b1 f0 * b0 b1 c\/ c= b1 f0 cclosure b0 b1 c/\ ! c~ c/\ c= b1 f0 c/\ cclosure b0 b1 c\/ c= b1 f0 * b0 b1 c/\ c~ ! c~ c/\ c= b1 f0 c\/ c= b1 f0 * b0 b1 c~ ! c~ c/\ cclosure b0 b1 c\/ c= b1 f0 * b0 b1 cclosure b0 f0 cF f1
++ (~ ((!x. (((x = a) \/ (s x)) ==> ((x = a) \/ ((closure s) x)))) /\ ((!x. (~ ((x = a) /\ (((closure s) x) /\ ((x = a) \/ (s x)))))) /\ ((~ (!x. (~ ((x = a) /\ ((x = a) \/ (s x)))))) /\ (~ (!x. (~ (((closure s) x) /\ ((x = a) \/ (s x)))))))))) |- (?x. ((((x = a) \/ (s x)) /\ ((~ (x = a)) /\ (~ ((closure s) x)))) \/ (((x = a) /\ (((closure s) x) /\ ((x = a) \/ (s x)))) \/ ((!x. ((~ (x = a)) \/ ((~ (x = a)) /\ (~ (s x))))) \/ (!x. ((~ ((closure s) x)) \/ ((~ (x = a)) /\ (~ (s x)))))))))
+T c==> c~ c/\ ! c==> c\/ c= b0 f0 * f1 b0 c\/ c= b0 f0 cclosure f1 b0 c/\ ! c~ c/\ c= b0 f0 c/\ cclosure f1 b0 c\/ c= b0 f0 * f1 b0 c/\ c~ ! c~ c/\ c= b0 f0 c\/ c= b0 f0 * f1 b0 c~ ! c~ c/\ cclosure f1 b0 c\/ c= b0 f0 * f1 b0 c? / c\/ c/\ c\/ c= b0 f0 * f1 b0 c/\ c~ c= b0 f0 c~ cclosure f1 b0 c\/ c/\ c= b0 f0 c/\ cclosure f1 b0 c\/ c= b0 f0 * f1 b0 c\/ ! c\/ c~ c= b1 f0 c/\ c~ c= b1 f0 c~ * f1 b1 ! c\/ c~ cclosure f1 b1 c/\ c~ c= b1 f0 c~ * f1 b1
++ |- (p = ((~ p) ==> F))
+T c= f0 c==> c~ f0 cF
++ (!x. ((s x) ==> ((closure s) x))), (~ ((closure s) a)), ((connected s) /\ (~ (!x. (~ (s x))))) |- ((?x. ((((x = a) \/ (s x)) /\ ((~ (x = a)) /\ (~ ((closure s) x)))) \/ (((x = a) /\ (((closure s) x) /\ ((x = a) \/ (s x)))) \/ ((!x. ((~ (x = a)) \/ ((~ (x = a)) /\ (~ (s x))))) \/ (!x. ((~ ((closure s) x)) \/ ((~ (x = a)) /\ (~ (s x))))))))) ==> F)
+T c==> ! c==> * f0 b0 cclosure f0 b0 c==> c~ cclosure f0 f1 c==> c/\ cconnected f0 c~ ! c~ * f0 b0 c==> c? / c\/ c/\ c\/ c= b0 f1 * f0 b0 c/\ c~ c= b0 f1 c~ cclosure f0 b0 c\/ c/\ c= b0 f1 c/\ cclosure f0 b0 c\/ c= b0 f1 * f0 b0 c\/ ! c\/ c~ c= b1 f1 c/\ c~ c= b1 f1 c~ * f0 b1 ! c\/ c~ cclosure f0 b1 c/\ c~ c= b1 f1 c~ * f0 b1 cF
+- |- ((?x. t) = t)
+T c= c? / f0 f0
++ (!x. ((s x) ==> ((closure s) x))), (~ ((closure s) a)), ((((x = a) \/ (s x)) /\ ((~ (x = a)) /\ (~ ((closure s) x)))) \/ (((x = a) /\ (((closure s) x) /\ ((x = a) \/ (s x)))) \/ ((!x. ((~ (x = a)) \/ ((~ (x = a)) /\ (~ (s x))))) \/ (!x. ((~ ((closure s) x)) \/ ((~ (x = a)) /\ (~ (s x)))))))) |- (((\x. ((connected s) /\ (s x))) x') ==> F)
+T c==> ! c==> * f0 b0 cclosure f0 b0 c==> c~ cclosure f0 f1 c==> c\/ c/\ c\/ c= f2 f1 * f0 f2 c/\ c~ c= f2 f1 c~ cclosure f0 f2 c\/ c/\ c= f2 f1 c/\ cclosure f0 f2 c\/ c= f2 f1 * f0 f2 c\/ ! c\/ c~ c= b0 f1 c/\ c~ c= b0 f1 c~ * f0 b0 ! c\/ c~ cclosure f0 b0 c/\ c~ c= b0 f1 c~ * f0 b0 c==> * / c/\ cconnected f0 * f0 b0 f3 cF
+- |- ((!x'. ((~ ((closure s) x)) \/ ((~ (x' = a)) /\ (~ (s x'))))) = ((~ ((closure s) x)) \/ (!x. ((~ (x = a)) /\ (~ (s x))))))
+T c= ! c\/ c~ cclosure f0 f1 c/\ c~ c= b0 f2 c~ * f0 b0 c\/ c~ cclosure f0 f1 ! c/\ c~ c= b0 f2 c~ * f0 b0
++ |- ((\a. (connected (a INSERT EMPTY))) a)
+T * / cconnected * * part cINSERT b0 part cEMPTY f0
+- |- (((((~ ((((closure s) a) /\ ((connected s) /\ (~ (!x. (~ (s x)))))) ==> (~ (!x. (~ (((closure s) x) /\ (x = a))))))) ==> F) ==> ((~ ((((closure s) a) /\ ((connected s) /\ (~ (!x. (~ (s x)))))) ==> (~ (!x. (~ (((closure s) x) /\ (x = a))))))) ==> F)) ==> (((~ ((((closure s) a) /\ ((connected s) /\ (~ (!x. (~ (s x)))))) ==> (~ (!x. (~ (((closure s) x) /\ (x = a))))))) ==> F) ==> ((~ ((((closure s) a) /\ ((connected s) /\ (~ (!x. (~ (s x)))))) ==> (~ (!x. (~ (((closure s) x) /\ (x = a))))))) ==> F))) = (((~ ((((closure s) a) /\ ((connected s) /\ (~ (!x. (~ (s x)))))) ==> (~ (!x. (~ (((closure s) x) /\ (x = a))))))) ==> F) ==> ((~ ((((closure s) a) /\ ((connected s) /\ (~ (!x. (~ (s x)))))) ==> (~ (!x. (~ (((closure s) x) /\ (x = a))))))) ==> F)))
+T c= c==> c==> c==> c~ c==> c/\ cclosure f0 f1 c/\ cconnected f0 c~ ! c~ * f0 b0 c~ ! c~ c/\ cclosure f0 b0 c= b0 f1 cF c==> c~ c==> c/\ cclosure f0 f1 c/\ cconnected f0 c~ ! c~ * f0 b0 c~ ! c~ c/\ cclosure f0 b0 c= b0 f1 cF c==> c==> c~ c==> c/\ cclosure f0 f1 c/\ cconnected f0 c~ ! c~ * f0 b0 c~ ! c~ c/\ cclosure f0 b0 c= b0 f1 cF c==> c~ c==> c/\ cclosure f0 f1 c/\ cconnected f0 c~ ! c~ * f0 b0 c~ ! c~ c/\ cclosure f0 b0 c= b0 f1 cF c==> c==> c~ c==> c/\ cclosure f0 f1 c/\ cconnected f0 c~ ! c~ * f0 b0 c~ ! c~ c/\ cclosure f0 b0 c= b0 f1 cF c==> c~ c==> c/\ cclosure f0 f1 c/\ cconnected f0 c~ ! c~ * f0 b0 c~ ! c~ c/\ cclosure f0 b0 c= b0 f1 cF
++ (!x. ((~ ((closure s) x)) \/ ((~ (x = a)) /\ (~ ((I s) x))))) |- (((!x. (((~ ((closure s) x)) \/ (~ (x = a))) /\ ((~ ((closure s) x)) \/ (~ ((I s) x))))) ==> ((\x. (((~ ((closure s) x)) \/ (~ (x = a))) /\ ((~ ((closure s) x)) \/ (~ ((I s) x))))) _288570)) = ((\x. (((~ ((closure s) x)) \/ (~ (x = a))) /\ ((~ ((closure s) x)) \/ (~ ((I s) x))))) _288570))
+T c==> ! c\/ c~ cclosure f0 b0 c/\ c~ c= b0 f1 c~ cI f0 b0 c= c==> ! c/\ c\/ c~ cclosure f0 b0 c~ c= b0 f1 c\/ c~ cclosure f0 b0 c~ cI f0 b0 * / c/\ c\/ c~ cclosure f0 b0 c~ c= b0 f1 c\/ c~ cclosure f0 b0 c~ cI f0 b0 f2 * / c/\ c\/ c~ cclosure f0 b0 c~ c= b0 f1 c\/ c~ cclosure f0 b0 c~ cI f0 b0 f2
+- (!s. (!t. (((connected s) /\ ((connected t) /\ (~ (((closure s) INTER t) = EMPTY)))) ==> (connected (s UNION t))))) |- ((((connected s) /\ ((connected t) /\ (~ (((closure s) INTER t) = EMPTY)))) ==> (connected (s UNION t))) = T)
+T c==> ! ! c==> c/\ cconnected b0 c/\ cconnected b1 c~ c= * * part cINTER * part cclosure b0 b1 part cEMPTY cconnected * * part cUNION b0 b1 c= c==> c/\ cconnected f0 c/\ cconnected f1 c~ c= * * part cINTER * part cclosure f0 f1 part cEMPTY cconnected * * part cUNION f0 f1 cT
++ (!x. ((s x) ==> ((closure s) x))), (~ ((closure s) a)), ((((x = a) \/ (s x)) /\ ((~ (x = a)) /\ (~ ((closure s) x)))) \/ (((x = a) /\ (((closure s) x) /\ ((x = a) \/ (s x)))) \/ ((!x. ((~ (x = a)) \/ ((~ (x = a)) /\ (~ (s x))))) \/ (!x. ((~ ((closure s) x)) \/ ((~ (x = a)) /\ (~ (s x)))))))), ((\x. ((connected s) /\ (s x))) x') |- (((\x. ((connected s) /\ (s x))) x') /\ F)
+T c==> ! c==> * f0 b0 cclosure f0 b0 c==> c~ cclosure f0 f1 c==> c\/ c/\ c\/ c= f2 f1 * f0 f2 c/\ c~ c= f2 f1 c~ cclosure f0 f2 c\/ c/\ c= f2 f1 c/\ cclosure f0 f2 c\/ c= f2 f1 * f0 f2 c\/ ! c\/ c~ c= b0 f1 c/\ c~ c= b0 f1 c~ * f0 b0 ! c\/ c~ cclosure f0 b0 c/\ c~ c= b0 f1 c~ * f0 b0 c==> * / c/\ cconnected f0 * f0 b0 f3 c/\ * / c/\ cconnected f0 * f0 b0 f3 cF
+- |- ((!s. (((connected s) /\ (~ (!x. (~ (s x))))) ==> ((!x. ((s x) ==> ((closure s) x))) ==> ((~ ((!x. (((x = a) \/ (s x)) ==> ((x = a) \/ ((closure s) x)))) /\ ((!x. (~ ((x = a) /\ (((closure s) x) /\ ((x = a) \/ (s x)))))) /\ ((~ (!x. (~ ((x = a) /\ ((x = a) \/ (s x)))))) /\ (~ (!x. (~ (((closure s) x) /\ ((x = a) \/ (s x)))))))))) ==> ((closure s) a))))) = T)
+T c= ! c==> c/\ cconnected b0 c~ ! c~ * b0 b1 c==> ! c==> * b0 b1 cclosure b0 b1 c==> c~ c/\ ! c==> c\/ c= b1 f0 * b0 b1 c\/ c= b1 f0 cclosure b0 b1 c/\ ! c~ c/\ c= b1 f0 c/\ cclosure b0 b1 c\/ c= b1 f0 * b0 b1 c/\ c~ ! c~ c/\ c= b1 f0 c\/ c= b1 f0 * b0 b1 c~ ! c~ c/\ cclosure b0 b1 c\/ c= b1 f0 * b0 b1 cclosure b0 f0 cT
++ |- ((\t. (t \/ (~ t))) (s = EMPTY))
+T * / c\/ b0 c~ b0 c= f0 part cEMPTY
++ |- (((connected s) /\ (~ (!x. ((x IN s) = (x IN EMPTY))))) ==> ((!x. ((x IN s) ==> (x IN (closure s)))) ==> ((~ ((!x. ((x IN (a INSERT s)) ==> (x IN ((a INSERT EMPTY) UNION (closure s))))) /\ ((!x. ((x IN ((a INSERT EMPTY) INTER ((closure s) INTER (a INSERT s)))) = (x IN EMPTY))) /\ ((~ (!x. ((x IN ((a INSERT EMPTY) INTER (a INSERT s))) = (x IN EMPTY)))) /\ (~ (!x. ((x IN ((closure s) INTER (a INSERT s))) = (x IN EMPTY)))))))) ==> (a IN (closure s)))))
+T c==> c/\ cconnected f0 c~ ! c= cIN b0 f0 cIN b0 part cEMPTY c==> ! c==> cIN b0 f0 cIN b0 * part cclosure f0 c==> c~ c/\ ! c==> cIN b0 * * part cINSERT f1 f0 cIN b0 * * part cUNION * * part cINSERT f1 part cEMPTY * part cclosure f0 c/\ ! c= cIN b0 * * part cINTER * * part cINSERT f1 part cEMPTY * * part cINTER * part cclosure f0 * * part cINSERT f1 f0 cIN b0 part cEMPTY c/\ c~ ! c= cIN b0 * * part cINTER * * part cINSERT f1 part cEMPTY * * part cINSERT f1 f0 cIN b0 part cEMPTY c~ ! c= cIN b0 * * part cINTER * part cclosure f0 * * part cINSERT f1 f0 cIN b0 part cEMPTY cIN f1 * part cclosure f0
+- (~ F), (x = a), (((x = a) \/ ((I s) x)) /\ ((~ (x = a)) /\ (~ ((closure s) x)))) |- ((~ F) /\ F)
+T c==> c~ cF c==> c= f0 f1 c==> c/\ c\/ c= f0 f1 cI f2 f0 c/\ c~ c= f0 f1 c~ cclosure f2 f0 c/\ c~ cF cF
+- ((~ (!x. (((x = a) \/ (s x)) = ((s x) \/ (x = a))))) ==> F) |- ((((~ (!x. (((x = a) \/ (s x)) = ((s x) \/ (x = a))))) ==> F) ==> ((~ (!x. (((x = a) \/ (s x)) = ((s x) \/ (x = a))))) ==> F)) ==> ((~ (!x. (((x = a) \/ (s x)) = ((s x) \/ (x = a))))) ==> F))
+T c==> c==> c~ ! c= c\/ c= b0 f0 * f1 b0 c\/ * f1 b0 c= b0 f0 cF c==> c==> c==> c~ ! c= c\/ c= b0 f0 * f1 b0 c\/ * f1 b0 c= b0 f0 cF c==> c~ ! c= c\/ c= b0 f0 * f1 b0 c\/ * f1 b0 c= b0 f0 cF c==> c~ ! c= c\/ c= b0 f0 * f1 b0 c\/ * f1 b0 c= b0 f0 cF
+- |- ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))
+T c= c\/ f0 c\/ f1 f2 c\/ c\/ f0 f1 f2
+- (x = a), (((x = a) \/ (s x)) /\ ((~ (s x)) /\ (~ (x = a)))) |- ((~ F) ==> F)
+T c==> c= f0 f1 c==> c/\ c\/ c= f0 f1 * f2 f0 c/\ c~ * f2 f0 c~ c= f0 f1 c==> c~ cF cF
++ (x = a), (((~ (x = a)) /\ (~ (s x))) /\ ((s x) \/ (x = a))) |- (~ (a = a))
+T c==> c= f0 f1 c==> c/\ c/\ c~ c= f0 f1 c~ * f2 f0 c\/ * f2 f0 c= f0 f1 c~ c= f1 f1
++ |- ((((connected s) /\ (~ (!x. ((x IN s) = (x IN EMPTY))))) ==> ((!x. ((x IN s) ==> (x IN (closure s)))) ==> ((~ ((!x. ((x IN (a INSERT s)) ==> (x IN ((a INSERT EMPTY) UNION (closure s))))) /\ ((!x. ((x IN ((a INSERT EMPTY) INTER ((closure s) INTER (a INSERT s)))) = (x IN EMPTY))) /\ ((~ (!x. ((x IN ((a INSERT EMPTY) INTER (a INSERT s))) = (x IN EMPTY)))) /\ (~ (!x. ((x IN ((closure s) INTER (a INSERT s))) = (x IN EMPTY)))))))) ==> (a IN (closure s))))) = (((connected s) /\ (~ (s = EMPTY))) ==> ((s SUBSET (closure s)) ==> ((~ (((a INSERT s) SUBSET ((a INSERT EMPTY) UNION (closure s))) /\ ((((a INSERT EMPTY) INTER ((closure s) INTER (a INSERT s))) = EMPTY) /\ ((~ (((a INSERT EMPTY) INTER (a INSERT s)) = EMPTY)) /\ (~ (((closure s) INTER (a INSERT s)) = EMPTY)))))) ==> (a IN (closure s))))))
+T c= c==> c/\ cconnected f0 c~ ! c= cIN b0 f0 cIN b0 part cEMPTY c==> ! c==> cIN b0 f0 cIN b0 * part cclosure f0 c==> c~ c/\ ! c==> cIN b0 * * part cINSERT f1 f0 cIN b0 * * part cUNION * * part cINSERT f1 part cEMPTY * part cclosure f0 c/\ ! c= cIN b0 * * part cINTER * * part cINSERT f1 part cEMPTY * * part cINTER * part cclosure f0 * * part cINSERT f1 f0 cIN b0 part cEMPTY c/\ c~ ! c= cIN b0 * * part cINTER * * part cINSERT f1 part cEMPTY * * part cINSERT f1 f0 cIN b0 part cEMPTY c~ ! c= cIN b0 * * part cINTER * part cclosure f0 * * part cINSERT f1 f0 cIN b0 part cEMPTY cIN f1 * part cclosure f0 c==> c/\ cconnected f0 c~ c= f0 part cEMPTY c==> cSUBSET f0 * part cclosure f0 c==> c~ c/\ cSUBSET * * part cINSERT f1 f0 * * part cUNION * * part cINSERT f1 part cEMPTY * part cclosure f0 c/\ c= * * part cINTER * * part cINSERT f1 part cEMPTY * * part cINTER * part cclosure f0 * * part cINSERT f1 f0 part cEMPTY c/\ c~ c= * * part cINTER * * part cINSERT f1 part cEMPTY * * part cINSERT f1 f0 part cEMPTY c~ c= * * part cINTER * part cclosure f0 * * part cINSERT f1 f0 part cEMPTY cIN f1 * part cclosure f0
++ (~ (s = EMPTY)) |- ((connected s) ==> ((connected (a INSERT s)) = (a IN (closure s))))
+T c==> c~ c= f0 part cEMPTY c==> cconnected f0 c= cconnected * * part cINSERT f1 f0 cIN f1 * part cclosure f0
+- ((~ ((((closure s) a) /\ ((connected s) /\ (~ (!x. (~ (s x)))))) ==> (~ (!x. (~ (((closure s) x) /\ (x = a))))))) ==> F), (((~ ((((closure s) a) /\ ((connected s) /\ (~ (!x. (~ (s x)))))) ==> (~ (!x. (~ (((closure s) x) /\ (x = a))))))) ==> F) ==> ((~ ((((closure s) a) /\ ((connected s) /\ (~ (!x. (~ (s x)))))) ==> (~ (!x. (~ (((closure s) x) /\ (x = a))))))) ==> F)) |- (((~ ((((closure s) a) /\ ((connected s) /\ (~ (!x. (~ (s x)))))) ==> (~ (!x. (~ (((closure s) x) /\ (x = a))))))) ==> F) /\ ((~ ((((closure s) a) /\ ((connected s) /\ (~ (!x. (~ (s x)))))) ==> (~ (!x. (~ (((closure s) x) /\ (x = a))))))) ==> F))
+T c==> c==> c~ c==> c/\ cclosure f0 f1 c/\ cconnected f0 c~ ! c~ * f0 b0 c~ ! c~ c/\ cclosure f0 b0 c= b0 f1 cF c==> c==> c==> c~ c==> c/\ cclosure f0 f1 c/\ cconnected f0 c~ ! c~ * f0 b0 c~ ! c~ c/\ cclosure f0 b0 c= b0 f1 cF c==> c~ c==> c/\ cclosure f0 f1 c/\ cconnected f0 c~ ! c~ * f0 b0 c~ ! c~ c/\ cclosure f0 b0 c= b0 f1 cF c/\ c==> c~ c==> c/\ cclosure f0 f1 c/\ cconnected f0 c~ ! c~ * f0 b0 c~ ! c~ c/\ cclosure f0 b0 c= b0 f1 cF c==> c~ c==> c/\ cclosure f0 f1 c/\ cconnected f0 c~ ! c~ * f0 b0 c~ ! c~ c/\ cclosure f0 b0 c= b0 f1 cF
++ (!x. (~ (((closure s) x) /\ (x = a)))) |- ((\x. ((~ ((closure s) x)) \/ (~ (x = a)))) _288653)
+T c==> ! c~ c/\ cclosure f0 b0 c= b0 f1 * / c\/ c~ cclosure f0 b0 c~ c= b0 f1 f2
++ (!x. (~ (((closure s) x) /\ (x = a)))), (((closure s) a) /\ ((connected s) /\ (s x))) |- ((((closure s) a) /\ ((connected s) /\ (s x))) /\ F)
+T c==> ! c~ c/\ cclosure f0 b0 c= b0 f1 c==> c/\ cclosure f0 f1 c/\ cconnected f0 * f0 f2 c/\ c/\ cclosure f0 f1 c/\ cconnected f0 * f0 f2 cF
+- |- ((!x. (((x = a) \/ (s x)) = ((s x) \/ (x = a)))) = T)
+T c= ! c= c\/ c= b0 f0 * f1 b0 c\/ * f1 b0 c= b0 f0 cT
++ (!x. ((~ (x = a)) \/ ((~ (x = a)) /\ (~ ((I s) x))))) |- (((_288568 = a) /\ (_288568 = a)) ==> F)
+T c==> ! c\/ c~ c= b0 f0 c/\ c~ c= b0 f0 c~ cI f1 b0 c==> c/\ c= f2 f0 c= f2 f0 cF
++ ((\x. ((((x = a) \/ (s x)) /\ ((~ (x = a)) /\ (~ ((closure s) x)))) \/ (((x = a) /\ (((closure s) x) /\ ((x = a) \/ (s x)))) \/ ((!x. ((~ (x = a)) \/ ((~ (x = a)) /\ (~ (s x))))) \/ (!x. ((~ ((closure s) x)) \/ ((~ (x = a)) /\ (~ (s x))))))))) x) |- ((((((x = a) \/ (s x)) /\ ((~ (x = a)) /\ (~ ((closure s) x)))) \/ (((x = a) /\ (((closure s) x) /\ ((x = a) \/ (s x)))) \/ ((!x. ((~ (x = a)) \/ ((~ (x = a)) /\ (~ (s x))))) \/ (!x. ((~ ((closure s) x)) \/ ((~ (x = a)) /\ (~ (s x)))))))) ==> F) = F)
+T c==> * / c\/ c/\ c\/ c= b0 f0 * f1 b0 c/\ c~ c= b0 f0 c~ cclosure f1 b0 c\/ c/\ c= b0 f0 c/\ cclosure f1 b0 c\/ c= b0 f0 * f1 b0 c\/ ! c\/ c~ c= b1 f0 c/\ c~ c= b1 f0 c~ * f1 b1 ! c\/ c~ cclosure f1 b1 c/\ c~ c= b1 f0 c~ * f1 b1 f2 c= c==> c\/ c/\ c\/ c= f2 f0 * f1 f2 c/\ c~ c= f2 f0 c~ cclosure f1 f2 c\/ c/\ c= f2 f0 c/\ cclosure f1 f2 c\/ c= f2 f0 * f1 f2 c\/ ! c\/ c~ c= b0 f0 c/\ c~ c= b0 f0 c~ * f1 b0 ! c\/ c~ cclosure f1 b0 c/\ c~ c= b0 f0 c~ * f1 b0 cF cF
++ |- ((\t. (((connected s) /\ ((connected t) /\ (~ (((closure s) INTER t) = EMPTY)))) ==> (connected (s UNION t)))) t)
+T * / c==> c/\ cconnected f0 c/\ cconnected b0 c~ c= * * part cINTER * part cclosure f0 b0 part cEMPTY cconnected * * part cUNION f0 b0 f1
++ ((connected s) /\ (~ (!x. (~ (s x))))) |- (((?x. ((connected s) /\ (s x))) ==> F) = F)
+T c==> c/\ cconnected f0 c~ ! c~ * f0 b0 c= c==> c? / c/\ cconnected f0 * f0 b0 cF cF
++ (((x = a) \/ ((I s) x)) /\ ((~ (x = a)) /\ (~ ((closure s) x)))), ((x = a) ==> F), (((I s) x) ==> F) |- F
+T c==> c/\ c\/ c= f0 f1 cI f2 f0 c/\ c~ c= f0 f1 c~ cclosure f2 f0 c==> c==> c= f0 f1 cF c==> c==> cI f2 f0 cF cF
++ (connected s) |- ((connected s) = T)
+T c==> cconnected f0 c= cconnected f0 cT
+- |- ((!s. (!t. (((connected s) /\ ((connected t) /\ (~ (((closure s) INTER t) = EMPTY)))) ==> (connected (s UNION t))))) ==> (!s. (!t. (((connected s) /\ ((connected t) /\ (~ (((closure s) INTER t) = EMPTY)))) ==> (connected (s UNION t))))))
+T c==> ! ! c==> c/\ cconnected b0 c/\ cconnected b1 c~ c= * * part cINTER * part cclosure b0 b1 part cEMPTY cconnected * * part cUNION b0 b1 ! ! c==> c/\ cconnected b0 c/\ cconnected b1 c~ c= * * part cINTER * part cclosure b0 b1 part cEMPTY cconnected * * part cUNION b0 b1
++ (!x. ((~ (x = a)) \/ ((~ (x = a)) /\ (~ ((I s) x))))) |- (((!x. (((~ (x = a)) \/ (~ (x = a))) /\ ((~ (x = a)) \/ (~ ((I s) x))))) ==> ((\x. (((~ (x = a)) \/ (~ (x = a))) /\ ((~ (x = a)) \/ (~ ((I s) x))))) _288568)) = ((\x. (((~ (x = a)) \/ (~ (x = a))) /\ ((~ (x = a)) \/ (~ ((I s) x))))) _288568))
+T c==> ! c\/ c~ c= b0 f0 c/\ c~ c= b0 f0 c~ cI f1 b0 c= c==> ! c/\ c\/ c~ c= b0 f0 c~ c= b0 f0 c\/ c~ c= b0 f0 c~ cI f1 b0 * / c/\ c\/ c~ c= b0 f0 c~ c= b0 f0 c\/ c~ c= b0 f0 c~ cI f1 b0 f2 * / c/\ c\/ c~ c= b0 f0 c~ c= b0 f0 c\/ c~ c= b0 f0 c~ cI f1 b0 f2
+- |- (((~ ((((closure s) a) /\ ((connected s) /\ (~ (!x. (~ (s x)))))) ==> (~ (!x. (~ (((closure s) x) /\ (x = a))))))) ==> F) = ((((closure s) a) /\ ((connected s) /\ (~ (!x. (~ (s x)))))) ==> (~ (!x. (~ (((closure s) x) /\ (x = a)))))))
+T c= c==> c~ c==> c/\ cclosure f0 f1 c/\ cconnected f0 c~ ! c~ * f0 b0 c~ ! c~ c/\ cclosure f0 b0 c= b0 f1 cF c==> c/\ cclosure f0 f1 c/\ cconnected f0 c~ ! c~ * f0 b0 c~ ! c~ c/\ cclosure f0 b0 c= b0 f1
+- |- ((_288561 = _288562) ==> ((s _288562) \/ (~ (s _288561))))
+T c==> c= f0 f1 c\/ * f2 f1 c~ * f2 f0
++ ((x = a) /\ (((closure s) x) /\ ((x = a) \/ ((I s) x)))) |- ((((closure s) a) ==> F) = F)
+T c==> c/\ c= f0 f1 c/\ cclosure f2 f0 c\/ c= f0 f1 cI f2 f0 c= c==> cclosure f2 f1 cF cF
+- (x = a), ((x = a) /\ (((closure s) x) /\ ((x = a) \/ ((I s) x)))) |- ((~ ((closure s) a)) ==> ((closure s) a))
+T c==> c= f0 f1 c==> c/\ c= f0 f1 c/\ cclosure f2 f0 c\/ c= f0 f1 cI f2 f0 c==> c~ cclosure f2 f1 cclosure f2 f1
++ (!x. (~ (((closure s) x) /\ (x = a)))), (((closure s) a) /\ ((connected s) /\ (~ (!x. (~ (s x)))))) |- ((!x. (~ (((closure s) x) /\ (x = a)))) /\ F)
+T c==> ! c~ c/\ cclosure f0 b0 c= b0 f1 c==> c/\ cclosure f0 f1 c/\ cconnected f0 c~ ! c~ * f0 b0 c/\ ! c~ c/\ cclosure f0 b0 c= b0 f1 cF
+- |- (((!s. ((~ ((((closure s) a) /\ ((connected s) /\ (~ (!x. (~ (s x)))))) ==> (~ (!x. (~ (((closure s) x) /\ (x = a))))))) ==> F)) ==> ((\s. ((~ ((((closure s) a) /\ ((connected s) /\ (~ (!x. (~ (s x)))))) ==> (~ (!x. (~ (((closure s) x) /\ (x = a))))))) ==> F)) s)) = ((\s. ((~ ((((closure s) a) /\ ((connected s) /\ (~ (!x. (~ (s x)))))) ==> (~ (!x. (~ (((closure s) x) /\ (x = a))))))) ==> F)) s))
+T c= c==> ! c==> c~ c==> c/\ cclosure b0 f0 c/\ cconnected b0 c~ ! c~ * b0 b1 c~ ! c~ c/\ cclosure b0 b1 c= b1 f0 cF * / c==> c~ c==> c/\ cclosure b0 f0 c/\ cconnected b0 c~ ! c~ * b0 b1 c~ ! c~ c/\ cclosure b0 b1 c= b1 f0 cF f1 * / c==> c~ c==> c/\ cclosure b0 f0 c/\ cconnected b0 c~ ! c~ * b0 b1 c~ ! c~ c/\ cclosure b0 b1 c= b1 f0 cF f1
++ (~ ((closure s) a)) |- (((closure s) a) ==> F)
+T c==> c~ cclosure f0 f1 c==> cclosure f0 f1 cF
++ |- ((\s. (s SUBSET (closure s))) s)
+T * / cSUBSET b0 * part cclosure b0 f0
++ |- ((!x. (((x = a) \/ (s x)) = ((s x) \/ (x = a)))) = (!x. ((x IN (a INSERT s)) = (x IN (s UNION (a INSERT EMPTY))))))
+T c= ! c= c\/ c= b0 f0 * f1 b0 c\/ * f1 b0 c= b0 f0 ! c= cIN b0 * * part cINSERT f0 f1 cIN b0 * * part cUNION f1 * * part cINSERT f0 part cEMPTY
+- (~ F), (~ ((closure s) a)), (x = a), ((x = a) /\ (((closure s) x) /\ ((x = a) \/ ((I s) x)))) |- ((~ F) /\ F)
+T c==> c~ cF c==> c~ cclosure f0 f1 c==> c= f2 f1 c==> c/\ c= f2 f1 c/\ cclosure f0 f2 c\/ c= f2 f1 cI f0 f2 c/\ c~ cF cF
+- |- ((\t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3)))) t2)
+T * / ! c= c\/ f0 c\/ b0 b1 c\/ c\/ f0 b0 b1 f1
+- |- ((!x. ((P x) \/ Q)) = ((!x. (P x)) \/ Q))
+T c= ! c\/ * f0 b0 f1 c\/ ! * f0 b0 f1
+- (x = a) |- (((closure s) x) = ((closure s) a))
+T c==> c= f0 f1 c= cclosure f2 f0 cclosure f2 f1
++ |- ((!x. ((x IN (a INSERT s)) = (x IN (s UNION (a INSERT EMPTY))))) = ((a INSERT s) = (s UNION (a INSERT EMPTY))))
+T c= ! c= cIN b0 * * part cINSERT f0 f1 cIN b0 * * part cUNION f1 * * part cINSERT f0 part cEMPTY c= * * part cINSERT f0 f1 * * part cUNION f1 * * part cINSERT f0 part cEMPTY
++ (~ (s = EMPTY)) |- ((s = EMPTY) = F)
+T c==> c~ c= f0 part cEMPTY c= c= f0 part cEMPTY cF
+- (~ ((closure s) a)), (x = a), ((x = a) /\ (((closure s) x) /\ ((x = a) \/ ((I s) x)))) |- F
+T c==> c~ cclosure f0 f1 c==> c= f2 f1 c==> c/\ c= f2 f1 c/\ cclosure f0 f2 c\/ c= f2 f1 cI f0 f2 cF
++ (~ (s = EMPTY)), (connected s) |- ((connected s) /\ (~ (s = EMPTY)))
+T c==> c~ c= f0 part cEMPTY c==> cconnected f0 c/\ cconnected f0 c~ c= f0 part cEMPTY
++ (!x. ((s x) ==> ((closure s) x))), (~ ((!x. (((x = a) \/ (s x)) ==> ((x = a) \/ ((closure s) x)))) /\ ((!x. (~ ((x = a) /\ (((closure s) x) /\ ((x = a) \/ (s x)))))) /\ ((~ (!x. (~ ((x = a) /\ ((x = a) \/ (s x)))))) /\ (~ (!x. (~ (((closure s) x) /\ ((x = a) \/ (s x)))))))))), ((connected s) /\ (~ (!x. (~ (s x))))) |- ((~ ((!x. (((x = a) \/ (s x)) ==> ((x = a) \/ ((closure s) x)))) /\ ((!x. (~ ((x = a) /\ (((closure s) x) /\ ((x = a) \/ (s x)))))) /\ ((~ (!x. (~ ((x = a) /\ ((x = a) \/ (s x)))))) /\ (~ (!x. (~ (((closure s) x) /\ ((x = a) \/ (s x)))))))))) /\ ((closure s) a))
+T c==> ! c==> * f0 b0 cclosure f0 b0 c==> c~ c/\ ! c==> c\/ c= b0 f1 * f0 b0 c\/ c= b0 f1 cclosure f0 b0 c/\ ! c~ c/\ c= b0 f1 c/\ cclosure f0 b0 c\/ c= b0 f1 * f0 b0 c/\ c~ ! c~ c/\ c= b0 f1 c\/ c= b0 f1 * f0 b0 c~ ! c~ c/\ cclosure f0 b0 c\/ c= b0 f1 * f0 b0 c==> c/\ cconnected f0 c~ ! c~ * f0 b0 c/\ c~ c/\ ! c==> c\/ c= b0 f1 * f0 b0 c\/ c= b0 f1 cclosure f0 b0 c/\ ! c~ c/\ c= b0 f1 c/\ cclosure f0 b0 c\/ c= b0 f1 * f0 b0 c/\ c~ ! c~ c/\ c= b0 f1 c\/ c= b0 f1 * f0 b0 c~ ! c~ c/\ cclosure f0 b0 c\/ c= b0 f1 * f0 b0 cclosure f0 f1
+- (!s. (!t. (((connected s) /\ ((connected t) /\ (~ (((closure s) INTER t) = EMPTY)))) ==> (connected (s UNION t))))), ((connected s) /\ ((connected t) /\ (~ (((closure s) INTER t) = EMPTY)))) |- (((connected s) /\ ((connected t) /\ (~ (((closure s) INTER t) = EMPTY)))) /\ (connected (s UNION t)))
+T c==> ! ! c==> c/\ cconnected b0 c/\ cconnected b1 c~ c= * * part cINTER * part cclosure b0 b1 part cEMPTY cconnected * * part cUNION b0 b1 c==> c/\ cconnected f0 c/\ cconnected f1 c~ c= * * part cINTER * part cclosure f0 f1 part cEMPTY c/\ c/\ cconnected f0 c/\ cconnected f1 c~ c= * * part cINTER * part cclosure f0 f1 part cEMPTY cconnected * * part cUNION f0 f1
++ |- ((((a IN (closure s)) /\ ((connected s) /\ (~ (!x. ((x IN s) = (x IN EMPTY)))))) ==> (~ (!x. ((x IN ((closure s) INTER (a INSERT EMPTY))) = (x IN EMPTY))))) = (((a IN (closure s)) /\ ((connected s) /\ (~ (s = EMPTY)))) ==> (~ (((closure s) INTER (a INSERT EMPTY)) = EMPTY))))
+T c= c==> c/\ cIN f0 * part cclosure f1 c/\ cconnected f1 c~ ! c= cIN b0 f1 cIN b0 part cEMPTY c~ ! c= cIN b0 * * part cINTER * part cclosure f1 * * part cINSERT f0 part cEMPTY cIN b0 part cEMPTY c==> c/\ cIN f0 * part cclosure f1 c/\ cconnected f1 c~ c= f1 part cEMPTY c~ c= * * part cINTER * part cclosure f1 * * part cINSERT f0 part cEMPTY part cEMPTY
++ |- (((a = a) ==> F) = F)
+T c= c==> c= f0 f0 cF cF
++ (!e1. (!e2. (~ ((closed e1) /\ ((closed e2) /\ (((a INSERT s) SUBSET (e1 UNION e2)) /\ (((e1 INTER (e2 INTER (a INSERT s))) = EMPTY) /\ ((~ ((e1 INTER (a INSERT s)) = EMPTY)) /\ (~ ((e2 INTER (a INSERT s)) = EMPTY)))))))))) |- (((!e2. (~ ((closed (a INSERT EMPTY)) /\ ((closed e2) /\ (((a INSERT s) SUBSET ((a INSERT EMPTY) UNION e2)) /\ ((((a INSERT EMPTY) INTER (e2 INTER (a INSERT s))) = EMPTY) /\ ((~ (((a INSERT EMPTY) INTER (a INSERT s)) = EMPTY)) /\ (~ ((e2 INTER (a INSERT s)) = EMPTY))))))))) ==> ((\e2. (~ ((closed (a INSERT EMPTY)) /\ ((closed e2) /\ (((a INSERT s) SUBSET ((a INSERT EMPTY) UNION e2)) /\ ((((a INSERT EMPTY) INTER (e2 INTER (a INSERT s))) = EMPTY) /\ ((~ (((a INSERT EMPTY) INTER (a INSERT s)) = EMPTY)) /\ (~ ((e2 INTER (a INSERT s)) = EMPTY))))))))) (closure s))) = ((\e2. (~ ((closed (a INSERT EMPTY)) /\ ((closed e2) /\ (((a INSERT s) SUBSET ((a INSERT EMPTY) UNION e2)) /\ ((((a INSERT EMPTY) INTER (e2 INTER (a INSERT s))) = EMPTY) /\ ((~ (((a INSERT EMPTY) INTER (a INSERT s)) = EMPTY)) /\ (~ ((e2 INTER (a INSERT s)) = EMPTY))))))))) (closure s)))
+T c==> ! ! c~ c/\ cclosed b0 c/\ cclosed b1 c/\ cSUBSET * * part cINSERT f0 f1 * * part cUNION b0 b1 c/\ c= * * part cINTER b0 * * part cINTER b1 * * part cINSERT f0 f1 part cEMPTY c/\ c~ c= * * part cINTER b0 * * part cINSERT f0 f1 part cEMPTY c~ c= * * part cINTER b1 * * part cINSERT f0 f1 part cEMPTY c= c==> ! c~ c/\ cclosed * * part cINSERT f0 part cEMPTY c/\ cclosed b0 c/\ cSUBSET * * part cINSERT f0 f1 * * part cUNION * * part cINSERT f0 part cEMPTY b0 c/\ c= * * part cINTER * * part cINSERT f0 part cEMPTY * * part cINTER b0 * * part cINSERT f0 f1 part cEMPTY c/\ c~ c= * * part cINTER * * part cINSERT f0 part cEMPTY * * part cINSERT f0 f1 part cEMPTY c~ c= * * part cINTER b0 * * part cINSERT f0 f1 part cEMPTY * / c~ c/\ cclosed * * part cINSERT f0 part cEMPTY c/\ cclosed b0 c/\ cSUBSET * * part cINSERT f0 f1 * * part cUNION * * part cINSERT f0 part cEMPTY b0 c/\ c= * * part cINTER * * part cINSERT f0 part cEMPTY * * part cINTER b0 * * part cINSERT f0 f1 part cEMPTY c/\ c~ c= * * part cINTER * * part cINSERT f0 part cEMPTY * * part cINSERT f0 f1 part cEMPTY c~ c= * * part cINTER b0 * * part cINSERT f0 f1 part cEMPTY * part cclosure f1 * / c~ c/\ cclosed * * part cINSERT f0 part cEMPTY c/\ cclosed b0 c/\ cSUBSET * * part cINSERT f0 f1 * * part cUNION * * part cINSERT f0 part cEMPTY b0 c/\ c= * * part cINTER * * part cINSERT f0 part cEMPTY * * part cINTER b0 * * part cINSERT f0 f1 part cEMPTY c/\ c~ c= * * part cINTER * * part cINSERT f0 part cEMPTY * * part cINSERT f0 f1 part cEMPTY c~ c= * * part cINTER b0 * * part cINSERT f0 f1 part cEMPTY * part cclosure f1
++ (((~ (x = a)) /\ (~ (s x))) /\ ((s x) \/ (x = a))) |- ((s x) ==> F)
+T c==> c/\ c/\ c~ c= f0 f1 c~ * f2 f0 c\/ * f2 f0 c= f0 f1 c==> * f2 f0 cF
++ (!x. ((~ (x = a)) \/ ((~ (x = a)) /\ (~ ((I s) x))))) |- ((!x. ((~ (x = a)) \/ ((~ (x = a)) /\ (~ ((I s) x))))) /\ F)
+T c==> ! c\/ c~ c= b0 f0 c/\ c~ c= b0 f0 c~ cI f1 b0 c/\ ! c\/ c~ c= b0 f0 c/\ c~ c= b0 f0 c~ cI f1 b0 cF
++ (((x = a) \/ (s x)) /\ ((~ (s x)) /\ (~ (x = a)))), ((s x) ==> F) |- F
+T c==> c/\ c\/ c= f0 f1 * f2 f0 c/\ c~ * f2 f0 c~ c= f0 f1 c==> c==> * f2 f0 cF cF
++ (~ (s = EMPTY)), (connected s), (a IN (closure s)) |- ((((connected s) /\ ((connected (a INSERT EMPTY)) /\ (~ (((closure s) INTER (a INSERT EMPTY)) = EMPTY)))) ==> (connected (s UNION (a INSERT EMPTY)))) = (connected (s UNION (a INSERT EMPTY))))
+T c==> c~ c= f0 part cEMPTY c==> cconnected f0 c==> cIN f1 * part cclosure f0 c= c==> c/\ cconnected f0 c/\ cconnected * * part cINSERT f1 part cEMPTY c~ c= * * part cINTER * part cclosure f0 * * part cINSERT f1 part cEMPTY part cEMPTY cconnected * * part cUNION f0 * * part cINSERT f1 part cEMPTY cconnected * * part cUNION f0 * * part cINSERT f1 part cEMPTY
++ (((x = a) \/ (s x)) /\ ((~ (s x)) /\ (~ (x = a)))) |- ((((x = a) \/ (s x)) /\ ((~ (s x)) /\ (~ (x = a)))) /\ F)
+T c==> c/\ c\/ c= f0 f1 * f2 f0 c/\ c~ * f2 f0 c~ c= f0 f1 c/\ c/\ c\/ c= f0 f1 * f2 f0 c/\ c~ * f2 f0 c~ c= f0 f1 cF
+- |- ((?x'. ((x' = a) /\ (((closure s) x) /\ ((x = a) \/ (s x))))) = ((?x. (x = a)) /\ (((closure s) x) /\ ((x = a) \/ (s x)))))
+T c= c? / c/\ c= b0 f0 c/\ cclosure f1 f2 c\/ c= f2 f0 * f1 f2 c/\ c? / c= b0 f0 c/\ cclosure f1 f2 c\/ c= f2 f0 * f1 f2
++ (!x. (~ (((closure s) x) /\ (x = a)))) |- ((((closure s) _288653) /\ (_288653 = a)) ==> F)
+T c==> ! c~ c/\ cclosure f0 b0 c= b0 f1 c==> c/\ cclosure f0 f2 c= f2 f1 cF
++ (~ (s = EMPTY)), (connected s), (a IN (closure s)) |- ((connected s) /\ ((connected (a INSERT EMPTY)) /\ (~ (((closure s) INTER (a INSERT EMPTY)) = EMPTY))))
+T c==> c~ c= f0 part cEMPTY c==> cconnected f0 c==> cIN f1 * part cclosure f0 c/\ cconnected f0 c/\ cconnected * * part cINSERT f1 part cEMPTY c~ c= * * part cINTER * part cclosure f0 * * part cINSERT f1 part cEMPTY part cEMPTY
++ (!x. ((~ ((closure s) x)) \/ ((~ (x = a)) /\ (~ ((I s) x))))) |- ((~ ((closure s) _288570)) \/ (~ ((I s) _288570)))
+T c==> ! c\/ c~ cclosure f0 b0 c/\ c~ c= b0 f1 c~ cI f0 b0 c\/ c~ cclosure f0 f2 c~ cI f0 f2
+- (!x. ((~ (x = a)) \/ ((~ (x = a)) /\ (~ ((I s) x))))) |- ((~ F) ==> F)
+T c==> ! c\/ c~ c= b0 f0 c/\ c~ c= b0 f0 c~ cI f1 b0 c==> c~ cF cF
++ |- (((connected s) ==> ((connected (a INSERT s)) = ((s = EMPTY) \/ (a IN (closure s))))) = T)
+T c= c==> cconnected f0 c= cconnected * * part cINSERT f1 f0 c\/ c= f0 part cEMPTY cIN f1 * part cclosure f0 cT
++ ((\x. ((connected s) /\ (s x))) x') |- ((connected s) /\ (s x'))
+T c==> * / c/\ cconnected f0 * f0 b0 f1 c/\ cconnected f0 * f0 f1
+- |- ((!a. (!s. (((connected s) /\ (~ (!x. (~ (s x))))) ==> ((!x. ((s x) ==> ((closure s) x))) ==> ((~ ((!x. (((x = a) \/ (s x)) ==> ((x = a) \/ ((closure s) x)))) /\ ((!x. (~ ((x = a) /\ (((closure s) x) /\ ((x = a) \/ (s x)))))) /\ ((~ (!x. (~ ((x = a) /\ ((x = a) \/ (s x)))))) /\ (~ (!x. (~ (((closure s) x) /\ ((x = a) \/ (s x)))))))))) ==> ((closure s) a)))))) = (!a. (!s. ((~ (((connected s) /\ (~ (!x. (~ (s x))))) ==> ((!x. ((s x) ==> ((closure s) x))) ==> ((~ ((!x. (((x = a) \/ (s x)) ==> ((x = a) \/ ((closure s) x)))) /\ ((!x. (~ ((x = a) /\ (((closure s) x) /\ ((x = a) \/ (s x)))))) /\ ((~ (!x. (~ ((x = a) /\ ((x = a) \/ (s x)))))) /\ (~ (!x. (~ (((closure s) x) /\ ((x = a) \/ (s x)))))))))) ==> ((closure s) a))))) ==> F))))
+T c= ! ! c==> c/\ cconnected b1 c~ ! c~ * b1 b2 c==> ! c==> * b1 b2 cclosure b1 b2 c==> c~ c/\ ! c==> c\/ c= b2 b0 * b1 b2 c\/ c= b2 b0 cclosure b1 b2 c/\ ! c~ c/\ c= b2 b0 c/\ cclosure b1 b2 c\/ c= b2 b0 * b1 b2 c/\ c~ ! c~ c/\ c= b2 b0 c\/ c= b2 b0 * b1 b2 c~ ! c~ c/\ cclosure b1 b2 c\/ c= b2 b0 * b1 b2 cclosure b1 b0 ! ! c==> c~ c==> c/\ cconnected b1 c~ ! c~ * b1 b2 c==> ! c==> * b1 b2 cclosure b1 b2 c==> c~ c/\ ! c==> c\/ c= b2 b0 * b1 b2 c\/ c= b2 b0 cclosure b1 b2 c/\ ! c~ c/\ c= b2 b0 c/\ cclosure b1 b2 c\/ c= b2 b0 * b1 b2 c/\ c~ ! c~ c/\ c= b2 b0 c\/ c= b2 b0 * b1 b2 c~ ! c~ c/\ cclosure b1 b2 c\/ c= b2 b0 * b1 b2 cclosure b1 b0 cF
++ (~ (((x = a) \/ (s x)) = ((s x) \/ (x = a)))), ((((~ (x = a)) /\ (~ (s x))) /\ ((s x) \/ (x = a))) ==> F) |- F
+T c==> c~ c= c\/ c= f0 f1 * f2 f0 c\/ * f2 f0 c= f0 f1 c==> c==> c/\ c/\ c~ c= f0 f1 c~ * f2 f0 c\/ * f2 f0 c= f0 f1 cF cF
+- |- (((!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3)))) ==> ((\t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3)))) t2)) = ((\t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3)))) t2))
+T c= c==> ! ! c= c\/ f0 c\/ b0 b1 c\/ c\/ f0 b0 b1 * / ! c= c\/ f0 c\/ b0 b1 c\/ c\/ f0 b0 b1 f1 * / ! c= c\/ f0 c\/ b0 b1 c\/ c\/ f0 b0 b1 f1
++ (~ (s = EMPTY)), (connected s) |- ((s SUBSET (closure s)) ==> ((~ (((a INSERT s) SUBSET ((a INSERT EMPTY) UNION (closure s))) /\ ((((a INSERT EMPTY) INTER ((closure s) INTER (a INSERT s))) = EMPTY) /\ ((~ (((a INSERT EMPTY) INTER (a INSERT s)) = EMPTY)) /\ (~ (((closure s) INTER (a INSERT s)) = EMPTY)))))) ==> (a IN (closure s))))
+T c==> c~ c= f0 part cEMPTY c==> cconnected f0 c==> cSUBSET f0 * part cclosure f0 c==> c~ c/\ cSUBSET * * part cINSERT f1 f0 * * part cUNION * * part cINSERT f1 part cEMPTY * part cclosure f0 c/\ c= * * part cINTER * * part cINSERT f1 part cEMPTY * * part cINTER * part cclosure f0 * * part cINSERT f1 f0 part cEMPTY c/\ c~ c= * * part cINTER * * part cINSERT f1 part cEMPTY * * part cINSERT f1 f0 part cEMPTY c~ c= * * part cINTER * part cclosure f0 * * part cINSERT f1 f0 part cEMPTY cIN f1 * part cclosure f0
++ (!x. ((s x) ==> ((closure s) x))), (~ ((closure s) a)), ((connected s) /\ (~ (!x. (~ (s x))))), ((((x = a) \/ (s x)) /\ ((~ (x = a)) /\ (~ ((closure s) x)))) \/ (((x = a) /\ (((closure s) x) /\ ((x = a) \/ (s x)))) \/ ((!x. ((~ (x = a)) \/ ((~ (x = a)) /\ (~ (s x))))) \/ (!x. ((~ ((closure s) x)) \/ ((~ (x = a)) /\ (~ (s x)))))))) |- (((((x = a) \/ (s x)) /\ ((~ (x = a)) /\ (~ ((closure s) x)))) \/ (((x = a) /\ (((closure s) x) /\ ((x = a) \/ (s x)))) \/ ((!x. ((~ (x = a)) \/ ((~ (x = a)) /\ (~ (s x))))) \/ (!x. ((~ ((closure s) x)) \/ ((~ (x = a)) /\ (~ (s x)))))))) /\ F)
+T c==> ! c==> * f0 b0 cclosure f0 b0 c==> c~ cclosure f0 f1 c==> c/\ cconnected f0 c~ ! c~ * f0 b0 c==> c\/ c/\ c\/ c= f2 f1 * f0 f2 c/\ c~ c= f2 f1 c~ cclosure f0 f2 c\/ c/\ c= f2 f1 c/\ cclosure f0 f2 c\/ c= f2 f1 * f0 f2 c\/ ! c\/ c~ c= b0 f1 c/\ c~ c= b0 f1 c~ * f0 b0 ! c\/ c~ cclosure f0 b0 c/\ c~ c= b0 f1 c~ * f0 b0 c/\ c\/ c/\ c\/ c= f2 f1 * f0 f2 c/\ c~ c= f2 f1 c~ cclosure f0 f2 c\/ c/\ c= f2 f1 c/\ cclosure f0 f2 c\/ c= f2 f1 * f0 f2 c\/ ! c\/ c~ c= b0 f1 c/\ c~ c= b0 f1 c~ * f0 b0 ! c\/ c~ cclosure f0 b0 c/\ c~ c= b0 f1 c~ * f0 b0 cF
+- |- (((~ ((((closure s) a) /\ ((connected s) /\ (~ (!x. (~ (s x)))))) ==> (~ (!x. (~ (((closure s) x) /\ (x = a))))))) ==> F) ==> ((~ ((((closure s) a) /\ ((connected s) /\ (~ (!x. (~ (s x)))))) ==> (~ (!x. (~ (((closure s) x) /\ (x = a))))))) ==> F))
+T c==> c==> c~ c==> c/\ cclosure f0 f1 c/\ cconnected f0 c~ ! c~ * f0 b0 c~ ! c~ c/\ cclosure f0 b0 c= b0 f1 cF c==> c~ c==> c/\ cclosure f0 f1 c/\ cconnected f0 c~ ! c~ * f0 b0 c~ ! c~ c/\ cclosure f0 b0 c= b0 f1 cF
++ (x = a), (((~ (x = a)) /\ (~ (s x))) /\ ((s x) \/ (x = a))) |- ((x = a) /\ F)
+T c==> c= f0 f1 c==> c/\ c/\ c~ c= f0 f1 c~ * f2 f0 c\/ * f2 f0 c= f0 f1 c/\ c= f0 f1 cF
++ (!x. ((~ ((closure s) x)) \/ ((~ (x = a)) /\ (~ ((I s) x))))) |- (!x. (((~ ((closure s) x)) \/ (~ (x = a))) /\ ((~ ((closure s) x)) \/ (~ ((I s) x)))))
+T c==> ! c\/ c~ cclosure f0 b0 c/\ c~ c= b0 f1 c~ cI f0 b0 ! c/\ c\/ c~ cclosure f0 b0 c~ c= b0 f1 c\/ c~ cclosure f0 b0 c~ cI f0 b0
++ (!x. (~ (((closure s) x) /\ (x = a)))) |- ((((\x. (((closure s) a) /\ ((connected s) /\ (s x)))) x) ==> F) = T)
+T c==> ! c~ c/\ cclosure f0 b0 c= b0 f1 c= c==> * / c/\ cclosure f0 f1 c/\ cconnected f0 * f0 b0 f2 cF cT
+- ((x = a) /\ (((closure s) x) /\ ((x = a) \/ ((I s) x)))), ((I s) x) |- ((I s) a)
+T c==> c/\ c= f0 f1 c/\ cclosure f2 f0 c\/ c= f0 f1 cI f2 f0 c==> cI f2 f0 cI f2 f1
++ (((closure s) a) /\ ((connected s) /\ (~ (!x. (~ (s x)))))) |- (((?x. (((closure s) a) /\ ((connected s) /\ (s x)))) ==> F) = F)
+T c==> c/\ cclosure f0 f1 c/\ cconnected f0 c~ ! c~ * f0 b0 c= c==> c? / c/\ cclosure f0 f1 c/\ cconnected f0 * f0 b0 cF cF
++ |- (((a IN (closure s)) /\ ((connected s) /\ (~ (!x. ((x IN s) = (x IN EMPTY)))))) ==> (~ (!x. ((x IN ((closure s) INTER (a INSERT EMPTY))) = (x IN EMPTY)))))
+T c==> c/\ cIN f0 * part cclosure f1 c/\ cconnected f1 c~ ! c= cIN b0 f1 cIN b0 part cEMPTY c~ ! c= cIN b0 * * part cINTER * part cclosure f1 * * part cINSERT f0 part cEMPTY cIN b0 part cEMPTY
++ |- (((!a. (closed (a INSERT EMPTY))) ==> ((\a. (closed (a INSERT EMPTY))) a)) = ((\a. (closed (a INSERT EMPTY))) a))
+T c= c==> ! cclosed * * part cINSERT b0 part cEMPTY * / cclosed * * part cINSERT b0 part cEMPTY f0 * / cclosed * * part cINSERT b0 part cEMPTY f0
+- (!s. (!t. (((connected s) /\ ((connected t) /\ (~ (((closure s) INTER t) = EMPTY)))) ==> (connected (s UNION t))))), ((connected s) /\ ((connected t) /\ (~ (((closure s) INTER t) = EMPTY)))) |- ((!s. (!t. (((connected s) /\ ((connected t) /\ (~ (((closure s) INTER t) = EMPTY)))) ==> (connected (s UNION t))))) /\ (connected (s UNION t)))
+T c==> ! ! c==> c/\ cconnected b0 c/\ cconnected b1 c~ c= * * part cINTER * part cclosure b0 b1 part cEMPTY cconnected * * part cUNION b0 b1 c==> c/\ cconnected f0 c/\ cconnected f1 c~ c= * * part cINTER * part cclosure f0 f1 part cEMPTY c/\ ! ! c==> c/\ cconnected b0 c/\ cconnected b1 c~ c= * * part cINTER * part cclosure b0 b1 part cEMPTY cconnected * * part cUNION b0 b1 cconnected * * part cUNION f0 f1
+- |- ((((connected s) /\ (~ (!x. (~ (s x))))) ==> ((!x. ((s x) ==> ((closure s) x))) ==> ((~ ((!x. (((x = a) \/ (s x)) ==> ((x = a) \/ ((closure s) x)))) /\ ((!x. (~ ((x = a) /\ (((closure s) x) /\ ((x = a) \/ (s x)))))) /\ ((~ (!x. (~ ((x = a) /\ ((x = a) \/ (s x)))))) /\ (~ (!x. (~ (((closure s) x) /\ ((x = a) \/ (s x)))))))))) ==> ((closure s) a)))) = T)
+T c= c==> c/\ cconnected f0 c~ ! c~ * f0 b0 c==> ! c==> * f0 b0 cclosure f0 b0 c==> c~ c/\ ! c==> c\/ c= b0 f1 * f0 b0 c\/ c= b0 f1 cclosure f0 b0 c/\ ! c~ c/\ c= b0 f1 c/\ cclosure f0 b0 c\/ c= b0 f1 * f0 b0 c/\ c~ ! c~ c/\ c= b0 f1 c\/ c= b0 f1 * f0 b0 c~ ! c~ c/\ cclosure f0 b0 c\/ c= b0 f1 * f0 b0 cclosure f0 f1 cT
++ (((x = a) \/ ((I s) x)) /\ ((~ (x = a)) /\ (~ ((closure s) x)))) |- (~ ((closure s) x))
+T c==> c/\ c\/ c= f0 f1 cI f2 f0 c/\ c~ c= f0 f1 c~ cclosure f2 f0 c~ cclosure f2 f0
+- ((~ ((((closure s) a) /\ ((connected s) /\ (~ (!x. (~ (s x)))))) ==> (~ (!x. (~ (((closure s) x) /\ (x = a))))))) ==> F) |- (((~ ((((closure s) a) /\ ((connected s) /\ (~ (!x. (~ (s x)))))) ==> (~ (!x. (~ (((closure s) x) /\ (x = a))))))) ==> F) /\ ((~ ((((closure s) a) /\ ((connected s) /\ (~ (!x. (~ (s x)))))) ==> (~ (!x. (~ (((closure s) x) /\ (x = a))))))) ==> F))
+T c==> c==> c~ c==> c/\ cclosure f0 f1 c/\ cconnected f0 c~ ! c~ * f0 b0 c~ ! c~ c/\ cclosure f0 b0 c= b0 f1 cF c/\ c==> c~ c==> c/\ cclosure f0 f1 c/\ cconnected f0 c~ ! c~ * f0 b0 c~ ! c~ c/\ cclosure f0 b0 c= b0 f1 cF c==> c~ c==> c/\ cclosure f0 f1 c/\ cconnected f0 c~ ! c~ * f0 b0 c~ ! c~ c/\ cclosure f0 b0 c= b0 f1 cF
++ (~ (s = EMPTY)), (connected s), (a IN (closure s)) |- (~ (((closure s) INTER (a INSERT EMPTY)) = EMPTY))
+T c==> c~ c= f0 part cEMPTY c==> cconnected f0 c==> cIN f1 * part cclosure f0 c~ c= * * part cINTER * part cclosure f0 * * part cINSERT f1 part cEMPTY part cEMPTY
+- (!x. ((s x) ==> ((closure s) x))), (((x = a) \/ ((I s) x)) /\ ((~ (x = a)) /\ (~ ((closure s) x)))), ((I s) x) |- ((~ F) ==> F)
+T c==> ! c==> * f0 b0 cclosure f0 b0 c==> c/\ c\/ c= f1 f2 cI f0 f1 c/\ c~ c= f1 f2 c~ cclosure f0 f1 c==> cI f0 f1 c==> c~ cF cF
+- (x = a), (((~ (x = a)) /\ (~ (s x))) /\ ((s x) \/ (x = a))) |- (~ (s a))
+T c==> c= f0 f1 c==> c/\ c/\ c~ c= f0 f1 c~ * f2 f0 c\/ * f2 f0 c= f0 f1 c~ * f2 f1
+- (~ ((closure s) a)), ((x = a) /\ (((closure s) x) /\ ((x = a) \/ ((I s) x)))), ((I s) x) |- (((I s) x) /\ F)
+T c==> c~ cclosure f0 f1 c==> c/\ c= f2 f1 c/\ cclosure f0 f2 c\/ c= f2 f1 cI f0 f2 c==> cI f0 f2 c/\ cI f0 f2 cF
++ |- (((((closure s) a) /\ ((connected s) /\ (~ (!x. (~ (s x)))))) ==> (~ (!x. (~ (((closure s) x) /\ (x = a)))))) = (((a IN (closure s)) /\ ((connected s) /\ (~ (!x. ((x IN s) = (x IN EMPTY)))))) ==> (~ (!x. ((x IN ((closure s) INTER (a INSERT EMPTY))) = (x IN EMPTY))))))
+T c= c==> c/\ cclosure f0 f1 c/\ cconnected f0 c~ ! c~ * f0 b0 c~ ! c~ c/\ cclosure f0 b0 c= b0 f1 c==> c/\ cIN f1 * part cclosure f0 c/\ cconnected f0 c~ ! c= cIN b0 f0 cIN b0 part cEMPTY c~ ! c= cIN b0 * * part cINTER * part cclosure f0 * * part cINSERT f1 part cEMPTY cIN b0 part cEMPTY
++ |- (((?x. ((x = a) /\ (((closure s) x) /\ ((x = a) \/ (s x))))) \/ ((!x. ((~ (x = a)) \/ ((~ (x = a)) /\ (~ (s x))))) \/ (!x. ((~ ((closure s) x)) \/ ((~ (x = a)) /\ (~ (s x))))))) = (?x. (((x = a) /\ (((closure s) x) /\ ((x = a) \/ (s x)))) \/ ((!x. ((~ (x = a)) \/ ((~ (x = a)) /\ (~ (s x))))) \/ (!x. ((~ ((closure s) x)) \/ ((~ (x = a)) /\ (~ (s x)))))))))
+T c= c\/ c? / c/\ c= b0 f0 c/\ cclosure f1 b0 c\/ c= b0 f0 * f1 b0 c\/ ! c\/ c~ c= b0 f0 c/\ c~ c= b0 f0 c~ * f1 b0 ! c\/ c~ cclosure f1 b0 c/\ c~ c= b0 f0 c~ * f1 b0 c? / c\/ c/\ c= b0 f0 c/\ cclosure f1 b0 c\/ c= b0 f0 * f1 b0 c\/ ! c\/ c~ c= b1 f0 c/\ c~ c= b1 f0 c~ * f1 b1 ! c\/ c~ cclosure f1 b1 c/\ c~ c= b1 f0 c~ * f1 b1
++ (!x. ((s x) ==> ((closure s) x))), (~ ((closure s) a)), ((((x = a) \/ (s x)) /\ ((~ (x = a)) /\ (~ ((closure s) x)))) \/ (((x = a) /\ (((closure s) x) /\ ((x = a) \/ (s x)))) \/ ((!x. ((~ (x = a)) \/ ((~ (x = a)) /\ (~ (s x))))) \/ (!x. ((~ ((closure s) x)) \/ ((~ (x = a)) /\ (~ (s x)))))))) |- (!x'. (((\x. ((connected s) /\ (s x))) x') ==> F))
+T c==> ! c==> * f0 b0 cclosure f0 b0 c==> c~ cclosure f0 f1 c==> c\/ c/\ c\/ c= f2 f1 * f0 f2 c/\ c~ c= f2 f1 c~ cclosure f0 f2 c\/ c/\ c= f2 f1 c/\ cclosure f0 f2 c\/ c= f2 f1 * f0 f2 c\/ ! c\/ c~ c= b0 f1 c/\ c~ c= b0 f1 c~ * f0 b0 ! c\/ c~ cclosure f0 b0 c/\ c~ c= b0 f1 c~ * f0 b0 ! c==> * / c/\ cconnected f0 * f0 b1 b0 cF
++ (((x = a) \/ ((I s) x)) /\ ((~ (x = a)) /\ (~ ((closure s) x)))), (((I s) x) ==> F) |- F
+T c==> c/\ c\/ c= f0 f1 cI f2 f0 c/\ c~ c= f0 f1 c~ cclosure f2 f0 c==> c==> cI f2 f0 cF cF
++ (!x. ((s x) ==> ((closure s) x))), ((connected s) /\ (~ (!x. (~ (s x))))) |- ((~ ((!x. (((x = a) \/ (s x)) ==> ((x = a) \/ ((closure s) x)))) /\ ((!x. (~ ((x = a) /\ (((closure s) x) /\ ((x = a) \/ (s x)))))) /\ ((~ (!x. (~ ((x = a) /\ ((x = a) \/ (s x)))))) /\ (~ (!x. (~ (((closure s) x) /\ ((x = a) \/ (s x)))))))))) ==> ((closure s) a))
+T c==> ! c==> * f0 b0 cclosure f0 b0 c==> c/\ cconnected f0 c~ ! c~ * f0 b0 c==> c~ c/\ ! c==> c\/ c= b0 f1 * f0 b0 c\/ c= b0 f1 cclosure f0 b0 c/\ ! c~ c/\ c= b0 f1 c/\ cclosure f0 b0 c\/ c= b0 f1 * f0 b0 c/\ c~ ! c~ c/\ c= b0 f1 c\/ c= b0 f1 * f0 b0 c~ ! c~ c/\ cclosure f0 b0 c\/ c= b0 f1 * f0 b0 cclosure f0 f1
++ ((\x. ((connected s) /\ (s x))) x') |- ((((connected s) /\ (s x')) ==> F) = F)
+T c==> * / c/\ cconnected f0 * f0 b0 f1 c= c==> c/\ cconnected f0 * f0 f1 cF cF
++ |- (((~ (((x = a) \/ (s x)) = ((s x) \/ (x = a)))) ==> F) = (((x = a) \/ (s x)) = ((s x) \/ (x = a))))
+T c= c==> c~ c= c\/ c= f0 f1 * f2 f0 c\/ * f2 f0 c= f0 f1 cF c= c\/ c= f0 f1 * f2 f0 c\/ * f2 f0 c= f0 f1
++ |- ((x = x) = T)
+T c= c= f0 f0 cT
+- (~ F), (s x), (((~ (x = a)) /\ (~ (s x))) /\ ((s x) \/ (x = a))) |- ((~ F) /\ F)
+T c==> c~ cF c==> * f0 f1 c==> c/\ c/\ c~ c= f1 f2 c~ * f0 f1 c\/ * f0 f1 c= f1 f2 c/\ c~ cF cF
+- (_288654 = _288656), (_288655 = _288657) |- ((_288654 = _288656) /\ (((I _288656) _288657) \/ (~ ((I _288654) _288655))))
+T c==> c= f0 f1 c==> c= f2 f3 c/\ c= f0 f1 c\/ cI f1 f3 c~ cI f0 f2
++ |- (((~ (((a INSERT s) SUBSET ((a INSERT EMPTY) UNION (closure s))) /\ ((((a INSERT EMPTY) INTER ((closure s) INTER (a INSERT s))) = EMPTY) /\ ((~ (((a INSERT EMPTY) INTER (a INSERT s)) = EMPTY)) /\ (~ (((closure s) INTER (a INSERT s)) = EMPTY)))))) ==> (a IN (closure s))) = ((~ ((closed (a INSERT EMPTY)) /\ ((closed (closure s)) /\ (((a INSERT s) SUBSET ((a INSERT EMPTY) UNION (closure s))) /\ ((((a INSERT EMPTY) INTER ((closure s) INTER (a INSERT s))) = EMPTY) /\ ((~ (((a INSERT EMPTY) INTER (a INSERT s)) = EMPTY)) /\ (~ (((closure s) INTER (a INSERT s)) = EMPTY)))))))) ==> (a IN (closure s))))
+T c= c==> c~ c/\ cSUBSET * * part cINSERT f0 f1 * * part cUNION * * part cINSERT f0 part cEMPTY * part cclosure f1 c/\ c= * * part cINTER * * part cINSERT f0 part cEMPTY * * part cINTER * part cclosure f1 * * part cINSERT f0 f1 part cEMPTY c/\ c~ c= * * part cINTER * * part cINSERT f0 part cEMPTY * * part cINSERT f0 f1 part cEMPTY c~ c= * * part cINTER * part cclosure f1 * * part cINSERT f0 f1 part cEMPTY cIN f0 * part cclosure f1 c==> c~ c/\ cclosed * * part cINSERT f0 part cEMPTY c/\ cclosed * part cclosure f1 c/\ cSUBSET * * part cINSERT f0 f1 * * part cUNION * * part cINSERT f0 part cEMPTY * part cclosure f1 c/\ c= * * part cINTER * * part cINSERT f0 part cEMPTY * * part cINTER * part cclosure f1 * * part cINSERT f0 f1 part cEMPTY c/\ c~ c= * * part cINTER * * part cINSERT f0 part cEMPTY * * part cINSERT f0 f1 part cEMPTY c~ c= * * part cINTER * part cclosure f1 * * part cINSERT f0 f1 part cEMPTY cIN f0 * part cclosure f1
++ |- ((!x. ((~ (x = a)) \/ ((~ (x = a)) /\ (~ ((I s) x))))) ==> F)
+T c==> ! c\/ c~ c= b0 f0 c/\ c~ c= b0 f0 c~ cI f1 b0 cF
++ (!x. ((s x) ==> ((closure s) x))), ((connected s) /\ (s x')) |- ((!x. ((~ ((closure s) x)) \/ ((~ (x = a)) /\ (~ ((I s) x))))) ==> F)
+T c==> ! c==> * f0 b0 cclosure f0 b0 c==> c/\ cconnected f0 * f0 f1 c==> ! c\/ c~ cclosure f0 b0 c/\ c~ c= b0 f2 c~ cI f0 b0 cF
+- (x = a) |- (((I s) x') = ((I s) x'))
+T c==> c= f0 f1 c= cI f2 f3 cI f2 f3
++ (!x. ((s x) ==> ((closure s) x))), (~ ((closure s) a)), ((((x = a) \/ (s x)) /\ ((~ (x = a)) /\ (~ ((closure s) x)))) \/ (((x = a) /\ (((closure s) x) /\ ((x = a) \/ (s x)))) \/ ((!x. ((~ (x = a)) \/ ((~ (x = a)) /\ (~ (s x))))) \/ (!x. ((~ ((closure s) x)) \/ ((~ (x = a)) /\ (~ (s x)))))))) |- ((?x. ((connected s) /\ (s x))) ==> F)
+T c==> ! c==> * f0 b0 cclosure f0 b0 c==> c~ cclosure f0 f1 c==> c\/ c/\ c\/ c= f2 f1 * f0 f2 c/\ c~ c= f2 f1 c~ cclosure f0 f2 c\/ c/\ c= f2 f1 c/\ cclosure f0 f2 c\/ c= f2 f1 * f0 f2 c\/ ! c\/ c~ c= b0 f1 c/\ c~ c= b0 f1 c~ * f0 b0 ! c\/ c~ cclosure f0 b0 c/\ c~ c= b0 f1 c~ * f0 b0 c==> c? / c/\ cconnected f0 * f0 b0 cF
+- |- ((a ==> b) = ((~ a) \/ b))
+T c= c==> f0 f1 c\/ c~ f0 f1
+- (x = a), (((x = a) \/ (s x)) /\ ((~ (s x)) /\ (~ (x = a)))) |- (~ (s a))
+T c==> c= f0 f1 c==> c/\ c\/ c= f0 f1 * f2 f0 c/\ c~ * f2 f0 c~ c= f0 f1 c~ * f2 f1
++ |- ((((x = a) \/ (s x)) /\ ((~ (s x)) /\ (~ (x = a)))) ==> F)
+T c==> c/\ c\/ c= f0 f1 * f2 f0 c/\ c~ * f2 f0 c~ c= f0 f1 cF
++ (~ (s = EMPTY)) |- (((connected s) ==> ((connected (a INSERT s)) = (a IN (closure s)))) = ((connected s) ==> ((connected (a INSERT s)) = ((s = EMPTY) \/ (a IN (closure s))))))
+T c==> c~ c= f0 part cEMPTY c= c==> cconnected f0 c= cconnected * * part cINSERT f1 f0 cIN f1 * part cclosure f0 c==> cconnected f0 c= cconnected * * part cINSERT f1 f0 c\/ c= f0 part cEMPTY cIN f1 * part cclosure f0
++ (((~ (x = a)) /\ (~ (s x))) /\ ((s x) \/ (x = a))) |- (~ (s x))
+T c==> c/\ c/\ c~ c= f0 f1 c~ * f2 f0 c\/ * f2 f0 c= f0 f1 c~ * f2 f0
+- (_288660 = _288662), (_288661 = _288663) |- (((closure _288662) _288663) \/ (~ ((closure _288660) _288661)))
+T c==> c= f0 f1 c==> c= f2 f3 c\/ cclosure f1 f3 c~ cclosure f0 f2
+- (_288658 = _288659) |- ((((connected _288658) = (connected _288659)) ==> ((connected _288659) \/ (~ (connected _288658)))) = ((connected _288659) \/ (~ (connected _288658))))
+T c==> c= f0 f1 c= c==> c= cconnected f0 cconnected f1 c\/ cconnected f1 c~ cconnected f0 c\/ cconnected f1 c~ cconnected f0
++ |- ((((closure s) a) /\ (?x. ((connected s) /\ (s x)))) = (?x. (((closure s) a) /\ ((connected s) /\ (s x)))))
+T c= c/\ cclosure f0 f1 c? / c/\ cconnected f0 * f0 b0 c? / c/\ cclosure f0 f1 c/\ cconnected f0 * f0 b0
++ ((connected s) /\ (~ (!x. (~ (s x))))) |- (?x. ((connected s) /\ (s x)))
+T c==> c/\ cconnected f0 c~ ! c~ * f0 b0 c? / c/\ cconnected f0 * f0 b0
++ |- (((~ a) \/ (~ b)) = (~ (a /\ b)))
+T c= c\/ c~ f0 c~ f1 c~ c/\ f0 f1
+- |- ((!s. ((((closure s) a) /\ ((connected s) /\ (~ (!x. (~ (s x)))))) ==> (~ (!x. (~ (((closure s) x) /\ (x = a))))))) = T)
+T c= ! c==> c/\ cclosure b0 f0 c/\ cconnected b0 c~ ! c~ * b0 b1 c~ ! c~ c/\ cclosure b0 b1 c= b1 f0 cT
++ (((closure s) a) /\ ((connected s) /\ (s x))) |- ((a = a) = (((closure s) a) /\ (a = a)))
+T c==> c/\ cclosure f0 f1 c/\ cconnected f0 * f0 f2 c= c= f1 f1 c/\ cclosure f0 f1 c= f1 f1
++ (!x. ((s x) ==> ((closure s) x))), (~ ((closure s) a)), ((connected s) /\ (s x')), ((((x = a) \/ (s x)) /\ ((~ (x = a)) /\ (~ ((closure s) x)))) \/ (((x = a) /\ (((closure s) x) /\ ((x = a) \/ (s x)))) \/ ((!x. ((~ (x = a)) \/ ((~ (x = a)) /\ (~ (s x))))) \/ (!x. ((~ ((closure s) x)) \/ ((~ (x = a)) /\ (~ (s x)))))))) |- F
+T c==> ! c==> * f0 b0 cclosure f0 b0 c==> c~ cclosure f0 f1 c==> c/\ cconnected f0 * f0 f2 c==> c\/ c/\ c\/ c= f3 f1 * f0 f3 c/\ c~ c= f3 f1 c~ cclosure f0 f3 c\/ c/\ c= f3 f1 c/\ cclosure f0 f3 c\/ c= f3 f1 * f0 f3 c\/ ! c\/ c~ c= b0 f1 c/\ c~ c= b0 f1 c~ * f0 b0 ! c\/ c~ cclosure f0 b0 c/\ c~ c= b0 f1 c~ * f0 b0 cF
+- |- ((\s. ((~ (!x. (((x = a) \/ (s x)) = ((s x) \/ (x = a))))) ==> F)) s)
+T * / c==> c~ ! c= c\/ c= b1 f0 * b0 b1 c\/ * b0 b1 c= b1 f0 cF f1
+- (x = a) |- (((~ ((I s) _288565)) \/ ((closure s) _288565)) = ((~ ((I s) _288565)) \/ ((closure s) _288565)))
+T c==> c= f0 f1 c= c\/ c~ cI f2 f3 cclosure f2 f3 c\/ c~ cI f2 f3 cclosure f2 f3
++ |- ((p \/ q) = (q \/ p))
+T c= c\/ f0 f1 c\/ f1 f0
++ (~ (s = EMPTY)), (connected s) |- ((((connected s) /\ (~ (s = EMPTY))) ==> ((s SUBSET (closure s)) ==> ((~ (((a INSERT s) SUBSET ((a INSERT EMPTY) UNION (closure s))) /\ ((((a INSERT EMPTY) INTER ((closure s) INTER (a INSERT s))) = EMPTY) /\ ((~ (((a INSERT EMPTY) INTER (a INSERT s)) = EMPTY)) /\ (~ (((closure s) INTER (a INSERT s)) = EMPTY)))))) ==> (a IN (closure s))))) = ((s SUBSET (closure s)) ==> ((~ (((a INSERT s) SUBSET ((a INSERT EMPTY) UNION (closure s))) /\ ((((a INSERT EMPTY) INTER ((closure s) INTER (a INSERT s))) = EMPTY) /\ ((~ (((a INSERT EMPTY) INTER (a INSERT s)) = EMPTY)) /\ (~ (((closure s) INTER (a INSERT s)) = EMPTY)))))) ==> (a IN (closure s)))))
+T c==> c~ c= f0 part cEMPTY c==> cconnected f0 c= c==> c/\ cconnected f0 c~ c= f0 part cEMPTY c==> cSUBSET f0 * part cclosure f0 c==> c~ c/\ cSUBSET * * part cINSERT f1 f0 * * part cUNION * * part cINSERT f1 part cEMPTY * part cclosure f0 c/\ c= * * part cINTER * * part cINSERT f1 part cEMPTY * * part cINTER * part cclosure f0 * * part cINSERT f1 f0 part cEMPTY c/\ c~ c= * * part cINTER * * part cINSERT f1 part cEMPTY * * part cINSERT f1 f0 part cEMPTY c~ c= * * part cINTER * part cclosure f0 * * part cINSERT f1 f0 part cEMPTY cIN f1 * part cclosure f0 c==> cSUBSET f0 * part cclosure f0 c==> c~ c/\ cSUBSET * * part cINSERT f1 f0 * * part cUNION * * part cINSERT f1 part cEMPTY * part cclosure f0 c/\ c= * * part cINTER * * part cINSERT f1 part cEMPTY * * part cINTER * part cclosure f0 * * part cINSERT f1 f0 part cEMPTY c/\ c~ c= * * part cINTER * * part cINSERT f1 part cEMPTY * * part cINSERT f1 f0 part cEMPTY c~ c= * * part cINTER * part cclosure f0 * * part cINSERT f1 f0 part cEMPTY cIN f1 * part cclosure f0
+- (x = a), (((x = a) \/ ((I s) x)) /\ ((~ (x = a)) /\ (~ ((closure s) x)))) |- ((~ F) ==> F)
+T c==> c= f0 f1 c==> c/\ c\/ c= f0 f1 cI f2 f0 c/\ c~ c= f0 f1 c~ cclosure f2 f0 c==> c~ cF cF
+- (s x), (((~ (x = a)) /\ (~ (s x))) /\ ((s x) \/ (x = a))) |- ((s x) /\ F)
+T c==> * f0 f1 c==> c/\ c/\ c~ c= f1 f2 c~ * f0 f1 c\/ * f0 f1 c= f1 f2 c/\ * f0 f1 cF
++ (!x. (~ (((closure s) x) /\ (x = a)))) |- ((((closure s) a) /\ ((connected s) /\ (s x))) ==> F)
+T c==> ! c~ c/\ cclosure f0 b0 c= b0 f1 c==> c/\ cclosure f0 f1 c/\ cconnected f0 * f0 f2 cF
+- |- ((_288661 = _288663) ==> ((~ (_288660 = _288662)) \/ (((closure _288662) _288663) \/ (~ ((closure _288660) _288661)))))
+T c==> c= f0 f1 c\/ c~ c= f2 f3 c\/ cclosure f3 f1 c~ cclosure f2 f0
++ |- ((((a = a) /\ (a = a)) ==> F) = F)
+T c= c==> c/\ c= f0 f0 c= f0 f0 cF cF
++ ((((x = a) \/ ((I s) x)) /\ ((~ (x = a)) /\ (~ ((closure s) x)))) ==> F), ((((x = a) /\ (((closure s) x) /\ ((x = a) \/ ((I s) x)))) \/ ((!x. ((~ (x = a)) \/ ((~ (x = a)) /\ (~ ((I s) x))))) \/ (!x. ((~ ((closure s) x)) \/ ((~ (x = a)) /\ (~ ((I s) x))))))) ==> F), ((((x = a) \/ (s x)) /\ ((~ (x = a)) /\ (~ ((closure s) x)))) \/ (((x = a) /\ (((closure s) x) /\ ((x = a) \/ (s x)))) \/ ((!x. ((~ (x = a)) \/ ((~ (x = a)) /\ (~ (s x))))) \/ (!x. ((~ ((closure s) x)) \/ ((~ (x = a)) /\ (~ (s x)))))))) |- F
+T c==> c==> c/\ c\/ c= f0 f1 cI f2 f0 c/\ c~ c= f0 f1 c~ cclosure f2 f0 cF c==> c==> c\/ c/\ c= f0 f1 c/\ cclosure f2 f0 c\/ c= f0 f1 cI f2 f0 c\/ ! c\/ c~ c= b0 f1 c/\ c~ c= b0 f1 c~ cI f2 b0 ! c\/ c~ cclosure f2 b0 c/\ c~ c= b0 f1 c~ cI f2 b0 cF c==> c\/ c/\ c\/ c= f0 f1 * f2 f0 c/\ c~ c= f0 f1 c~ cclosure f2 f0 c\/ c/\ c= f0 f1 c/\ cclosure f2 f0 c\/ c= f0 f1 * f2 f0 c\/ ! c\/ c~ c= b0 f1 c/\ c~ c= b0 f1 c~ * f2 b0 ! c\/ c~ cclosure f2 b0 c/\ c~ c= b0 f1 c~ * f2 b0 cF
+- (_288655 = _288657) |- ((_288655 = _288657) /\ ((~ (_288654 = _288656)) \/ (((I _288656) _288657) \/ (~ ((I _288654) _288655)))))
+T c==> c= f0 f1 c/\ c= f0 f1 c\/ c~ c= f2 f3 c\/ cI f3 f1 c~ cI f2 f0
++ (!x. ((~ ((closure s) x)) \/ ((~ (x = a)) /\ (~ ((I s) x))))) |- ((((closure s) _288570) /\ ((I s) _288570)) ==> F)
+T c==> ! c\/ c~ cclosure f0 b0 c/\ c~ c= b0 f1 c~ cI f0 b0 c==> c/\ cclosure f0 f2 cI f0 f2 cF
++ (((~ (x = a)) /\ (~ (s x))) /\ ((s x) \/ (x = a))) |- (~ (x = a))
+T c==> c/\ c/\ c~ c= f0 f1 c~ * f2 f0 c\/ * f2 f0 c= f0 f1 c~ c= f0 f1
+- (_288561 = _288562) |- ((_288561 = _288562) /\ ((s _288562) \/ (~ (s _288561))))
+T c==> c= f0 f1 c/\ c= f0 f1 c\/ * f2 f1 c~ * f2 f0
+- (x = a) |- (F = F)
+T c==> c= f0 f1 c= cF cF
++ (!x. ((s x) ==> ((closure s) x))), ((connected s) /\ (s x')) |- (((closure s) x') /\ ((I s) x'))
+T c==> ! c==> * f0 b0 cclosure f0 b0 c==> c/\ cconnected f0 * f0 f1 c/\ cclosure f0 f1 cI f0 f1
++ (!x. ((s x) ==> ((closure s) x))), (~ ((closure s) a)), ((((x = a) \/ (s x)) /\ ((~ (x = a)) /\ (~ ((closure s) x)))) \/ (((x = a) /\ (((closure s) x) /\ ((x = a) \/ (s x)))) \/ ((!x. ((~ (x = a)) \/ ((~ (x = a)) /\ (~ (s x))))) \/ (!x. ((~ ((closure s) x)) \/ ((~ (x = a)) /\ (~ (s x)))))))) |- (((connected s) /\ (s x')) ==> F)
+T c==> ! c==> * f0 b0 cclosure f0 b0 c==> c~ cclosure f0 f1 c==> c\/ c/\ c\/ c= f2 f1 * f0 f2 c/\ c~ c= f2 f1 c~ cclosure f0 f2 c\/ c/\ c= f2 f1 c/\ cclosure f0 f2 c\/ c= f2 f1 * f0 f2 c\/ ! c\/ c~ c= b0 f1 c/\ c~ c= b0 f1 c~ * f0 b0 ! c\/ c~ cclosure f0 b0 c/\ c~ c= b0 f1 c~ * f0 b0 c==> c/\ cconnected f0 * f0 f3 cF
+- (!s. (!t. (((connected s) /\ ((connected t) /\ (~ (((closure s) INTER t) = EMPTY)))) ==> (connected (s UNION t))))) |- (((!t. (((connected s) /\ ((connected t) /\ (~ (((closure s) INTER t) = EMPTY)))) ==> (connected (s UNION t)))) ==> ((\t. (((connected s) /\ ((connected t) /\ (~ (((closure s) INTER t) = EMPTY)))) ==> (connected (s UNION t)))) t)) = ((\t. (((connected s) /\ ((connected t) /\ (~ (((closure s) INTER t) = EMPTY)))) ==> (connected (s UNION t)))) t))
+T c==> ! ! c==> c/\ cconnected b0 c/\ cconnected b1 c~ c= * * part cINTER * part cclosure b0 b1 part cEMPTY cconnected * * part cUNION b0 b1 c= c==> ! c==> c/\ cconnected f0 c/\ cconnected b0 c~ c= * * part cINTER * part cclosure f0 b0 part cEMPTY cconnected * * part cUNION f0 b0 * / c==> c/\ cconnected f0 c/\ cconnected b0 c~ c= * * part cINTER * part cclosure f0 b0 part cEMPTY cconnected * * part cUNION f0 b0 f1 * / c==> c/\ cconnected f0 c/\ cconnected b0 c~ c= * * part cINTER * part cclosure f0 b0 part cEMPTY cconnected * * part cUNION f0 b0 f1
+- (_288660 = _288662), (_288661 = _288663) |- ((_288660 = _288662) /\ (((closure _288662) _288663) \/ (~ ((closure _288660) _288661))))
+T c==> c= f0 f1 c==> c= f2 f3 c/\ c= f0 f1 c\/ cclosure f1 f3 c~ cclosure f0 f2
+- (x = a), (((~ (x = a)) /\ (~ (s x))) /\ ((s x) \/ (x = a))) |- ((~ F) ==> F)
+T c==> c= f0 f1 c==> c/\ c/\ c~ c= f0 f1 c~ * f2 f0 c\/ * f2 f0 c= f0 f1 c==> c~ cF cF
++ (((~ (x = a)) /\ (~ (s x))) /\ ((s x) \/ (x = a))) |- ((((~ (x = a)) /\ (~ (s x))) /\ ((s x) \/ (x = a))) /\ F)
+T c==> c/\ c/\ c~ c= f0 f1 c~ * f2 f0 c\/ * f2 f0 c= f0 f1 c/\ c/\ c/\ c~ c= f0 f1 c~ * f2 f0 c\/ * f2 f0 c= f0 f1 cF
+- (~ ((closure s) a)), ((x = a) /\ (((closure s) x) /\ ((x = a) \/ ((I s) x)))) |- (((I s) x) ==> F)
+T c==> c~ cclosure f0 f1 c==> c/\ c= f2 f1 c/\ cclosure f0 f2 c\/ c= f2 f1 cI f0 f2 c==> cI f0 f2 cF
++ |- ((a = a) /\ (a = a))
+T c/\ c= f0 f0 c= f0 f0
+- |- ((((~ ((((closure s) a) /\ ((connected s) /\ (~ (!x. (~ (s x)))))) ==> (~ (!x. (~ (((closure s) x) /\ (x = a))))))) ==> F) ==> ((~ ((((closure s) a) /\ ((connected s) /\ (~ (!x. (~ (s x)))))) ==> (~ (!x. (~ (((closure s) x) /\ (x = a))))))) ==> F)) ==> (((~ ((((closure s) a) /\ ((connected s) /\ (~ (!x. (~ (s x)))))) ==> (~ (!x. (~ (((closure s) x) /\ (x = a))))))) ==> F) ==> ((~ ((((closure s) a) /\ ((connected s) /\ (~ (!x. (~ (s x)))))) ==> (~ (!x. (~ (((closure s) x) /\ (x = a))))))) ==> F)))
+T c==> c==> c==> c~ c==> c/\ cclosure f0 f1 c/\ cconnected f0 c~ ! c~ * f0 b0 c~ ! c~ c/\ cclosure f0 b0 c= b0 f1 cF c==> c~ c==> c/\ cclosure f0 f1 c/\ cconnected f0 c~ ! c~ * f0 b0 c~ ! c~ c/\ cclosure f0 b0 c= b0 f1 cF c==> c==> c~ c==> c/\ cclosure f0 f1 c/\ cconnected f0 c~ ! c~ * f0 b0 c~ ! c~ c/\ cclosure f0 b0 c= b0 f1 cF c==> c~ c==> c/\ cclosure f0 f1 c/\ cconnected f0 c~ ! c~ * f0 b0 c~ ! c~ c/\ cclosure f0 b0 c= b0 f1 cF
++ |- ((s = EMPTY) \/ (~ (s = EMPTY)))
+T c\/ c= f0 part cEMPTY c~ c= f0 part cEMPTY
++ (!x. ((~ (x = a)) \/ ((~ (x = a)) /\ (~ ((I s) x))))) |- (!x. (((~ (x = a)) \/ (~ (x = a))) /\ ((~ (x = a)) \/ (~ ((I s) x)))))
+T c==> ! c\/ c~ c= b0 f0 c/\ c~ c= b0 f0 c~ cI f1 b0 ! c/\ c\/ c~ c= b0 f0 c~ c= b0 f0 c\/ c~ c= b0 f0 c~ cI f1 b0
+- |- ((!a. (!s. ((((closure s) a) /\ ((connected s) /\ (~ (!x. (~ (s x)))))) ==> (~ (!x. (~ (((closure s) x) /\ (x = a)))))))) = (!a. (!s. ((~ ((((closure s) a) /\ ((connected s) /\ (~ (!x. (~ (s x)))))) ==> (~ (!x. (~ (((closure s) x) /\ (x = a))))))) ==> F))))
+T c= ! ! c==> c/\ cclosure b1 b0 c/\ cconnected b1 c~ ! c~ * b1 b2 c~ ! c~ c/\ cclosure b1 b2 c= b2 b0 ! ! c==> c~ c==> c/\ cclosure b1 b0 c/\ cconnected b1 c~ ! c~ * b1 b2 c~ ! c~ c/\ cclosure b1 b2 c= b2 b0 cF
++ (~ (s = EMPTY)), (connected s) |- ((a IN (closure s)) ==> (connected (a INSERT s)))
+T c==> c~ c= f0 part cEMPTY c==> cconnected f0 c==> cIN f1 * part cclosure f0 cconnected * * part cINSERT f1 f0
++ (!e1. (!e2. (~ ((closed e1) /\ ((closed e2) /\ (((a INSERT s) SUBSET (e1 UNION e2)) /\ (((e1 INTER (e2 INTER (a INSERT s))) = EMPTY) /\ ((~ ((e1 INTER (a INSERT s)) = EMPTY)) /\ (~ ((e2 INTER (a INSERT s)) = EMPTY)))))))))) |- ((\e2. (~ ((closed (a INSERT EMPTY)) /\ ((closed e2) /\ (((a INSERT s) SUBSET ((a INSERT EMPTY) UNION e2)) /\ ((((a INSERT EMPTY) INTER (e2 INTER (a INSERT s))) = EMPTY) /\ ((~ (((a INSERT EMPTY) INTER (a INSERT s)) = EMPTY)) /\ (~ ((e2 INTER (a INSERT s)) = EMPTY))))))))) (closure s))
+T c==> ! ! c~ c/\ cclosed b0 c/\ cclosed b1 c/\ cSUBSET * * part cINSERT f0 f1 * * part cUNION b0 b1 c/\ c= * * part cINTER b0 * * part cINTER b1 * * part cINSERT f0 f1 part cEMPTY c/\ c~ c= * * part cINTER b0 * * part cINSERT f0 f1 part cEMPTY c~ c= * * part cINTER b1 * * part cINSERT f0 f1 part cEMPTY * / c~ c/\ cclosed * * part cINSERT f0 part cEMPTY c/\ cclosed b0 c/\ cSUBSET * * part cINSERT f0 f1 * * part cUNION * * part cINSERT f0 part cEMPTY b0 c/\ c= * * part cINTER * * part cINSERT f0 part cEMPTY * * part cINTER b0 * * part cINSERT f0 f1 part cEMPTY c/\ c~ c= * * part cINTER * * part cINSERT f0 part cEMPTY * * part cINSERT f0 f1 part cEMPTY c~ c= * * part cINTER b0 * * part cINSERT f0 f1 part cEMPTY * part cclosure f1
+- |- (((t1 \/ t2) \/ t3) = (t1 \/ (t2 \/ t3)))
+T c= c\/ c\/ f0 f1 f2 c\/ f0 c\/ f1 f2
+- (~ (s = EMPTY)) |- (((~ (EMPTY = s)) ==> ((EMPTY = s) = F)) = ((EMPTY = s) = F))
+T c==> c~ c= f0 part cEMPTY c= c==> c~ c= part cEMPTY f0 c= c= part cEMPTY f0 cF c= c= part cEMPTY f0 cF
+- (~ ((closure s) a)), ((x = a) /\ (((closure s) x) /\ ((x = a) \/ ((I s) x)))) |- ((~ F) ==> F)
+T c==> c~ cclosure f0 f1 c==> c/\ c= f2 f1 c/\ cclosure f0 f2 c\/ c= f2 f1 cI f0 f2 c==> c~ cF cF
+- |- (T = (((~ ((I s) _288569)) \/ ((closure s) _288569)) = (((closure s) _288569) \/ (~ ((I s) _288569)))))
+T c= cT c= c\/ c~ cI f0 f1 cclosure f0 f1 c\/ cclosure f0 f1 c~ cI f0 f1
++ (~ (s = EMPTY)), (connected s) |- ((~ (((a INSERT s) SUBSET ((a INSERT EMPTY) UNION (closure s))) /\ ((((a INSERT EMPTY) INTER ((closure s) INTER (a INSERT s))) = EMPTY) /\ ((~ (((a INSERT EMPTY) INTER (a INSERT s)) = EMPTY)) /\ (~ (((closure s) INTER (a INSERT s)) = EMPTY)))))) ==> (a IN (closure s)))
+T c==> c~ c= f0 part cEMPTY c==> cconnected f0 c==> c~ c/\ cSUBSET * * part cINSERT f1 f0 * * part cUNION * * part cINSERT f1 part cEMPTY * part cclosure f0 c/\ c= * * part cINTER * * part cINSERT f1 part cEMPTY * * part cINTER * part cclosure f0 * * part cINSERT f1 f0 part cEMPTY c/\ c~ c= * * part cINTER * * part cINSERT f1 part cEMPTY * * part cINSERT f1 f0 part cEMPTY c~ c= * * part cINTER * part cclosure f0 * * part cINSERT f1 f0 part cEMPTY cIN f1 * part cclosure f0
++ ((x = a) /\ (((closure s) x) /\ ((x = a) \/ ((I s) x)))) |- ((closure s) x)
+T c==> c/\ c= f0 f1 c/\ cclosure f2 f0 c\/ c= f0 f1 cI f2 f0 cclosure f2 f0
++ (!x. ((s x) ==> ((closure s) x))), ((connected s) /\ (s x')) |- (((I s) x') = (((closure s) x') /\ ((I s) x')))
+T c==> ! c==> * f0 b0 cclosure f0 b0 c==> c/\ cconnected f0 * f0 f1 c= cI f0 f1 c/\ cclosure f0 f1 cI f0 f1
++ (!x. (~ (((closure s) x) /\ (x = a)))) |- (((!x. (((\x. (((closure s) a) /\ ((connected s) /\ (s x)))) x) ==> F)) ==> ((?x. (((closure s) a) /\ ((connected s) /\ (s x)))) ==> F)) = ((?x. (((closure s) a) /\ ((connected s) /\ (s x)))) ==> F))
+T c==> ! c~ c/\ cclosure f0 b0 c= b0 f1 c= c==> ! c==> * / c/\ cclosure f0 f1 c/\ cconnected f0 * f0 b1 b0 cF c==> c? / c/\ cclosure f0 f1 c/\ cconnected f0 * f0 b0 cF c==> c? / c/\ cclosure f0 f1 c/\ cconnected f0 * f0 b0 cF
++ (~ (((x = a) \/ (s x)) = ((s x) \/ (x = a)))), ((((~ (x = a)) /\ (~ (s x))) /\ ((s x) \/ (x = a))) ==> F), ((((x = a) \/ (s x)) /\ ((~ (s x)) /\ (~ (x = a)))) ==> F) |- F
+T c==> c~ c= c\/ c= f0 f1 * f2 f0 c\/ * f2 f0 c= f0 f1 c==> c==> c/\ c/\ c~ c= f0 f1 c~ * f2 f0 c\/ * f2 f0 c= f0 f1 cF c==> c==> c/\ c\/ c= f0 f1 * f2 f0 c/\ c~ * f2 f0 c~ c= f0 f1 cF cF
+- (~ (s = EMPTY)) |- (~ (EMPTY = s))
+T c==> c~ c= f0 part cEMPTY c~ c= part cEMPTY f0
+- (!s. (!t. (((connected s) /\ ((connected t) /\ (~ (((closure s) INTER t) = EMPTY)))) ==> (connected (s UNION t))))) |- ((\s. (!t. (((connected s) /\ ((connected t) /\ (~ (((closure s) INTER t) = EMPTY)))) ==> (connected (s UNION t))))) s)
+T c==> ! ! c==> c/\ cconnected b0 c/\ cconnected b1 c~ c= * * part cINTER * part cclosure b0 b1 part cEMPTY cconnected * * part cUNION b0 b1 * / ! c==> c/\ cconnected b0 c/\ cconnected b1 c~ c= * * part cINTER * part cclosure b0 b1 part cEMPTY cconnected * * part cUNION b0 b1 f0
++ (!x. ((s x) ==> ((closure s) x))) |- (!x. ((~ ((I s) x)) \/ ((closure s) x)))
+T c==> ! c==> * f0 b0 cclosure f0 b0 ! c\/ c~ cI f0 b0 cclosure f0 b0
++ |- ((~ (((x = a) \/ (s x)) = ((s x) \/ (x = a)))) ==> F)
+T c==> c~ c= c\/ c= f0 f1 * f2 f0 c\/ * f2 f0 c= f0 f1 cF
++ (!e1. (!e2. (~ ((closed e1) /\ ((closed e2) /\ (((a INSERT s) SUBSET (e1 UNION e2)) /\ (((e1 INTER (e2 INTER (a INSERT s))) = EMPTY) /\ ((~ ((e1 INTER (a INSERT s)) = EMPTY)) /\ (~ ((e2 INTER (a INSERT s)) = EMPTY)))))))))), (~ (s = EMPTY)), (connected s) |- ((!e1. (!e2. (~ ((closed e1) /\ ((closed e2) /\ (((a INSERT s) SUBSET (e1 UNION e2)) /\ (((e1 INTER (e2 INTER (a INSERT s))) = EMPTY) /\ ((~ ((e1 INTER (a INSERT s)) = EMPTY)) /\ (~ ((e2 INTER (a INSERT s)) = EMPTY)))))))))) /\ (a IN (closure s)))
+T c==> ! ! c~ c/\ cclosed b0 c/\ cclosed b1 c/\ cSUBSET * * part cINSERT f0 f1 * * part cUNION b0 b1 c/\ c= * * part cINTER b0 * * part cINTER b1 * * part cINSERT f0 f1 part cEMPTY c/\ c~ c= * * part cINTER b0 * * part cINSERT f0 f1 part cEMPTY c~ c= * * part cINTER b1 * * part cINSERT f0 f1 part cEMPTY c==> c~ c= f1 part cEMPTY c==> cconnected f1 c/\ ! ! c~ c/\ cclosed b0 c/\ cclosed b1 c/\ cSUBSET * * part cINSERT f0 f1 * * part cUNION b0 b1 c/\ c= * * part cINTER b0 * * part cINTER b1 * * part cINSERT f0 f1 part cEMPTY c/\ c~ c= * * part cINTER b0 * * part cINSERT f0 f1 part cEMPTY c~ c= * * part cINTER b1 * * part cINSERT f0 f1 part cEMPTY cIN f0 * part cclosure f1
+- ((connected s) /\ ((connected t) /\ (~ (((closure s) INTER t) = EMPTY)))) |- ((!s. (!t. (((connected s) /\ ((connected t) /\ (~ (((closure s) INTER t) = EMPTY)))) ==> (connected (s UNION t))))) ==> (connected (s UNION t)))
+T c==> c/\ cconnected f0 c/\ cconnected f1 c~ c= * * part cINTER * part cclosure f0 f1 part cEMPTY c==> ! ! c==> c/\ cconnected b0 c/\ cconnected b1 c~ c= * * part cINTER * part cclosure b0 b1 part cEMPTY cconnected * * part cUNION b0 b1 cconnected * * part cUNION f0 f1
++ ((\x. (((closure s) a) /\ ((connected s) /\ (s x)))) x) |- (((((closure s) a) /\ ((connected s) /\ (s x))) ==> F) = F)
+T c==> * / c/\ cclosure f0 f1 c/\ cconnected f0 * f0 b0 f2 c= c==> c/\ cclosure f0 f1 c/\ cconnected f0 * f0 f2 cF cF
+- (((closure s) a) /\ ((connected s) /\ (s x))) |- ((~ ((closure s) a)) ==> ((closure s) a))
+T c==> c/\ cclosure f0 f1 c/\ cconnected f0 * f0 f2 c==> c~ cclosure f0 f1 cclosure f0 f1
+- (!x. ((s x) ==> ((closure s) x))), ((connected s) /\ (s x')) |- ((~ ((closure s) x')) ==> ((closure s) x'))
+T c==> ! c==> * f0 b0 cclosure f0 b0 c==> c/\ cconnected f0 * f0 f1 c==> c~ cclosure f0 f1 cclosure f0 f1
++ |- (((!s. (closed (closure s))) ==> ((\s. (closed (closure s))) s)) = ((\s. (closed (closure s))) s))
+T c= c==> ! cclosed * part cclosure b0 * / cclosed * part cclosure b0 f0 * / cclosed * part cclosure b0 f0
+- |- ((!x'. ((~ ((closure s) x)) \/ (~ (x' = a)))) = ((~ ((closure s) x)) \/ (!x. (~ (x = a)))))
+T c= ! c\/ c~ cclosure f0 f1 c~ c= b0 f2 c\/ c~ cclosure f0 f1 ! c~ c= b0 f2
+- ((~ (((connected s) /\ (~ (!x. (~ (s x))))) ==> ((!x. ((s x) ==> ((closure s) x))) ==> ((~ ((!x. (((x = a) \/ (s x)) ==> ((x = a) \/ ((closure s) x)))) /\ ((!x. (~ ((x = a) /\ (((closure s) x) /\ ((x = a) \/ (s x)))))) /\ ((~ (!x. (~ ((x = a) /\ ((x = a) \/ (s x)))))) /\ (~ (!x. (~ (((closure s) x) /\ ((x = a) \/ (s x)))))))))) ==> ((closure s) a))))) ==> F), (((~ (((connected s) /\ (~ (!x. (~ (s x))))) ==> ((!x. ((s x) ==> ((closure s) x))) ==> ((~ ((!x. (((x = a) \/ (s x)) ==> ((x = a) \/ ((closure s) x)))) /\ ((!x. (~ ((x = a) /\ (((closure s) x) /\ ((x = a) \/ (s x)))))) /\ ((~ (!x. (~ ((x = a) /\ ((x = a) \/ (s x)))))) /\ (~ (!x. (~ (((closure s) x) /\ ((x = a) \/ (s x)))))))))) ==> ((closure s) a))))) ==> F) ==> ((~ (((connected s) /\ (~ (!x. (~ (s x))))) ==> ((!x. ((s x) ==> ((closure s) x))) ==> ((~ ((!x. (((x = a) \/ (s x)) ==> ((x = a) \/ ((closure s) x)))) /\ ((!x. (~ ((x = a) /\ (((closure s) x) /\ ((x = a) \/ (s x)))))) /\ ((~ (!x. (~ ((x = a) /\ ((x = a) \/ (s x)))))) /\ (~ (!x. (~ (((closure s) x) /\ ((x = a) \/ (s x)))))))))) ==> ((closure s) a))))) ==> F)) |- (((~ (((connected s) /\ (~ (!x. (~ (s x))))) ==> ((!x. ((s x) ==> ((closure s) x))) ==> ((~ ((!x. (((x = a) \/ (s x)) ==> ((x = a) \/ ((closure s) x)))) /\ ((!x. (~ ((x = a) /\ (((closure s) x) /\ ((x = a) \/ (s x)))))) /\ ((~ (!x. (~ ((x = a) /\ ((x = a) \/ (s x)))))) /\ (~ (!x. (~ (((closure s) x) /\ ((x = a) \/ (s x)))))))))) ==> ((closure s) a))))) ==> F) /\ ((~ (((connected s) /\ (~ (!x. (~ (s x))))) ==> ((!x. ((s x) ==> ((closure s) x))) ==> ((~ ((!x. (((x = a) \/ (s x)) ==> ((x = a) \/ ((closure s) x)))) /\ ((!x. (~ ((x = a) /\ (((closure s) x) /\ ((x = a) \/ (s x)))))) /\ ((~ (!x. (~ ((x = a) /\ ((x = a) \/ (s x)))))) /\ (~ (!x. (~ (((closure s) x) /\ ((x = a) \/ (s x)))))))))) ==> ((closure s) a))))) ==> F))
+T c==> c==> c~ c==> c/\ cconnected f0 c~ ! c~ * f0 b0 c==> ! c==> * f0 b0 cclosure f0 b0 c==> c~ c/\ ! c==> c\/ c= b0 f1 * f0 b0 c\/ c= b0 f1 cclosure f0 b0 c/\ ! c~ c/\ c= b0 f1 c/\ cclosure f0 b0 c\/ c= b0 f1 * f0 b0 c/\ c~ ! c~ c/\ c= b0 f1 c\/ c= b0 f1 * f0 b0 c~ ! c~ c/\ cclosure f0 b0 c\/ c= b0 f1 * f0 b0 cclosure f0 f1 cF c==> c==> c==> c~ c==> c/\ cconnected f0 c~ ! c~ * f0 b0 c==> ! c==> * f0 b0 cclosure f0 b0 c==> c~ c/\ ! c==> c\/ c= b0 f1 * f0 b0 c\/ c= b0 f1 cclosure f0 b0 c/\ ! c~ c/\ c= b0 f1 c/\ cclosure f0 b0 c\/ c= b0 f1 * f0 b0 c/\ c~ ! c~ c/\ c= b0 f1 c\/ c= b0 f1 * f0 b0 c~ ! c~ c/\ cclosure f0 b0 c\/ c= b0 f1 * f0 b0 cclosure f0 f1 cF c==> c~ c==> c/\ cconnected f0 c~ ! c~ * f0 b0 c==> ! c==> * f0 b0 cclosure f0 b0 c==> c~ c/\ ! c==> c\/ c= b0 f1 * f0 b0 c\/ c= b0 f1 cclosure f0 b0 c/\ ! c~ c/\ c= b0 f1 c/\ cclosure f0 b0 c\/ c= b0 f1 * f0 b0 c/\ c~ ! c~ c/\ c= b0 f1 c\/ c= b0 f1 * f0 b0 c~ ! c~ c/\ cclosure f0 b0 c\/ c= b0 f1 * f0 b0 cclosure f0 f1 cF c/\ c==> c~ c==> c/\ cconnected f0 c~ ! c~ * f0 b0 c==> ! c==> * f0 b0 cclosure f0 b0 c==> c~ c/\ ! c==> c\/ c= b0 f1 * f0 b0 c\/ c= b0 f1 cclosure f0 b0 c/\ ! c~ c/\ c= b0 f1 c/\ cclosure f0 b0 c\/ c= b0 f1 * f0 b0 c/\ c~ ! c~ c/\ c= b0 f1 c\/ c= b0 f1 * f0 b0 c~ ! c~ c/\ cclosure f0 b0 c\/ c= b0 f1 * f0 b0 cclosure f0 f1 cF c==> c~ c==> c/\ cconnected f0 c~ ! c~ * f0 b0 c==> ! c==> * f0 b0 cclosure f0 b0 c==> c~ c/\ ! c==> c\/ c= b0 f1 * f0 b0 c\/ c= b0 f1 cclosure f0 b0 c/\ ! c~ c/\ c= b0 f1 c/\ cclosure f0 b0 c\/ c= b0 f1 * f0 b0 c/\ c~ ! c~ c/\ c= b0 f1 c\/ c= b0 f1 * f0 b0 c~ ! c~ c/\ cclosure f0 b0 c\/ c= b0 f1 * f0 b0 cclosure f0 f1 cF
++ (!x. ((s x) ==> ((closure s) x))), (~ ((closure s) a)), ((connected s) /\ (~ (!x. (~ (s x))))) |- (!x. (((\x. ((((x = a) \/ (s x)) /\ ((~ (x = a)) /\ (~ ((closure s) x)))) \/ (((x = a) /\ (((closure s) x) /\ ((x = a) \/ (s x)))) \/ ((!x. ((~ (x = a)) \/ ((~ (x = a)) /\ (~ (s x))))) \/ (!x. ((~ ((closure s) x)) \/ ((~ (x = a)) /\ (~ (s x))))))))) x) ==> F))
+T c==> ! c==> * f0 b0 cclosure f0 b0 c==> c~ cclosure f0 f1 c==> c/\ cconnected f0 c~ ! c~ * f0 b0 ! c==> * / c\/ c/\ c\/ c= b1 f1 * f0 b1 c/\ c~ c= b1 f1 c~ cclosure f0 b1 c\/ c/\ c= b1 f1 c/\ cclosure f0 b1 c\/ c= b1 f1 * f0 b1 c\/ ! c\/ c~ c= b1 f1 c/\ c~ c= b1 f1 c~ * f0 b1 ! c\/ c~ cclosure f0 b1 c/\ c~ c= b1 f1 c~ * f0 b1 b0 cF
++ (((~ (x = a)) /\ (~ (s x))) /\ ((s x) \/ (x = a))) |- ((x = a) ==> F)
+T c==> c/\ c/\ c~ c= f0 f1 c~ * f2 f0 c\/ * f2 f0 c= f0 f1 c==> c= f0 f1 cF
+- |- ((?x'. (((x' = a) \/ (s x')) /\ ((~ (x = a)) /\ (~ ((closure s) x))))) = ((?x. ((x = a) \/ (s x))) /\ ((~ (x = a)) /\ (~ ((closure s) x)))))
+T c= c? / c/\ c\/ c= b0 f0 * f1 b0 c/\ c~ c= f2 f0 c~ cclosure f1 f2 c/\ c? / c\/ c= b0 f0 * f1 b0 c/\ c~ c= f2 f0 c~ cclosure f1 f2
++ (((~ (x = a)) /\ (~ (s x))) /\ ((s x) \/ (x = a))), ((x = a) ==> F) |- F
+T c==> c/\ c/\ c~ c= f0 f1 c~ * f2 f0 c\/ * f2 f0 c= f0 f1 c==> c==> c= f0 f1 cF cF
++ (!x. ((s x) ==> ((closure s) x))), (((x = a) \/ ((I s) x)) /\ ((~ (x = a)) /\ (~ ((closure s) x)))) |- (((I s) x) ==> F)
+T c==> ! c==> * f0 b0 cclosure f0 b0 c==> c/\ c\/ c= f1 f2 cI f0 f1 c/\ c~ c= f1 f2 c~ cclosure f0 f1 c==> cI f0 f1 cF
++ (((closure s) a) /\ ((connected s) /\ (s x))) |- (((closure s) a) /\ (a = a))
+T c==> c/\ cclosure f0 f1 c/\ cconnected f0 * f0 f2 c/\ cclosure f0 f1 c= f1 f1
+- (~ (s x)), (s x) |- ((~ (s x)) /\ (s x))
+T c==> c~ * f0 f1 c==> * f0 f1 c/\ c~ * f0 f1 * f0 f1
++ (~ (s = EMPTY)), (connected s) |- (((a IN (closure s)) ==> (connected (a INSERT s))) = (((connected (a INSERT s)) ==> (a IN (closure s))) /\ ((a IN (closure s)) ==> (connected (a INSERT s)))))
+T c==> c~ c= f0 part cEMPTY c==> cconnected f0 c= c==> cIN f1 * part cclosure f0 cconnected * * part cINSERT f1 f0 c/\ c==> cconnected * * part cINSERT f1 f0 cIN f1 * part cclosure f0 c==> cIN f1 * part cclosure f0 cconnected * * part cINSERT f1 f0
+- (s x), (((x = a) \/ (s x)) /\ ((~ (s x)) /\ (~ (x = a)))) |- ((~ F) ==> F)
+T c==> * f0 f1 c==> c/\ c\/ c= f1 f2 * f0 f1 c/\ c~ * f0 f1 c~ c= f1 f2 c==> c~ cF cF
++ (!e1. (!e2. (~ ((closed e1) /\ ((closed e2) /\ (((a INSERT s) SUBSET (e1 UNION e2)) /\ (((e1 INTER (e2 INTER (a INSERT s))) = EMPTY) /\ ((~ ((e1 INTER (a INSERT s)) = EMPTY)) /\ (~ ((e2 INTER (a INSERT s)) = EMPTY)))))))))) |- (((~ ((closed (a INSERT EMPTY)) /\ ((closed (closure s)) /\ (((a INSERT s) SUBSET ((a INSERT EMPTY) UNION (closure s))) /\ ((((a INSERT EMPTY) INTER ((closure s) INTER (a INSERT s))) = EMPTY) /\ ((~ (((a INSERT EMPTY) INTER (a INSERT s)) = EMPTY)) /\ (~ (((closure s) INTER (a INSERT s)) = EMPTY)))))))) ==> (a IN (closure s))) = (a IN (closure s)))
+T c==> ! ! c~ c/\ cclosed b0 c/\ cclosed b1 c/\ cSUBSET * * part cINSERT f0 f1 * * part cUNION b0 b1 c/\ c= * * part cINTER b0 * * part cINTER b1 * * part cINSERT f0 f1 part cEMPTY c/\ c~ c= * * part cINTER b0 * * part cINSERT f0 f1 part cEMPTY c~ c= * * part cINTER b1 * * part cINSERT f0 f1 part cEMPTY c= c==> c~ c/\ cclosed * * part cINSERT f0 part cEMPTY c/\ cclosed * part cclosure f1 c/\ cSUBSET * * part cINSERT f0 f1 * * part cUNION * * part cINSERT f0 part cEMPTY * part cclosure f1 c/\ c= * * part cINTER * * part cINSERT f0 part cEMPTY * * part cINTER * part cclosure f1 * * part cINSERT f0 f1 part cEMPTY c/\ c~ c= * * part cINTER * * part cINSERT f0 part cEMPTY * * part cINSERT f0 f1 part cEMPTY c~ c= * * part cINTER * part cclosure f1 * * part cINSERT f0 f1 part cEMPTY cIN f0 * part cclosure f1 cIN f0 * part cclosure f1
++ (!x. ((s x) ==> ((closure s) x))), (~ ((closure s) a)), ((connected s) /\ (s x')) |- ((((x = a) /\ (((closure s) x) /\ ((x = a) \/ ((I s) x)))) \/ ((!x. ((~ (x = a)) \/ ((~ (x = a)) /\ (~ ((I s) x))))) \/ (!x. ((~ ((closure s) x)) \/ ((~ (x = a)) /\ (~ ((I s) x))))))) ==> F)
+T c==> ! c==> * f0 b0 cclosure f0 b0 c==> c~ cclosure f0 f1 c==> c/\ cconnected f0 * f0 f2 c==> c\/ c/\ c= f3 f1 c/\ cclosure f0 f3 c\/ c= f3 f1 cI f0 f3 c\/ ! c\/ c~ c= b0 f1 c/\ c~ c= b0 f1 c~ cI f0 b0 ! c\/ c~ cclosure f0 b0 c/\ c~ c= b0 f1 c~ cI f0 b0 cF
+- (!x. ((s x) ==> ((closure s) x))), ((I s) x) |- ((~ ((closure s) x)) ==> ((closure s) x))
+T c==> ! c==> * f0 b0 cclosure f0 b0 c==> cI f0 f1 c==> c~ cclosure f0 f1 cclosure f0 f1
+- |- ((!x'. ((~ ((closure s) x')) \/ (~ (x = a)))) = ((!x. (~ ((closure s) x))) \/ (~ (x = a))))
+T c= ! c\/ c~ cclosure f0 b0 c~ c= f1 f2 c\/ ! c~ cclosure f0 b0 c~ c= f1 f2
++ |- ((T \/ t) = T)
+T c= c\/ cT f0 cT
++ (((closure s) a) /\ ((connected s) /\ (s x))) |- ((closure s) a)
+T c==> c/\ cclosure f0 f1 c/\ cconnected f0 * f0 f2 cclosure f0 f1
++ (x = a), (((x = a) \/ (s x)) /\ ((~ (s x)) /\ (~ (x = a)))) |- F
+T c==> c= f0 f1 c==> c/\ c\/ c= f0 f1 * f2 f0 c/\ c~ * f2 f0 c~ c= f0 f1 cF
+- |- ((!x. (P \/ (Q x))) = (P \/ (!x. (Q x))))
+T c= ! c\/ f0 * f1 b0 c\/ f0 ! * f1 b0
+- (s x), (((x = a) \/ (s x)) /\ ((~ (s x)) /\ (~ (x = a)))) |- ((s x) /\ F)
+T c==> * f0 f1 c==> c/\ c\/ c= f1 f2 * f0 f1 c/\ c~ * f0 f1 c~ c= f1 f2 c/\ * f0 f1 cF
++ ((((x = a) \/ (s x)) /\ ((~ (x = a)) /\ (~ ((closure s) x)))) \/ (((x = a) /\ (((closure s) x) /\ ((x = a) \/ (s x)))) \/ ((!x. ((~ (x = a)) \/ ((~ (x = a)) /\ (~ (s x))))) \/ (!x. ((~ ((closure s) x)) \/ ((~ (x = a)) /\ (~ (s x)))))))) |- ((((x = a) \/ ((I s) x)) /\ ((~ (x = a)) /\ (~ ((closure s) x)))) \/ (((x = a) /\ (((closure s) x) /\ ((x = a) \/ ((I s) x)))) \/ ((!x. ((~ (x = a)) \/ ((~ (x = a)) /\ (~ ((I s) x))))) \/ (!x. ((~ ((closure s) x)) \/ ((~ (x = a)) /\ (~ ((I s) x))))))))
+T c==> c\/ c/\ c\/ c= f0 f1 * f2 f0 c/\ c~ c= f0 f1 c~ cclosure f2 f0 c\/ c/\ c= f0 f1 c/\ cclosure f2 f0 c\/ c= f0 f1 * f2 f0 c\/ ! c\/ c~ c= b0 f1 c/\ c~ c= b0 f1 c~ * f2 b0 ! c\/ c~ cclosure f2 b0 c/\ c~ c= b0 f1 c~ * f2 b0 c\/ c/\ c\/ c= f0 f1 cI f2 f0 c/\ c~ c= f0 f1 c~ cclosure f2 f0 c\/ c/\ c= f0 f1 c/\ cclosure f2 f0 c\/ c= f0 f1 cI f2 f0 c\/ ! c\/ c~ c= b0 f1 c/\ c~ c= b0 f1 c~ cI f2 b0 ! c\/ c~ cclosure f2 b0 c/\ c~ c= b0 f1 c~ cI f2 b0
++ (((x = a) \/ ((I s) x)) /\ ((~ (x = a)) /\ (~ ((closure s) x)))) |- (((closure s) x) ==> F)
+T c==> c/\ c\/ c= f0 f1 cI f2 f0 c/\ c~ c= f0 f1 c~ cclosure f2 f0 c==> cclosure f2 f0 cF
+- |- (((!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))) ==> ((\t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))) t3)) = ((\t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))) t3))
+T c= c==> ! c= c\/ f0 c\/ f1 b0 c\/ c\/ f0 f1 b0 * / c= c\/ f0 c\/ f1 b0 c\/ c\/ f0 f1 b0 f2 * / c= c\/ f0 c\/ f1 b0 c\/ c\/ f0 f1 b0 f2
++ |- ((connected (a INSERT EMPTY)) = T)
+T c= cconnected * * part cINSERT f0 part cEMPTY cT
++ (!x. ((s x) ==> ((closure s) x))), (~ ((closure s) a)), ((connected s) /\ (~ (!x. (~ (s x))))), ((\x. ((((x = a) \/ (s x)) /\ ((~ (x = a)) /\ (~ ((closure s) x)))) \/ (((x = a) /\ (((closure s) x) /\ ((x = a) \/ (s x)))) \/ ((!x. ((~ (x = a)) \/ ((~ (x = a)) /\ (~ (s x))))) \/ (!x. ((~ ((closure s) x)) \/ ((~ (x = a)) /\ (~ (s x))))))))) x) |- (((\x. ((((x = a) \/ (s x)) /\ ((~ (x = a)) /\ (~ ((closure s) x)))) \/ (((x = a) /\ (((closure s) x) /\ ((x = a) \/ (s x)))) \/ ((!x. ((~ (x = a)) \/ ((~ (x = a)) /\ (~ (s x))))) \/ (!x. ((~ ((closure s) x)) \/ ((~ (x = a)) /\ (~ (s x))))))))) x) /\ F)
+T c==> ! c==> * f0 b0 cclosure f0 b0 c==> c~ cclosure f0 f1 c==> c/\ cconnected f0 c~ ! c~ * f0 b0 c==> * / c\/ c/\ c\/ c= b0 f1 * f0 b0 c/\ c~ c= b0 f1 c~ cclosure f0 b0 c\/ c/\ c= b0 f1 c/\ cclosure f0 b0 c\/ c= b0 f1 * f0 b0 c\/ ! c\/ c~ c= b1 f1 c/\ c~ c= b1 f1 c~ * f0 b1 ! c\/ c~ cclosure f0 b1 c/\ c~ c= b1 f1 c~ * f0 b1 f2 c/\ * / c\/ c/\ c\/ c= b0 f1 * f0 b0 c/\ c~ c= b0 f1 c~ cclosure f0 b0 c\/ c/\ c= b0 f1 c/\ cclosure f0 b0 c\/ c= b0 f1 * f0 b0 c\/ ! c\/ c~ c= b1 f1 c/\ c~ c= b1 f1 c~ * f0 b1 ! c\/ c~ cclosure f0 b1 c/\ c~ c= b1 f1 c~ * f0 b1 f2 cF
+- |- ((t /\ t) = t)
+T c= c/\ f0 f0 f0
+- |- ((a = b) ==> (b \/ (~ a)))
+T c==> c= f0 f1 c\/ f1 c~ f0
+- (~ ((closure s) a)), ((x = a) /\ (((closure s) x) /\ ((x = a) \/ ((I s) x)))) |- ((x = a) ==> F)
+T c==> c~ cclosure f0 f1 c==> c/\ c= f2 f1 c/\ cclosure f0 f2 c\/ c= f2 f1 cI f0 f2 c==> c= f2 f1 cF
++ (x = a), (((~ (x = a)) /\ (~ (s x))) /\ ((s x) \/ (x = a))) |- F
+T c==> c= f0 f1 c==> c/\ c/\ c~ c= f0 f1 c~ * f2 f0 c\/ * f2 f0 c= f0 f1 cF
+- |- (((~ (((connected s) /\ (~ (!x. (~ (s x))))) ==> ((!x. ((s x) ==> ((closure s) x))) ==> ((~ ((!x. (((x = a) \/ (s x)) ==> ((x = a) \/ ((closure s) x)))) /\ ((!x. (~ ((x = a) /\ (((closure s) x) /\ ((x = a) \/ (s x)))))) /\ ((~ (!x. (~ ((x = a) /\ ((x = a) \/ (s x)))))) /\ (~ (!x. (~ (((closure s) x) /\ ((x = a) \/ (s x)))))))))) ==> ((closure s) a))))) ==> F) = (((connected s) /\ (~ (!x. (~ (s x))))) ==> ((!x. ((s x) ==> ((closure s) x))) ==> ((~ ((!x. (((x = a) \/ (s x)) ==> ((x = a) \/ ((closure s) x)))) /\ ((!x. (~ ((x = a) /\ (((closure s) x) /\ ((x = a) \/ (s x)))))) /\ ((~ (!x. (~ ((x = a) /\ ((x = a) \/ (s x)))))) /\ (~ (!x. (~ (((closure s) x) /\ ((x = a) \/ (s x)))))))))) ==> ((closure s) a)))))
+T c= c==> c~ c==> c/\ cconnected f0 c~ ! c~ * f0 b0 c==> ! c==> * f0 b0 cclosure f0 b0 c==> c~ c/\ ! c==> c\/ c= b0 f1 * f0 b0 c\/ c= b0 f1 cclosure f0 b0 c/\ ! c~ c/\ c= b0 f1 c/\ cclosure f0 b0 c\/ c= b0 f1 * f0 b0 c/\ c~ ! c~ c/\ c= b0 f1 c\/ c= b0 f1 * f0 b0 c~ ! c~ c/\ cclosure f0 b0 c\/ c= b0 f1 * f0 b0 cclosure f0 f1 cF c==> c/\ cconnected f0 c~ ! c~ * f0 b0 c==> ! c==> * f0 b0 cclosure f0 b0 c==> c~ c/\ ! c==> c\/ c= b0 f1 * f0 b0 c\/ c= b0 f1 cclosure f0 b0 c/\ ! c~ c/\ c= b0 f1 c/\ cclosure f0 b0 c\/ c= b0 f1 * f0 b0 c/\ c~ ! c~ c/\ c= b0 f1 c\/ c= b0 f1 * f0 b0 c~ ! c~ c/\ cclosure f0 b0 c\/ c= b0 f1 * f0 b0 cclosure f0 f1
++ (((x = a) \/ ((I s) x)) /\ ((~ (x = a)) /\ (~ ((closure s) x)))) |- (~ (x = a))
+T c==> c/\ c\/ c= f0 f1 cI f2 f0 c/\ c~ c= f0 f1 c~ cclosure f2 f0 c~ c= f0 f1
+- (_288654 = _288656), (_288655 = _288657) |- (((I _288656) _288657) \/ (~ ((I _288654) _288655)))
+T c==> c= f0 f1 c==> c= f2 f3 c\/ cI f1 f3 c~ cI f0 f2
++ (~ (s = EMPTY)), (connected s), (a IN (closure s)) |- ((((a IN (closure s)) /\ ((connected s) /\ (~ (s = EMPTY)))) ==> (~ (((closure s) INTER (a INSERT EMPTY)) = EMPTY))) = (~ (((closure s) INTER (a INSERT EMPTY)) = EMPTY)))
+T c==> c~ c= f0 part cEMPTY c==> cconnected f0 c==> cIN f1 * part cclosure f0 c= c==> c/\ cIN f1 * part cclosure f0 c/\ cconnected f0 c~ c= f0 part cEMPTY c~ c= * * part cINTER * part cclosure f0 * * part cINSERT f1 part cEMPTY part cEMPTY c~ c= * * part cINTER * part cclosure f0 * * part cINSERT f1 part cEMPTY part cEMPTY
++ (!x. ((s x) ==> ((closure s) x))), (~ ((!x. (((x = a) \/ (s x)) ==> ((x = a) \/ ((closure s) x)))) /\ ((!x. (~ ((x = a) /\ (((closure s) x) /\ ((x = a) \/ (s x)))))) /\ ((~ (!x. (~ ((x = a) /\ ((x = a) \/ (s x)))))) /\ (~ (!x. (~ (((closure s) x) /\ ((x = a) \/ (s x)))))))))), (~ ((closure s) a)), ((connected s) /\ (~ (!x. (~ (s x))))) |- F
+T c==> ! c==> * f0 b0 cclosure f0 b0 c==> c~ c/\ ! c==> c\/ c= b0 f1 * f0 b0 c\/ c= b0 f1 cclosure f0 b0 c/\ ! c~ c/\ c= b0 f1 c/\ cclosure f0 b0 c\/ c= b0 f1 * f0 b0 c/\ c~ ! c~ c/\ c= b0 f1 c\/ c= b0 f1 * f0 b0 c~ ! c~ c/\ cclosure f0 b0 c\/ c= b0 f1 * f0 b0 c==> c~ cclosure f0 f1 c==> c/\ cconnected f0 c~ ! c~ * f0 b0 cF
+- ((x = a) /\ (((closure s) x) /\ ((x = a) \/ ((I s) x)))), ((x = a) ==> F), (((I s) x) ==> F) |- F
+T c==> c/\ c= f0 f1 c/\ cclosure f2 f0 c\/ c= f0 f1 cI f2 f0 c==> c==> c= f0 f1 cF c==> c==> cI f2 f0 cF cF
++ (!x. ((s x) ==> ((closure s) x))), ((connected s) /\ (s x')), ((!x. ((~ (x = a)) \/ ((~ (x = a)) /\ (~ ((I s) x))))) \/ (!x. ((~ ((closure s) x)) \/ ((~ (x = a)) /\ (~ ((I s) x)))))) |- (((!x. ((~ (x = a)) \/ ((~ (x = a)) /\ (~ ((I s) x))))) \/ (!x. ((~ ((closure s) x)) \/ ((~ (x = a)) /\ (~ ((I s) x)))))) /\ F)
+T c==> ! c==> * f0 b0 cclosure f0 b0 c==> c/\ cconnected f0 * f0 f1 c==> c\/ ! c\/ c~ c= b0 f2 c/\ c~ c= b0 f2 c~ cI f0 b0 ! c\/ c~ cclosure f0 b0 c/\ c~ c= b0 f2 c~ cI f0 b0 c/\ c\/ ! c\/ c~ c= b0 f2 c/\ c~ c= b0 f2 c~ cI f0 b0 ! c\/ c~ cclosure f0 b0 c/\ c~ c= b0 f2 c~ cI f0 b0 cF
+- ((x = a) /\ (((closure s) x) /\ ((x = a) \/ ((I s) x)))) |- (F = F)
+T c==> c/\ c= f0 f1 c/\ cclosure f2 f0 c\/ c= f0 f1 cI f2 f0 c= cF cF
+- (~ F), (x = a), (((x = a) \/ (s x)) /\ ((~ (s x)) /\ (~ (x = a)))) |- ((~ F) /\ F)
+T c==> c~ cF c==> c= f0 f1 c==> c/\ c\/ c= f0 f1 * f2 f0 c/\ c~ * f2 f0 c~ c= f0 f1 c/\ c~ cF cF
+- (x = a), (((x = a) \/ ((I s) x)) /\ ((~ (x = a)) /\ (~ ((closure s) x)))) |- (~ ((closure s) a))
+T c==> c= f0 f1 c==> c/\ c\/ c= f0 f1 cI f2 f0 c/\ c~ c= f0 f1 c~ cclosure f2 f0 c~ cclosure f2 f1
++ (((closure s) a) /\ ((connected s) /\ (~ (!x. (~ (s x)))))) |- (?x. (((closure s) a) /\ ((connected s) /\ (s x))))
+T c==> c/\ cclosure f0 f1 c/\ cconnected f0 c~ ! c~ * f0 b0 c? / c/\ cclosure f0 f1 c/\ cconnected f0 * f0 b0
+- (((~ (!x. (((x = a) \/ (s x)) = ((s x) \/ (x = a))))) ==> F) ==> ((~ (!x. (((x = a) \/ (s x)) = ((s x) \/ (x = a))))) ==> F)) |- ((((~ (!x. (((x = a) \/ (s x)) = ((s x) \/ (x = a))))) ==> F) ==> ((~ (!x. (((x = a) \/ (s x)) = ((s x) \/ (x = a))))) ==> F)) /\ (((~ (!x. (((x = a) \/ (s x)) = ((s x) \/ (x = a))))) ==> F) ==> ((~ (!x. (((x = a) \/ (s x)) = ((s x) \/ (x = a))))) ==> F)))
+T c==> c==> c==> c~ ! c= c\/ c= b0 f0 * f1 b0 c\/ * f1 b0 c= b0 f0 cF c==> c~ ! c= c\/ c= b0 f0 * f1 b0 c\/ * f1 b0 c= b0 f0 cF c/\ c==> c==> c~ ! c= c\/ c= b0 f0 * f1 b0 c\/ * f1 b0 c= b0 f0 cF c==> c~ ! c= c\/ c= b0 f0 * f1 b0 c\/ * f1 b0 c= b0 f0 cF c==> c==> c~ ! c= c\/ c= b0 f0 * f1 b0 c\/ * f1 b0 c= b0 f0 cF c==> c~ ! c= c\/ c= b0 f0 * f1 b0 c\/ * f1 b0 c= b0 f0 cF
++ (~ (s = EMPTY)), (connected s) |- (((connected (a INSERT s)) ==> (a IN (closure s))) /\ ((a IN (closure s)) ==> (connected (a INSERT s))))
+T c==> c~ c= f0 part cEMPTY c==> cconnected f0 c/\ c==> cconnected * * part cINSERT f1 f0 cIN f1 * part cclosure f0 c==> cIN f1 * part cclosure f0 cconnected * * part cINSERT f1 f0
++ (!x. ((s x) ==> ((closure s) x))) |- (!x. ((~ (s x)) \/ ((closure s) x)))
+T c==> ! c==> * f0 b0 cclosure f0 b0 ! c\/ c~ * f0 b0 cclosure f0 b0
+- (_288660 = _288662), (_288661 = _288663) |- (((((closure _288660) _288661) = ((closure _288662) _288663)) ==> (((closure _288662) _288663) \/ (~ ((closure _288660) _288661)))) = (((closure _288662) _288663) \/ (~ ((closure _288660) _288661))))
+T c==> c= f0 f1 c==> c= f2 f3 c= c==> c= cclosure f0 f2 cclosure f1 f3 c\/ cclosure f1 f3 c~ cclosure f0 f2 c\/ cclosure f1 f3 c~ cclosure f0 f2
++ |- ((closed (closure s)) = T)
+T c= cclosed * part cclosure f0 cT
+- |- ((~ (_288661 = _288663)) \/ ((~ (_288660 = _288662)) \/ (((closure _288662) _288663) \/ (~ ((closure _288660) _288661)))))
+T c\/ c~ c= f0 f1 c\/ c~ c= f2 f3 c\/ cclosure f3 f1 c~ cclosure f2 f0
+- ((x = a) /\ (((closure s) x) /\ ((x = a) \/ ((I s) x)))) |- ((~ ((closure s) a)) = (~ ((closure s) a)))
+T c==> c/\ c= f0 f1 c/\ cclosure f2 f0 c\/ c= f0 f1 cI f2 f0 c= c~ cclosure f2 f1 c~ cclosure f2 f1
+- |- ((!x'. ((~ ((closure s) x')) \/ ((~ (x = a)) /\ (~ (s x))))) = ((!x. (~ ((closure s) x))) \/ ((~ (x = a)) /\ (~ (s x)))))
+T c= ! c\/ c~ cclosure f0 b0 c/\ c~ c= f1 f2 c~ * f0 f1 c\/ ! c~ cclosure f0 b0 c/\ c~ c= f1 f2 c~ * f0 f1
++ |- ((closed (a INSERT EMPTY)) = T)
+T c= cclosed * * part cINSERT f0 part cEMPTY cT
++ |- ((((~ (x = a)) /\ (~ (s x))) /\ ((s x) \/ (x = a))) ==> F)
+T c==> c/\ c/\ c~ c= f0 f1 c~ * f2 f0 c\/ * f2 f0 c= f0 f1 cF
++ ((~ (s = EMPTY)) ==> ((connected s) ==> ((connected (a INSERT s)) = ((s = EMPTY) \/ (a IN (closure s)))))), ((s = EMPTY) ==> ((connected s) ==> ((connected (a INSERT s)) = ((s = EMPTY) \/ (a IN (closure s)))))) |- ((connected s) ==> ((connected (a INSERT s)) = ((s = EMPTY) \/ (a IN (closure s)))))
+T c==> c==> c~ c= f0 part cEMPTY c==> cconnected f0 c= cconnected * * part cINSERT f1 f0 c\/ c= f0 part cEMPTY cIN f1 * part cclosure f0 c==> c==> c= f0 part cEMPTY c==> cconnected f0 c= cconnected * * part cINSERT f1 f0 c\/ c= f0 part cEMPTY cIN f1 * part cclosure f0 c==> cconnected f0 c= cconnected * * part cINSERT f1 f0 c\/ c= f0 part cEMPTY cIN f1 * part cclosure f0
++ (x = a) |- ((~ (x = a)) = (~ (a = a)))
+T c==> c= f0 f1 c= c~ c= f0 f1 c~ c= f1 f1
++ (!x. ((s x) ==> ((closure s) x))) |- (((I s) _288569) ==> ((closure s) _288569))
+T c==> ! c==> * f0 b0 cclosure f0 b0 c==> cI f0 f1 cclosure f0 f1
++ (!x. ((s x) ==> ((closure s) x))), ((I s) x) |- ((((closure s) x) ==> F) = F)
+T c==> ! c==> * f0 b0 cclosure f0 b0 c==> cI f0 f1 c= c==> cclosure f0 f1 cF cF
++ (x = a), (((x = a) \/ (s x)) /\ ((~ (s x)) /\ (~ (x = a)))) |- ((x = a) /\ F)
+T c==> c= f0 f1 c==> c/\ c\/ c= f0 f1 * f2 f0 c/\ c~ * f2 f0 c~ c= f0 f1 c/\ c= f0 f1 cF
+- (x = a) |- ((~ ((closure s) x)) = (~ ((closure s) a)))
+T c==> c= f0 f1 c= c~ cclosure f2 f0 c~ cclosure f2 f1
+- |- ((((~ (((connected s) /\ (~ (!x. (~ (s x))))) ==> ((!x. ((s x) ==> ((closure s) x))) ==> ((~ ((!x. (((x = a) \/ (s x)) ==> ((x = a) \/ ((closure s) x)))) /\ ((!x. (~ ((x = a) /\ (((closure s) x) /\ ((x = a) \/ (s x)))))) /\ ((~ (!x. (~ ((x = a) /\ ((x = a) \/ (s x)))))) /\ (~ (!x. (~ (((closure s) x) /\ ((x = a) \/ (s x)))))))))) ==> ((closure s) a))))) ==> F) ==> ((~ (((connected s) /\ (~ (!x. (~ (s x))))) ==> ((!x. ((s x) ==> ((closure s) x))) ==> ((~ ((!x. (((x = a) \/ (s x)) ==> ((x = a) \/ ((closure s) x)))) /\ ((!x. (~ ((x = a) /\ (((closure s) x) /\ ((x = a) \/ (s x)))))) /\ ((~ (!x. (~ ((x = a) /\ ((x = a) \/ (s x)))))) /\ (~ (!x. (~ (((closure s) x) /\ ((x = a) \/ (s x)))))))))) ==> ((closure s) a))))) ==> F)) ==> (((~ (((connected s) /\ (~ (!x. (~ (s x))))) ==> ((!x. ((s x) ==> ((closure s) x))) ==> ((~ ((!x. (((x = a) \/ (s x)) ==> ((x = a) \/ ((closure s) x)))) /\ ((!x. (~ ((x = a) /\ (((closure s) x) /\ ((x = a) \/ (s x)))))) /\ ((~ (!x. (~ ((x = a) /\ ((x = a) \/ (s x)))))) /\ (~ (!x. (~ (((closure s) x) /\ ((x = a) \/ (s x)))))))))) ==> ((closure s) a))))) ==> F) ==> ((~ (((connected s) /\ (~ (!x. (~ (s x))))) ==> ((!x. ((s x) ==> ((closure s) x))) ==> ((~ ((!x. (((x = a) \/ (s x)) ==> ((x = a) \/ ((closure s) x)))) /\ ((!x. (~ ((x = a) /\ (((closure s) x) /\ ((x = a) \/ (s x)))))) /\ ((~ (!x. (~ ((x = a) /\ ((x = a) \/ (s x)))))) /\ (~ (!x. (~ (((closure s) x) /\ ((x = a) \/ (s x)))))))))) ==> ((closure s) a))))) ==> F)))
+T c==> c==> c==> c~ c==> c/\ cconnected f0 c~ ! c~ * f0 b0 c==> ! c==> * f0 b0 cclosure f0 b0 c==> c~ c/\ ! c==> c\/ c= b0 f1 * f0 b0 c\/ c= b0 f1 cclosure f0 b0 c/\ ! c~ c/\ c= b0 f1 c/\ cclosure f0 b0 c\/ c= b0 f1 * f0 b0 c/\ c~ ! c~ c/\ c= b0 f1 c\/ c= b0 f1 * f0 b0 c~ ! c~ c/\ cclosure f0 b0 c\/ c= b0 f1 * f0 b0 cclosure f0 f1 cF c==> c~ c==> c/\ cconnected f0 c~ ! c~ * f0 b0 c==> ! c==> * f0 b0 cclosure f0 b0 c==> c~ c/\ ! c==> c\/ c= b0 f1 * f0 b0 c\/ c= b0 f1 cclosure f0 b0 c/\ ! c~ c/\ c= b0 f1 c/\ cclosure f0 b0 c\/ c= b0 f1 * f0 b0 c/\ c~ ! c~ c/\ c= b0 f1 c\/ c= b0 f1 * f0 b0 c~ ! c~ c/\ cclosure f0 b0 c\/ c= b0 f1 * f0 b0 cclosure f0 f1 cF c==> c==> c~ c==> c/\ cconnected f0 c~ ! c~ * f0 b0 c==> ! c==> * f0 b0 cclosure f0 b0 c==> c~ c/\ ! c==> c\/ c= b0 f1 * f0 b0 c\/ c= b0 f1 cclosure f0 b0 c/\ ! c~ c/\ c= b0 f1 c/\ cclosure f0 b0 c\/ c= b0 f1 * f0 b0 c/\ c~ ! c~ c/\ c= b0 f1 c\/ c= b0 f1 * f0 b0 c~ ! c~ c/\ cclosure f0 b0 c\/ c= b0 f1 * f0 b0 cclosure f0 f1 cF c==> c~ c==> c/\ cconnected f0 c~ ! c~ * f0 b0 c==> ! c==> * f0 b0 cclosure f0 b0 c==> c~ c/\ ! c==> c\/ c= b0 f1 * f0 b0 c\/ c= b0 f1 cclosure f0 b0 c/\ ! c~ c/\ c= b0 f1 c/\ cclosure f0 b0 c\/ c= b0 f1 * f0 b0 c/\ c~ ! c~ c/\ c= b0 f1 c\/ c= b0 f1 * f0 b0 c~ ! c~ c/\ cclosure f0 b0 c\/ c= b0 f1 * f0 b0 cclosure f0 f1 cF
++ (((x = a) \/ (s x)) /\ ((~ (s x)) /\ (~ (x = a)))) |- (~ (x = a))
+T c==> c/\ c\/ c= f0 f1 * f2 f0 c/\ c~ * f2 f0 c~ c= f0 f1 c~ c= f0 f1
++ (!x. ((s x) ==> ((closure s) x))), (~ ((closure s) a)), ((((x = a) \/ (s x)) /\ ((~ (x = a)) /\ (~ ((closure s) x)))) \/ (((x = a) /\ (((closure s) x) /\ ((x = a) \/ (s x)))) \/ ((!x. ((~ (x = a)) \/ ((~ (x = a)) /\ (~ (s x))))) \/ (!x. ((~ ((closure s) x)) \/ ((~ (x = a)) /\ (~ (s x)))))))) |- ((((\x. ((connected s) /\ (s x))) x') ==> F) = T)
+T c==> ! c==> * f0 b0 cclosure f0 b0 c==> c~ cclosure f0 f1 c==> c\/ c/\ c\/ c= f2 f1 * f0 f2 c/\ c~ c= f2 f1 c~ cclosure f0 f2 c\/ c/\ c= f2 f1 c/\ cclosure f0 f2 c\/ c= f2 f1 * f0 f2 c\/ ! c\/ c~ c= b0 f1 c/\ c~ c= b0 f1 c~ * f0 b0 ! c\/ c~ cclosure f0 b0 c/\ c~ c= b0 f1 c~ * f0 b0 c= c==> * / c/\ cconnected f0 * f0 b0 f3 cF cT
++ |- ((F \/ t) = t)
+T c= c\/ cF f0 f0
++ |- (((!P. ((~ (?x. (P x))) = (!x. (~ (P x))))) ==> ((\P. ((~ (?x. (P x))) = (!x. (~ (P x))))) P)) = ((\P. ((~ (?x. (P x))) = (!x. (~ (P x))))) P))
+T c= c==> ! c= c~ c? / * b0 b1 ! c~ * b0 b1 * / c= c~ c? / * b0 b1 ! c~ * b0 b1 f0 * / c= c~ c? / * b0 b1 ! c~ * b0 b1 f0
+- (_288661 = _288663) |- ((_288661 = _288663) /\ ((~ (_288660 = _288662)) \/ (((closure _288662) _288663) \/ (~ ((closure _288660) _288661)))))
+T c==> c= f0 f1 c/\ c= f0 f1 c\/ c~ c= f2 f3 c\/ cclosure f3 f1 c~ cclosure f2 f0
+- ((connected s) /\ (s x')) |- (connected s)
+T c==> c/\ cconnected f0 * f0 f1 cconnected f0
++ (((closure s) a) /\ ((connected s) /\ (s x))) |- (((closure s) a) /\ ((connected s) /\ ((I s) x)))
+T c==> c/\ cclosure f0 f1 c/\ cconnected f0 * f0 f2 c/\ cclosure f0 f1 c/\ cconnected f0 cI f0 f2
++ |- ((x IN EMPTY) = F)
+T c= cIN f0 part cEMPTY cF
+- |- ((_288655 = _288657) ==> ((~ (_288654 = _288656)) \/ (((I _288656) _288657) \/ (~ ((I _288654) _288655)))))
+T c==> c= f0 f1 c\/ c~ c= f2 f3 c\/ cI f3 f1 c~ cI f2 f0
++ (!x. ((s x) ==> ((closure s) x))), ((((x = a) /\ (((closure s) x) /\ ((x = a) \/ ((I s) x)))) \/ ((!x. ((~ (x = a)) \/ ((~ (x = a)) /\ (~ ((I s) x))))) \/ (!x. ((~ ((closure s) x)) \/ ((~ (x = a)) /\ (~ ((I s) x))))))) ==> F), ((((x = a) \/ (s x)) /\ ((~ (x = a)) /\ (~ ((closure s) x)))) \/ (((x = a) /\ (((closure s) x) /\ ((x = a) \/ (s x)))) \/ ((!x. ((~ (x = a)) \/ ((~ (x = a)) /\ (~ (s x))))) \/ (!x. ((~ ((closure s) x)) \/ ((~ (x = a)) /\ (~ (s x)))))))) |- F
+T c==> ! c==> * f0 b0 cclosure f0 b0 c==> c==> c\/ c/\ c= f1 f2 c/\ cclosure f0 f1 c\/ c= f1 f2 cI f0 f1 c\/ ! c\/ c~ c= b0 f2 c/\ c~ c= b0 f2 c~ cI f0 b0 ! c\/ c~ cclosure f0 b0 c/\ c~ c= b0 f2 c~ cI f0 b0 cF c==> c\/ c/\ c\/ c= f1 f2 * f0 f1 c/\ c~ c= f1 f2 c~ cclosure f0 f1 c\/ c/\ c= f1 f2 c/\ cclosure f0 f1 c\/ c= f1 f2 * f0 f1 c\/ ! c\/ c~ c= b0 f2 c/\ c~ c= b0 f2 c~ * f0 b0 ! c\/ c~ cclosure f0 b0 c/\ c~ c= b0 f2 c~ * f0 b0 cF
++ |- ((~ (?e1. (?e2. ((closed e1) /\ ((closed e2) /\ (((a INSERT s) SUBSET (e1 UNION e2)) /\ (((e1 INTER (e2 INTER (a INSERT s))) = EMPTY) /\ ((~ ((e1 INTER (a INSERT s)) = EMPTY)) /\ (~ ((e2 INTER (a INSERT s)) = EMPTY)))))))))) = (!e1. (~ (?e2. ((closed e1) /\ ((closed e2) /\ (((a INSERT s) SUBSET (e1 UNION e2)) /\ (((e1 INTER (e2 INTER (a INSERT s))) = EMPTY) /\ ((~ ((e1 INTER (a INSERT s)) = EMPTY)) /\ (~ ((e2 INTER (a INSERT s)) = EMPTY)))))))))))
+T c= c~ c? / c? / c/\ cclosed b0 c/\ cclosed b1 c/\ cSUBSET * * part cINSERT f0 f1 * * part cUNION b0 b1 c/\ c= * * part cINTER b0 * * part cINTER b1 * * part cINSERT f0 f1 part cEMPTY c/\ c~ c= * * part cINTER b0 * * part cINSERT f0 f1 part cEMPTY c~ c= * * part cINTER b1 * * part cINSERT f0 f1 part cEMPTY ! c~ c? / c/\ cclosed b0 c/\ cclosed b1 c/\ cSUBSET * * part cINSERT f0 f1 * * part cUNION b0 b1 c/\ c= * * part cINTER b0 * * part cINTER b1 * * part cINSERT f0 f1 part cEMPTY c/\ c~ c= * * part cINTER b0 * * part cINSERT f0 f1 part cEMPTY c~ c= * * part cINTER b1 * * part cINSERT f0 f1 part cEMPTY
++ |- (!x. ((x IN (a INSERT s)) = (x IN (s UNION (a INSERT EMPTY)))))
+T c= cIN f0 * * part cINSERT f1 f2 cIN f0 * * part cUNION f2 * * part cINSERT f1 part cEMPTY
+- (s x), (((~ (x = a)) /\ (~ (s x))) /\ ((s x) \/ (x = a))) |- F
+T c==> * f0 f1 c==> c/\ c/\ c~ c= f1 f2 c~ * f0 f1 c\/ * f0 f1 c= f1 f2 cF
+- |- ((!x'. ((~ (s x')) \/ ((closure s) x))) = ((!x. (~ (s x))) \/ ((closure s) x)))
+T c= ! c\/ c~ * f0 b0 cclosure f0 f1 c\/ ! c~ * f0 b0 cclosure f0 f1
++ |- ((~ (?e2. ((closed e1) /\ ((closed e2) /\ (((a INSERT s) SUBSET (e1 UNION e2)) /\ (((e1 INTER (e2 INTER (a INSERT s))) = EMPTY) /\ ((~ ((e1 INTER (a INSERT s)) = EMPTY)) /\ (~ ((e2 INTER (a INSERT s)) = EMPTY))))))))) = (!e2. (~ ((closed e1) /\ ((closed e2) /\ (((a INSERT s) SUBSET (e1 UNION e2)) /\ (((e1 INTER (e2 INTER (a INSERT s))) = EMPTY) /\ ((~ ((e1 INTER (a INSERT s)) = EMPTY)) /\ (~ ((e2 INTER (a INSERT s)) = EMPTY))))))))))
+T c= c~ c? / c/\ cclosed f0 c/\ cclosed b0 c/\ cSUBSET * * part cINSERT f1 f2 * * part cUNION f0 b0 c/\ c= * * part cINTER f0 * * part cINTER b0 * * part cINSERT f1 f2 part cEMPTY c/\ c~ c= * * part cINTER f0 * * part cINSERT f1 f2 part cEMPTY c~ c= * * part cINTER b0 * * part cINSERT f1 f2 part cEMPTY ! c~ c/\ cclosed f0 c/\ cclosed b0 c/\ cSUBSET * * part cINSERT f1 f2 * * part cUNION f0 b0 c/\ c= * * part cINTER f0 * * part cINTER b0 * * part cINSERT f1 f2 part cEMPTY c/\ c~ c= * * part cINTER f0 * * part cINSERT f1 f2 part cEMPTY c~ c= * * part cINTER b0 * * part cINSERT f1 f2 part cEMPTY
++ (((closure s) a) /\ ((connected s) /\ (s x))) |- (((((closure s) a) /\ (a = a)) ==> F) = F)
+T c==> c/\ cclosure f0 f1 c/\ cconnected f0 * f0 f2 c= c==> c/\ cclosure f0 f1 c= f1 f1 cF cF
+- (a IN (closure s)) |- ((a IN (closure s)) = T)
+T c==> cIN f0 * part cclosure f1 c= cIN f0 * part cclosure f1 cT
+- ((~ ((((closure s) a) /\ ((connected s) /\ (~ (!x. (~ (s x)))))) ==> (~ (!x. (~ (((closure s) x) /\ (x = a))))))) ==> F) |- ((((~ ((((closure s) a) /\ ((connected s) /\ (~ (!x. (~ (s x)))))) ==> (~ (!x. (~ (((closure s) x) /\ (x = a))))))) ==> F) ==> ((~ ((((closure s) a) /\ ((connected s) /\ (~ (!x. (~ (s x)))))) ==> (~ (!x. (~ (((closure s) x) /\ (x = a))))))) ==> F)) ==> ((~ ((((closure s) a) /\ ((connected s) /\ (~ (!x. (~ (s x)))))) ==> (~ (!x. (~ (((closure s) x) /\ (x = a))))))) ==> F))
+T c==> c==> c~ c==> c/\ cclosure f0 f1 c/\ cconnected f0 c~ ! c~ * f0 b0 c~ ! c~ c/\ cclosure f0 b0 c= b0 f1 cF c==> c==> c==> c~ c==> c/\ cclosure f0 f1 c/\ cconnected f0 c~ ! c~ * f0 b0 c~ ! c~ c/\ cclosure f0 b0 c= b0 f1 cF c==> c~ c==> c/\ cclosure f0 f1 c/\ cconnected f0 c~ ! c~ * f0 b0 c~ ! c~ c/\ cclosure f0 b0 c= b0 f1 cF c==> c~ c==> c/\ cclosure f0 f1 c/\ cconnected f0 c~ ! c~ * f0 b0 c~ ! c~ c/\ cclosure f0 b0 c= b0 f1 cF
++ |- ((\s. ((connected s) = (~ (?e1. (?e2. ((closed e1) /\ ((closed e2) /\ ((s SUBSET (e1 UNION e2)) /\ (((e1 INTER (e2 INTER s)) = EMPTY) /\ ((~ ((e1 INTER s) = EMPTY)) /\ (~ ((e2 INTER s) = EMPTY)))))))))))) s)
+T * / c= cconnected b0 c~ c? / c? / c/\ cclosed b1 c/\ cclosed b2 c/\ cSUBSET b0 * * part cUNION b1 b2 c/\ c= * * part cINTER b1 * * part cINTER b2 b0 part cEMPTY c/\ c~ c= * * part cINTER b1 b0 part cEMPTY c~ c= * * part cINTER b2 b0 part cEMPTY f0
++ (((x = a) \/ (s x)) /\ ((~ (s x)) /\ (~ (x = a)))) |- (~ (s x))
+T c==> c/\ c\/ c= f0 f1 * f2 f0 c/\ c~ * f2 f0 c~ c= f0 f1 c~ * f2 f0
+- (~ ((closure s) a)), ((x = a) /\ (((closure s) x) /\ ((x = a) \/ ((I s) x)))) |- ((~ ((closure s) a)) /\ ((closure s) a))
+T c==> c~ cclosure f0 f1 c==> c/\ c= f2 f1 c/\ cclosure f0 f2 c\/ c= f2 f1 cI f0 f2 c/\ c~ cclosure f0 f1 cclosure f0 f1
++ ((connected s) /\ (~ (!x. (~ (s x))))) |- (((connected s) /\ (~ (!x. (~ (s x))))) /\ ((!x. ((s x) ==> ((closure s) x))) ==> ((~ ((!x. (((x = a) \/ (s x)) ==> ((x = a) \/ ((closure s) x)))) /\ ((!x. (~ ((x = a) /\ (((closure s) x) /\ ((x = a) \/ (s x)))))) /\ ((~ (!x. (~ ((x = a) /\ ((x = a) \/ (s x)))))) /\ (~ (!x. (~ (((closure s) x) /\ ((x = a) \/ (s x)))))))))) ==> ((closure s) a))))
+T c==> c/\ cconnected f0 c~ ! c~ * f0 b0 c/\ c/\ cconnected f0 c~ ! c~ * f0 b0 c==> ! c==> * f0 b0 cclosure f0 b0 c==> c~ c/\ ! c==> c\/ c= b0 f1 * f0 b0 c\/ c= b0 f1 cclosure f0 b0 c/\ ! c~ c/\ c= b0 f1 c/\ cclosure f0 b0 c\/ c= b0 f1 * f0 b0 c/\ c~ ! c~ c/\ c= b0 f1 c\/ c= b0 f1 * f0 b0 c~ ! c~ c/\ cclosure f0 b0 c\/ c= b0 f1 * f0 b0 cclosure f0 f1
+- (x = a), ((x = a) /\ (((closure s) x) /\ ((x = a) \/ ((I s) x)))) |- (a = a)
+T c==> c= f0 f1 c==> c/\ c= f0 f1 c/\ cclosure f2 f0 c\/ c= f0 f1 cI f2 f0 c= f1 f1
+- |- ((((~ (!x. (((x = a) \/ (s x)) = ((s x) \/ (x = a))))) ==> F) ==> ((~ (!x. (((x = a) \/ (s x)) = ((s x) \/ (x = a))))) ==> F)) = ((~ (!x. (((x = a) \/ (s x)) = ((s x) \/ (x = a))))) ==> F))
+T c= c==> c==> c~ ! c= c\/ c= b0 f0 * f1 b0 c\/ * f1 b0 c= b0 f0 cF c==> c~ ! c= c\/ c= b0 f0 * f1 b0 c\/ * f1 b0 c= b0 f0 cF c==> c~ ! c= c\/ c= b0 f0 * f1 b0 c\/ * f1 b0 c= b0 f0 cF
++ (s = EMPTY) |- ((s = EMPTY) /\ ((connected s) ==> ((connected (a INSERT s)) = ((s = EMPTY) \/ (a IN (closure s))))))
+T c==> c= f0 part cEMPTY c/\ c= f0 part cEMPTY c==> cconnected f0 c= cconnected * * part cINSERT f1 f0 c\/ c= f0 part cEMPTY cIN f1 * part cclosure f0
++ ((!x. ((~ ((closure s) x)) \/ ((~ (x = a)) /\ (~ ((I s) x))))) ==> F), ((!x. ((~ (x = a)) \/ ((~ (x = a)) /\ (~ ((I s) x))))) \/ (!x. ((~ ((closure s) x)) \/ ((~ (x = a)) /\ (~ ((I s) x)))))) |- F
+T c==> c==> ! c\/ c~ cclosure f0 b0 c/\ c~ c= b0 f1 c~ cI f0 b0 cF c==> c\/ ! c\/ c~ c= b0 f1 c/\ c~ c= b0 f1 c~ cI f0 b0 ! c\/ c~ cclosure f0 b0 c/\ c~ c= b0 f1 c~ cI f0 b0 cF
++ |- (((?x. (P x)) \/ (?x. (Q x))) = (?x. ((P x) \/ (Q x))))
+T c= c\/ c? / * f0 b0 c? / * f1 b0 c? / c\/ * f0 b0 * f1 b0
+- (_288655 = _288657) |- ((_288654 = _288656) ==> (((I _288656) _288657) \/ (~ ((I _288654) _288655))))
+T c==> c= f0 f1 c==> c= f2 f3 c\/ cI f3 f1 c~ cI f2 f0
+- |- ((!x. (P x)) = ((P T) /\ (P F)))
+T c= ! * f0 b0 c/\ * f0 cT * f0 cF
+- (~ ((closure s) a)), ((x = a) /\ (((closure s) x) /\ ((x = a) \/ ((I s) x)))), (((I s) x) ==> F) |- F
+T c==> c~ cclosure f0 f1 c==> c/\ c= f2 f1 c/\ cclosure f0 f2 c\/ c= f2 f1 cI f0 f2 c==> c==> cI f0 f2 cF cF
+- (!x. (~ (((closure s) x) /\ (x = a)))), (~ F), (((closure s) a) /\ ((connected s) /\ (s x))) |- ((~ F) /\ F)
+T c==> ! c~ c/\ cclosure f0 b0 c= b0 f1 c==> c~ cF c==> c/\ cclosure f0 f1 c/\ cconnected f0 * f0 f2 c/\ c~ cF cF
+- |- (((!t1. (!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))))) ==> ((\t1. (!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))))) t1)) = ((\t1. (!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))))) t1))
+T c= c==> ! ! ! c= c\/ b0 c\/ b1 b2 c\/ c\/ b0 b1 b2 * / ! ! c= c\/ b0 c\/ b1 b2 c\/ c\/ b0 b1 b2 f0 * / ! ! c= c\/ b0 c\/ b1 b2 c\/ c\/ b0 b1 b2 f0
+- (x = a) |- ((~ (s x)) = (~ (s a)))
+T c==> c= f0 f1 c= c~ * f2 f0 c~ * f2 f1
++ (~ (s = EMPTY)), (connected s), (a IN (closure s)) |- ((a IN (closure s)) /\ ((connected s) /\ (~ (s = EMPTY))))
+T c==> c~ c= f0 part cEMPTY c==> cconnected f0 c==> cIN f1 * part cclosure f0 c/\ cIN f1 * part cclosure f0 c/\ cconnected f0 c~ c= f0 part cEMPTY
++ ((\x. (((closure s) a) /\ ((connected s) /\ (s x)))) x) |- (((closure s) a) /\ ((connected s) /\ (s x)))
+T c==> * / c/\ cclosure f0 f1 c/\ cconnected f0 * f0 b0 f2 c/\ cclosure f0 f1 c/\ cconnected f0 * f0 f2
+- ((~ ((((closure s) a) /\ ((connected s) /\ (~ (!x. (~ (s x)))))) ==> (~ (!x. (~ (((closure s) x) /\ (x = a))))))) ==> F), (((~ ((((closure s) a) /\ ((connected s) /\ (~ (!x. (~ (s x)))))) ==> (~ (!x. (~ (((closure s) x) /\ (x = a))))))) ==> F) ==> ((~ ((((closure s) a) /\ ((connected s) /\ (~ (!x. (~ (s x)))))) ==> (~ (!x. (~ (((closure s) x) /\ (x = a))))))) ==> F)) |- ((((~ ((((closure s) a) /\ ((connected s) /\ (~ (!x. (~ (s x)))))) ==> (~ (!x. (~ (((closure s) x) /\ (x = a))))))) ==> F) ==> ((~ ((((closure s) a) /\ ((connected s) /\ (~ (!x. (~ (s x)))))) ==> (~ (!x. (~ (((closure s) x) /\ (x = a))))))) ==> F)) /\ ((~ ((((closure s) a) /\ ((connected s) /\ (~ (!x. (~ (s x)))))) ==> (~ (!x. (~ (((closure s) x) /\ (x = a))))))) ==> F))
+T c==> c==> c~ c==> c/\ cclosure f0 f1 c/\ cconnected f0 c~ ! c~ * f0 b0 c~ ! c~ c/\ cclosure f0 b0 c= b0 f1 cF c==> c==> c==> c~ c==> c/\ cclosure f0 f1 c/\ cconnected f0 c~ ! c~ * f0 b0 c~ ! c~ c/\ cclosure f0 b0 c= b0 f1 cF c==> c~ c==> c/\ cclosure f0 f1 c/\ cconnected f0 c~ ! c~ * f0 b0 c~ ! c~ c/\ cclosure f0 b0 c= b0 f1 cF c/\ c==> c==> c~ c==> c/\ cclosure f0 f1 c/\ cconnected f0 c~ ! c~ * f0 b0 c~ ! c~ c/\ cclosure f0 b0 c= b0 f1 cF c==> c~ c==> c/\ cclosure f0 f1 c/\ cconnected f0 c~ ! c~ * f0 b0 c~ ! c~ c/\ cclosure f0 b0 c= b0 f1 cF c==> c~ c==> c/\ cclosure f0 f1 c/\ cconnected f0 c~ ! c~ * f0 b0 c~ ! c~ c/\ cclosure f0 b0 c= b0 f1 cF
++ (!x. ((~ ((closure s) x)) \/ ((~ (x = a)) /\ (~ ((I s) x))))) |- (((~ ((closure s) _288570)) \/ (~ (_288570 = a))) /\ ((~ ((closure s) _288570)) \/ (~ ((I s) _288570))))
+T c==> ! c\/ c~ cclosure f0 b0 c/\ c~ c= b0 f1 c~ cI f0 b0 c/\ c\/ c~ cclosure f0 f2 c~ c= f2 f1 c\/ c~ cclosure f0 f2 c~ cI f0 f2
++ (!x. ((s x) ==> ((closure s) x))) |- (((closure s) _288569) \/ (~ ((I s) _288569)))
+T c==> ! c==> * f0 b0 cclosure f0 b0 c\/ cclosure f0 f1 c~ cI f0 f1
++ (!x. ((s x) ==> ((closure s) x))), ((connected s) /\ (s x')) |- (((!x. ((~ (x = a)) \/ ((~ (x = a)) /\ (~ ((I s) x))))) \/ (!x. ((~ ((closure s) x)) \/ ((~ (x = a)) /\ (~ ((I s) x)))))) ==> F)
+T c==> ! c==> * f0 b0 cclosure f0 b0 c==> c/\ cconnected f0 * f0 f1 c==> c\/ ! c\/ c~ c= b0 f2 c/\ c~ c= b0 f2 c~ cI f0 b0 ! c\/ c~ cclosure f0 b0 c/\ c~ c= b0 f2 c~ cI f0 b0 cF
++ (!e1. (!e2. (~ ((closed e1) /\ ((closed e2) /\ (((a INSERT s) SUBSET (e1 UNION e2)) /\ (((e1 INTER (e2 INTER (a INSERT s))) = EMPTY) /\ ((~ ((e1 INTER (a INSERT s)) = EMPTY)) /\ (~ ((e2 INTER (a INSERT s)) = EMPTY)))))))))) |- ((\e1. (!e2. (~ ((closed e1) /\ ((closed e2) /\ (((a INSERT s) SUBSET (e1 UNION e2)) /\ (((e1 INTER (e2 INTER (a INSERT s))) = EMPTY) /\ ((~ ((e1 INTER (a INSERT s)) = EMPTY)) /\ (~ ((e2 INTER (a INSERT s)) = EMPTY)))))))))) (a INSERT EMPTY))
+T c==> ! ! c~ c/\ cclosed b0 c/\ cclosed b1 c/\ cSUBSET * * part cINSERT f0 f1 * * part cUNION b0 b1 c/\ c= * * part cINTER b0 * * part cINTER b1 * * part cINSERT f0 f1 part cEMPTY c/\ c~ c= * * part cINTER b0 * * part cINSERT f0 f1 part cEMPTY c~ c= * * part cINTER b1 * * part cINSERT f0 f1 part cEMPTY * / ! c~ c/\ cclosed b0 c/\ cclosed b1 c/\ cSUBSET * * part cINSERT f0 f1 * * part cUNION b0 b1 c/\ c= * * part cINTER b0 * * part cINTER b1 * * part cINSERT f0 f1 part cEMPTY c/\ c~ c= * * part cINTER b0 * * part cINSERT f0 f1 part cEMPTY c~ c= * * part cINTER b1 * * part cINSERT f0 f1 part cEMPTY * * part cINSERT f0 part cEMPTY
++ |- (((~ ((closure s) a)) ==> F) = ((closure s) a))
+T c= c==> c~ cclosure f0 f1 cF cclosure f0 f1
+- ((~ (!x. (((x = a) \/ (s x)) = ((s x) \/ (x = a))))) ==> F) |- (((~ (!x. (((x = a) \/ (s x)) = ((s x) \/ (x = a))))) ==> F) /\ ((~ (!x. (((x = a) \/ (s x)) = ((s x) \/ (x = a))))) ==> F))
+T c==> c==> c~ ! c= c\/ c= b0 f0 * f1 b0 c\/ * f1 b0 c= b0 f0 cF c/\ c==> c~ ! c= c\/ c= b0 f0 * f1 b0 c\/ * f1 b0 c= b0 f0 cF c==> c~ ! c= c\/ c= b0 f0 * f1 b0 c\/ * f1 b0 c= b0 f0 cF
++ (!x. ((s x) ==> ((closure s) x))), (~ ((!x. (((x = a) \/ (s x)) ==> ((x = a) \/ ((closure s) x)))) /\ ((!x. (~ ((x = a) /\ (((closure s) x) /\ ((x = a) \/ (s x)))))) /\ ((~ (!x. (~ ((x = a) /\ ((x = a) \/ (s x)))))) /\ (~ (!x. (~ (((closure s) x) /\ ((x = a) \/ (s x)))))))))), (~ ((closure s) a)), ((connected s) /\ (~ (!x. (~ (s x))))) |- ((~ ((closure s) a)) /\ F)
+T c==> ! c==> * f0 b0 cclosure f0 b0 c==> c~ c/\ ! c==> c\/ c= b0 f1 * f0 b0 c\/ c= b0 f1 cclosure f0 b0 c/\ ! c~ c/\ c= b0 f1 c/\ cclosure f0 b0 c\/ c= b0 f1 * f0 b0 c/\ c~ ! c~ c/\ c= b0 f1 c\/ c= b0 f1 * f0 b0 c~ ! c~ c/\ cclosure f0 b0 c\/ c= b0 f1 * f0 b0 c==> c~ cclosure f0 f1 c==> c/\ cconnected f0 c~ ! c~ * f0 b0 c/\ c~ cclosure f0 f1 cF
++ (!e1. (!e2. (~ ((closed e1) /\ ((closed e2) /\ (((a INSERT s) SUBSET (e1 UNION e2)) /\ (((e1 INTER (e2 INTER (a INSERT s))) = EMPTY) /\ ((~ ((e1 INTER (a INSERT s)) = EMPTY)) /\ (~ ((e2 INTER (a INSERT s)) = EMPTY)))))))))) |- (!e2. (~ ((closed (a INSERT EMPTY)) /\ ((closed e2) /\ (((a INSERT s) SUBSET ((a INSERT EMPTY) UNION e2)) /\ ((((a INSERT EMPTY) INTER (e2 INTER (a INSERT s))) = EMPTY) /\ ((~ (((a INSERT EMPTY) INTER (a INSERT s)) = EMPTY)) /\ (~ ((e2 INTER (a INSERT s)) = EMPTY)))))))))
+T c==> ! ! c~ c/\ cclosed b0 c/\ cclosed b1 c/\ cSUBSET * * part cINSERT f0 f1 * * part cUNION b0 b1 c/\ c= * * part cINTER b0 * * part cINTER b1 * * part cINSERT f0 f1 part cEMPTY c/\ c~ c= * * part cINTER b0 * * part cINSERT f0 f1 part cEMPTY c~ c= * * part cINTER b1 * * part cINSERT f0 f1 part cEMPTY ! c~ c/\ cclosed * * part cINSERT f0 part cEMPTY c/\ cclosed b0 c/\ cSUBSET * * part cINSERT f0 f1 * * part cUNION * * part cINSERT f0 part cEMPTY b0 c/\ c= * * part cINTER * * part cINSERT f0 part cEMPTY * * part cINTER b0 * * part cINSERT f0 f1 part cEMPTY c/\ c~ c= * * part cINTER * * part cINSERT f0 part cEMPTY * * part cINSERT f0 f1 part cEMPTY c~ c= * * part cINTER b0 * * part cINSERT f0 f1 part cEMPTY
++ (x = a), (((x = a) \/ ((I s) x)) /\ ((~ (x = a)) /\ (~ ((closure s) x)))) |- F
+T c==> c= f0 f1 c==> c/\ c\/ c= f0 f1 cI f2 f0 c/\ c~ c= f0 f1 c~ cclosure f2 f0 cF
+- (s x) |- ((~ (s x)) ==> (s x))
+T c==> * f0 f1 c==> c~ * f0 f1 * f0 f1
+- (s = EMPTY) |- (EMPTY = s)
+T c==> c= f0 part cEMPTY c= part cEMPTY f0
++ (!x. ((s x) ==> ((closure s) x))) |- ((((x = a) \/ ((I s) x)) /\ ((~ (x = a)) /\ (~ ((closure s) x)))) ==> F)
+T c==> ! c==> * f0 b0 cclosure f0 b0 c==> c/\ c\/ c= f1 f2 cI f0 f1 c/\ c~ c= f1 f2 c~ cclosure f0 f1 cF
++ |- (((!t. (((connected s) /\ ((connected t) /\ (~ (((closure s) INTER t) = EMPTY)))) ==> (connected (s UNION t)))) ==> ((\t. (((connected s) /\ ((connected t) /\ (~ (((closure s) INTER t) = EMPTY)))) ==> (connected (s UNION t)))) t)) = ((\t. (((connected s) /\ ((connected t) /\ (~ (((closure s) INTER t) = EMPTY)))) ==> (connected (s UNION t)))) t))
+T c= c==> ! c==> c/\ cconnected f0 c/\ cconnected b0 c~ c= * * part cINTER * part cclosure f0 b0 part cEMPTY cconnected * * part cUNION f0 b0 * / c==> c/\ cconnected f0 c/\ cconnected b0 c~ c= * * part cINTER * part cclosure f0 b0 part cEMPTY cconnected * * part cUNION f0 b0 f1 * / c==> c/\ cconnected f0 c/\ cconnected b0 c~ c= * * part cINTER * part cclosure f0 b0 part cEMPTY cconnected * * part cUNION f0 b0 f1
+- (!x. ((s x) ==> ((closure s) x))), (~ ((closure s) x)), ((I s) x) |- ((~ ((closure s) x)) /\ ((closure s) x))
+T c==> ! c==> * f0 b0 cclosure f0 b0 c==> c~ cclosure f0 f1 c==> cI f0 f1 c/\ c~ cclosure f0 f1 cclosure f0 f1
++ ((x = a) /\ (((closure s) x) /\ ((x = a) \/ ((I s) x)))) |- (((closure s) x) = ((closure s) a))
+T c==> c/\ c= f0 f1 c/\ cclosure f2 f0 c\/ c= f0 f1 cI f2 f0 c= cclosure f2 f0 cclosure f2 f1
+- ((x = a) /\ (((closure s) x) /\ ((x = a) \/ ((I s) x)))) |- (((I s) x) = ((I s) a))
+T c==> c/\ c= f0 f1 c/\ cclosure f2 f0 c\/ c= f0 f1 cI f2 f0 c= cI f2 f0 cI f2 f1
++ (!x. (~ (((closure s) x) /\ (x = a)))) |- (((\x. (((closure s) a) /\ ((connected s) /\ (s x)))) x) ==> F)
+T c==> ! c~ c/\ cclosure f0 b0 c= b0 f1 c==> * / c/\ cclosure f0 f1 c/\ cconnected f0 * f0 b0 f2 cF
+- (~ (s = EMPTY)) |- ((EMPTY = s) = F)
+T c==> c~ c= f0 part cEMPTY c= c= part cEMPTY f0 cF
++ (!x. ((s x) ==> ((closure s) x))), (!x. ((~ ((closure s) x)) \/ ((~ (x = a)) /\ (~ ((I s) x))))), ((connected s) /\ (s x')) |- ((!x. ((~ ((closure s) x)) \/ ((~ (x = a)) /\ (~ ((I s) x))))) /\ F)
+T c==> ! c==> * f0 b0 cclosure f0 b0 c==> ! c\/ c~ cclosure f0 b0 c/\ c~ c= b0 f1 c~ cI f0 b0 c==> c/\ cconnected f0 * f0 f2 c/\ ! c\/ c~ cclosure f0 b0 c/\ c~ c= b0 f1 c~ cI f0 b0 cF
+- |- (((~ (!x. (((x = a) \/ (s x)) = ((s x) \/ (x = a))))) ==> F) = (!x. (((x = a) \/ (s x)) = ((s x) \/ (x = a)))))
+T c= c==> c~ ! c= c\/ c= b0 f0 * f1 b0 c\/ * f1 b0 c= b0 f0 cF ! c= c\/ c= b0 f0 * f1 b0 c\/ * f1 b0 c= b0 f0
++ (!x. (~ (((closure s) x) /\ (x = a)))) |- ((~ ((closure s) _288653)) \/ (~ (_288653 = a)))
+T c==> ! c~ c/\ cclosure f0 b0 c= b0 f1 c\/ c~ cclosure f0 f2 c~ c= f2 f1
+- |- ((?x. (P /\ (Q x))) = (P /\ (?x. (Q x))))
+T c= c? / c/\ f0 * f1 b0 c/\ f0 c? / * f1 b0
++ |- ((~ (s = EMPTY)) ==> ((connected s) ==> ((connected (a INSERT s)) = ((s = EMPTY) \/ (a IN (closure s))))))
+T c==> c~ c= f0 part cEMPTY c==> cconnected f0 c= cconnected * * part cINSERT f1 f0 c\/ c= f0 part cEMPTY cIN f1 * part cclosure f0
+- (s x), (((~ (x = a)) /\ (~ (s x))) /\ ((s x) \/ (x = a))) |- ((~ F) ==> F)
+T c==> * f0 f1 c==> c/\ c/\ c~ c= f1 f2 c~ * f0 f1 c\/ * f0 f1 c= f1 f2 c==> c~ cF cF
+- |- ((~ (_288658 = _288659)) \/ ((connected _288659) \/ (~ (connected _288658))))
+T c\/ c~ c= f0 f1 c\/ cconnected f1 c~ cconnected f0
+- ((~ (((connected s) /\ (~ (!x. (~ (s x))))) ==> ((!x. ((s x) ==> ((closure s) x))) ==> ((~ ((!x. (((x = a) \/ (s x)) ==> ((x = a) \/ ((closure s) x)))) /\ ((!x. (~ ((x = a) /\ (((closure s) x) /\ ((x = a) \/ (s x)))))) /\ ((~ (!x. (~ ((x = a) /\ ((x = a) \/ (s x)))))) /\ (~ (!x. (~ (((closure s) x) /\ ((x = a) \/ (s x)))))))))) ==> ((closure s) a))))) ==> F) |- (((~ (((connected s) /\ (~ (!x. (~ (s x))))) ==> ((!x. ((s x) ==> ((closure s) x))) ==> ((~ ((!x. (((x = a) \/ (s x)) ==> ((x = a) \/ ((closure s) x)))) /\ ((!x. (~ ((x = a) /\ (((closure s) x) /\ ((x = a) \/ (s x)))))) /\ ((~ (!x. (~ ((x = a) /\ ((x = a) \/ (s x)))))) /\ (~ (!x. (~ (((closure s) x) /\ ((x = a) \/ (s x)))))))))) ==> ((closure s) a))))) ==> F) /\ ((~ (((connected s) /\ (~ (!x. (~ (s x))))) ==> ((!x. ((s x) ==> ((closure s) x))) ==> ((~ ((!x. (((x = a) \/ (s x)) ==> ((x = a) \/ ((closure s) x)))) /\ ((!x. (~ ((x = a) /\ (((closure s) x) /\ ((x = a) \/ (s x)))))) /\ ((~ (!x. (~ ((x = a) /\ ((x = a) \/ (s x)))))) /\ (~ (!x. (~ (((closure s) x) /\ ((x = a) \/ (s x)))))))))) ==> ((closure s) a))))) ==> F))
+T c==> c==> c~ c==> c/\ cconnected f0 c~ ! c~ * f0 b0 c==> ! c==> * f0 b0 cclosure f0 b0 c==> c~ c/\ ! c==> c\/ c= b0 f1 * f0 b0 c\/ c= b0 f1 cclosure f0 b0 c/\ ! c~ c/\ c= b0 f1 c/\ cclosure f0 b0 c\/ c= b0 f1 * f0 b0 c/\ c~ ! c~ c/\ c= b0 f1 c\/ c= b0 f1 * f0 b0 c~ ! c~ c/\ cclosure f0 b0 c\/ c= b0 f1 * f0 b0 cclosure f0 f1 cF c/\ c==> c~ c==> c/\ cconnected f0 c~ ! c~ * f0 b0 c==> ! c==> * f0 b0 cclosure f0 b0 c==> c~ c/\ ! c==> c\/ c= b0 f1 * f0 b0 c\/ c= b0 f1 cclosure f0 b0 c/\ ! c~ c/\ c= b0 f1 c/\ cclosure f0 b0 c\/ c= b0 f1 * f0 b0 c/\ c~ ! c~ c/\ c= b0 f1 c\/ c= b0 f1 * f0 b0 c~ ! c~ c/\ cclosure f0 b0 c\/ c= b0 f1 * f0 b0 cclosure f0 f1 cF c==> c~ c==> c/\ cconnected f0 c~ ! c~ * f0 b0 c==> ! c==> * f0 b0 cclosure f0 b0 c==> c~ c/\ ! c==> c\/ c= b0 f1 * f0 b0 c\/ c= b0 f1 cclosure f0 b0 c/\ ! c~ c/\ c= b0 f1 c/\ cclosure f0 b0 c\/ c= b0 f1 * f0 b0 c/\ c~ ! c~ c/\ c= b0 f1 c\/ c= b0 f1 * f0 b0 c~ ! c~ c/\ cclosure f0 b0 c\/ c= b0 f1 * f0 b0 cclosure f0 f1 cF
+- (!s. (!t. (((connected s) /\ ((connected t) /\ (~ (((closure s) INTER t) = EMPTY)))) ==> (connected (s UNION t))))) |- ((!t. (((connected s) /\ ((connected t) /\ (~ (((closure s) INTER t) = EMPTY)))) ==> (connected (s UNION t)))) = T)
+T c==> ! ! c==> c/\ cconnected b0 c/\ cconnected b1 c~ c= * * part cINTER * part cclosure b0 b1 part cEMPTY cconnected * * part cUNION b0 b1 c= ! c==> c/\ cconnected f0 c/\ cconnected b0 c~ c= * * part cINTER * part cclosure f0 b0 part cEMPTY cconnected * * part cUNION f0 b0 cT
+- |- ((?x'. ((x = a) /\ (((closure s) x') /\ ((x' = a) \/ (s x'))))) = ((x = a) /\ (?x. (((closure s) x) /\ ((x = a) \/ (s x))))))
+T c= c? / c/\ c= f0 f1 c/\ cclosure f2 b0 c\/ c= b0 f1 * f2 b0 c/\ c= f0 f1 c? / c/\ cclosure f2 b0 c\/ c= b0 f1 * f2 b0
+- (~ (((connected s) /\ (~ (!x. (~ (s x))))) ==> ((!x. ((s x) ==> ((closure s) x))) ==> ((~ ((!x. (((x = a) \/ (s x)) ==> ((x = a) \/ ((closure s) x)))) /\ ((!x. (~ ((x = a) /\ (((closure s) x) /\ ((x = a) \/ (s x)))))) /\ ((~ (!x. (~ ((x = a) /\ ((x = a) \/ (s x)))))) /\ (~ (!x. (~ (((closure s) x) /\ ((x = a) \/ (s x)))))))))) ==> ((closure s) a))))) |- F
+T c==> c~ c==> c/\ cconnected f0 c~ ! c~ * f0 b0 c==> ! c==> * f0 b0 cclosure f0 b0 c==> c~ c/\ ! c==> c\/ c= b0 f1 * f0 b0 c\/ c= b0 f1 cclosure f0 b0 c/\ ! c~ c/\ c= b0 f1 c/\ cclosure f0 b0 c\/ c= b0 f1 * f0 b0 c/\ c~ ! c~ c/\ c= b0 f1 c\/ c= b0 f1 * f0 b0 c~ ! c~ c/\ cclosure f0 b0 c\/ c= b0 f1 * f0 b0 cclosure f0 f1 cF
+- (!x. (~ (((closure s) x) /\ (x = a)))), (((closure s) a) /\ ((connected s) /\ (s x))) |- ((~ F) ==> F)
+T c==> ! c~ c/\ cclosure f0 b0 c= b0 f1 c==> c/\ cclosure f0 f1 c/\ cconnected f0 * f0 f2 c==> c~ cF cF
+- (_288561 = _288562) |- ((((s _288561) = (s _288562)) ==> ((s _288562) \/ (~ (s _288561)))) = ((s _288562) \/ (~ (s _288561))))
+T c==> c= f0 f1 c= c==> c= * f2 f0 * f2 f1 c\/ * f2 f1 c~ * f2 f0 c\/ * f2 f1 c~ * f2 f0
+- (x = a) |- ((~ ((closure s) a)) = (~ ((closure s) a)))
+T c==> c= f0 f1 c= c~ cclosure f2 f1 c~ cclosure f2 f1
+- |- ((\s. ((~ (((connected s) /\ (~ (!x. (~ (s x))))) ==> ((!x. ((s x) ==> ((closure s) x))) ==> ((~ ((!x. (((x = a) \/ (s x)) ==> ((x = a) \/ ((closure s) x)))) /\ ((!x. (~ ((x = a) /\ (((closure s) x) /\ ((x = a) \/ (s x)))))) /\ ((~ (!x. (~ ((x = a) /\ ((x = a) \/ (s x)))))) /\ (~ (!x. (~ (((closure s) x) /\ ((x = a) \/ (s x)))))))))) ==> ((closure s) a))))) ==> F)) s)
+T * / c==> c~ c==> c/\ cconnected b0 c~ ! c~ * b0 b1 c==> ! c==> * b0 b1 cclosure b0 b1 c==> c~ c/\ ! c==> c\/ c= b1 f0 * b0 b1 c\/ c= b1 f0 cclosure b0 b1 c/\ ! c~ c/\ c= b1 f0 c/\ cclosure b0 b1 c\/ c= b1 f0 * b0 b1 c/\ c~ ! c~ c/\ c= b1 f0 c\/ c= b1 f0 * b0 b1 c~ ! c~ c/\ cclosure b0 b1 c\/ c= b1 f0 * b0 b1 cclosure b0 f0 cF f1
+- (~ (a = a)) |- ((~ (a = a)) /\ (a = a))
+T c==> c~ c= f0 f0 c/\ c~ c= f0 f0 c= f0 f0
+- |- ((!x'. ((~ (x' = a)) \/ ((~ (x = a)) /\ (~ (s x))))) = ((!x. (~ (x = a))) \/ ((~ (x = a)) /\ (~ (s x)))))
+T c= ! c\/ c~ c= b0 f0 c/\ c~ c= f1 f0 c~ * f2 f1 c\/ ! c~ c= b0 f0 c/\ c~ c= f1 f0 c~ * f2 f1
+- |- ((~ (_288561 = _288562)) \/ ((s _288562) \/ (~ (s _288561))))
+T c\/ c~ c= f0 f1 c\/ * f2 f1 c~ * f2 f0
+- (~ (!x. (((x = a) \/ (s x)) = ((s x) \/ (x = a))))) |- ((~ (!x. (((x = a) \/ (s x)) = ((s x) \/ (x = a))))) /\ F)
+T c==> c~ ! c= c\/ c= b0 f0 * f1 b0 c\/ * f1 b0 c= b0 f0 c/\ c~ ! c= c\/ c= b0 f0 * f1 b0 c\/ * f1 b0 c= b0 f0 cF
+- (!x. ((s x) ==> ((closure s) x))), (!x. ((~ ((closure s) x)) \/ ((~ (x = a)) /\ (~ ((I s) x))))), ((connected s) /\ (s x')) |- ((~ F) ==> F)
+T c==> ! c==> * f0 b0 cclosure f0 b0 c==> ! c\/ c~ cclosure f0 b0 c/\ c~ c= b0 f1 c~ cI f0 b0 c==> c/\ cconnected f0 * f0 f2 c==> c~ cF cF
+- (!x. ((~ (x = a)) \/ ((~ (x = a)) /\ (~ ((I s) x))))), (~ F) |- ((~ F) /\ F)
+T c==> ! c\/ c~ c= b0 f0 c/\ c~ c= b0 f0 c~ cI f1 b0 c==> c~ cF c/\ c~ cF cF
+- |- ((((~ ((((closure s) a) /\ ((connected s) /\ (~ (!x. (~ (s x)))))) ==> (~ (!x. (~ (((closure s) x) /\ (x = a))))))) ==> F) ==> ((~ ((((closure s) a) /\ ((connected s) /\ (~ (!x. (~ (s x)))))) ==> (~ (!x. (~ (((closure s) x) /\ (x = a))))))) ==> F)) = ((~ ((((closure s) a) /\ ((connected s) /\ (~ (!x. (~ (s x)))))) ==> (~ (!x. (~ (((closure s) x) /\ (x = a))))))) ==> F))
+T c= c==> c==> c~ c==> c/\ cclosure f0 f1 c/\ cconnected f0 c~ ! c~ * f0 b0 c~ ! c~ c/\ cclosure f0 b0 c= b0 f1 cF c==> c~ c==> c/\ cclosure f0 f1 c/\ cconnected f0 c~ ! c~ * f0 b0 c~ ! c~ c/\ cclosure f0 b0 c= b0 f1 cF c==> c~ c==> c/\ cclosure f0 f1 c/\ cconnected f0 c~ ! c~ * f0 b0 c~ ! c~ c/\ cclosure f0 b0 c= b0 f1 cF
+- |- ((\a. (!s. ((~ (!x. (((x = a) \/ (s x)) = ((s x) \/ (x = a))))) ==> F))) a)
+T * / ! c==> c~ ! c= c\/ c= b2 b0 * b1 b2 c\/ * b1 b2 c= b2 b0 cF f0
+- ((x = a) /\ (((closure s) x) /\ ((x = a) \/ ((I s) x)))) |- ((x = a) \/ ((I s) x))
+T c==> c/\ c= f0 f1 c/\ cclosure f2 f0 c\/ c= f0 f1 cI f2 f0 c\/ c= f0 f1 cI f2 f0
+- ((~ (((connected s) /\ (~ (!x. (~ (s x))))) ==> ((!x. ((s x) ==> ((closure s) x))) ==> ((~ ((!x. (((x = a) \/ (s x)) ==> ((x = a) \/ ((closure s) x)))) /\ ((!x. (~ ((x = a) /\ (((closure s) x) /\ ((x = a) \/ (s x)))))) /\ ((~ (!x. (~ ((x = a) /\ ((x = a) \/ (s x)))))) /\ (~ (!x. (~ (((closure s) x) /\ ((x = a) \/ (s x)))))))))) ==> ((closure s) a))))) ==> F) |- ((((~ (((connected s) /\ (~ (!x. (~ (s x))))) ==> ((!x. ((s x) ==> ((closure s) x))) ==> ((~ ((!x. (((x = a) \/ (s x)) ==> ((x = a) \/ ((closure s) x)))) /\ ((!x. (~ ((x = a) /\ (((closure s) x) /\ ((x = a) \/ (s x)))))) /\ ((~ (!x. (~ ((x = a) /\ ((x = a) \/ (s x)))))) /\ (~ (!x. (~ (((closure s) x) /\ ((x = a) \/ (s x)))))))))) ==> ((closure s) a))))) ==> F) ==> ((~ (((connected s) /\ (~ (!x. (~ (s x))))) ==> ((!x. ((s x) ==> ((closure s) x))) ==> ((~ ((!x. (((x = a) \/ (s x)) ==> ((x = a) \/ ((closure s) x)))) /\ ((!x. (~ ((x = a) /\ (((closure s) x) /\ ((x = a) \/ (s x)))))) /\ ((~ (!x. (~ ((x = a) /\ ((x = a) \/ (s x)))))) /\ (~ (!x. (~ (((closure s) x) /\ ((x = a) \/ (s x)))))))))) ==> ((closure s) a))))) ==> F)) ==> ((~ (((connected s) /\ (~ (!x. (~ (s x))))) ==> ((!x. ((s x) ==> ((closure s) x))) ==> ((~ ((!x. (((x = a) \/ (s x)) ==> ((x = a) \/ ((closure s) x)))) /\ ((!x. (~ ((x = a) /\ (((closure s) x) /\ ((x = a) \/ (s x)))))) /\ ((~ (!x. (~ ((x = a) /\ ((x = a) \/ (s x)))))) /\ (~ (!x. (~ (((closure s) x) /\ ((x = a) \/ (s x)))))))))) ==> ((closure s) a))))) ==> F))
+T c==> c==> c~ c==> c/\ cconnected f0 c~ ! c~ * f0 b0 c==> ! c==> * f0 b0 cclosure f0 b0 c==> c~ c/\ ! c==> c\/ c= b0 f1 * f0 b0 c\/ c= b0 f1 cclosure f0 b0 c/\ ! c~ c/\ c= b0 f1 c/\ cclosure f0 b0 c\/ c= b0 f1 * f0 b0 c/\ c~ ! c~ c/\ c= b0 f1 c\/ c= b0 f1 * f0 b0 c~ ! c~ c/\ cclosure f0 b0 c\/ c= b0 f1 * f0 b0 cclosure f0 f1 cF c==> c==> c==> c~ c==> c/\ cconnected f0 c~ ! c~ * f0 b0 c==> ! c==> * f0 b0 cclosure f0 b0 c==> c~ c/\ ! c==> c\/ c= b0 f1 * f0 b0 c\/ c= b0 f1 cclosure f0 b0 c/\ ! c~ c/\ c= b0 f1 c/\ cclosure f0 b0 c\/ c= b0 f1 * f0 b0 c/\ c~ ! c~ c/\ c= b0 f1 c\/ c= b0 f1 * f0 b0 c~ ! c~ c/\ cclosure f0 b0 c\/ c= b0 f1 * f0 b0 cclosure f0 f1 cF c==> c~ c==> c/\ cconnected f0 c~ ! c~ * f0 b0 c==> ! c==> * f0 b0 cclosure f0 b0 c==> c~ c/\ ! c==> c\/ c= b0 f1 * f0 b0 c\/ c= b0 f1 cclosure f0 b0 c/\ ! c~ c/\ c= b0 f1 c/\ cclosure f0 b0 c\/ c= b0 f1 * f0 b0 c/\ c~ ! c~ c/\ c= b0 f1 c\/ c= b0 f1 * f0 b0 c~ ! c~ c/\ cclosure f0 b0 c\/ c= b0 f1 * f0 b0 cclosure f0 f1 cF c==> c~ c==> c/\ cconnected f0 c~ ! c~ * f0 b0 c==> ! c==> * f0 b0 cclosure f0 b0 c==> c~ c/\ ! c==> c\/ c= b0 f1 * f0 b0 c\/ c= b0 f1 cclosure f0 b0 c/\ ! c~ c/\ c= b0 f1 c/\ cclosure f0 b0 c\/ c= b0 f1 * f0 b0 c/\ c~ ! c~ c/\ c= b0 f1 c\/ c= b0 f1 * f0 b0 c~ ! c~ c/\ cclosure f0 b0 c\/ c= b0 f1 * f0 b0 cclosure f0 f1 cF
+- ((x = a) /\ (((closure s) x) /\ ((x = a) \/ ((I s) x)))) |- ((connected s) = (connected s))
+T c==> c/\ c= f0 f1 c/\ cclosure f2 f0 c\/ c= f0 f1 cI f2 f0 c= cconnected f2 cconnected f2
+- ((~ (!x. (((x = a) \/ (s x)) = ((s x) \/ (x = a))))) ==> F), (((~ (!x. (((x = a) \/ (s x)) = ((s x) \/ (x = a))))) ==> F) ==> ((~ (!x. (((x = a) \/ (s x)) = ((s x) \/ (x = a))))) ==> F)) |- ((((~ (!x. (((x = a) \/ (s x)) = ((s x) \/ (x = a))))) ==> F) ==> ((~ (!x. (((x = a) \/ (s x)) = ((s x) \/ (x = a))))) ==> F)) /\ ((~ (!x. (((x = a) \/ (s x)) = ((s x) \/ (x = a))))) ==> F))
+T c==> c==> c~ ! c= c\/ c= b0 f0 * f1 b0 c\/ * f1 b0 c= b0 f0 cF c==> c==> c==> c~ ! c= c\/ c= b0 f0 * f1 b0 c\/ * f1 b0 c= b0 f0 cF c==> c~ ! c= c\/ c= b0 f0 * f1 b0 c\/ * f1 b0 c= b0 f0 cF c/\ c==> c==> c~ ! c= c\/ c= b0 f0 * f1 b0 c\/ * f1 b0 c= b0 f0 cF c==> c~ ! c= c\/ c= b0 f0 * f1 b0 c\/ * f1 b0 c= b0 f0 cF c==> c~ ! c= c\/ c= b0 f0 * f1 b0 c\/ * f1 b0 c= b0 f0 cF
+- (((closure s) a) /\ ((connected s) /\ (s x))) |- (connected s)
+T c==> c/\ cclosure f0 f1 c/\ cconnected f0 * f0 f2 cconnected f0
+- (!x. ((~ ((closure s) x)) \/ ((~ (x = a)) /\ (~ ((I s) x))))) |- ((~ ((closure s) _288570)) \/ (~ (_288570 = a)))
+T c==> ! c\/ c~ cclosure f0 b0 c/\ c~ c= b0 f1 c~ cI f0 b0 c\/ c~ cclosure f0 f2 c~ c= f2 f1
+- (~ ((closure s) a)), (((closure s) a) /\ ((connected s) /\ (s x))) |- ((~ ((closure s) a)) /\ ((closure s) a))
+T c==> c~ cclosure f0 f1 c==> c/\ cclosure f0 f1 c/\ cconnected f0 * f0 f2 c/\ c~ cclosure f0 f1 cclosure f0 f1
+- |- (((!s. (!t. (((connected s) /\ ((connected t) /\ (~ (((closure s) INTER t) = EMPTY)))) ==> (connected (s UNION t))))) ==> (!s. (!t. (((connected s) /\ ((connected t) /\ (~ (((closure s) INTER t) = EMPTY)))) ==> (connected (s UNION t)))))) = (!s. (!t. (((connected s) /\ ((connected t) /\ (~ (((closure s) INTER t) = EMPTY)))) ==> (connected (s UNION t))))))
+T c= c==> ! ! c==> c/\ cconnected b0 c/\ cconnected b1 c~ c= * * part cINTER * part cclosure b0 b1 part cEMPTY cconnected * * part cUNION b0 b1 ! ! c==> c/\ cconnected b0 c/\ cconnected b1 c~ c= * * part cINTER * part cclosure b0 b1 part cEMPTY cconnected * * part cUNION b0 b1 ! ! c==> c/\ cconnected b0 c/\ cconnected b1 c~ c= * * part cINTER * part cclosure b0 b1 part cEMPTY cconnected * * part cUNION b0 b1
+- (_288661 = _288663) |- ((_288660 = _288662) ==> (((closure _288662) _288663) \/ (~ ((closure _288660) _288661))))
+T c==> c= f0 f1 c==> c= f2 f3 c\/ cclosure f3 f1 c~ cclosure f2 f0
+- (!s. (!t. (((connected s) /\ ((connected t) /\ (~ (((closure s) INTER t) = EMPTY)))) ==> (connected (s UNION t))))), ((connected s) /\ ((connected t) /\ (~ (((closure s) INTER t) = EMPTY)))) |- (connected (s UNION t))
+T c==> ! ! c==> c/\ cconnected b0 c/\ cconnected b1 c~ c= * * part cINTER * part cclosure b0 b1 part cEMPTY cconnected * * part cUNION b0 b1 c==> c/\ cconnected f0 c/\ cconnected f1 c~ c= * * part cINTER * part cclosure f0 f1 part cEMPTY cconnected * * part cUNION f0 f1
+- ((x = a) /\ (((closure s) x) /\ ((x = a) \/ ((I s) x)))) |- ((~ ((closure s) a)) ==> ((closure s) a))
+T c==> c/\ c= f0 f1 c/\ cclosure f2 f0 c\/ c= f0 f1 cI f2 f0 c==> c~ cclosure f2 f1 cclosure f2 f1
+- |- ((?x. ((P x) /\ Q)) = ((?x. (P x)) /\ Q))
+T c= c? / c/\ * f0 b0 f1 c/\ c? / * f0 b0 f1
+- ((~ (!x. (((x = a) \/ (s x)) = ((s x) \/ (x = a))))) ==> F), (((~ (!x. (((x = a) \/ (s x)) = ((s x) \/ (x = a))))) ==> F) ==> ((~ (!x. (((x = a) \/ (s x)) = ((s x) \/ (x = a))))) ==> F)) |- (((~ (!x. (((x = a) \/ (s x)) = ((s x) \/ (x = a))))) ==> F) /\ ((~ (!x. (((x = a) \/ (s x)) = ((s x) \/ (x = a))))) ==> F))
+T c==> c==> c~ ! c= c\/ c= b0 f0 * f1 b0 c\/ * f1 b0 c= b0 f0 cF c==> c==> c==> c~ ! c= c\/ c= b0 f0 * f1 b0 c\/ * f1 b0 c= b0 f0 cF c==> c~ ! c= c\/ c= b0 f0 * f1 b0 c\/ * f1 b0 c= b0 f0 cF c/\ c==> c~ ! c= c\/ c= b0 f0 * f1 b0 c\/ * f1 b0 c= b0 f0 cF c==> c~ ! c= c\/ c= b0 f0 * f1 b0 c\/ * f1 b0 c= b0 f0 cF
+- |- (((!s. ((~ (!x. (((x = a) \/ (s x)) = ((s x) \/ (x = a))))) ==> F)) ==> ((\s. ((~ (!x. (((x = a) \/ (s x)) = ((s x) \/ (x = a))))) ==> F)) s)) = ((\s. ((~ (!x. (((x = a) \/ (s x)) = ((s x) \/ (x = a))))) ==> F)) s))
+T c= c==> ! c==> c~ ! c= c\/ c= b1 f0 * b0 b1 c\/ * b0 b1 c= b1 f0 cF * / c==> c~ ! c= c\/ c= b1 f0 * b0 b1 c\/ * b0 b1 c= b1 f0 cF f1 * / c==> c~ ! c= c\/ c= b1 f0 * b0 b1 c\/ * b0 b1 c= b1 f0 cF f1
+- (s x), (((x = a) \/ (s x)) /\ ((~ (s x)) /\ (~ (x = a)))) |- F
+T c==> * f0 f1 c==> c/\ c\/ c= f1 f2 * f0 f1 c/\ c~ * f0 f1 c~ c= f1 f2 cF
+- |- (((((closure s) a) /\ ((connected s) /\ (~ (!x. (~ (s x)))))) ==> (~ (!x. (~ (((closure s) x) /\ (x = a)))))) = T)
+T c= c==> c/\ cclosure f0 f1 c/\ cconnected f0 c~ ! c~ * f0 b0 c~ ! c~ c/\ cclosure f0 b0 c= b0 f1 cT
+- (~ ((((closure s) a) /\ ((connected s) /\ (~ (!x. (~ (s x)))))) ==> (~ (!x. (~ (((closure s) x) /\ (x = a))))))) |- F
+T c==> c~ c==> c/\ cclosure f0 f1 c/\ cconnected f0 c~ ! c~ * f0 b0 c~ ! c~ c/\ cclosure f0 b0 c= b0 f1 cF
+- |- ((!a. (!s. (!x. (((x = a) \/ (s x)) = ((s x) \/ (x = a)))))) = (!a. (!s. ((~ (!x. (((x = a) \/ (s x)) = ((s x) \/ (x = a))))) ==> F))))
+T c= ! ! ! c= c\/ c= b2 b0 * b1 b2 c\/ * b1 b2 c= b2 b0 ! ! c==> c~ ! c= c\/ c= b2 b0 * b1 b2 c\/ * b1 b2 c= b2 b0 cF
+- |- (((!a. (!s. ((~ (!x. (((x = a) \/ (s x)) = ((s x) \/ (x = a))))) ==> F))) ==> ((\a. (!s. ((~ (!x. (((x = a) \/ (s x)) = ((s x) \/ (x = a))))) ==> F))) a)) = ((\a. (!s. ((~ (!x. (((x = a) \/ (s x)) = ((s x) \/ (x = a))))) ==> F))) a))
+T c= c==> ! ! c==> c~ ! c= c\/ c= b2 b0 * b1 b2 c\/ * b1 b2 c= b2 b0 cF * / ! c==> c~ ! c= c\/ c= b2 b0 * b1 b2 c\/ * b1 b2 c= b2 b0 cF f0 * / ! c==> c~ ! c= c\/ c= b2 b0 * b1 b2 c\/ * b1 b2 c= b2 b0 cF f0

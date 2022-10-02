@@ -1,0 +1,159 @@
+N SQRT_NEG
+C |- (!x. ((sqrt (real_neg x)) = (real_neg (sqrt x))))
+T c= csqrt creal_neg f0 creal_neg csqrt f0
+D TRUTH
+A |- T
+T cT
+D COND_CLAUSES
+A |- (!t1. (!t2. (((((COND T) t1) t2) = t1) /\ ((((COND F) t1) t2) = t2))))
+T c/\ c= cCOND cT f0 f1 f0 c= cCOND cF f0 f1 f1
+D ARITH_EVEN
+A |- ((!n. ((EVEN (NUMERAL n)) = (EVEN n))) /\ (((EVEN _0) = T) /\ ((!n. ((EVEN (BIT0 n)) = T)) /\ (!n. ((EVEN (BIT1 n)) = F)))))
+T c/\ ! c= cEVEN cNUMERAL b0 cEVEN b0 c/\ c= cEVEN c_0 cT c/\ ! c= cEVEN cBIT0 b0 cT ! c= cEVEN cBIT1 b0 cF
+D REAL_POW_NEG
+A |- (!x. (!n. (((real_pow (real_neg x)) n) = (((COND (EVEN n)) ((real_pow x) n)) (real_neg ((real_pow x) n))))))
+T c= creal_pow creal_neg f0 f1 cCOND cEVEN f1 creal_pow f0 f1 creal_neg creal_pow f0 f1
+D REAL_ABS_NEG
+A |- (!x. ((real_abs (real_neg x)) = (real_abs x)))
+T c= creal_abs creal_neg f0 creal_abs f0
+D REAL_SGN_NEG
+A |- (!x. ((real_sgn (real_neg x)) = (real_neg (real_sgn x))))
+T c= creal_sgn creal_neg f0 creal_neg creal_sgn f0
+D SQRT_WORKS_GEN
+A |- (!x. (((real_sgn (sqrt x)) = (real_sgn x)) /\ (((real_pow (sqrt x)) (NUMERAL (BIT0 (BIT1 _0)))) = (real_abs x))))
+T c/\ c= creal_sgn csqrt f0 creal_sgn f0 c= creal_pow csqrt f0 cNUMERAL cBIT0 cBIT1 c_0 creal_abs f0
+D SQRT_UNIQUE_GEN
+A |- (!x. (!y. ((((real_sgn y) = (real_sgn x)) /\ (((real_pow y) (NUMERAL (BIT0 (BIT1 _0)))) = (real_abs x))) ==> ((sqrt x) = y))))
+T c==> c/\ c= creal_sgn f0 creal_sgn f1 c= creal_pow f0 cNUMERAL cBIT0 cBIT1 c_0 creal_abs f1 c= csqrt f1 f0
+- |- ((\m. (!n. (((BIT0 m) <= (BIT0 n)) = (m <= n)))) m)
+T * / ! c= c<= cBIT0 b0 cBIT0 b1 c<= b0 b1 f0
+- |- (((!n. (((BIT0 n) + _0) = (BIT0 n))) ==> ((\n. (((BIT0 n) + _0) = (BIT0 n))) n)) = ((\n. (((BIT0 n) + _0) = (BIT0 n))) n))
+T c= c==> ! c= c+ cBIT0 b0 c_0 cBIT0 b0 * / c= c+ cBIT0 b0 c_0 cBIT0 b0 f0 * / c= c+ cBIT0 b0 c_0 cBIT0 b0 f0
+- |- (((!x. (!y. ((((real_sgn y) = (real_sgn x)) /\ (((real_pow y) (NUMERAL (BIT0 (BIT1 _0)))) = (real_abs x))) ==> ((sqrt x) = y)))) ==> (!x. (!y. ((((real_sgn y) = (real_sgn x)) /\ (((real_pow y) (NUMERAL (BIT0 (BIT1 _0)))) = (real_abs x))) ==> ((sqrt x) = y))))) = (!x. (!y. ((((real_sgn y) = (real_sgn x)) /\ (((real_pow y) (NUMERAL (BIT0 (BIT1 _0)))) = (real_abs x))) ==> ((sqrt x) = y)))))
+T c= c==> ! ! c==> c/\ c= creal_sgn b1 creal_sgn b0 c= creal_pow b1 cNUMERAL cBIT0 cBIT1 c_0 creal_abs b0 c= csqrt b0 b1 ! ! c==> c/\ c= creal_sgn b1 creal_sgn b0 c= creal_pow b1 cNUMERAL cBIT0 cBIT1 c_0 creal_abs b0 c= csqrt b0 b1 ! ! c==> c/\ c= creal_sgn b1 creal_sgn b0 c= creal_pow b1 cNUMERAL cBIT0 cBIT1 c_0 creal_abs b0 c= csqrt b0 b1
+- |- (((BIT0 m) EXP (BIT0 n)) = (((BIT0 m) EXP n) * ((BIT0 m) EXP n)))
+T c= cEXP cBIT0 f0 cBIT0 f1 c* cEXP cBIT0 f0 f1 cEXP cBIT0 f0 f1
+- |- (((!m. (!n. (((NUMERAL n) >= (NUMERAL m)) = (n >= m)))) ==> ((\m. (!n. (((NUMERAL n) >= (NUMERAL m)) = (n >= m)))) m)) = ((\m. (!n. (((NUMERAL n) >= (NUMERAL m)) = (n >= m)))) m))
+T c= c==> ! ! c= c>= cNUMERAL b1 cNUMERAL b0 c>= b1 b0 * / ! c= c>= cNUMERAL b1 cNUMERAL b0 c>= b1 b0 f0 * / ! c= c>= cNUMERAL b1 cNUMERAL b0 c>= b1 b0 f0
+- |- ((!m. (!n. (((BIT0 m) + (BIT1 n)) = (BIT1 (m + n))))) /\ ((!m. (!n. (((BIT1 m) + (BIT0 n)) = (BIT1 (m + n))))) /\ (!m. (!n. (((BIT1 m) + (BIT1 n)) = (BIT0 (SUC (m + n))))))))
+T c/\ ! ! c= c+ cBIT0 b0 cBIT1 b1 cBIT1 c+ b0 b1 c/\ ! ! c= c+ cBIT1 b0 cBIT0 b1 cBIT1 c+ b0 b1 ! ! c= c+ cBIT1 b0 cBIT1 b1 cBIT0 cSUC c+ b0 b1
+- |- (((!n. (((BIT1 n) * _0) = _0)) ==> ((\n. (((BIT1 n) * _0) = _0)) n)) = ((\n. (((BIT1 n) * _0) = _0)) n))
+T c= c==> ! c= c* cBIT1 b0 c_0 c_0 * / c= c* cBIT1 b0 c_0 c_0 f0 * / c= c* cBIT1 b0 c_0 c_0 f0
+- |- (((BIT0 m) = (BIT1 n)) = F)
+T c= c= cBIT0 f0 cBIT1 f1 cF
+- |- (((!n. (((BIT0 n) * _0) = _0)) ==> ((\n. (((BIT0 n) * _0) = _0)) n)) = ((\n. (((BIT0 n) * _0) = _0)) n))
+T c= c==> ! c= c* cBIT0 b0 c_0 c_0 * / c= c* cBIT0 b0 c_0 c_0 f0 * / c= c* cBIT0 b0 c_0 c_0 f0
+- |- (((!n. ((BIT1 n) > _0)) ==> ((\n. ((BIT1 n) > _0)) n)) = ((\n. ((BIT1 n) > _0)) n))
+T c= c==> ! c> cBIT1 b0 c_0 * / c> cBIT1 b0 c_0 f0 * / c> cBIT1 b0 c_0 f0
+- |- (((BIT0 m) + (BIT1 n)) = (BIT1 (m + n)))
+T c= c+ cBIT0 f0 cBIT1 f1 cBIT1 c+ f0 f1
+- |- ((SUC _0) = (BIT1 _0))
+T c= cSUC c_0 cBIT1 c_0
+- |- (((!m. (!n. (((BIT0 m) < (BIT1 n)) = (m <= n)))) ==> ((\m. (!n. (((BIT0 m) < (BIT1 n)) = (m <= n)))) m)) = ((\m. (!n. (((BIT0 m) < (BIT1 n)) = (m <= n)))) m))
+T c= c==> ! ! c= c< cBIT0 b0 cBIT1 b1 c<= b0 b1 * / ! c= c< cBIT0 b0 cBIT1 b1 c<= b0 b1 f0 * / ! c= c< cBIT0 b0 cBIT1 b1 c<= b0 b1 f0
+- |- ((_0 <= (BIT0 n)) = T)
+T c= c<= c_0 cBIT0 f0 cT
+- |- (((BIT1 m) = (BIT0 n)) = F)
+T c= c= cBIT1 f0 cBIT0 f1 cF
+- |- ((!m. (!n. (((BIT0 n) > (BIT0 m)) = (n > m)))) /\ ((!m. (!n. (((BIT1 n) > (BIT0 m)) = (n >= m)))) /\ ((!m. (!n. (((BIT0 n) > (BIT1 m)) = (n > m)))) /\ (!m. (!n. (((BIT1 n) > (BIT1 m)) = (n > m)))))))
+T c/\ ! ! c= c> cBIT0 b1 cBIT0 b0 c> b1 b0 c/\ ! ! c= c> cBIT1 b1 cBIT0 b0 c>= b1 b0 c/\ ! ! c= c> cBIT0 b1 cBIT1 b0 c> b1 b0 ! ! c= c> cBIT1 b1 cBIT1 b0 c> b1 b0
+- |- (((PRE _0) = _0) /\ ((!n. ((PRE (BIT0 n)) = (((COND (n = _0)) _0) (BIT1 (PRE n))))) /\ (!n. ((PRE (BIT1 n)) = (BIT0 n)))))
+T c/\ c= cPRE c_0 c_0 c/\ ! c= cPRE cBIT0 b0 cCOND c= b0 c_0 c_0 cBIT1 cPRE b0 ! c= cPRE cBIT1 b0 cBIT0 b0
+- |- (((BIT0 m) * (BIT0 n)) = (BIT0 (BIT0 (m * n))))
+T c= c* cBIT0 f0 cBIT0 f1 cBIT0 cBIT0 c* f0 f1
+- |- ((!n. (((BIT1 n) = _0) = F)) /\ ((!n. ((_0 = (BIT0 n)) = (_0 = n))) /\ ((!n. ((_0 = (BIT1 n)) = F)) /\ ((!m. (!n. (((BIT0 m) = (BIT0 n)) = (m = n)))) /\ ((!m. (!n. (((BIT0 m) = (BIT1 n)) = F))) /\ ((!m. (!n. (((BIT1 m) = (BIT0 n)) = F))) /\ (!m. (!n. (((BIT1 m) = (BIT1 n)) = (m = n))))))))))
+T c/\ ! c= c= cBIT1 b0 c_0 cF c/\ ! c= c= c_0 cBIT0 b0 c= c_0 b0 c/\ ! c= c= c_0 cBIT1 b0 cF c/\ ! ! c= c= cBIT0 b0 cBIT0 b1 c= b0 b1 c/\ ! ! c= c= cBIT0 b0 cBIT1 b1 cF c/\ ! ! c= c= cBIT1 b0 cBIT0 b1 cF ! ! c= c= cBIT1 b0 cBIT1 b1 c= b0 b1
+- |- (((BIT1 m) < (BIT0 n)) = (m < n))
+T c= c< cBIT1 f0 cBIT0 f1 c< f0 f1
+- |- ((\m. (!n. (((BIT0 m) EXP (BIT1 n)) = ((BIT0 m) * (((BIT0 m) EXP n) * ((BIT0 m) EXP n)))))) m)
+T * / ! c= cEXP cBIT0 b0 cBIT1 b1 c* cBIT0 b0 c* cEXP cBIT0 b0 b1 cEXP cBIT0 b0 b1 f0
+- |- (((!m. (!n. (((BIT0 m) - (BIT0 n)) = (BIT0 (m - n))))) ==> ((\m. (!n. (((BIT0 m) - (BIT0 n)) = (BIT0 (m - n))))) m)) = ((\m. (!n. (((BIT0 m) - (BIT0 n)) = (BIT0 (m - n))))) m))
+T c= c==> ! ! c= c- cBIT0 b0 cBIT0 b1 cBIT0 c- b0 b1 * / ! c= c- cBIT0 b0 cBIT0 b1 cBIT0 c- b0 b1 f0 * / ! c= c- cBIT0 b0 cBIT0 b1 cBIT0 c- b0 b1 f0
+- |- ((_0 EXP (BIT0 n)) = ((_0 EXP n) * (_0 EXP n)))
+T c= cEXP c_0 cBIT0 f0 c* cEXP c_0 f0 cEXP c_0 f0
+- |- (((NUMERAL m) EXP (NUMERAL n)) = (NUMERAL (m EXP n)))
+T c= cEXP cNUMERAL f0 cNUMERAL f1 cNUMERAL cEXP f0 f1
+- |- (((!n. ((SUC (BIT0 n)) = (BIT1 n))) ==> ((\n. ((SUC (BIT0 n)) = (BIT1 n))) n)) = ((\n. ((SUC (BIT0 n)) = (BIT1 n))) n))
+T c= c==> ! c= cSUC cBIT0 b0 cBIT1 b0 * / c= cSUC cBIT0 b0 cBIT1 b0 f0 * / c= cSUC cBIT0 b0 cBIT1 b0 f0
++ |- ((!n. ((EVEN (BIT0 n)) = T)) /\ (!n. ((EVEN (BIT1 n)) = F)))
+T c/\ ! c= cEVEN cBIT0 b0 cT ! c= cEVEN cBIT1 b0 cF
+- |- (((!n. ((ODD (BIT0 n)) = F)) ==> ((\n. ((ODD (BIT0 n)) = F)) n)) = ((\n. ((ODD (BIT0 n)) = F)) n))
+T c= c==> ! c= cODD cBIT0 b0 cF * / c= cODD cBIT0 b0 cF f0 * / c= cODD cBIT0 b0 cF f0
+- |- ((\m. (((BIT1 m) EXP _0) = (BIT1 _0))) m)
+T * / c= cEXP cBIT1 b0 c_0 cBIT1 c_0 f0
+- |- (((!n. (((BIT1 m) EXP (BIT0 n)) = (((BIT1 m) EXP n) * ((BIT1 m) EXP n)))) ==> ((\n. (((BIT1 m) EXP (BIT0 n)) = (((BIT1 m) EXP n) * ((BIT1 m) EXP n)))) n)) = ((\n. (((BIT1 m) EXP (BIT0 n)) = (((BIT1 m) EXP n) * ((BIT1 m) EXP n)))) n))
+T c= c==> ! c= cEXP cBIT1 f0 cBIT0 b0 c* cEXP cBIT1 f0 b0 cEXP cBIT1 f0 b0 * / c= cEXP cBIT1 f0 cBIT0 b0 c* cEXP cBIT1 f0 b0 cEXP cBIT1 f0 b0 f1 * / c= cEXP cBIT1 f0 cBIT0 b0 c* cEXP cBIT1 f0 b0 cEXP cBIT1 f0 b0 f1
+- |- (((!n. ((_0 * (BIT0 n)) = _0)) ==> ((\n. ((_0 * (BIT0 n)) = _0)) n)) = ((\n. ((_0 * (BIT0 n)) = _0)) n))
+T c= c==> ! c= c* c_0 cBIT0 b0 c_0 * / c= c* c_0 cBIT0 b0 c_0 f0 * / c= c* c_0 cBIT0 b0 c_0 f0
+- |- (((!n. ((EVEN (BIT1 n)) = F)) ==> ((\n. ((EVEN (BIT1 n)) = F)) n)) = ((\n. ((EVEN (BIT1 n)) = F)) n))
+T c= c==> ! c= cEVEN cBIT1 b0 cF * / c= cEVEN cBIT1 b0 cF f0 * / c= cEVEN cBIT1 b0 cF f0
+- |- (((!m. (!n. (((BIT1 m) + (BIT0 n)) = (BIT1 (m + n))))) ==> ((\m. (!n. (((BIT1 m) + (BIT0 n)) = (BIT1 (m + n))))) m)) = ((\m. (!n. (((BIT1 m) + (BIT0 n)) = (BIT1 (m + n))))) m))
+T c= c==> ! ! c= c+ cBIT1 b0 cBIT0 b1 cBIT1 c+ b0 b1 * / ! c= c+ cBIT1 b0 cBIT0 b1 cBIT1 c+ b0 b1 f0 * / ! c= c+ cBIT1 b0 cBIT0 b1 cBIT1 c+ b0 b1 f0
+- |- (((!m. (!n. (((BIT1 m) EXP (BIT1 n)) = ((BIT1 m) * (((BIT1 m) EXP n) * ((BIT1 m) EXP n)))))) ==> ((\m. (!n. (((BIT1 m) EXP (BIT1 n)) = ((BIT1 m) * (((BIT1 m) EXP n) * ((BIT1 m) EXP n)))))) m)) = ((\m. (!n. (((BIT1 m) EXP (BIT1 n)) = ((BIT1 m) * (((BIT1 m) EXP n) * ((BIT1 m) EXP n)))))) m))
+T c= c==> ! ! c= cEXP cBIT1 b0 cBIT1 b1 c* cBIT1 b0 c* cEXP cBIT1 b0 b1 cEXP cBIT1 b0 b1 * / ! c= cEXP cBIT1 b0 cBIT1 b1 c* cBIT1 b0 c* cEXP cBIT1 b0 b1 cEXP cBIT1 b0 b1 f0 * / ! c= cEXP cBIT1 b0 cBIT1 b1 c* cBIT1 b0 c* cEXP cBIT1 b0 b1 cEXP cBIT1 b0 b1 f0
+- |- ((\n. (((BIT0 m) < (BIT0 n)) = (m < n))) n)
+T * / c= c< cBIT0 f0 cBIT0 b0 c< f0 b0 f1
++ |- ((\x. ((real_sgn (real_neg x)) = (real_neg (real_sgn x)))) x)
+T * / c= creal_sgn creal_neg b0 creal_neg creal_sgn b0 f0
++ |- (((!x. (((real_sgn (sqrt x)) = (real_sgn x)) /\ (((real_pow (sqrt x)) (NUMERAL (BIT0 (BIT1 _0)))) = (real_abs x)))) ==> ((\x. (((real_sgn (sqrt x)) = (real_sgn x)) /\ (((real_pow (sqrt x)) (NUMERAL (BIT0 (BIT1 _0)))) = (real_abs x)))) x)) = ((\x. (((real_sgn (sqrt x)) = (real_sgn x)) /\ (((real_pow (sqrt x)) (NUMERAL (BIT0 (BIT1 _0)))) = (real_abs x)))) x))
+T c= c==> ! c/\ c= creal_sgn csqrt b0 creal_sgn b0 c= creal_pow csqrt b0 cNUMERAL cBIT0 cBIT1 c_0 creal_abs b0 * / c/\ c= creal_sgn csqrt b0 creal_sgn b0 c= creal_pow csqrt b0 cNUMERAL cBIT0 cBIT1 c_0 creal_abs b0 f0 * / c/\ c= creal_sgn csqrt b0 creal_sgn b0 c= creal_pow csqrt b0 cNUMERAL cBIT0 cBIT1 c_0 creal_abs b0 f0
++ |- ((real_sgn (sqrt x)) = (real_sgn x))
+T c= creal_sgn csqrt f0 creal_sgn f0
++ |- (((!x. (!n. (((real_pow (real_neg x)) n) = (((COND (EVEN n)) ((real_pow x) n)) (real_neg ((real_pow x) n)))))) ==> ((\x. (!n. (((real_pow (real_neg x)) n) = (((COND (EVEN n)) ((real_pow x) n)) (real_neg ((real_pow x) n)))))) x)) = ((\x. (!n. (((real_pow (real_neg x)) n) = (((COND (EVEN n)) ((real_pow x) n)) (real_neg ((real_pow x) n)))))) x))
+T c= c==> ! ! c= creal_pow creal_neg b0 b1 cCOND cEVEN b1 creal_pow b0 b1 creal_neg creal_pow b0 b1 * / ! c= creal_pow creal_neg b0 b1 cCOND cEVEN b1 creal_pow b0 b1 creal_neg creal_pow b0 b1 f0 * / ! c= creal_pow creal_neg b0 b1 cCOND cEVEN b1 creal_pow b0 b1 creal_neg creal_pow b0 b1 f0
++ |- (((EVEN _0) = T) /\ ((!n. ((EVEN (BIT0 n)) = T)) /\ (!n. ((EVEN (BIT1 n)) = F))))
+T c/\ c= cEVEN c_0 cT c/\ ! c= cEVEN cBIT0 b0 cT ! c= cEVEN cBIT1 b0 cF
++ |- ((((real_neg (real_sgn (sqrt x))) = (real_neg (real_sgn x))) /\ (((real_pow (sqrt x)) (NUMERAL (BIT0 (BIT1 _0)))) = (real_abs x))) = (((real_sgn (real_neg (sqrt x))) = (real_sgn (real_neg x))) /\ (((real_pow (real_neg (sqrt x))) (NUMERAL (BIT0 (BIT1 _0)))) = (real_abs (real_neg x)))))
+T c= c/\ c= creal_neg creal_sgn csqrt f0 creal_neg creal_sgn f0 c= creal_pow csqrt f0 cNUMERAL cBIT0 cBIT1 c_0 creal_abs f0 c/\ c= creal_sgn creal_neg csqrt f0 creal_sgn creal_neg f0 c= creal_pow creal_neg csqrt f0 cNUMERAL cBIT0 cBIT1 c_0 creal_abs creal_neg f0
++ |- ((\n. ((EVEN (BIT0 n)) = T)) n)
+T * / c= cEVEN cBIT0 b0 cT f0
++ |- (((!y. ((((real_sgn y) = (real_sgn x)) /\ (((real_pow y) (NUMERAL (BIT0 (BIT1 _0)))) = (real_abs x))) ==> ((sqrt x) = y))) ==> ((\y. ((((real_sgn y) = (real_sgn x)) /\ (((real_pow y) (NUMERAL (BIT0 (BIT1 _0)))) = (real_abs x))) ==> ((sqrt x) = y))) y)) = ((\y. ((((real_sgn y) = (real_sgn x)) /\ (((real_pow y) (NUMERAL (BIT0 (BIT1 _0)))) = (real_abs x))) ==> ((sqrt x) = y))) y))
+T c= c==> ! c==> c/\ c= creal_sgn b0 creal_sgn f0 c= creal_pow b0 cNUMERAL cBIT0 cBIT1 c_0 creal_abs f0 c= csqrt f0 b0 * / c==> c/\ c= creal_sgn b0 creal_sgn f0 c= creal_pow b0 cNUMERAL cBIT0 cBIT1 c_0 creal_abs f0 c= csqrt f0 b0 f1 * / c==> c/\ c= creal_sgn b0 creal_sgn f0 c= creal_pow b0 cNUMERAL cBIT0 cBIT1 c_0 creal_abs f0 c= csqrt f0 b0 f1
++ |- (((real_sgn (real_neg (sqrt x))) = (real_sgn (real_neg x))) /\ (((real_pow (real_neg (sqrt x))) (NUMERAL (BIT0 (BIT1 _0)))) = (real_abs (real_neg x))))
+T c/\ c= creal_sgn creal_neg csqrt f0 creal_sgn creal_neg f0 c= creal_pow creal_neg csqrt f0 cNUMERAL cBIT0 cBIT1 c_0 creal_abs creal_neg f0
++ |- (((!n. (((real_pow (real_neg x)) n) = (((COND (EVEN n)) ((real_pow x) n)) (real_neg ((real_pow x) n))))) ==> ((\n. (((real_pow (real_neg x)) n) = (((COND (EVEN n)) ((real_pow x) n)) (real_neg ((real_pow x) n))))) n)) = ((\n. (((real_pow (real_neg x)) n) = (((COND (EVEN n)) ((real_pow x) n)) (real_neg ((real_pow x) n))))) n))
+T c= c==> ! c= creal_pow creal_neg f0 b0 cCOND cEVEN b0 creal_pow f0 b0 creal_neg creal_pow f0 b0 * / c= creal_pow creal_neg f0 b0 cCOND cEVEN b0 creal_pow f0 b0 creal_neg creal_pow f0 b0 f1 * / c= creal_pow creal_neg f0 b0 cCOND cEVEN b0 creal_pow f0 b0 creal_neg creal_pow f0 b0 f1
++ |- ((\x. (((real_sgn (sqrt x)) = (real_sgn x)) /\ (((real_pow (sqrt x)) (NUMERAL (BIT0 (BIT1 _0)))) = (real_abs x)))) x)
+T * / c/\ c= creal_sgn csqrt b0 creal_sgn b0 c= creal_pow csqrt b0 cNUMERAL cBIT0 cBIT1 c_0 creal_abs b0 f0
++ |- (((real_neg (real_sgn (sqrt x))) = (real_neg (real_sgn x))) /\ (((real_pow (sqrt x)) (NUMERAL (BIT0 (BIT1 _0)))) = (real_abs x)))
+T c/\ c= creal_neg creal_sgn csqrt f0 creal_neg creal_sgn f0 c= creal_pow csqrt f0 cNUMERAL cBIT0 cBIT1 c_0 creal_abs f0
++ |- ((\x. ((real_abs (real_neg x)) = (real_abs x))) x)
+T * / c= creal_abs creal_neg b0 creal_abs b0 f0
++ |- ((\x. (!y. ((((real_sgn y) = (real_sgn x)) /\ (((real_pow y) (NUMERAL (BIT0 (BIT1 _0)))) = (real_abs x))) ==> ((sqrt x) = y)))) x)
+T * / ! c==> c/\ c= creal_sgn b1 creal_sgn b0 c= creal_pow b1 cNUMERAL cBIT0 cBIT1 c_0 creal_abs b0 c= csqrt b0 b1 f0
++ |- (((((real_sgn (real_neg (sqrt x))) = (real_sgn (real_neg x))) /\ (((real_pow (real_neg (sqrt x))) (NUMERAL (BIT0 (BIT1 _0)))) = (real_abs (real_neg x)))) ==> ((sqrt (real_neg x)) = (real_neg (sqrt x)))) = ((sqrt (real_neg x)) = (real_neg (sqrt x))))
+T c= c==> c/\ c= creal_sgn creal_neg csqrt f0 creal_sgn creal_neg f0 c= creal_pow creal_neg csqrt f0 cNUMERAL cBIT0 cBIT1 c_0 creal_abs creal_neg f0 c= csqrt creal_neg f0 creal_neg csqrt f0 c= csqrt creal_neg f0 creal_neg csqrt f0
++ |- ((x = x) = T)
+T c= c= f0 f0 cT
++ |- (((!n. ((EVEN (NUMERAL n)) = (EVEN n))) ==> ((\n. ((EVEN (NUMERAL n)) = (EVEN n))) n)) = ((\n. ((EVEN (NUMERAL n)) = (EVEN n))) n))
+T c= c==> ! c= cEVEN cNUMERAL b0 cEVEN b0 * / c= cEVEN cNUMERAL b0 cEVEN b0 f0 * / c= cEVEN cNUMERAL b0 cEVEN b0 f0
++ |- (((!n. ((EVEN (BIT0 n)) = T)) ==> ((\n. ((EVEN (BIT0 n)) = T)) n)) = ((\n. ((EVEN (BIT0 n)) = T)) n))
+T c= c==> ! c= cEVEN cBIT0 b0 cT * / c= cEVEN cBIT0 b0 cT f0 * / c= cEVEN cBIT0 b0 cT f0
++ |- (((!x. ((real_sgn (real_neg x)) = (real_neg (real_sgn x)))) ==> ((\x. ((real_sgn (real_neg x)) = (real_neg (real_sgn x)))) x)) = ((\x. ((real_sgn (real_neg x)) = (real_neg (real_sgn x)))) x))
+T c= c==> ! c= creal_sgn creal_neg b0 creal_neg creal_sgn b0 * / c= creal_sgn creal_neg b0 creal_neg creal_sgn b0 f0 * / c= creal_sgn creal_neg b0 creal_neg creal_sgn b0 f0
++ |- (((sqrt (real_neg x)) = (real_neg (sqrt x))) = T)
+T c= c= csqrt creal_neg f0 creal_neg csqrt f0 cT
++ |- (T = (((real_neg (real_sgn (sqrt x))) = (real_neg (real_sgn x))) /\ (((real_pow (sqrt x)) (NUMERAL (BIT0 (BIT1 _0)))) = (real_abs x))))
+T c= cT c/\ c= creal_neg creal_sgn csqrt f0 creal_neg creal_sgn f0 c= creal_pow csqrt f0 cNUMERAL cBIT0 cBIT1 c_0 creal_abs f0
++ |- ((\x. (!n. (((real_pow (real_neg x)) n) = (((COND (EVEN n)) ((real_pow x) n)) (real_neg ((real_pow x) n)))))) x)
+T * / ! c= creal_pow creal_neg b0 b1 cCOND cEVEN b1 creal_pow b0 b1 creal_neg creal_pow b0 b1 f0
++ |- (((!x. ((real_abs (real_neg x)) = (real_abs x))) ==> ((\x. ((real_abs (real_neg x)) = (real_abs x))) x)) = ((\x. ((real_abs (real_neg x)) = (real_abs x))) x))
+T c= c==> ! c= creal_abs creal_neg b0 creal_abs b0 * / c= creal_abs creal_neg b0 creal_abs b0 f0 * / c= creal_abs creal_neg b0 creal_abs b0 f0
++ |- ((EVEN (BIT0 n)) = T)
+T c= cEVEN cBIT0 f0 cT
++ |- ((\y. ((((real_sgn y) = (real_sgn x)) /\ (((real_pow y) (NUMERAL (BIT0 (BIT1 _0)))) = (real_abs x))) ==> ((sqrt x) = y))) y)
+T * / c==> c/\ c= creal_sgn b0 creal_sgn f0 c= creal_pow b0 cNUMERAL cBIT0 cBIT1 c_0 creal_abs f0 c= csqrt f0 b0 f1
++ |- ((\n. (((real_pow (real_neg x)) n) = (((COND (EVEN n)) ((real_pow x) n)) (real_neg ((real_pow x) n))))) n)
+T * / c= creal_pow creal_neg f0 b0 cCOND cEVEN b0 creal_pow f0 b0 creal_neg creal_pow f0 b0 f1
++ |- ((\n. ((EVEN (NUMERAL n)) = (EVEN n))) n)
+T * / c= cEVEN cNUMERAL b0 cEVEN b0 f0
++ |- (((!x. (!y. ((((real_sgn y) = (real_sgn x)) /\ (((real_pow y) (NUMERAL (BIT0 (BIT1 _0)))) = (real_abs x))) ==> ((sqrt x) = y)))) ==> ((\x. (!y. ((((real_sgn y) = (real_sgn x)) /\ (((real_pow y) (NUMERAL (BIT0 (BIT1 _0)))) = (real_abs x))) ==> ((sqrt x) = y)))) x)) = ((\x. (!y. ((((real_sgn y) = (real_sgn x)) /\ (((real_pow y) (NUMERAL (BIT0 (BIT1 _0)))) = (real_abs x))) ==> ((sqrt x) = y)))) x))
+T c= c==> ! ! c==> c/\ c= creal_sgn b1 creal_sgn b0 c= creal_pow b1 cNUMERAL cBIT0 cBIT1 c_0 creal_abs b0 c= csqrt b0 b1 * / ! c==> c/\ c= creal_sgn b1 creal_sgn b0 c= creal_pow b1 cNUMERAL cBIT0 cBIT1 c_0 creal_abs b0 c= csqrt b0 b1 f0 * / ! c==> c/\ c= creal_sgn b1 creal_sgn b0 c= creal_pow b1 cNUMERAL cBIT0 cBIT1 c_0 creal_abs b0 c= csqrt b0 b1 f0
++ |- ((T /\ t) = t)
+T c= c/\ cT f0 f0
++ |- ((EVEN (NUMERAL n)) = (EVEN n))
+T c= cEVEN cNUMERAL f0 cEVEN f0
++ |- ((((COND T) t1) t2) = t1)
+T c= cCOND cT f0 f1 f0
++ |- (((real_pow (sqrt x)) (NUMERAL (BIT0 (BIT1 _0)))) = (real_abs x))
+T c= creal_pow csqrt f0 cNUMERAL cBIT0 cBIT1 c_0 creal_abs f0

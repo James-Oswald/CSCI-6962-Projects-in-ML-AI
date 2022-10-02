@@ -1,0 +1,407 @@
+N MEM_MAP
+C |- (!f. (!y. (!l. (((MEM y) ((MAP f) l)) = (?x. (((MEM x) l) /\ (y = (f x))))))))
+T c= cMEM f0 cMAP f1 f2 c? / c/\ cMEM b0 f2 c= f0 * f1 b0
+D TRUTH
+A |- T
+T cT
+D ETA_AX
+A |- (!t. ((\x. (t x)) = t))
+T c= / * f0 b0 f0
+D BOOL_CASES_AX
+A |- (!t. ((t = T) \/ (t = F)))
+T c\/ c= f0 cT c= f0 cF
+D NOT_CLAUSES
+A |- ((!t. ((~ (~ t)) = t)) /\ (((~ T) = F) /\ ((~ F) = T)))
+T c/\ ! c= c~ c~ b0 b0 c/\ c= c~ cT cF c= c~ cF cT
+D NOT_EXISTS_THM
+A |- (!P. ((~ (?x. (P x))) = (!x. (~ (P x)))))
+T c= c~ c? / * f0 b0 ! c~ * f0 b0
+D list_INDUCT
+A |- (!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x))))
+T c==> c/\ * f0 cNIL ! ! c==> * f0 b1 * f0 cCONS b0 b1 ! * f0 b0
+D MAP
+A |- ((!f. (((MAP f) NIL) = NIL)) /\ (!f. (!h. (!t. (((MAP f) ((CONS h) t)) = ((CONS (f h)) ((MAP f) t)))))))
+T c/\ ! c= cMAP b0 cNIL cNIL ! ! ! c= cMAP b0 cCONS b1 b2 cCONS * b0 b1 cMAP b0 b2
+D MEM
+A |- ((((MEM x) NIL) = F) /\ (((MEM x) ((CONS h) t)) = ((x = h) \/ ((MEM x) t))))
+T c/\ c= cMEM f0 cNIL cF c= cMEM f0 cCONS f1 f2 c\/ c= f0 f1 cMEM f0 f2
++ |- (((~ (((y = (f h)) \/ (?x. (((MEM x) t) /\ (y = (f x))))) = (?x. (((x = h) \/ ((MEM x) t)) /\ (y = (f x)))))) ==> F) = (((y = (f h)) \/ (?x. (((MEM x) t) /\ (y = (f x))))) = (?x. (((x = h) \/ ((MEM x) t)) /\ (y = (f x))))))
+T c= c==> c~ c= c\/ c= f0 * f1 f2 c? / c/\ cMEM b0 f3 c= f0 * f1 b0 c? / c/\ c\/ c= b0 f2 cMEM b0 f3 c= f0 * f1 b0 cF c= c\/ c= f0 * f1 f2 c? / c/\ cMEM b0 f3 c= f0 * f1 b0 c? / c/\ c\/ c= b0 f2 cMEM b0 f3 c= f0 * f1 b0
++ (((MEM x) t) /\ (y = (f x))) |- (((MEM x) t) /\ ((f x) = (f x)))
+T c==> c/\ cMEM f0 f1 c= f2 * f3 f0 c/\ cMEM f0 f1 c= * f3 f0 * f3 f0
+- |- ((!f. (!y. (!t. (!h. (((y = (f h)) \/ (?x. (((MEM x) t) /\ (y = (f x))))) = (?x. (((x = h) \/ ((MEM x) t)) /\ (y = (f x))))))))) = (!f. (!y. (!t. (!h. ((~ (((y = (f h)) \/ (?x. (((MEM x) t) /\ (y = (f x))))) = (?x. (((x = h) \/ ((MEM x) t)) /\ (y = (f x)))))) ==> F))))))
+T c= ! ! ! ! c= c\/ c= b1 * b0 b3 c? / c/\ cMEM b4 b2 c= b1 * b0 b4 c? / c/\ c\/ c= b4 b3 cMEM b4 b2 c= b1 * b0 b4 ! ! ! ! c==> c~ c= c\/ c= b1 * b0 b3 c? / c/\ cMEM b4 b2 c= b1 * b0 b4 c? / c/\ c\/ c= b4 b3 cMEM b4 b2 c= b1 * b0 b4 cF
++ (((~ (y = (f h))) /\ (!x. ((~ ((MEM x) t)) \/ (~ (y = (f x)))))) /\ (((x = h) \/ ((MEM x) t)) /\ (y = (f x)))) |- (((MEM x) t) ==> F)
+T c==> c/\ c/\ c~ c= f0 * f1 f2 ! c\/ c~ cMEM b0 f3 c~ c= f0 * f1 b0 c/\ c\/ c= f4 f2 cMEM f4 f3 c= f0 * f1 f4 c==> cMEM f4 f3 cF
++ (((MEM y) ((MAP f) t)) = (?x. (((MEM x) t) /\ (y = (f x))))) |- ((((y = (f h)) \/ (?x. (((MEM x) t) /\ (y = (f x))))) = (?x. (((x = h) \/ ((MEM x) t)) /\ (y = (f x))))) = (((MEM y) ((MAP f) ((CONS h) t))) = (?x. (((MEM x) ((CONS h) t)) /\ (y = (f x))))))
+T c==> c= cMEM f0 cMAP f1 f2 c? / c/\ cMEM b0 f2 c= f0 * f1 b0 c= c= c\/ c= f0 * f1 f3 c? / c/\ cMEM b0 f2 c= f0 * f1 b0 c? / c/\ c\/ c= b0 f3 cMEM b0 f2 c= f0 * f1 b0 c= cMEM f0 cMAP f1 cCONS f3 f2 c? / c/\ cMEM b0 cCONS f3 f2 c= f0 * f1 b0
+- |- ((\t1. (!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))))) t1)
+T * / ! ! c= c\/ b0 c\/ b1 b2 c\/ c\/ b0 b1 b2 f0
+- |- ((~ (h = h)) ==> (h = h))
+T c==> c~ c= f0 f0 c= f0 f0
++ |- (((!f. (!h. (!t. (((MAP f) ((CONS h) t)) = ((CONS (f h)) ((MAP f) t)))))) ==> ((\f. (!h. (!t. (((MAP f) ((CONS h) t)) = ((CONS (f h)) ((MAP f) t)))))) f)) = ((\f. (!h. (!t. (((MAP f) ((CONS h) t)) = ((CONS (f h)) ((MAP f) t)))))) f))
+T c= c==> ! ! ! c= cMAP b0 cCONS b1 b2 cCONS * b0 b1 cMAP b0 b2 * / ! ! c= cMAP b0 cCONS b1 b2 cCONS * b0 b1 cMAP b0 b2 f0 * / ! ! c= cMAP b0 cCONS b1 b2 cCONS * b0 b1 cMAP b0 b2 f0
++ |- ((?x. ((((y = (f h)) \/ (((MEM x) t) /\ (y = (f x)))) /\ (!x. (((~ (x = h)) /\ (~ ((MEM x) t))) \/ (~ (y = (f x)))))) \/ (((~ (y = (f h))) /\ (!x. ((~ ((MEM x) t)) \/ (~ (y = (f x)))))) /\ (((x = h) \/ ((MEM x) t)) /\ (y = (f x)))))) ==> F)
+T c==> c? / c\/ c/\ c\/ c= f0 * f1 f2 c/\ cMEM b0 f3 c= f0 * f1 b0 ! c\/ c/\ c~ c= b1 f2 c~ cMEM b1 f3 c~ c= f0 * f1 b1 c/\ c/\ c~ c= f0 * f1 f2 ! c\/ c~ cMEM b1 f3 c~ c= f0 * f1 b1 c/\ c\/ c= b0 f2 cMEM b0 f3 c= f0 * f1 b0 cF
+- |- ((((~ (((y = (f h)) \/ (?x. (((MEM x) t) /\ (y = (f x))))) = (?x. (((x = h) \/ ((MEM x) t)) /\ (y = (f x)))))) ==> F) ==> ((~ (((y = (f h)) \/ (?x. (((MEM x) t) /\ (y = (f x))))) = (?x. (((x = h) \/ ((MEM x) t)) /\ (y = (f x)))))) ==> F)) = ((~ (((y = (f h)) \/ (?x. (((MEM x) t) /\ (y = (f x))))) = (?x. (((x = h) \/ ((MEM x) t)) /\ (y = (f x)))))) ==> F))
+T c= c==> c==> c~ c= c\/ c= f0 * f1 f2 c? / c/\ cMEM b0 f3 c= f0 * f1 b0 c? / c/\ c\/ c= b0 f2 cMEM b0 f3 c= f0 * f1 b0 cF c==> c~ c= c\/ c= f0 * f1 f2 c? / c/\ cMEM b0 f3 c= f0 * f1 b0 c? / c/\ c\/ c= b0 f2 cMEM b0 f3 c= f0 * f1 b0 cF c==> c~ c= c\/ c= f0 * f1 f2 c? / c/\ cMEM b0 f3 c= f0 * f1 b0 c? / c/\ c\/ c= b0 f2 cMEM b0 f3 c= f0 * f1 b0 cF
+- (((y = (f h)) \/ (((MEM x) t) /\ (y = (f x)))) /\ (!x. (((~ (x = h)) /\ (~ ((MEM x) t))) \/ (~ (y = (f x)))))), (((MEM x) t) /\ (y = (f x))) |- ((~ (_17353 = h)) \/ (~ ((f x) = (f _17353))))
+T c==> c/\ c\/ c= f0 * f1 f2 c/\ cMEM f3 f4 c= f0 * f1 f3 ! c\/ c/\ c~ c= b0 f2 c~ cMEM b0 f4 c~ c= f0 * f1 b0 c==> c/\ cMEM f3 f4 c= f0 * f1 f3 c\/ c~ c= f5 f2 c~ c= * f1 f3 * f1 f5
+- |- ((?x'. (((x = h) \/ ((MEM x) t)) /\ (y = (f x')))) = (((x = h) \/ ((MEM x) t)) /\ (?x. (y = (f x)))))
+T c= c? / c/\ c\/ c= f0 f1 cMEM f0 f2 c= f3 * f4 b0 c/\ c\/ c= f0 f1 cMEM f0 f2 c? / c= f3 * f4 b0
++ (x = h), (((~ (y = (f h))) /\ (!x. ((~ ((MEM x) t)) \/ (~ (y = (f x)))))) /\ (((x = h) \/ ((MEM x) t)) /\ (y = (f x)))) |- ((x = h) /\ F)
+T c==> c= f0 f1 c==> c/\ c/\ c~ c= f2 * f3 f1 ! c\/ c~ cMEM b0 f4 c~ c= f2 * f3 b0 c/\ c\/ c= f0 f1 cMEM f0 f4 c= f2 * f3 f0 c/\ c= f0 f1 cF
+- (((~ (y = (f h))) /\ (!x. ((~ ((MEM x) t)) \/ (~ (y = (f x)))))) /\ (((x = h) \/ ((MEM x) t)) /\ (y = (f x)))), ((MEM x) t) |- ((~ F) ==> F)
+T c==> c/\ c/\ c~ c= f0 * f1 f2 ! c\/ c~ cMEM b0 f3 c~ c= f0 * f1 b0 c/\ c\/ c= f4 f2 cMEM f4 f3 c= f0 * f1 f4 c==> cMEM f4 f3 c==> c~ cF cF
++ (x = h), (((~ (y = (f h))) /\ (!x. ((~ ((MEM x) t)) \/ (~ (y = (f x)))))) /\ (((x = h) \/ ((MEM x) t)) /\ (y = (f x)))) |- (((f h) = (f h)) ==> F)
+T c==> c= f0 f1 c==> c/\ c/\ c~ c= f2 * f3 f1 ! c\/ c~ cMEM b0 f4 c~ c= f2 * f3 b0 c/\ c\/ c= f0 f1 cMEM f0 f4 c= f2 * f3 f0 c==> c= * f3 f1 * f3 f1 cF
+- |- ((!t. (!h. (((y = (f h)) \/ (?x. (((MEM x) t) /\ (y = (f x))))) = (?x. (((x = h) \/ ((MEM x) t)) /\ (y = (f x))))))) = T)
+T c= ! ! c= c\/ c= f0 * f1 b1 c? / c/\ cMEM b2 b0 c= f0 * f1 b2 c? / c/\ c\/ c= b2 b1 cMEM b2 b0 c= f0 * f1 b2 cT
++ |- ((!h. (!t. ((((MEM y) ((MAP f) t)) = (?x. (((MEM x) t) /\ (y = (f x))))) ==> (((MEM y) ((MAP f) ((CONS h) t))) = (?x. (((MEM x) ((CONS h) t)) /\ (y = (f x)))))))) = ((((MEM y) ((MAP f) NIL)) = (?x. (((MEM x) NIL) /\ (y = (f x))))) /\ (!h. (!t. ((((MEM y) ((MAP f) t)) = (?x. (((MEM x) t) /\ (y = (f x))))) ==> (((MEM y) ((MAP f) ((CONS h) t))) = (?x. (((MEM x) ((CONS h) t)) /\ (y = (f x))))))))))
+T c= ! ! c==> c= cMEM f0 cMAP f1 b1 c? / c/\ cMEM b2 b1 c= f0 * f1 b2 c= cMEM f0 cMAP f1 cCONS b0 b1 c? / c/\ cMEM b2 cCONS b0 b1 c= f0 * f1 b2 c/\ c= cMEM f0 cMAP f1 cNIL c? / c/\ cMEM b0 cNIL c= f0 * f1 b0 ! ! c==> c= cMEM f0 cMAP f1 b1 c? / c/\ cMEM b2 b1 c= f0 * f1 b2 c= cMEM f0 cMAP f1 cCONS b0 b1 c? / c/\ cMEM b2 cCONS b0 b1 c= f0 * f1 b2
+- |- ((?x. (P x)) = ((P T) \/ (P F)))
+T c= c? / * f0 b0 c\/ * f0 cT * f0 cF
+- |- ((!x'. (((~ (x' = h)) /\ (~ ((MEM x') t))) \/ (~ (y = (f x))))) = ((!x. ((~ (x = h)) /\ (~ ((MEM x) t)))) \/ (~ (y = (f x)))))
+T c= ! c\/ c/\ c~ c= b0 f0 c~ cMEM b0 f1 c~ c= f2 * f3 f4 c\/ ! c/\ c~ c= b0 f0 c~ cMEM b0 f1 c~ c= f2 * f3 f4
++ (x = h), (((~ (y = (f h))) /\ (!x. ((~ ((MEM x) t)) \/ (~ (y = (f x)))))) /\ (((x = h) \/ ((MEM x) t)) /\ (y = (f x)))) |- (~ ((f h) = (f h)))
+T c==> c= f0 f1 c==> c/\ c/\ c~ c= f2 * f3 f1 ! c\/ c~ cMEM b0 f4 c~ c= f2 * f3 b0 c/\ c\/ c= f0 f1 cMEM f0 f4 c= f2 * f3 f0 c~ c= * f3 f1 * f3 f1
+- |- ((?x'. (((MEM x') t) /\ (y = (f x)))) = ((?x. ((MEM x) t)) /\ (y = (f x))))
+T c= c? / c/\ cMEM b0 f0 c= f1 * f2 f3 c/\ c? / cMEM b0 f0 c= f1 * f2 f3
++ |- (((?x. (P x)) /\ Q) = (?x. ((P x) /\ Q)))
+T c= c/\ c? / * f0 b0 f1 c? / c/\ * f0 b0 f1
+- |- (((~ (((y = (f h)) \/ (?x. (((MEM x) t) /\ (y = (f x))))) = (?x. (((x = h) \/ ((MEM x) t)) /\ (y = (f x)))))) ==> F) ==> ((~ (((y = (f h)) \/ (?x. (((MEM x) t) /\ (y = (f x))))) = (?x. (((x = h) \/ ((MEM x) t)) /\ (y = (f x)))))) ==> F))
+T c==> c==> c~ c= c\/ c= f0 * f1 f2 c? / c/\ cMEM b0 f3 c= f0 * f1 b0 c? / c/\ c\/ c= b0 f2 cMEM b0 f3 c= f0 * f1 b0 cF c==> c~ c= c\/ c= f0 * f1 f2 c? / c/\ cMEM b0 f3 c= f0 * f1 b0 c? / c/\ c\/ c= b0 f2 cMEM b0 f3 c= f0 * f1 b0 cF
+- |- ((t \/ t) = t)
+T c= c\/ f0 f0 f0
++ (((~ (y = (f h))) /\ (!x. ((~ ((MEM x) t)) \/ (~ (y = (f x)))))) /\ (((x = h) \/ ((MEM x) t)) /\ (y = (f x)))) |- ((((MEM _17355) t) /\ ((f x) = (f _17355))) ==> F)
+T c==> c/\ c/\ c~ c= f0 * f1 f2 ! c\/ c~ cMEM b0 f3 c~ c= f0 * f1 b0 c/\ c\/ c= f4 f2 cMEM f4 f3 c= f0 * f1 f4 c==> c/\ cMEM f5 f3 c= * f1 f4 * f1 f5 cF
++ |- ((((\x. ((((y = (f h)) \/ (((MEM x) t) /\ (y = (f x)))) /\ (!x. (((~ (x = h)) /\ (~ ((MEM x) t))) \/ (~ (y = (f x)))))) \/ (((~ (y = (f h))) /\ (!x. ((~ ((MEM x) t)) \/ (~ (y = (f x)))))) /\ (((x = h) \/ ((MEM x) t)) /\ (y = (f x)))))) x) ==> F) = T)
+T c= c==> * / c\/ c/\ c\/ c= f0 * f1 f2 c/\ cMEM b0 f3 c= f0 * f1 b0 ! c\/ c/\ c~ c= b1 f2 c~ cMEM b1 f3 c~ c= f0 * f1 b1 c/\ c/\ c~ c= f0 * f1 f2 ! c\/ c~ cMEM b1 f3 c~ c= f0 * f1 b1 c/\ c\/ c= b0 f2 cMEM b0 f3 c= f0 * f1 b0 f4 cF cT
++ (x = h), (((~ (y = (f h))) /\ (!x. ((~ ((MEM x) t)) \/ (~ (y = (f x)))))) /\ (((x = h) \/ ((MEM x) t)) /\ (y = (f x)))) |- F
+T c==> c= f0 f1 c==> c/\ c/\ c~ c= f2 * f3 f1 ! c\/ c~ cMEM b0 f4 c~ c= f2 * f3 b0 c/\ c\/ c= f0 f1 cMEM f0 f4 c= f2 * f3 f0 cF
+- |- ((\t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))) t3)
+T * / c= c\/ f0 c\/ f1 b0 c\/ c\/ f0 f1 b0 f2
+- |- (((~ p) ==> p) = p)
+T c= c==> c~ f0 f0 f0
++ |- ((((~ (y = (f h))) /\ (!x. ((~ ((MEM x) t)) \/ (~ (y = (f x)))))) /\ (?x. (((x = h) \/ ((MEM x) t)) /\ (y = (f x))))) = (?x. (((~ (y = (f h))) /\ (!x. ((~ ((MEM x) t)) \/ (~ (y = (f x)))))) /\ (((x = h) \/ ((MEM x) t)) /\ (y = (f x))))))
+T c= c/\ c/\ c~ c= f0 * f1 f2 ! c\/ c~ cMEM b0 f3 c~ c= f0 * f1 b0 c? / c/\ c\/ c= b0 f2 cMEM b0 f3 c= f0 * f1 b0 c? / c/\ c/\ c~ c= f0 * f1 f2 ! c\/ c~ cMEM b1 f3 c~ c= f0 * f1 b1 c/\ c\/ c= b0 f2 cMEM b0 f3 c= f0 * f1 b0
+- (~ F), (((y = (f h)) \/ (((MEM x) t) /\ (y = (f x)))) /\ (!x. (((~ (x = h)) /\ (~ ((MEM x) t))) \/ (~ (y = (f x)))))), (((MEM x) t) /\ (y = (f x))) |- ((~ F) /\ F)
+T c==> c~ cF c==> c/\ c\/ c= f0 * f1 f2 c/\ cMEM f3 f4 c= f0 * f1 f3 ! c\/ c/\ c~ c= b0 f2 c~ cMEM b0 f4 c~ c= f0 * f1 b0 c==> c/\ cMEM f3 f4 c= f0 * f1 f3 c/\ c~ cF cF
+- |- ((!x. t) = t)
+T c= ! f0 f0
+- |- ((t ==> F) = (~ t))
+T c= c==> f0 cF c~ f0
++ |- ((F = t) = (~ t))
+T c= c= cF f0 c~ f0
+- |- ((((y = (f h)) \/ (?x. (((MEM x) t) /\ (y = (f x))))) = (?x. (((x = h) \/ ((MEM x) t)) /\ (y = (f x))))) = T)
+T c= c= c\/ c= f0 * f1 f2 c? / c/\ cMEM b0 f3 c= f0 * f1 b0 c? / c/\ c\/ c= b0 f2 cMEM b0 f3 c= f0 * f1 b0 cT
++ (x = h) |- ((y = (f x)) = (y = (f h)))
+T c==> c= f0 f1 c= c= f2 * f3 f0 c= f2 * f3 f1
++ (((~ (y = (f h))) /\ (!x. ((~ ((MEM x) t)) \/ (~ (y = (f x)))))) /\ (((x = h) \/ ((MEM x) t)) /\ (y = (f x)))) |- (~ (y = (f h)))
+T c==> c/\ c/\ c~ c= f0 * f1 f2 ! c\/ c~ cMEM b0 f3 c~ c= f0 * f1 b0 c/\ c\/ c= f4 f2 cMEM f4 f3 c= f0 * f1 f4 c~ c= f0 * f1 f2
+- (y = (f h)) |- (F = F)
+T c==> c= f0 * f1 f2 c= cF cF
++ |- (p = ((~ p) ==> F))
+T c= f0 c==> c~ f0 cF
++ (((y = (f h)) \/ (((MEM x) t) /\ (y = (f x)))) /\ (!x. (((~ (x = h)) /\ (~ ((MEM x) t))) \/ (~ (y = (f x)))))) |- ((\x. (((~ (x = h)) \/ (~ (y = (f x)))) /\ ((~ ((MEM x) t)) \/ (~ (y = (f x)))))) _17353)
+T c==> c/\ c\/ c= f0 * f1 f2 c/\ cMEM f3 f4 c= f0 * f1 f3 ! c\/ c/\ c~ c= b0 f2 c~ cMEM b0 f4 c~ c= f0 * f1 b0 * / c/\ c\/ c~ c= b0 f2 c~ c= f0 * f1 b0 c\/ c~ cMEM b0 f4 c~ c= f0 * f1 b0 f5
++ |- ((?x. t) = t)
+T c= c? / f0 f0
++ (~ (((y = (f h)) \/ (?x. (((MEM x) t) /\ (y = (f x))))) = (?x. (((x = h) \/ ((MEM x) t)) /\ (y = (f x)))))) |- (?x. ((((y = (f h)) \/ (((MEM x) t) /\ (y = (f x)))) /\ (!x. (((~ (x = h)) /\ (~ ((MEM x) t))) \/ (~ (y = (f x)))))) \/ (((~ (y = (f h))) /\ (!x. ((~ ((MEM x) t)) \/ (~ (y = (f x)))))) /\ (((x = h) \/ ((MEM x) t)) /\ (y = (f x))))))
+T c==> c~ c= c\/ c= f0 * f1 f2 c? / c/\ cMEM b0 f3 c= f0 * f1 b0 c? / c/\ c\/ c= b0 f2 cMEM b0 f3 c= f0 * f1 b0 c? / c\/ c/\ c\/ c= f0 * f1 f2 c/\ cMEM b0 f3 c= f0 * f1 b0 ! c\/ c/\ c~ c= b1 f2 c~ cMEM b1 f3 c~ c= f0 * f1 b1 c/\ c/\ c~ c= f0 * f1 f2 ! c\/ c~ cMEM b1 f3 c~ c= f0 * f1 b1 c/\ c\/ c= b0 f2 cMEM b0 f3 c= f0 * f1 b0
++ (((y = (f h)) \/ (((MEM x) t) /\ (y = (f x)))) /\ (!x. (((~ (x = h)) /\ (~ ((MEM x) t))) \/ (~ (y = (f x)))))), (((MEM x) t) /\ (y = (f x))) |- ((((MEM _17353) t) /\ ((f x) = (f _17353))) ==> F)
+T c==> c/\ c\/ c= f0 * f1 f2 c/\ cMEM f3 f4 c= f0 * f1 f3 ! c\/ c/\ c~ c= b0 f2 c~ cMEM b0 f4 c~ c= f0 * f1 b0 c==> c/\ cMEM f3 f4 c= f0 * f1 f3 c==> c/\ cMEM f5 f4 c= * f1 f3 * f1 f5 cF
+- (_17410 = _17412), (_17411 = _17413) |- ((_17411 = _17413) /\ (((MEM _17412) _17413) \/ (~ ((MEM _17410) _17411))))
+T c==> c= f0 f1 c==> c= f2 f3 c/\ c= f2 f3 c\/ cMEM f1 f3 c~ cMEM f0 f2
++ |- (((!h. (!t. (((MAP f) ((CONS h) t)) = ((CONS (f h)) ((MAP f) t))))) ==> ((\h. (!t. (((MAP f) ((CONS h) t)) = ((CONS (f h)) ((MAP f) t))))) h)) = ((\h. (!t. (((MAP f) ((CONS h) t)) = ((CONS (f h)) ((MAP f) t))))) h))
+T c= c==> ! ! c= cMAP f0 cCONS b0 b1 cCONS * f0 b0 cMAP f0 b1 * / ! c= cMAP f0 cCONS b0 b1 cCONS * f0 b0 cMAP f0 b1 f1 * / ! c= cMAP f0 cCONS b0 b1 cCONS * f0 b0 cMAP f0 b1 f1
++ (~ (((y = (f h)) \/ (?x. (((MEM x) t) /\ (y = (f x))))) = (?x. (((x = h) \/ ((MEM x) t)) /\ (y = (f x)))))) |- ((~ (((y = (f h)) \/ (?x. (((MEM x) t) /\ (y = (f x))))) = (?x. (((x = h) \/ ((MEM x) t)) /\ (y = (f x)))))) /\ F)
+T c==> c~ c= c\/ c= f0 * f1 f2 c? / c/\ cMEM b0 f3 c= f0 * f1 b0 c? / c/\ c\/ c= b0 f2 cMEM b0 f3 c= f0 * f1 b0 c/\ c~ c= c\/ c= f0 * f1 f2 c? / c/\ cMEM b0 f3 c= f0 * f1 b0 c? / c/\ c\/ c= b0 f2 cMEM b0 f3 c= f0 * f1 b0 cF
++ ((MEM x) t) |- (((MEM x) t) /\ ((f x) = (f x)))
+T c==> cMEM f0 f1 c/\ cMEM f0 f1 c= * f2 f0 * f2 f0
++ |- (((MEM x) ((CONS h) t)) = ((x = h) \/ ((MEM x) t)))
+T c= cMEM f0 cCONS f1 f2 c\/ c= f0 f1 cMEM f0 f2
++ (((y = (f h)) \/ (((MEM x) t) /\ (y = (f x)))) /\ (!x. (((~ (x = h)) /\ (~ ((MEM x) t))) \/ (~ (y = (f x)))))) |- ((((MEM x) t) /\ (y = (f x))) ==> F)
+T c==> c/\ c\/ c= f0 * f1 f2 c/\ cMEM f3 f4 c= f0 * f1 f3 ! c\/ c/\ c~ c= b0 f2 c~ cMEM b0 f4 c~ c= f0 * f1 b0 c==> c/\ cMEM f3 f4 c= f0 * f1 f3 cF
++ (x = h), (((~ (y = (f h))) /\ (!x. ((~ ((MEM x) t)) \/ (~ (y = (f x)))))) /\ (((x = h) \/ ((MEM x) t)) /\ (y = (f x)))) |- ((~ (y = (f h))) = (~ ((f h) = (f h))))
+T c==> c= f0 f1 c==> c/\ c/\ c~ c= f2 * f3 f1 ! c\/ c~ cMEM b0 f4 c~ c= f2 * f3 b0 c/\ c\/ c= f0 f1 cMEM f0 f4 c= f2 * f3 f0 c= c~ c= f2 * f3 f1 c~ c= * f3 f1 * f3 f1
+- |- ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))
+T c= c\/ f0 c\/ f1 f2 c\/ c\/ f0 f1 f2
++ ((((~ (y = (f h))) /\ (!x. ((~ ((MEM x) t)) \/ (~ (y = (f x)))))) /\ (((x = h) \/ ((MEM x) t)) /\ (y = (f x)))) ==> F), ((((y = (f h)) \/ (((MEM x) t) /\ (y = (f x)))) /\ (!x. (((~ (x = h)) /\ (~ ((MEM x) t))) \/ (~ (y = (f x)))))) \/ (((~ (y = (f h))) /\ (!x. ((~ ((MEM x) t)) \/ (~ (y = (f x)))))) /\ (((x = h) \/ ((MEM x) t)) /\ (y = (f x))))) |- F
+T c==> c==> c/\ c/\ c~ c= f0 * f1 f2 ! c\/ c~ cMEM b0 f3 c~ c= f0 * f1 b0 c/\ c\/ c= f4 f2 cMEM f4 f3 c= f0 * f1 f4 cF c==> c\/ c/\ c\/ c= f0 * f1 f2 c/\ cMEM f4 f3 c= f0 * f1 f4 ! c\/ c/\ c~ c= b0 f2 c~ cMEM b0 f3 c~ c= f0 * f1 b0 c/\ c/\ c~ c= f0 * f1 f2 ! c\/ c~ cMEM b0 f3 c~ c= f0 * f1 b0 c/\ c\/ c= f4 f2 cMEM f4 f3 c= f0 * f1 f4 cF
++ (((MEM x) t) /\ (y = (f x))) |- (((f x) = (f x)) = (((MEM x) t) /\ ((f x) = (f x))))
+T c==> c/\ cMEM f0 f1 c= f2 * f3 f0 c= c= * f3 f0 * f3 f0 c/\ cMEM f0 f1 c= * f3 f0 * f3 f0
+- (~ F), (((~ (y = (f h))) /\ (!x. ((~ ((MEM x) t)) \/ (~ (y = (f x)))))) /\ (((x = h) \/ ((MEM x) t)) /\ (y = (f x)))), ((MEM x) t) |- ((~ F) /\ F)
+T c==> c~ cF c==> c/\ c/\ c~ c= f0 * f1 f2 ! c\/ c~ cMEM b0 f3 c~ c= f0 * f1 b0 c/\ c\/ c= f4 f2 cMEM f4 f3 c= f0 * f1 f4 c==> cMEM f4 f3 c/\ c~ cF cF
+- (((~ (y = (f h))) /\ (!x. ((~ ((MEM x) t)) \/ (~ (y = (f x)))))) /\ (((x = h) \/ ((MEM x) t)) /\ (y = (f x)))) |- (F = F)
+T c==> c/\ c/\ c~ c= f0 * f1 f2 ! c\/ c~ cMEM b0 f3 c~ c= f0 * f1 b0 c/\ c\/ c= f4 f2 cMEM f4 f3 c= f0 * f1 f4 c= cF cF
++ (((y = (f h)) \/ (((MEM x) t) /\ (y = (f x)))) /\ (!x. (((~ (x = h)) /\ (~ ((MEM x) t))) \/ (~ (y = (f x)))))), (((MEM x) t) /\ (y = (f x))) |- ((~ ((MEM _17353) t)) \/ (~ ((f x) = (f _17353))))
+T c==> c/\ c\/ c= f0 * f1 f2 c/\ cMEM f3 f4 c= f0 * f1 f3 ! c\/ c/\ c~ c= b0 f2 c~ cMEM b0 f4 c~ c= f0 * f1 b0 c==> c/\ cMEM f3 f4 c= f0 * f1 f3 c\/ c~ cMEM f5 f4 c~ c= * f1 f3 * f1 f5
+- (_17410 = _17412) |- ((_17410 = _17412) /\ ((~ (_17411 = _17413)) \/ (((MEM _17412) _17413) \/ (~ ((MEM _17410) _17411)))))
+T c==> c= f0 f1 c/\ c= f0 f1 c\/ c~ c= f2 f3 c\/ cMEM f1 f3 c~ cMEM f0 f2
++ (y = (f h)) |- (((~ (_17352 = h)) \/ (~ (y = (f _17352)))) = ((~ (_17352 = h)) \/ (~ ((f h) = (f _17352)))))
+T c==> c= f0 * f1 f2 c= c\/ c~ c= f3 f2 c~ c= f0 * f1 f3 c\/ c~ c= f3 f2 c~ c= * f1 f2 * f1 f3
++ (((y = (f h)) \/ (((MEM x) t) /\ (y = (f x)))) /\ (!x. (((~ (x = h)) /\ (~ ((MEM x) t))) \/ (~ (y = (f x)))))), (((MEM x) t) /\ (y = (f x))) |- ((((MEM x) t) /\ (y = (f x))) /\ F)
+T c==> c/\ c\/ c= f0 * f1 f2 c/\ cMEM f3 f4 c= f0 * f1 f3 ! c\/ c/\ c~ c= b0 f2 c~ cMEM b0 f4 c~ c= f0 * f1 b0 c==> c/\ cMEM f3 f4 c= f0 * f1 f3 c/\ c/\ cMEM f3 f4 c= f0 * f1 f3 cF
+- |- ((_17410 = _17412) ==> ((~ (_17411 = _17413)) \/ (((MEM _17412) _17413) \/ (~ ((MEM _17410) _17411)))))
+T c==> c= f0 f1 c\/ c~ c= f2 f3 c\/ cMEM f1 f3 c~ cMEM f0 f2
++ |- ((h = h) /\ ((f h) = (f h)))
+T c/\ c= f0 f0 c= * f1 f0 * f1 f0
++ (((MEM x) t) /\ (y = (f x))) |- (((~ ((MEM _17353) t)) \/ (~ (y = (f _17353)))) = ((~ ((MEM _17353) t)) \/ (~ ((f x) = (f _17353)))))
+T c==> c/\ cMEM f0 f1 c= f2 * f3 f0 c= c\/ c~ cMEM f4 f1 c~ c= f2 * f3 f4 c\/ c~ cMEM f4 f1 c~ c= * f3 f0 * f3 f4
++ (((y = (f h)) \/ (((MEM x) t) /\ (y = (f x)))) /\ (!x. (((~ (x = h)) /\ (~ ((MEM x) t))) \/ (~ (y = (f x)))))) |- (((~ (_17353 = h)) \/ (~ (y = (f _17353)))) /\ ((~ ((MEM _17353) t)) \/ (~ (y = (f _17353)))))
+T c==> c/\ c\/ c= f0 * f1 f2 c/\ cMEM f3 f4 c= f0 * f1 f3 ! c\/ c/\ c~ c= b0 f2 c~ cMEM b0 f4 c~ c= f0 * f1 b0 c/\ c\/ c~ c= f5 f2 c~ c= f0 * f1 f5 c\/ c~ cMEM f5 f4 c~ c= f0 * f1 f5
++ |- (((MEM y) ((MAP f) NIL)) = (?x. (((MEM x) NIL) /\ (y = (f x)))))
+T c= cMEM f0 cMAP f1 cNIL c? / c/\ cMEM b0 cNIL c= f0 * f1 b0
+- |- ((!h. (((y = (f h)) \/ (?x. (((MEM x) t) /\ (y = (f x))))) = (?x. (((x = h) \/ ((MEM x) t)) /\ (y = (f x)))))) = T)
+T c= ! c= c\/ c= f0 * f1 b0 c? / c/\ cMEM b1 f2 c= f0 * f1 b1 c? / c/\ c\/ c= b1 b0 cMEM b1 f2 c= f0 * f1 b1 cT
+- |- ((\f. (!y. (!t. (!h. ((~ (((y = (f h)) \/ (?x. (((MEM x) t) /\ (y = (f x))))) = (?x. (((x = h) \/ ((MEM x) t)) /\ (y = (f x)))))) ==> F))))) f)
+T * / ! ! ! c==> c~ c= c\/ c= b1 * b0 b3 c? / c/\ cMEM b4 b2 c= b1 * b0 b4 c? / c/\ c\/ c= b4 b3 cMEM b4 b2 c= b1 * b0 b4 cF f0
+- (((~ (((y = (f h)) \/ (?x. (((MEM x) t) /\ (y = (f x))))) = (?x. (((x = h) \/ ((MEM x) t)) /\ (y = (f x)))))) ==> F) ==> ((~ (((y = (f h)) \/ (?x. (((MEM x) t) /\ (y = (f x))))) = (?x. (((x = h) \/ ((MEM x) t)) /\ (y = (f x)))))) ==> F)) |- ((((~ (((y = (f h)) \/ (?x. (((MEM x) t) /\ (y = (f x))))) = (?x. (((x = h) \/ ((MEM x) t)) /\ (y = (f x)))))) ==> F) ==> ((~ (((y = (f h)) \/ (?x. (((MEM x) t) /\ (y = (f x))))) = (?x. (((x = h) \/ ((MEM x) t)) /\ (y = (f x)))))) ==> F)) /\ (((~ (((y = (f h)) \/ (?x. (((MEM x) t) /\ (y = (f x))))) = (?x. (((x = h) \/ ((MEM x) t)) /\ (y = (f x)))))) ==> F) ==> ((~ (((y = (f h)) \/ (?x. (((MEM x) t) /\ (y = (f x))))) = (?x. (((x = h) \/ ((MEM x) t)) /\ (y = (f x)))))) ==> F)))
+T c==> c==> c==> c~ c= c\/ c= f0 * f1 f2 c? / c/\ cMEM b0 f3 c= f0 * f1 b0 c? / c/\ c\/ c= b0 f2 cMEM b0 f3 c= f0 * f1 b0 cF c==> c~ c= c\/ c= f0 * f1 f2 c? / c/\ cMEM b0 f3 c= f0 * f1 b0 c? / c/\ c\/ c= b0 f2 cMEM b0 f3 c= f0 * f1 b0 cF c/\ c==> c==> c~ c= c\/ c= f0 * f1 f2 c? / c/\ cMEM b0 f3 c= f0 * f1 b0 c? / c/\ c\/ c= b0 f2 cMEM b0 f3 c= f0 * f1 b0 cF c==> c~ c= c\/ c= f0 * f1 f2 c? / c/\ cMEM b0 f3 c= f0 * f1 b0 c? / c/\ c\/ c= b0 f2 cMEM b0 f3 c= f0 * f1 b0 cF c==> c==> c~ c= c\/ c= f0 * f1 f2 c? / c/\ cMEM b0 f3 c= f0 * f1 b0 c? / c/\ c\/ c= b0 f2 cMEM b0 f3 c= f0 * f1 b0 cF c==> c~ c= c\/ c= f0 * f1 f2 c? / c/\ cMEM b0 f3 c= f0 * f1 b0 c? / c/\ c\/ c= b0 f2 cMEM b0 f3 c= f0 * f1 b0 cF
+- |- ((\t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3)))) t2)
+T * / ! c= c\/ f0 c\/ b0 b1 c\/ c\/ f0 b0 b1 f1
+- |- ((\h. ((~ (((y = (f h)) \/ (?x. (((MEM x) t) /\ (y = (f x))))) = (?x. (((x = h) \/ ((MEM x) t)) /\ (y = (f x)))))) ==> F)) h)
+T * / c==> c~ c= c\/ c= f0 * f1 b0 c? / c/\ cMEM b1 f2 c= f0 * f1 b1 c? / c/\ c\/ c= b1 b0 cMEM b1 f2 c= f0 * f1 b1 cF f3
+- |- ((!x. ((P x) \/ Q)) = ((!x. (P x)) \/ Q))
+T c= ! c\/ * f0 b0 f1 c\/ ! * f0 b0 f1
+- |- (((((~ (((y = (f h)) \/ (?x. (((MEM x) t) /\ (y = (f x))))) = (?x. (((x = h) \/ ((MEM x) t)) /\ (y = (f x)))))) ==> F) ==> ((~ (((y = (f h)) \/ (?x. (((MEM x) t) /\ (y = (f x))))) = (?x. (((x = h) \/ ((MEM x) t)) /\ (y = (f x)))))) ==> F)) ==> (((~ (((y = (f h)) \/ (?x. (((MEM x) t) /\ (y = (f x))))) = (?x. (((x = h) \/ ((MEM x) t)) /\ (y = (f x)))))) ==> F) ==> ((~ (((y = (f h)) \/ (?x. (((MEM x) t) /\ (y = (f x))))) = (?x. (((x = h) \/ ((MEM x) t)) /\ (y = (f x)))))) ==> F))) = (((~ (((y = (f h)) \/ (?x. (((MEM x) t) /\ (y = (f x))))) = (?x. (((x = h) \/ ((MEM x) t)) /\ (y = (f x)))))) ==> F) ==> ((~ (((y = (f h)) \/ (?x. (((MEM x) t) /\ (y = (f x))))) = (?x. (((x = h) \/ ((MEM x) t)) /\ (y = (f x)))))) ==> F)))
+T c= c==> c==> c==> c~ c= c\/ c= f0 * f1 f2 c? / c/\ cMEM b0 f3 c= f0 * f1 b0 c? / c/\ c\/ c= b0 f2 cMEM b0 f3 c= f0 * f1 b0 cF c==> c~ c= c\/ c= f0 * f1 f2 c? / c/\ cMEM b0 f3 c= f0 * f1 b0 c? / c/\ c\/ c= b0 f2 cMEM b0 f3 c= f0 * f1 b0 cF c==> c==> c~ c= c\/ c= f0 * f1 f2 c? / c/\ cMEM b0 f3 c= f0 * f1 b0 c? / c/\ c\/ c= b0 f2 cMEM b0 f3 c= f0 * f1 b0 cF c==> c~ c= c\/ c= f0 * f1 f2 c? / c/\ cMEM b0 f3 c= f0 * f1 b0 c? / c/\ c\/ c= b0 f2 cMEM b0 f3 c= f0 * f1 b0 cF c==> c==> c~ c= c\/ c= f0 * f1 f2 c? / c/\ cMEM b0 f3 c= f0 * f1 b0 c? / c/\ c\/ c= b0 f2 cMEM b0 f3 c= f0 * f1 b0 cF c==> c~ c= c\/ c= f0 * f1 f2 c? / c/\ cMEM b0 f3 c= f0 * f1 b0 c? / c/\ c\/ c= b0 f2 cMEM b0 f3 c= f0 * f1 b0 cF
++ |- ((((f h) = (f h)) ==> F) = F)
+T c= c==> c= * f0 f1 * f0 f1 cF cF
++ (((~ (y = (f h))) /\ (!x. ((~ ((MEM x) t)) \/ (~ (y = (f x)))))) /\ (((x = h) \/ ((MEM x) t)) /\ (y = (f x)))) |- (y = (f x))
+T c==> c/\ c/\ c~ c= f0 * f1 f2 ! c\/ c~ cMEM b0 f3 c~ c= f0 * f1 b0 c/\ c\/ c= f4 f2 cMEM f4 f3 c= f0 * f1 f4 c= f0 * f1 f4
+- |- ((!x'. (((~ (x = h)) /\ (~ ((MEM x) t))) \/ (~ (y = (f x'))))) = (((~ (x = h)) /\ (~ ((MEM x) t))) \/ (!x. (~ (y = (f x))))))
+T c= ! c\/ c/\ c~ c= f0 f1 c~ cMEM f0 f2 c~ c= f3 * f4 b0 c\/ c/\ c~ c= f0 f1 c~ cMEM f0 f2 ! c~ c= f3 * f4 b0
+- |- (((!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3)))) ==> ((\t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3)))) t2)) = ((\t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3)))) t2))
+T c= c==> ! ! c= c\/ f0 c\/ b0 b1 c\/ c\/ f0 b0 b1 * / ! c= c\/ f0 c\/ b0 b1 c\/ c\/ f0 b0 b1 f1 * / ! c= c\/ f0 c\/ b0 b1 c\/ c\/ f0 b0 b1 f1
++ (((~ (y = (f h))) /\ (!x. ((~ ((MEM x) t)) \/ (~ (y = (f x)))))) /\ (((x = h) \/ ((MEM x) t)) /\ (y = (f x)))) |- (((~ ((MEM _17355) t)) \/ (~ (y = (f _17355)))) = ((~ ((MEM _17355) t)) \/ (~ ((f x) = (f _17355)))))
+T c==> c/\ c/\ c~ c= f0 * f1 f2 ! c\/ c~ cMEM b0 f3 c~ c= f0 * f1 b0 c/\ c\/ c= f4 f2 cMEM f4 f3 c= f0 * f1 f4 c= c\/ c~ cMEM f5 f3 c~ c= f0 * f1 f5 c\/ c~ cMEM f5 f3 c~ c= * f1 f4 * f1 f5
++ (((y = (f h)) \/ (((MEM x) t) /\ (y = (f x)))) /\ (!x. (((~ (x = h)) /\ (~ ((MEM x) t))) \/ (~ (y = (f x)))))) |- ((y = (f h)) ==> F)
+T c==> c/\ c\/ c= f0 * f1 f2 c/\ cMEM f3 f4 c= f0 * f1 f3 ! c\/ c/\ c~ c= b0 f2 c~ cMEM b0 f4 c~ c= f0 * f1 b0 c==> c= f0 * f1 f2 cF
++ (((y = (f h)) \/ (((MEM x) t) /\ (y = (f x)))) /\ (!x. (((~ (x = h)) /\ (~ ((MEM x) t))) \/ (~ (y = (f x)))))) |- (!x. (((~ (x = h)) \/ (~ (y = (f x)))) /\ ((~ ((MEM x) t)) \/ (~ (y = (f x))))))
+T c==> c/\ c\/ c= f0 * f1 f2 c/\ cMEM f3 f4 c= f0 * f1 f3 ! c\/ c/\ c~ c= b0 f2 c~ cMEM b0 f4 c~ c= f0 * f1 b0 ! c/\ c\/ c~ c= b0 f2 c~ c= f0 * f1 b0 c\/ c~ cMEM b0 f4 c~ c= f0 * f1 b0
++ |- (((?x. (((y = (f h)) \/ (((MEM x) t) /\ (y = (f x)))) /\ (!x. (((~ (x = h)) /\ (~ ((MEM x) t))) \/ (~ (y = (f x))))))) \/ (?x. (((~ (y = (f h))) /\ (!x. ((~ ((MEM x) t)) \/ (~ (y = (f x)))))) /\ (((x = h) \/ ((MEM x) t)) /\ (y = (f x)))))) = (?x. ((((y = (f h)) \/ (((MEM x) t) /\ (y = (f x)))) /\ (!x. (((~ (x = h)) /\ (~ ((MEM x) t))) \/ (~ (y = (f x)))))) \/ (((~ (y = (f h))) /\ (!x. ((~ ((MEM x) t)) \/ (~ (y = (f x)))))) /\ (((x = h) \/ ((MEM x) t)) /\ (y = (f x)))))))
+T c= c\/ c? / c/\ c\/ c= f0 * f1 f2 c/\ cMEM b0 f3 c= f0 * f1 b0 ! c\/ c/\ c~ c= b1 f2 c~ cMEM b1 f3 c~ c= f0 * f1 b1 c? / c/\ c/\ c~ c= f0 * f1 f2 ! c\/ c~ cMEM b1 f3 c~ c= f0 * f1 b1 c/\ c\/ c= b0 f2 cMEM b0 f3 c= f0 * f1 b0 c? / c\/ c/\ c\/ c= f0 * f1 f2 c/\ cMEM b0 f3 c= f0 * f1 b0 ! c\/ c/\ c~ c= b1 f2 c~ cMEM b1 f3 c~ c= f0 * f1 b1 c/\ c/\ c~ c= f0 * f1 f2 ! c\/ c~ cMEM b1 f3 c~ c= f0 * f1 b1 c/\ c\/ c= b0 f2 cMEM b0 f3 c= f0 * f1 b0
++ (((~ (y = (f h))) /\ (!x. ((~ ((MEM x) t)) \/ (~ (y = (f x)))))) /\ (((x = h) \/ ((MEM x) t)) /\ (y = (f x)))) |- (!x. ((~ ((MEM x) t)) \/ (~ (y = (f x)))))
+T c==> c/\ c/\ c~ c= f0 * f1 f2 ! c\/ c~ cMEM b0 f3 c~ c= f0 * f1 b0 c/\ c\/ c= f4 f2 cMEM f4 f3 c= f0 * f1 f4 ! c\/ c~ cMEM b0 f3 c~ c= f0 * f1 b0
+- (_17414 = _17415) |- ((_17414 = _17415) /\ ((f _17414) = (f _17415)))
+T c==> c= f0 f1 c/\ c= f0 f1 c= * f2 f0 * f2 f1
+- |- ((?x'. (((x' = h) \/ ((MEM x') t)) /\ (y = (f x)))) = ((?x. ((x = h) \/ ((MEM x) t))) /\ (y = (f x))))
+T c= c? / c/\ c\/ c= b0 f0 cMEM b0 f1 c= f2 * f3 f4 c/\ c? / c\/ c= b0 f0 cMEM b0 f1 c= f2 * f3 f4
+- |- ((x = x) = T)
+T c= c= f0 f0 cT
++ ((\x. ((((y = (f h)) \/ (((MEM x) t) /\ (y = (f x)))) /\ (!x. (((~ (x = h)) /\ (~ ((MEM x) t))) \/ (~ (y = (f x)))))) \/ (((~ (y = (f h))) /\ (!x. ((~ ((MEM x) t)) \/ (~ (y = (f x)))))) /\ (((x = h) \/ ((MEM x) t)) /\ (y = (f x)))))) x) |- ((((y = (f h)) \/ (((MEM x) t) /\ (y = (f x)))) /\ (!x. (((~ (x = h)) /\ (~ ((MEM x) t))) \/ (~ (y = (f x)))))) \/ (((~ (y = (f h))) /\ (!x. ((~ ((MEM x) t)) \/ (~ (y = (f x)))))) /\ (((x = h) \/ ((MEM x) t)) /\ (y = (f x)))))
+T c==> * / c\/ c/\ c\/ c= f0 * f1 f2 c/\ cMEM b0 f3 c= f0 * f1 b0 ! c\/ c/\ c~ c= b1 f2 c~ cMEM b1 f3 c~ c= f0 * f1 b1 c/\ c/\ c~ c= f0 * f1 f2 ! c\/ c~ cMEM b1 f3 c~ c= f0 * f1 b1 c/\ c\/ c= b0 f2 cMEM b0 f3 c= f0 * f1 b0 f4 c\/ c/\ c\/ c= f0 * f1 f2 c/\ cMEM f4 f3 c= f0 * f1 f4 ! c\/ c/\ c~ c= b0 f2 c~ cMEM b0 f3 c~ c= f0 * f1 b0 c/\ c/\ c~ c= f0 * f1 f2 ! c\/ c~ cMEM b0 f3 c~ c= f0 * f1 b0 c/\ c\/ c= f4 f2 cMEM f4 f3 c= f0 * f1 f4
++ |- ((\h. (!t. (((MAP f) ((CONS h) t)) = ((CONS (f h)) ((MAP f) t))))) h)
+T * / ! c= cMAP f0 cCONS b0 b1 cCONS * f0 b0 cMAP f0 b1 f1
+- |- ((a ==> b) = ((~ a) \/ b))
+T c= c==> f0 f1 c\/ c~ f0 f1
+- ((MEM x) t) |- ((~ ((MEM x) t)) ==> ((MEM x) t))
+T c==> cMEM f0 f1 c==> c~ cMEM f0 f1 cMEM f0 f1
++ (((~ (y = (f h))) /\ (!x. ((~ ((MEM x) t)) \/ (~ (y = (f x)))))) /\ (((x = h) \/ ((MEM x) t)) /\ (y = (f x)))), ((MEM x) t) |- (((MEM x) t) /\ F)
+T c==> c/\ c/\ c~ c= f0 * f1 f2 ! c\/ c~ cMEM b0 f3 c~ c= f0 * f1 b0 c/\ c\/ c= f4 f2 cMEM f4 f3 c= f0 * f1 f4 c==> cMEM f4 f3 c/\ cMEM f4 f3 cF
++ (((~ (y = (f h))) /\ (!x. ((~ ((MEM x) t)) \/ (~ (y = (f x)))))) /\ (((x = h) \/ ((MEM x) t)) /\ (y = (f x)))), ((x = h) ==> F), (((MEM x) t) ==> F) |- F
+T c==> c/\ c/\ c~ c= f0 * f1 f2 ! c\/ c~ cMEM b0 f3 c~ c= f0 * f1 b0 c/\ c\/ c= f4 f2 cMEM f4 f3 c= f0 * f1 f4 c==> c==> c= f4 f2 cF c==> c==> cMEM f4 f3 cF cF
+- (((y = (f h)) \/ (((MEM x) t) /\ (y = (f x)))) /\ (!x. (((~ (x = h)) /\ (~ ((MEM x) t))) \/ (~ (y = (f x)))))), (((MEM x) t) /\ (y = (f x))) |- ((~ F) ==> F)
+T c==> c/\ c\/ c= f0 * f1 f2 c/\ cMEM f3 f4 c= f0 * f1 f3 ! c\/ c/\ c~ c= b0 f2 c~ cMEM b0 f4 c~ c= f0 * f1 b0 c==> c/\ cMEM f3 f4 c= f0 * f1 f3 c==> c~ cF cF
++ |- (((~ a) \/ (~ b)) = (~ (a /\ b)))
+T c= c\/ c~ f0 c~ f1 c~ c/\ f0 f1
+- (x = h), (((~ (y = (f h))) /\ (!x. ((~ ((MEM x) t)) \/ (~ (y = (f x)))))) /\ (((x = h) \/ ((MEM x) t)) /\ (y = (f x)))) |- (((~ ((MEM _17354) t)) \/ (~ (y = (f _17354)))) = ((~ ((MEM _17354) t)) \/ (~ ((f h) = (f _17354)))))
+T c==> c= f0 f1 c==> c/\ c/\ c~ c= f2 * f3 f1 ! c\/ c~ cMEM b0 f4 c~ c= f2 * f3 b0 c/\ c\/ c= f0 f1 cMEM f0 f4 c= f2 * f3 f0 c= c\/ c~ cMEM f5 f4 c~ c= f2 * f3 f5 c\/ c~ cMEM f5 f4 c~ c= * f3 f1 * f3 f5
++ ((MEM x) t) |- (((((MEM x) t) /\ ((f x) = (f x))) ==> F) = F)
+T c==> cMEM f0 f1 c= c==> c/\ cMEM f0 f1 c= * f2 f0 * f2 f0 cF cF
+- |- (((!h. ((~ (((y = (f h)) \/ (?x. (((MEM x) t) /\ (y = (f x))))) = (?x. (((x = h) \/ ((MEM x) t)) /\ (y = (f x)))))) ==> F)) ==> ((\h. ((~ (((y = (f h)) \/ (?x. (((MEM x) t) /\ (y = (f x))))) = (?x. (((x = h) \/ ((MEM x) t)) /\ (y = (f x)))))) ==> F)) h)) = ((\h. ((~ (((y = (f h)) \/ (?x. (((MEM x) t) /\ (y = (f x))))) = (?x. (((x = h) \/ ((MEM x) t)) /\ (y = (f x)))))) ==> F)) h))
+T c= c==> ! c==> c~ c= c\/ c= f0 * f1 b0 c? / c/\ cMEM b1 f2 c= f0 * f1 b1 c? / c/\ c\/ c= b1 b0 cMEM b1 f2 c= f0 * f1 b1 cF * / c==> c~ c= c\/ c= f0 * f1 b0 c? / c/\ cMEM b1 f2 c= f0 * f1 b1 c? / c/\ c\/ c= b1 b0 cMEM b1 f2 c= f0 * f1 b1 cF f3 * / c==> c~ c= c\/ c= f0 * f1 b0 c? / c/\ cMEM b1 f2 c= f0 * f1 b1 c? / c/\ c\/ c= b1 b0 cMEM b1 f2 c= f0 * f1 b1 cF f3
++ |- ((!t. ((((MEM y) ((MAP f) t)) = (?x. (((MEM x) t) /\ (y = (f x))))) ==> (((MEM y) ((MAP f) ((CONS h) t))) = (?x. (((MEM x) ((CONS h) t)) /\ (y = (f x))))))) = T)
+T c= ! c==> c= cMEM f0 cMAP f1 b0 c? / c/\ cMEM b1 b0 c= f0 * f1 b1 c= cMEM f0 cMAP f1 cCONS f2 b0 c? / c/\ cMEM b1 cCONS f2 b0 c= f0 * f1 b1 cT
+- |- ((_17414 = _17415) ==> ((f _17414) = (f _17415)))
+T c==> c= f0 f1 c= * f2 f0 * f2 f1
++ |- (((f h) = (f h)) = ((h = h) /\ ((f h) = (f h))))
+T c= c= * f0 f1 * f0 f1 c/\ c= f1 f1 c= * f0 f1 * f0 f1
++ |- (((!x. (((\x. ((((y = (f h)) \/ (((MEM x) t) /\ (y = (f x)))) /\ (!x. (((~ (x = h)) /\ (~ ((MEM x) t))) \/ (~ (y = (f x)))))) \/ (((~ (y = (f h))) /\ (!x. ((~ ((MEM x) t)) \/ (~ (y = (f x)))))) /\ (((x = h) \/ ((MEM x) t)) /\ (y = (f x)))))) x) ==> F)) ==> ((?x. ((((y = (f h)) \/ (((MEM x) t) /\ (y = (f x)))) /\ (!x. (((~ (x = h)) /\ (~ ((MEM x) t))) \/ (~ (y = (f x)))))) \/ (((~ (y = (f h))) /\ (!x. ((~ ((MEM x) t)) \/ (~ (y = (f x)))))) /\ (((x = h) \/ ((MEM x) t)) /\ (y = (f x)))))) ==> F)) = ((?x. ((((y = (f h)) \/ (((MEM x) t) /\ (y = (f x)))) /\ (!x. (((~ (x = h)) /\ (~ ((MEM x) t))) \/ (~ (y = (f x)))))) \/ (((~ (y = (f h))) /\ (!x. ((~ ((MEM x) t)) \/ (~ (y = (f x)))))) /\ (((x = h) \/ ((MEM x) t)) /\ (y = (f x)))))) ==> F))
+T c= c==> ! c==> * / c\/ c/\ c\/ c= f0 * f1 f2 c/\ cMEM b1 f3 c= f0 * f1 b1 ! c\/ c/\ c~ c= b1 f2 c~ cMEM b1 f3 c~ c= f0 * f1 b1 c/\ c/\ c~ c= f0 * f1 f2 ! c\/ c~ cMEM b1 f3 c~ c= f0 * f1 b1 c/\ c\/ c= b1 f2 cMEM b1 f3 c= f0 * f1 b1 b0 cF c==> c? / c\/ c/\ c\/ c= f0 * f1 f2 c/\ cMEM b0 f3 c= f0 * f1 b0 ! c\/ c/\ c~ c= b1 f2 c~ cMEM b1 f3 c~ c= f0 * f1 b1 c/\ c/\ c~ c= f0 * f1 f2 ! c\/ c~ cMEM b1 f3 c~ c= f0 * f1 b1 c/\ c\/ c= b0 f2 cMEM b0 f3 c= f0 * f1 b0 cF c==> c? / c\/ c/\ c\/ c= f0 * f1 f2 c/\ cMEM b0 f3 c= f0 * f1 b0 ! c\/ c/\ c~ c= b1 f2 c~ cMEM b1 f3 c~ c= f0 * f1 b1 c/\ c/\ c~ c= f0 * f1 f2 ! c\/ c~ cMEM b1 f3 c~ c= f0 * f1 b1 c/\ c\/ c= b0 f2 cMEM b0 f3 c= f0 * f1 b0 cF
+- (x = h), (((~ (y = (f h))) /\ (!x. ((~ ((MEM x) t)) \/ (~ (y = (f x)))))) /\ (((x = h) \/ ((MEM x) t)) /\ (y = (f x)))) |- ((~ F) ==> F)
+T c==> c= f0 f1 c==> c/\ c/\ c~ c= f2 * f3 f1 ! c\/ c~ cMEM b0 f4 c~ c= f2 * f3 b0 c/\ c\/ c= f0 f1 cMEM f0 f4 c= f2 * f3 f0 c==> c~ cF cF
+- ((~ (((y = (f h)) \/ (?x. (((MEM x) t) /\ (y = (f x))))) = (?x. (((x = h) \/ ((MEM x) t)) /\ (y = (f x)))))) ==> F) |- (((~ (((y = (f h)) \/ (?x. (((MEM x) t) /\ (y = (f x))))) = (?x. (((x = h) \/ ((MEM x) t)) /\ (y = (f x)))))) ==> F) /\ ((~ (((y = (f h)) \/ (?x. (((MEM x) t) /\ (y = (f x))))) = (?x. (((x = h) \/ ((MEM x) t)) /\ (y = (f x)))))) ==> F))
+T c==> c==> c~ c= c\/ c= f0 * f1 f2 c? / c/\ cMEM b0 f3 c= f0 * f1 b0 c? / c/\ c\/ c= b0 f2 cMEM b0 f3 c= f0 * f1 b0 cF c/\ c==> c~ c= c\/ c= f0 * f1 f2 c? / c/\ cMEM b0 f3 c= f0 * f1 b0 c? / c/\ c\/ c= b0 f2 cMEM b0 f3 c= f0 * f1 b0 cF c==> c~ c= c\/ c= f0 * f1 f2 c? / c/\ cMEM b0 f3 c= f0 * f1 b0 c? / c/\ c\/ c= b0 f2 cMEM b0 f3 c= f0 * f1 b0 cF
++ (((~ (y = (f h))) /\ (!x. ((~ ((MEM x) t)) \/ (~ (y = (f x)))))) /\ (((x = h) \/ ((MEM x) t)) /\ (y = (f x)))), (((MEM x) t) ==> F) |- F
+T c==> c/\ c/\ c~ c= f0 * f1 f2 ! c\/ c~ cMEM b0 f3 c~ c= f0 * f1 b0 c/\ c\/ c= f4 f2 cMEM f4 f3 c= f0 * f1 f4 c==> c==> cMEM f4 f3 cF cF
++ |- (((?x. ((y = (f h)) \/ (((MEM x) t) /\ (y = (f x))))) /\ (!x. (((~ (x = h)) /\ (~ ((MEM x) t))) \/ (~ (y = (f x)))))) = (?x. (((y = (f h)) \/ (((MEM x) t) /\ (y = (f x)))) /\ (!x. (((~ (x = h)) /\ (~ ((MEM x) t))) \/ (~ (y = (f x))))))))
+T c= c/\ c? / c\/ c= f0 * f1 f2 c/\ cMEM b0 f3 c= f0 * f1 b0 ! c\/ c/\ c~ c= b0 f2 c~ cMEM b0 f3 c~ c= f0 * f1 b0 c? / c/\ c\/ c= f0 * f1 f2 c/\ cMEM b0 f3 c= f0 * f1 b0 ! c\/ c/\ c~ c= b1 f2 c~ cMEM b1 f3 c~ c= f0 * f1 b1
++ |- (((MAP f) NIL) = NIL)
+T c= cMAP f0 cNIL cNIL
+- (x = h) |- (F = F)
+T c==> c= f0 f1 c= cF cF
++ (((y = (f h)) \/ (((MEM x) t) /\ (y = (f x)))) /\ (!x. (((~ (x = h)) /\ (~ ((MEM x) t))) \/ (~ (y = (f x)))))) |- (((!x. (((~ (x = h)) \/ (~ (y = (f x)))) /\ ((~ ((MEM x) t)) \/ (~ (y = (f x)))))) ==> ((\x. (((~ (x = h)) \/ (~ (y = (f x)))) /\ ((~ ((MEM x) t)) \/ (~ (y = (f x)))))) _17353)) = ((\x. (((~ (x = h)) \/ (~ (y = (f x)))) /\ ((~ ((MEM x) t)) \/ (~ (y = (f x)))))) _17353))
+T c==> c/\ c\/ c= f0 * f1 f2 c/\ cMEM f3 f4 c= f0 * f1 f3 ! c\/ c/\ c~ c= b0 f2 c~ cMEM b0 f4 c~ c= f0 * f1 b0 c= c==> ! c/\ c\/ c~ c= b0 f2 c~ c= f0 * f1 b0 c\/ c~ cMEM b0 f4 c~ c= f0 * f1 b0 * / c/\ c\/ c~ c= b0 f2 c~ c= f0 * f1 b0 c\/ c~ cMEM b0 f4 c~ c= f0 * f1 b0 f5 * / c/\ c\/ c~ c= b0 f2 c~ c= f0 * f1 b0 c\/ c~ cMEM b0 f4 c~ c= f0 * f1 b0 f5
+- (~ ((f x) = (f x))) |- ((~ ((f x) = (f x))) /\ ((f x) = (f x)))
+T c==> c~ c= * f0 f1 * f0 f1 c/\ c~ c= * f0 f1 * f0 f1 c= * f0 f1 * f0 f1
+- (~ F), (y = (f h)), (((y = (f h)) \/ (((MEM x) t) /\ (y = (f x)))) /\ (!x. (((~ (x = h)) /\ (~ ((MEM x) t))) \/ (~ (y = (f x)))))) |- ((~ F) /\ F)
+T c==> c~ cF c==> c= f0 * f1 f2 c==> c/\ c\/ c= f0 * f1 f2 c/\ cMEM f3 f4 c= f0 * f1 f3 ! c\/ c/\ c~ c= b0 f2 c~ cMEM b0 f4 c~ c= f0 * f1 b0 c/\ c~ cF cF
+- ((~ (((y = (f h)) \/ (?x. (((MEM x) t) /\ (y = (f x))))) = (?x. (((x = h) \/ ((MEM x) t)) /\ (y = (f x)))))) ==> F) |- ((((~ (((y = (f h)) \/ (?x. (((MEM x) t) /\ (y = (f x))))) = (?x. (((x = h) \/ ((MEM x) t)) /\ (y = (f x)))))) ==> F) ==> ((~ (((y = (f h)) \/ (?x. (((MEM x) t) /\ (y = (f x))))) = (?x. (((x = h) \/ ((MEM x) t)) /\ (y = (f x)))))) ==> F)) ==> ((~ (((y = (f h)) \/ (?x. (((MEM x) t) /\ (y = (f x))))) = (?x. (((x = h) \/ ((MEM x) t)) /\ (y = (f x)))))) ==> F))
+T c==> c==> c~ c= c\/ c= f0 * f1 f2 c? / c/\ cMEM b0 f3 c= f0 * f1 b0 c? / c/\ c\/ c= b0 f2 cMEM b0 f3 c= f0 * f1 b0 cF c==> c==> c==> c~ c= c\/ c= f0 * f1 f2 c? / c/\ cMEM b0 f3 c= f0 * f1 b0 c? / c/\ c\/ c= b0 f2 cMEM b0 f3 c= f0 * f1 b0 cF c==> c~ c= c\/ c= f0 * f1 f2 c? / c/\ cMEM b0 f3 c= f0 * f1 b0 c? / c/\ c\/ c= b0 f2 cMEM b0 f3 c= f0 * f1 b0 cF c==> c~ c= c\/ c= f0 * f1 f2 c? / c/\ cMEM b0 f3 c= f0 * f1 b0 c? / c/\ c\/ c= b0 f2 cMEM b0 f3 c= f0 * f1 b0 cF
+- |- ((\t. (!h. ((~ (((y = (f h)) \/ (?x. (((MEM x) t) /\ (y = (f x))))) = (?x. (((x = h) \/ ((MEM x) t)) /\ (y = (f x)))))) ==> F))) t)
+T * / ! c==> c~ c= c\/ c= f0 * f1 b1 c? / c/\ cMEM b2 b0 c= f0 * f1 b2 c? / c/\ c\/ c= b2 b1 cMEM b2 b0 c= f0 * f1 b2 cF f2
+- (y = (f h)), (((y = (f h)) \/ (((MEM x) t) /\ (y = (f x)))) /\ (!x. (((~ (x = h)) /\ (~ ((MEM x) t))) \/ (~ (y = (f x)))))) |- ((~ F) ==> F)
+T c==> c= f0 * f1 f2 c==> c/\ c\/ c= f0 * f1 f2 c/\ cMEM f3 f4 c= f0 * f1 f3 ! c\/ c/\ c~ c= b0 f2 c~ cMEM b0 f4 c~ c= f0 * f1 b0 c==> c~ cF cF
+- |- (((t1 \/ t2) \/ t3) = (t1 \/ (t2 \/ t3)))
+T c= c\/ c\/ f0 f1 f2 c\/ f0 c\/ f1 f2
++ |- (((MAP f) ((CONS h) t)) = ((CONS (f h)) ((MAP f) t)))
+T c= cMAP f0 cCONS f1 f2 cCONS * f0 f1 cMAP f0 f2
++ (y = (f h)), (((y = (f h)) \/ (((MEM x) t) /\ (y = (f x)))) /\ (!x. (((~ (x = h)) /\ (~ ((MEM x) t))) \/ (~ (y = (f x)))))) |- F
+T c==> c= f0 * f1 f2 c==> c/\ c\/ c= f0 * f1 f2 c/\ cMEM f3 f4 c= f0 * f1 f3 ! c\/ c/\ c~ c= b0 f2 c~ cMEM b0 f4 c~ c= f0 * f1 b0 cF
++ (((~ (y = (f h))) /\ (!x. ((~ ((MEM x) t)) \/ (~ (y = (f x)))))) /\ (((x = h) \/ ((MEM x) t)) /\ (y = (f x)))) |- ((~ ((MEM _17355) t)) \/ (~ ((f x) = (f _17355))))
+T c==> c/\ c/\ c~ c= f0 * f1 f2 ! c\/ c~ cMEM b0 f3 c~ c= f0 * f1 b0 c/\ c\/ c= f4 f2 cMEM f4 f3 c= f0 * f1 f4 c\/ c~ cMEM f5 f3 c~ c= * f1 f4 * f1 f5
+- |- ((!x'. ((~ ((MEM x') t)) \/ (~ (y = (f x))))) = ((!x. (~ ((MEM x) t))) \/ (~ (y = (f x)))))
+T c= ! c\/ c~ cMEM b0 f0 c~ c= f1 * f2 f3 c\/ ! c~ cMEM b0 f0 c~ c= f1 * f2 f3
++ |- ((((MEM y) ((MAP f) NIL)) = (?x. (((MEM x) NIL) /\ (y = (f x))))) /\ (!h. (!t. ((((MEM y) ((MAP f) t)) = (?x. (((MEM x) t) /\ (y = (f x))))) ==> (((MEM y) ((MAP f) ((CONS h) t))) = (?x. (((MEM x) ((CONS h) t)) /\ (y = (f x)))))))))
+T c/\ c= cMEM f0 cMAP f1 cNIL c? / c/\ cMEM b0 cNIL c= f0 * f1 b0 ! ! c==> c= cMEM f0 cMAP f1 b1 c? / c/\ cMEM b2 b1 c= f0 * f1 b2 c= cMEM f0 cMAP f1 cCONS b0 b1 c? / c/\ cMEM b2 cCONS b0 b1 c= f0 * f1 b2
+- (y = (f h)), (((y = (f h)) \/ (((MEM x) t) /\ (y = (f x)))) /\ (!x. (((~ (x = h)) /\ (~ ((MEM x) t))) \/ (~ (y = (f x)))))) |- ((~ ((MEM _17352) t)) \/ (~ ((f h) = (f _17352))))
+T c==> c= f0 * f1 f2 c==> c/\ c\/ c= f0 * f1 f2 c/\ cMEM f3 f4 c= f0 * f1 f3 ! c\/ c/\ c~ c= b0 f2 c~ cMEM b0 f4 c~ c= f0 * f1 b0 c\/ c~ cMEM f5 f4 c~ c= * f1 f2 * f1 f5
+- |- (((!t. (!h. ((~ (((y = (f h)) \/ (?x. (((MEM x) t) /\ (y = (f x))))) = (?x. (((x = h) \/ ((MEM x) t)) /\ (y = (f x)))))) ==> F))) ==> ((\t. (!h. ((~ (((y = (f h)) \/ (?x. (((MEM x) t) /\ (y = (f x))))) = (?x. (((x = h) \/ ((MEM x) t)) /\ (y = (f x)))))) ==> F))) t)) = ((\t. (!h. ((~ (((y = (f h)) \/ (?x. (((MEM x) t) /\ (y = (f x))))) = (?x. (((x = h) \/ ((MEM x) t)) /\ (y = (f x)))))) ==> F))) t))
+T c= c==> ! ! c==> c~ c= c\/ c= f0 * f1 b1 c? / c/\ cMEM b2 b0 c= f0 * f1 b2 c? / c/\ c\/ c= b2 b1 cMEM b2 b0 c= f0 * f1 b2 cF * / ! c==> c~ c= c\/ c= f0 * f1 b1 c? / c/\ cMEM b2 b0 c= f0 * f1 b2 c? / c/\ c\/ c= b2 b1 cMEM b2 b0 c= f0 * f1 b2 cF f2 * / ! c==> c~ c= c\/ c= f0 * f1 b1 c? / c/\ cMEM b2 b0 c= f0 * f1 b2 c? / c/\ c\/ c= b2 b1 cMEM b2 b0 c= f0 * f1 b2 cF f2
++ |- ((((y = (f h)) \/ (((MEM x) t) /\ (y = (f x)))) /\ (!x. (((~ (x = h)) /\ (~ ((MEM x) t))) \/ (~ (y = (f x)))))) ==> F)
+T c==> c/\ c\/ c= f0 * f1 f2 c/\ cMEM f3 f4 c= f0 * f1 f3 ! c\/ c/\ c~ c= b0 f2 c~ cMEM b0 f4 c~ c= f0 * f1 b0 cF
++ |- (((y = (f h)) \/ (?x. (((MEM x) t) /\ (y = (f x))))) = (?x. ((y = (f h)) \/ (((MEM x) t) /\ (y = (f x))))))
+T c= c\/ c= f0 * f1 f2 c? / c/\ cMEM b0 f3 c= f0 * f1 b0 c? / c\/ c= f0 * f1 f2 c/\ cMEM b0 f3 c= f0 * f1 b0
++ (((y = (f h)) \/ (((MEM x) t) /\ (y = (f x)))) /\ (!x. (((~ (x = h)) /\ (~ ((MEM x) t))) \/ (~ (y = (f x)))))), ((((MEM x) t) /\ (y = (f x))) ==> F) |- F
+T c==> c/\ c\/ c= f0 * f1 f2 c/\ cMEM f3 f4 c= f0 * f1 f3 ! c\/ c/\ c~ c= b0 f2 c~ cMEM b0 f4 c~ c= f0 * f1 b0 c==> c==> c/\ cMEM f3 f4 c= f0 * f1 f3 cF cF
+- |- ((~ ((f x) = (f x))) ==> ((f x) = (f x)))
+T c==> c~ c= * f0 f1 * f0 f1 c= * f0 f1 * f0 f1
+- ((~ (((y = (f h)) \/ (?x. (((MEM x) t) /\ (y = (f x))))) = (?x. (((x = h) \/ ((MEM x) t)) /\ (y = (f x)))))) ==> F), (((~ (((y = (f h)) \/ (?x. (((MEM x) t) /\ (y = (f x))))) = (?x. (((x = h) \/ ((MEM x) t)) /\ (y = (f x)))))) ==> F) ==> ((~ (((y = (f h)) \/ (?x. (((MEM x) t) /\ (y = (f x))))) = (?x. (((x = h) \/ ((MEM x) t)) /\ (y = (f x)))))) ==> F)) |- (((~ (((y = (f h)) \/ (?x. (((MEM x) t) /\ (y = (f x))))) = (?x. (((x = h) \/ ((MEM x) t)) /\ (y = (f x)))))) ==> F) /\ ((~ (((y = (f h)) \/ (?x. (((MEM x) t) /\ (y = (f x))))) = (?x. (((x = h) \/ ((MEM x) t)) /\ (y = (f x)))))) ==> F))
+T c==> c==> c~ c= c\/ c= f0 * f1 f2 c? / c/\ cMEM b0 f3 c= f0 * f1 b0 c? / c/\ c\/ c= b0 f2 cMEM b0 f3 c= f0 * f1 b0 cF c==> c==> c==> c~ c= c\/ c= f0 * f1 f2 c? / c/\ cMEM b0 f3 c= f0 * f1 b0 c? / c/\ c\/ c= b0 f2 cMEM b0 f3 c= f0 * f1 b0 cF c==> c~ c= c\/ c= f0 * f1 f2 c? / c/\ cMEM b0 f3 c= f0 * f1 b0 c? / c/\ c\/ c= b0 f2 cMEM b0 f3 c= f0 * f1 b0 cF c/\ c==> c~ c= c\/ c= f0 * f1 f2 c? / c/\ cMEM b0 f3 c= f0 * f1 b0 c? / c/\ c\/ c= b0 f2 cMEM b0 f3 c= f0 * f1 b0 cF c==> c~ c= c\/ c= f0 * f1 f2 c? / c/\ cMEM b0 f3 c= f0 * f1 b0 c? / c/\ c\/ c= b0 f2 cMEM b0 f3 c= f0 * f1 b0 cF
+- |- ((!x. (P \/ (Q x))) = (P \/ (!x. (Q x))))
+T c= ! c\/ f0 * f1 b0 c\/ f0 ! * f1 b0
++ |- (((((y = (f h)) \/ (((MEM x) t) /\ (y = (f x)))) /\ (!x. (((~ (x = h)) /\ (~ ((MEM x) t))) \/ (~ (y = (f x)))))) \/ (((~ (y = (f h))) /\ (!x. ((~ ((MEM x) t)) \/ (~ (y = (f x)))))) /\ (((x = h) \/ ((MEM x) t)) /\ (y = (f x))))) ==> F)
+T c==> c\/ c/\ c\/ c= f0 * f1 f2 c/\ cMEM f3 f4 c= f0 * f1 f3 ! c\/ c/\ c~ c= b0 f2 c~ cMEM b0 f4 c~ c= f0 * f1 b0 c/\ c/\ c~ c= f0 * f1 f2 ! c\/ c~ cMEM b0 f4 c~ c= f0 * f1 b0 c/\ c\/ c= f3 f2 cMEM f3 f4 c= f0 * f1 f3 cF
+- |- (((!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))) ==> ((\t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))) t3)) = ((\t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))) t3))
+T c= c==> ! c= c\/ f0 c\/ f1 b0 c\/ c\/ f0 f1 b0 * / c= c\/ f0 c\/ f1 b0 c\/ c\/ f0 f1 b0 f2 * / c= c\/ f0 c\/ f1 b0 c\/ c\/ f0 f1 b0 f2
+- (((~ (y = (f h))) /\ (!x. ((~ ((MEM x) t)) \/ (~ (y = (f x)))))) /\ (((x = h) \/ ((MEM x) t)) /\ (y = (f x)))) |- (~ ((f x) = (f h)))
+T c==> c/\ c/\ c~ c= f0 * f1 f2 ! c\/ c~ cMEM b0 f3 c~ c= f0 * f1 b0 c/\ c\/ c= f4 f2 cMEM f4 f3 c= f0 * f1 f4 c~ c= * f1 f4 * f1 f2
++ |- ((((~ (y = (f h))) /\ (!x. ((~ ((MEM x) t)) \/ (~ (y = (f x)))))) /\ (((x = h) \/ ((MEM x) t)) /\ (y = (f x)))) ==> F)
+T c==> c/\ c/\ c~ c= f0 * f1 f2 ! c\/ c~ cMEM b0 f3 c~ c= f0 * f1 b0 c/\ c\/ c= f4 f2 cMEM f4 f3 c= f0 * f1 f4 cF
+- |- ((t /\ t) = t)
+T c= c/\ f0 f0 f0
++ |- (((((MEM y) ((MAP f) NIL)) = (?x. (((MEM x) NIL) /\ (y = (f x))))) /\ (!h. (!t. ((((MEM y) ((MAP f) t)) = (?x. (((MEM x) t) /\ (y = (f x))))) ==> (((MEM y) ((MAP f) ((CONS h) t))) = (?x. (((MEM x) ((CONS h) t)) /\ (y = (f x))))))))) ==> (!l. (((MEM y) ((MAP f) l)) = (?x. (((MEM x) l) /\ (y = (f x)))))))
+T c==> c/\ c= cMEM f0 cMAP f1 cNIL c? / c/\ cMEM b0 cNIL c= f0 * f1 b0 ! ! c==> c= cMEM f0 cMAP f1 b1 c? / c/\ cMEM b2 b1 c= f0 * f1 b2 c= cMEM f0 cMAP f1 cCONS b0 b1 c? / c/\ cMEM b2 cCONS b0 b1 c= f0 * f1 b2 ! c= cMEM f0 cMAP f1 b0 c? / c/\ cMEM b1 b0 c= f0 * f1 b1
++ |- ((F /\ t) = F)
+T c= c/\ cF f0 cF
+- ((~ (((y = (f h)) \/ (?x. (((MEM x) t) /\ (y = (f x))))) = (?x. (((x = h) \/ ((MEM x) t)) /\ (y = (f x)))))) ==> F), (((~ (((y = (f h)) \/ (?x. (((MEM x) t) /\ (y = (f x))))) = (?x. (((x = h) \/ ((MEM x) t)) /\ (y = (f x)))))) ==> F) ==> ((~ (((y = (f h)) \/ (?x. (((MEM x) t) /\ (y = (f x))))) = (?x. (((x = h) \/ ((MEM x) t)) /\ (y = (f x)))))) ==> F)) |- ((((~ (((y = (f h)) \/ (?x. (((MEM x) t) /\ (y = (f x))))) = (?x. (((x = h) \/ ((MEM x) t)) /\ (y = (f x)))))) ==> F) ==> ((~ (((y = (f h)) \/ (?x. (((MEM x) t) /\ (y = (f x))))) = (?x. (((x = h) \/ ((MEM x) t)) /\ (y = (f x)))))) ==> F)) /\ ((~ (((y = (f h)) \/ (?x. (((MEM x) t) /\ (y = (f x))))) = (?x. (((x = h) \/ ((MEM x) t)) /\ (y = (f x)))))) ==> F))
+T c==> c==> c~ c= c\/ c= f0 * f1 f2 c? / c/\ cMEM b0 f3 c= f0 * f1 b0 c? / c/\ c\/ c= b0 f2 cMEM b0 f3 c= f0 * f1 b0 cF c==> c==> c==> c~ c= c\/ c= f0 * f1 f2 c? / c/\ cMEM b0 f3 c= f0 * f1 b0 c? / c/\ c\/ c= b0 f2 cMEM b0 f3 c= f0 * f1 b0 cF c==> c~ c= c\/ c= f0 * f1 f2 c? / c/\ cMEM b0 f3 c= f0 * f1 b0 c? / c/\ c\/ c= b0 f2 cMEM b0 f3 c= f0 * f1 b0 cF c/\ c==> c==> c~ c= c\/ c= f0 * f1 f2 c? / c/\ cMEM b0 f3 c= f0 * f1 b0 c? / c/\ c\/ c= b0 f2 cMEM b0 f3 c= f0 * f1 b0 cF c==> c~ c= c\/ c= f0 * f1 f2 c? / c/\ cMEM b0 f3 c= f0 * f1 b0 c? / c/\ c\/ c= b0 f2 cMEM b0 f3 c= f0 * f1 b0 cF c==> c~ c= c\/ c= f0 * f1 f2 c? / c/\ cMEM b0 f3 c= f0 * f1 b0 c? / c/\ c\/ c= b0 f2 cMEM b0 f3 c= f0 * f1 b0 cF
+- |- ((a = b) ==> (b \/ (~ a)))
+T c==> c= f0 f1 c\/ f1 c~ f0
++ |- (!h. (!t. ((((MEM y) ((MAP f) t)) = (?x. (((MEM x) t) /\ (y = (f x))))) ==> (((MEM y) ((MAP f) ((CONS h) t))) = (?x. (((MEM x) ((CONS h) t)) /\ (y = (f x))))))))
+T c==> c= cMEM f0 cMAP f1 f2 c? / c/\ cMEM b0 f2 c= f0 * f1 b0 c= cMEM f0 cMAP f1 cCONS f3 f2 c? / c/\ cMEM b0 cCONS f3 f2 c= f0 * f1 b0
++ (x = h), (((~ (y = (f h))) /\ (!x. ((~ ((MEM x) t)) \/ (~ (y = (f x)))))) /\ (((x = h) \/ ((MEM x) t)) /\ (y = (f x)))) |- (y = (f h))
+T c==> c= f0 f1 c==> c/\ c/\ c~ c= f2 * f3 f1 ! c\/ c~ cMEM b0 f4 c~ c= f2 * f3 b0 c/\ c\/ c= f0 f1 cMEM f0 f4 c= f2 * f3 f0 c= f2 * f3 f1
++ |- (!x. (((\x. ((((y = (f h)) \/ (((MEM x) t) /\ (y = (f x)))) /\ (!x. (((~ (x = h)) /\ (~ ((MEM x) t))) \/ (~ (y = (f x)))))) \/ (((~ (y = (f h))) /\ (!x. ((~ ((MEM x) t)) \/ (~ (y = (f x)))))) /\ (((x = h) \/ ((MEM x) t)) /\ (y = (f x)))))) x) ==> F))
+T c==> * / c\/ c/\ c\/ c= f0 * f1 f2 c/\ cMEM b0 f3 c= f0 * f1 b0 ! c\/ c/\ c~ c= b1 f2 c~ cMEM b1 f3 c~ c= f0 * f1 b1 c/\ c/\ c~ c= f0 * f1 f2 ! c\/ c~ cMEM b1 f3 c~ c= f0 * f1 b1 c/\ c\/ c= b0 f2 cMEM b0 f3 c= f0 * f1 b0 f4 cF
+- (_17410 = _17412), (_17411 = _17413) |- (((((MEM _17410) _17411) = ((MEM _17412) _17413)) ==> (((MEM _17412) _17413) \/ (~ ((MEM _17410) _17411)))) = (((MEM _17412) _17413) \/ (~ ((MEM _17410) _17411))))
+T c==> c= f0 f1 c==> c= f2 f3 c= c==> c= cMEM f0 f2 cMEM f1 f3 c\/ cMEM f1 f3 c~ cMEM f0 f2 c\/ cMEM f1 f3 c~ cMEM f0 f2
+- |- ((~ (_17414 = _17415)) \/ ((f _17414) = (f _17415)))
+T c\/ c~ c= f0 f1 c= * f2 f0 * f2 f1
+- |- ((~ (_17410 = _17412)) \/ ((~ (_17411 = _17413)) \/ (((MEM _17412) _17413) \/ (~ ((MEM _17410) _17411)))))
+T c\/ c~ c= f0 f1 c\/ c~ c= f2 f3 c\/ cMEM f1 f3 c~ cMEM f0 f2
++ |- (((!f. (((MAP f) NIL) = NIL)) ==> ((\f. (((MAP f) NIL) = NIL)) f)) = ((\f. (((MAP f) NIL) = NIL)) f))
+T c= c==> ! c= cMAP b0 cNIL cNIL * / c= cMAP b0 cNIL cNIL f0 * / c= cMAP b0 cNIL cNIL f0
++ (((MEM x) t) /\ (y = (f x))) |- (((((MEM x) t) /\ ((f x) = (f x))) ==> F) = F)
+T c==> c/\ cMEM f0 f1 c= f2 * f3 f0 c= c==> c/\ cMEM f0 f1 c= * f3 f0 * f3 f0 cF cF
++ |- ((!y. (!l. (((MEM y) ((MAP f) l)) = (?x. (((MEM x) l) /\ (y = (f x))))))) = T)
+T c= ! ! c= cMEM b0 cMAP f0 b1 c? / c/\ cMEM b2 b1 c= b0 * f0 b2 cT
+- (_17410 = _17412) |- ((_17411 = _17413) ==> (((MEM _17412) _17413) \/ (~ ((MEM _17410) _17411))))
+T c==> c= f0 f1 c==> c= f2 f3 c\/ cMEM f1 f3 c~ cMEM f0 f2
+- (((~ (y = (f h))) /\ (!x. ((~ ((MEM x) t)) \/ (~ (y = (f x)))))) /\ (((x = h) \/ ((MEM x) t)) /\ (y = (f x)))) |- (((MEM x) t) = ((MEM x) t))
+T c==> c/\ c/\ c~ c= f0 * f1 f2 ! c\/ c~ cMEM b0 f3 c~ c= f0 * f1 b0 c/\ c\/ c= f4 f2 cMEM f4 f3 c= f0 * f1 f4 c= cMEM f4 f3 cMEM f4 f3
++ ((\x. ((((y = (f h)) \/ (((MEM x) t) /\ (y = (f x)))) /\ (!x. (((~ (x = h)) /\ (~ ((MEM x) t))) \/ (~ (y = (f x)))))) \/ (((~ (y = (f h))) /\ (!x. ((~ ((MEM x) t)) \/ (~ (y = (f x)))))) /\ (((x = h) \/ ((MEM x) t)) /\ (y = (f x)))))) x) |- (((\x. ((((y = (f h)) \/ (((MEM x) t) /\ (y = (f x)))) /\ (!x. (((~ (x = h)) /\ (~ ((MEM x) t))) \/ (~ (y = (f x)))))) \/ (((~ (y = (f h))) /\ (!x. ((~ ((MEM x) t)) \/ (~ (y = (f x)))))) /\ (((x = h) \/ ((MEM x) t)) /\ (y = (f x)))))) x) /\ F)
+T c==> * / c\/ c/\ c\/ c= f0 * f1 f2 c/\ cMEM b0 f3 c= f0 * f1 b0 ! c\/ c/\ c~ c= b1 f2 c~ cMEM b1 f3 c~ c= f0 * f1 b1 c/\ c/\ c~ c= f0 * f1 f2 ! c\/ c~ cMEM b1 f3 c~ c= f0 * f1 b1 c/\ c\/ c= b0 f2 cMEM b0 f3 c= f0 * f1 b0 f4 c/\ * / c\/ c/\ c\/ c= f0 * f1 f2 c/\ cMEM b0 f3 c= f0 * f1 b0 ! c\/ c/\ c~ c= b1 f2 c~ cMEM b1 f3 c~ c= f0 * f1 b1 c/\ c/\ c~ c= f0 * f1 f2 ! c\/ c~ cMEM b1 f3 c~ c= f0 * f1 b1 c/\ c\/ c= b0 f2 cMEM b0 f3 c= f0 * f1 b0 f4 cF
+- |- ((?x'. (((MEM x) t) /\ (y = (f x')))) = (((MEM x) t) /\ (?x. (y = (f x)))))
+T c= c? / c/\ cMEM f0 f1 c= f2 * f3 b0 c/\ cMEM f0 f1 c? / c= f2 * f3 b0
+- (((MEM x) t) /\ (y = (f x))) |- (((MEM x) t) = ((MEM x) t))
+T c==> c/\ cMEM f0 f1 c= f2 * f3 f0 c= cMEM f0 f1 cMEM f0 f1
++ |- (((!t. (((MAP f) ((CONS h) t)) = ((CONS (f h)) ((MAP f) t)))) ==> ((\t. (((MAP f) ((CONS h) t)) = ((CONS (f h)) ((MAP f) t)))) t)) = ((\t. (((MAP f) ((CONS h) t)) = ((CONS (f h)) ((MAP f) t)))) t))
+T c= c==> ! c= cMAP f0 cCONS f1 b0 cCONS * f0 f1 cMAP f0 b0 * / c= cMAP f0 cCONS f1 b0 cCONS * f0 f1 cMAP f0 b0 f2 * / c= cMAP f0 cCONS f1 b0 cCONS * f0 f1 cMAP f0 b0 f2
+- (((MEM x) t) /\ (y = (f x))) |- (F = F)
+T c==> c/\ cMEM f0 f1 c= f2 * f3 f0 c= cF cF
+- |- ((\y. (!t. (!h. ((~ (((y = (f h)) \/ (?x. (((MEM x) t) /\ (y = (f x))))) = (?x. (((x = h) \/ ((MEM x) t)) /\ (y = (f x)))))) ==> F)))) y)
+T * / ! ! c==> c~ c= c\/ c= b0 * f0 b2 c? / c/\ cMEM b3 b1 c= b0 * f0 b3 c? / c/\ c\/ c= b3 b2 cMEM b3 b1 c= b0 * f0 b3 cF f1
+- (((MEM x) t) /\ (y = (f x))) |- (((~ (_17353 = h)) \/ (~ (y = (f _17353)))) = ((~ (_17353 = h)) \/ (~ ((f x) = (f _17353)))))
+T c==> c/\ cMEM f0 f1 c= f2 * f3 f0 c= c\/ c~ c= f4 f5 c~ c= f2 * f3 f4 c\/ c~ c= f4 f5 c~ c= * f3 f0 * f3 f4
++ |- ((~ F) = T)
+T c= c~ cF cT
++ (((~ (y = (f h))) /\ (!x. ((~ ((MEM x) t)) \/ (~ (y = (f x)))))) /\ (((x = h) \/ ((MEM x) t)) /\ (y = (f x)))) |- ((x = h) \/ ((MEM x) t))
+T c==> c/\ c/\ c~ c= f0 * f1 f2 ! c\/ c~ cMEM b0 f3 c~ c= f0 * f1 b0 c/\ c\/ c= f4 f2 cMEM f4 f3 c= f0 * f1 f4 c\/ c= f4 f2 cMEM f4 f3
++ (((~ (y = (f h))) /\ (!x. ((~ ((MEM x) t)) \/ (~ (y = (f x)))))) /\ (((x = h) \/ ((MEM x) t)) /\ (y = (f x)))) |- ((((~ (y = (f h))) /\ (!x. ((~ ((MEM x) t)) \/ (~ (y = (f x)))))) /\ (((x = h) \/ ((MEM x) t)) /\ (y = (f x)))) /\ F)
+T c==> c/\ c/\ c~ c= f0 * f1 f2 ! c\/ c~ cMEM b0 f3 c~ c= f0 * f1 b0 c/\ c\/ c= f4 f2 cMEM f4 f3 c= f0 * f1 f4 c/\ c/\ c/\ c~ c= f0 * f1 f2 ! c\/ c~ cMEM b0 f3 c~ c= f0 * f1 b0 c/\ c\/ c= f4 f2 cMEM f4 f3 c= f0 * f1 f4 cF
++ |- (((?x. (P x)) \/ (?x. (Q x))) = (?x. ((P x) \/ (Q x))))
+T c= c\/ c? / * f0 b0 c? / * f1 b0 c? / c\/ * f0 b0 * f1 b0
+- |- ((!h. (P h)) = ((P T) /\ (P F)))
+T c= ! * f0 b0 c/\ * f0 cT * f0 cF
++ |- ((\t. (((MAP f) ((CONS h) t)) = ((CONS (f h)) ((MAP f) t)))) t)
+T * / c= cMAP f0 cCONS f1 b0 cCONS * f0 f1 cMAP f0 b0 f2
+- |- (((!y. (!t. (!h. ((~ (((y = (f h)) \/ (?x. (((MEM x) t) /\ (y = (f x))))) = (?x. (((x = h) \/ ((MEM x) t)) /\ (y = (f x)))))) ==> F)))) ==> ((\y. (!t. (!h. ((~ (((y = (f h)) \/ (?x. (((MEM x) t) /\ (y = (f x))))) = (?x. (((x = h) \/ ((MEM x) t)) /\ (y = (f x)))))) ==> F)))) y)) = ((\y. (!t. (!h. ((~ (((y = (f h)) \/ (?x. (((MEM x) t) /\ (y = (f x))))) = (?x. (((x = h) \/ ((MEM x) t)) /\ (y = (f x)))))) ==> F)))) y))
+T c= c==> ! ! ! c==> c~ c= c\/ c= b0 * f0 b2 c? / c/\ cMEM b3 b1 c= b0 * f0 b3 c? / c/\ c\/ c= b3 b2 cMEM b3 b1 c= b0 * f0 b3 cF * / ! ! c==> c~ c= c\/ c= b0 * f0 b2 c? / c/\ cMEM b3 b1 c= b0 * f0 b3 c? / c/\ c\/ c= b3 b2 cMEM b3 b1 c= b0 * f0 b3 cF f1 * / ! ! c==> c~ c= c\/ c= b0 * f0 b2 c? / c/\ cMEM b3 b1 c= b0 * f0 b3 c? / c/\ c\/ c= b3 b2 cMEM b3 b1 c= b0 * f0 b3 cF f1
+- |- ((!y. (!t. (!h. (((y = (f h)) \/ (?x. (((MEM x) t) /\ (y = (f x))))) = (?x. (((x = h) \/ ((MEM x) t)) /\ (y = (f x)))))))) = T)
+T c= ! ! ! c= c\/ c= b0 * f0 b2 c? / c/\ cMEM b3 b1 c= b0 * f0 b3 c? / c/\ c\/ c= b3 b2 cMEM b3 b1 c= b0 * f0 b3 cT
+- |- (((!t1. (!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))))) ==> ((\t1. (!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))))) t1)) = ((\t1. (!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))))) t1))
+T c= c==> ! ! ! c= c\/ b0 c\/ b1 b2 c\/ c\/ b0 b1 b2 * / ! ! c= c\/ b0 c\/ b1 b2 c\/ c\/ b0 b1 b2 f0 * / ! ! c= c\/ b0 c\/ b1 b2 c\/ c\/ b0 b1 b2 f0
++ |- ((\f. (((MAP f) NIL) = NIL)) f)
+T * / c= cMAP b0 cNIL cNIL f0
+- |- ((~ (~ t)) = t)
+T c= c~ c~ f0 f0
++ |- ((!l. (((MEM y) ((MAP f) l)) = (?x. (((MEM x) l) /\ (y = (f x)))))) = T)
+T c= ! c= cMEM f0 cMAP f1 b0 c? / c/\ cMEM b1 b0 c= f0 * f1 b1 cT
++ (((MEM y) ((MAP f) t)) = (?x. (((MEM x) t) /\ (y = (f x))))) |- ((((MEM y) ((MAP f) t)) = (?x. (((MEM x) t) /\ (y = (f x))))) /\ (((MEM y) ((MAP f) ((CONS h) t))) = (?x. (((MEM x) ((CONS h) t)) /\ (y = (f x))))))
+T c==> c= cMEM f0 cMAP f1 f2 c? / c/\ cMEM b0 f2 c= f0 * f1 b0 c/\ c= cMEM f0 cMAP f1 f2 c? / c/\ cMEM b0 f2 c= f0 * f1 b0 c= cMEM f0 cMAP f1 cCONS f3 f2 c? / c/\ cMEM b0 cCONS f3 f2 c= f0 * f1 b0
++ (~ (((y = (f h)) \/ (?x. (((MEM x) t) /\ (y = (f x))))) = (?x. (((x = h) \/ ((MEM x) t)) /\ (y = (f x)))))) |- (((?x. ((((y = (f h)) \/ (((MEM x) t) /\ (y = (f x)))) /\ (!x. (((~ (x = h)) /\ (~ ((MEM x) t))) \/ (~ (y = (f x)))))) \/ (((~ (y = (f h))) /\ (!x. ((~ ((MEM x) t)) \/ (~ (y = (f x)))))) /\ (((x = h) \/ ((MEM x) t)) /\ (y = (f x)))))) ==> F) = F)
+T c==> c~ c= c\/ c= f0 * f1 f2 c? / c/\ cMEM b0 f3 c= f0 * f1 b0 c? / c/\ c\/ c= b0 f2 cMEM b0 f3 c= f0 * f1 b0 c= c==> c? / c\/ c/\ c\/ c= f0 * f1 f2 c/\ cMEM b0 f3 c= f0 * f1 b0 ! c\/ c/\ c~ c= b1 f2 c~ cMEM b1 f3 c~ c= f0 * f1 b1 c/\ c/\ c~ c= f0 * f1 f2 ! c\/ c~ cMEM b1 f3 c~ c= f0 * f1 b1 c/\ c\/ c= b0 f2 cMEM b0 f3 c= f0 * f1 b0 cF cF
++ ((\x. ((((y = (f h)) \/ (((MEM x) t) /\ (y = (f x)))) /\ (!x. (((~ (x = h)) /\ (~ ((MEM x) t))) \/ (~ (y = (f x)))))) \/ (((~ (y = (f h))) /\ (!x. ((~ ((MEM x) t)) \/ (~ (y = (f x)))))) /\ (((x = h) \/ ((MEM x) t)) /\ (y = (f x)))))) x) |- ((((((y = (f h)) \/ (((MEM x) t) /\ (y = (f x)))) /\ (!x. (((~ (x = h)) /\ (~ ((MEM x) t))) \/ (~ (y = (f x)))))) \/ (((~ (y = (f h))) /\ (!x. ((~ ((MEM x) t)) \/ (~ (y = (f x)))))) /\ (((x = h) \/ ((MEM x) t)) /\ (y = (f x))))) ==> F) = F)
+T c==> * / c\/ c/\ c\/ c= f0 * f1 f2 c/\ cMEM b0 f3 c= f0 * f1 b0 ! c\/ c/\ c~ c= b1 f2 c~ cMEM b1 f3 c~ c= f0 * f1 b1 c/\ c/\ c~ c= f0 * f1 f2 ! c\/ c~ cMEM b1 f3 c~ c= f0 * f1 b1 c/\ c\/ c= b0 f2 cMEM b0 f3 c= f0 * f1 b0 f4 c= c==> c\/ c/\ c\/ c= f0 * f1 f2 c/\ cMEM f4 f3 c= f0 * f1 f4 ! c\/ c/\ c~ c= b0 f2 c~ cMEM b0 f3 c~ c= f0 * f1 b0 c/\ c/\ c~ c= f0 * f1 f2 ! c\/ c~ cMEM b0 f3 c~ c= f0 * f1 b0 c/\ c\/ c= f4 f2 cMEM f4 f3 c= f0 * f1 f4 cF cF
++ |- ((((((MEM y) ((MAP f) NIL)) = (?x. (((MEM x) NIL) /\ (y = (f x))))) /\ (!h. (!t. ((((MEM y) ((MAP f) t)) = (?x. (((MEM x) t) /\ (y = (f x))))) ==> (((MEM y) ((MAP f) ((CONS h) t))) = (?x. (((MEM x) ((CONS h) t)) /\ (y = (f x))))))))) ==> (!l. (((MEM y) ((MAP f) l)) = (?x. (((MEM x) l) /\ (y = (f x))))))) = (!l. (((MEM y) ((MAP f) l)) = (?x. (((MEM x) l) /\ (y = (f x)))))))
+T c= c==> c/\ c= cMEM f0 cMAP f1 cNIL c? / c/\ cMEM b0 cNIL c= f0 * f1 b0 ! ! c==> c= cMEM f0 cMAP f1 b1 c? / c/\ cMEM b2 b1 c= f0 * f1 b2 c= cMEM f0 cMAP f1 cCONS b0 b1 c? / c/\ cMEM b2 cCONS b0 b1 c= f0 * f1 b2 ! c= cMEM f0 cMAP f1 b0 c? / c/\ cMEM b1 b0 c= f0 * f1 b1 ! c= cMEM f0 cMAP f1 b0 c? / c/\ cMEM b1 b0 c= f0 * f1 b1
++ (y = (f h)), (((y = (f h)) \/ (((MEM x) t) /\ (y = (f x)))) /\ (!x. (((~ (x = h)) /\ (~ ((MEM x) t))) \/ (~ (y = (f x)))))) |- ((~ (_17352 = h)) \/ (~ ((f h) = (f _17352))))
+T c==> c= f0 * f1 f2 c==> c/\ c\/ c= f0 * f1 f2 c/\ cMEM f3 f4 c= f0 * f1 f3 ! c\/ c/\ c~ c= b0 f2 c~ cMEM b0 f4 c~ c= f0 * f1 b0 c\/ c~ c= f5 f2 c~ c= * f1 f2 * f1 f5
+- (x = h) |- (((~ ((MEM _17354) t)) \/ (~ (y = (f _17354)))) = ((~ ((MEM _17354) t)) \/ (~ (y = (f _17354)))))
+T c==> c= f0 f1 c= c\/ c~ cMEM f2 f3 c~ c= f4 * f5 f2 c\/ c~ cMEM f2 f3 c~ c= f4 * f5 f2
++ (((~ (y = (f h))) /\ (!x. ((~ ((MEM x) t)) \/ (~ (y = (f x)))))) /\ (((x = h) \/ ((MEM x) t)) /\ (y = (f x)))) |- ((x = h) ==> F)
+T c==> c/\ c/\ c~ c= f0 * f1 f2 ! c\/ c~ cMEM b0 f3 c~ c= f0 * f1 b0 c/\ c\/ c= f4 f2 cMEM f4 f3 c= f0 * f1 f4 c==> c= f4 f2 cF
+- |- ((?x. (P /\ (Q x))) = (P /\ (?x. (Q x))))
+T c= c? / c/\ f0 * f1 b0 c/\ f0 c? / * f1 b0
++ |- (((((MEM y) ((MAP f) t)) = (?x. (((MEM x) t) /\ (y = (f x))))) ==> (((MEM y) ((MAP f) ((CONS h) t))) = (?x. (((MEM x) ((CONS h) t)) /\ (y = (f x)))))) = T)
+T c= c==> c= cMEM f0 cMAP f1 f2 c? / c/\ cMEM b0 f2 c= f0 * f1 b0 c= cMEM f0 cMAP f1 cCONS f3 f2 c? / c/\ cMEM b0 cCONS f3 f2 c= f0 * f1 b0 cT
++ ((((y = (f h)) \/ (((MEM x) t) /\ (y = (f x)))) /\ (!x. (((~ (x = h)) /\ (~ ((MEM x) t))) \/ (~ (y = (f x)))))) \/ (((~ (y = (f h))) /\ (!x. ((~ ((MEM x) t)) \/ (~ (y = (f x)))))) /\ (((x = h) \/ ((MEM x) t)) /\ (y = (f x))))) |- (((((y = (f h)) \/ (((MEM x) t) /\ (y = (f x)))) /\ (!x. (((~ (x = h)) /\ (~ ((MEM x) t))) \/ (~ (y = (f x)))))) \/ (((~ (y = (f h))) /\ (!x. ((~ ((MEM x) t)) \/ (~ (y = (f x)))))) /\ (((x = h) \/ ((MEM x) t)) /\ (y = (f x))))) /\ F)
+T c==> c\/ c/\ c\/ c= f0 * f1 f2 c/\ cMEM f3 f4 c= f0 * f1 f3 ! c\/ c/\ c~ c= b0 f2 c~ cMEM b0 f4 c~ c= f0 * f1 b0 c/\ c/\ c~ c= f0 * f1 f2 ! c\/ c~ cMEM b0 f4 c~ c= f0 * f1 b0 c/\ c\/ c= f3 f2 cMEM f3 f4 c= f0 * f1 f3 c/\ c\/ c/\ c\/ c= f0 * f1 f2 c/\ cMEM f3 f4 c= f0 * f1 f3 ! c\/ c/\ c~ c= b0 f2 c~ cMEM b0 f4 c~ c= f0 * f1 b0 c/\ c/\ c~ c= f0 * f1 f2 ! c\/ c~ cMEM b0 f4 c~ c= f0 * f1 b0 c/\ c\/ c= f3 f2 cMEM f3 f4 c= f0 * f1 f3 cF
++ (y = (f h)), (((y = (f h)) \/ (((MEM x) t) /\ (y = (f x)))) /\ (!x. (((~ (x = h)) /\ (~ ((MEM x) t))) \/ (~ (y = (f x)))))) |- (((_17352 = h) /\ ((f h) = (f _17352))) ==> F)
+T c==> c= f0 * f1 f2 c==> c/\ c\/ c= f0 * f1 f2 c/\ cMEM f3 f4 c= f0 * f1 f3 ! c\/ c/\ c~ c= b0 f2 c~ cMEM b0 f4 c~ c= f0 * f1 b0 c==> c/\ c= f5 f2 c= * f1 f2 * f1 f5 cF
++ |- ((((h = h) /\ ((f h) = (f h))) ==> F) = F)
+T c= c==> c/\ c= f0 f0 c= * f1 f0 * f1 f0 cF cF
+- |- ((!x'. ((~ ((MEM x) t)) \/ (~ (y = (f x'))))) = ((~ ((MEM x) t)) \/ (!x. (~ (y = (f x))))))
+T c= ! c\/ c~ cMEM f0 f1 c~ c= f2 * f3 b0 c\/ c~ cMEM f0 f1 ! c~ c= f2 * f3 b0
+- (x = h) |- ((~ (y = (f h))) = (~ (y = (f h))))
+T c==> c= f0 f1 c= c~ c= f2 * f3 f1 c~ c= f2 * f3 f1
+- (~ (h = h)) |- ((~ (h = h)) /\ (h = h))
+T c==> c~ c= f0 f0 c/\ c~ c= f0 f0 c= f0 f0
+- (~ ((MEM x) t)), (((MEM x) t) /\ (y = (f x))) |- ((~ ((MEM x) t)) /\ ((MEM x) t))
+T c==> c~ cMEM f0 f1 c==> c/\ cMEM f0 f1 c= f2 * f3 f0 c/\ c~ cMEM f0 f1 cMEM f0 f1
+- (x = h), (((~ (y = (f h))) /\ (!x. ((~ ((MEM x) t)) \/ (~ (y = (f x)))))) /\ (((x = h) \/ ((MEM x) t)) /\ (y = (f x)))) |- ((~ ((MEM _17354) t)) \/ (~ ((f h) = (f _17354))))
+T c==> c= f0 f1 c==> c/\ c/\ c~ c= f2 * f3 f1 ! c\/ c~ cMEM b0 f4 c~ c= f2 * f3 b0 c/\ c\/ c= f0 f1 cMEM f0 f4 c= f2 * f3 f0 c\/ c~ cMEM f5 f4 c~ c= * f3 f1 * f3 f5
++ |- ((P /\ (?x. (Q x))) = (?x. (P /\ (Q x))))
+T c= c/\ f0 c? / * f1 b0 c? / c/\ f0 * f1 b0
+- (y = (f h)) |- (((~ ((MEM _17352) t)) \/ (~ (y = (f _17352)))) = ((~ ((MEM _17352) t)) \/ (~ ((f h) = (f _17352)))))
+T c==> c= f0 * f1 f2 c= c\/ c~ cMEM f3 f4 c~ c= f0 * f1 f3 c\/ c~ cMEM f3 f4 c~ c= * f1 f2 * f1 f3
+- |- (((!f. (!y. (!t. (!h. ((~ (((y = (f h)) \/ (?x. (((MEM x) t) /\ (y = (f x))))) = (?x. (((x = h) \/ ((MEM x) t)) /\ (y = (f x)))))) ==> F))))) ==> ((\f. (!y. (!t. (!h. ((~ (((y = (f h)) \/ (?x. (((MEM x) t) /\ (y = (f x))))) = (?x. (((x = h) \/ ((MEM x) t)) /\ (y = (f x)))))) ==> F))))) f)) = ((\f. (!y. (!t. (!h. ((~ (((y = (f h)) \/ (?x. (((MEM x) t) /\ (y = (f x))))) = (?x. (((x = h) \/ ((MEM x) t)) /\ (y = (f x)))))) ==> F))))) f))
+T c= c==> ! ! ! ! c==> c~ c= c\/ c= b1 * b0 b3 c? / c/\ cMEM b4 b2 c= b1 * b0 b4 c? / c/\ c\/ c= b4 b3 cMEM b4 b2 c= b1 * b0 b4 cF * / ! ! ! c==> c~ c= c\/ c= b1 * b0 b3 c? / c/\ cMEM b4 b2 c= b1 * b0 b4 c? / c/\ c\/ c= b4 b3 cMEM b4 b2 c= b1 * b0 b4 cF f0 * / ! ! ! c==> c~ c= c\/ c= b1 * b0 b3 c? / c/\ cMEM b4 b2 c= b1 * b0 b4 c? / c/\ c\/ c= b4 b3 cMEM b4 b2 c= b1 * b0 b4 cF f0
+- (((~ (y = (f h))) /\ (!x. ((~ ((MEM x) t)) \/ (~ (y = (f x)))))) /\ (((x = h) \/ ((MEM x) t)) /\ (y = (f x)))) |- ((~ (y = (f h))) = (~ ((f x) = (f h))))
+T c==> c/\ c/\ c~ c= f0 * f1 f2 ! c\/ c~ cMEM b0 f3 c~ c= f0 * f1 b0 c/\ c\/ c= f4 f2 cMEM f4 f3 c= f0 * f1 f4 c= c~ c= f0 * f1 f2 c~ c= * f1 f4 * f1 f2
+- |- ((((~ (((y = (f h)) \/ (?x. (((MEM x) t) /\ (y = (f x))))) = (?x. (((x = h) \/ ((MEM x) t)) /\ (y = (f x)))))) ==> F) ==> ((~ (((y = (f h)) \/ (?x. (((MEM x) t) /\ (y = (f x))))) = (?x. (((x = h) \/ ((MEM x) t)) /\ (y = (f x)))))) ==> F)) ==> (((~ (((y = (f h)) \/ (?x. (((MEM x) t) /\ (y = (f x))))) = (?x. (((x = h) \/ ((MEM x) t)) /\ (y = (f x)))))) ==> F) ==> ((~ (((y = (f h)) \/ (?x. (((MEM x) t) /\ (y = (f x))))) = (?x. (((x = h) \/ ((MEM x) t)) /\ (y = (f x)))))) ==> F)))
+T c==> c==> c==> c~ c= c\/ c= f0 * f1 f2 c? / c/\ cMEM b0 f3 c= f0 * f1 b0 c? / c/\ c\/ c= b0 f2 cMEM b0 f3 c= f0 * f1 b0 cF c==> c~ c= c\/ c= f0 * f1 f2 c? / c/\ cMEM b0 f3 c= f0 * f1 b0 c? / c/\ c\/ c= b0 f2 cMEM b0 f3 c= f0 * f1 b0 cF c==> c==> c~ c= c\/ c= f0 * f1 f2 c? / c/\ cMEM b0 f3 c= f0 * f1 b0 c? / c/\ c\/ c= b0 f2 cMEM b0 f3 c= f0 * f1 b0 cF c==> c~ c= c\/ c= f0 * f1 f2 c? / c/\ cMEM b0 f3 c= f0 * f1 b0 c? / c/\ c\/ c= b0 f2 cMEM b0 f3 c= f0 * f1 b0 cF
+- (~ ((MEM x) t)), ((MEM x) t) |- ((~ ((MEM x) t)) /\ ((MEM x) t))
+T c==> c~ cMEM f0 f1 c==> cMEM f0 f1 c/\ c~ cMEM f0 f1 cMEM f0 f1
+- (~ F), (x = h), (((~ (y = (f h))) /\ (!x. ((~ ((MEM x) t)) \/ (~ (y = (f x)))))) /\ (((x = h) \/ ((MEM x) t)) /\ (y = (f x)))) |- ((~ F) /\ F)
+T c==> c~ cF c==> c= f0 f1 c==> c/\ c/\ c~ c= f2 * f3 f1 ! c\/ c~ cMEM b0 f4 c~ c= f2 * f3 b0 c/\ c\/ c= f0 f1 cMEM f0 f4 c= f2 * f3 f0 c/\ c~ cF cF
+- |- ((?x. ((P x) /\ Q)) = ((?x. (P x)) /\ Q))
+T c= c? / c/\ * f0 b0 f1 c/\ c? / * f0 b0 f1
+- (x = h), (((~ (y = (f h))) /\ (!x. ((~ ((MEM x) t)) \/ (~ (y = (f x)))))) /\ (((x = h) \/ ((MEM x) t)) /\ (y = (f x)))) |- (F = F)
+T c==> c= f0 f1 c==> c/\ c/\ c~ c= f2 * f3 f1 ! c\/ c~ cMEM b0 f4 c~ c= f2 * f3 b0 c/\ c\/ c= f0 f1 cMEM f0 f4 c= f2 * f3 f0 c= cF cF
+- (((MEM x) t) /\ (y = (f x))) |- ((~ ((MEM x) t)) ==> ((MEM x) t))
+T c==> c/\ cMEM f0 f1 c= f2 * f3 f0 c==> c~ cMEM f0 f1 cMEM f0 f1

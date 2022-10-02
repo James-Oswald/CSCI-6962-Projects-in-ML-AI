@@ -1,0 +1,942 @@
+N FRONTIER_UNION
+C |- (!s. (!t. ((((closure s) INTER (closure t)) = EMPTY) ==> ((frontier (s UNION t)) = ((frontier s) UNION (frontier t))))))
+T c==> c= * * part cINTER * part cclosure f0 * part cclosure f1 part cEMPTY c= * part cfrontier * * part cUNION f0 f1 * * part cUNION * part cfrontier f0 * part cfrontier f1
+D TRUTH
+A |- T
+T cT
+D BOOL_CASES_AX
+A |- (!t. ((t = T) \/ (t = F)))
+T c\/ c= f0 cT c= f0 cF
+D NOT_CLAUSES
+A |- ((!t. ((~ (~ t)) = t)) /\ (((~ T) = F) /\ ((~ F) = T)))
+T c/\ ! c= c~ c~ b0 b0 c/\ c= c~ cT cF c= c~ cF cT
+D IN
+A |- (!P. (!x. ((x IN P) = (P x))))
+T c= cIN f0 f1 * f1 f0
+D EXTENSION
+A |- (!s. (!t. ((s = t) = (!x. ((x IN s) = (x IN t))))))
+T c= c= f0 f1 ! c= cIN b0 f0 cIN b0 f1
+D SUBSET
+A |- (!s. (!t. ((s SUBSET t) = (!x. ((x IN s) ==> (x IN t))))))
+T c= cSUBSET f0 f1 ! c==> cIN b0 f0 cIN b0 f1
+D NOT_IN_EMPTY
+A |- (!x. (~ (x IN EMPTY)))
+T c~ cIN f0 part cEMPTY
+D IN_UNIV
+A |- (!x. (x IN UNIV))
+T cIN f0 part cUNIV
+D IN_UNION
+A |- (!s. (!t. (!x. ((x IN (s UNION t)) = ((x IN s) \/ (x IN t))))))
+T c= cIN f0 * * part cUNION f1 f2 c\/ cIN f0 f1 cIN f0 f2
+D IN_INTER
+A |- (!s. (!t. (!x. ((x IN (s INTER t)) = ((x IN s) /\ (x IN t))))))
+T c= cIN f0 * * part cINTER f1 f2 c/\ cIN f0 f1 cIN f0 f2
+D IN_DIFF
+A |- (!s. (!t. (!x. ((x IN (s DIFF t)) = ((x IN s) /\ (~ (x IN t)))))))
+T c= cIN f0 * * part cDIFF f1 f2 c/\ cIN f0 f1 c~ cIN f0 f2
+D SUBSET_ANTISYM
+A |- (!s. (!t. (((s SUBSET t) /\ (t SUBSET s)) ==> (s = t))))
+T c==> c/\ cSUBSET f0 f1 cSUBSET f1 f0 c= f0 f1
+D UNION_COMM
+A |- (!s. (!t. ((s UNION t) = (t UNION s))))
+T c= * * part cUNION f0 f1 * * part cUNION f1 f0
+D INTER_COMM
+A |- (!s. (!t. ((s INTER t) = (t INTER s))))
+T c= * * part cINTER f0 f1 * * part cINTER f1 f0
+D SUBSET_DIFF
+A |- (!s. (!t. ((s DIFF t) SUBSET s)))
+T cSUBSET * * part cDIFF f0 f1 f0
+D SUBSET_INTERIOR
+A |- (!s. (!t. ((s SUBSET t) ==> ((interior s) SUBSET (interior t)))))
+T c==> cSUBSET f0 f1 cSUBSET * part cinterior f0 * part cinterior f1
+D INTERIOR_INTER
+A |- (!s. (!t. ((interior (s INTER t)) = ((interior s) INTER (interior t)))))
+T c= * part cinterior * * part cINTER f0 f1 * * part cINTER * part cinterior f0 * part cinterior f1
+D CLOSURE_UNION
+A |- (!s. (!t. ((closure (s UNION t)) = ((closure s) UNION (closure t)))))
+T c= * part cclosure * * part cUNION f0 f1 * * part cUNION * part cclosure f0 * part cclosure f1
+D INTERIOR_COMPLEMENT
+A |- (!s. ((interior (UNIV DIFF s)) = (UNIV DIFF (closure s))))
+T c= * part cinterior * * part cDIFF part cUNIV f0 * * part cDIFF part cUNIV * part cclosure f0
+D frontier
+A |- (!s. ((frontier s) = ((closure s) DIFF (interior s))))
+T c= * part cfrontier f0 * * part cDIFF * part cclosure f0 * part cinterior f0
+D FRONTIER_UNION_SUBSET
+A |- (!s. (!t. ((frontier (s UNION t)) SUBSET ((frontier s) UNION (frontier t)))))
+T cSUBSET * part cfrontier * * part cUNION f0 f1 * * part cUNION * part cfrontier f0 * part cfrontier f1
+- ((~ ((!x. ((((closure s) x) /\ (~ ((interior s) x))) ==> ((closure s) x))) /\ (!x. ((((closure t) x) /\ (~ ((interior t) x))) ==> ((closure t) x))))) ==> F), (((~ ((!x. ((((closure s) x) /\ (~ ((interior s) x))) ==> ((closure s) x))) /\ (!x. ((((closure t) x) /\ (~ ((interior t) x))) ==> ((closure t) x))))) ==> F) ==> ((~ ((!x. ((((closure s) x) /\ (~ ((interior s) x))) ==> ((closure s) x))) /\ (!x. ((((closure t) x) /\ (~ ((interior t) x))) ==> ((closure t) x))))) ==> F)) |- ((((~ ((!x. ((((closure s) x) /\ (~ ((interior s) x))) ==> ((closure s) x))) /\ (!x. ((((closure t) x) /\ (~ ((interior t) x))) ==> ((closure t) x))))) ==> F) ==> ((~ ((!x. ((((closure s) x) /\ (~ ((interior s) x))) ==> ((closure s) x))) /\ (!x. ((((closure t) x) /\ (~ ((interior t) x))) ==> ((closure t) x))))) ==> F)) /\ ((~ ((!x. ((((closure s) x) /\ (~ ((interior s) x))) ==> ((closure s) x))) /\ (!x. ((((closure t) x) /\ (~ ((interior t) x))) ==> ((closure t) x))))) ==> F))
+T c==> c==> c~ c/\ ! c==> c/\ cclosure f0 b0 c~ cinterior f0 b0 cclosure f0 b0 ! c==> c/\ cclosure f1 b0 c~ cinterior f1 b0 cclosure f1 b0 cF c==> c==> c==> c~ c/\ ! c==> c/\ cclosure f0 b0 c~ cinterior f0 b0 cclosure f0 b0 ! c==> c/\ cclosure f1 b0 c~ cinterior f1 b0 cclosure f1 b0 cF c==> c~ c/\ ! c==> c/\ cclosure f0 b0 c~ cinterior f0 b0 cclosure f0 b0 ! c==> c/\ cclosure f1 b0 c~ cinterior f1 b0 cclosure f1 b0 cF c/\ c==> c==> c~ c/\ ! c==> c/\ cclosure f0 b0 c~ cinterior f0 b0 cclosure f0 b0 ! c==> c/\ cclosure f1 b0 c~ cinterior f1 b0 cclosure f1 b0 cF c==> c~ c/\ ! c==> c/\ cclosure f0 b0 c~ cinterior f0 b0 cclosure f0 b0 ! c==> c/\ cclosure f1 b0 c~ cinterior f1 b0 cclosure f1 b0 cF c==> c~ c/\ ! c==> c/\ cclosure f0 b0 c~ cinterior f0 b0 cclosure f0 b0 ! c==> c/\ cclosure f1 b0 c~ cinterior f1 b0 cclosure f1 b0 cF
+- |- (((!ti. (!si. (!c. ((~ ((!x. ((ti x) ==> (si x))) ==> (!x. (~ (((c x) /\ (~ (si x))) /\ (ti x)))))) ==> F)))) ==> ((\ti. (!si. (!c. ((~ ((!x. ((ti x) ==> (si x))) ==> (!x. (~ (((c x) /\ (~ (si x))) /\ (ti x)))))) ==> F)))) ti)) = ((\ti. (!si. (!c. ((~ ((!x. ((ti x) ==> (si x))) ==> (!x. (~ (((c x) /\ (~ (si x))) /\ (ti x)))))) ==> F)))) ti))
+T c= c==> ! ! ! c==> c~ c==> ! c==> * b0 b3 * b1 b3 ! c~ c/\ c/\ * b2 b3 c~ * b1 b3 * b0 b3 cF * / ! ! c==> c~ c==> ! c==> * b0 b3 * b1 b3 ! c~ c/\ c/\ * b2 b3 c~ * b1 b3 * b0 b3 cF f0 * / ! ! c==> c~ c==> ! c==> * b0 b3 * b1 b3 ! c~ c/\ c/\ * b2 b3 c~ * b1 b3 * b0 b3 cF f0
++ (ft x), (k x), (((!x. ((fs x) ==> (cs x))) /\ (!x. ((ft x) ==> (ct x)))) /\ ((!x. (~ ((k x) /\ (fs x)))) /\ (!x. (~ ((k x) /\ (ft x)))))) |- F
+T c==> * f0 f1 c==> * f2 f1 c==> c/\ c/\ ! c==> * f3 b0 * f4 b0 ! c==> * f0 b0 * f5 b0 c/\ ! c~ c/\ * f2 b0 * f3 b0 ! c~ c/\ * f2 b0 * f0 b0 cF
+- |- (((((~ ((!x. (~ ((s x) /\ (t x)))) ==> (((!x. ((s' x) ==> (s x))) /\ (!x. (~ ((s' x) /\ ((u x) /\ (~ (t x))))))) ==> (!x. (~ ((u x) /\ (s' x))))))) ==> F) ==> ((~ ((!x. (~ ((s x) /\ (t x)))) ==> (((!x. ((s' x) ==> (s x))) /\ (!x. (~ ((s' x) /\ ((u x) /\ (~ (t x))))))) ==> (!x. (~ ((u x) /\ (s' x))))))) ==> F)) ==> (((~ ((!x. (~ ((s x) /\ (t x)))) ==> (((!x. ((s' x) ==> (s x))) /\ (!x. (~ ((s' x) /\ ((u x) /\ (~ (t x))))))) ==> (!x. (~ ((u x) /\ (s' x))))))) ==> F) ==> ((~ ((!x. (~ ((s x) /\ (t x)))) ==> (((!x. ((s' x) ==> (s x))) /\ (!x. (~ ((s' x) /\ ((u x) /\ (~ (t x))))))) ==> (!x. (~ ((u x) /\ (s' x))))))) ==> F))) = (((~ ((!x. (~ ((s x) /\ (t x)))) ==> (((!x. ((s' x) ==> (s x))) /\ (!x. (~ ((s' x) /\ ((u x) /\ (~ (t x))))))) ==> (!x. (~ ((u x) /\ (s' x))))))) ==> F) ==> ((~ ((!x. (~ ((s x) /\ (t x)))) ==> (((!x. ((s' x) ==> (s x))) /\ (!x. (~ ((s' x) /\ ((u x) /\ (~ (t x))))))) ==> (!x. (~ ((u x) /\ (s' x))))))) ==> F)))
+T c= c==> c==> c==> c~ c==> ! c~ c/\ * f0 b0 * f1 b0 c==> c/\ ! c==> * f2 b0 * f0 b0 ! c~ c/\ * f2 b0 c/\ * f3 b0 c~ * f1 b0 ! c~ c/\ * f3 b0 * f2 b0 cF c==> c~ c==> ! c~ c/\ * f0 b0 * f1 b0 c==> c/\ ! c==> * f2 b0 * f0 b0 ! c~ c/\ * f2 b0 c/\ * f3 b0 c~ * f1 b0 ! c~ c/\ * f3 b0 * f2 b0 cF c==> c==> c~ c==> ! c~ c/\ * f0 b0 * f1 b0 c==> c/\ ! c==> * f2 b0 * f0 b0 ! c~ c/\ * f2 b0 c/\ * f3 b0 c~ * f1 b0 ! c~ c/\ * f3 b0 * f2 b0 cF c==> c~ c==> ! c~ c/\ * f0 b0 * f1 b0 c==> c/\ ! c==> * f2 b0 * f0 b0 ! c~ c/\ * f2 b0 c/\ * f3 b0 c~ * f1 b0 ! c~ c/\ * f3 b0 * f2 b0 cF c==> c==> c~ c==> ! c~ c/\ * f0 b0 * f1 b0 c==> c/\ ! c==> * f2 b0 * f0 b0 ! c~ c/\ * f2 b0 c/\ * f3 b0 c~ * f1 b0 ! c~ c/\ * f3 b0 * f2 b0 cF c==> c~ c==> ! c~ c/\ * f0 b0 * f1 b0 c==> c/\ ! c==> * f2 b0 * f0 b0 ! c~ c/\ * f2 b0 c/\ * f3 b0 c~ * f1 b0 ! c~ c/\ * f3 b0 * f2 b0 cF
++ |- ((t = F) = (~ t))
+T c= c= f0 cF c~ f0
+- (((closure s) x) /\ (~ ((interior s) x))) |- ((((closure s) x) ==> F) = F)
+T c==> c/\ cclosure f0 f1 c~ cinterior f0 f1 c= c==> cclosure f0 f1 cF cF
+- ((((~ (s x)) /\ (~ (t x))) \/ (t x)) /\ ((s x) /\ (~ (t x)))) |- ((~ (s x)) ==> (s x))
+T c==> c/\ c\/ c/\ c~ * f0 f1 c~ * f2 f1 * f2 f1 c/\ * f0 f1 c~ * f2 f1 c==> c~ * f0 f1 * f0 f1
+- |- (((!t. (!s. ((~ (!x. ((((s x) \/ (t x)) /\ (~ (t x))) = ((s x) /\ (~ (t x)))))) ==> F))) ==> ((\t. (!s. ((~ (!x. ((((s x) \/ (t x)) /\ (~ (t x))) = ((s x) /\ (~ (t x)))))) ==> F))) t)) = ((\t. (!s. ((~ (!x. ((((s x) \/ (t x)) /\ (~ (t x))) = ((s x) /\ (~ (t x)))))) ==> F))) t))
+T c= c==> ! ! c==> c~ ! c= c/\ c\/ * b1 b2 * b0 b2 c~ * b0 b2 c/\ * b1 b2 c~ * b0 b2 cF * / ! c==> c~ ! c= c/\ c\/ * b1 b2 * b0 b2 c~ * b0 b2 c/\ * b1 b2 c~ * b0 b2 cF f0 * / ! c==> c~ ! c= c/\ c\/ * b1 b2 * b0 b2 c~ * b0 b2 c/\ * b1 b2 c~ * b0 b2 cF f0
++ |- (((!t. ((s UNION t) = (t UNION s))) ==> ((\t. ((s UNION t) = (t UNION s))) t)) = ((\t. ((s UNION t) = (t UNION s))) t))
+T c= c==> ! c= * * part cUNION f0 b0 * * part cUNION b0 f0 * / c= * * part cUNION f0 b0 * * part cUNION b0 f0 f1 * / c= * * part cUNION f0 b0 * * part cUNION b0 f0 f1
+- |- (((!k. (!ct. (!cs. (!ft. (!fs. ((~ ((((!x. ((fs x) ==> (cs x))) /\ (!x. ((ft x) ==> (ct x)))) /\ ((!x. (~ ((k x) /\ (fs x)))) /\ (!x. (~ ((k x) /\ (ft x)))))) ==> (!x. (((fs x) \/ (ft x)) ==> (((cs x) \/ (ct x)) /\ (~ (k x))))))) ==> F)))))) ==> ((\k. (!ct. (!cs. (!ft. (!fs. ((~ ((((!x. ((fs x) ==> (cs x))) /\ (!x. ((ft x) ==> (ct x)))) /\ ((!x. (~ ((k x) /\ (fs x)))) /\ (!x. (~ ((k x) /\ (ft x)))))) ==> (!x. (((fs x) \/ (ft x)) ==> (((cs x) \/ (ct x)) /\ (~ (k x))))))) ==> F)))))) k)) = ((\k. (!ct. (!cs. (!ft. (!fs. ((~ ((((!x. ((fs x) ==> (cs x))) /\ (!x. ((ft x) ==> (ct x)))) /\ ((!x. (~ ((k x) /\ (fs x)))) /\ (!x. (~ ((k x) /\ (ft x)))))) ==> (!x. (((fs x) \/ (ft x)) ==> (((cs x) \/ (ct x)) /\ (~ (k x))))))) ==> F)))))) k))
+T c= c==> ! ! ! ! ! c==> c~ c==> c/\ c/\ ! c==> * b4 b5 * b2 b5 ! c==> * b3 b5 * b1 b5 c/\ ! c~ c/\ * b0 b5 * b4 b5 ! c~ c/\ * b0 b5 * b3 b5 ! c==> c\/ * b4 b5 * b3 b5 c/\ c\/ * b2 b5 * b1 b5 c~ * b0 b5 cF * / ! ! ! ! c==> c~ c==> c/\ c/\ ! c==> * b4 b5 * b2 b5 ! c==> * b3 b5 * b1 b5 c/\ ! c~ c/\ * b0 b5 * b4 b5 ! c~ c/\ * b0 b5 * b3 b5 ! c==> c\/ * b4 b5 * b3 b5 c/\ c\/ * b2 b5 * b1 b5 c~ * b0 b5 cF f0 * / ! ! ! ! c==> c~ c==> c/\ c/\ ! c==> * b4 b5 * b2 b5 ! c==> * b3 b5 * b1 b5 c/\ ! c~ c/\ * b0 b5 * b4 b5 ! c~ c/\ * b0 b5 * b3 b5 ! c==> c\/ * b4 b5 * b3 b5 c/\ c\/ * b2 b5 * b1 b5 c~ * b0 b5 cF f0
++ |- (((((closure s) DIFF (interior s)) SUBSET (closure s)) /\ (((closure t) DIFF (interior t)) SUBSET (closure t))) = (((frontier s) SUBSET (closure s)) /\ ((frontier t) SUBSET (closure t))))
+T c= c/\ cSUBSET * * part cDIFF * part cclosure f0 * part cinterior f0 * part cclosure f0 cSUBSET * * part cDIFF * part cclosure f1 * part cinterior f1 * part cclosure f1 c/\ cSUBSET * part cfrontier f0 * part cclosure f0 cSUBSET * part cfrontier f1 * part cclosure f1
+- (fs x), ((~ (cs x)) /\ (~ (ct x))), (((!x. ((fs x) ==> (cs x))) /\ (!x. ((ft x) ==> (ct x)))) /\ ((!x. (~ ((k x) /\ (fs x)))) /\ (!x. (~ ((k x) /\ (ft x)))))) |- ((~ F) ==> F)
+T c==> * f0 f1 c==> c/\ c~ * f2 f1 c~ * f3 f1 c==> c/\ c/\ ! c==> * f0 b0 * f2 b0 ! c==> * f4 b0 * f3 b0 c/\ ! c~ c/\ * f5 b0 * f0 b0 ! c~ c/\ * f5 b0 * f4 b0 c==> c~ cF cF
+- |- ((!x'. ((~ (ft x')) \/ (ct x))) = ((!x. (~ (ft x))) \/ (ct x)))
+T c= ! c\/ c~ * f0 b0 * f1 f2 c\/ ! c~ * f0 b0 * f1 f2
+- |- ((!s. (!x. ((((s x) \/ (t x)) /\ (~ (t x))) = ((s x) /\ (~ (t x)))))) = T)
+T c= ! ! c= c/\ c\/ * b0 b1 * f0 b1 c~ * f0 b1 c/\ * b0 b1 c~ * f0 b1 cT
++ (((closure s) INTER (closure t)) = EMPTY) |- (((s' SUBSET (closure t)) /\ ((s' INTER (u INTER (UNIV DIFF (closure s)))) = EMPTY)) ==> ((u INTER s') = EMPTY))
+T c==> c= * * part cINTER * part cclosure f0 * part cclosure f1 part cEMPTY c==> c/\ cSUBSET f2 * part cclosure f1 c= * * part cINTER f2 * * part cINTER f3 * * part cDIFF part cUNIV * part cclosure f0 part cEMPTY c= * * part cINTER f3 f2 part cEMPTY
++ |- (T = ((t DIFF s) SUBSET t))
+T c= cT cSUBSET * * part cDIFF f0 f1 f0
++ |- ((\s. (!t. (((s SUBSET t) /\ (t SUBSET s)) ==> (s = t)))) s)
+T * / ! c==> c/\ cSUBSET b0 b1 cSUBSET b1 b0 c= b0 b1 f0
++ (k x), (((!x. ((fs x) ==> (cs x))) /\ (!x. ((ft x) ==> (ct x)))) /\ ((!x. (~ ((k x) /\ (fs x)))) /\ (!x. (~ ((k x) /\ (ft x)))))), ((fs x) \/ (ft x)) |- ((k x) /\ F)
+T c==> * f0 f1 c==> c/\ c/\ ! c==> * f2 b0 * f3 b0 ! c==> * f4 b0 * f5 b0 c/\ ! c~ c/\ * f0 b0 * f2 b0 ! c~ c/\ * f0 b0 * f4 b0 c==> c\/ * f2 f1 * f4 f1 c/\ * f0 f1 cF
++ (~ ((((s x) \/ (t x)) /\ (~ (t x))) = ((s x) /\ (~ (t x))))) |- ((~ ((((s x) \/ (t x)) /\ (~ (t x))) = ((s x) /\ (~ (t x))))) /\ F)
+T c==> c~ c= c/\ c\/ * f0 f1 * f2 f1 c~ * f2 f1 c/\ * f0 f1 c~ * f2 f1 c/\ c~ c= c/\ c\/ * f0 f1 * f2 f1 c~ * f2 f1 c/\ * f0 f1 c~ * f2 f1 cF
++ ((~ (s x)) /\ (~ (t x))), ((((~ (s x)) /\ (~ (t x))) \/ (t x)) /\ ((s x) /\ (~ (t x)))) |- F
+T c==> c/\ c~ * f0 f1 c~ * f2 f1 c==> c/\ c\/ c/\ c~ * f0 f1 c~ * f2 f1 * f2 f1 c/\ * f0 f1 c~ * f2 f1 cF
+- (~ ((!x. ((((closure s) x) /\ (~ ((interior s) x))) ==> ((closure s) x))) /\ (!x. ((((closure t) x) /\ (~ ((interior t) x))) ==> ((closure t) x))))) |- ((~ ((!x. ((((closure s) x) /\ (~ ((interior s) x))) ==> ((closure s) x))) /\ (!x. ((((closure t) x) /\ (~ ((interior t) x))) ==> ((closure t) x))))) /\ F)
+T c==> c~ c/\ ! c==> c/\ cclosure f0 b0 c~ cinterior f0 b0 cclosure f0 b0 ! c==> c/\ cclosure f1 b0 c~ cinterior f1 b0 cclosure f1 b0 c/\ c~ c/\ ! c==> c/\ cclosure f0 b0 c~ cinterior f0 b0 cclosure f0 b0 ! c==> c/\ cclosure f1 b0 c~ cinterior f1 b0 cclosure f1 b0 cF
+- |- ((\t1. (!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))))) t1)
+T * / ! ! c= c\/ b0 c\/ b1 b2 c\/ c\/ b0 b1 b2 f0
++ ((~ (cs x)) /\ (~ (ct x))), (((!x. ((fs x) ==> (cs x))) /\ (!x. ((ft x) ==> (ct x)))) /\ ((!x. (~ ((k x) /\ (fs x)))) /\ (!x. (~ ((k x) /\ (ft x)))))), ((fs x) \/ (ft x)) |- F
+T c==> c/\ c~ * f0 f1 c~ * f2 f1 c==> c/\ c/\ ! c==> * f3 b0 * f0 b0 ! c==> * f4 b0 * f2 b0 c/\ ! c~ c/\ * f5 b0 * f3 b0 ! c~ c/\ * f5 b0 * f4 b0 c==> c\/ * f3 f1 * f4 f1 cF
++ |- ((((frontier s) UNION (frontier t)) SUBSET ((closure (s UNION t)) DIFF (interior (s UNION t)))) = (((frontier s) UNION (frontier t)) SUBSET (frontier (s UNION t))))
+T c= cSUBSET * * part cUNION * part cfrontier f0 * part cfrontier f1 * * part cDIFF * part cclosure * * part cUNION f0 f1 * part cinterior * * part cUNION f0 f1 cSUBSET * * part cUNION * part cfrontier f0 * part cfrontier f1 * part cfrontier * * part cUNION f0 f1
+- (~ F), (fs x), (k x), (((!x. ((fs x) ==> (cs x))) /\ (!x. ((ft x) ==> (ct x)))) /\ ((!x. (~ ((k x) /\ (fs x)))) /\ (!x. (~ ((k x) /\ (ft x)))))) |- ((~ F) /\ F)
+T c==> c~ cF c==> * f0 f1 c==> * f2 f1 c==> c/\ c/\ ! c==> * f0 b0 * f3 b0 ! c==> * f4 b0 * f5 b0 c/\ ! c~ c/\ * f2 b0 * f0 b0 ! c~ c/\ * f2 b0 * f4 b0 c/\ c~ cF cF
++ |- (((!x. ((ti x) ==> (si x))) ==> (!x. (~ (((c x) /\ (~ (si x))) /\ (ti x))))) = ((!x. ((x IN ti) ==> (x IN si))) ==> (!x. ((x IN ((c DIFF si) INTER ti)) = (x IN EMPTY)))))
+T c= c==> ! c==> * f0 b0 * f1 b0 ! c~ c/\ c/\ * f2 b0 c~ * f1 b0 * f0 b0 c==> ! c==> cIN b0 f0 cIN b0 f1 ! c= cIN b0 * * part cINTER * * part cDIFF f2 f1 f0 cIN b0 part cEMPTY
+- |- (T = (((~ (ft _290967)) \/ (ct _290967)) = ((ct _290967) \/ (~ (ft _290967)))))
+T c= cT c= c\/ c~ * f0 f1 * f2 f1 c\/ * f2 f1 c~ * f0 f1
+- (((~ ((((!x. ((fs x) ==> (cs x))) /\ (!x. ((ft x) ==> (ct x)))) /\ ((!x. (~ ((k x) /\ (fs x)))) /\ (!x. (~ ((k x) /\ (ft x)))))) ==> (!x. (((fs x) \/ (ft x)) ==> (((cs x) \/ (ct x)) /\ (~ (k x))))))) ==> F) ==> ((~ ((((!x. ((fs x) ==> (cs x))) /\ (!x. ((ft x) ==> (ct x)))) /\ ((!x. (~ ((k x) /\ (fs x)))) /\ (!x. (~ ((k x) /\ (ft x)))))) ==> (!x. (((fs x) \/ (ft x)) ==> (((cs x) \/ (ct x)) /\ (~ (k x))))))) ==> F)) |- ((((~ ((((!x. ((fs x) ==> (cs x))) /\ (!x. ((ft x) ==> (ct x)))) /\ ((!x. (~ ((k x) /\ (fs x)))) /\ (!x. (~ ((k x) /\ (ft x)))))) ==> (!x. (((fs x) \/ (ft x)) ==> (((cs x) \/ (ct x)) /\ (~ (k x))))))) ==> F) ==> ((~ ((((!x. ((fs x) ==> (cs x))) /\ (!x. ((ft x) ==> (ct x)))) /\ ((!x. (~ ((k x) /\ (fs x)))) /\ (!x. (~ ((k x) /\ (ft x)))))) ==> (!x. (((fs x) \/ (ft x)) ==> (((cs x) \/ (ct x)) /\ (~ (k x))))))) ==> F)) /\ (((~ ((((!x. ((fs x) ==> (cs x))) /\ (!x. ((ft x) ==> (ct x)))) /\ ((!x. (~ ((k x) /\ (fs x)))) /\ (!x. (~ ((k x) /\ (ft x)))))) ==> (!x. (((fs x) \/ (ft x)) ==> (((cs x) \/ (ct x)) /\ (~ (k x))))))) ==> F) ==> ((~ ((((!x. ((fs x) ==> (cs x))) /\ (!x. ((ft x) ==> (ct x)))) /\ ((!x. (~ ((k x) /\ (fs x)))) /\ (!x. (~ ((k x) /\ (ft x)))))) ==> (!x. (((fs x) \/ (ft x)) ==> (((cs x) \/ (ct x)) /\ (~ (k x))))))) ==> F)))
+T c==> c==> c==> c~ c==> c/\ c/\ ! c==> * f0 b0 * f1 b0 ! c==> * f2 b0 * f3 b0 c/\ ! c~ c/\ * f4 b0 * f0 b0 ! c~ c/\ * f4 b0 * f2 b0 ! c==> c\/ * f0 b0 * f2 b0 c/\ c\/ * f1 b0 * f3 b0 c~ * f4 b0 cF c==> c~ c==> c/\ c/\ ! c==> * f0 b0 * f1 b0 ! c==> * f2 b0 * f3 b0 c/\ ! c~ c/\ * f4 b0 * f0 b0 ! c~ c/\ * f4 b0 * f2 b0 ! c==> c\/ * f0 b0 * f2 b0 c/\ c\/ * f1 b0 * f3 b0 c~ * f4 b0 cF c/\ c==> c==> c~ c==> c/\ c/\ ! c==> * f0 b0 * f1 b0 ! c==> * f2 b0 * f3 b0 c/\ ! c~ c/\ * f4 b0 * f0 b0 ! c~ c/\ * f4 b0 * f2 b0 ! c==> c\/ * f0 b0 * f2 b0 c/\ c\/ * f1 b0 * f3 b0 c~ * f4 b0 cF c==> c~ c==> c/\ c/\ ! c==> * f0 b0 * f1 b0 ! c==> * f2 b0 * f3 b0 c/\ ! c~ c/\ * f4 b0 * f0 b0 ! c~ c/\ * f4 b0 * f2 b0 ! c==> c\/ * f0 b0 * f2 b0 c/\ c\/ * f1 b0 * f3 b0 c~ * f4 b0 cF c==> c==> c~ c==> c/\ c/\ ! c==> * f0 b0 * f1 b0 ! c==> * f2 b0 * f3 b0 c/\ ! c~ c/\ * f4 b0 * f0 b0 ! c~ c/\ * f4 b0 * f2 b0 ! c==> c\/ * f0 b0 * f2 b0 c/\ c\/ * f1 b0 * f3 b0 c~ * f4 b0 cF c==> c~ c==> c/\ c/\ ! c==> * f0 b0 * f1 b0 ! c==> * f2 b0 * f3 b0 c/\ ! c~ c/\ * f4 b0 * f0 b0 ! c~ c/\ * f4 b0 * f2 b0 ! c==> c\/ * f0 b0 * f2 b0 c/\ c\/ * f1 b0 * f3 b0 c~ * f4 b0 cF
++ |- ((a \/ b) = ((~ b) ==> a))
+T c= c\/ f0 f1 c==> c~ f1 f0
+- (!s. (!t. (((s SUBSET t) /\ (t SUBSET s)) ==> (s = t)))) |- (((!t. (((s SUBSET t) /\ (t SUBSET s)) ==> (s = t))) ==> ((\t. (((s SUBSET t) /\ (t SUBSET s)) ==> (s = t))) t)) = ((\t. (((s SUBSET t) /\ (t SUBSET s)) ==> (s = t))) t))
+T c==> ! ! c==> c/\ cSUBSET b0 b1 cSUBSET b1 b0 c= b0 b1 c= c==> ! c==> c/\ cSUBSET f0 b0 cSUBSET b0 f0 c= f0 b0 * / c==> c/\ cSUBSET f0 b0 cSUBSET b0 f0 c= f0 b0 f1 * / c==> c/\ cSUBSET f0 b0 cSUBSET b0 f0 c= f0 b0 f1
++ |- ((!t. ((((closure s) INTER (closure t)) = EMPTY) ==> ((frontier (s UNION t)) = ((frontier s) UNION (frontier t))))) = T)
+T c= ! c==> c= * * part cINTER * part cclosure f0 * part cclosure b0 part cEMPTY c= * part cfrontier * * part cUNION f0 b0 * * part cUNION * part cfrontier f0 * part cfrontier b0 cT
++ ((!x. ((s' x) ==> (s x))) /\ (!x. (~ ((s' x) /\ ((u x) /\ (~ (t x))))))) |- ((~ (s' _290959)) \/ ((~ (u _290959)) \/ (t _290959)))
+T c==> c/\ ! c==> * f0 b0 * f1 b0 ! c~ c/\ * f0 b0 c/\ * f2 b0 c~ * f3 b0 c\/ c~ * f0 f4 c\/ c~ * f2 f4 * f3 f4
+- |- (((!fs. ((~ ((((!x. ((fs x) ==> (cs x))) /\ (!x. ((ft x) ==> (ct x)))) /\ ((!x. (~ ((k x) /\ (fs x)))) /\ (!x. (~ ((k x) /\ (ft x)))))) ==> (!x. (((fs x) \/ (ft x)) ==> (((cs x) \/ (ct x)) /\ (~ (k x))))))) ==> F)) ==> ((\fs. ((~ ((((!x. ((fs x) ==> (cs x))) /\ (!x. ((ft x) ==> (ct x)))) /\ ((!x. (~ ((k x) /\ (fs x)))) /\ (!x. (~ ((k x) /\ (ft x)))))) ==> (!x. (((fs x) \/ (ft x)) ==> (((cs x) \/ (ct x)) /\ (~ (k x))))))) ==> F)) fs)) = ((\fs. ((~ ((((!x. ((fs x) ==> (cs x))) /\ (!x. ((ft x) ==> (ct x)))) /\ ((!x. (~ ((k x) /\ (fs x)))) /\ (!x. (~ ((k x) /\ (ft x)))))) ==> (!x. (((fs x) \/ (ft x)) ==> (((cs x) \/ (ct x)) /\ (~ (k x))))))) ==> F)) fs))
+T c= c==> ! c==> c~ c==> c/\ c/\ ! c==> * b0 b1 * f0 b1 ! c==> * f1 b1 * f2 b1 c/\ ! c~ c/\ * f3 b1 * b0 b1 ! c~ c/\ * f3 b1 * f1 b1 ! c==> c\/ * b0 b1 * f1 b1 c/\ c\/ * f0 b1 * f2 b1 c~ * f3 b1 cF * / c==> c~ c==> c/\ c/\ ! c==> * b0 b1 * f0 b1 ! c==> * f1 b1 * f2 b1 c/\ ! c~ c/\ * f3 b1 * b0 b1 ! c~ c/\ * f3 b1 * f1 b1 ! c==> c\/ * b0 b1 * f1 b1 c/\ c\/ * f0 b1 * f2 b1 c~ * f3 b1 cF f4 * / c==> c~ c==> c/\ c/\ ! c==> * b0 b1 * f0 b1 ! c==> * f1 b1 * f2 b1 c/\ ! c~ c/\ * f3 b1 * b0 b1 ! c~ c/\ * f3 b1 * f1 b1 ! c==> c\/ * b0 b1 * f1 b1 c/\ c\/ * f0 b1 * f2 b1 c~ * f3 b1 cF f4
++ |- ((\s. (!t. ((s INTER t) = (t INTER s)))) s)
+T * / ! c= * * part cINTER b0 b1 * * part cINTER b1 b0 f0
+- (t x), ((((~ (s x)) /\ (~ (t x))) \/ (t x)) /\ ((s x) /\ (~ (t x)))) |- F
+T c==> * f0 f1 c==> c/\ c\/ c/\ c~ * f2 f1 c~ * f0 f1 * f0 f1 c/\ * f2 f1 c~ * f0 f1 cF
++ (((closure s) INTER (closure t)) = EMPTY) |- (((frontier s) UNION (frontier t)) SUBSET ((closure (s UNION t)) DIFF (interior (s UNION t))))
+T c==> c= * * part cINTER * part cclosure f0 * part cclosure f1 part cEMPTY cSUBSET * * part cUNION * part cfrontier f0 * part cfrontier f1 * * part cDIFF * part cclosure * * part cUNION f0 f1 * part cinterior * * part cUNION f0 f1
++ (fs x), (k x), (((!x. ((fs x) ==> (cs x))) /\ (!x. ((ft x) ==> (ct x)))) /\ ((!x. (~ ((k x) /\ (fs x)))) /\ (!x. (~ ((k x) /\ (ft x)))))) |- F
+T c==> * f0 f1 c==> * f2 f1 c==> c/\ c/\ ! c==> * f0 b0 * f3 b0 ! c==> * f4 b0 * f5 b0 c/\ ! c~ c/\ * f2 b0 * f0 b0 ! c~ c/\ * f2 b0 * f4 b0 cF
++ |- (((interior (t DIFF s)) SUBSET (interior t)) = T)
+T c= cSUBSET * part cinterior * * part cDIFF f0 f1 * part cinterior f0 cT
+- ((s' SUBSET (closure t)) /\ ((s' INTER (u INTER (UNIV DIFF (closure s)))) = EMPTY)), (((s' SUBSET (closure t)) /\ ((s' INTER (u INTER (UNIV DIFF (closure s)))) = EMPTY)) ==> ((u INTER s') = EMPTY)) |- ((((s' SUBSET (closure t)) /\ ((s' INTER (u INTER (UNIV DIFF (closure s)))) = EMPTY)) ==> ((u INTER s') = EMPTY)) /\ ((u INTER s') = EMPTY))
+T c==> c/\ cSUBSET f0 * part cclosure f1 c= * * part cINTER f0 * * part cINTER f2 * * part cDIFF part cUNIV * part cclosure f3 part cEMPTY c==> c==> c/\ cSUBSET f0 * part cclosure f1 c= * * part cINTER f0 * * part cINTER f2 * * part cDIFF part cUNIV * part cclosure f3 part cEMPTY c= * * part cINTER f2 f0 part cEMPTY c/\ c==> c/\ cSUBSET f0 * part cclosure f1 c= * * part cINTER f0 * * part cINTER f2 * * part cDIFF part cUNIV * part cclosure f3 part cEMPTY c= * * part cINTER f2 f0 part cEMPTY c= * * part cINTER f2 f0 part cEMPTY
++ |- ((s SUBSET t) ==> (((interior s) SUBSET (interior t)) = T))
+T c==> cSUBSET f0 f1 c= cSUBSET * part cinterior f0 * part cinterior f1 cT
+- |- ((!s'. (!u. (!t. (!s. ((!x. (~ ((s x) /\ (t x)))) ==> (((!x. ((s' x) ==> (s x))) /\ (!x. (~ ((s' x) /\ ((u x) /\ (~ (t x))))))) ==> (!x. (~ ((u x) /\ (s' x)))))))))) = (!s'. (!u. (!t. (!s. ((~ ((!x. (~ ((s x) /\ (t x)))) ==> (((!x. ((s' x) ==> (s x))) /\ (!x. (~ ((s' x) /\ ((u x) /\ (~ (t x))))))) ==> (!x. (~ ((u x) /\ (s' x))))))) ==> F))))))
+T c= ! ! ! ! c==> ! c~ c/\ * b3 b4 * b2 b4 c==> c/\ ! c==> * b0 b4 * b3 b4 ! c~ c/\ * b0 b4 c/\ * b1 b4 c~ * b2 b4 ! c~ c/\ * b1 b4 * b0 b4 ! ! ! ! c==> c~ c==> ! c~ c/\ * b3 b4 * b2 b4 c==> c/\ ! c==> * b0 b4 * b3 b4 ! c~ c/\ * b0 b4 c/\ * b1 b4 c~ * b2 b4 ! c~ c/\ * b1 b4 * b0 b4 cF
++ |- (((~ ((((s x) \/ (t x)) /\ (~ (t x))) = ((s x) /\ (~ (t x))))) ==> F) = ((((s x) \/ (t x)) /\ (~ (t x))) = ((s x) /\ (~ (t x)))))
+T c= c==> c~ c= c/\ c\/ * f0 f1 * f2 f1 c~ * f2 f1 c/\ * f0 f1 c~ * f2 f1 cF c= c/\ c\/ * f0 f1 * f2 f1 c~ * f2 f1 c/\ * f0 f1 c~ * f2 f1
+- (ti SUBSET si) |- (((ti SUBSET si) ==> (((c DIFF si) INTER ti) = EMPTY)) ==> (((c DIFF si) INTER ti) = EMPTY))
+T c==> cSUBSET f0 f1 c==> c==> cSUBSET f0 f1 c= * * part cINTER * * part cDIFF f2 f1 f0 part cEMPTY c= * * part cINTER * * part cDIFF f2 f1 f0 part cEMPTY
++ |- (((!x. ((x IN ti) ==> (x IN si))) ==> (!x. ((x IN ((c DIFF si) INTER ti)) = (x IN EMPTY)))) = ((ti SUBSET si) ==> (((c DIFF si) INTER ti) = EMPTY)))
+T c= c==> ! c==> cIN b0 f0 cIN b0 f1 ! c= cIN b0 * * part cINTER * * part cDIFF f2 f1 f0 cIN b0 part cEMPTY c==> cSUBSET f0 f1 c= * * part cINTER * * part cDIFF f2 f1 f0 part cEMPTY
+- (~ ((closure s) x)), (((closure s) x) /\ (~ ((interior s) x))) |- F
+T c==> c~ cclosure f0 f1 c==> c/\ cclosure f0 f1 c~ cinterior f0 f1 cF
+- |- ((\t. (!s. ((~ (!x. ((((s x) \/ (t x)) /\ (~ (t x))) = ((s x) /\ (~ (t x)))))) ==> F))) t)
+T * / ! c==> c~ ! c= c/\ c\/ * b1 b2 * b0 b2 c~ * b0 b2 c/\ * b1 b2 c~ * b0 b2 cF f0
++ |- (((((!x. ((x IN fs) ==> (x IN cs))) /\ (!x. ((x IN ft) ==> (x IN ct)))) /\ ((!x. ((x IN (k INTER fs)) = (x IN EMPTY))) /\ (!x. ((x IN (k INTER ft)) = (x IN EMPTY))))) ==> (!x. ((x IN (fs UNION ft)) ==> (x IN ((cs UNION ct) DIFF k))))) = ((((fs SUBSET cs) /\ (ft SUBSET ct)) /\ (((k INTER fs) = EMPTY) /\ ((k INTER ft) = EMPTY))) ==> ((fs UNION ft) SUBSET ((cs UNION ct) DIFF k))))
+T c= c==> c/\ c/\ ! c==> cIN b0 f0 cIN b0 f1 ! c==> cIN b0 f2 cIN b0 f3 c/\ ! c= cIN b0 * * part cINTER f4 f0 cIN b0 part cEMPTY ! c= cIN b0 * * part cINTER f4 f2 cIN b0 part cEMPTY ! c==> cIN b0 * * part cUNION f0 f2 cIN b0 * * part cDIFF * * part cUNION f1 f3 f4 c==> c/\ c/\ cSUBSET f0 f1 cSUBSET f2 f3 c/\ c= * * part cINTER f4 f0 part cEMPTY c= * * part cINTER f4 f2 part cEMPTY cSUBSET * * part cUNION f0 f2 * * part cDIFF * * part cUNION f1 f3 f4
++ |- (((((interior (s UNION t)) INTER (frontier s)) = EMPTY) /\ (((interior (s UNION t)) INTER (frontier t)) = EMPTY)) = ((((frontier s) SUBSET (closure s)) /\ ((frontier t) SUBSET (closure t))) /\ ((((interior (s UNION t)) INTER (frontier s)) = EMPTY) /\ (((interior (s UNION t)) INTER (frontier t)) = EMPTY))))
+T c= c/\ c= * * part cINTER * part cinterior * * part cUNION f0 f1 * part cfrontier f0 part cEMPTY c= * * part cINTER * part cinterior * * part cUNION f0 f1 * part cfrontier f1 part cEMPTY c/\ c/\ cSUBSET * part cfrontier f0 * part cclosure f0 cSUBSET * part cfrontier f1 * part cclosure f1 c/\ c= * * part cINTER * part cinterior * * part cUNION f0 f1 * part cfrontier f0 part cEMPTY c= * * part cINTER * part cinterior * * part cUNION f0 f1 * part cfrontier f1 part cEMPTY
++ |- ((((closure t) DIFF (interior t)) INTER (interior (t DIFF s))) = EMPTY)
+T c= * * part cINTER * * part cDIFF * part cclosure f0 * part cinterior f0 * part cinterior * * part cDIFF f0 f1 part cEMPTY
++ (((!x. ((fs x) ==> (cs x))) /\ (!x. ((ft x) ==> (ct x)))) /\ ((!x. (~ ((k x) /\ (fs x)))) /\ (!x. (~ ((k x) /\ (ft x)))))) |- (!x. ((~ (k x)) \/ (~ (fs x))))
+T c==> c/\ c/\ ! c==> * f0 b0 * f1 b0 ! c==> * f2 b0 * f3 b0 c/\ ! c~ c/\ * f4 b0 * f0 b0 ! c~ c/\ * f4 b0 * f2 b0 ! c\/ c~ * f4 b0 c~ * f0 b0
++ (~ ((((s x) \/ (t x)) /\ (~ (t x))) = ((s x) /\ (~ (t x))))) |- (((((s x) \/ (t x)) /\ (~ (t x))) /\ ((~ (s x)) \/ (t x))) \/ ((((~ (s x)) /\ (~ (t x))) \/ (t x)) /\ ((s x) /\ (~ (t x)))))
+T c==> c~ c= c/\ c\/ * f0 f1 * f2 f1 c~ * f2 f1 c/\ * f0 f1 c~ * f2 f1 c\/ c/\ c/\ c\/ * f0 f1 * f2 f1 c~ * f2 f1 c\/ c~ * f0 f1 * f2 f1 c/\ c\/ c/\ c~ * f0 f1 c~ * f2 f1 * f2 f1 c/\ * f0 f1 c~ * f2 f1
+- |- ((\si. (!c. ((~ ((!x. ((ti x) ==> (si x))) ==> (!x. (~ (((c x) /\ (~ (si x))) /\ (ti x)))))) ==> F))) si)
+T * / ! c==> c~ c==> ! c==> * f0 b2 * b0 b2 ! c~ c/\ c/\ * b1 b2 c~ * b0 b2 * f0 b2 cF f1
+- (~ ((!x. (~ ((s x) /\ (t x)))) ==> (((!x. ((s' x) ==> (s x))) /\ (!x. (~ ((s' x) /\ ((u x) /\ (~ (t x))))))) ==> (!x. (~ ((u x) /\ (s' x))))))) |- F
+T c==> c~ c==> ! c~ c/\ * f0 b0 * f1 b0 c==> c/\ ! c==> * f2 b0 * f0 b0 ! c~ c/\ * f2 b0 c/\ * f3 b0 c~ * f1 b0 ! c~ c/\ * f3 b0 * f2 b0 cF
++ |- (((!s. ((~ ((!x. ((((closure s) x) /\ (~ ((interior s) x))) ==> ((closure s) x))) /\ (!x. ((((closure t) x) /\ (~ ((interior t) x))) ==> ((closure t) x))))) ==> F)) ==> ((\s. ((~ ((!x. ((((closure s) x) /\ (~ ((interior s) x))) ==> ((closure s) x))) /\ (!x. ((((closure t) x) /\ (~ ((interior t) x))) ==> ((closure t) x))))) ==> F)) s)) = ((\s. ((~ ((!x. ((((closure s) x) /\ (~ ((interior s) x))) ==> ((closure s) x))) /\ (!x. ((((closure t) x) /\ (~ ((interior t) x))) ==> ((closure t) x))))) ==> F)) s))
+T c= c==> ! c==> c~ c/\ ! c==> c/\ cclosure b0 b1 c~ cinterior b0 b1 cclosure b0 b1 ! c==> c/\ cclosure f0 b1 c~ cinterior f0 b1 cclosure f0 b1 cF * / c==> c~ c/\ ! c==> c/\ cclosure b0 b1 c~ cinterior b0 b1 cclosure b0 b1 ! c==> c/\ cclosure f0 b1 c~ cinterior f0 b1 cclosure f0 b1 cF f1 * / c==> c~ c/\ ! c==> c/\ cclosure b0 b1 c~ cinterior b0 b1 cclosure b0 b1 ! c==> c/\ cclosure f0 b1 c~ cinterior f0 b1 cclosure f0 b1 cF f1
++ (((closure s) INTER (closure t)) = EMPTY) |- ((((interior (s UNION t)) INTER (frontier s)) = EMPTY) /\ (((interior (s UNION t)) INTER (frontier t)) = EMPTY))
+T c==> c= * * part cINTER * part cclosure f0 * part cclosure f1 part cEMPTY c/\ c= * * part cINTER * part cinterior * * part cUNION f0 f1 * part cfrontier f0 part cEMPTY c= * * part cINTER * part cinterior * * part cUNION f0 f1 * part cfrontier f1 part cEMPTY
++ |- (((frontier t) SUBSET (closure t)) /\ (((frontier t) INTER ((interior (t UNION s)) INTER (UNIV DIFF (closure s)))) = EMPTY))
+T c/\ cSUBSET * part cfrontier f0 * part cclosure f0 c= * * part cINTER * part cfrontier f0 * * part cINTER * part cinterior * * part cUNION f0 f1 * * part cDIFF part cUNIV * part cclosure f1 part cEMPTY
++ |- ((\s. (!t. ((frontier (s UNION t)) SUBSET ((frontier s) UNION (frontier t))))) s)
+T * / ! cSUBSET * part cfrontier * * part cUNION b0 b1 * * part cUNION * part cfrontier b0 * part cfrontier b1 f0
++ |- ((\t. ((closure (s UNION t)) = ((closure s) UNION (closure t)))) t)
+T * / c= * part cclosure * * part cUNION f0 b0 * * part cUNION * part cclosure f0 * part cclosure b0 f1
++ (!x. (~ ((s x) /\ (t x)))) |- (!x. ((~ (s x)) \/ (~ (t x))))
+T c==> ! c~ c/\ * f0 b0 * f1 b0 ! c\/ c~ * f0 b0 c~ * f1 b0
+- (((~ ((!x. ((((closure s) x) /\ (~ ((interior s) x))) ==> ((closure s) x))) /\ (!x. ((((closure t) x) /\ (~ ((interior t) x))) ==> ((closure t) x))))) ==> F) ==> ((~ ((!x. ((((closure s) x) /\ (~ ((interior s) x))) ==> ((closure s) x))) /\ (!x. ((((closure t) x) /\ (~ ((interior t) x))) ==> ((closure t) x))))) ==> F)) |- ((((~ ((!x. ((((closure s) x) /\ (~ ((interior s) x))) ==> ((closure s) x))) /\ (!x. ((((closure t) x) /\ (~ ((interior t) x))) ==> ((closure t) x))))) ==> F) ==> ((~ ((!x. ((((closure s) x) /\ (~ ((interior s) x))) ==> ((closure s) x))) /\ (!x. ((((closure t) x) /\ (~ ((interior t) x))) ==> ((closure t) x))))) ==> F)) /\ (((~ ((!x. ((((closure s) x) /\ (~ ((interior s) x))) ==> ((closure s) x))) /\ (!x. ((((closure t) x) /\ (~ ((interior t) x))) ==> ((closure t) x))))) ==> F) ==> ((~ ((!x. ((((closure s) x) /\ (~ ((interior s) x))) ==> ((closure s) x))) /\ (!x. ((((closure t) x) /\ (~ ((interior t) x))) ==> ((closure t) x))))) ==> F)))
+T c==> c==> c==> c~ c/\ ! c==> c/\ cclosure f0 b0 c~ cinterior f0 b0 cclosure f0 b0 ! c==> c/\ cclosure f1 b0 c~ cinterior f1 b0 cclosure f1 b0 cF c==> c~ c/\ ! c==> c/\ cclosure f0 b0 c~ cinterior f0 b0 cclosure f0 b0 ! c==> c/\ cclosure f1 b0 c~ cinterior f1 b0 cclosure f1 b0 cF c/\ c==> c==> c~ c/\ ! c==> c/\ cclosure f0 b0 c~ cinterior f0 b0 cclosure f0 b0 ! c==> c/\ cclosure f1 b0 c~ cinterior f1 b0 cclosure f1 b0 cF c==> c~ c/\ ! c==> c/\ cclosure f0 b0 c~ cinterior f0 b0 cclosure f0 b0 ! c==> c/\ cclosure f1 b0 c~ cinterior f1 b0 cclosure f1 b0 cF c==> c==> c~ c/\ ! c==> c/\ cclosure f0 b0 c~ cinterior f0 b0 cclosure f0 b0 ! c==> c/\ cclosure f1 b0 c~ cinterior f1 b0 cclosure f1 b0 cF c==> c~ c/\ ! c==> c/\ cclosure f0 b0 c~ cinterior f0 b0 cclosure f0 b0 ! c==> c/\ cclosure f1 b0 c~ cinterior f1 b0 cclosure f1 b0 cF
++ (!x. ((ti x) ==> (si x))) |- ((((c x) /\ (~ (si x))) /\ (ti x)) ==> F)
+T c==> ! c==> * f0 b0 * f1 b0 c==> c/\ c/\ * f2 f3 c~ * f1 f3 * f0 f3 cF
+- |- ((((~ (!x. ((((s x) \/ (t x)) /\ (~ (t x))) = ((s x) /\ (~ (t x)))))) ==> F) ==> ((~ (!x. ((((s x) \/ (t x)) /\ (~ (t x))) = ((s x) /\ (~ (t x)))))) ==> F)) ==> (((~ (!x. ((((s x) \/ (t x)) /\ (~ (t x))) = ((s x) /\ (~ (t x)))))) ==> F) ==> ((~ (!x. ((((s x) \/ (t x)) /\ (~ (t x))) = ((s x) /\ (~ (t x)))))) ==> F)))
+T c==> c==> c==> c~ ! c= c/\ c\/ * f0 b0 * f1 b0 c~ * f1 b0 c/\ * f0 b0 c~ * f1 b0 cF c==> c~ ! c= c/\ c\/ * f0 b0 * f1 b0 c~ * f1 b0 c/\ * f0 b0 c~ * f1 b0 cF c==> c==> c~ ! c= c/\ c\/ * f0 b0 * f1 b0 c~ * f1 b0 c/\ * f0 b0 c~ * f1 b0 cF c==> c~ ! c= c/\ c\/ * f0 b0 * f1 b0 c~ * f1 b0 c/\ * f0 b0 c~ * f1 b0 cF
+- (~ ((!x. ((ti x) ==> (si x))) ==> (!x. (~ (((c x) /\ (~ (si x))) /\ (ti x)))))) |- ((~ ((!x. ((ti x) ==> (si x))) ==> (!x. (~ (((c x) /\ (~ (si x))) /\ (ti x)))))) /\ F)
+T c==> c~ c==> ! c==> * f0 b0 * f1 b0 ! c~ c/\ c/\ * f2 b0 c~ * f1 b0 * f0 b0 c/\ c~ c==> ! c==> * f0 b0 * f1 b0 ! c~ c/\ c/\ * f2 b0 c~ * f1 b0 * f0 b0 cF
++ (((closure s) INTER (closure t)) = EMPTY) |- (((interior (s UNION t)) INTER (frontier t)) = EMPTY)
+T c==> c= * * part cINTER * part cclosure f0 * part cclosure f1 part cEMPTY c= * * part cINTER * part cinterior * * part cUNION f0 f1 * part cfrontier f1 part cEMPTY
++ ((!x. ((s' x) ==> (s x))) /\ (!x. (~ ((s' x) /\ ((u x) /\ (~ (t x))))))), ((u x) /\ (s' x)) |- (t x)
+T c==> c/\ ! c==> * f0 b0 * f1 b0 ! c~ c/\ * f0 b0 c/\ * f2 b0 c~ * f3 b0 c==> c/\ * f2 f4 * f0 f4 * f3 f4
+- |- (((!u. (!t. (!s. ((~ ((!x. (~ ((s x) /\ (t x)))) ==> (((!x. ((s' x) ==> (s x))) /\ (!x. (~ ((s' x) /\ ((u x) /\ (~ (t x))))))) ==> (!x. (~ ((u x) /\ (s' x))))))) ==> F)))) ==> ((\u. (!t. (!s. ((~ ((!x. (~ ((s x) /\ (t x)))) ==> (((!x. ((s' x) ==> (s x))) /\ (!x. (~ ((s' x) /\ ((u x) /\ (~ (t x))))))) ==> (!x. (~ ((u x) /\ (s' x))))))) ==> F)))) u)) = ((\u. (!t. (!s. ((~ ((!x. (~ ((s x) /\ (t x)))) ==> (((!x. ((s' x) ==> (s x))) /\ (!x. (~ ((s' x) /\ ((u x) /\ (~ (t x))))))) ==> (!x. (~ ((u x) /\ (s' x))))))) ==> F)))) u))
+T c= c==> ! ! ! c==> c~ c==> ! c~ c/\ * b2 b3 * b1 b3 c==> c/\ ! c==> * f0 b3 * b2 b3 ! c~ c/\ * f0 b3 c/\ * b0 b3 c~ * b1 b3 ! c~ c/\ * b0 b3 * f0 b3 cF * / ! ! c==> c~ c==> ! c~ c/\ * b2 b3 * b1 b3 c==> c/\ ! c==> * f0 b3 * b2 b3 ! c~ c/\ * f0 b3 c/\ * b0 b3 c~ * b1 b3 ! c~ c/\ * b0 b3 * f0 b3 cF f1 * / ! ! c==> c~ c==> ! c~ c/\ * b2 b3 * b1 b3 c==> c/\ ! c==> * f0 b3 * b2 b3 ! c~ c/\ * f0 b3 c/\ * b0 b3 c~ * b1 b3 ! c~ c/\ * b0 b3 * f0 b3 cF f1
++ |- ((!t. ((!s. (!x. ((((closure s) x) /\ (~ ((interior s) x))) ==> ((closure s) x)))) /\ (!x. ((((closure t) x) /\ (~ ((interior t) x))) ==> ((closure t) x))))) = ((!t. (!s. (!x. ((((closure s) x) /\ (~ ((interior s) x))) ==> ((closure s) x))))) /\ (!t. (!x. ((((closure t) x) /\ (~ ((interior t) x))) ==> ((closure t) x))))))
+T c= ! c/\ ! ! c==> c/\ cclosure b1 b2 c~ cinterior b1 b2 cclosure b1 b2 ! c==> c/\ cclosure b0 b1 c~ cinterior b0 b1 cclosure b0 b1 c/\ ! ! ! c==> c/\ cclosure b1 b2 c~ cinterior b1 b2 cclosure b1 b2 ! ! c==> c/\ cclosure b0 b1 c~ cinterior b0 b1 cclosure b0 b1
+- (((~ ((!x. ((ti x) ==> (si x))) ==> (!x. (~ (((c x) /\ (~ (si x))) /\ (ti x)))))) ==> F) ==> ((~ ((!x. ((ti x) ==> (si x))) ==> (!x. (~ (((c x) /\ (~ (si x))) /\ (ti x)))))) ==> F)) |- ((((~ ((!x. ((ti x) ==> (si x))) ==> (!x. (~ (((c x) /\ (~ (si x))) /\ (ti x)))))) ==> F) ==> ((~ ((!x. ((ti x) ==> (si x))) ==> (!x. (~ (((c x) /\ (~ (si x))) /\ (ti x)))))) ==> F)) /\ (((~ ((!x. ((ti x) ==> (si x))) ==> (!x. (~ (((c x) /\ (~ (si x))) /\ (ti x)))))) ==> F) ==> ((~ ((!x. ((ti x) ==> (si x))) ==> (!x. (~ (((c x) /\ (~ (si x))) /\ (ti x)))))) ==> F)))
+T c==> c==> c==> c~ c==> ! c==> * f0 b0 * f1 b0 ! c~ c/\ c/\ * f2 b0 c~ * f1 b0 * f0 b0 cF c==> c~ c==> ! c==> * f0 b0 * f1 b0 ! c~ c/\ c/\ * f2 b0 c~ * f1 b0 * f0 b0 cF c/\ c==> c==> c~ c==> ! c==> * f0 b0 * f1 b0 ! c~ c/\ c/\ * f2 b0 c~ * f1 b0 * f0 b0 cF c==> c~ c==> ! c==> * f0 b0 * f1 b0 ! c~ c/\ c/\ * f2 b0 c~ * f1 b0 * f0 b0 cF c==> c==> c~ c==> ! c==> * f0 b0 * f1 b0 ! c~ c/\ c/\ * f2 b0 c~ * f1 b0 * f0 b0 cF c==> c~ c==> ! c==> * f0 b0 * f1 b0 ! c~ c/\ c/\ * f2 b0 c~ * f1 b0 * f0 b0 cF
++ |- (((!s. (!t. (((s SUBSET t) /\ (t SUBSET s)) ==> (s = t)))) ==> ((\s. (!t. (((s SUBSET t) /\ (t SUBSET s)) ==> (s = t)))) s)) = ((\s. (!t. (((s SUBSET t) /\ (t SUBSET s)) ==> (s = t)))) s))
+T c= c==> ! ! c==> c/\ cSUBSET b0 b1 cSUBSET b1 b0 c= b0 b1 * / ! c==> c/\ cSUBSET b0 b1 cSUBSET b1 b0 c= b0 b1 f0 * / ! c==> c/\ cSUBSET b0 b1 cSUBSET b1 b0 c= b0 b1 f0
+- |- ((t ==> t) = T)
+T c= c==> f0 f0 cT
+- (~ (s x)), ((((~ (s x)) /\ (~ (t x))) \/ (t x)) /\ ((s x) /\ (~ (t x)))) |- ((~ (s x)) /\ (s x))
+T c==> c~ * f0 f1 c==> c/\ c\/ c/\ c~ * f0 f1 c~ * f2 f1 * f2 f1 c/\ * f0 f1 c~ * f2 f1 c/\ c~ * f0 f1 * f0 f1
+- |- ((!s. ((!x. (~ ((s x) /\ (t x)))) ==> (((!x. ((s' x) ==> (s x))) /\ (!x. (~ ((s' x) /\ ((u x) /\ (~ (t x))))))) ==> (!x. (~ ((u x) /\ (s' x))))))) = T)
+T c= ! c==> ! c~ c/\ * b0 b1 * f0 b1 c==> c/\ ! c==> * f1 b1 * b0 b1 ! c~ c/\ * f1 b1 c/\ * f2 b1 c~ * f0 b1 ! c~ c/\ * f2 b1 * f1 b1 cT
++ |- ((((frontier s) UNION (frontier t)) SUBSET (((closure s) UNION (closure t)) DIFF (interior (s UNION t)))) = (((frontier s) UNION (frontier t)) SUBSET ((closure (s UNION t)) DIFF (interior (s UNION t)))))
+T c= cSUBSET * * part cUNION * part cfrontier f0 * part cfrontier f1 * * part cDIFF * * part cUNION * part cclosure f0 * part cclosure f1 * part cinterior * * part cUNION f0 f1 cSUBSET * * part cUNION * part cfrontier f0 * part cfrontier f1 * * part cDIFF * part cclosure * * part cUNION f0 f1 * part cinterior * * part cUNION f0 f1
+- |- ((t \/ t) = t)
+T c= c\/ f0 f0 f0
+- (t x), ((((~ (s x)) /\ (~ (t x))) \/ (t x)) /\ ((s x) /\ (~ (t x)))) |- ((~ F) ==> F)
+T c==> * f0 f1 c==> c/\ c\/ c/\ c~ * f2 f1 c~ * f0 f1 * f0 f1 c/\ * f2 f1 c~ * f0 f1 c==> c~ cF cF
+- (~ F), (fs x), ((~ (cs x)) /\ (~ (ct x))), (((!x. ((fs x) ==> (cs x))) /\ (!x. ((ft x) ==> (ct x)))) /\ ((!x. (~ ((k x) /\ (fs x)))) /\ (!x. (~ ((k x) /\ (ft x)))))) |- ((~ F) /\ F)
+T c==> c~ cF c==> * f0 f1 c==> c/\ c~ * f2 f1 c~ * f3 f1 c==> c/\ c/\ ! c==> * f0 b0 * f2 b0 ! c==> * f4 b0 * f3 b0 c/\ ! c~ c/\ * f5 b0 * f0 b0 ! c~ c/\ * f5 b0 * f4 b0 c/\ c~ cF cF
+- (((fs SUBSET cs) /\ (ft SUBSET ct)) /\ (((k INTER fs) = EMPTY) /\ ((k INTER ft) = EMPTY))) |- (((((fs SUBSET cs) /\ (ft SUBSET ct)) /\ (((k INTER fs) = EMPTY) /\ ((k INTER ft) = EMPTY))) ==> ((fs UNION ft) SUBSET ((cs UNION ct) DIFF k))) ==> ((fs UNION ft) SUBSET ((cs UNION ct) DIFF k)))
+T c==> c/\ c/\ cSUBSET f0 f1 cSUBSET f2 f3 c/\ c= * * part cINTER f4 f0 part cEMPTY c= * * part cINTER f4 f2 part cEMPTY c==> c==> c/\ c/\ cSUBSET f0 f1 cSUBSET f2 f3 c/\ c= * * part cINTER f4 f0 part cEMPTY c= * * part cINTER f4 f2 part cEMPTY cSUBSET * * part cUNION f0 f2 * * part cDIFF * * part cUNION f1 f3 f4 cSUBSET * * part cUNION f0 f2 * * part cDIFF * * part cUNION f1 f3 f4
+- (~ F), ((~ (s x)) /\ (~ (t x))), ((((~ (s x)) /\ (~ (t x))) \/ (t x)) /\ ((s x) /\ (~ (t x)))) |- ((~ F) /\ F)
+T c==> c~ cF c==> c/\ c~ * f0 f1 c~ * f2 f1 c==> c/\ c\/ c/\ c~ * f0 f1 c~ * f2 f1 * f2 f1 c/\ * f0 f1 c~ * f2 f1 c/\ c~ cF cF
++ |- ((((interior (t UNION s)) INTER (frontier t)) = EMPTY) = (((interior (s UNION t)) INTER (frontier t)) = EMPTY))
+T c= c= * * part cINTER * part cinterior * * part cUNION f0 f1 * part cfrontier f0 part cEMPTY c= * * part cINTER * part cinterior * * part cUNION f1 f0 * part cfrontier f0 part cEMPTY
++ |- ((!x. ((x IN ((s UNION t) INTER (UNIV DIFF t))) = (x IN (s DIFF t)))) = (((s UNION t) INTER (UNIV DIFF t)) = (s DIFF t)))
+T c= ! c= cIN b0 * * part cINTER * * part cUNION f0 f1 * * part cDIFF part cUNIV f1 cIN b0 * * part cDIFF f0 f1 c= * * part cINTER * * part cUNION f0 f1 * * part cDIFF part cUNIV f1 * * part cDIFF f0 f1
+- ((((fs SUBSET cs) /\ (ft SUBSET ct)) /\ (((k INTER fs) = EMPTY) /\ ((k INTER ft) = EMPTY))) ==> ((fs UNION ft) SUBSET ((cs UNION ct) DIFF k))) |- (((((fs SUBSET cs) /\ (ft SUBSET ct)) /\ (((k INTER fs) = EMPTY) /\ ((k INTER ft) = EMPTY))) ==> ((fs UNION ft) SUBSET ((cs UNION ct) DIFF k))) /\ ((((fs SUBSET cs) /\ (ft SUBSET ct)) /\ (((k INTER fs) = EMPTY) /\ ((k INTER ft) = EMPTY))) ==> ((fs UNION ft) SUBSET ((cs UNION ct) DIFF k))))
+T c==> c==> c/\ c/\ cSUBSET f0 f1 cSUBSET f2 f3 c/\ c= * * part cINTER f4 f0 part cEMPTY c= * * part cINTER f4 f2 part cEMPTY cSUBSET * * part cUNION f0 f2 * * part cDIFF * * part cUNION f1 f3 f4 c/\ c==> c/\ c/\ cSUBSET f0 f1 cSUBSET f2 f3 c/\ c= * * part cINTER f4 f0 part cEMPTY c= * * part cINTER f4 f2 part cEMPTY cSUBSET * * part cUNION f0 f2 * * part cDIFF * * part cUNION f1 f3 f4 c==> c/\ c/\ cSUBSET f0 f1 cSUBSET f2 f3 c/\ c= * * part cINTER f4 f0 part cEMPTY c= * * part cINTER f4 f2 part cEMPTY cSUBSET * * part cUNION f0 f2 * * part cDIFF * * part cUNION f1 f3 f4
+- |- ((\t. (!s. ((~ ((!x. (~ ((s x) /\ (t x)))) ==> (((!x. ((s' x) ==> (s x))) /\ (!x. (~ ((s' x) /\ ((u x) /\ (~ (t x))))))) ==> (!x. (~ ((u x) /\ (s' x))))))) ==> F))) t)
+T * / ! c==> c~ c==> ! c~ c/\ * b1 b2 * b0 b2 c==> c/\ ! c==> * f0 b2 * b1 b2 ! c~ c/\ * f0 b2 c/\ * f1 b2 c~ * b0 b2 ! c~ c/\ * f1 b2 * f0 b2 cF f2
+- (!s. (!t. (((s SUBSET t) /\ (t SUBSET s)) ==> (s = t)))) |- ((!s. (!t. (((s SUBSET t) /\ (t SUBSET s)) ==> (s = t)))) /\ (!s. (!t. (((s SUBSET t) /\ (t SUBSET s)) ==> (s = t)))))
+T c==> ! ! c==> c/\ cSUBSET b0 b1 cSUBSET b1 b0 c= b0 b1 c/\ ! ! c==> c/\ cSUBSET b0 b1 cSUBSET b1 b0 c= b0 b1 ! ! c==> c/\ cSUBSET b0 b1 cSUBSET b1 b0 c= b0 b1
++ |- (((!t. ((s DIFF t) SUBSET s)) ==> ((\t. ((s DIFF t) SUBSET s)) t)) = ((\t. ((s DIFF t) SUBSET s)) t))
+T c= c==> ! cSUBSET * * part cDIFF f0 b0 f0 * / cSUBSET * * part cDIFF f0 b0 f0 f1 * / cSUBSET * * part cDIFF f0 b0 f0 f1
++ |- ((~ ((((s x) \/ (t x)) /\ (~ (t x))) = ((s x) /\ (~ (t x))))) ==> F)
+T c==> c~ c= c/\ c\/ * f0 f1 * f2 f1 c~ * f2 f1 c/\ * f0 f1 c~ * f2 f1 cF
++ (((closure s) INTER (closure t)) = EMPTY) |- (((((frontier (s UNION t)) SUBSET ((frontier s) UNION (frontier t))) /\ (((frontier s) UNION (frontier t)) SUBSET (frontier (s UNION t)))) ==> ((frontier (s UNION t)) = ((frontier s) UNION (frontier t)))) = ((frontier (s UNION t)) = ((frontier s) UNION (frontier t))))
+T c==> c= * * part cINTER * part cclosure f0 * part cclosure f1 part cEMPTY c= c==> c/\ cSUBSET * part cfrontier * * part cUNION f0 f1 * * part cUNION * part cfrontier f0 * part cfrontier f1 cSUBSET * * part cUNION * part cfrontier f0 * part cfrontier f1 * part cfrontier * * part cUNION f0 f1 c= * part cfrontier * * part cUNION f0 f1 * * part cUNION * part cfrontier f0 * part cfrontier f1 c= * part cfrontier * * part cUNION f0 f1 * * part cUNION * part cfrontier f0 * part cfrontier f1
+- |- ((\ti. (!si. (!c. ((~ ((!x. ((ti x) ==> (si x))) ==> (!x. (~ (((c x) /\ (~ (si x))) /\ (ti x)))))) ==> F)))) ti)
+T * / ! ! c==> c~ c==> ! c==> * b0 b3 * b1 b3 ! c~ c/\ c/\ * b2 b3 c~ * b1 b3 * b0 b3 cF f0
+- |- ((\t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))) t3)
+T * / c= c\/ f0 c\/ f1 b0 c\/ c\/ f0 f1 b0 f2
++ |- ((!x. ((x IN (s INTER t)) = (x IN EMPTY))) ==> (((!x. ((x IN s') ==> (x IN s))) /\ (!x. ((x IN (s' INTER (u INTER (UNIV DIFF t)))) = (x IN EMPTY)))) ==> (!x. ((x IN (u INTER s')) = (x IN EMPTY)))))
+T c==> ! c= cIN b0 * * part cINTER f0 f1 cIN b0 part cEMPTY c==> c/\ ! c==> cIN b0 f2 cIN b0 f0 ! c= cIN b0 * * part cINTER f2 * * part cINTER f3 * * part cDIFF part cUNIV f1 cIN b0 part cEMPTY ! c= cIN b0 * * part cINTER f3 f2 cIN b0 part cEMPTY
++ (((closure s) INTER (closure t)) = EMPTY) |- (((interior (s UNION t)) INTER (frontier s)) = EMPTY)
+T c==> c= * * part cINTER * part cclosure f0 * part cclosure f1 part cEMPTY c= * * part cINTER * part cinterior * * part cUNION f0 f1 * part cfrontier f0 part cEMPTY
++ |- (((((closure t) DIFF (interior t)) INTER (interior (t DIFF s))) = EMPTY) = ((((closure t) DIFF (interior t)) INTER ((interior (t UNION s)) INTER (interior (UNIV DIFF s)))) = EMPTY))
+T c= c= * * part cINTER * * part cDIFF * part cclosure f0 * part cinterior f0 * part cinterior * * part cDIFF f0 f1 part cEMPTY c= * * part cINTER * * part cDIFF * part cclosure f0 * part cinterior f0 * * part cINTER * part cinterior * * part cUNION f0 f1 * part cinterior * * part cDIFF part cUNIV f1 part cEMPTY
++ ((~ (cs x)) /\ (~ (ct x))), (((!x. ((fs x) ==> (cs x))) /\ (!x. ((ft x) ==> (ct x)))) /\ ((!x. (~ ((k x) /\ (fs x)))) /\ (!x. (~ ((k x) /\ (ft x)))))) |- ((ft x) ==> F)
+T c==> c/\ c~ * f0 f1 c~ * f2 f1 c==> c/\ c/\ ! c==> * f3 b0 * f0 b0 ! c==> * f4 b0 * f2 b0 c/\ ! c~ c/\ * f5 b0 * f3 b0 ! c~ c/\ * f5 b0 * f4 b0 c==> * f4 f1 cF
++ (((!x. ((fs x) ==> (cs x))) /\ (!x. ((ft x) ==> (ct x)))) /\ ((!x. (~ ((k x) /\ (fs x)))) /\ (!x. (~ ((k x) /\ (ft x)))))) |- ((cs _290962) \/ (~ (fs _290962)))
+T c==> c/\ c/\ ! c==> * f0 b0 * f1 b0 ! c==> * f2 b0 * f3 b0 c/\ ! c~ c/\ * f4 b0 * f0 b0 ! c~ c/\ * f4 b0 * f2 b0 c\/ * f1 f5 c~ * f0 f5
++ (((!x. ((fs x) ==> (cs x))) /\ (!x. ((ft x) ==> (ct x)))) /\ ((!x. (~ ((k x) /\ (fs x)))) /\ (!x. (~ ((k x) /\ (ft x)))))), ((fs x) \/ (ft x)) |- (((~ (cs x)) /\ (~ (ct x))) ==> F)
+T c==> c/\ c/\ ! c==> * f0 b0 * f1 b0 ! c==> * f2 b0 * f3 b0 c/\ ! c~ c/\ * f4 b0 * f0 b0 ! c~ c/\ * f4 b0 * f2 b0 c==> c\/ * f0 f5 * f2 f5 c==> c/\ c~ * f1 f5 c~ * f3 f5 cF
++ (s SUBSET t) |- ((s SUBSET t) /\ (((interior s) SUBSET (interior t)) = T))
+T c==> cSUBSET f0 f1 c/\ cSUBSET f0 f1 c= cSUBSET * part cinterior f0 * part cinterior f1 cT
+- |- ((!t. (!s. (!x. ((((s x) \/ (t x)) /\ (~ (t x))) = ((s x) /\ (~ (t x))))))) = (!t. (!s. ((~ (!x. ((((s x) \/ (t x)) /\ (~ (t x))) = ((s x) /\ (~ (t x)))))) ==> F))))
+T c= ! ! ! c= c/\ c\/ * b1 b2 * b0 b2 c~ * b0 b2 c/\ * b1 b2 c~ * b0 b2 ! ! c==> c~ ! c= c/\ c\/ * b1 b2 * b0 b2 c~ * b0 b2 c/\ * b1 b2 c~ * b0 b2 cF
+- |- (((~ p) ==> p) = p)
+T c= c==> c~ f0 f0 f0
++ |- ((ti SUBSET si) ==> (((c DIFF si) INTER ti) = EMPTY))
+T c==> cSUBSET f0 f1 c= * * part cINTER * * part cDIFF f2 f1 f0 part cEMPTY
+- |- (((x = x) ==> p) = p)
+T c= c==> c= f0 f0 f1 f1
++ (~ (((cs x) \/ (ct x)) /\ (~ (k x)))), (((!x. ((fs x) ==> (cs x))) /\ (!x. ((ft x) ==> (ct x)))) /\ ((!x. (~ ((k x) /\ (fs x)))) /\ (!x. (~ ((k x) /\ (ft x)))))), ((fs x) \/ (ft x)) |- ((~ (((cs x) \/ (ct x)) /\ (~ (k x)))) /\ F)
+T c==> c~ c/\ c\/ * f0 f1 * f2 f1 c~ * f3 f1 c==> c/\ c/\ ! c==> * f4 b0 * f0 b0 ! c==> * f5 b0 * f2 b0 c/\ ! c~ c/\ * f3 b0 * f4 b0 ! c~ c/\ * f3 b0 * f5 b0 c==> c\/ * f4 f1 * f5 f1 c/\ c~ c/\ c\/ * f0 f1 * f2 f1 c~ * f3 f1 cF
++ ((((~ (s x)) /\ (~ (t x))) \/ (t x)) /\ ((s x) /\ (~ (t x)))) |- (s x)
+T c==> c/\ c\/ c/\ c~ * f0 f1 c~ * f2 f1 * f2 f1 c/\ * f0 f1 c~ * f2 f1 * f0 f1
++ (((!x. ((fs x) ==> (cs x))) /\ (!x. ((ft x) ==> (ct x)))) /\ ((!x. (~ ((k x) /\ (fs x)))) /\ (!x. (~ ((k x) /\ (ft x)))))) |- (((k _290973) /\ (ft _290973)) ==> F)
+T c==> c/\ c/\ ! c==> * f0 b0 * f1 b0 ! c==> * f2 b0 * f3 b0 c/\ ! c~ c/\ * f4 b0 * f0 b0 ! c~ c/\ * f4 b0 * f2 b0 c==> c/\ * f4 f5 * f2 f5 cF
+- (t x), ((((s x) \/ (t x)) /\ (~ (t x))) /\ ((~ (s x)) \/ (t x))) |- ((~ F) ==> F)
+T c==> * f0 f1 c==> c/\ c/\ c\/ * f2 f1 * f0 f1 c~ * f0 f1 c\/ c~ * f2 f1 * f0 f1 c==> c~ cF cF
++ (s x) |- ((~ (s x)) ==> F)
+T c==> * f0 f1 c==> c~ * f0 f1 cF
+- |- (((~ (!x. ((((s x) \/ (t x)) /\ (~ (t x))) = ((s x) /\ (~ (t x)))))) ==> F) ==> ((~ (!x. ((((s x) \/ (t x)) /\ (~ (t x))) = ((s x) /\ (~ (t x)))))) ==> F))
+T c==> c==> c~ ! c= c/\ c\/ * f0 b0 * f1 b0 c~ * f1 b0 c/\ * f0 b0 c~ * f1 b0 cF c==> c~ ! c= c/\ c\/ * f0 b0 * f1 b0 c~ * f1 b0 c/\ * f0 b0 c~ * f1 b0 cF
++ (k x), (((!x. ((fs x) ==> (cs x))) /\ (!x. ((ft x) ==> (ct x)))) /\ ((!x. (~ ((k x) /\ (fs x)))) /\ (!x. (~ ((k x) /\ (ft x)))))), ((ft x) ==> F), ((fs x) \/ (ft x)) |- F
+T c==> * f0 f1 c==> c/\ c/\ ! c==> * f2 b0 * f3 b0 ! c==> * f4 b0 * f5 b0 c/\ ! c~ c/\ * f0 b0 * f2 b0 ! c~ c/\ * f0 b0 * f4 b0 c==> c==> * f4 f1 cF c==> c\/ * f2 f1 * f4 f1 cF
+- |- (((~ ((!x. ((ti x) ==> (si x))) ==> (!x. (~ (((c x) /\ (~ (si x))) /\ (ti x)))))) ==> F) ==> ((~ ((!x. ((ti x) ==> (si x))) ==> (!x. (~ (((c x) /\ (~ (si x))) /\ (ti x)))))) ==> F))
+T c==> c==> c~ c==> ! c==> * f0 b0 * f1 b0 ! c~ c/\ c/\ * f2 b0 c~ * f1 b0 * f0 b0 cF c==> c~ c==> ! c==> * f0 b0 * f1 b0 ! c~ c/\ c/\ * f2 b0 c~ * f1 b0 * f0 b0 cF
+- |- ((((~ ((!x. (~ ((s x) /\ (t x)))) ==> (((!x. ((s' x) ==> (s x))) /\ (!x. (~ ((s' x) /\ ((u x) /\ (~ (t x))))))) ==> (!x. (~ ((u x) /\ (s' x))))))) ==> F) ==> ((~ ((!x. (~ ((s x) /\ (t x)))) ==> (((!x. ((s' x) ==> (s x))) /\ (!x. (~ ((s' x) /\ ((u x) /\ (~ (t x))))))) ==> (!x. (~ ((u x) /\ (s' x))))))) ==> F)) = ((~ ((!x. (~ ((s x) /\ (t x)))) ==> (((!x. ((s' x) ==> (s x))) /\ (!x. (~ ((s' x) /\ ((u x) /\ (~ (t x))))))) ==> (!x. (~ ((u x) /\ (s' x))))))) ==> F))
+T c= c==> c==> c~ c==> ! c~ c/\ * f0 b0 * f1 b0 c==> c/\ ! c==> * f2 b0 * f0 b0 ! c~ c/\ * f2 b0 c/\ * f3 b0 c~ * f1 b0 ! c~ c/\ * f3 b0 * f2 b0 cF c==> c~ c==> ! c~ c/\ * f0 b0 * f1 b0 c==> c/\ ! c==> * f2 b0 * f0 b0 ! c~ c/\ * f2 b0 c/\ * f3 b0 c~ * f1 b0 ! c~ c/\ * f3 b0 * f2 b0 cF c==> c~ c==> ! c~ c/\ * f0 b0 * f1 b0 c==> c/\ ! c==> * f2 b0 * f0 b0 ! c~ c/\ * f2 b0 c/\ * f3 b0 c~ * f1 b0 ! c~ c/\ * f3 b0 * f2 b0 cF
+- ((u x) /\ (s' x)) |- ((~ (u x)) ==> (u x))
+T c==> c/\ * f0 f1 * f2 f1 c==> c~ * f0 f1 * f0 f1
++ |- (((s INTER t) = EMPTY) ==> (((s' SUBSET s) /\ ((s' INTER (u INTER (UNIV DIFF t))) = EMPTY)) ==> ((u INTER s') = EMPTY)))
+T c==> c= * * part cINTER f0 f1 part cEMPTY c==> c/\ cSUBSET f2 f0 c= * * part cINTER f2 * * part cINTER f3 * * part cDIFF part cUNIV f1 part cEMPTY c= * * part cINTER f3 f2 part cEMPTY
+- |- ((t ==> F) = (~ t))
+T c= c==> f0 cF c~ f0
+- |- (((!t. (!s. ((~ ((!x. (~ ((s x) /\ (t x)))) ==> (((!x. ((s' x) ==> (s x))) /\ (!x. (~ ((s' x) /\ ((u x) /\ (~ (t x))))))) ==> (!x. (~ ((u x) /\ (s' x))))))) ==> F))) ==> ((\t. (!s. ((~ ((!x. (~ ((s x) /\ (t x)))) ==> (((!x. ((s' x) ==> (s x))) /\ (!x. (~ ((s' x) /\ ((u x) /\ (~ (t x))))))) ==> (!x. (~ ((u x) /\ (s' x))))))) ==> F))) t)) = ((\t. (!s. ((~ ((!x. (~ ((s x) /\ (t x)))) ==> (((!x. ((s' x) ==> (s x))) /\ (!x. (~ ((s' x) /\ ((u x) /\ (~ (t x))))))) ==> (!x. (~ ((u x) /\ (s' x))))))) ==> F))) t))
+T c= c==> ! ! c==> c~ c==> ! c~ c/\ * b1 b2 * b0 b2 c==> c/\ ! c==> * f0 b2 * b1 b2 ! c~ c/\ * f0 b2 c/\ * f1 b2 c~ * b0 b2 ! c~ c/\ * f1 b2 * f0 b2 cF * / ! c==> c~ c==> ! c~ c/\ * b1 b2 * b0 b2 c==> c/\ ! c==> * f0 b2 * b1 b2 ! c~ c/\ * f0 b2 c/\ * f1 b2 c~ * b0 b2 ! c~ c/\ * f1 b2 * f0 b2 cF f2 * / ! c==> c~ c==> ! c~ c/\ * b1 b2 * b0 b2 c==> c/\ ! c==> * f0 b2 * b1 b2 ! c~ c/\ * f0 b2 c/\ * f1 b2 c~ * b0 b2 ! c~ c/\ * f1 b2 * f0 b2 cF f2
+- (t x), ((((s x) \/ (t x)) /\ (~ (t x))) /\ ((~ (s x)) \/ (t x))) |- ((~ (s x)) ==> F)
+T c==> * f0 f1 c==> c/\ c/\ c\/ * f2 f1 * f0 f1 c~ * f0 f1 c\/ c~ * f2 f1 * f0 f1 c==> c~ * f2 f1 cF
++ ((!x. ((s' x) ==> (s x))) /\ (!x. (~ ((s' x) /\ ((u x) /\ (~ (t x))))))) |- ((t _290959) \/ ((~ (s' _290959)) \/ (~ (u _290959))))
+T c==> c/\ ! c==> * f0 b0 * f1 b0 ! c~ c/\ * f0 b0 c/\ * f2 b0 c~ * f3 b0 c\/ * f3 f4 c\/ c~ * f0 f4 c~ * f2 f4
++ |- (((!t. (((interior s) INTER (interior t)) = (interior (s INTER t)))) ==> ((\t. (((interior s) INTER (interior t)) = (interior (s INTER t)))) t)) = ((\t. (((interior s) INTER (interior t)) = (interior (s INTER t)))) t))
+T c= c==> ! c= * * part cINTER * part cinterior f0 * part cinterior b0 * part cinterior * * part cINTER f0 b0 * / c= * * part cINTER * part cinterior f0 * part cinterior b0 * part cinterior * * part cINTER f0 b0 f1 * / c= * * part cINTER * part cinterior f0 * part cinterior b0 * part cinterior * * part cINTER f0 b0 f1
++ (ft x), (k x) |- ((((k x) /\ (ft x)) ==> F) = F)
+T c==> * f0 f1 c==> * f2 f1 c= c==> c/\ * f2 f1 * f0 f1 cF cF
++ |- (p = ((~ p) ==> F))
+T c= f0 c==> c~ f0 cF
++ (((closure s) INTER (closure t)) = EMPTY) |- (((frontier s) UNION (frontier t)) SUBSET (((closure s) UNION (closure t)) DIFF (interior (s UNION t))))
+T c==> c= * * part cINTER * part cclosure f0 * part cclosure f1 part cEMPTY cSUBSET * * part cUNION * part cfrontier f0 * part cfrontier f1 * * part cDIFF * * part cUNION * part cclosure f0 * part cclosure f1 * part cinterior * * part cUNION f0 f1
++ ((~ (cs x)) /\ (~ (ct x))), (((!x. ((fs x) ==> (cs x))) /\ (!x. ((ft x) ==> (ct x)))) /\ ((!x. (~ ((k x) /\ (fs x)))) /\ (!x. (~ ((k x) /\ (ft x)))))), ((ft x) ==> F), ((fs x) \/ (ft x)) |- F
+T c==> c/\ c~ * f0 f1 c~ * f2 f1 c==> c/\ c/\ ! c==> * f3 b0 * f0 b0 ! c==> * f4 b0 * f2 b0 c/\ ! c~ c/\ * f5 b0 * f3 b0 ! c~ c/\ * f5 b0 * f4 b0 c==> c==> * f4 f1 cF c==> c\/ * f3 f1 * f4 f1 cF
+- (((~ (!x. ((((s x) \/ (t x)) /\ (~ (t x))) = ((s x) /\ (~ (t x)))))) ==> F) ==> ((~ (!x. ((((s x) \/ (t x)) /\ (~ (t x))) = ((s x) /\ (~ (t x)))))) ==> F)) |- ((((~ (!x. ((((s x) \/ (t x)) /\ (~ (t x))) = ((s x) /\ (~ (t x)))))) ==> F) ==> ((~ (!x. ((((s x) \/ (t x)) /\ (~ (t x))) = ((s x) /\ (~ (t x)))))) ==> F)) /\ (((~ (!x. ((((s x) \/ (t x)) /\ (~ (t x))) = ((s x) /\ (~ (t x)))))) ==> F) ==> ((~ (!x. ((((s x) \/ (t x)) /\ (~ (t x))) = ((s x) /\ (~ (t x)))))) ==> F)))
+T c==> c==> c==> c~ ! c= c/\ c\/ * f0 b0 * f1 b0 c~ * f1 b0 c/\ * f0 b0 c~ * f1 b0 cF c==> c~ ! c= c/\ c\/ * f0 b0 * f1 b0 c~ * f1 b0 c/\ * f0 b0 c~ * f1 b0 cF c/\ c==> c==> c~ ! c= c/\ c\/ * f0 b0 * f1 b0 c~ * f1 b0 c/\ * f0 b0 c~ * f1 b0 cF c==> c~ ! c= c/\ c\/ * f0 b0 * f1 b0 c~ * f1 b0 c/\ * f0 b0 c~ * f1 b0 cF c==> c==> c~ ! c= c/\ c\/ * f0 b0 * f1 b0 c~ * f1 b0 c/\ * f0 b0 c~ * f1 b0 cF c==> c~ ! c= c/\ c\/ * f0 b0 * f1 b0 c~ * f1 b0 c/\ * f0 b0 c~ * f1 b0 cF
++ ((((s x) \/ (t x)) /\ (~ (t x))) /\ ((~ (s x)) \/ (t x))) |- ((s x) ==> F)
+T c==> c/\ c/\ c\/ * f0 f1 * f2 f1 c~ * f2 f1 c\/ c~ * f0 f1 * f2 f1 c==> * f0 f1 cF
++ (((!x. ((fs x) ==> (cs x))) /\ (!x. ((ft x) ==> (ct x)))) /\ ((!x. (~ ((k x) /\ (fs x)))) /\ (!x. (~ ((k x) /\ (ft x)))))) |- ((!x. ((~ (k x)) \/ (~ (fs x)))) /\ (!x. ((~ (k x)) \/ (~ (ft x)))))
+T c==> c/\ c/\ ! c==> * f0 b0 * f1 b0 ! c==> * f2 b0 * f3 b0 c/\ ! c~ c/\ * f4 b0 * f0 b0 ! c~ c/\ * f4 b0 * f2 b0 c/\ ! c\/ c~ * f4 b0 c~ * f0 b0 ! c\/ c~ * f4 b0 c~ * f2 b0
+- (~ ((!x. (~ ((s x) /\ (t x)))) ==> (((!x. ((s' x) ==> (s x))) /\ (!x. (~ ((s' x) /\ ((u x) /\ (~ (t x))))))) ==> (!x. (~ ((u x) /\ (s' x))))))) |- ((~ ((!x. (~ ((s x) /\ (t x)))) ==> (((!x. ((s' x) ==> (s x))) /\ (!x. (~ ((s' x) /\ ((u x) /\ (~ (t x))))))) ==> (!x. (~ ((u x) /\ (s' x))))))) /\ F)
+T c==> c~ c==> ! c~ c/\ * f0 b0 * f1 b0 c==> c/\ ! c==> * f2 b0 * f0 b0 ! c~ c/\ * f2 b0 c/\ * f3 b0 c~ * f1 b0 ! c~ c/\ * f3 b0 * f2 b0 c/\ c~ c==> ! c~ c/\ * f0 b0 * f1 b0 c==> c/\ ! c==> * f2 b0 * f0 b0 ! c~ c/\ * f2 b0 c/\ * f3 b0 c~ * f1 b0 ! c~ c/\ * f3 b0 * f2 b0 cF
+- |- ((\s'. (!u. (!t. (!s. ((~ ((!x. (~ ((s x) /\ (t x)))) ==> (((!x. ((s' x) ==> (s x))) /\ (!x. (~ ((s' x) /\ ((u x) /\ (~ (t x))))))) ==> (!x. (~ ((u x) /\ (s' x))))))) ==> F))))) s')
+T * / ! ! ! c==> c~ c==> ! c~ c/\ * b3 b4 * b2 b4 c==> c/\ ! c==> * b0 b4 * b3 b4 ! c~ c/\ * b0 b4 c/\ * b1 b4 c~ * b2 b4 ! c~ c/\ * b1 b4 * b0 b4 cF f0
+- ((~ ((!x. ((ti x) ==> (si x))) ==> (!x. (~ (((c x) /\ (~ (si x))) /\ (ti x)))))) ==> F) |- ((((~ ((!x. ((ti x) ==> (si x))) ==> (!x. (~ (((c x) /\ (~ (si x))) /\ (ti x)))))) ==> F) ==> ((~ ((!x. ((ti x) ==> (si x))) ==> (!x. (~ (((c x) /\ (~ (si x))) /\ (ti x)))))) ==> F)) ==> ((~ ((!x. ((ti x) ==> (si x))) ==> (!x. (~ (((c x) /\ (~ (si x))) /\ (ti x)))))) ==> F))
+T c==> c==> c~ c==> ! c==> * f0 b0 * f1 b0 ! c~ c/\ c/\ * f2 b0 c~ * f1 b0 * f0 b0 cF c==> c==> c==> c~ c==> ! c==> * f0 b0 * f1 b0 ! c~ c/\ c/\ * f2 b0 c~ * f1 b0 * f0 b0 cF c==> c~ c==> ! c==> * f0 b0 * f1 b0 ! c~ c/\ c/\ * f2 b0 c~ * f1 b0 * f0 b0 cF c==> c~ c==> ! c==> * f0 b0 * f1 b0 ! c~ c/\ c/\ * f2 b0 c~ * f1 b0 * f0 b0 cF
++ (!x. ((ti x) ==> (si x))) |- ((~ (ti _290956)) \/ (si _290956))
+T c==> ! c==> * f0 b0 * f1 b0 c\/ c~ * f0 f2 * f1 f2
++ |- ((\s. (!t. ((closure (s UNION t)) = ((closure s) UNION (closure t))))) s)
+T * / ! c= * part cclosure * * part cUNION b0 b1 * * part cUNION * part cclosure b0 * part cclosure b1 f0
+- ((~ ((((!x. ((fs x) ==> (cs x))) /\ (!x. ((ft x) ==> (ct x)))) /\ ((!x. (~ ((k x) /\ (fs x)))) /\ (!x. (~ ((k x) /\ (ft x)))))) ==> (!x. (((fs x) \/ (ft x)) ==> (((cs x) \/ (ct x)) /\ (~ (k x))))))) ==> F), (((~ ((((!x. ((fs x) ==> (cs x))) /\ (!x. ((ft x) ==> (ct x)))) /\ ((!x. (~ ((k x) /\ (fs x)))) /\ (!x. (~ ((k x) /\ (ft x)))))) ==> (!x. (((fs x) \/ (ft x)) ==> (((cs x) \/ (ct x)) /\ (~ (k x))))))) ==> F) ==> ((~ ((((!x. ((fs x) ==> (cs x))) /\ (!x. ((ft x) ==> (ct x)))) /\ ((!x. (~ ((k x) /\ (fs x)))) /\ (!x. (~ ((k x) /\ (ft x)))))) ==> (!x. (((fs x) \/ (ft x)) ==> (((cs x) \/ (ct x)) /\ (~ (k x))))))) ==> F)) |- (((~ ((((!x. ((fs x) ==> (cs x))) /\ (!x. ((ft x) ==> (ct x)))) /\ ((!x. (~ ((k x) /\ (fs x)))) /\ (!x. (~ ((k x) /\ (ft x)))))) ==> (!x. (((fs x) \/ (ft x)) ==> (((cs x) \/ (ct x)) /\ (~ (k x))))))) ==> F) /\ ((~ ((((!x. ((fs x) ==> (cs x))) /\ (!x. ((ft x) ==> (ct x)))) /\ ((!x. (~ ((k x) /\ (fs x)))) /\ (!x. (~ ((k x) /\ (ft x)))))) ==> (!x. (((fs x) \/ (ft x)) ==> (((cs x) \/ (ct x)) /\ (~ (k x))))))) ==> F))
+T c==> c==> c~ c==> c/\ c/\ ! c==> * f0 b0 * f1 b0 ! c==> * f2 b0 * f3 b0 c/\ ! c~ c/\ * f4 b0 * f0 b0 ! c~ c/\ * f4 b0 * f2 b0 ! c==> c\/ * f0 b0 * f2 b0 c/\ c\/ * f1 b0 * f3 b0 c~ * f4 b0 cF c==> c==> c==> c~ c==> c/\ c/\ ! c==> * f0 b0 * f1 b0 ! c==> * f2 b0 * f3 b0 c/\ ! c~ c/\ * f4 b0 * f0 b0 ! c~ c/\ * f4 b0 * f2 b0 ! c==> c\/ * f0 b0 * f2 b0 c/\ c\/ * f1 b0 * f3 b0 c~ * f4 b0 cF c==> c~ c==> c/\ c/\ ! c==> * f0 b0 * f1 b0 ! c==> * f2 b0 * f3 b0 c/\ ! c~ c/\ * f4 b0 * f0 b0 ! c~ c/\ * f4 b0 * f2 b0 ! c==> c\/ * f0 b0 * f2 b0 c/\ c\/ * f1 b0 * f3 b0 c~ * f4 b0 cF c/\ c==> c~ c==> c/\ c/\ ! c==> * f0 b0 * f1 b0 ! c==> * f2 b0 * f3 b0 c/\ ! c~ c/\ * f4 b0 * f0 b0 ! c~ c/\ * f4 b0 * f2 b0 ! c==> c\/ * f0 b0 * f2 b0 c/\ c\/ * f1 b0 * f3 b0 c~ * f4 b0 cF c==> c~ c==> c/\ c/\ ! c==> * f0 b0 * f1 b0 ! c==> * f2 b0 * f3 b0 c/\ ! c~ c/\ * f4 b0 * f0 b0 ! c~ c/\ * f4 b0 * f2 b0 ! c==> c\/ * f0 b0 * f2 b0 c/\ c\/ * f1 b0 * f3 b0 c~ * f4 b0 cF
++ |- ((\s. ((UNIV DIFF (closure s)) = (interior (UNIV DIFF s)))) s)
+T * / c= * * part cDIFF part cUNIV * part cclosure b0 * part cinterior * * part cDIFF part cUNIV b0 f0
++ (~ (((cs x) \/ (ct x)) /\ (~ (k x)))) |- (((~ (cs x)) /\ (~ (ct x))) \/ (k x))
+T c==> c~ c/\ c\/ * f0 f1 * f2 f1 c~ * f3 f1 c\/ c/\ c~ * f0 f1 c~ * f2 f1 * f3 f1
+- |- ((!cs. (!ft. (!fs. ((((!x. ((fs x) ==> (cs x))) /\ (!x. ((ft x) ==> (ct x)))) /\ ((!x. (~ ((k x) /\ (fs x)))) /\ (!x. (~ ((k x) /\ (ft x)))))) ==> (!x. (((fs x) \/ (ft x)) ==> (((cs x) \/ (ct x)) /\ (~ (k x))))))))) = T)
+T c= ! ! ! c==> c/\ c/\ ! c==> * b2 b3 * b0 b3 ! c==> * b1 b3 * f0 b3 c/\ ! c~ c/\ * f1 b3 * b2 b3 ! c~ c/\ * f1 b3 * b1 b3 ! c==> c\/ * b2 b3 * b1 b3 c/\ c\/ * b0 b3 * f0 b3 c~ * f1 b3 cT
+- ((ti SUBSET si) ==> (((c DIFF si) INTER ti) = EMPTY)), (ti SUBSET si) |- ((ti SUBSET si) /\ (((c DIFF si) INTER ti) = EMPTY))
+T c==> c==> cSUBSET f0 f1 c= * * part cINTER * * part cDIFF f2 f1 f0 part cEMPTY c==> cSUBSET f0 f1 c/\ cSUBSET f0 f1 c= * * part cINTER * * part cDIFF f2 f1 f0 part cEMPTY
+- ((~ ((((!x. ((fs x) ==> (cs x))) /\ (!x. ((ft x) ==> (ct x)))) /\ ((!x. (~ ((k x) /\ (fs x)))) /\ (!x. (~ ((k x) /\ (ft x)))))) ==> (!x. (((fs x) \/ (ft x)) ==> (((cs x) \/ (ct x)) /\ (~ (k x))))))) ==> F) |- ((((~ ((((!x. ((fs x) ==> (cs x))) /\ (!x. ((ft x) ==> (ct x)))) /\ ((!x. (~ ((k x) /\ (fs x)))) /\ (!x. (~ ((k x) /\ (ft x)))))) ==> (!x. (((fs x) \/ (ft x)) ==> (((cs x) \/ (ct x)) /\ (~ (k x))))))) ==> F) ==> ((~ ((((!x. ((fs x) ==> (cs x))) /\ (!x. ((ft x) ==> (ct x)))) /\ ((!x. (~ ((k x) /\ (fs x)))) /\ (!x. (~ ((k x) /\ (ft x)))))) ==> (!x. (((fs x) \/ (ft x)) ==> (((cs x) \/ (ct x)) /\ (~ (k x))))))) ==> F)) ==> ((~ ((((!x. ((fs x) ==> (cs x))) /\ (!x. ((ft x) ==> (ct x)))) /\ ((!x. (~ ((k x) /\ (fs x)))) /\ (!x. (~ ((k x) /\ (ft x)))))) ==> (!x. (((fs x) \/ (ft x)) ==> (((cs x) \/ (ct x)) /\ (~ (k x))))))) ==> F))
+T c==> c==> c~ c==> c/\ c/\ ! c==> * f0 b0 * f1 b0 ! c==> * f2 b0 * f3 b0 c/\ ! c~ c/\ * f4 b0 * f0 b0 ! c~ c/\ * f4 b0 * f2 b0 ! c==> c\/ * f0 b0 * f2 b0 c/\ c\/ * f1 b0 * f3 b0 c~ * f4 b0 cF c==> c==> c==> c~ c==> c/\ c/\ ! c==> * f0 b0 * f1 b0 ! c==> * f2 b0 * f3 b0 c/\ ! c~ c/\ * f4 b0 * f0 b0 ! c~ c/\ * f4 b0 * f2 b0 ! c==> c\/ * f0 b0 * f2 b0 c/\ c\/ * f1 b0 * f3 b0 c~ * f4 b0 cF c==> c~ c==> c/\ c/\ ! c==> * f0 b0 * f1 b0 ! c==> * f2 b0 * f3 b0 c/\ ! c~ c/\ * f4 b0 * f0 b0 ! c~ c/\ * f4 b0 * f2 b0 ! c==> c\/ * f0 b0 * f2 b0 c/\ c\/ * f1 b0 * f3 b0 c~ * f4 b0 cF c==> c~ c==> c/\ c/\ ! c==> * f0 b0 * f1 b0 ! c==> * f2 b0 * f3 b0 c/\ ! c~ c/\ * f4 b0 * f0 b0 ! c~ c/\ * f4 b0 * f2 b0 ! c==> c\/ * f0 b0 * f2 b0 c/\ c\/ * f1 b0 * f3 b0 c~ * f4 b0 cF
+- (!s. (!t. (((s SUBSET t) /\ (t SUBSET s)) ==> (s = t)))) |- ((((s SUBSET t) /\ (t SUBSET s)) ==> (s = t)) = T)
+T c==> ! ! c==> c/\ cSUBSET b0 b1 cSUBSET b1 b0 c= b0 b1 c= c==> c/\ cSUBSET f0 f1 cSUBSET f1 f0 c= f0 f1 cT
++ |- ((\s. (!t. (((interior s) INTER (interior t)) = (interior (s INTER t))))) s)
+T * / ! c= * * part cINTER * part cinterior b0 * part cinterior b1 * part cinterior * * part cINTER b0 b1 f0
++ (!x. ((ti x) ==> (si x))) |- ((ti _290956) ==> (si _290956))
+T c==> ! c==> * f0 b0 * f1 b0 c==> * f0 f2 * f1 f2
++ (!x. (~ ((s x) /\ (t x)))) |- (((!x. ((~ (s x)) \/ (~ (t x)))) ==> ((\x. ((~ (s x)) \/ (~ (t x)))) _290957)) = ((\x. ((~ (s x)) \/ (~ (t x)))) _290957))
+T c==> ! c~ c/\ * f0 b0 * f1 b0 c= c==> ! c\/ c~ * f0 b0 c~ * f1 b0 * / c\/ c~ * f0 b0 c~ * f1 b0 f2 * / c\/ c~ * f0 b0 c~ * f1 b0 f2
+- |- ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))
+T c= c\/ f0 c\/ f1 f2 c\/ c\/ f0 f1 f2
++ (((closure s) INTER (closure t)) = EMPTY) |- (((((closure t) INTER (closure s)) = EMPTY) ==> (((s' SUBSET (closure t)) /\ ((s' INTER (u INTER (UNIV DIFF (closure s)))) = EMPTY)) ==> ((u INTER s') = EMPTY))) = (((s' SUBSET (closure t)) /\ ((s' INTER (u INTER (UNIV DIFF (closure s)))) = EMPTY)) ==> ((u INTER s') = EMPTY)))
+T c==> c= * * part cINTER * part cclosure f0 * part cclosure f1 part cEMPTY c= c==> c= * * part cINTER * part cclosure f1 * part cclosure f0 part cEMPTY c==> c/\ cSUBSET f2 * part cclosure f1 c= * * part cINTER f2 * * part cINTER f3 * * part cDIFF part cUNIV * part cclosure f0 part cEMPTY c= * * part cINTER f3 f2 part cEMPTY c==> c/\ cSUBSET f2 * part cclosure f1 c= * * part cINTER f2 * * part cINTER f3 * * part cDIFF part cUNIV * part cclosure f0 part cEMPTY c= * * part cINTER f3 f2 part cEMPTY
++ |- ((!x. ((x IN ((closure s) DIFF (interior s))) ==> (x IN (closure s)))) /\ (!x. ((x IN ((closure t) DIFF (interior t))) ==> (x IN (closure t)))))
+T c/\ ! c==> cIN b0 * * part cDIFF * part cclosure f0 * part cinterior f0 cIN b0 * part cclosure f0 ! c==> cIN b0 * * part cDIFF * part cclosure f1 * part cinterior f1 cIN b0 * part cclosure f1
+- (~ ((closure s) x)), (((closure s) x) /\ (~ ((interior s) x))) |- ((~ F) ==> F)
+T c==> c~ cclosure f0 f1 c==> c/\ cclosure f0 f1 c~ cinterior f0 f1 c==> c~ cF cF
+- |- (((~ ((((!x. ((fs x) ==> (cs x))) /\ (!x. ((ft x) ==> (ct x)))) /\ ((!x. (~ ((k x) /\ (fs x)))) /\ (!x. (~ ((k x) /\ (ft x)))))) ==> (!x. (((fs x) \/ (ft x)) ==> (((cs x) \/ (ct x)) /\ (~ (k x))))))) ==> F) = ((((!x. ((fs x) ==> (cs x))) /\ (!x. ((ft x) ==> (ct x)))) /\ ((!x. (~ ((k x) /\ (fs x)))) /\ (!x. (~ ((k x) /\ (ft x)))))) ==> (!x. (((fs x) \/ (ft x)) ==> (((cs x) \/ (ct x)) /\ (~ (k x)))))))
+T c= c==> c~ c==> c/\ c/\ ! c==> * f0 b0 * f1 b0 ! c==> * f2 b0 * f3 b0 c/\ ! c~ c/\ * f4 b0 * f0 b0 ! c~ c/\ * f4 b0 * f2 b0 ! c==> c\/ * f0 b0 * f2 b0 c/\ c\/ * f1 b0 * f3 b0 c~ * f4 b0 cF c==> c/\ c/\ ! c==> * f0 b0 * f1 b0 ! c==> * f2 b0 * f3 b0 c/\ ! c~ c/\ * f4 b0 * f0 b0 ! c~ c/\ * f4 b0 * f2 b0 ! c==> c\/ * f0 b0 * f2 b0 c/\ c\/ * f1 b0 * f3 b0 c~ * f4 b0
+- ((s' SUBSET (closure t)) /\ ((s' INTER (u INTER (UNIV DIFF (closure s)))) = EMPTY)) |- ((((s' SUBSET (closure t)) /\ ((s' INTER (u INTER (UNIV DIFF (closure s)))) = EMPTY)) ==> ((u INTER s') = EMPTY)) ==> ((u INTER s') = EMPTY))
+T c==> c/\ cSUBSET f0 * part cclosure f1 c= * * part cINTER f0 * * part cINTER f2 * * part cDIFF part cUNIV * part cclosure f3 part cEMPTY c==> c==> c/\ cSUBSET f0 * part cclosure f1 c= * * part cINTER f0 * * part cINTER f2 * * part cDIFF part cUNIV * part cclosure f3 part cEMPTY c= * * part cINTER f2 f0 part cEMPTY c= * * part cINTER f2 f0 part cEMPTY
+- |- (((((~ ((!x. ((ti x) ==> (si x))) ==> (!x. (~ (((c x) /\ (~ (si x))) /\ (ti x)))))) ==> F) ==> ((~ ((!x. ((ti x) ==> (si x))) ==> (!x. (~ (((c x) /\ (~ (si x))) /\ (ti x)))))) ==> F)) ==> (((~ ((!x. ((ti x) ==> (si x))) ==> (!x. (~ (((c x) /\ (~ (si x))) /\ (ti x)))))) ==> F) ==> ((~ ((!x. ((ti x) ==> (si x))) ==> (!x. (~ (((c x) /\ (~ (si x))) /\ (ti x)))))) ==> F))) = (((~ ((!x. ((ti x) ==> (si x))) ==> (!x. (~ (((c x) /\ (~ (si x))) /\ (ti x)))))) ==> F) ==> ((~ ((!x. ((ti x) ==> (si x))) ==> (!x. (~ (((c x) /\ (~ (si x))) /\ (ti x)))))) ==> F)))
+T c= c==> c==> c==> c~ c==> ! c==> * f0 b0 * f1 b0 ! c~ c/\ c/\ * f2 b0 c~ * f1 b0 * f0 b0 cF c==> c~ c==> ! c==> * f0 b0 * f1 b0 ! c~ c/\ c/\ * f2 b0 c~ * f1 b0 * f0 b0 cF c==> c==> c~ c==> ! c==> * f0 b0 * f1 b0 ! c~ c/\ c/\ * f2 b0 c~ * f1 b0 * f0 b0 cF c==> c~ c==> ! c==> * f0 b0 * f1 b0 ! c~ c/\ c/\ * f2 b0 c~ * f1 b0 * f0 b0 cF c==> c==> c~ c==> ! c==> * f0 b0 * f1 b0 ! c~ c/\ c/\ * f2 b0 c~ * f1 b0 * f0 b0 cF c==> c~ c==> ! c==> * f0 b0 * f1 b0 ! c~ c/\ c/\ * f2 b0 c~ * f1 b0 * f0 b0 cF
+- (t x), ((((s x) \/ (t x)) /\ (~ (t x))) /\ ((~ (s x)) \/ (t x))) |- ((t x) /\ F)
+T c==> * f0 f1 c==> c/\ c/\ c\/ * f2 f1 * f0 f1 c~ * f0 f1 c\/ c~ * f2 f1 * f0 f1 c/\ * f0 f1 cF
++ (~ (s x)), (s x) |- F
+T c==> c~ * f0 f1 c==> * f0 f1 cF
+- |- ((!x'. ((~ (s' x')) \/ ((~ (u x)) \/ (t x)))) = ((!x. (~ (s' x))) \/ ((~ (u x)) \/ (t x))))
+T c= ! c\/ c~ * f0 b0 c\/ c~ * f1 f2 * f3 f2 c\/ ! c~ * f0 b0 c\/ c~ * f1 f2 * f3 f2
+- |- ((((~ ((!x. (~ ((s x) /\ (t x)))) ==> (((!x. ((s' x) ==> (s x))) /\ (!x. (~ ((s' x) /\ ((u x) /\ (~ (t x))))))) ==> (!x. (~ ((u x) /\ (s' x))))))) ==> F) ==> ((~ ((!x. (~ ((s x) /\ (t x)))) ==> (((!x. ((s' x) ==> (s x))) /\ (!x. (~ ((s' x) /\ ((u x) /\ (~ (t x))))))) ==> (!x. (~ ((u x) /\ (s' x))))))) ==> F)) ==> (((~ ((!x. (~ ((s x) /\ (t x)))) ==> (((!x. ((s' x) ==> (s x))) /\ (!x. (~ ((s' x) /\ ((u x) /\ (~ (t x))))))) ==> (!x. (~ ((u x) /\ (s' x))))))) ==> F) ==> ((~ ((!x. (~ ((s x) /\ (t x)))) ==> (((!x. ((s' x) ==> (s x))) /\ (!x. (~ ((s' x) /\ ((u x) /\ (~ (t x))))))) ==> (!x. (~ ((u x) /\ (s' x))))))) ==> F)))
+T c==> c==> c==> c~ c==> ! c~ c/\ * f0 b0 * f1 b0 c==> c/\ ! c==> * f2 b0 * f0 b0 ! c~ c/\ * f2 b0 c/\ * f3 b0 c~ * f1 b0 ! c~ c/\ * f3 b0 * f2 b0 cF c==> c~ c==> ! c~ c/\ * f0 b0 * f1 b0 c==> c/\ ! c==> * f2 b0 * f0 b0 ! c~ c/\ * f2 b0 c/\ * f3 b0 c~ * f1 b0 ! c~ c/\ * f3 b0 * f2 b0 cF c==> c==> c~ c==> ! c~ c/\ * f0 b0 * f1 b0 c==> c/\ ! c==> * f2 b0 * f0 b0 ! c~ c/\ * f2 b0 c/\ * f3 b0 c~ * f1 b0 ! c~ c/\ * f3 b0 * f2 b0 cF c==> c~ c==> ! c~ c/\ * f0 b0 * f1 b0 c==> c/\ ! c==> * f2 b0 * f0 b0 ! c~ c/\ * f2 b0 c/\ * f3 b0 c~ * f1 b0 ! c~ c/\ * f3 b0 * f2 b0 cF
+- (!s. (!t. (((s SUBSET t) /\ (t SUBSET s)) ==> (s = t)))) |- ((\s. (!t. (((s SUBSET t) /\ (t SUBSET s)) ==> (s = t)))) s)
+T c==> ! ! c==> c/\ cSUBSET b0 b1 cSUBSET b1 b0 c= b0 b1 * / ! c==> c/\ cSUBSET b0 b1 cSUBSET b1 b0 c= b0 b1 f0
+- (~ F), (ft x), (k x), (((!x. ((fs x) ==> (cs x))) /\ (!x. ((ft x) ==> (ct x)))) /\ ((!x. (~ ((k x) /\ (fs x)))) /\ (!x. (~ ((k x) /\ (ft x)))))) |- ((~ F) /\ F)
+T c==> c~ cF c==> * f0 f1 c==> * f2 f1 c==> c/\ c/\ ! c==> * f3 b0 * f4 b0 ! c==> * f0 b0 * f5 b0 c/\ ! c~ c/\ * f2 b0 * f3 b0 ! c~ c/\ * f2 b0 * f0 b0 c/\ c~ cF cF
++ (((closure s) x) /\ (~ ((interior s) x))) |- ((((closure s) x) /\ (~ ((interior s) x))) /\ ((closure s) x))
+T c==> c/\ cclosure f0 f1 c~ cinterior f0 f1 c/\ c/\ cclosure f0 f1 c~ cinterior f0 f1 cclosure f0 f1
++ ((interior (UNIV DIFF s)) = (UNIV DIFF (closure s))) |- ((UNIV DIFF (closure s)) = (interior (UNIV DIFF s)))
+T c==> c= * part cinterior * * part cDIFF part cUNIV f0 * * part cDIFF part cUNIV * part cclosure f0 c= * * part cDIFF part cUNIV * part cclosure f0 * part cinterior * * part cDIFF part cUNIV f0
+- |- ((((((fs SUBSET cs) /\ (ft SUBSET ct)) /\ (((k INTER fs) = EMPTY) /\ ((k INTER ft) = EMPTY))) ==> ((fs UNION ft) SUBSET ((cs UNION ct) DIFF k))) ==> ((((fs SUBSET cs) /\ (ft SUBSET ct)) /\ (((k INTER fs) = EMPTY) /\ ((k INTER ft) = EMPTY))) ==> ((fs UNION ft) SUBSET ((cs UNION ct) DIFF k)))) = ((((fs SUBSET cs) /\ (ft SUBSET ct)) /\ (((k INTER fs) = EMPTY) /\ ((k INTER ft) = EMPTY))) ==> ((fs UNION ft) SUBSET ((cs UNION ct) DIFF k))))
+T c= c==> c==> c/\ c/\ cSUBSET f0 f1 cSUBSET f2 f3 c/\ c= * * part cINTER f4 f0 part cEMPTY c= * * part cINTER f4 f2 part cEMPTY cSUBSET * * part cUNION f0 f2 * * part cDIFF * * part cUNION f1 f3 f4 c==> c/\ c/\ cSUBSET f0 f1 cSUBSET f2 f3 c/\ c= * * part cINTER f4 f0 part cEMPTY c= * * part cINTER f4 f2 part cEMPTY cSUBSET * * part cUNION f0 f2 * * part cDIFF * * part cUNION f1 f3 f4 c==> c/\ c/\ cSUBSET f0 f1 cSUBSET f2 f3 c/\ c= * * part cINTER f4 f0 part cEMPTY c= * * part cINTER f4 f2 part cEMPTY cSUBSET * * part cUNION f0 f2 * * part cDIFF * * part cUNION f1 f3 f4
++ (s x), ((((s x) \/ (t x)) /\ (~ (t x))) /\ ((~ (s x)) \/ (t x))) |- F
+T c==> * f0 f1 c==> c/\ c/\ c\/ * f0 f1 * f2 f1 c~ * f2 f1 c\/ c~ * f0 f1 * f2 f1 cF
+- |- ((((~ ((!x. ((ti x) ==> (si x))) ==> (!x. (~ (((c x) /\ (~ (si x))) /\ (ti x)))))) ==> F) ==> ((~ ((!x. ((ti x) ==> (si x))) ==> (!x. (~ (((c x) /\ (~ (si x))) /\ (ti x)))))) ==> F)) = ((~ ((!x. ((ti x) ==> (si x))) ==> (!x. (~ (((c x) /\ (~ (si x))) /\ (ti x)))))) ==> F))
+T c= c==> c==> c~ c==> ! c==> * f0 b0 * f1 b0 ! c~ c/\ c/\ * f2 b0 c~ * f1 b0 * f0 b0 cF c==> c~ c==> ! c==> * f0 b0 * f1 b0 ! c~ c/\ c/\ * f2 b0 c~ * f1 b0 * f0 b0 cF c==> c~ c==> ! c==> * f0 b0 * f1 b0 ! c~ c/\ c/\ * f2 b0 c~ * f1 b0 * f0 b0 cF
+- |- (((!cs. (!ft. (!fs. ((~ ((((!x. ((fs x) ==> (cs x))) /\ (!x. ((ft x) ==> (ct x)))) /\ ((!x. (~ ((k x) /\ (fs x)))) /\ (!x. (~ ((k x) /\ (ft x)))))) ==> (!x. (((fs x) \/ (ft x)) ==> (((cs x) \/ (ct x)) /\ (~ (k x))))))) ==> F)))) ==> ((\cs. (!ft. (!fs. ((~ ((((!x. ((fs x) ==> (cs x))) /\ (!x. ((ft x) ==> (ct x)))) /\ ((!x. (~ ((k x) /\ (fs x)))) /\ (!x. (~ ((k x) /\ (ft x)))))) ==> (!x. (((fs x) \/ (ft x)) ==> (((cs x) \/ (ct x)) /\ (~ (k x))))))) ==> F)))) cs)) = ((\cs. (!ft. (!fs. ((~ ((((!x. ((fs x) ==> (cs x))) /\ (!x. ((ft x) ==> (ct x)))) /\ ((!x. (~ ((k x) /\ (fs x)))) /\ (!x. (~ ((k x) /\ (ft x)))))) ==> (!x. (((fs x) \/ (ft x)) ==> (((cs x) \/ (ct x)) /\ (~ (k x))))))) ==> F)))) cs))
+T c= c==> ! ! ! c==> c~ c==> c/\ c/\ ! c==> * b2 b3 * b0 b3 ! c==> * b1 b3 * f0 b3 c/\ ! c~ c/\ * f1 b3 * b2 b3 ! c~ c/\ * f1 b3 * b1 b3 ! c==> c\/ * b2 b3 * b1 b3 c/\ c\/ * b0 b3 * f0 b3 c~ * f1 b3 cF * / ! ! c==> c~ c==> c/\ c/\ ! c==> * b2 b3 * b0 b3 ! c==> * b1 b3 * f0 b3 c/\ ! c~ c/\ * f1 b3 * b2 b3 ! c~ c/\ * f1 b3 * b1 b3 ! c==> c\/ * b2 b3 * b1 b3 c/\ c\/ * b0 b3 * f0 b3 c~ * f1 b3 cF f2 * / ! ! c==> c~ c==> c/\ c/\ ! c==> * b2 b3 * b0 b3 ! c==> * b1 b3 * f0 b3 c/\ ! c~ c/\ * f1 b3 * b2 b3 ! c~ c/\ * f1 b3 * b1 b3 ! c==> c\/ * b2 b3 * b1 b3 c/\ c\/ * b0 b3 * f0 b3 c~ * f1 b3 cF f2
++ ((((s x) \/ (t x)) /\ (~ (t x))) /\ ((~ (s x)) \/ (t x))) |- ((s x) \/ (t x))
+T c==> c/\ c/\ c\/ * f0 f1 * f2 f1 c~ * f2 f1 c\/ c~ * f0 f1 * f2 f1 c\/ * f0 f1 * f2 f1
++ ((u x) /\ (s' x)) |- (((s' x) ==> (s x)) = (s x))
+T c==> c/\ * f0 f1 * f2 f1 c= c==> * f2 f1 * f3 f1 * f3 f1
++ |- (((((closure s) INTER (closure t)) = EMPTY) ==> ((frontier (s UNION t)) = ((frontier s) UNION (frontier t)))) = T)
+T c= c==> c= * * part cINTER * part cclosure f0 * part cclosure f1 part cEMPTY c= * part cfrontier * * part cUNION f0 f1 * * part cUNION * part cfrontier f0 * part cfrontier f1 cT
+- ((u x) /\ (s' x)) |- ((~ (s' x)) ==> (s' x))
+T c==> c/\ * f0 f1 * f2 f1 c==> c~ * f2 f1 * f2 f1
+- (~ (s' x)), ((u x) /\ (s' x)) |- ((~ (s' x)) /\ (s' x))
+T c==> c~ * f0 f1 c==> c/\ * f2 f1 * f0 f1 c/\ c~ * f0 f1 * f0 f1
+- |- ((!c. ((!x. ((ti x) ==> (si x))) ==> (!x. (~ (((c x) /\ (~ (si x))) /\ (ti x)))))) = T)
+T c= ! c==> ! c==> * f0 b1 * f1 b1 ! c~ c/\ c/\ * b0 b1 c~ * f1 b1 * f0 b1 cT
++ (((!x. ((fs x) ==> (cs x))) /\ (!x. ((ft x) ==> (ct x)))) /\ ((!x. (~ ((k x) /\ (fs x)))) /\ (!x. (~ ((k x) /\ (ft x)))))) |- ((((!x. ((fs x) ==> (cs x))) /\ (!x. ((ft x) ==> (ct x)))) /\ ((!x. (~ ((k x) /\ (fs x)))) /\ (!x. (~ ((k x) /\ (ft x)))))) /\ (!x. (((fs x) \/ (ft x)) ==> (((cs x) \/ (ct x)) /\ (~ (k x))))))
+T c==> c/\ c/\ ! c==> * f0 b0 * f1 b0 ! c==> * f2 b0 * f3 b0 c/\ ! c~ c/\ * f4 b0 * f0 b0 ! c~ c/\ * f4 b0 * f2 b0 c/\ c/\ c/\ ! c==> * f0 b0 * f1 b0 ! c==> * f2 b0 * f3 b0 c/\ ! c~ c/\ * f4 b0 * f0 b0 ! c~ c/\ * f4 b0 * f2 b0 ! c==> c\/ * f0 b0 * f2 b0 c/\ c\/ * f1 b0 * f3 b0 c~ * f4 b0
++ ((~ (cs x)) /\ (~ (ct x))), (((!x. ((fs x) ==> (cs x))) /\ (!x. ((ft x) ==> (ct x)))) /\ ((!x. (~ ((k x) /\ (fs x)))) /\ (!x. (~ ((k x) /\ (ft x)))))) |- ((fs x) ==> F)
+T c==> c/\ c~ * f0 f1 c~ * f2 f1 c==> c/\ c/\ ! c==> * f3 b0 * f0 b0 ! c==> * f4 b0 * f2 b0 c/\ ! c~ c/\ * f5 b0 * f3 b0 ! c~ c/\ * f5 b0 * f4 b0 c==> * f3 f1 cF
++ |- ((\s. (!t. ((s UNION t) = (t UNION s)))) s)
+T * / ! c= * * part cUNION b0 b1 * * part cUNION b1 b0 f0
+- (!s. (!t. (((s SUBSET t) /\ (t SUBSET s)) ==> (s = t)))) |- (!t. (((s SUBSET t) /\ (t SUBSET s)) ==> (s = t)))
+T c==> ! ! c==> c/\ cSUBSET b0 b1 cSUBSET b1 b0 c= b0 b1 ! c==> c/\ cSUBSET f0 b0 cSUBSET b0 f0 c= f0 b0
+- (~ ((closure s) x)) |- (((closure s) x) ==> F)
+T c==> c~ cclosure f0 f1 c==> cclosure f0 f1 cF
+- |- (((((~ (!x. ((((s x) \/ (t x)) /\ (~ (t x))) = ((s x) /\ (~ (t x)))))) ==> F) ==> ((~ (!x. ((((s x) \/ (t x)) /\ (~ (t x))) = ((s x) /\ (~ (t x)))))) ==> F)) ==> (((~ (!x. ((((s x) \/ (t x)) /\ (~ (t x))) = ((s x) /\ (~ (t x)))))) ==> F) ==> ((~ (!x. ((((s x) \/ (t x)) /\ (~ (t x))) = ((s x) /\ (~ (t x)))))) ==> F))) = (((~ (!x. ((((s x) \/ (t x)) /\ (~ (t x))) = ((s x) /\ (~ (t x)))))) ==> F) ==> ((~ (!x. ((((s x) \/ (t x)) /\ (~ (t x))) = ((s x) /\ (~ (t x)))))) ==> F)))
+T c= c==> c==> c==> c~ ! c= c/\ c\/ * f0 b0 * f1 b0 c~ * f1 b0 c/\ * f0 b0 c~ * f1 b0 cF c==> c~ ! c= c/\ c\/ * f0 b0 * f1 b0 c~ * f1 b0 c/\ * f0 b0 c~ * f1 b0 cF c==> c==> c~ ! c= c/\ c\/ * f0 b0 * f1 b0 c~ * f1 b0 c/\ * f0 b0 c~ * f1 b0 cF c==> c~ ! c= c/\ c\/ * f0 b0 * f1 b0 c~ * f1 b0 c/\ * f0 b0 c~ * f1 b0 cF c==> c==> c~ ! c= c/\ c\/ * f0 b0 * f1 b0 c~ * f1 b0 c/\ * f0 b0 c~ * f1 b0 cF c==> c~ ! c= c/\ c\/ * f0 b0 * f1 b0 c~ * f1 b0 c/\ * f0 b0 c~ * f1 b0 cF
+- |- ((!k. (!ct. (!cs. (!ft. (!fs. ((((!x. ((fs x) ==> (cs x))) /\ (!x. ((ft x) ==> (ct x)))) /\ ((!x. (~ ((k x) /\ (fs x)))) /\ (!x. (~ ((k x) /\ (ft x)))))) ==> (!x. (((fs x) \/ (ft x)) ==> (((cs x) \/ (ct x)) /\ (~ (k x))))))))))) = (!k. (!ct. (!cs. (!ft. (!fs. ((~ ((((!x. ((fs x) ==> (cs x))) /\ (!x. ((ft x) ==> (ct x)))) /\ ((!x. (~ ((k x) /\ (fs x)))) /\ (!x. (~ ((k x) /\ (ft x)))))) ==> (!x. (((fs x) \/ (ft x)) ==> (((cs x) \/ (ct x)) /\ (~ (k x))))))) ==> F)))))))
+T c= ! ! ! ! ! c==> c/\ c/\ ! c==> * b4 b5 * b2 b5 ! c==> * b3 b5 * b1 b5 c/\ ! c~ c/\ * b0 b5 * b4 b5 ! c~ c/\ * b0 b5 * b3 b5 ! c==> c\/ * b4 b5 * b3 b5 c/\ c\/ * b2 b5 * b1 b5 c~ * b0 b5 ! ! ! ! ! c==> c~ c==> c/\ c/\ ! c==> * b4 b5 * b2 b5 ! c==> * b3 b5 * b1 b5 c/\ ! c~ c/\ * b0 b5 * b4 b5 ! c~ c/\ * b0 b5 * b3 b5 ! c==> c\/ * b4 b5 * b3 b5 c/\ c\/ * b2 b5 * b1 b5 c~ * b0 b5 cF
+- (~ (s x)), (t x), ((((s x) \/ (t x)) /\ (~ (t x))) /\ ((~ (s x)) \/ (t x))) |- ((~ (s x)) /\ F)
+T c==> c~ * f0 f1 c==> * f2 f1 c==> c/\ c/\ c\/ * f0 f1 * f2 f1 c~ * f2 f1 c\/ c~ * f0 f1 * f2 f1 c/\ c~ * f0 f1 cF
+- (~ (s x)), (s x) |- ((~ F) ==> F)
+T c==> c~ * f0 f1 c==> * f0 f1 c==> c~ cF cF
+- (~ (s x)), ((!x. ((s' x) ==> (s x))) /\ (!x. (~ ((s' x) /\ ((u x) /\ (~ (t x))))))), ((u x) /\ (s' x)) |- ((~ (s x)) /\ (s x))
+T c==> c~ * f0 f1 c==> c/\ ! c==> * f2 b0 * f0 b0 ! c~ c/\ * f2 b0 c/\ * f3 b0 c~ * f4 b0 c==> c/\ * f3 f1 * f2 f1 c/\ c~ * f0 f1 * f0 f1
+- |- ((\t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3)))) t2)
+T * / ! c= c\/ f0 c\/ b0 b1 c\/ c\/ f0 b0 b1 f1
++ |- (((~ (((cs x) \/ (ct x)) /\ (~ (k x)))) ==> F) = (((cs x) \/ (ct x)) /\ (~ (k x))))
+T c= c==> c~ c/\ c\/ * f0 f1 * f2 f1 c~ * f3 f1 cF c/\ c\/ * f0 f1 * f2 f1 c~ * f3 f1
+- |- ((!x. ((P x) \/ Q)) = ((!x. (P x)) \/ Q))
+T c= ! c\/ * f0 b0 f1 c\/ ! * f0 b0 f1
++ |- ((\t. ((s DIFF t) SUBSET s)) t)
+T * / cSUBSET * * part cDIFF f0 b0 f0 f1
++ (((closure s) INTER (closure t)) = EMPTY) |- (((frontier (s UNION t)) SUBSET ((frontier s) UNION (frontier t))) /\ (((frontier s) UNION (frontier t)) SUBSET (frontier (s UNION t))))
+T c==> c= * * part cINTER * part cclosure f0 * part cclosure f1 part cEMPTY c/\ cSUBSET * part cfrontier * * part cUNION f0 f1 * * part cUNION * part cfrontier f0 * part cfrontier f1 cSUBSET * * part cUNION * part cfrontier f0 * part cfrontier f1 * part cfrontier * * part cUNION f0 f1
+- (~ (u x)), ((u x) /\ (s' x)) |- ((~ (u x)) /\ (u x))
+T c==> c~ * f0 f1 c==> c/\ * f0 f1 * f2 f1 c/\ c~ * f0 f1 * f0 f1
+- (((~ ((!x. (~ ((s x) /\ (t x)))) ==> (((!x. ((s' x) ==> (s x))) /\ (!x. (~ ((s' x) /\ ((u x) /\ (~ (t x))))))) ==> (!x. (~ ((u x) /\ (s' x))))))) ==> F) ==> ((~ ((!x. (~ ((s x) /\ (t x)))) ==> (((!x. ((s' x) ==> (s x))) /\ (!x. (~ ((s' x) /\ ((u x) /\ (~ (t x))))))) ==> (!x. (~ ((u x) /\ (s' x))))))) ==> F)) |- ((((~ ((!x. (~ ((s x) /\ (t x)))) ==> (((!x. ((s' x) ==> (s x))) /\ (!x. (~ ((s' x) /\ ((u x) /\ (~ (t x))))))) ==> (!x. (~ ((u x) /\ (s' x))))))) ==> F) ==> ((~ ((!x. (~ ((s x) /\ (t x)))) ==> (((!x. ((s' x) ==> (s x))) /\ (!x. (~ ((s' x) /\ ((u x) /\ (~ (t x))))))) ==> (!x. (~ ((u x) /\ (s' x))))))) ==> F)) /\ (((~ ((!x. (~ ((s x) /\ (t x)))) ==> (((!x. ((s' x) ==> (s x))) /\ (!x. (~ ((s' x) /\ ((u x) /\ (~ (t x))))))) ==> (!x. (~ ((u x) /\ (s' x))))))) ==> F) ==> ((~ ((!x. (~ ((s x) /\ (t x)))) ==> (((!x. ((s' x) ==> (s x))) /\ (!x. (~ ((s' x) /\ ((u x) /\ (~ (t x))))))) ==> (!x. (~ ((u x) /\ (s' x))))))) ==> F)))
+T c==> c==> c==> c~ c==> ! c~ c/\ * f0 b0 * f1 b0 c==> c/\ ! c==> * f2 b0 * f0 b0 ! c~ c/\ * f2 b0 c/\ * f3 b0 c~ * f1 b0 ! c~ c/\ * f3 b0 * f2 b0 cF c==> c~ c==> ! c~ c/\ * f0 b0 * f1 b0 c==> c/\ ! c==> * f2 b0 * f0 b0 ! c~ c/\ * f2 b0 c/\ * f3 b0 c~ * f1 b0 ! c~ c/\ * f3 b0 * f2 b0 cF c/\ c==> c==> c~ c==> ! c~ c/\ * f0 b0 * f1 b0 c==> c/\ ! c==> * f2 b0 * f0 b0 ! c~ c/\ * f2 b0 c/\ * f3 b0 c~ * f1 b0 ! c~ c/\ * f3 b0 * f2 b0 cF c==> c~ c==> ! c~ c/\ * f0 b0 * f1 b0 c==> c/\ ! c==> * f2 b0 * f0 b0 ! c~ c/\ * f2 b0 c/\ * f3 b0 c~ * f1 b0 ! c~ c/\ * f3 b0 * f2 b0 cF c==> c==> c~ c==> ! c~ c/\ * f0 b0 * f1 b0 c==> c/\ ! c==> * f2 b0 * f0 b0 ! c~ c/\ * f2 b0 c/\ * f3 b0 c~ * f1 b0 ! c~ c/\ * f3 b0 * f2 b0 cF c==> c~ c==> ! c~ c/\ * f0 b0 * f1 b0 c==> c/\ ! c==> * f2 b0 * f0 b0 ! c~ c/\ * f2 b0 c/\ * f3 b0 c~ * f1 b0 ! c~ c/\ * f3 b0 * f2 b0 cF
++ |- (((s UNION t) INTER (UNIV DIFF t)) = (s DIFF t))
+T c= * * part cINTER * * part cUNION f0 f1 * * part cDIFF part cUNIV f1 * * part cDIFF f0 f1
+- (!s. (!t. (((s SUBSET t) /\ (t SUBSET s)) ==> (s = t)))), ((s SUBSET t) /\ (t SUBSET s)) |- ((!s. (!t. (((s SUBSET t) /\ (t SUBSET s)) ==> (s = t)))) /\ (s = t))
+T c==> ! ! c==> c/\ cSUBSET b0 b1 cSUBSET b1 b0 c= b0 b1 c==> c/\ cSUBSET f0 f1 cSUBSET f1 f0 c/\ ! ! c==> c/\ cSUBSET b0 b1 cSUBSET b1 b0 c= b0 b1 c= f0 f1
++ |- ((((closure s) DIFF (interior s)) SUBSET (closure s)) /\ (((closure t) DIFF (interior t)) SUBSET (closure t)))
+T c/\ cSUBSET * * part cDIFF * part cclosure f0 * part cinterior f0 * part cclosure f0 cSUBSET * * part cDIFF * part cclosure f1 * part cinterior f1 * part cclosure f1
++ ((!x. ((s' x) ==> (s x))) /\ (!x. (~ ((s' x) /\ ((u x) /\ (~ (t x))))))) |- ((!x. ((~ (s' x)) \/ (s x))) /\ (!x. ((~ (s' x)) \/ ((~ (u x)) \/ (t x)))))
+T c==> c/\ ! c==> * f0 b0 * f1 b0 ! c~ c/\ * f0 b0 c/\ * f2 b0 c~ * f3 b0 c/\ ! c\/ c~ * f0 b0 * f1 b0 ! c\/ c~ * f0 b0 c\/ c~ * f2 b0 * f3 b0
+- |- ((!u. (!t. (!s. ((!x. (~ ((s x) /\ (t x)))) ==> (((!x. ((s' x) ==> (s x))) /\ (!x. (~ ((s' x) /\ ((u x) /\ (~ (t x))))))) ==> (!x. (~ ((u x) /\ (s' x))))))))) = T)
+T c= ! ! ! c==> ! c~ c/\ * b2 b3 * b1 b3 c==> c/\ ! c==> * f0 b3 * b2 b3 ! c~ c/\ * f0 b3 c/\ * b0 b3 c~ * b1 b3 ! c~ c/\ * b0 b3 * f0 b3 cT
+- (ft x), (k x), (((!x. ((fs x) ==> (cs x))) /\ (!x. ((ft x) ==> (ct x)))) /\ ((!x. (~ ((k x) /\ (fs x)))) /\ (!x. (~ ((k x) /\ (ft x)))))) |- ((~ F) ==> F)
+T c==> * f0 f1 c==> * f2 f1 c==> c/\ c/\ ! c==> * f3 b0 * f4 b0 ! c==> * f0 b0 * f5 b0 c/\ ! c~ c/\ * f2 b0 * f3 b0 ! c~ c/\ * f2 b0 * f0 b0 c==> c~ cF cF
+- (~ ((!x. ((ti x) ==> (si x))) ==> (!x. (~ (((c x) /\ (~ (si x))) /\ (ti x)))))) |- F
+T c==> c~ c==> ! c==> * f0 b0 * f1 b0 ! c~ c/\ c/\ * f2 b0 c~ * f1 b0 * f0 b0 cF
++ |- (((!t. ((s SUBSET t) ==> ((interior s) SUBSET (interior t)))) ==> ((\t. ((s SUBSET t) ==> ((interior s) SUBSET (interior t)))) t)) = ((\t. ((s SUBSET t) ==> ((interior s) SUBSET (interior t)))) t))
+T c= c==> ! c==> cSUBSET f0 b0 cSUBSET * part cinterior f0 * part cinterior b0 * / c==> cSUBSET f0 b0 cSUBSET * part cinterior f0 * part cinterior b0 f1 * / c==> cSUBSET f0 b0 cSUBSET * part cinterior f0 * part cinterior b0 f1
++ ((u x) /\ (s' x)) |- ((((s' x) /\ (u x)) ==> (t x)) = (t x))
+T c==> c/\ * f0 f1 * f2 f1 c= c==> c/\ * f2 f1 * f0 f1 * f3 f1 * f3 f1
++ (!x. (~ ((s x) /\ (t x)))) |- ((!x. (~ ((s x) /\ (t x)))) /\ (((!x. ((s' x) ==> (s x))) /\ (!x. (~ ((s' x) /\ ((u x) /\ (~ (t x))))))) ==> (!x. (~ ((u x) /\ (s' x))))))
+T c==> ! c~ c/\ * f0 b0 * f1 b0 c/\ ! c~ c/\ * f0 b0 * f1 b0 c==> c/\ ! c==> * f2 b0 * f0 b0 ! c~ c/\ * f2 b0 c/\ * f3 b0 c~ * f1 b0 ! c~ c/\ * f3 b0 * f2 b0
++ ((~ (cs x)) /\ (~ (ct x))) |- ((ct x) ==> F)
+T c==> c/\ c~ * f0 f1 c~ * f2 f1 c==> * f2 f1 cF
+- (~ ((closure s) x)), (((closure s) x) /\ (~ ((interior s) x))) |- ((~ ((closure s) x)) /\ F)
+T c==> c~ cclosure f0 f1 c==> c/\ cclosure f0 f1 c~ cinterior f0 f1 c/\ c~ cclosure f0 f1 cF
++ ((~ (cs x)) /\ (~ (ct x))), (((!x. ((fs x) ==> (cs x))) /\ (!x. ((ft x) ==> (ct x)))) /\ ((!x. (~ ((k x) /\ (fs x)))) /\ (!x. (~ ((k x) /\ (ft x)))))), ((fs x) \/ (ft x)) |- (((~ (cs x)) /\ (~ (ct x))) /\ F)
+T c==> c/\ c~ * f0 f1 c~ * f2 f1 c==> c/\ c/\ ! c==> * f3 b0 * f0 b0 ! c==> * f4 b0 * f2 b0 c/\ ! c~ c/\ * f5 b0 * f3 b0 ! c~ c/\ * f5 b0 * f4 b0 c==> c\/ * f3 f1 * f4 f1 c/\ c/\ c~ * f0 f1 c~ * f2 f1 cF
++ |- (((!t. (!s. ((~ ((!x. ((((closure s) x) /\ (~ ((interior s) x))) ==> ((closure s) x))) /\ (!x. ((((closure t) x) /\ (~ ((interior t) x))) ==> ((closure t) x))))) ==> F))) ==> ((\t. (!s. ((~ ((!x. ((((closure s) x) /\ (~ ((interior s) x))) ==> ((closure s) x))) /\ (!x. ((((closure t) x) /\ (~ ((interior t) x))) ==> ((closure t) x))))) ==> F))) t)) = ((\t. (!s. ((~ ((!x. ((((closure s) x) /\ (~ ((interior s) x))) ==> ((closure s) x))) /\ (!x. ((((closure t) x) /\ (~ ((interior t) x))) ==> ((closure t) x))))) ==> F))) t))
+T c= c==> ! ! c==> c~ c/\ ! c==> c/\ cclosure b1 b2 c~ cinterior b1 b2 cclosure b1 b2 ! c==> c/\ cclosure b0 b2 c~ cinterior b0 b2 cclosure b0 b2 cF * / ! c==> c~ c/\ ! c==> c/\ cclosure b1 b2 c~ cinterior b1 b2 cclosure b1 b2 ! c==> c/\ cclosure b0 b2 c~ cinterior b0 b2 cclosure b0 b2 cF f0 * / ! c==> c~ c/\ ! c==> c/\ cclosure b1 b2 c~ cinterior b1 b2 cclosure b1 b2 ! c==> c/\ cclosure b0 b2 c~ cinterior b0 b2 cclosure b0 b2 cF f0
++ (ft x), (k x), (((!x. ((fs x) ==> (cs x))) /\ (!x. ((ft x) ==> (ct x)))) /\ ((!x. (~ ((k x) /\ (fs x)))) /\ (!x. (~ ((k x) /\ (ft x)))))) |- ((ft x) /\ F)
+T c==> * f0 f1 c==> * f2 f1 c==> c/\ c/\ ! c==> * f3 b0 * f4 b0 ! c==> * f0 b0 * f5 b0 c/\ ! c~ c/\ * f2 b0 * f3 b0 ! c~ c/\ * f2 b0 * f0 b0 c/\ * f0 f1 cF
++ |- (((!t. ((s INTER t) = (t INTER s))) ==> ((\t. ((s INTER t) = (t INTER s))) t)) = ((\t. ((s INTER t) = (t INTER s))) t))
+T c= c==> ! c= * * part cINTER f0 b0 * * part cINTER b0 f0 * / c= * * part cINTER f0 b0 * * part cINTER b0 f0 f1 * / c= * * part cINTER f0 b0 * * part cINTER b0 f0 f1
+- (!x. ((ti x) ==> (si x))), (~ F), (((c x) /\ (~ (si x))) /\ (ti x)) |- ((~ F) /\ F)
+T c==> ! c==> * f0 b0 * f1 b0 c==> c~ cF c==> c/\ c/\ * f2 f3 c~ * f1 f3 * f0 f3 c/\ c~ cF cF
++ (!x. ((ti x) ==> (si x))) |- ((~ (((c x) /\ (~ (si x))) /\ (ti x))) = T)
+T c==> ! c==> * f0 b0 * f1 b0 c= c~ c/\ c/\ * f2 f3 c~ * f1 f3 * f0 f3 cT
++ (!x. ((ti x) ==> (si x))), (((c x) /\ (~ (si x))) /\ (ti x)) |- (((si x) ==> F) = F)
+T c==> ! c==> * f0 b0 * f1 b0 c==> c/\ c/\ * f2 f3 c~ * f1 f3 * f0 f3 c= c==> * f1 f3 cF cF
+- |- (((!s. ((~ (!x. ((((s x) \/ (t x)) /\ (~ (t x))) = ((s x) /\ (~ (t x)))))) ==> F)) ==> ((\s. ((~ (!x. ((((s x) \/ (t x)) /\ (~ (t x))) = ((s x) /\ (~ (t x)))))) ==> F)) s)) = ((\s. ((~ (!x. ((((s x) \/ (t x)) /\ (~ (t x))) = ((s x) /\ (~ (t x)))))) ==> F)) s))
+T c= c==> ! c==> c~ ! c= c/\ c\/ * b0 b1 * f0 b1 c~ * f0 b1 c/\ * b0 b1 c~ * f0 b1 cF * / c==> c~ ! c= c/\ c\/ * b0 b1 * f0 b1 c~ * f0 b1 c/\ * b0 b1 c~ * f0 b1 cF f1 * / c==> c~ ! c= c/\ c\/ * b0 b1 * f0 b1 c~ * f0 b1 c/\ * b0 b1 c~ * f0 b1 cF f1
+- |- (((!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3)))) ==> ((\t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3)))) t2)) = ((\t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3)))) t2))
+T c= c==> ! ! c= c\/ f0 c\/ b0 b1 c\/ c\/ f0 b0 b1 * / ! c= c\/ f0 c\/ b0 b1 c\/ c\/ f0 b0 b1 f1 * / ! c= c\/ f0 c\/ b0 b1 c\/ c\/ f0 b0 b1 f1
++ (ft x), (((!x. ((fs x) ==> (cs x))) /\ (!x. ((ft x) ==> (ct x)))) /\ ((!x. (~ ((k x) /\ (fs x)))) /\ (!x. (~ ((k x) /\ (ft x)))))) |- (ct x)
+T c==> * f0 f1 c==> c/\ c/\ ! c==> * f2 b0 * f3 b0 ! c==> * f0 b0 * f4 b0 c/\ ! c~ c/\ * f5 b0 * f2 b0 ! c~ c/\ * f5 b0 * f0 b0 * f4 f1
++ (!x. (~ ((s x) /\ (t x)))) |- (((s _290957) /\ (t _290957)) ==> F)
+T c==> ! c~ c/\ * f0 b0 * f1 b0 c==> c/\ * f0 f2 * f1 f2 cF
+- (((closure s) INTER (closure t)) = EMPTY) |- (((((s' SUBSET (closure t)) /\ ((s' INTER (u INTER (UNIV DIFF (closure s)))) = EMPTY)) ==> ((u INTER s') = EMPTY)) ==> (((s' SUBSET (closure t)) /\ ((s' INTER (u INTER (UNIV DIFF (closure s)))) = EMPTY)) ==> ((u INTER s') = EMPTY))) = (((s' SUBSET (closure t)) /\ ((s' INTER (u INTER (UNIV DIFF (closure s)))) = EMPTY)) ==> ((u INTER s') = EMPTY)))
+T c==> c= * * part cINTER * part cclosure f0 * part cclosure f1 part cEMPTY c= c==> c==> c/\ cSUBSET f2 * part cclosure f1 c= * * part cINTER f2 * * part cINTER f3 * * part cDIFF part cUNIV * part cclosure f0 part cEMPTY c= * * part cINTER f3 f2 part cEMPTY c==> c/\ cSUBSET f2 * part cclosure f1 c= * * part cINTER f2 * * part cINTER f3 * * part cDIFF part cUNIV * part cclosure f0 part cEMPTY c= * * part cINTER f3 f2 part cEMPTY c==> c/\ cSUBSET f2 * part cclosure f1 c= * * part cINTER f2 * * part cINTER f3 * * part cDIFF part cUNIV * part cclosure f0 part cEMPTY c= * * part cINTER f3 f2 part cEMPTY
++ |- (((interior s) INTER (interior t)) = (interior (s INTER t)))
+T c= * * part cINTER * part cinterior f0 * part cinterior f1 * part cinterior * * part cINTER f0 f1
+- (~ (!x. ((((s x) \/ (t x)) /\ (~ (t x))) = ((s x) /\ (~ (t x)))))) |- ((~ (!x. ((((s x) \/ (t x)) /\ (~ (t x))) = ((s x) /\ (~ (t x)))))) /\ F)
+T c==> c~ ! c= c/\ c\/ * f0 b0 * f1 b0 c~ * f1 b0 c/\ * f0 b0 c~ * f1 b0 c/\ c~ ! c= c/\ c\/ * f0 b0 * f1 b0 c~ * f1 b0 c/\ * f0 b0 c~ * f1 b0 cF
++ |- (((frontier (s UNION t)) SUBSET ((frontier s) UNION (frontier t))) = T)
+T c= cSUBSET * part cfrontier * * part cUNION f0 f1 * * part cUNION * part cfrontier f0 * part cfrontier f1 cT
++ |- ((!s. ((!x. ((((closure s) x) /\ (~ ((interior s) x))) ==> ((closure s) x))) /\ (!x. ((((closure t) x) /\ (~ ((interior t) x))) ==> ((closure t) x))))) = ((!s. (!x. ((((closure s) x) /\ (~ ((interior s) x))) ==> ((closure s) x)))) /\ (!s. (!x. ((((closure t) x) /\ (~ ((interior t) x))) ==> ((closure t) x))))))
+T c= ! c/\ ! c==> c/\ cclosure b0 b1 c~ cinterior b0 b1 cclosure b0 b1 ! c==> c/\ cclosure f0 b1 c~ cinterior f0 b1 cclosure f0 b1 c/\ ! ! c==> c/\ cclosure b0 b1 c~ cinterior b0 b1 cclosure b0 b1 ! ! c==> c/\ cclosure f0 b1 c~ cinterior f0 b1 cclosure f0 b1
++ |- (((~ ((!x. ((((closure s) x) /\ (~ ((interior s) x))) ==> ((closure s) x))) /\ (!x. ((((closure t) x) /\ (~ ((interior t) x))) ==> ((closure t) x))))) ==> F) = ((!x. ((((closure s) x) /\ (~ ((interior s) x))) ==> ((closure s) x))) /\ (!x. ((((closure t) x) /\ (~ ((interior t) x))) ==> ((closure t) x)))))
+T c= c==> c~ c/\ ! c==> c/\ cclosure f0 b0 c~ cinterior f0 b0 cclosure f0 b0 ! c==> c/\ cclosure f1 b0 c~ cinterior f1 b0 cclosure f1 b0 cF c/\ ! c==> c/\ cclosure f0 b0 c~ cinterior f0 b0 cclosure f0 b0 ! c==> c/\ cclosure f1 b0 c~ cinterior f1 b0 cclosure f1 b0
++ |- ((((frontier s) UNION (frontier t)) SUBSET (frontier (s UNION t))) = (((frontier (s UNION t)) SUBSET ((frontier s) UNION (frontier t))) /\ (((frontier s) UNION (frontier t)) SUBSET (frontier (s UNION t)))))
+T c= cSUBSET * * part cUNION * part cfrontier f0 * part cfrontier f1 * part cfrontier * * part cUNION f0 f1 c/\ cSUBSET * part cfrontier * * part cUNION f0 f1 * * part cUNION * part cfrontier f0 * part cfrontier f1 cSUBSET * * part cUNION * part cfrontier f0 * part cfrontier f1 * part cfrontier * * part cUNION f0 f1
++ |- ((\t. ((s UNION t) = (t UNION s))) t)
+T * / c= * * part cUNION f0 b0 * * part cUNION b0 f0 f1
+- |- ((((~ ((((!x. ((fs x) ==> (cs x))) /\ (!x. ((ft x) ==> (ct x)))) /\ ((!x. (~ ((k x) /\ (fs x)))) /\ (!x. (~ ((k x) /\ (ft x)))))) ==> (!x. (((fs x) \/ (ft x)) ==> (((cs x) \/ (ct x)) /\ (~ (k x))))))) ==> F) ==> ((~ ((((!x. ((fs x) ==> (cs x))) /\ (!x. ((ft x) ==> (ct x)))) /\ ((!x. (~ ((k x) /\ (fs x)))) /\ (!x. (~ ((k x) /\ (ft x)))))) ==> (!x. (((fs x) \/ (ft x)) ==> (((cs x) \/ (ct x)) /\ (~ (k x))))))) ==> F)) = ((~ ((((!x. ((fs x) ==> (cs x))) /\ (!x. ((ft x) ==> (ct x)))) /\ ((!x. (~ ((k x) /\ (fs x)))) /\ (!x. (~ ((k x) /\ (ft x)))))) ==> (!x. (((fs x) \/ (ft x)) ==> (((cs x) \/ (ct x)) /\ (~ (k x))))))) ==> F))
+T c= c==> c==> c~ c==> c/\ c/\ ! c==> * f0 b0 * f1 b0 ! c==> * f2 b0 * f3 b0 c/\ ! c~ c/\ * f4 b0 * f0 b0 ! c~ c/\ * f4 b0 * f2 b0 ! c==> c\/ * f0 b0 * f2 b0 c/\ c\/ * f1 b0 * f3 b0 c~ * f4 b0 cF c==> c~ c==> c/\ c/\ ! c==> * f0 b0 * f1 b0 ! c==> * f2 b0 * f3 b0 c/\ ! c~ c/\ * f4 b0 * f0 b0 ! c~ c/\ * f4 b0 * f2 b0 ! c==> c\/ * f0 b0 * f2 b0 c/\ c\/ * f1 b0 * f3 b0 c~ * f4 b0 cF c==> c~ c==> c/\ c/\ ! c==> * f0 b0 * f1 b0 ! c==> * f2 b0 * f3 b0 c/\ ! c~ c/\ * f4 b0 * f0 b0 ! c~ c/\ * f4 b0 * f2 b0 ! c==> c\/ * f0 b0 * f2 b0 c/\ c\/ * f1 b0 * f3 b0 c~ * f4 b0 cF
+- ((~ (!x. ((((s x) \/ (t x)) /\ (~ (t x))) = ((s x) /\ (~ (t x)))))) ==> F) |- (((~ (!x. ((((s x) \/ (t x)) /\ (~ (t x))) = ((s x) /\ (~ (t x)))))) ==> F) /\ ((~ (!x. ((((s x) \/ (t x)) /\ (~ (t x))) = ((s x) /\ (~ (t x)))))) ==> F))
+T c==> c==> c~ ! c= c/\ c\/ * f0 b0 * f1 b0 c~ * f1 b0 c/\ * f0 b0 c~ * f1 b0 cF c/\ c==> c~ ! c= c/\ c\/ * f0 b0 * f1 b0 c~ * f1 b0 c/\ * f0 b0 c~ * f1 b0 cF c==> c~ ! c= c/\ c\/ * f0 b0 * f1 b0 c~ * f1 b0 c/\ * f0 b0 c~ * f1 b0 cF
++ |- (!x. ((x IN ((s UNION t) INTER (UNIV DIFF t))) = (x IN (s DIFF t))))
+T c= cIN f0 * * part cINTER * * part cUNION f1 f2 * * part cDIFF part cUNIV f2 cIN f0 * * part cDIFF f1 f2
+- |- ((!x'. ((~ (k x')) \/ (~ (ft x)))) = ((!x. (~ (k x))) \/ (~ (ft x))))
+T c= ! c\/ c~ * f0 b0 c~ * f1 f2 c\/ ! c~ * f0 b0 c~ * f1 f2
++ (((c x) /\ (~ (si x))) /\ (ti x)) |- (~ (si x))
+T c==> c/\ c/\ * f0 f1 c~ * f2 f1 * f3 f1 c~ * f2 f1
++ (!x. ((ti x) ==> (si x))), (((c x) /\ (~ (si x))) /\ (ti x)) |- (si x)
+T c==> ! c==> * f0 b0 * f1 b0 c==> c/\ c/\ * f2 f3 c~ * f1 f3 * f0 f3 * f1 f3
+- |- (((!x. ((ti x) ==> (si x))) ==> (!x. (~ (((c x) /\ (~ (si x))) /\ (ti x))))) = T)
+T c= c==> ! c==> * f0 b0 * f1 b0 ! c~ c/\ c/\ * f2 b0 c~ * f1 b0 * f0 b0 cT
++ (((closure s) INTER (closure t)) = EMPTY) |- (((interior (t UNION s)) INTER (frontier t)) = EMPTY)
+T c==> c= * * part cINTER * part cclosure f0 * part cclosure f1 part cEMPTY c= * * part cINTER * part cinterior * * part cUNION f1 f0 * part cfrontier f1 part cEMPTY
++ ((!x. ((s' x) ==> (s x))) /\ (!x. (~ ((s' x) /\ ((u x) /\ (~ (t x))))))) |- (((s' _290959) /\ (u _290959)) ==> (t _290959))
+T c==> c/\ ! c==> * f0 b0 * f1 b0 ! c~ c/\ * f0 b0 c/\ * f2 b0 c~ * f3 b0 c==> c/\ * f0 f4 * f2 f4 * f3 f4
++ |- ((!x. ((((s x) \/ (t x)) /\ (~ (t x))) = ((s x) /\ (~ (t x))))) = (!x. ((x IN ((s UNION t) INTER (UNIV DIFF t))) = (x IN (s DIFF t)))))
+T c= ! c= c/\ c\/ * f0 b0 * f1 b0 c~ * f1 b0 c/\ * f0 b0 c~ * f1 b0 ! c= cIN b0 * * part cINTER * * part cUNION f0 f1 * * part cDIFF part cUNIV f1 cIN b0 * * part cDIFF f0 f1
++ |- (((!x. ((x IN (s INTER t)) = (x IN EMPTY))) ==> (((!x. ((x IN s') ==> (x IN s))) /\ (!x. ((x IN (s' INTER (u INTER (UNIV DIFF t)))) = (x IN EMPTY)))) ==> (!x. ((x IN (u INTER s')) = (x IN EMPTY))))) = (((s INTER t) = EMPTY) ==> (((s' SUBSET s) /\ ((s' INTER (u INTER (UNIV DIFF t))) = EMPTY)) ==> ((u INTER s') = EMPTY))))
+T c= c==> ! c= cIN b0 * * part cINTER f0 f1 cIN b0 part cEMPTY c==> c/\ ! c==> cIN b0 f2 cIN b0 f0 ! c= cIN b0 * * part cINTER f2 * * part cINTER f3 * * part cDIFF part cUNIV f1 cIN b0 part cEMPTY ! c= cIN b0 * * part cINTER f3 f2 cIN b0 part cEMPTY c==> c= * * part cINTER f0 f1 part cEMPTY c==> c/\ cSUBSET f2 f0 c= * * part cINTER f2 * * part cINTER f3 * * part cDIFF part cUNIV f1 part cEMPTY c= * * part cINTER f3 f2 part cEMPTY
++ ((!x. ((s' x) ==> (s x))) /\ (!x. (~ ((s' x) /\ ((u x) /\ (~ (t x))))))) |- ((\x. ((~ (s' x)) \/ (s x))) _290958)
+T c==> c/\ ! c==> * f0 b0 * f1 b0 ! c~ c/\ * f0 b0 c/\ * f2 b0 c~ * f3 b0 * / c\/ c~ * f0 b0 * f1 b0 f4
++ |- ((!x. ((((closure s) x) /\ (~ ((interior s) x))) ==> ((closure s) x))) /\ (!x. ((((closure t) x) /\ (~ ((interior t) x))) ==> ((closure t) x))))
+T c/\ ! c==> c/\ cclosure f0 b0 c~ cinterior f0 b0 cclosure f0 b0 ! c==> c/\ cclosure f1 b0 c~ cinterior f1 b0 cclosure f1 b0
+- |- ((x = x) = T)
+T c= c= f0 f0 cT
++ |- (T = ((interior (t DIFF s)) SUBSET (interior t)))
+T c= cT cSUBSET * part cinterior * * part cDIFF f0 f1 * part cinterior f0
+- ((~ ((!x. (~ ((s x) /\ (t x)))) ==> (((!x. ((s' x) ==> (s x))) /\ (!x. (~ ((s' x) /\ ((u x) /\ (~ (t x))))))) ==> (!x. (~ ((u x) /\ (s' x))))))) ==> F), (((~ ((!x. (~ ((s x) /\ (t x)))) ==> (((!x. ((s' x) ==> (s x))) /\ (!x. (~ ((s' x) /\ ((u x) /\ (~ (t x))))))) ==> (!x. (~ ((u x) /\ (s' x))))))) ==> F) ==> ((~ ((!x. (~ ((s x) /\ (t x)))) ==> (((!x. ((s' x) ==> (s x))) /\ (!x. (~ ((s' x) /\ ((u x) /\ (~ (t x))))))) ==> (!x. (~ ((u x) /\ (s' x))))))) ==> F)) |- ((((~ ((!x. (~ ((s x) /\ (t x)))) ==> (((!x. ((s' x) ==> (s x))) /\ (!x. (~ ((s' x) /\ ((u x) /\ (~ (t x))))))) ==> (!x. (~ ((u x) /\ (s' x))))))) ==> F) ==> ((~ ((!x. (~ ((s x) /\ (t x)))) ==> (((!x. ((s' x) ==> (s x))) /\ (!x. (~ ((s' x) /\ ((u x) /\ (~ (t x))))))) ==> (!x. (~ ((u x) /\ (s' x))))))) ==> F)) /\ ((~ ((!x. (~ ((s x) /\ (t x)))) ==> (((!x. ((s' x) ==> (s x))) /\ (!x. (~ ((s' x) /\ ((u x) /\ (~ (t x))))))) ==> (!x. (~ ((u x) /\ (s' x))))))) ==> F))
+T c==> c==> c~ c==> ! c~ c/\ * f0 b0 * f1 b0 c==> c/\ ! c==> * f2 b0 * f0 b0 ! c~ c/\ * f2 b0 c/\ * f3 b0 c~ * f1 b0 ! c~ c/\ * f3 b0 * f2 b0 cF c==> c==> c==> c~ c==> ! c~ c/\ * f0 b0 * f1 b0 c==> c/\ ! c==> * f2 b0 * f0 b0 ! c~ c/\ * f2 b0 c/\ * f3 b0 c~ * f1 b0 ! c~ c/\ * f3 b0 * f2 b0 cF c==> c~ c==> ! c~ c/\ * f0 b0 * f1 b0 c==> c/\ ! c==> * f2 b0 * f0 b0 ! c~ c/\ * f2 b0 c/\ * f3 b0 c~ * f1 b0 ! c~ c/\ * f3 b0 * f2 b0 cF c/\ c==> c==> c~ c==> ! c~ c/\ * f0 b0 * f1 b0 c==> c/\ ! c==> * f2 b0 * f0 b0 ! c~ c/\ * f2 b0 c/\ * f3 b0 c~ * f1 b0 ! c~ c/\ * f3 b0 * f2 b0 cF c==> c~ c==> ! c~ c/\ * f0 b0 * f1 b0 c==> c/\ ! c==> * f2 b0 * f0 b0 ! c~ c/\ * f2 b0 c/\ * f3 b0 c~ * f1 b0 ! c~ c/\ * f3 b0 * f2 b0 cF c==> c~ c==> ! c~ c/\ * f0 b0 * f1 b0 c==> c/\ ! c==> * f2 b0 * f0 b0 ! c~ c/\ * f2 b0 c/\ * f3 b0 c~ * f1 b0 ! c~ c/\ * f3 b0 * f2 b0 cF
++ (!x. (~ ((s x) /\ (t x)))) |- ((\x. ((~ (s x)) \/ (~ (t x)))) _290957)
+T c==> ! c~ c/\ * f0 b0 * f1 b0 * / c\/ c~ * f0 b0 c~ * f1 b0 f2
++ |- ((p \/ (q \/ r)) = (q \/ (p \/ r)))
+T c= c\/ f0 c\/ f1 f2 c\/ f1 c\/ f0 f2
+- ((~ ((((!x. ((fs x) ==> (cs x))) /\ (!x. ((ft x) ==> (ct x)))) /\ ((!x. (~ ((k x) /\ (fs x)))) /\ (!x. (~ ((k x) /\ (ft x)))))) ==> (!x. (((fs x) \/ (ft x)) ==> (((cs x) \/ (ct x)) /\ (~ (k x))))))) ==> F), (((~ ((((!x. ((fs x) ==> (cs x))) /\ (!x. ((ft x) ==> (ct x)))) /\ ((!x. (~ ((k x) /\ (fs x)))) /\ (!x. (~ ((k x) /\ (ft x)))))) ==> (!x. (((fs x) \/ (ft x)) ==> (((cs x) \/ (ct x)) /\ (~ (k x))))))) ==> F) ==> ((~ ((((!x. ((fs x) ==> (cs x))) /\ (!x. ((ft x) ==> (ct x)))) /\ ((!x. (~ ((k x) /\ (fs x)))) /\ (!x. (~ ((k x) /\ (ft x)))))) ==> (!x. (((fs x) \/ (ft x)) ==> (((cs x) \/ (ct x)) /\ (~ (k x))))))) ==> F)) |- ((((~ ((((!x. ((fs x) ==> (cs x))) /\ (!x. ((ft x) ==> (ct x)))) /\ ((!x. (~ ((k x) /\ (fs x)))) /\ (!x. (~ ((k x) /\ (ft x)))))) ==> (!x. (((fs x) \/ (ft x)) ==> (((cs x) \/ (ct x)) /\ (~ (k x))))))) ==> F) ==> ((~ ((((!x. ((fs x) ==> (cs x))) /\ (!x. ((ft x) ==> (ct x)))) /\ ((!x. (~ ((k x) /\ (fs x)))) /\ (!x. (~ ((k x) /\ (ft x)))))) ==> (!x. (((fs x) \/ (ft x)) ==> (((cs x) \/ (ct x)) /\ (~ (k x))))))) ==> F)) /\ ((~ ((((!x. ((fs x) ==> (cs x))) /\ (!x. ((ft x) ==> (ct x)))) /\ ((!x. (~ ((k x) /\ (fs x)))) /\ (!x. (~ ((k x) /\ (ft x)))))) ==> (!x. (((fs x) \/ (ft x)) ==> (((cs x) \/ (ct x)) /\ (~ (k x))))))) ==> F))
+T c==> c==> c~ c==> c/\ c/\ ! c==> * f0 b0 * f1 b0 ! c==> * f2 b0 * f3 b0 c/\ ! c~ c/\ * f4 b0 * f0 b0 ! c~ c/\ * f4 b0 * f2 b0 ! c==> c\/ * f0 b0 * f2 b0 c/\ c\/ * f1 b0 * f3 b0 c~ * f4 b0 cF c==> c==> c==> c~ c==> c/\ c/\ ! c==> * f0 b0 * f1 b0 ! c==> * f2 b0 * f3 b0 c/\ ! c~ c/\ * f4 b0 * f0 b0 ! c~ c/\ * f4 b0 * f2 b0 ! c==> c\/ * f0 b0 * f2 b0 c/\ c\/ * f1 b0 * f3 b0 c~ * f4 b0 cF c==> c~ c==> c/\ c/\ ! c==> * f0 b0 * f1 b0 ! c==> * f2 b0 * f3 b0 c/\ ! c~ c/\ * f4 b0 * f0 b0 ! c~ c/\ * f4 b0 * f2 b0 ! c==> c\/ * f0 b0 * f2 b0 c/\ c\/ * f1 b0 * f3 b0 c~ * f4 b0 cF c/\ c==> c==> c~ c==> c/\ c/\ ! c==> * f0 b0 * f1 b0 ! c==> * f2 b0 * f3 b0 c/\ ! c~ c/\ * f4 b0 * f0 b0 ! c~ c/\ * f4 b0 * f2 b0 ! c==> c\/ * f0 b0 * f2 b0 c/\ c\/ * f1 b0 * f3 b0 c~ * f4 b0 cF c==> c~ c==> c/\ c/\ ! c==> * f0 b0 * f1 b0 ! c==> * f2 b0 * f3 b0 c/\ ! c~ c/\ * f4 b0 * f0 b0 ! c~ c/\ * f4 b0 * f2 b0 ! c==> c\/ * f0 b0 * f2 b0 c/\ c\/ * f1 b0 * f3 b0 c~ * f4 b0 cF c==> c~ c==> c/\ c/\ ! c==> * f0 b0 * f1 b0 ! c==> * f2 b0 * f3 b0 c/\ ! c~ c/\ * f4 b0 * f0 b0 ! c~ c/\ * f4 b0 * f2 b0 ! c==> c\/ * f0 b0 * f2 b0 c/\ c\/ * f1 b0 * f3 b0 c~ * f4 b0 cF
++ |- (((((!x. ((fs x) ==> (cs x))) /\ (!x. ((ft x) ==> (ct x)))) /\ ((!x. (~ ((k x) /\ (fs x)))) /\ (!x. (~ ((k x) /\ (ft x)))))) ==> (!x. (((fs x) \/ (ft x)) ==> (((cs x) \/ (ct x)) /\ (~ (k x)))))) = ((((!x. ((x IN fs) ==> (x IN cs))) /\ (!x. ((x IN ft) ==> (x IN ct)))) /\ ((!x. ((x IN (k INTER fs)) = (x IN EMPTY))) /\ (!x. ((x IN (k INTER ft)) = (x IN EMPTY))))) ==> (!x. ((x IN (fs UNION ft)) ==> (x IN ((cs UNION ct) DIFF k))))))
+T c= c==> c/\ c/\ ! c==> * f0 b0 * f1 b0 ! c==> * f2 b0 * f3 b0 c/\ ! c~ c/\ * f4 b0 * f0 b0 ! c~ c/\ * f4 b0 * f2 b0 ! c==> c\/ * f0 b0 * f2 b0 c/\ c\/ * f1 b0 * f3 b0 c~ * f4 b0 c==> c/\ c/\ ! c==> cIN b0 f0 cIN b0 f1 ! c==> cIN b0 f2 cIN b0 f3 c/\ ! c= cIN b0 * * part cINTER f4 f0 cIN b0 part cEMPTY ! c= cIN b0 * * part cINTER f4 f2 cIN b0 part cEMPTY ! c==> cIN b0 * * part cUNION f0 f2 cIN b0 * * part cDIFF * * part cUNION f1 f3 f4
+- (~ F), (t x), ((((s x) \/ (t x)) /\ (~ (t x))) /\ ((~ (s x)) \/ (t x))) |- ((~ F) /\ F)
+T c==> c~ cF c==> * f0 f1 c==> c/\ c/\ c\/ * f2 f1 * f0 f1 c~ * f0 f1 c\/ c~ * f2 f1 * f0 f1 c/\ c~ cF cF
+- (((closure s) INTER (closure t)) = EMPTY) |- (((((s' SUBSET (closure s)) /\ ((s' INTER (u INTER (UNIV DIFF (closure t)))) = EMPTY)) ==> ((u INTER s') = EMPTY)) ==> (((s' SUBSET (closure s)) /\ ((s' INTER (u INTER (UNIV DIFF (closure t)))) = EMPTY)) ==> ((u INTER s') = EMPTY))) = (((s' SUBSET (closure s)) /\ ((s' INTER (u INTER (UNIV DIFF (closure t)))) = EMPTY)) ==> ((u INTER s') = EMPTY)))
+T c==> c= * * part cINTER * part cclosure f0 * part cclosure f1 part cEMPTY c= c==> c==> c/\ cSUBSET f2 * part cclosure f0 c= * * part cINTER f2 * * part cINTER f3 * * part cDIFF part cUNIV * part cclosure f1 part cEMPTY c= * * part cINTER f3 f2 part cEMPTY c==> c/\ cSUBSET f2 * part cclosure f0 c= * * part cINTER f2 * * part cINTER f3 * * part cDIFF part cUNIV * part cclosure f1 part cEMPTY c= * * part cINTER f3 f2 part cEMPTY c==> c/\ cSUBSET f2 * part cclosure f0 c= * * part cINTER f2 * * part cINTER f3 * * part cDIFF part cUNIV * part cclosure f1 part cEMPTY c= * * part cINTER f3 f2 part cEMPTY
++ (ft x), (k x) |- ((k x) /\ (ft x))
+T c==> * f0 f1 c==> * f2 f1 c/\ * f2 f1 * f0 f1
+- (~ ((((!x. ((fs x) ==> (cs x))) /\ (!x. ((ft x) ==> (ct x)))) /\ ((!x. (~ ((k x) /\ (fs x)))) /\ (!x. (~ ((k x) /\ (ft x)))))) ==> (!x. (((fs x) \/ (ft x)) ==> (((cs x) \/ (ct x)) /\ (~ (k x))))))) |- F
+T c==> c~ c==> c/\ c/\ ! c==> * f0 b0 * f1 b0 ! c==> * f2 b0 * f3 b0 c/\ ! c~ c/\ * f4 b0 * f0 b0 ! c~ c/\ * f4 b0 * f2 b0 ! c==> c\/ * f0 b0 * f2 b0 c/\ c\/ * f1 b0 * f3 b0 c~ * f4 b0 cF
++ |- (((!s. (!t. ((s UNION t) = (t UNION s)))) ==> ((\s. (!t. ((s UNION t) = (t UNION s)))) s)) = ((\s. (!t. ((s UNION t) = (t UNION s)))) s))
+T c= c==> ! ! c= * * part cUNION b0 b1 * * part cUNION b1 b0 * / ! c= * * part cUNION b0 b1 * * part cUNION b1 b0 f0 * / ! c= * * part cUNION b0 b1 * * part cUNION b1 b0 f0
+- |- ((\ct. (!cs. (!ft. (!fs. ((~ ((((!x. ((fs x) ==> (cs x))) /\ (!x. ((ft x) ==> (ct x)))) /\ ((!x. (~ ((k x) /\ (fs x)))) /\ (!x. (~ ((k x) /\ (ft x)))))) ==> (!x. (((fs x) \/ (ft x)) ==> (((cs x) \/ (ct x)) /\ (~ (k x))))))) ==> F))))) ct)
+T * / ! ! ! c==> c~ c==> c/\ c/\ ! c==> * b3 b4 * b1 b4 ! c==> * b2 b4 * b0 b4 c/\ ! c~ c/\ * f0 b4 * b3 b4 ! c~ c/\ * f0 b4 * b2 b4 ! c==> c\/ * b3 b4 * b2 b4 c/\ c\/ * b1 b4 * b0 b4 c~ * f0 b4 cF f1
++ (fs x), (((!x. ((fs x) ==> (cs x))) /\ (!x. ((ft x) ==> (ct x)))) /\ ((!x. (~ ((k x) /\ (fs x)))) /\ (!x. (~ ((k x) /\ (ft x)))))) |- (((cs x) ==> F) = F)
+T c==> * f0 f1 c==> c/\ c/\ ! c==> * f0 b0 * f2 b0 ! c==> * f3 b0 * f4 b0 c/\ ! c~ c/\ * f5 b0 * f0 b0 ! c~ c/\ * f5 b0 * f3 b0 c= c==> * f2 f1 cF cF
++ (!x. (~ ((s x) /\ (t x)))), ((!x. ((s' x) ==> (s x))) /\ (!x. (~ ((s' x) /\ ((u x) /\ (~ (t x))))))), ((u x) /\ (s' x)) |- (((u x) /\ (s' x)) /\ F)
+T c==> ! c~ c/\ * f0 b0 * f1 b0 c==> c/\ ! c==> * f2 b0 * f0 b0 ! c~ c/\ * f2 b0 c/\ * f3 b0 c~ * f1 b0 c==> c/\ * f3 f4 * f2 f4 c/\ c/\ * f3 f4 * f2 f4 cF
++ (((!x. ((fs x) ==> (cs x))) /\ (!x. ((ft x) ==> (ct x)))) /\ ((!x. (~ ((k x) /\ (fs x)))) /\ (!x. (~ ((k x) /\ (ft x)))))) |- (((!x. ((~ (fs x)) \/ (cs x))) /\ (!x. ((~ (ft x)) \/ (ct x)))) /\ ((!x. ((~ (k x)) \/ (~ (fs x)))) /\ (!x. ((~ (k x)) \/ (~ (ft x))))))
+T c==> c/\ c/\ ! c==> * f0 b0 * f1 b0 ! c==> * f2 b0 * f3 b0 c/\ ! c~ c/\ * f4 b0 * f0 b0 ! c~ c/\ * f4 b0 * f2 b0 c/\ c/\ ! c\/ c~ * f0 b0 * f1 b0 ! c\/ c~ * f2 b0 * f3 b0 c/\ ! c\/ c~ * f4 b0 c~ * f0 b0 ! c\/ c~ * f4 b0 c~ * f2 b0
++ (~ ((((s x) \/ (t x)) /\ (~ (t x))) = ((s x) /\ (~ (t x))))), (((((s x) \/ (t x)) /\ (~ (t x))) /\ ((~ (s x)) \/ (t x))) ==> F), (((((~ (s x)) /\ (~ (t x))) \/ (t x)) /\ ((s x) /\ (~ (t x)))) ==> F) |- F
+T c==> c~ c= c/\ c\/ * f0 f1 * f2 f1 c~ * f2 f1 c/\ * f0 f1 c~ * f2 f1 c==> c==> c/\ c/\ c\/ * f0 f1 * f2 f1 c~ * f2 f1 c\/ c~ * f0 f1 * f2 f1 cF c==> c==> c/\ c\/ c/\ c~ * f0 f1 c~ * f2 f1 * f2 f1 c/\ * f0 f1 c~ * f2 f1 cF cF
++ |- (!s. (!x. ((((closure s) x) /\ (~ ((interior s) x))) ==> ((closure s) x))))
+T c==> c/\ cclosure f0 f1 c~ cinterior f0 f1 cclosure f0 f1
++ |- (((~ a) \/ (~ b)) = (~ (a /\ b)))
+T c= c\/ c~ f0 c~ f1 c~ c/\ f0 f1
++ |- (((!s. ((frontier s) = ((closure s) DIFF (interior s)))) ==> ((\s. ((frontier s) = ((closure s) DIFF (interior s)))) s)) = ((\s. ((frontier s) = ((closure s) DIFF (interior s)))) s))
+T c= c==> ! c= * part cfrontier b0 * * part cDIFF * part cclosure b0 * part cinterior b0 * / c= * part cfrontier b0 * * part cDIFF * part cclosure b0 * part cinterior b0 f0 * / c= * part cfrontier b0 * * part cDIFF * part cclosure b0 * part cinterior b0 f0
++ |- ((x IN UNIV) = T)
+T c= cIN f0 part cUNIV cT
++ |- (((s DIFF t) SUBSET s) = T)
+T c= cSUBSET * * part cDIFF f0 f1 f0 cT
+- (fs x), (((!x. ((fs x) ==> (cs x))) /\ (!x. ((ft x) ==> (ct x)))) /\ ((!x. (~ ((k x) /\ (fs x)))) /\ (!x. (~ ((k x) /\ (ft x)))))) |- ((~ (cs x)) ==> (cs x))
+T c==> * f0 f1 c==> c/\ c/\ ! c==> * f0 b0 * f2 b0 ! c==> * f3 b0 * f4 b0 c/\ ! c~ c/\ * f5 b0 * f0 b0 ! c~ c/\ * f5 b0 * f3 b0 c==> c~ * f2 f1 * f2 f1
+- ((ti SUBSET si) ==> (((c DIFF si) INTER ti) = EMPTY)) |- (((ti SUBSET si) ==> (((c DIFF si) INTER ti) = EMPTY)) /\ ((ti SUBSET si) ==> (((c DIFF si) INTER ti) = EMPTY)))
+T c==> c==> cSUBSET f0 f1 c= * * part cINTER * * part cDIFF f2 f1 f0 part cEMPTY c/\ c==> cSUBSET f0 f1 c= * * part cINTER * * part cDIFF f2 f1 f0 part cEMPTY c==> cSUBSET f0 f1 c= * * part cINTER * * part cDIFF f2 f1 f0 part cEMPTY
++ |- ((!x. ((((closure s) x) /\ (~ ((interior s) x))) ==> ((closure s) x))) = T)
+T c= ! c==> c/\ cclosure f0 b0 c~ cinterior f0 b0 cclosure f0 b0 cT
++ (!x. ((ti x) ==> (si x))) |- ((!x. ((ti x) ==> (si x))) /\ (!x. (~ (((c x) /\ (~ (si x))) /\ (ti x)))))
+T c==> ! c==> * f0 b0 * f1 b0 c/\ ! c==> * f0 b0 * f1 b0 ! c~ c/\ c/\ * f2 b0 c~ * f1 b0 * f0 b0
+- (!x. (~ ((s x) /\ (t x)))), (~ F), ((!x. ((s' x) ==> (s x))) /\ (!x. (~ ((s' x) /\ ((u x) /\ (~ (t x))))))), ((u x) /\ (s' x)) |- ((~ F) /\ F)
+T c==> ! c~ c/\ * f0 b0 * f1 b0 c==> c~ cF c==> c/\ ! c==> * f2 b0 * f0 b0 ! c~ c/\ * f2 b0 c/\ * f3 b0 c~ * f1 b0 c==> c/\ * f3 f4 * f2 f4 c/\ c~ cF cF
++ (fs x), ((~ (cs x)) /\ (~ (ct x))), (((!x. ((fs x) ==> (cs x))) /\ (!x. ((ft x) ==> (ct x)))) /\ ((!x. (~ ((k x) /\ (fs x)))) /\ (!x. (~ ((k x) /\ (ft x)))))) |- F
+T c==> * f0 f1 c==> c/\ c~ * f2 f1 c~ * f3 f1 c==> c/\ c/\ ! c==> * f0 b0 * f2 b0 ! c==> * f4 b0 * f3 b0 c/\ ! c~ c/\ * f5 b0 * f0 b0 ! c~ c/\ * f5 b0 * f4 b0 cF
++ ((!x. ((s' x) ==> (s x))) /\ (!x. (~ ((s' x) /\ ((u x) /\ (~ (t x))))))) |- ((s _290958) \/ (~ (s' _290958)))
+T c==> c/\ ! c==> * f0 b0 * f1 b0 ! c~ c/\ * f0 b0 c/\ * f2 b0 c~ * f3 b0 c\/ * f1 f4 c~ * f0 f4
+- ((~ (!x. ((((s x) \/ (t x)) /\ (~ (t x))) = ((s x) /\ (~ (t x)))))) ==> F), (((~ (!x. ((((s x) \/ (t x)) /\ (~ (t x))) = ((s x) /\ (~ (t x)))))) ==> F) ==> ((~ (!x. ((((s x) \/ (t x)) /\ (~ (t x))) = ((s x) /\ (~ (t x)))))) ==> F)) |- ((((~ (!x. ((((s x) \/ (t x)) /\ (~ (t x))) = ((s x) /\ (~ (t x)))))) ==> F) ==> ((~ (!x. ((((s x) \/ (t x)) /\ (~ (t x))) = ((s x) /\ (~ (t x)))))) ==> F)) /\ ((~ (!x. ((((s x) \/ (t x)) /\ (~ (t x))) = ((s x) /\ (~ (t x)))))) ==> F))
+T c==> c==> c~ ! c= c/\ c\/ * f0 b0 * f1 b0 c~ * f1 b0 c/\ * f0 b0 c~ * f1 b0 cF c==> c==> c==> c~ ! c= c/\ c\/ * f0 b0 * f1 b0 c~ * f1 b0 c/\ * f0 b0 c~ * f1 b0 cF c==> c~ ! c= c/\ c\/ * f0 b0 * f1 b0 c~ * f1 b0 c/\ * f0 b0 c~ * f1 b0 cF c/\ c==> c==> c~ ! c= c/\ c\/ * f0 b0 * f1 b0 c~ * f1 b0 c/\ * f0 b0 c~ * f1 b0 cF c==> c~ ! c= c/\ c\/ * f0 b0 * f1 b0 c~ * f1 b0 c/\ * f0 b0 c~ * f1 b0 cF c==> c~ ! c= c/\ c\/ * f0 b0 * f1 b0 c~ * f1 b0 c/\ * f0 b0 c~ * f1 b0 cF
++ |- (((!s. (!t. ((closure (s UNION t)) = ((closure s) UNION (closure t))))) ==> ((\s. (!t. ((closure (s UNION t)) = ((closure s) UNION (closure t))))) s)) = ((\s. (!t. ((closure (s UNION t)) = ((closure s) UNION (closure t))))) s))
+T c= c==> ! ! c= * part cclosure * * part cUNION b0 b1 * * part cUNION * part cclosure b0 * part cclosure b1 * / ! c= * part cclosure * * part cUNION b0 b1 * * part cUNION * part cclosure b0 * part cclosure b1 f0 * / ! c= * part cclosure * * part cUNION b0 b1 * * part cUNION * part cclosure b0 * part cclosure b1 f0
++ |- ((p \/ q) = (q \/ p))
+T c= c\/ f0 f1 c\/ f1 f0
+- (t x), ((((~ (s x)) /\ (~ (t x))) \/ (t x)) /\ ((s x) /\ (~ (t x)))) |- ((t x) /\ F)
+T c==> * f0 f1 c==> c/\ c\/ c/\ c~ * f2 f1 c~ * f0 f1 * f0 f1 c/\ * f2 f1 c~ * f0 f1 c/\ * f0 f1 cF
++ (fs x), (((!x. ((fs x) ==> (cs x))) /\ (!x. ((ft x) ==> (ct x)))) /\ ((!x. (~ ((k x) /\ (fs x)))) /\ (!x. (~ ((k x) /\ (ft x)))))) |- (cs x)
+T c==> * f0 f1 c==> c/\ c/\ ! c==> * f0 b0 * f2 b0 ! c==> * f3 b0 * f4 b0 c/\ ! c~ c/\ * f5 b0 * f0 b0 ! c~ c/\ * f5 b0 * f3 b0 * f2 f1
+- (!x. ((ti x) ==> (si x))), (((c x) /\ (~ (si x))) /\ (ti x)) |- ((~ (si x)) ==> (si x))
+T c==> ! c==> * f0 b0 * f1 b0 c==> c/\ c/\ * f2 f3 c~ * f1 f3 * f0 f3 c==> c~ * f1 f3 * f1 f3
++ |- (((!s. (!t. ((s INTER t) = (t INTER s)))) ==> ((\s. (!t. ((s INTER t) = (t INTER s)))) s)) = ((\s. (!t. ((s INTER t) = (t INTER s)))) s))
+T c= c==> ! ! c= * * part cINTER b0 b1 * * part cINTER b1 b0 * / ! c= * * part cINTER b0 b1 * * part cINTER b1 b0 f0 * / ! c= * * part cINTER b0 b1 * * part cINTER b1 b0 f0
++ |- (((!t. ((frontier (s UNION t)) SUBSET ((frontier s) UNION (frontier t)))) ==> ((\t. ((frontier (s UNION t)) SUBSET ((frontier s) UNION (frontier t)))) t)) = ((\t. ((frontier (s UNION t)) SUBSET ((frontier s) UNION (frontier t)))) t))
+T c= c==> ! cSUBSET * part cfrontier * * part cUNION f0 b0 * * part cUNION * part cfrontier f0 * part cfrontier b0 * / cSUBSET * part cfrontier * * part cUNION f0 b0 * * part cUNION * part cfrontier f0 * part cfrontier b0 f1 * / cSUBSET * part cfrontier * * part cUNION f0 b0 * * part cUNION * part cfrontier f0 * part cfrontier b0 f1
+- (((closure s) x) /\ (~ ((interior s) x))) |- ((~ ((closure s) x)) ==> F)
+T c==> c/\ cclosure f0 f1 c~ cinterior f0 f1 c==> c~ cclosure f0 f1 cF
+- |- (((~ ((!x. ((ti x) ==> (si x))) ==> (!x. (~ (((c x) /\ (~ (si x))) /\ (ti x)))))) ==> F) = ((!x. ((ti x) ==> (si x))) ==> (!x. (~ (((c x) /\ (~ (si x))) /\ (ti x))))))
+T c= c==> c~ c==> ! c==> * f0 b0 * f1 b0 ! c~ c/\ c/\ * f2 b0 c~ * f1 b0 * f0 b0 cF c==> ! c==> * f0 b0 * f1 b0 ! c~ c/\ c/\ * f2 b0 c~ * f1 b0 * f0 b0
+- |- ((p \/ (p \/ q)) = (p \/ q))
+T c= c\/ f0 c\/ f0 f1 c\/ f0 f1
+- (ft x), (((!x. ((fs x) ==> (cs x))) /\ (!x. ((ft x) ==> (ct x)))) /\ ((!x. (~ ((k x) /\ (fs x)))) /\ (!x. (~ ((k x) /\ (ft x)))))) |- ((~ (ct x)) ==> (ct x))
+T c==> * f0 f1 c==> c/\ c/\ ! c==> * f2 b0 * f3 b0 ! c==> * f0 b0 * f4 b0 c/\ ! c~ c/\ * f5 b0 * f2 b0 ! c~ c/\ * f5 b0 * f0 b0 c==> c~ * f4 f1 * f4 f1
++ ((((~ (s x)) /\ (~ (t x))) \/ (t x)) /\ ((s x) /\ (~ (t x)))), ((t x) ==> F) |- F
+T c==> c/\ c\/ c/\ c~ * f0 f1 c~ * f2 f1 * f2 f1 c/\ * f0 f1 c~ * f2 f1 c==> c==> * f2 f1 cF cF
+- (~ (ti x)), (((c x) /\ (~ (si x))) /\ (ti x)) |- ((~ (ti x)) /\ (ti x))
+T c==> c~ * f0 f1 c==> c/\ c/\ * f2 f1 c~ * f3 f1 * f0 f1 c/\ c~ * f0 f1 * f0 f1
++ (((interior s) INTER (interior t)) = (interior (s INTER t))) |- ((interior (s INTER t)) = ((interior s) INTER (interior t)))
+T c==> c= * * part cINTER * part cinterior f0 * part cinterior f1 * part cinterior * * part cINTER f0 f1 c= * part cinterior * * part cINTER f0 f1 * * part cINTER * part cinterior f0 * part cinterior f1
+- |- (((!s. (!t. (((s SUBSET t) /\ (t SUBSET s)) ==> (s = t)))) ==> (!s. (!t. (((s SUBSET t) /\ (t SUBSET s)) ==> (s = t))))) = (!s. (!t. (((s SUBSET t) /\ (t SUBSET s)) ==> (s = t)))))
+T c= c==> ! ! c==> c/\ cSUBSET b0 b1 cSUBSET b1 b0 c= b0 b1 ! ! c==> c/\ cSUBSET b0 b1 cSUBSET b1 b0 c= b0 b1 ! ! c==> c/\ cSUBSET b0 b1 cSUBSET b1 b0 c= b0 b1
++ (ft x), ((~ (cs x)) /\ (~ (ct x))), (((!x. ((fs x) ==> (cs x))) /\ (!x. ((ft x) ==> (ct x)))) /\ ((!x. (~ ((k x) /\ (fs x)))) /\ (!x. (~ ((k x) /\ (ft x)))))) |- F
+T c==> * f0 f1 c==> c/\ c~ * f2 f1 c~ * f3 f1 c==> c/\ c/\ ! c==> * f4 b0 * f2 b0 ! c==> * f0 b0 * f3 b0 c/\ ! c~ c/\ * f5 b0 * f4 b0 ! c~ c/\ * f5 b0 * f0 b0 cF
+- |- ((((ti SUBSET si) ==> (((c DIFF si) INTER ti) = EMPTY)) ==> ((ti SUBSET si) ==> (((c DIFF si) INTER ti) = EMPTY))) = ((ti SUBSET si) ==> (((c DIFF si) INTER ti) = EMPTY)))
+T c= c==> c==> cSUBSET f0 f1 c= * * part cINTER * * part cDIFF f2 f1 f0 part cEMPTY c==> cSUBSET f0 f1 c= * * part cINTER * * part cDIFF f2 f1 f0 part cEMPTY c==> cSUBSET f0 f1 c= * * part cINTER * * part cDIFF f2 f1 f0 part cEMPTY
++ (fs x), ((~ (cs x)) /\ (~ (ct x))), (((!x. ((fs x) ==> (cs x))) /\ (!x. ((ft x) ==> (ct x)))) /\ ((!x. (~ ((k x) /\ (fs x)))) /\ (!x. (~ ((k x) /\ (ft x)))))) |- ((fs x) /\ F)
+T c==> * f0 f1 c==> c/\ c~ * f2 f1 c~ * f3 f1 c==> c/\ c/\ ! c==> * f0 b0 * f2 b0 ! c==> * f4 b0 * f3 b0 c/\ ! c~ c/\ * f5 b0 * f0 b0 ! c~ c/\ * f5 b0 * f4 b0 c/\ * f0 f1 cF
++ |- ((((fs SUBSET cs) /\ (ft SUBSET ct)) /\ (((k INTER fs) = EMPTY) /\ ((k INTER ft) = EMPTY))) ==> ((fs UNION ft) SUBSET ((cs UNION ct) DIFF k)))
+T c==> c/\ c/\ cSUBSET f0 f1 cSUBSET f2 f3 c/\ c= * * part cINTER f4 f0 part cEMPTY c= * * part cINTER f4 f2 part cEMPTY cSUBSET * * part cUNION f0 f2 * * part cDIFF * * part cUNION f1 f3 f4
+- ((~ (s x)) /\ (~ (t x))), ((((~ (s x)) /\ (~ (t x))) \/ (t x)) /\ ((s x) /\ (~ (t x)))) |- ((~ F) ==> F)
+T c==> c/\ c~ * f0 f1 c~ * f2 f1 c==> c/\ c\/ c/\ c~ * f0 f1 c~ * f2 f1 * f2 f1 c/\ * f0 f1 c~ * f2 f1 c==> c~ cF cF
++ |- ((UNIV DIFF (closure s)) = (interior (UNIV DIFF s)))
+T c= * * part cDIFF part cUNIV * part cclosure f0 * part cinterior * * part cDIFF part cUNIV f0
++ |- ((\t. (((s SUBSET t) /\ (t SUBSET s)) ==> (s = t))) t)
+T * / c==> c/\ cSUBSET f0 b0 cSUBSET b0 f0 c= f0 b0 f1
++ |- (((!s. (!x. ((((closure s) x) /\ (~ ((interior s) x))) ==> ((closure s) x)))) /\ (!t. (!x. ((((closure t) x) /\ (~ ((interior t) x))) ==> ((closure t) x))))) = (!s. (!x. ((((closure s) x) /\ (~ ((interior s) x))) ==> ((closure s) x)))))
+T c= c/\ ! ! c==> c/\ cclosure b0 b1 c~ cinterior b0 b1 cclosure b0 b1 ! ! c==> c/\ cclosure b0 b1 c~ cinterior b0 b1 cclosure b0 b1 ! ! c==> c/\ cclosure b0 b1 c~ cinterior b0 b1 cclosure b0 b1
+- ((ti SUBSET si) ==> (((c DIFF si) INTER ti) = EMPTY)), (ti SUBSET si) |- (((ti SUBSET si) ==> (((c DIFF si) INTER ti) = EMPTY)) /\ (((c DIFF si) INTER ti) = EMPTY))
+T c==> c==> cSUBSET f0 f1 c= * * part cINTER * * part cDIFF f2 f1 f0 part cEMPTY c==> cSUBSET f0 f1 c/\ c==> cSUBSET f0 f1 c= * * part cINTER * * part cDIFF f2 f1 f0 part cEMPTY c= * * part cINTER * * part cDIFF f2 f1 f0 part cEMPTY
+- |- ((!x'. ((~ (s' x)) \/ ((~ (u x')) \/ (t x')))) = ((~ (s' x)) \/ (!x. ((~ (u x)) \/ (t x)))))
+T c= ! c\/ c~ * f0 f1 c\/ c~ * f2 b0 * f3 b0 c\/ c~ * f0 f1 ! c\/ c~ * f2 b0 * f3 b0
++ ((((~ (s x)) /\ (~ (t x))) \/ (t x)) /\ ((s x) /\ (~ (t x)))) |- (((~ (s x)) /\ (~ (t x))) ==> F)
+T c==> c/\ c\/ c/\ c~ * f0 f1 c~ * f2 f1 * f2 f1 c/\ * f0 f1 c~ * f2 f1 c==> c/\ c~ * f0 f1 c~ * f2 f1 cF
+- |- ((!x. ((((s x) \/ (t x)) /\ (~ (t x))) = ((s x) /\ (~ (t x))))) = T)
+T c= ! c= c/\ c\/ * f0 b0 * f1 b0 c~ * f1 b0 c/\ * f0 b0 c~ * f1 b0 cT
++ ((((~ (s x)) /\ (~ (t x))) \/ (t x)) /\ ((s x) /\ (~ (t x)))) |- (((s x) ==> F) = F)
+T c==> c/\ c\/ c/\ c~ * f0 f1 c~ * f2 f1 * f2 f1 c/\ * f0 f1 c~ * f2 f1 c= c==> * f0 f1 cF cF
++ ((((~ (s x)) /\ (~ (t x))) \/ (t x)) /\ ((s x) /\ (~ (t x)))) |- (((((~ (s x)) /\ (~ (t x))) \/ (t x)) /\ ((s x) /\ (~ (t x)))) /\ F)
+T c==> c/\ c\/ c/\ c~ * f0 f1 c~ * f2 f1 * f2 f1 c/\ * f0 f1 c~ * f2 f1 c/\ c/\ c\/ c/\ c~ * f0 f1 c~ * f2 f1 * f2 f1 c/\ * f0 f1 c~ * f2 f1 cF
+- |- (((~ (!x. ((((s x) \/ (t x)) /\ (~ (t x))) = ((s x) /\ (~ (t x)))))) ==> F) = (!x. ((((s x) \/ (t x)) /\ (~ (t x))) = ((s x) /\ (~ (t x))))))
+T c= c==> c~ ! c= c/\ c\/ * f0 b0 * f1 b0 c~ * f1 b0 c/\ * f0 b0 c~ * f1 b0 cF ! c= c/\ c\/ * f0 b0 * f1 b0 c~ * f1 b0 c/\ * f0 b0 c~ * f1 b0
+- |- ((((s' SUBSET (closure t)) /\ ((s' INTER (u INTER (UNIV DIFF (closure s)))) = EMPTY)) ==> ((u INTER s') = EMPTY)) ==> (((s' SUBSET (closure t)) /\ ((s' INTER (u INTER (UNIV DIFF (closure s)))) = EMPTY)) ==> ((u INTER s') = EMPTY)))
+T c==> c==> c/\ cSUBSET f0 * part cclosure f1 c= * * part cINTER f0 * * part cINTER f2 * * part cDIFF part cUNIV * part cclosure f3 part cEMPTY c= * * part cINTER f2 f0 part cEMPTY c==> c/\ cSUBSET f0 * part cclosure f1 c= * * part cINTER f0 * * part cINTER f2 * * part cDIFF part cUNIV * part cclosure f3 part cEMPTY c= * * part cINTER f2 f0 part cEMPTY
+- |- (((~ ((!x. (~ ((s x) /\ (t x)))) ==> (((!x. ((s' x) ==> (s x))) /\ (!x. (~ ((s' x) /\ ((u x) /\ (~ (t x))))))) ==> (!x. (~ ((u x) /\ (s' x))))))) ==> F) = ((!x. (~ ((s x) /\ (t x)))) ==> (((!x. ((s' x) ==> (s x))) /\ (!x. (~ ((s' x) /\ ((u x) /\ (~ (t x))))))) ==> (!x. (~ ((u x) /\ (s' x)))))))
+T c= c==> c~ c==> ! c~ c/\ * f0 b0 * f1 b0 c==> c/\ ! c==> * f2 b0 * f0 b0 ! c~ c/\ * f2 b0 c/\ * f3 b0 c~ * f1 b0 ! c~ c/\ * f3 b0 * f2 b0 cF c==> ! c~ c/\ * f0 b0 * f1 b0 c==> c/\ ! c==> * f2 b0 * f0 b0 ! c~ c/\ * f2 b0 c/\ * f3 b0 c~ * f1 b0 ! c~ c/\ * f3 b0 * f2 b0
++ (~ (((cs x) \/ (ct x)) /\ (~ (k x)))), ((k x) ==> F), (((~ (cs x)) /\ (~ (ct x))) ==> F) |- F
+T c==> c~ c/\ c\/ * f0 f1 * f2 f1 c~ * f3 f1 c==> c==> * f3 f1 cF c==> c==> c/\ c~ * f0 f1 c~ * f2 f1 cF cF
++ (!x. ((ti x) ==> (si x))) |- (!x. ((~ (ti x)) \/ (si x)))
+T c==> ! c==> * f0 b0 * f1 b0 ! c\/ c~ * f0 b0 * f1 b0
+- (!s. (!t. (((s SUBSET t) /\ (t SUBSET s)) ==> (s = t)))), ((s SUBSET t) /\ (t SUBSET s)) |- (((s SUBSET t) /\ (t SUBSET s)) /\ (s = t))
+T c==> ! ! c==> c/\ cSUBSET b0 b1 cSUBSET b1 b0 c= b0 b1 c==> c/\ cSUBSET f0 f1 cSUBSET f1 f0 c/\ c/\ cSUBSET f0 f1 cSUBSET f1 f0 c= f0 f1
++ ((!x. ((s' x) ==> (s x))) /\ (!x. (~ ((s' x) /\ ((u x) /\ (~ (t x))))))) |- ((\x. ((~ (s' x)) \/ ((~ (u x)) \/ (t x)))) _290959)
+T c==> c/\ ! c==> * f0 b0 * f1 b0 ! c~ c/\ * f0 b0 c/\ * f2 b0 c~ * f3 b0 * / c\/ c~ * f0 b0 c\/ c~ * f2 b0 * f3 b0 f4
+- |- (((t1 \/ t2) \/ t3) = (t1 \/ (t2 \/ t3)))
+T c= c\/ c\/ f0 f1 f2 c\/ f0 c\/ f1 f2
++ (!x. ((ti x) ==> (si x))), (((c x) /\ (~ (si x))) /\ (ti x)) |- ((((c x) /\ (~ (si x))) /\ (ti x)) /\ F)
+T c==> ! c==> * f0 b0 * f1 b0 c==> c/\ c/\ * f2 f3 c~ * f1 f3 * f0 f3 c/\ c/\ c/\ * f2 f3 c~ * f1 f3 * f0 f3 cF
++ |- ((~ (a \/ b)) = ((~ a) /\ (~ b)))
+T c= c~ c\/ f0 f1 c/\ c~ f0 c~ f1
++ (((!x. ((fs x) ==> (cs x))) /\ (!x. ((ft x) ==> (ct x)))) /\ ((!x. (~ ((k x) /\ (fs x)))) /\ (!x. (~ ((k x) /\ (ft x)))))) |- (!x. ((~ (ft x)) \/ (ct x)))
+T c==> c/\ c/\ ! c==> * f0 b0 * f1 b0 ! c==> * f2 b0 * f3 b0 c/\ ! c~ c/\ * f4 b0 * f0 b0 ! c~ c/\ * f4 b0 * f2 b0 ! c\/ c~ * f2 b0 * f3 b0
++ (k x), (((!x. ((fs x) ==> (cs x))) /\ (!x. ((ft x) ==> (ct x)))) /\ ((!x. (~ ((k x) /\ (fs x)))) /\ (!x. (~ ((k x) /\ (ft x)))))) |- ((fs x) ==> F)
+T c==> * f0 f1 c==> c/\ c/\ ! c==> * f2 b0 * f3 b0 ! c==> * f4 b0 * f5 b0 c/\ ! c~ c/\ * f0 b0 * f2 b0 ! c~ c/\ * f0 b0 * f4 b0 c==> * f2 f1 cF
++ |- (((!s. (!t. ((s DIFF t) SUBSET s))) ==> ((\s. (!t. ((s DIFF t) SUBSET s))) s)) = ((\s. (!t. ((s DIFF t) SUBSET s))) s))
+T c= c==> ! ! cSUBSET * * part cDIFF b0 b1 b0 * / ! cSUBSET * * part cDIFF b0 b1 b0 f0 * / ! cSUBSET * * part cDIFF b0 b1 b0 f0
++ (((closure s) INTER (closure t)) = EMPTY) |- (((s' SUBSET (closure s)) /\ ((s' INTER (u INTER (UNIV DIFF (closure t)))) = EMPTY)) ==> ((u INTER s') = EMPTY))
+T c==> c= * * part cINTER * part cclosure f0 * part cclosure f1 part cEMPTY c==> c/\ cSUBSET f2 * part cclosure f0 c= * * part cINTER f2 * * part cINTER f3 * * part cDIFF part cUNIV * part cclosure f1 part cEMPTY c= * * part cINTER f3 f2 part cEMPTY
++ |- ((((interior (t DIFF s)) SUBSET (interior t)) ==> ((((closure t) DIFF (interior t)) INTER (interior (t DIFF s))) = EMPTY)) = ((((closure t) DIFF (interior t)) INTER (interior (t DIFF s))) = EMPTY))
+T c= c==> cSUBSET * part cinterior * * part cDIFF f0 f1 * part cinterior f0 c= * * part cINTER * * part cDIFF * part cclosure f0 * part cinterior f0 * part cinterior * * part cDIFF f0 f1 part cEMPTY c= * * part cINTER * * part cDIFF * part cclosure f0 * part cinterior f0 * part cinterior * * part cDIFF f0 f1 part cEMPTY
++ ((~ (s x)) /\ (~ (t x))), ((((~ (s x)) /\ (~ (t x))) \/ (t x)) /\ ((s x) /\ (~ (t x)))) |- (((~ (s x)) /\ (~ (t x))) /\ F)
+T c==> c/\ c~ * f0 f1 c~ * f2 f1 c==> c/\ c\/ c/\ c~ * f0 f1 c~ * f2 f1 * f2 f1 c/\ * f0 f1 c~ * f2 f1 c/\ c/\ c~ * f0 f1 c~ * f2 f1 cF
+- |- (((((~ ((((!x. ((fs x) ==> (cs x))) /\ (!x. ((ft x) ==> (ct x)))) /\ ((!x. (~ ((k x) /\ (fs x)))) /\ (!x. (~ ((k x) /\ (ft x)))))) ==> (!x. (((fs x) \/ (ft x)) ==> (((cs x) \/ (ct x)) /\ (~ (k x))))))) ==> F) ==> ((~ ((((!x. ((fs x) ==> (cs x))) /\ (!x. ((ft x) ==> (ct x)))) /\ ((!x. (~ ((k x) /\ (fs x)))) /\ (!x. (~ ((k x) /\ (ft x)))))) ==> (!x. (((fs x) \/ (ft x)) ==> (((cs x) \/ (ct x)) /\ (~ (k x))))))) ==> F)) ==> (((~ ((((!x. ((fs x) ==> (cs x))) /\ (!x. ((ft x) ==> (ct x)))) /\ ((!x. (~ ((k x) /\ (fs x)))) /\ (!x. (~ ((k x) /\ (ft x)))))) ==> (!x. (((fs x) \/ (ft x)) ==> (((cs x) \/ (ct x)) /\ (~ (k x))))))) ==> F) ==> ((~ ((((!x. ((fs x) ==> (cs x))) /\ (!x. ((ft x) ==> (ct x)))) /\ ((!x. (~ ((k x) /\ (fs x)))) /\ (!x. (~ ((k x) /\ (ft x)))))) ==> (!x. (((fs x) \/ (ft x)) ==> (((cs x) \/ (ct x)) /\ (~ (k x))))))) ==> F))) = (((~ ((((!x. ((fs x) ==> (cs x))) /\ (!x. ((ft x) ==> (ct x)))) /\ ((!x. (~ ((k x) /\ (fs x)))) /\ (!x. (~ ((k x) /\ (ft x)))))) ==> (!x. (((fs x) \/ (ft x)) ==> (((cs x) \/ (ct x)) /\ (~ (k x))))))) ==> F) ==> ((~ ((((!x. ((fs x) ==> (cs x))) /\ (!x. ((ft x) ==> (ct x)))) /\ ((!x. (~ ((k x) /\ (fs x)))) /\ (!x. (~ ((k x) /\ (ft x)))))) ==> (!x. (((fs x) \/ (ft x)) ==> (((cs x) \/ (ct x)) /\ (~ (k x))))))) ==> F)))
+T c= c==> c==> c==> c~ c==> c/\ c/\ ! c==> * f0 b0 * f1 b0 ! c==> * f2 b0 * f3 b0 c/\ ! c~ c/\ * f4 b0 * f0 b0 ! c~ c/\ * f4 b0 * f2 b0 ! c==> c\/ * f0 b0 * f2 b0 c/\ c\/ * f1 b0 * f3 b0 c~ * f4 b0 cF c==> c~ c==> c/\ c/\ ! c==> * f0 b0 * f1 b0 ! c==> * f2 b0 * f3 b0 c/\ ! c~ c/\ * f4 b0 * f0 b0 ! c~ c/\ * f4 b0 * f2 b0 ! c==> c\/ * f0 b0 * f2 b0 c/\ c\/ * f1 b0 * f3 b0 c~ * f4 b0 cF c==> c==> c~ c==> c/\ c/\ ! c==> * f0 b0 * f1 b0 ! c==> * f2 b0 * f3 b0 c/\ ! c~ c/\ * f4 b0 * f0 b0 ! c~ c/\ * f4 b0 * f2 b0 ! c==> c\/ * f0 b0 * f2 b0 c/\ c\/ * f1 b0 * f3 b0 c~ * f4 b0 cF c==> c~ c==> c/\ c/\ ! c==> * f0 b0 * f1 b0 ! c==> * f2 b0 * f3 b0 c/\ ! c~ c/\ * f4 b0 * f0 b0 ! c~ c/\ * f4 b0 * f2 b0 ! c==> c\/ * f0 b0 * f2 b0 c/\ c\/ * f1 b0 * f3 b0 c~ * f4 b0 cF c==> c==> c~ c==> c/\ c/\ ! c==> * f0 b0 * f1 b0 ! c==> * f2 b0 * f3 b0 c/\ ! c~ c/\ * f4 b0 * f0 b0 ! c~ c/\ * f4 b0 * f2 b0 ! c==> c\/ * f0 b0 * f2 b0 c/\ c\/ * f1 b0 * f3 b0 c~ * f4 b0 cF c==> c~ c==> c/\ c/\ ! c==> * f0 b0 * f1 b0 ! c==> * f2 b0 * f3 b0 c/\ ! c~ c/\ * f4 b0 * f0 b0 ! c~ c/\ * f4 b0 * f2 b0 ! c==> c\/ * f0 b0 * f2 b0 c/\ c\/ * f1 b0 * f3 b0 c~ * f4 b0 cF
+- (((fs SUBSET cs) /\ (ft SUBSET ct)) /\ (((k INTER fs) = EMPTY) /\ ((k INTER ft) = EMPTY))), ((((fs SUBSET cs) /\ (ft SUBSET ct)) /\ (((k INTER fs) = EMPTY) /\ ((k INTER ft) = EMPTY))) ==> ((fs UNION ft) SUBSET ((cs UNION ct) DIFF k))) |- (((((fs SUBSET cs) /\ (ft SUBSET ct)) /\ (((k INTER fs) = EMPTY) /\ ((k INTER ft) = EMPTY))) ==> ((fs UNION ft) SUBSET ((cs UNION ct) DIFF k))) /\ ((fs UNION ft) SUBSET ((cs UNION ct) DIFF k)))
+T c==> c/\ c/\ cSUBSET f0 f1 cSUBSET f2 f3 c/\ c= * * part cINTER f4 f0 part cEMPTY c= * * part cINTER f4 f2 part cEMPTY c==> c==> c/\ c/\ cSUBSET f0 f1 cSUBSET f2 f3 c/\ c= * * part cINTER f4 f0 part cEMPTY c= * * part cINTER f4 f2 part cEMPTY cSUBSET * * part cUNION f0 f2 * * part cDIFF * * part cUNION f1 f3 f4 c/\ c==> c/\ c/\ cSUBSET f0 f1 cSUBSET f2 f3 c/\ c= * * part cINTER f4 f0 part cEMPTY c= * * part cINTER f4 f2 part cEMPTY cSUBSET * * part cUNION f0 f2 * * part cDIFF * * part cUNION f1 f3 f4 cSUBSET * * part cUNION f0 f2 * * part cDIFF * * part cUNION f1 f3 f4
++ ((!x. ((s' x) ==> (s x))) /\ (!x. (~ ((s' x) /\ ((u x) /\ (~ (t x))))))), ((u x) /\ (s' x)) |- ((((s x) /\ (t x)) ==> F) = F)
+T c==> c/\ ! c==> * f0 b0 * f1 b0 ! c~ c/\ * f0 b0 c/\ * f2 b0 c~ * f3 b0 c==> c/\ * f2 f4 * f0 f4 c= c==> c/\ * f1 f4 * f3 f4 cF cF
+- |- ((!s. (!t. (((s SUBSET t) /\ (t SUBSET s)) ==> (s = t)))) ==> (!s. (!t. (((s SUBSET t) /\ (t SUBSET s)) ==> (s = t)))))
+T c==> ! ! c==> c/\ cSUBSET b0 b1 cSUBSET b1 b0 c= b0 b1 ! ! c==> c/\ cSUBSET b0 b1 cSUBSET b1 b0 c= b0 b1
+- |- (((ti SUBSET si) ==> (((c DIFF si) INTER ti) = EMPTY)) ==> ((ti SUBSET si) ==> (((c DIFF si) INTER ti) = EMPTY)))
+T c==> c==> cSUBSET f0 f1 c= * * part cINTER * * part cDIFF f2 f1 f0 part cEMPTY c==> cSUBSET f0 f1 c= * * part cINTER * * part cDIFF f2 f1 f0 part cEMPTY
++ ((!x. ((s' x) ==> (s x))) /\ (!x. (~ ((s' x) /\ ((u x) /\ (~ (t x))))))) |- (!x. ((~ (s' x)) \/ (s x)))
+T c==> c/\ ! c==> * f0 b0 * f1 b0 ! c~ c/\ * f0 b0 c/\ * f2 b0 c~ * f3 b0 ! c\/ c~ * f0 b0 * f1 b0
++ (((closure s) INTER (closure t)) = EMPTY) |- ((((closure s) INTER (closure t)) = EMPTY) /\ ((frontier (s UNION t)) = ((frontier s) UNION (frontier t))))
+T c==> c= * * part cINTER * part cclosure f0 * part cclosure f1 part cEMPTY c/\ c= * * part cINTER * part cclosure f0 * part cclosure f1 part cEMPTY c= * part cfrontier * * part cUNION f0 f1 * * part cUNION * part cfrontier f0 * part cfrontier f1
++ |- ((interior (t DIFF s)) SUBSET (interior t))
+T cSUBSET * part cinterior * * part cDIFF f0 f1 * part cinterior f0
++ ((((s x) \/ (t x)) /\ (~ (t x))) /\ ((~ (s x)) \/ (t x))), ((s x) ==> F), ((t x) ==> F) |- F
+T c==> c/\ c/\ c\/ * f0 f1 * f2 f1 c~ * f2 f1 c\/ c~ * f0 f1 * f2 f1 c==> c==> * f0 f1 cF c==> c==> * f2 f1 cF cF
+- |- ((\fs. ((~ ((((!x. ((fs x) ==> (cs x))) /\ (!x. ((ft x) ==> (ct x)))) /\ ((!x. (~ ((k x) /\ (fs x)))) /\ (!x. (~ ((k x) /\ (ft x)))))) ==> (!x. (((fs x) \/ (ft x)) ==> (((cs x) \/ (ct x)) /\ (~ (k x))))))) ==> F)) fs)
+T * / c==> c~ c==> c/\ c/\ ! c==> * b0 b1 * f0 b1 ! c==> * f1 b1 * f2 b1 c/\ ! c~ c/\ * f3 b1 * b0 b1 ! c~ c/\ * f3 b1 * f1 b1 ! c==> c\/ * b0 b1 * f1 b1 c/\ c\/ * f0 b1 * f2 b1 c~ * f3 b1 cF f4
+- (~ (cs x)), (fs x), (((!x. ((fs x) ==> (cs x))) /\ (!x. ((ft x) ==> (ct x)))) /\ ((!x. (~ ((k x) /\ (fs x)))) /\ (!x. (~ ((k x) /\ (ft x)))))) |- ((~ (cs x)) /\ (cs x))
+T c==> c~ * f0 f1 c==> * f2 f1 c==> c/\ c/\ ! c==> * f2 b0 * f0 b0 ! c==> * f3 b0 * f4 b0 c/\ ! c~ c/\ * f5 b0 * f2 b0 ! c~ c/\ * f5 b0 * f3 b0 c/\ c~ * f0 f1 * f0 f1
+- |- ((!ti. (!si. (!c. ((!x. ((ti x) ==> (si x))) ==> (!x. (~ (((c x) /\ (~ (si x))) /\ (ti x)))))))) = (!ti. (!si. (!c. ((~ ((!x. ((ti x) ==> (si x))) ==> (!x. (~ (((c x) /\ (~ (si x))) /\ (ti x)))))) ==> F)))))
+T c= ! ! ! c==> ! c==> * b0 b3 * b1 b3 ! c~ c/\ c/\ * b2 b3 c~ * b1 b3 * b0 b3 ! ! ! c==> c~ c==> ! c==> * b0 b3 * b1 b3 ! c~ c/\ c/\ * b2 b3 c~ * b1 b3 * b0 b3 cF
+- (t x), ((((s x) \/ (t x)) /\ (~ (t x))) /\ ((~ (s x)) \/ (t x))), ((t x) ==> F) |- F
+T c==> * f0 f1 c==> c/\ c/\ c\/ * f2 f1 * f0 f1 c~ * f0 f1 c\/ c~ * f2 f1 * f0 f1 c==> c==> * f0 f1 cF cF
++ |- (((((closure t) DIFF (interior t)) INTER ((interior (t UNION s)) INTER (interior (UNIV DIFF s)))) = EMPTY) = (((frontier t) SUBSET (closure t)) /\ (((frontier t) INTER ((interior (t UNION s)) INTER (UNIV DIFF (closure s)))) = EMPTY)))
+T c= c= * * part cINTER * * part cDIFF * part cclosure f0 * part cinterior f0 * * part cINTER * part cinterior * * part cUNION f0 f1 * part cinterior * * part cDIFF part cUNIV f1 part cEMPTY c/\ cSUBSET * part cfrontier f0 * part cclosure f0 c= * * part cINTER * part cfrontier f0 * * part cINTER * part cinterior * * part cUNION f0 f1 * * part cDIFF part cUNIV * part cclosure f1 part cEMPTY
++ ((((s x) \/ (t x)) /\ (~ (t x))) /\ ((~ (s x)) \/ (t x))) |- (((((s x) \/ (t x)) /\ (~ (t x))) /\ ((~ (s x)) \/ (t x))) /\ F)
+T c==> c/\ c/\ c\/ * f0 f1 * f2 f1 c~ * f2 f1 c\/ c~ * f0 f1 * f2 f1 c/\ c/\ c/\ c\/ * f0 f1 * f2 f1 c~ * f2 f1 c\/ c~ * f0 f1 * f2 f1 cF
++ (ft x), ((~ (cs x)) /\ (~ (ct x))), (((!x. ((fs x) ==> (cs x))) /\ (!x. ((ft x) ==> (ct x)))) /\ ((!x. (~ ((k x) /\ (fs x)))) /\ (!x. (~ ((k x) /\ (ft x)))))) |- ((ft x) /\ F)
+T c==> * f0 f1 c==> c/\ c~ * f2 f1 c~ * f3 f1 c==> c/\ c/\ ! c==> * f4 b0 * f2 b0 ! c==> * f0 b0 * f3 b0 c/\ ! c~ c/\ * f5 b0 * f4 b0 ! c~ c/\ * f5 b0 * f0 b0 c/\ * f0 f1 cF
++ ((!x. ((s' x) ==> (s x))) /\ (!x. (~ ((s' x) /\ ((u x) /\ (~ (t x))))))), ((u x) /\ (s' x)) |- (s x)
+T c==> c/\ ! c==> * f0 b0 * f1 b0 ! c~ c/\ * f0 b0 c/\ * f2 b0 c~ * f3 b0 c==> c/\ * f2 f4 * f0 f4 * f1 f4
+- (~ F), (~ ((closure s) x)), (((closure s) x) /\ (~ ((interior s) x))) |- ((~ F) /\ F)
+T c==> c~ cF c==> c~ cclosure f0 f1 c==> c/\ cclosure f0 f1 c~ cinterior f0 f1 c/\ c~ cF cF
+- (~ (k x)), (k x) |- ((~ (k x)) /\ (k x))
+T c==> c~ * f0 f1 c==> * f0 f1 c/\ c~ * f0 f1 * f0 f1
+- ((~ ((!x. (~ ((s x) /\ (t x)))) ==> (((!x. ((s' x) ==> (s x))) /\ (!x. (~ ((s' x) /\ ((u x) /\ (~ (t x))))))) ==> (!x. (~ ((u x) /\ (s' x))))))) ==> F), (((~ ((!x. (~ ((s x) /\ (t x)))) ==> (((!x. ((s' x) ==> (s x))) /\ (!x. (~ ((s' x) /\ ((u x) /\ (~ (t x))))))) ==> (!x. (~ ((u x) /\ (s' x))))))) ==> F) ==> ((~ ((!x. (~ ((s x) /\ (t x)))) ==> (((!x. ((s' x) ==> (s x))) /\ (!x. (~ ((s' x) /\ ((u x) /\ (~ (t x))))))) ==> (!x. (~ ((u x) /\ (s' x))))))) ==> F)) |- (((~ ((!x. (~ ((s x) /\ (t x)))) ==> (((!x. ((s' x) ==> (s x))) /\ (!x. (~ ((s' x) /\ ((u x) /\ (~ (t x))))))) ==> (!x. (~ ((u x) /\ (s' x))))))) ==> F) /\ ((~ ((!x. (~ ((s x) /\ (t x)))) ==> (((!x. ((s' x) ==> (s x))) /\ (!x. (~ ((s' x) /\ ((u x) /\ (~ (t x))))))) ==> (!x. (~ ((u x) /\ (s' x))))))) ==> F))
+T c==> c==> c~ c==> ! c~ c/\ * f0 b0 * f1 b0 c==> c/\ ! c==> * f2 b0 * f0 b0 ! c~ c/\ * f2 b0 c/\ * f3 b0 c~ * f1 b0 ! c~ c/\ * f3 b0 * f2 b0 cF c==> c==> c==> c~ c==> ! c~ c/\ * f0 b0 * f1 b0 c==> c/\ ! c==> * f2 b0 * f0 b0 ! c~ c/\ * f2 b0 c/\ * f3 b0 c~ * f1 b0 ! c~ c/\ * f3 b0 * f2 b0 cF c==> c~ c==> ! c~ c/\ * f0 b0 * f1 b0 c==> c/\ ! c==> * f2 b0 * f0 b0 ! c~ c/\ * f2 b0 c/\ * f3 b0 c~ * f1 b0 ! c~ c/\ * f3 b0 * f2 b0 cF c/\ c==> c~ c==> ! c~ c/\ * f0 b0 * f1 b0 c==> c/\ ! c==> * f2 b0 * f0 b0 ! c~ c/\ * f2 b0 c/\ * f3 b0 c~ * f1 b0 ! c~ c/\ * f3 b0 * f2 b0 cF c==> c~ c==> ! c~ c/\ * f0 b0 * f1 b0 c==> c/\ ! c==> * f2 b0 * f0 b0 ! c~ c/\ * f2 b0 c/\ * f3 b0 c~ * f1 b0 ! c~ c/\ * f3 b0 * f2 b0 cF
++ (((!x. ((fs x) ==> (cs x))) /\ (!x. ((ft x) ==> (ct x)))) /\ ((!x. (~ ((k x) /\ (fs x)))) /\ (!x. (~ ((k x) /\ (ft x)))))) |- ((ft _290967) ==> (ct _290967))
+T c==> c/\ c/\ ! c==> * f0 b0 * f1 b0 ! c==> * f2 b0 * f3 b0 c/\ ! c~ c/\ * f4 b0 * f0 b0 ! c~ c/\ * f4 b0 * f2 b0 c==> * f2 f5 * f3 f5
++ (((!x. ((fs x) ==> (cs x))) /\ (!x. ((ft x) ==> (ct x)))) /\ ((!x. (~ ((k x) /\ (fs x)))) /\ (!x. (~ ((k x) /\ (ft x)))))) |- ((!x. ((~ (fs x)) \/ (cs x))) /\ (!x. ((~ (ft x)) \/ (ct x))))
+T c==> c/\ c/\ ! c==> * f0 b0 * f1 b0 ! c==> * f2 b0 * f3 b0 c/\ ! c~ c/\ * f4 b0 * f0 b0 ! c~ c/\ * f4 b0 * f2 b0 c/\ ! c\/ c~ * f0 b0 * f1 b0 ! c\/ c~ * f2 b0 * f3 b0
++ |- ((((!x. ((x IN fs) ==> (x IN cs))) /\ (!x. ((x IN ft) ==> (x IN ct)))) /\ ((!x. ((x IN (k INTER fs)) = (x IN EMPTY))) /\ (!x. ((x IN (k INTER ft)) = (x IN EMPTY))))) ==> (!x. ((x IN (fs UNION ft)) ==> (x IN ((cs UNION ct) DIFF k)))))
+T c==> c/\ c/\ ! c==> cIN b0 f0 cIN b0 f1 ! c==> cIN b0 f2 cIN b0 f3 c/\ ! c= cIN b0 * * part cINTER f4 f0 cIN b0 part cEMPTY ! c= cIN b0 * * part cINTER f4 f2 cIN b0 part cEMPTY ! c==> cIN b0 * * part cUNION f0 f2 cIN b0 * * part cDIFF * * part cUNION f1 f3 f4
+- |- ((((~ ((!x. ((((closure s) x) /\ (~ ((interior s) x))) ==> ((closure s) x))) /\ (!x. ((((closure t) x) /\ (~ ((interior t) x))) ==> ((closure t) x))))) ==> F) ==> ((~ ((!x. ((((closure s) x) /\ (~ ((interior s) x))) ==> ((closure s) x))) /\ (!x. ((((closure t) x) /\ (~ ((interior t) x))) ==> ((closure t) x))))) ==> F)) ==> (((~ ((!x. ((((closure s) x) /\ (~ ((interior s) x))) ==> ((closure s) x))) /\ (!x. ((((closure t) x) /\ (~ ((interior t) x))) ==> ((closure t) x))))) ==> F) ==> ((~ ((!x. ((((closure s) x) /\ (~ ((interior s) x))) ==> ((closure s) x))) /\ (!x. ((((closure t) x) /\ (~ ((interior t) x))) ==> ((closure t) x))))) ==> F)))
+T c==> c==> c==> c~ c/\ ! c==> c/\ cclosure f0 b0 c~ cinterior f0 b0 cclosure f0 b0 ! c==> c/\ cclosure f1 b0 c~ cinterior f1 b0 cclosure f1 b0 cF c==> c~ c/\ ! c==> c/\ cclosure f0 b0 c~ cinterior f0 b0 cclosure f0 b0 ! c==> c/\ cclosure f1 b0 c~ cinterior f1 b0 cclosure f1 b0 cF c==> c==> c~ c/\ ! c==> c/\ cclosure f0 b0 c~ cinterior f0 b0 cclosure f0 b0 ! c==> c/\ cclosure f1 b0 c~ cinterior f1 b0 cclosure f1 b0 cF c==> c~ c/\ ! c==> c/\ cclosure f0 b0 c~ cinterior f0 b0 cclosure f0 b0 ! c==> c/\ cclosure f1 b0 c~ cinterior f1 b0 cclosure f1 b0 cF
++ (s x), ((((s x) \/ (t x)) /\ (~ (t x))) /\ ((~ (s x)) \/ (t x))), ((t x) ==> F) |- F
+T c==> * f0 f1 c==> c/\ c/\ c\/ * f0 f1 * f2 f1 c~ * f2 f1 c\/ c~ * f0 f1 * f2 f1 c==> c==> * f2 f1 cF cF
+- (fs x), (k x), (((!x. ((fs x) ==> (cs x))) /\ (!x. ((ft x) ==> (ct x)))) /\ ((!x. (~ ((k x) /\ (fs x)))) /\ (!x. (~ ((k x) /\ (ft x)))))) |- ((~ F) ==> F)
+T c==> * f0 f1 c==> * f2 f1 c==> c/\ c/\ ! c==> * f0 b0 * f3 b0 ! c==> * f4 b0 * f5 b0 c/\ ! c~ c/\ * f2 b0 * f0 b0 ! c~ c/\ * f2 b0 * f4 b0 c==> c~ cF cF
++ (!x. ((ti x) ==> (si x))) |- ((si _290956) \/ (~ (ti _290956)))
+T c==> ! c==> * f0 b0 * f1 b0 c\/ * f1 f2 c~ * f0 f2
+- |- ((!x. (P \/ (Q x))) = (P \/ (!x. (Q x))))
+T c= ! c\/ f0 * f1 b0 c\/ f0 ! * f1 b0
+- |- (T = (((~ (s' _290959)) \/ ((~ (u _290959)) \/ (t _290959))) = ((t _290959) \/ ((~ (s' _290959)) \/ (~ (u _290959))))))
+T c= cT c= c\/ c~ * f0 f1 c\/ c~ * f2 f1 * f3 f1 c\/ * f3 f1 c\/ c~ * f0 f1 c~ * f2 f1
+- |- ((!t. (!s. ((!x. (~ ((s x) /\ (t x)))) ==> (((!x. ((s' x) ==> (s x))) /\ (!x. (~ ((s' x) /\ ((u x) /\ (~ (t x))))))) ==> (!x. (~ ((u x) /\ (s' x)))))))) = T)
+T c= ! ! c==> ! c~ c/\ * b1 b2 * b0 b2 c==> c/\ ! c==> * f0 b2 * b1 b2 ! c~ c/\ * f0 b2 c/\ * f1 b2 c~ * b0 b2 ! c~ c/\ * f1 b2 * f0 b2 cT
+- |- (((((fs SUBSET cs) /\ (ft SUBSET ct)) /\ (((k INTER fs) = EMPTY) /\ ((k INTER ft) = EMPTY))) ==> ((fs UNION ft) SUBSET ((cs UNION ct) DIFF k))) ==> ((((fs SUBSET cs) /\ (ft SUBSET ct)) /\ (((k INTER fs) = EMPTY) /\ ((k INTER ft) = EMPTY))) ==> ((fs UNION ft) SUBSET ((cs UNION ct) DIFF k))))
+T c==> c==> c/\ c/\ cSUBSET f0 f1 cSUBSET f2 f3 c/\ c= * * part cINTER f4 f0 part cEMPTY c= * * part cINTER f4 f2 part cEMPTY cSUBSET * * part cUNION f0 f2 * * part cDIFF * * part cUNION f1 f3 f4 c==> c/\ c/\ cSUBSET f0 f1 cSUBSET f2 f3 c/\ c= * * part cINTER f4 f0 part cEMPTY c= * * part cINTER f4 f2 part cEMPTY cSUBSET * * part cUNION f0 f2 * * part cDIFF * * part cUNION f1 f3 f4
+- |- (((!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))) ==> ((\t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))) t3)) = ((\t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))) t3))
+T c= c==> ! c= c\/ f0 c\/ f1 b0 c\/ c\/ f0 f1 b0 * / c= c\/ f0 c\/ f1 b0 c\/ c\/ f0 f1 b0 f2 * / c= c\/ f0 c\/ f1 b0 c\/ c\/ f0 f1 b0 f2
++ ((((~ (s x)) /\ (~ (t x))) \/ (t x)) /\ ((s x) /\ (~ (t x)))) |- ((t x) ==> F)
+T c==> c/\ c\/ c/\ c~ * f0 f1 c~ * f2 f1 * f2 f1 c/\ * f0 f1 c~ * f2 f1 c==> * f2 f1 cF
+- ((~ ((!x. ((((closure s) x) /\ (~ ((interior s) x))) ==> ((closure s) x))) /\ (!x. ((((closure t) x) /\ (~ ((interior t) x))) ==> ((closure t) x))))) ==> F) |- (((~ ((!x. ((((closure s) x) /\ (~ ((interior s) x))) ==> ((closure s) x))) /\ (!x. ((((closure t) x) /\ (~ ((interior t) x))) ==> ((closure t) x))))) ==> F) /\ ((~ ((!x. ((((closure s) x) /\ (~ ((interior s) x))) ==> ((closure s) x))) /\ (!x. ((((closure t) x) /\ (~ ((interior t) x))) ==> ((closure t) x))))) ==> F))
+T c==> c==> c~ c/\ ! c==> c/\ cclosure f0 b0 c~ cinterior f0 b0 cclosure f0 b0 ! c==> c/\ cclosure f1 b0 c~ cinterior f1 b0 cclosure f1 b0 cF c/\ c==> c~ c/\ ! c==> c/\ cclosure f0 b0 c~ cinterior f0 b0 cclosure f0 b0 ! c==> c/\ cclosure f1 b0 c~ cinterior f1 b0 cclosure f1 b0 cF c==> c~ c/\ ! c==> c/\ cclosure f0 b0 c~ cinterior f0 b0 cclosure f0 b0 ! c==> c/\ cclosure f1 b0 c~ cinterior f1 b0 cclosure f1 b0 cF
+- ((~ (!x. ((((s x) \/ (t x)) /\ (~ (t x))) = ((s x) /\ (~ (t x)))))) ==> F) |- ((((~ (!x. ((((s x) \/ (t x)) /\ (~ (t x))) = ((s x) /\ (~ (t x)))))) ==> F) ==> ((~ (!x. ((((s x) \/ (t x)) /\ (~ (t x))) = ((s x) /\ (~ (t x)))))) ==> F)) ==> ((~ (!x. ((((s x) \/ (t x)) /\ (~ (t x))) = ((s x) /\ (~ (t x)))))) ==> F))
+T c==> c==> c~ ! c= c/\ c\/ * f0 b0 * f1 b0 c~ * f1 b0 c/\ * f0 b0 c~ * f1 b0 cF c==> c==> c==> c~ ! c= c/\ c\/ * f0 b0 * f1 b0 c~ * f1 b0 c/\ * f0 b0 c~ * f1 b0 cF c==> c~ ! c= c/\ c\/ * f0 b0 * f1 b0 c~ * f1 b0 c/\ * f0 b0 c~ * f1 b0 cF c==> c~ ! c= c/\ c\/ * f0 b0 * f1 b0 c~ * f1 b0 c/\ * f0 b0 c~ * f1 b0 cF
++ |- ((t /\ t) = t)
+T c= c/\ f0 f0 f0
++ (~ ((((s x) \/ (t x)) /\ (~ (t x))) = ((s x) /\ (~ (t x))))), (((((~ (s x)) /\ (~ (t x))) \/ (t x)) /\ ((s x) /\ (~ (t x)))) ==> F) |- F
+T c==> c~ c= c/\ c\/ * f0 f1 * f2 f1 c~ * f2 f1 c/\ * f0 f1 c~ * f2 f1 c==> c==> c/\ c\/ c/\ c~ * f0 f1 c~ * f2 f1 * f2 f1 c/\ * f0 f1 c~ * f2 f1 cF cF
++ (!x. (~ ((s x) /\ (t x)))), ((!x. ((s' x) ==> (s x))) /\ (!x. (~ ((s' x) /\ ((u x) /\ (~ (t x))))))) |- (((u x) /\ (s' x)) ==> F)
+T c==> ! c~ c/\ * f0 b0 * f1 b0 c==> c/\ ! c==> * f2 b0 * f0 b0 ! c~ c/\ * f2 b0 c/\ * f3 b0 c~ * f1 b0 c==> c/\ * f3 f4 * f2 f4 cF
++ (((closure s) INTER (closure t)) = EMPTY) |- ((((frontier s) SUBSET (closure s)) /\ ((frontier t) SUBSET (closure t))) /\ ((((interior (s UNION t)) INTER (frontier s)) = EMPTY) /\ (((interior (s UNION t)) INTER (frontier t)) = EMPTY)))
+T c==> c= * * part cINTER * part cclosure f0 * part cclosure f1 part cEMPTY c/\ c/\ cSUBSET * part cfrontier f0 * part cclosure f0 cSUBSET * part cfrontier f1 * part cclosure f1 c/\ c= * * part cINTER * part cinterior * * part cUNION f0 f1 * part cfrontier f0 part cEMPTY c= * * part cINTER * part cinterior * * part cUNION f0 f1 * part cfrontier f1 part cEMPTY
++ |- ((!s. (!x. ((((closure s) x) /\ (~ ((interior s) x))) ==> ((closure s) x)))) = (!t. (!s. ((~ ((!x. ((((closure s) x) /\ (~ ((interior s) x))) ==> ((closure s) x))) /\ (!x. ((((closure t) x) /\ (~ ((interior t) x))) ==> ((closure t) x))))) ==> F))))
+T c= ! ! c==> c/\ cclosure b0 b1 c~ cinterior b0 b1 cclosure b0 b1 ! ! c==> c~ c/\ ! c==> c/\ cclosure b1 b2 c~ cinterior b1 b2 cclosure b1 b2 ! c==> c/\ cclosure b0 b2 c~ cinterior b0 b2 cclosure b0 b2 cF
+- |- (((!s. ((~ ((!x. (~ ((s x) /\ (t x)))) ==> (((!x. ((s' x) ==> (s x))) /\ (!x. (~ ((s' x) /\ ((u x) /\ (~ (t x))))))) ==> (!x. (~ ((u x) /\ (s' x))))))) ==> F)) ==> ((\s. ((~ ((!x. (~ ((s x) /\ (t x)))) ==> (((!x. ((s' x) ==> (s x))) /\ (!x. (~ ((s' x) /\ ((u x) /\ (~ (t x))))))) ==> (!x. (~ ((u x) /\ (s' x))))))) ==> F)) s)) = ((\s. ((~ ((!x. (~ ((s x) /\ (t x)))) ==> (((!x. ((s' x) ==> (s x))) /\ (!x. (~ ((s' x) /\ ((u x) /\ (~ (t x))))))) ==> (!x. (~ ((u x) /\ (s' x))))))) ==> F)) s))
+T c= c==> ! c==> c~ c==> ! c~ c/\ * b0 b1 * f0 b1 c==> c/\ ! c==> * f1 b1 * b0 b1 ! c~ c/\ * f1 b1 c/\ * f2 b1 c~ * f0 b1 ! c~ c/\ * f2 b1 * f1 b1 cF * / c==> c~ c==> ! c~ c/\ * b0 b1 * f0 b1 c==> c/\ ! c==> * f1 b1 * b0 b1 ! c~ c/\ * f1 b1 c/\ * f2 b1 c~ * f0 b1 ! c~ c/\ * f2 b1 * f1 b1 cF f3 * / c==> c~ c==> ! c~ c/\ * b0 b1 * f0 b1 c==> c/\ ! c==> * f1 b1 * b0 b1 ! c~ c/\ * f1 b1 c/\ * f2 b1 c~ * f0 b1 ! c~ c/\ * f2 b1 * f1 b1 cF f3
++ (((!x. ((fs x) ==> (cs x))) /\ (!x. ((ft x) ==> (ct x)))) /\ ((!x. (~ ((k x) /\ (fs x)))) /\ (!x. (~ ((k x) /\ (ft x)))))) |- (!x. ((~ (fs x)) \/ (cs x)))
+T c==> c/\ c/\ ! c==> * f0 b0 * f1 b0 ! c==> * f2 b0 * f3 b0 c/\ ! c~ c/\ * f4 b0 * f0 b0 ! c~ c/\ * f4 b0 * f2 b0 ! c\/ c~ * f0 b0 * f1 b0
++ |- ((\t. ((s SUBSET t) ==> ((interior s) SUBSET (interior t)))) t)
+T * / c==> cSUBSET f0 b0 cSUBSET * part cinterior f0 * part cinterior b0 f1
++ (((!x. ((fs x) ==> (cs x))) /\ (!x. ((ft x) ==> (ct x)))) /\ ((!x. (~ ((k x) /\ (fs x)))) /\ (!x. (~ ((k x) /\ (ft x)))))), ((fs x) \/ (ft x)) |- (((fs x) \/ (ft x)) /\ (((cs x) \/ (ct x)) /\ (~ (k x))))
+T c==> c/\ c/\ ! c==> * f0 b0 * f1 b0 ! c==> * f2 b0 * f3 b0 c/\ ! c~ c/\ * f4 b0 * f0 b0 ! c~ c/\ * f4 b0 * f2 b0 c==> c\/ * f0 f5 * f2 f5 c/\ c\/ * f0 f5 * f2 f5 c/\ c\/ * f1 f5 * f3 f5 c~ * f4 f5
+- (!x. (~ ((s x) /\ (t x)))), ((!x. ((s' x) ==> (s x))) /\ (!x. (~ ((s' x) /\ ((u x) /\ (~ (t x))))))), ((u x) /\ (s' x)) |- ((~ F) ==> F)
+T c==> ! c~ c/\ * f0 b0 * f1 b0 c==> c/\ ! c==> * f2 b0 * f0 b0 ! c~ c/\ * f2 b0 c/\ * f3 b0 c~ * f1 b0 c==> c/\ * f3 f4 * f2 f4 c==> c~ cF cF
++ (!x. ((ti x) ==> (si x))) |- ((\x. ((~ (ti x)) \/ (si x))) _290956)
+T c==> ! c==> * f0 b0 * f1 b0 * / c\/ c~ * f0 b0 * f1 b0 f2
++ ((!x. ((s' x) ==> (s x))) /\ (!x. (~ ((s' x) /\ ((u x) /\ (~ (t x))))))), ((u x) /\ (s' x)) |- ((s x) /\ (t x))
+T c==> c/\ ! c==> * f0 b0 * f1 b0 ! c~ c/\ * f0 b0 c/\ * f2 b0 c~ * f3 b0 c==> c/\ * f2 f4 * f0 f4 c/\ * f1 f4 * f3 f4
++ (!x. (~ ((s x) /\ (t x)))) |- ((~ (s _290957)) \/ (~ (t _290957)))
+T c==> ! c~ c/\ * f0 b0 * f1 b0 c\/ c~ * f0 f2 c~ * f1 f2
+- |- (((!ct. (!cs. (!ft. (!fs. ((~ ((((!x. ((fs x) ==> (cs x))) /\ (!x. ((ft x) ==> (ct x)))) /\ ((!x. (~ ((k x) /\ (fs x)))) /\ (!x. (~ ((k x) /\ (ft x)))))) ==> (!x. (((fs x) \/ (ft x)) ==> (((cs x) \/ (ct x)) /\ (~ (k x))))))) ==> F))))) ==> ((\ct. (!cs. (!ft. (!fs. ((~ ((((!x. ((fs x) ==> (cs x))) /\ (!x. ((ft x) ==> (ct x)))) /\ ((!x. (~ ((k x) /\ (fs x)))) /\ (!x. (~ ((k x) /\ (ft x)))))) ==> (!x. (((fs x) \/ (ft x)) ==> (((cs x) \/ (ct x)) /\ (~ (k x))))))) ==> F))))) ct)) = ((\ct. (!cs. (!ft. (!fs. ((~ ((((!x. ((fs x) ==> (cs x))) /\ (!x. ((ft x) ==> (ct x)))) /\ ((!x. (~ ((k x) /\ (fs x)))) /\ (!x. (~ ((k x) /\ (ft x)))))) ==> (!x. (((fs x) \/ (ft x)) ==> (((cs x) \/ (ct x)) /\ (~ (k x))))))) ==> F))))) ct))
+T c= c==> ! ! ! ! c==> c~ c==> c/\ c/\ ! c==> * b3 b4 * b1 b4 ! c==> * b2 b4 * b0 b4 c/\ ! c~ c/\ * f0 b4 * b3 b4 ! c~ c/\ * f0 b4 * b2 b4 ! c==> c\/ * b3 b4 * b2 b4 c/\ c\/ * b1 b4 * b0 b4 c~ * f0 b4 cF * / ! ! ! c==> c~ c==> c/\ c/\ ! c==> * b3 b4 * b1 b4 ! c==> * b2 b4 * b0 b4 c/\ ! c~ c/\ * f0 b4 * b3 b4 ! c~ c/\ * f0 b4 * b2 b4 ! c==> c\/ * b3 b4 * b2 b4 c/\ c\/ * b1 b4 * b0 b4 c~ * f0 b4 cF f1 * / ! ! ! c==> c~ c==> c/\ c/\ ! c==> * b3 b4 * b1 b4 ! c==> * b2 b4 * b0 b4 c/\ ! c~ c/\ * f0 b4 * b3 b4 ! c~ c/\ * f0 b4 * b2 b4 ! c==> c\/ * b3 b4 * b2 b4 c/\ c\/ * b1 b4 * b0 b4 c~ * f0 b4 cF f1
+- ((~ ((((!x. ((fs x) ==> (cs x))) /\ (!x. ((ft x) ==> (ct x)))) /\ ((!x. (~ ((k x) /\ (fs x)))) /\ (!x. (~ ((k x) /\ (ft x)))))) ==> (!x. (((fs x) \/ (ft x)) ==> (((cs x) \/ (ct x)) /\ (~ (k x))))))) ==> F) |- (((~ ((((!x. ((fs x) ==> (cs x))) /\ (!x. ((ft x) ==> (ct x)))) /\ ((!x. (~ ((k x) /\ (fs x)))) /\ (!x. (~ ((k x) /\ (ft x)))))) ==> (!x. (((fs x) \/ (ft x)) ==> (((cs x) \/ (ct x)) /\ (~ (k x))))))) ==> F) /\ ((~ ((((!x. ((fs x) ==> (cs x))) /\ (!x. ((ft x) ==> (ct x)))) /\ ((!x. (~ ((k x) /\ (fs x)))) /\ (!x. (~ ((k x) /\ (ft x)))))) ==> (!x. (((fs x) \/ (ft x)) ==> (((cs x) \/ (ct x)) /\ (~ (k x))))))) ==> F))
+T c==> c==> c~ c==> c/\ c/\ ! c==> * f0 b0 * f1 b0 ! c==> * f2 b0 * f3 b0 c/\ ! c~ c/\ * f4 b0 * f0 b0 ! c~ c/\ * f4 b0 * f2 b0 ! c==> c\/ * f0 b0 * f2 b0 c/\ c\/ * f1 b0 * f3 b0 c~ * f4 b0 cF c/\ c==> c~ c==> c/\ c/\ ! c==> * f0 b0 * f1 b0 ! c==> * f2 b0 * f3 b0 c/\ ! c~ c/\ * f4 b0 * f0 b0 ! c~ c/\ * f4 b0 * f2 b0 ! c==> c\/ * f0 b0 * f2 b0 c/\ c\/ * f1 b0 * f3 b0 c~ * f4 b0 cF c==> c~ c==> c/\ c/\ ! c==> * f0 b0 * f1 b0 ! c==> * f2 b0 * f3 b0 c/\ ! c~ c/\ * f4 b0 * f0 b0 ! c~ c/\ * f4 b0 * f2 b0 ! c==> c\/ * f0 b0 * f2 b0 c/\ c\/ * f1 b0 * f3 b0 c~ * f4 b0 cF
+- |- ((\k. (!ct. (!cs. (!ft. (!fs. ((~ ((((!x. ((fs x) ==> (cs x))) /\ (!x. ((ft x) ==> (ct x)))) /\ ((!x. (~ ((k x) /\ (fs x)))) /\ (!x. (~ ((k x) /\ (ft x)))))) ==> (!x. (((fs x) \/ (ft x)) ==> (((cs x) \/ (ct x)) /\ (~ (k x))))))) ==> F)))))) k)
+T * / ! ! ! ! c==> c~ c==> c/\ c/\ ! c==> * b4 b5 * b2 b5 ! c==> * b3 b5 * b1 b5 c/\ ! c~ c/\ * b0 b5 * b4 b5 ! c~ c/\ * b0 b5 * b3 b5 ! c==> c\/ * b4 b5 * b3 b5 c/\ c\/ * b2 b5 * b1 b5 c~ * b0 b5 cF f0
++ (((closure s) INTER (closure t)) = EMPTY) |- ((((((frontier s) SUBSET (closure s)) /\ ((frontier t) SUBSET (closure t))) /\ ((((interior (s UNION t)) INTER (frontier s)) = EMPTY) /\ (((interior (s UNION t)) INTER (frontier t)) = EMPTY))) ==> (((frontier s) UNION (frontier t)) SUBSET (((closure s) UNION (closure t)) DIFF (interior (s UNION t))))) = (((frontier s) UNION (frontier t)) SUBSET (((closure s) UNION (closure t)) DIFF (interior (s UNION t)))))
+T c==> c= * * part cINTER * part cclosure f0 * part cclosure f1 part cEMPTY c= c==> c/\ c/\ cSUBSET * part cfrontier f0 * part cclosure f0 cSUBSET * part cfrontier f1 * part cclosure f1 c/\ c= * * part cINTER * part cinterior * * part cUNION f0 f1 * part cfrontier f0 part cEMPTY c= * * part cINTER * part cinterior * * part cUNION f0 f1 * part cfrontier f1 part cEMPTY cSUBSET * * part cUNION * part cfrontier f0 * part cfrontier f1 * * part cDIFF * * part cUNION * part cclosure f0 * part cclosure f1 * part cinterior * * part cUNION f0 f1 cSUBSET * * part cUNION * part cfrontier f0 * part cfrontier f1 * * part cDIFF * * part cUNION * part cclosure f0 * part cclosure f1 * part cinterior * * part cUNION f0 f1
+- |- ((!si. (!c. ((!x. ((ti x) ==> (si x))) ==> (!x. (~ (((c x) /\ (~ (si x))) /\ (ti x))))))) = T)
+T c= ! ! c==> ! c==> * f0 b2 * b0 b2 ! c~ c/\ c/\ * b1 b2 c~ * b0 b2 * f0 b2 cT
+- |- ((!ct. (!cs. (!ft. (!fs. ((((!x. ((fs x) ==> (cs x))) /\ (!x. ((ft x) ==> (ct x)))) /\ ((!x. (~ ((k x) /\ (fs x)))) /\ (!x. (~ ((k x) /\ (ft x)))))) ==> (!x. (((fs x) \/ (ft x)) ==> (((cs x) \/ (ct x)) /\ (~ (k x)))))))))) = T)
+T c= ! ! ! ! c==> c/\ c/\ ! c==> * b3 b4 * b1 b4 ! c==> * b2 b4 * b0 b4 c/\ ! c~ c/\ * f0 b4 * b3 b4 ! c~ c/\ * f0 b4 * b2 b4 ! c==> c\/ * b3 b4 * b2 b4 c/\ c\/ * b1 b4 * b0 b4 c~ * f0 b4 cT
+- |- ((\ft. (!fs. ((~ ((((!x. ((fs x) ==> (cs x))) /\ (!x. ((ft x) ==> (ct x)))) /\ ((!x. (~ ((k x) /\ (fs x)))) /\ (!x. (~ ((k x) /\ (ft x)))))) ==> (!x. (((fs x) \/ (ft x)) ==> (((cs x) \/ (ct x)) /\ (~ (k x))))))) ==> F))) ft)
+T * / ! c==> c~ c==> c/\ c/\ ! c==> * b1 b2 * f0 b2 ! c==> * b0 b2 * f1 b2 c/\ ! c~ c/\ * f2 b2 * b1 b2 ! c~ c/\ * f2 b2 * b0 b2 ! c==> c\/ * b1 b2 * b0 b2 c/\ c\/ * f0 b2 * f1 b2 c~ * f2 b2 cF f3
+- ((~ ((!x. ((ti x) ==> (si x))) ==> (!x. (~ (((c x) /\ (~ (si x))) /\ (ti x)))))) ==> F) |- (((~ ((!x. ((ti x) ==> (si x))) ==> (!x. (~ (((c x) /\ (~ (si x))) /\ (ti x)))))) ==> F) /\ ((~ ((!x. ((ti x) ==> (si x))) ==> (!x. (~ (((c x) /\ (~ (si x))) /\ (ti x)))))) ==> F))
+T c==> c==> c~ c==> ! c==> * f0 b0 * f1 b0 ! c~ c/\ c/\ * f2 b0 c~ * f1 b0 * f0 b0 cF c/\ c==> c~ c==> ! c==> * f0 b0 * f1 b0 ! c~ c/\ c/\ * f2 b0 c~ * f1 b0 * f0 b0 cF c==> c~ c==> ! c==> * f0 b0 * f1 b0 ! c~ c/\ c/\ * f2 b0 c~ * f1 b0 * f0 b0 cF
+- (!s. (!t. (((s SUBSET t) /\ (t SUBSET s)) ==> (s = t)))), ((s SUBSET t) /\ (t SUBSET s)) |- (s = t)
+T c==> ! ! c==> c/\ cSUBSET b0 b1 cSUBSET b1 b0 c= b0 b1 c==> c/\ cSUBSET f0 f1 cSUBSET f1 f0 c= f0 f1
+- |- ((\cs. (!ft. (!fs. ((~ ((((!x. ((fs x) ==> (cs x))) /\ (!x. ((ft x) ==> (ct x)))) /\ ((!x. (~ ((k x) /\ (fs x)))) /\ (!x. (~ ((k x) /\ (ft x)))))) ==> (!x. (((fs x) \/ (ft x)) ==> (((cs x) \/ (ct x)) /\ (~ (k x))))))) ==> F)))) cs)
+T * / ! ! c==> c~ c==> c/\ c/\ ! c==> * b2 b3 * b0 b3 ! c==> * b1 b3 * f0 b3 c/\ ! c~ c/\ * f1 b3 * b2 b3 ! c~ c/\ * f1 b3 * b1 b3 ! c==> c\/ * b2 b3 * b1 b3 c/\ c\/ * b0 b3 * f0 b3 c~ * f1 b3 cF f2
++ (!x. ((ti x) ==> (si x))) |- (((!x. ((~ (ti x)) \/ (si x))) ==> ((\x. ((~ (ti x)) \/ (si x))) _290956)) = ((\x. ((~ (ti x)) \/ (si x))) _290956))
+T c==> ! c==> * f0 b0 * f1 b0 c= c==> ! c\/ c~ * f0 b0 * f1 b0 * / c\/ c~ * f0 b0 * f1 b0 f2 * / c\/ c~ * f0 b0 * f1 b0 f2
++ |- ((!x. ((x IN ti) ==> (x IN si))) ==> (!x. ((x IN ((c DIFF si) INTER ti)) = (x IN EMPTY))))
+T c==> ! c==> cIN b0 f0 cIN b0 f1 ! c= cIN b0 * * part cINTER * * part cDIFF f2 f1 f0 cIN b0 part cEMPTY
+- (~ (t x)), ((!x. ((s' x) ==> (s x))) /\ (!x. (~ ((s' x) /\ ((u x) /\ (~ (t x))))))), ((u x) /\ (s' x)) |- ((~ (t x)) /\ (t x))
+T c==> c~ * f0 f1 c==> c/\ ! c==> * f2 b0 * f3 b0 ! c~ c/\ * f2 b0 c/\ * f4 b0 c~ * f0 b0 c==> c/\ * f4 f1 * f2 f1 c/\ c~ * f0 f1 * f0 f1
++ (!x. ((ti x) ==> (si x))) |- (~ (((c x) /\ (~ (si x))) /\ (ti x)))
+T c==> ! c==> * f0 b0 * f1 b0 c~ c/\ c/\ * f2 f3 c~ * f1 f3 * f0 f3
+- (!s. (!t. (((s SUBSET t) /\ (t SUBSET s)) ==> (s = t)))) |- ((\t. (((s SUBSET t) /\ (t SUBSET s)) ==> (s = t))) t)
+T c==> ! ! c==> c/\ cSUBSET b0 b1 cSUBSET b1 b0 c= b0 b1 * / c==> c/\ cSUBSET f0 b0 cSUBSET b0 f0 c= f0 b0 f1
+- |- (((~ ((!x. ((((closure s) x) /\ (~ ((interior s) x))) ==> ((closure s) x))) /\ (!x. ((((closure t) x) /\ (~ ((interior t) x))) ==> ((closure t) x))))) ==> F) ==> ((~ ((!x. ((((closure s) x) /\ (~ ((interior s) x))) ==> ((closure s) x))) /\ (!x. ((((closure t) x) /\ (~ ((interior t) x))) ==> ((closure t) x))))) ==> F))
+T c==> c==> c~ c/\ ! c==> c/\ cclosure f0 b0 c~ cinterior f0 b0 cclosure f0 b0 ! c==> c/\ cclosure f1 b0 c~ cinterior f1 b0 cclosure f1 b0 cF c==> c~ c/\ ! c==> c/\ cclosure f0 b0 c~ cinterior f0 b0 cclosure f0 b0 ! c==> c/\ cclosure f1 b0 c~ cinterior f1 b0 cclosure f1 b0 cF
++ |- ((\s. ((frontier s) = ((closure s) DIFF (interior s)))) s)
+T * / c= * part cfrontier b0 * * part cDIFF * part cclosure b0 * part cinterior b0 f0
++ (((closure s) INTER (closure t)) = EMPTY) |- ((((interior (s UNION t)) INTER (frontier t)) = EMPTY) = ((((interior (s UNION t)) INTER (frontier s)) = EMPTY) /\ (((interior (s UNION t)) INTER (frontier t)) = EMPTY)))
+T c==> c= * * part cINTER * part cclosure f0 * part cclosure f1 part cEMPTY c= c= * * part cINTER * part cinterior * * part cUNION f0 f1 * part cfrontier f1 part cEMPTY c/\ c= * * part cINTER * part cinterior * * part cUNION f0 f1 * part cfrontier f0 part cEMPTY c= * * part cINTER * part cinterior * * part cUNION f0 f1 * part cfrontier f1 part cEMPTY
++ |- (((((closure s) x) /\ (~ ((interior s) x))) ==> ((closure s) x)) = T)
+T c= c==> c/\ cclosure f0 f1 c~ cinterior f0 f1 cclosure f0 f1 cT
++ (((!x. ((fs x) ==> (cs x))) /\ (!x. ((ft x) ==> (ct x)))) /\ ((!x. (~ ((k x) /\ (fs x)))) /\ (!x. (~ ((k x) /\ (ft x)))))) |- ((((fs x) \/ (ft x)) ==> (((cs x) \/ (ct x)) /\ (~ (k x)))) = T)
+T c==> c/\ c/\ ! c==> * f0 b0 * f1 b0 ! c==> * f2 b0 * f3 b0 c/\ ! c~ c/\ * f4 b0 * f0 b0 ! c~ c/\ * f4 b0 * f2 b0 c= c==> c\/ * f0 f5 * f2 f5 c/\ c\/ * f1 f5 * f3 f5 c~ * f4 f5 cT
+- (~ F), (~ (s x)), (s x) |- ((~ F) /\ F)
+T c==> c~ cF c==> c~ * f0 f1 c==> * f0 f1 c/\ c~ cF cF
+- |- (((!si. (!c. ((~ ((!x. ((ti x) ==> (si x))) ==> (!x. (~ (((c x) /\ (~ (si x))) /\ (ti x)))))) ==> F))) ==> ((\si. (!c. ((~ ((!x. ((ti x) ==> (si x))) ==> (!x. (~ (((c x) /\ (~ (si x))) /\ (ti x)))))) ==> F))) si)) = ((\si. (!c. ((~ ((!x. ((ti x) ==> (si x))) ==> (!x. (~ (((c x) /\ (~ (si x))) /\ (ti x)))))) ==> F))) si))
+T c= c==> ! ! c==> c~ c==> ! c==> * f0 b2 * b0 b2 ! c~ c/\ c/\ * b1 b2 c~ * b0 b2 * f0 b2 cF * / ! c==> c~ c==> ! c==> * f0 b2 * b0 b2 ! c~ c/\ c/\ * b1 b2 c~ * b0 b2 * f0 b2 cF f1 * / ! c==> c~ c==> ! c==> * f0 b2 * b0 b2 ! c~ c/\ c/\ * b1 b2 c~ * b0 b2 * f0 b2 cF f1
+- |- (((!x. (~ ((s x) /\ (t x)))) ==> (((!x. ((s' x) ==> (s x))) /\ (!x. (~ ((s' x) /\ ((u x) /\ (~ (t x))))))) ==> (!x. (~ ((u x) /\ (s' x)))))) = T)
+T c= c==> ! c~ c/\ * f0 b0 * f1 b0 c==> c/\ ! c==> * f2 b0 * f0 b0 ! c~ c/\ * f2 b0 c/\ * f3 b0 c~ * f1 b0 ! c~ c/\ * f3 b0 * f2 b0 cT
++ |- ((x IN EMPTY) = F)
+T c= cIN f0 part cEMPTY cF
++ (((!x. ((fs x) ==> (cs x))) /\ (!x. ((ft x) ==> (ct x)))) /\ ((!x. (~ ((k x) /\ (fs x)))) /\ (!x. (~ ((k x) /\ (ft x)))))), ((fs x) \/ (ft x)) |- ((k x) ==> F)
+T c==> c/\ c/\ ! c==> * f0 b0 * f1 b0 ! c==> * f2 b0 * f3 b0 c/\ ! c~ c/\ * f4 b0 * f0 b0 ! c~ c/\ * f4 b0 * f2 b0 c==> c\/ * f0 f5 * f2 f5 c==> * f4 f5 cF
+- ((s' SUBSET (closure t)) /\ ((s' INTER (u INTER (UNIV DIFF (closure s)))) = EMPTY)), (((s' SUBSET (closure t)) /\ ((s' INTER (u INTER (UNIV DIFF (closure s)))) = EMPTY)) ==> ((u INTER s') = EMPTY)) |- (((s' SUBSET (closure t)) /\ ((s' INTER (u INTER (UNIV DIFF (closure s)))) = EMPTY)) /\ ((u INTER s') = EMPTY))
+T c==> c/\ cSUBSET f0 * part cclosure f1 c= * * part cINTER f0 * * part cINTER f2 * * part cDIFF part cUNIV * part cclosure f3 part cEMPTY c==> c==> c/\ cSUBSET f0 * part cclosure f1 c= * * part cINTER f0 * * part cINTER f2 * * part cDIFF part cUNIV * part cclosure f3 part cEMPTY c= * * part cINTER f2 f0 part cEMPTY c/\ c/\ cSUBSET f0 * part cclosure f1 c= * * part cINTER f0 * * part cINTER f2 * * part cDIFF part cUNIV * part cclosure f3 part cEMPTY c= * * part cINTER f2 f0 part cEMPTY
+- |- ((!fs. ((((!x. ((fs x) ==> (cs x))) /\ (!x. ((ft x) ==> (ct x)))) /\ ((!x. (~ ((k x) /\ (fs x)))) /\ (!x. (~ ((k x) /\ (ft x)))))) ==> (!x. (((fs x) \/ (ft x)) ==> (((cs x) \/ (ct x)) /\ (~ (k x))))))) = T)
+T c= ! c==> c/\ c/\ ! c==> * b0 b1 * f0 b1 ! c==> * f1 b1 * f2 b1 c/\ ! c~ c/\ * f3 b1 * b0 b1 ! c~ c/\ * f3 b1 * f1 b1 ! c==> c\/ * b0 b1 * f1 b1 c/\ c\/ * f0 b1 * f2 b1 c~ * f3 b1 cT
+- (!x. ((ti x) ==> (si x))), (~ (si x)), (((c x) /\ (~ (si x))) /\ (ti x)) |- ((~ (si x)) /\ (si x))
+T c==> ! c==> * f0 b0 * f1 b0 c==> c~ * f1 f2 c==> c/\ c/\ * f3 f2 c~ * f1 f2 * f0 f2 c/\ c~ * f1 f2 * f1 f2
++ |- ((\t. ((s INTER t) = (t INTER s))) t)
+T * / c= * * part cINTER f0 b0 * * part cINTER b0 f0 f1
+- (t x), ((((s x) \/ (t x)) /\ (~ (t x))) /\ ((~ (s x)) \/ (t x))) |- F
+T c==> * f0 f1 c==> c/\ c/\ c\/ * f2 f1 * f0 f1 c~ * f0 f1 c\/ c~ * f2 f1 * f0 f1 cF
+- |- ((((~ ((!x. ((ti x) ==> (si x))) ==> (!x. (~ (((c x) /\ (~ (si x))) /\ (ti x)))))) ==> F) ==> ((~ ((!x. ((ti x) ==> (si x))) ==> (!x. (~ (((c x) /\ (~ (si x))) /\ (ti x)))))) ==> F)) ==> (((~ ((!x. ((ti x) ==> (si x))) ==> (!x. (~ (((c x) /\ (~ (si x))) /\ (ti x)))))) ==> F) ==> ((~ ((!x. ((ti x) ==> (si x))) ==> (!x. (~ (((c x) /\ (~ (si x))) /\ (ti x)))))) ==> F)))
+T c==> c==> c==> c~ c==> ! c==> * f0 b0 * f1 b0 ! c~ c/\ c/\ * f2 b0 c~ * f1 b0 * f0 b0 cF c==> c~ c==> ! c==> * f0 b0 * f1 b0 ! c~ c/\ c/\ * f2 b0 c~ * f1 b0 * f0 b0 cF c==> c==> c~ c==> ! c==> * f0 b0 * f1 b0 ! c~ c/\ c/\ * f2 b0 c~ * f1 b0 * f0 b0 cF c==> c~ c==> ! c==> * f0 b0 * f1 b0 ! c~ c/\ c/\ * f2 b0 c~ * f1 b0 * f0 b0 cF
+- ((s SUBSET t) /\ (t SUBSET s)) |- ((!s. (!t. (((s SUBSET t) /\ (t SUBSET s)) ==> (s = t)))) ==> (s = t))
+T c==> c/\ cSUBSET f0 f1 cSUBSET f1 f0 c==> ! ! c==> c/\ cSUBSET b0 b1 cSUBSET b1 b0 c= b0 b1 c= f0 f1
+- ((~ ((!x. (~ ((s x) /\ (t x)))) ==> (((!x. ((s' x) ==> (s x))) /\ (!x. (~ ((s' x) /\ ((u x) /\ (~ (t x))))))) ==> (!x. (~ ((u x) /\ (s' x))))))) ==> F) |- ((((~ ((!x. (~ ((s x) /\ (t x)))) ==> (((!x. ((s' x) ==> (s x))) /\ (!x. (~ ((s' x) /\ ((u x) /\ (~ (t x))))))) ==> (!x. (~ ((u x) /\ (s' x))))))) ==> F) ==> ((~ ((!x. (~ ((s x) /\ (t x)))) ==> (((!x. ((s' x) ==> (s x))) /\ (!x. (~ ((s' x) /\ ((u x) /\ (~ (t x))))))) ==> (!x. (~ ((u x) /\ (s' x))))))) ==> F)) ==> ((~ ((!x. (~ ((s x) /\ (t x)))) ==> (((!x. ((s' x) ==> (s x))) /\ (!x. (~ ((s' x) /\ ((u x) /\ (~ (t x))))))) ==> (!x. (~ ((u x) /\ (s' x))))))) ==> F))
+T c==> c==> c~ c==> ! c~ c/\ * f0 b0 * f1 b0 c==> c/\ ! c==> * f2 b0 * f0 b0 ! c~ c/\ * f2 b0 c/\ * f3 b0 c~ * f1 b0 ! c~ c/\ * f3 b0 * f2 b0 cF c==> c==> c==> c~ c==> ! c~ c/\ * f0 b0 * f1 b0 c==> c/\ ! c==> * f2 b0 * f0 b0 ! c~ c/\ * f2 b0 c/\ * f3 b0 c~ * f1 b0 ! c~ c/\ * f3 b0 * f2 b0 cF c==> c~ c==> ! c~ c/\ * f0 b0 * f1 b0 c==> c/\ ! c==> * f2 b0 * f0 b0 ! c~ c/\ * f2 b0 c/\ * f3 b0 c~ * f1 b0 ! c~ c/\ * f3 b0 * f2 b0 cF c==> c~ c==> ! c~ c/\ * f0 b0 * f1 b0 c==> c/\ ! c==> * f2 b0 * f0 b0 ! c~ c/\ * f2 b0 c/\ * f3 b0 c~ * f1 b0 ! c~ c/\ * f3 b0 * f2 b0 cF
++ |- (((!t. (((s SUBSET t) /\ (t SUBSET s)) ==> (s = t))) ==> ((\t. (((s SUBSET t) /\ (t SUBSET s)) ==> (s = t))) t)) = ((\t. (((s SUBSET t) /\ (t SUBSET s)) ==> (s = t))) t))
+T c= c==> ! c==> c/\ cSUBSET f0 b0 cSUBSET b0 f0 c= f0 b0 * / c==> c/\ cSUBSET f0 b0 cSUBSET b0 f0 c= f0 b0 f1 * / c==> c/\ cSUBSET f0 b0 cSUBSET b0 f0 c= f0 b0 f1
++ (((c x) /\ (~ (si x))) /\ (ti x)) |- ((si x) ==> F)
+T c==> c/\ c/\ * f0 f1 c~ * f2 f1 * f3 f1 c==> * f2 f1 cF
+- |- (((~ ((!x. (~ ((s x) /\ (t x)))) ==> (((!x. ((s' x) ==> (s x))) /\ (!x. (~ ((s' x) /\ ((u x) /\ (~ (t x))))))) ==> (!x. (~ ((u x) /\ (s' x))))))) ==> F) ==> ((~ ((!x. (~ ((s x) /\ (t x)))) ==> (((!x. ((s' x) ==> (s x))) /\ (!x. (~ ((s' x) /\ ((u x) /\ (~ (t x))))))) ==> (!x. (~ ((u x) /\ (s' x))))))) ==> F))
+T c==> c==> c~ c==> ! c~ c/\ * f0 b0 * f1 b0 c==> c/\ ! c==> * f2 b0 * f0 b0 ! c~ c/\ * f2 b0 c/\ * f3 b0 c~ * f1 b0 ! c~ c/\ * f3 b0 * f2 b0 cF c==> c~ c==> ! c~ c/\ * f0 b0 * f1 b0 c==> c/\ ! c==> * f2 b0 * f0 b0 ! c~ c/\ * f2 b0 c/\ * f3 b0 c~ * f1 b0 ! c~ c/\ * f3 b0 * f2 b0 cF
++ (((!x. ((fs x) ==> (cs x))) /\ (!x. ((ft x) ==> (ct x)))) /\ ((!x. (~ ((k x) /\ (fs x)))) /\ (!x. (~ ((k x) /\ (ft x)))))) |- (((k _290968) /\ (fs _290968)) ==> F)
+T c==> c/\ c/\ ! c==> * f0 b0 * f1 b0 ! c==> * f2 b0 * f3 b0 c/\ ! c~ c/\ * f4 b0 * f0 b0 ! c~ c/\ * f4 b0 * f2 b0 c==> c/\ * f4 f5 * f0 f5 cF
+- (((s' SUBSET (closure t)) /\ ((s' INTER (u INTER (UNIV DIFF (closure s)))) = EMPTY)) ==> ((u INTER s') = EMPTY)) |- ((((s' SUBSET (closure t)) /\ ((s' INTER (u INTER (UNIV DIFF (closure s)))) = EMPTY)) ==> ((u INTER s') = EMPTY)) /\ (((s' SUBSET (closure t)) /\ ((s' INTER (u INTER (UNIV DIFF (closure s)))) = EMPTY)) ==> ((u INTER s') = EMPTY)))
+T c==> c==> c/\ cSUBSET f0 * part cclosure f1 c= * * part cINTER f0 * * part cINTER f2 * * part cDIFF part cUNIV * part cclosure f3 part cEMPTY c= * * part cINTER f2 f0 part cEMPTY c/\ c==> c/\ cSUBSET f0 * part cclosure f1 c= * * part cINTER f0 * * part cINTER f2 * * part cDIFF part cUNIV * part cclosure f3 part cEMPTY c= * * part cINTER f2 f0 part cEMPTY c==> c/\ cSUBSET f0 * part cclosure f1 c= * * part cINTER f0 * * part cINTER f2 * * part cDIFF part cUNIV * part cclosure f3 part cEMPTY c= * * part cINTER f2 f0 part cEMPTY
++ (((!x. ((fs x) ==> (cs x))) /\ (!x. ((ft x) ==> (ct x)))) /\ ((!x. (~ ((k x) /\ (fs x)))) /\ (!x. (~ ((k x) /\ (ft x)))))) |- (((fs x) \/ (ft x)) ==> (((cs x) \/ (ct x)) /\ (~ (k x))))
+T c==> c/\ c/\ ! c==> * f0 b0 * f1 b0 ! c==> * f2 b0 * f3 b0 c/\ ! c~ c/\ * f4 b0 * f0 b0 ! c~ c/\ * f4 b0 * f2 b0 c==> c\/ * f0 f5 * f2 f5 c/\ c\/ * f1 f5 * f3 f5 c~ * f4 f5
++ (k x), (((!x. ((fs x) ==> (cs x))) /\ (!x. ((ft x) ==> (ct x)))) /\ ((!x. (~ ((k x) /\ (fs x)))) /\ (!x. (~ ((k x) /\ (ft x)))))) |- ((ft x) ==> F)
+T c==> * f0 f1 c==> c/\ c/\ ! c==> * f2 b0 * f3 b0 ! c==> * f4 b0 * f5 b0 c/\ ! c~ c/\ * f0 b0 * f2 b0 ! c~ c/\ * f0 b0 * f4 b0 c==> * f4 f1 cF
++ ((((s x) \/ (t x)) /\ (~ (t x))) /\ ((~ (s x)) \/ (t x))) |- ((t x) ==> F)
+T c==> c/\ c/\ c\/ * f0 f1 * f2 f1 c~ * f2 f1 c\/ c~ * f0 f1 * f2 f1 c==> * f2 f1 cF
+- |- ((!fs. (P fs)) = ((P T) /\ (P F)))
+T c= ! * f0 b0 c/\ * f0 cT * f0 cF
+- ((~ (!x. ((((s x) \/ (t x)) /\ (~ (t x))) = ((s x) /\ (~ (t x)))))) ==> F), (((~ (!x. ((((s x) \/ (t x)) /\ (~ (t x))) = ((s x) /\ (~ (t x)))))) ==> F) ==> ((~ (!x. ((((s x) \/ (t x)) /\ (~ (t x))) = ((s x) /\ (~ (t x)))))) ==> F)) |- (((~ (!x. ((((s x) \/ (t x)) /\ (~ (t x))) = ((s x) /\ (~ (t x)))))) ==> F) /\ ((~ (!x. ((((s x) \/ (t x)) /\ (~ (t x))) = ((s x) /\ (~ (t x)))))) ==> F))
+T c==> c==> c~ ! c= c/\ c\/ * f0 b0 * f1 b0 c~ * f1 b0 c/\ * f0 b0 c~ * f1 b0 cF c==> c==> c==> c~ ! c= c/\ c\/ * f0 b0 * f1 b0 c~ * f1 b0 c/\ * f0 b0 c~ * f1 b0 cF c==> c~ ! c= c/\ c\/ * f0 b0 * f1 b0 c~ * f1 b0 c/\ * f0 b0 c~ * f1 b0 cF c/\ c==> c~ ! c= c/\ c\/ * f0 b0 * f1 b0 c~ * f1 b0 c/\ * f0 b0 c~ * f1 b0 cF c==> c~ ! c= c/\ c\/ * f0 b0 * f1 b0 c~ * f1 b0 c/\ * f0 b0 c~ * f1 b0 cF
+- (ft x), ((~ (cs x)) /\ (~ (ct x))), (((!x. ((fs x) ==> (cs x))) /\ (!x. ((ft x) ==> (ct x)))) /\ ((!x. (~ ((k x) /\ (fs x)))) /\ (!x. (~ ((k x) /\ (ft x)))))) |- ((~ F) ==> F)
+T c==> * f0 f1 c==> c/\ c~ * f2 f1 c~ * f3 f1 c==> c/\ c/\ ! c==> * f4 b0 * f2 b0 ! c==> * f0 b0 * f3 b0 c/\ ! c~ c/\ * f5 b0 * f4 b0 ! c~ c/\ * f5 b0 * f0 b0 c==> c~ cF cF
++ |- (((!s. ((UNIV DIFF (closure s)) = (interior (UNIV DIFF s)))) ==> ((\s. ((UNIV DIFF (closure s)) = (interior (UNIV DIFF s)))) s)) = ((\s. ((UNIV DIFF (closure s)) = (interior (UNIV DIFF s)))) s))
+T c= c==> ! c= * * part cDIFF part cUNIV * part cclosure b0 * part cinterior * * part cDIFF part cUNIV b0 * / c= * * part cDIFF part cUNIV * part cclosure b0 * part cinterior * * part cDIFF part cUNIV b0 f0 * / c= * * part cDIFF part cUNIV * part cclosure b0 * part cinterior * * part cDIFF part cUNIV b0 f0
+- |- (((!ft. (!fs. ((~ ((((!x. ((fs x) ==> (cs x))) /\ (!x. ((ft x) ==> (ct x)))) /\ ((!x. (~ ((k x) /\ (fs x)))) /\ (!x. (~ ((k x) /\ (ft x)))))) ==> (!x. (((fs x) \/ (ft x)) ==> (((cs x) \/ (ct x)) /\ (~ (k x))))))) ==> F))) ==> ((\ft. (!fs. ((~ ((((!x. ((fs x) ==> (cs x))) /\ (!x. ((ft x) ==> (ct x)))) /\ ((!x. (~ ((k x) /\ (fs x)))) /\ (!x. (~ ((k x) /\ (ft x)))))) ==> (!x. (((fs x) \/ (ft x)) ==> (((cs x) \/ (ct x)) /\ (~ (k x))))))) ==> F))) ft)) = ((\ft. (!fs. ((~ ((((!x. ((fs x) ==> (cs x))) /\ (!x. ((ft x) ==> (ct x)))) /\ ((!x. (~ ((k x) /\ (fs x)))) /\ (!x. (~ ((k x) /\ (ft x)))))) ==> (!x. (((fs x) \/ (ft x)) ==> (((cs x) \/ (ct x)) /\ (~ (k x))))))) ==> F))) ft))
+T c= c==> ! ! c==> c~ c==> c/\ c/\ ! c==> * b1 b2 * f0 b2 ! c==> * b0 b2 * f1 b2 c/\ ! c~ c/\ * f2 b2 * b1 b2 ! c~ c/\ * f2 b2 * b0 b2 ! c==> c\/ * b1 b2 * b0 b2 c/\ c\/ * f0 b2 * f1 b2 c~ * f2 b2 cF * / ! c==> c~ c==> c/\ c/\ ! c==> * b1 b2 * f0 b2 ! c==> * b0 b2 * f1 b2 c/\ ! c~ c/\ * f2 b2 * b1 b2 ! c~ c/\ * f2 b2 * b0 b2 ! c==> c\/ * b1 b2 * b0 b2 c/\ c\/ * f0 b2 * f1 b2 c~ * f2 b2 cF f3 * / ! c==> c~ c==> c/\ c/\ ! c==> * b1 b2 * f0 b2 ! c==> * b0 b2 * f1 b2 c/\ ! c~ c/\ * f2 b2 * b1 b2 ! c~ c/\ * f2 b2 * b0 b2 ! c==> c\/ * b1 b2 * b0 b2 c/\ c\/ * f0 b2 * f1 b2 c~ * f2 b2 cF f3
++ |- (((!x. ((x IN ((closure s) DIFF (interior s))) ==> (x IN (closure s)))) /\ (!x. ((x IN ((closure t) DIFF (interior t))) ==> (x IN (closure t))))) = ((((closure s) DIFF (interior s)) SUBSET (closure s)) /\ (((closure t) DIFF (interior t)) SUBSET (closure t))))
+T c= c/\ ! c==> cIN b0 * * part cDIFF * part cclosure f0 * part cinterior f0 cIN b0 * part cclosure f0 ! c==> cIN b0 * * part cDIFF * part cclosure f1 * part cinterior f1 cIN b0 * part cclosure f1 c/\ cSUBSET * * part cDIFF * part cclosure f0 * part cinterior f0 * part cclosure f0 cSUBSET * * part cDIFF * part cclosure f1 * part cinterior f1 * part cclosure f1
+- |- (((!t1. (!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))))) ==> ((\t1. (!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))))) t1)) = ((\t1. (!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))))) t1))
+T c= c==> ! ! ! c= c\/ b0 c\/ b1 b2 c\/ c\/ b0 b1 b2 * / ! ! c= c\/ b0 c\/ b1 b2 c\/ c\/ b0 b1 b2 f0 * / ! ! c= c\/ b0 c\/ b1 b2 c\/ c\/ b0 b1 b2 f0
++ ((((~ (s x)) /\ (~ (t x))) \/ (t x)) /\ ((s x) /\ (~ (t x)))), ((t x) ==> F), (((~ (s x)) /\ (~ (t x))) ==> F) |- F
+T c==> c/\ c\/ c/\ c~ * f0 f1 c~ * f2 f1 * f2 f1 c/\ * f0 f1 c~ * f2 f1 c==> c==> * f2 f1 cF c==> c==> c/\ c~ * f0 f1 c~ * f2 f1 cF cF
++ ((!x. ((s' x) ==> (s x))) /\ (!x. (~ ((s' x) /\ ((u x) /\ (~ (t x))))))) |- (!x. ((~ (s' x)) \/ ((~ (u x)) \/ (t x))))
+T c==> c/\ ! c==> * f0 b0 * f1 b0 ! c~ c/\ * f0 b0 c/\ * f2 b0 c~ * f3 b0 ! c\/ c~ * f0 b0 c\/ c~ * f2 b0 * f3 b0
++ (~ (s x)), (s x) |- ((~ (s x)) /\ F)
+T c==> c~ * f0 f1 c==> * f0 f1 c/\ c~ * f0 f1 cF
++ |- ((!t. ((P t) /\ (Q t))) = ((!t. (P t)) /\ (!t. (Q t))))
+T c= ! c/\ * f0 b0 * f1 b0 c/\ ! * f0 b0 ! * f1 b0
+- |- (((~ ((closure s) x)) ==> F) = ((closure s) x))
+T c= c==> c~ cclosure f0 f1 cF cclosure f0 f1
+- (!s. (!t. (((s SUBSET t) /\ (t SUBSET s)) ==> (s = t)))) |- ((!t. (((s SUBSET t) /\ (t SUBSET s)) ==> (s = t))) = T)
+T c==> ! ! c==> c/\ cSUBSET b0 b1 cSUBSET b1 b0 c= b0 b1 c= ! c==> c/\ cSUBSET f0 b0 cSUBSET b0 f0 c= f0 b0 cT
++ ((!x. ((s' x) ==> (s x))) /\ (!x. (~ ((s' x) /\ ((u x) /\ (~ (t x))))))) |- ((~ (s' _290958)) \/ (s _290958))
+T c==> c/\ ! c==> * f0 b0 * f1 b0 ! c~ c/\ * f0 b0 c/\ * f2 b0 c~ * f3 b0 c\/ c~ * f0 f4 * f1 f4
+- ((~ ((!x. ((ti x) ==> (si x))) ==> (!x. (~ (((c x) /\ (~ (si x))) /\ (ti x)))))) ==> F), (((~ ((!x. ((ti x) ==> (si x))) ==> (!x. (~ (((c x) /\ (~ (si x))) /\ (ti x)))))) ==> F) ==> ((~ ((!x. ((ti x) ==> (si x))) ==> (!x. (~ (((c x) /\ (~ (si x))) /\ (ti x)))))) ==> F)) |- (((~ ((!x. ((ti x) ==> (si x))) ==> (!x. (~ (((c x) /\ (~ (si x))) /\ (ti x)))))) ==> F) /\ ((~ ((!x. ((ti x) ==> (si x))) ==> (!x. (~ (((c x) /\ (~ (si x))) /\ (ti x)))))) ==> F))
+T c==> c==> c~ c==> ! c==> * f0 b0 * f1 b0 ! c~ c/\ c/\ * f2 b0 c~ * f1 b0 * f0 b0 cF c==> c==> c==> c~ c==> ! c==> * f0 b0 * f1 b0 ! c~ c/\ c/\ * f2 b0 c~ * f1 b0 * f0 b0 cF c==> c~ c==> ! c==> * f0 b0 * f1 b0 ! c~ c/\ c/\ * f2 b0 c~ * f1 b0 * f0 b0 cF c/\ c==> c~ c==> ! c==> * f0 b0 * f1 b0 ! c~ c/\ c/\ * f2 b0 c~ * f1 b0 * f0 b0 cF c==> c~ c==> ! c==> * f0 b0 * f1 b0 ! c~ c/\ c/\ * f2 b0 c~ * f1 b0 * f0 b0 cF
++ (!x. (~ ((s x) /\ (t x)))), ((!x. ((s' x) ==> (s x))) /\ (!x. (~ ((s' x) /\ ((u x) /\ (~ (t x))))))) |- ((~ ((u x) /\ (s' x))) = T)
+T c==> ! c~ c/\ * f0 b0 * f1 b0 c==> c/\ ! c==> * f2 b0 * f0 b0 ! c~ c/\ * f2 b0 c/\ * f3 b0 c~ * f1 b0 c= c~ c/\ * f3 f4 * f2 f4 cT
+- |- ((!x'. ((~ (k x)) \/ (~ (ft x')))) = ((~ (k x)) \/ (!x. (~ (ft x)))))
+T c= ! c\/ c~ * f0 f1 c~ * f2 b0 c\/ c~ * f0 f1 ! c~ * f2 b0
++ |- ((\t. (((interior s) INTER (interior t)) = (interior (s INTER t)))) t)
+T * / c= * * part cINTER * part cinterior f0 * part cinterior b0 * part cinterior * * part cINTER f0 b0 f1
++ |- (((((s x) \/ (t x)) /\ (~ (t x))) /\ ((~ (s x)) \/ (t x))) ==> F)
+T c==> c/\ c/\ c\/ * f0 f1 * f2 f1 c~ * f2 f1 c\/ c~ * f0 f1 * f2 f1 cF
+- (k x) |- ((~ (k x)) ==> (k x))
+T c==> * f0 f1 c==> c~ * f0 f1 * f0 f1
++ |- ((\s. (!t. ((s DIFF t) SUBSET s))) s)
+T * / ! cSUBSET * * part cDIFF b0 b1 b0 f0
+- (((c x) /\ (~ (si x))) /\ (ti x)) |- ((~ (ti x)) ==> (ti x))
+T c==> c/\ c/\ * f0 f1 c~ * f2 f1 * f3 f1 c==> c~ * f3 f1 * f3 f1
+- (~ ((((!x. ((fs x) ==> (cs x))) /\ (!x. ((ft x) ==> (ct x)))) /\ ((!x. (~ ((k x) /\ (fs x)))) /\ (!x. (~ ((k x) /\ (ft x)))))) ==> (!x. (((fs x) \/ (ft x)) ==> (((cs x) \/ (ct x)) /\ (~ (k x))))))) |- ((~ ((((!x. ((fs x) ==> (cs x))) /\ (!x. ((ft x) ==> (ct x)))) /\ ((!x. (~ ((k x) /\ (fs x)))) /\ (!x. (~ ((k x) /\ (ft x)))))) ==> (!x. (((fs x) \/ (ft x)) ==> (((cs x) \/ (ct x)) /\ (~ (k x))))))) /\ F)
+T c==> c~ c==> c/\ c/\ ! c==> * f0 b0 * f1 b0 ! c==> * f2 b0 * f3 b0 c/\ ! c~ c/\ * f4 b0 * f0 b0 ! c~ c/\ * f4 b0 * f2 b0 ! c==> c\/ * f0 b0 * f2 b0 c/\ c\/ * f1 b0 * f3 b0 c~ * f4 b0 c/\ c~ c==> c/\ c/\ ! c==> * f0 b0 * f1 b0 ! c==> * f2 b0 * f3 b0 c/\ ! c~ c/\ * f4 b0 * f0 b0 ! c~ c/\ * f4 b0 * f2 b0 ! c==> c\/ * f0 b0 * f2 b0 c/\ c\/ * f1 b0 * f3 b0 c~ * f4 b0 cF
+- (~ F), (ft x), ((~ (cs x)) /\ (~ (ct x))), (((!x. ((fs x) ==> (cs x))) /\ (!x. ((ft x) ==> (ct x)))) /\ ((!x. (~ ((k x) /\ (fs x)))) /\ (!x. (~ ((k x) /\ (ft x)))))) |- ((~ F) /\ F)
+T c==> c~ cF c==> * f0 f1 c==> c/\ c~ * f2 f1 c~ * f3 f1 c==> c/\ c/\ ! c==> * f4 b0 * f2 b0 ! c==> * f0 b0 * f3 b0 c/\ ! c~ c/\ * f5 b0 * f4 b0 ! c~ c/\ * f5 b0 * f0 b0 c/\ c~ cF cF
+- (~ F), (t x), ((((~ (s x)) /\ (~ (t x))) \/ (t x)) /\ ((s x) /\ (~ (t x)))) |- ((~ F) /\ F)
+T c==> c~ cF c==> * f0 f1 c==> c/\ c\/ c/\ c~ * f2 f1 c~ * f0 f1 * f0 f1 c/\ * f2 f1 c~ * f0 f1 c/\ c~ cF cF
+- |- (((((~ ((!x. ((((closure s) x) /\ (~ ((interior s) x))) ==> ((closure s) x))) /\ (!x. ((((closure t) x) /\ (~ ((interior t) x))) ==> ((closure t) x))))) ==> F) ==> ((~ ((!x. ((((closure s) x) /\ (~ ((interior s) x))) ==> ((closure s) x))) /\ (!x. ((((closure t) x) /\ (~ ((interior t) x))) ==> ((closure t) x))))) ==> F)) ==> (((~ ((!x. ((((closure s) x) /\ (~ ((interior s) x))) ==> ((closure s) x))) /\ (!x. ((((closure t) x) /\ (~ ((interior t) x))) ==> ((closure t) x))))) ==> F) ==> ((~ ((!x. ((((closure s) x) /\ (~ ((interior s) x))) ==> ((closure s) x))) /\ (!x. ((((closure t) x) /\ (~ ((interior t) x))) ==> ((closure t) x))))) ==> F))) = (((~ ((!x. ((((closure s) x) /\ (~ ((interior s) x))) ==> ((closure s) x))) /\ (!x. ((((closure t) x) /\ (~ ((interior t) x))) ==> ((closure t) x))))) ==> F) ==> ((~ ((!x. ((((closure s) x) /\ (~ ((interior s) x))) ==> ((closure s) x))) /\ (!x. ((((closure t) x) /\ (~ ((interior t) x))) ==> ((closure t) x))))) ==> F)))
+T c= c==> c==> c==> c~ c/\ ! c==> c/\ cclosure f0 b0 c~ cinterior f0 b0 cclosure f0 b0 ! c==> c/\ cclosure f1 b0 c~ cinterior f1 b0 cclosure f1 b0 cF c==> c~ c/\ ! c==> c/\ cclosure f0 b0 c~ cinterior f0 b0 cclosure f0 b0 ! c==> c/\ cclosure f1 b0 c~ cinterior f1 b0 cclosure f1 b0 cF c==> c==> c~ c/\ ! c==> c/\ cclosure f0 b0 c~ cinterior f0 b0 cclosure f0 b0 ! c==> c/\ cclosure f1 b0 c~ cinterior f1 b0 cclosure f1 b0 cF c==> c~ c/\ ! c==> c/\ cclosure f0 b0 c~ cinterior f0 b0 cclosure f0 b0 ! c==> c/\ cclosure f1 b0 c~ cinterior f1 b0 cclosure f1 b0 cF c==> c==> c~ c/\ ! c==> c/\ cclosure f0 b0 c~ cinterior f0 b0 cclosure f0 b0 ! c==> c/\ cclosure f1 b0 c~ cinterior f1 b0 cclosure f1 b0 cF c==> c~ c/\ ! c==> c/\ cclosure f0 b0 c~ cinterior f0 b0 cclosure f0 b0 ! c==> c/\ cclosure f1 b0 c~ cinterior f1 b0 cclosure f1 b0 cF
+- |- ((\s. ((~ (!x. ((((s x) \/ (t x)) /\ (~ (t x))) = ((s x) /\ (~ (t x)))))) ==> F)) s)
+T * / c==> c~ ! c= c/\ c\/ * b0 b1 * f0 b1 c~ * f0 b1 c/\ * b0 b1 c~ * f0 b1 cF f1
+- |- ((\s. ((~ ((!x. (~ ((s x) /\ (t x)))) ==> (((!x. ((s' x) ==> (s x))) /\ (!x. (~ ((s' x) /\ ((u x) /\ (~ (t x))))))) ==> (!x. (~ ((u x) /\ (s' x))))))) ==> F)) s)
+T * / c==> c~ c==> ! c~ c/\ * b0 b1 * f0 b1 c==> c/\ ! c==> * f1 b1 * b0 b1 ! c~ c/\ * f1 b1 c/\ * f2 b1 c~ * f0 b1 ! c~ c/\ * f2 b1 * f1 b1 cF f3
+- (~ (!x. ((((s x) \/ (t x)) /\ (~ (t x))) = ((s x) /\ (~ (t x)))))) |- F
+T c==> c~ ! c= c/\ c\/ * f0 b0 * f1 b0 c~ * f1 b0 c/\ * f0 b0 c~ * f1 b0 cF
+- |- ((\u. (!t. (!s. ((~ ((!x. (~ ((s x) /\ (t x)))) ==> (((!x. ((s' x) ==> (s x))) /\ (!x. (~ ((s' x) /\ ((u x) /\ (~ (t x))))))) ==> (!x. (~ ((u x) /\ (s' x))))))) ==> F)))) u)
+T * / ! ! c==> c~ c==> ! c~ c/\ * b2 b3 * b1 b3 c==> c/\ ! c==> * f0 b3 * b2 b3 ! c~ c/\ * f0 b3 c/\ * b0 b3 c~ * b1 b3 ! c~ c/\ * b0 b3 * f0 b3 cF f1
+- (~ ((closure s) x)), (((closure s) x) /\ (~ ((interior s) x))) |- ((~ ((closure s) x)) /\ ((closure s) x))
+T c==> c~ cclosure f0 f1 c==> c/\ cclosure f0 f1 c~ cinterior f0 f1 c/\ c~ cclosure f0 f1 cclosure f0 f1
+- |- ((!ft. (!fs. ((((!x. ((fs x) ==> (cs x))) /\ (!x. ((ft x) ==> (ct x)))) /\ ((!x. (~ ((k x) /\ (fs x)))) /\ (!x. (~ ((k x) /\ (ft x)))))) ==> (!x. (((fs x) \/ (ft x)) ==> (((cs x) \/ (ct x)) /\ (~ (k x)))))))) = T)
+T c= ! ! c==> c/\ c/\ ! c==> * b1 b2 * f0 b2 ! c==> * b0 b2 * f1 b2 c/\ ! c~ c/\ * f2 b2 * b1 b2 ! c~ c/\ * f2 b2 * b0 b2 ! c==> c\/ * b1 b2 * b0 b2 c/\ c\/ * f0 b2 * f1 b2 c~ * f2 b2 cT
+- (((closure s) x) /\ (~ ((interior s) x))) |- ((~ ((closure s) x)) ==> ((closure s) x))
+T c==> c/\ cclosure f0 f1 c~ cinterior f0 f1 c==> c~ cclosure f0 f1 cclosure f0 f1
+- |- ((((~ ((!x. ((((closure s) x) /\ (~ ((interior s) x))) ==> ((closure s) x))) /\ (!x. ((((closure t) x) /\ (~ ((interior t) x))) ==> ((closure t) x))))) ==> F) ==> ((~ ((!x. ((((closure s) x) /\ (~ ((interior s) x))) ==> ((closure s) x))) /\ (!x. ((((closure t) x) /\ (~ ((interior t) x))) ==> ((closure t) x))))) ==> F)) = ((~ ((!x. ((((closure s) x) /\ (~ ((interior s) x))) ==> ((closure s) x))) /\ (!x. ((((closure t) x) /\ (~ ((interior t) x))) ==> ((closure t) x))))) ==> F))
+T c= c==> c==> c~ c/\ ! c==> c/\ cclosure f0 b0 c~ cinterior f0 b0 cclosure f0 b0 ! c==> c/\ cclosure f1 b0 c~ cinterior f1 b0 cclosure f1 b0 cF c==> c~ c/\ ! c==> c/\ cclosure f0 b0 c~ cinterior f0 b0 cclosure f0 b0 ! c==> c/\ cclosure f1 b0 c~ cinterior f1 b0 cclosure f1 b0 cF c==> c~ c/\ ! c==> c/\ cclosure f0 b0 c~ cinterior f0 b0 cclosure f0 b0 ! c==> c/\ cclosure f1 b0 c~ cinterior f1 b0 cclosure f1 b0 cF
+- (!x. ((ti x) ==> (si x))), (((c x) /\ (~ (si x))) /\ (ti x)) |- ((~ F) ==> F)
+T c==> ! c==> * f0 b0 * f1 b0 c==> c/\ c/\ * f2 f3 c~ * f1 f3 * f0 f3 c==> c~ cF cF
+- (~ (ct x)), (ft x), (((!x. ((fs x) ==> (cs x))) /\ (!x. ((ft x) ==> (ct x)))) /\ ((!x. (~ ((k x) /\ (fs x)))) /\ (!x. (~ ((k x) /\ (ft x)))))) |- ((~ (ct x)) /\ (ct x))
+T c==> c~ * f0 f1 c==> * f2 f1 c==> c/\ c/\ ! c==> * f3 b0 * f4 b0 ! c==> * f2 b0 * f0 b0 c/\ ! c~ c/\ * f5 b0 * f3 b0 ! c~ c/\ * f5 b0 * f2 b0 c/\ c~ * f0 f1 * f0 f1
+- |- ((((~ ((((!x. ((fs x) ==> (cs x))) /\ (!x. ((ft x) ==> (ct x)))) /\ ((!x. (~ ((k x) /\ (fs x)))) /\ (!x. (~ ((k x) /\ (ft x)))))) ==> (!x. (((fs x) \/ (ft x)) ==> (((cs x) \/ (ct x)) /\ (~ (k x))))))) ==> F) ==> ((~ ((((!x. ((fs x) ==> (cs x))) /\ (!x. ((ft x) ==> (ct x)))) /\ ((!x. (~ ((k x) /\ (fs x)))) /\ (!x. (~ ((k x) /\ (ft x)))))) ==> (!x. (((fs x) \/ (ft x)) ==> (((cs x) \/ (ct x)) /\ (~ (k x))))))) ==> F)) ==> (((~ ((((!x. ((fs x) ==> (cs x))) /\ (!x. ((ft x) ==> (ct x)))) /\ ((!x. (~ ((k x) /\ (fs x)))) /\ (!x. (~ ((k x) /\ (ft x)))))) ==> (!x. (((fs x) \/ (ft x)) ==> (((cs x) \/ (ct x)) /\ (~ (k x))))))) ==> F) ==> ((~ ((((!x. ((fs x) ==> (cs x))) /\ (!x. ((ft x) ==> (ct x)))) /\ ((!x. (~ ((k x) /\ (fs x)))) /\ (!x. (~ ((k x) /\ (ft x)))))) ==> (!x. (((fs x) \/ (ft x)) ==> (((cs x) \/ (ct x)) /\ (~ (k x))))))) ==> F)))
+T c==> c==> c==> c~ c==> c/\ c/\ ! c==> * f0 b0 * f1 b0 ! c==> * f2 b0 * f3 b0 c/\ ! c~ c/\ * f4 b0 * f0 b0 ! c~ c/\ * f4 b0 * f2 b0 ! c==> c\/ * f0 b0 * f2 b0 c/\ c\/ * f1 b0 * f3 b0 c~ * f4 b0 cF c==> c~ c==> c/\ c/\ ! c==> * f0 b0 * f1 b0 ! c==> * f2 b0 * f3 b0 c/\ ! c~ c/\ * f4 b0 * f0 b0 ! c~ c/\ * f4 b0 * f2 b0 ! c==> c\/ * f0 b0 * f2 b0 c/\ c\/ * f1 b0 * f3 b0 c~ * f4 b0 cF c==> c==> c~ c==> c/\ c/\ ! c==> * f0 b0 * f1 b0 ! c==> * f2 b0 * f3 b0 c/\ ! c~ c/\ * f4 b0 * f0 b0 ! c~ c/\ * f4 b0 * f2 b0 ! c==> c\/ * f0 b0 * f2 b0 c/\ c\/ * f1 b0 * f3 b0 c~ * f4 b0 cF c==> c~ c==> c/\ c/\ ! c==> * f0 b0 * f1 b0 ! c==> * f2 b0 * f3 b0 c/\ ! c~ c/\ * f4 b0 * f0 b0 ! c~ c/\ * f4 b0 * f2 b0 ! c==> c\/ * f0 b0 * f2 b0 c/\ c\/ * f1 b0 * f3 b0 c~ * f4 b0 cF
+- ((~ ((!x. ((ti x) ==> (si x))) ==> (!x. (~ (((c x) /\ (~ (si x))) /\ (ti x)))))) ==> F), (((~ ((!x. ((ti x) ==> (si x))) ==> (!x. (~ (((c x) /\ (~ (si x))) /\ (ti x)))))) ==> F) ==> ((~ ((!x. ((ti x) ==> (si x))) ==> (!x. (~ (((c x) /\ (~ (si x))) /\ (ti x)))))) ==> F)) |- ((((~ ((!x. ((ti x) ==> (si x))) ==> (!x. (~ (((c x) /\ (~ (si x))) /\ (ti x)))))) ==> F) ==> ((~ ((!x. ((ti x) ==> (si x))) ==> (!x. (~ (((c x) /\ (~ (si x))) /\ (ti x)))))) ==> F)) /\ ((~ ((!x. ((ti x) ==> (si x))) ==> (!x. (~ (((c x) /\ (~ (si x))) /\ (ti x)))))) ==> F))
+T c==> c==> c~ c==> ! c==> * f0 b0 * f1 b0 ! c~ c/\ c/\ * f2 b0 c~ * f1 b0 * f0 b0 cF c==> c==> c==> c~ c==> ! c==> * f0 b0 * f1 b0 ! c~ c/\ c/\ * f2 b0 c~ * f1 b0 * f0 b0 cF c==> c~ c==> ! c==> * f0 b0 * f1 b0 ! c~ c/\ c/\ * f2 b0 c~ * f1 b0 * f0 b0 cF c/\ c==> c==> c~ c==> ! c==> * f0 b0 * f1 b0 ! c~ c/\ c/\ * f2 b0 c~ * f1 b0 * f0 b0 cF c==> c~ c==> ! c==> * f0 b0 * f1 b0 ! c~ c/\ c/\ * f2 b0 c~ * f1 b0 * f0 b0 cF c==> c~ c==> ! c==> * f0 b0 * f1 b0 ! c~ c/\ c/\ * f2 b0 c~ * f1 b0 * f0 b0 cF
+- |- (((!s'. (!u. (!t. (!s. ((~ ((!x. (~ ((s x) /\ (t x)))) ==> (((!x. ((s' x) ==> (s x))) /\ (!x. (~ ((s' x) /\ ((u x) /\ (~ (t x))))))) ==> (!x. (~ ((u x) /\ (s' x))))))) ==> F))))) ==> ((\s'. (!u. (!t. (!s. ((~ ((!x. (~ ((s x) /\ (t x)))) ==> (((!x. ((s' x) ==> (s x))) /\ (!x. (~ ((s' x) /\ ((u x) /\ (~ (t x))))))) ==> (!x. (~ ((u x) /\ (s' x))))))) ==> F))))) s')) = ((\s'. (!u. (!t. (!s. ((~ ((!x. (~ ((s x) /\ (t x)))) ==> (((!x. ((s' x) ==> (s x))) /\ (!x. (~ ((s' x) /\ ((u x) /\ (~ (t x))))))) ==> (!x. (~ ((u x) /\ (s' x))))))) ==> F))))) s'))
+T c= c==> ! ! ! ! c==> c~ c==> ! c~ c/\ * b3 b4 * b2 b4 c==> c/\ ! c==> * b0 b4 * b3 b4 ! c~ c/\ * b0 b4 c/\ * b1 b4 c~ * b2 b4 ! c~ c/\ * b1 b4 * b0 b4 cF * / ! ! ! c==> c~ c==> ! c~ c/\ * b3 b4 * b2 b4 c==> c/\ ! c==> * b0 b4 * b3 b4 ! c~ c/\ * b0 b4 c/\ * b1 b4 c~ * b2 b4 ! c~ c/\ * b1 b4 * b0 b4 cF f0 * / ! ! ! c==> c~ c==> ! c~ c/\ * b3 b4 * b2 b4 c==> c/\ ! c==> * b0 b4 * b3 b4 ! c~ c/\ * b0 b4 c/\ * b1 b4 c~ * b2 b4 ! c~ c/\ * b1 b4 * b0 b4 cF f0
+- |- (((((!x. ((fs x) ==> (cs x))) /\ (!x. ((ft x) ==> (ct x)))) /\ ((!x. (~ ((k x) /\ (fs x)))) /\ (!x. (~ ((k x) /\ (ft x)))))) ==> (!x. (((fs x) \/ (ft x)) ==> (((cs x) \/ (ct x)) /\ (~ (k x)))))) = T)
+T c= c==> c/\ c/\ ! c==> * f0 b0 * f1 b0 ! c==> * f2 b0 * f3 b0 c/\ ! c~ c/\ * f4 b0 * f0 b0 ! c~ c/\ * f4 b0 * f2 b0 ! c==> c\/ * f0 b0 * f2 b0 c/\ c\/ * f1 b0 * f3 b0 c~ * f4 b0 cT
+- |- (((!c. ((~ ((!x. ((ti x) ==> (si x))) ==> (!x. (~ (((c x) /\ (~ (si x))) /\ (ti x)))))) ==> F)) ==> ((\c. ((~ ((!x. ((ti x) ==> (si x))) ==> (!x. (~ (((c x) /\ (~ (si x))) /\ (ti x)))))) ==> F)) c)) = ((\c. ((~ ((!x. ((ti x) ==> (si x))) ==> (!x. (~ (((c x) /\ (~ (si x))) /\ (ti x)))))) ==> F)) c))
+T c= c==> ! c==> c~ c==> ! c==> * f0 b1 * f1 b1 ! c~ c/\ c/\ * b0 b1 c~ * f1 b1 * f0 b1 cF * / c==> c~ c==> ! c==> * f0 b1 * f1 b1 ! c~ c/\ c/\ * b0 b1 c~ * f1 b1 * f0 b1 cF f2 * / c==> c~ c==> ! c==> * f0 b1 * f1 b1 ! c~ c/\ c/\ * b0 b1 c~ * f1 b1 * f0 b1 cF f2
+- |- ((((~ (!x. ((((s x) \/ (t x)) /\ (~ (t x))) = ((s x) /\ (~ (t x)))))) ==> F) ==> ((~ (!x. ((((s x) \/ (t x)) /\ (~ (t x))) = ((s x) /\ (~ (t x)))))) ==> F)) = ((~ (!x. ((((s x) \/ (t x)) /\ (~ (t x))) = ((s x) /\ (~ (t x)))))) ==> F))
+T c= c==> c==> c~ ! c= c/\ c\/ * f0 b0 * f1 b0 c~ * f1 b0 c/\ * f0 b0 c~ * f1 b0 cF c==> c~ ! c= c/\ c\/ * f0 b0 * f1 b0 c~ * f1 b0 c/\ * f0 b0 c~ * f1 b0 cF c==> c~ ! c= c/\ c\/ * f0 b0 * f1 b0 c~ * f1 b0 c/\ * f0 b0 c~ * f1 b0 cF
+- (((c x) /\ (~ (si x))) /\ (ti x)) |- (c x)
+T c==> c/\ c/\ * f0 f1 c~ * f2 f1 * f3 f1 * f0 f1
+- ((~ ((!x. ((((closure s) x) /\ (~ ((interior s) x))) ==> ((closure s) x))) /\ (!x. ((((closure t) x) /\ (~ ((interior t) x))) ==> ((closure t) x))))) ==> F) |- ((((~ ((!x. ((((closure s) x) /\ (~ ((interior s) x))) ==> ((closure s) x))) /\ (!x. ((((closure t) x) /\ (~ ((interior t) x))) ==> ((closure t) x))))) ==> F) ==> ((~ ((!x. ((((closure s) x) /\ (~ ((interior s) x))) ==> ((closure s) x))) /\ (!x. ((((closure t) x) /\ (~ ((interior t) x))) ==> ((closure t) x))))) ==> F)) ==> ((~ ((!x. ((((closure s) x) /\ (~ ((interior s) x))) ==> ((closure s) x))) /\ (!x. ((((closure t) x) /\ (~ ((interior t) x))) ==> ((closure t) x))))) ==> F))
+T c==> c==> c~ c/\ ! c==> c/\ cclosure f0 b0 c~ cinterior f0 b0 cclosure f0 b0 ! c==> c/\ cclosure f1 b0 c~ cinterior f1 b0 cclosure f1 b0 cF c==> c==> c==> c~ c/\ ! c==> c/\ cclosure f0 b0 c~ cinterior f0 b0 cclosure f0 b0 ! c==> c/\ cclosure f1 b0 c~ cinterior f1 b0 cclosure f1 b0 cF c==> c~ c/\ ! c==> c/\ cclosure f0 b0 c~ cinterior f0 b0 cclosure f0 b0 ! c==> c/\ cclosure f1 b0 c~ cinterior f1 b0 cclosure f1 b0 cF c==> c~ c/\ ! c==> c/\ cclosure f0 b0 c~ cinterior f0 b0 cclosure f0 b0 ! c==> c/\ cclosure f1 b0 c~ cinterior f1 b0 cclosure f1 b0 cF
+- ((!x. ((s' x) ==> (s x))) /\ (!x. (~ ((s' x) /\ ((u x) /\ (~ (t x))))))), ((u x) /\ (s' x)) |- ((~ (t x)) ==> (t x))
+T c==> c/\ ! c==> * f0 b0 * f1 b0 ! c~ c/\ * f0 b0 c/\ * f2 b0 c~ * f3 b0 c==> c/\ * f2 f4 * f0 f4 c==> c~ * f3 f4 * f3 f4
+- |- ((\c. ((~ ((!x. ((ti x) ==> (si x))) ==> (!x. (~ (((c x) /\ (~ (si x))) /\ (ti x)))))) ==> F)) c)
+T * / c==> c~ c==> ! c==> * f0 b1 * f1 b1 ! c~ c/\ c/\ * b0 b1 c~ * f1 b1 * f0 b1 cF f2
+- ((~ ((!x. ((((closure s) x) /\ (~ ((interior s) x))) ==> ((closure s) x))) /\ (!x. ((((closure t) x) /\ (~ ((interior t) x))) ==> ((closure t) x))))) ==> F), (((~ ((!x. ((((closure s) x) /\ (~ ((interior s) x))) ==> ((closure s) x))) /\ (!x. ((((closure t) x) /\ (~ ((interior t) x))) ==> ((closure t) x))))) ==> F) ==> ((~ ((!x. ((((closure s) x) /\ (~ ((interior s) x))) ==> ((closure s) x))) /\ (!x. ((((closure t) x) /\ (~ ((interior t) x))) ==> ((closure t) x))))) ==> F)) |- (((~ ((!x. ((((closure s) x) /\ (~ ((interior s) x))) ==> ((closure s) x))) /\ (!x. ((((closure t) x) /\ (~ ((interior t) x))) ==> ((closure t) x))))) ==> F) /\ ((~ ((!x. ((((closure s) x) /\ (~ ((interior s) x))) ==> ((closure s) x))) /\ (!x. ((((closure t) x) /\ (~ ((interior t) x))) ==> ((closure t) x))))) ==> F))
+T c==> c==> c~ c/\ ! c==> c/\ cclosure f0 b0 c~ cinterior f0 b0 cclosure f0 b0 ! c==> c/\ cclosure f1 b0 c~ cinterior f1 b0 cclosure f1 b0 cF c==> c==> c==> c~ c/\ ! c==> c/\ cclosure f0 b0 c~ cinterior f0 b0 cclosure f0 b0 ! c==> c/\ cclosure f1 b0 c~ cinterior f1 b0 cclosure f1 b0 cF c==> c~ c/\ ! c==> c/\ cclosure f0 b0 c~ cinterior f0 b0 cclosure f0 b0 ! c==> c/\ cclosure f1 b0 c~ cinterior f1 b0 cclosure f1 b0 cF c/\ c==> c~ c/\ ! c==> c/\ cclosure f0 b0 c~ cinterior f0 b0 cclosure f0 b0 ! c==> c/\ cclosure f1 b0 c~ cinterior f1 b0 cclosure f1 b0 cF c==> c~ c/\ ! c==> c/\ cclosure f0 b0 c~ cinterior f0 b0 cclosure f0 b0 ! c==> c/\ cclosure f1 b0 c~ cinterior f1 b0 cclosure f1 b0 cF
+- (((fs SUBSET cs) /\ (ft SUBSET ct)) /\ (((k INTER fs) = EMPTY) /\ ((k INTER ft) = EMPTY))), ((((fs SUBSET cs) /\ (ft SUBSET ct)) /\ (((k INTER fs) = EMPTY) /\ ((k INTER ft) = EMPTY))) ==> ((fs UNION ft) SUBSET ((cs UNION ct) DIFF k))) |- ((((fs SUBSET cs) /\ (ft SUBSET ct)) /\ (((k INTER fs) = EMPTY) /\ ((k INTER ft) = EMPTY))) /\ ((fs UNION ft) SUBSET ((cs UNION ct) DIFF k)))
+T c==> c/\ c/\ cSUBSET f0 f1 cSUBSET f2 f3 c/\ c= * * part cINTER f4 f0 part cEMPTY c= * * part cINTER f4 f2 part cEMPTY c==> c==> c/\ c/\ cSUBSET f0 f1 cSUBSET f2 f3 c/\ c= * * part cINTER f4 f0 part cEMPTY c= * * part cINTER f4 f2 part cEMPTY cSUBSET * * part cUNION f0 f2 * * part cDIFF * * part cUNION f1 f3 f4 c/\ c/\ c/\ cSUBSET f0 f1 cSUBSET f2 f3 c/\ c= * * part cINTER f4 f0 part cEMPTY c= * * part cINTER f4 f2 part cEMPTY cSUBSET * * part cUNION f0 f2 * * part cDIFF * * part cUNION f1 f3 f4
+- |- (((~ ((((!x. ((fs x) ==> (cs x))) /\ (!x. ((ft x) ==> (ct x)))) /\ ((!x. (~ ((k x) /\ (fs x)))) /\ (!x. (~ ((k x) /\ (ft x)))))) ==> (!x. (((fs x) \/ (ft x)) ==> (((cs x) \/ (ct x)) /\ (~ (k x))))))) ==> F) ==> ((~ ((((!x. ((fs x) ==> (cs x))) /\ (!x. ((ft x) ==> (ct x)))) /\ ((!x. (~ ((k x) /\ (fs x)))) /\ (!x. (~ ((k x) /\ (ft x)))))) ==> (!x. (((fs x) \/ (ft x)) ==> (((cs x) \/ (ct x)) /\ (~ (k x))))))) ==> F))
+T c==> c==> c~ c==> c/\ c/\ ! c==> * f0 b0 * f1 b0 ! c==> * f2 b0 * f3 b0 c/\ ! c~ c/\ * f4 b0 * f0 b0 ! c~ c/\ * f4 b0 * f2 b0 ! c==> c\/ * f0 b0 * f2 b0 c/\ c\/ * f1 b0 * f3 b0 c~ * f4 b0 cF c==> c~ c==> c/\ c/\ ! c==> * f0 b0 * f1 b0 ! c==> * f2 b0 * f3 b0 c/\ ! c~ c/\ * f4 b0 * f0 b0 ! c~ c/\ * f4 b0 * f2 b0 ! c==> c\/ * f0 b0 * f2 b0 c/\ c\/ * f1 b0 * f3 b0 c~ * f4 b0 cF
+- ((!x. ((s' x) ==> (s x))) /\ (!x. (~ ((s' x) /\ ((u x) /\ (~ (t x))))))), ((u x) /\ (s' x)) |- ((~ (s x)) ==> (s x))
+T c==> c/\ ! c==> * f0 b0 * f1 b0 ! c~ c/\ * f0 b0 c/\ * f2 b0 c~ * f3 b0 c==> c/\ * f2 f4 * f0 f4 c==> c~ * f1 f4 * f1 f4
+- ((~ ((!x. (~ ((s x) /\ (t x)))) ==> (((!x. ((s' x) ==> (s x))) /\ (!x. (~ ((s' x) /\ ((u x) /\ (~ (t x))))))) ==> (!x. (~ ((u x) /\ (s' x))))))) ==> F) |- (((~ ((!x. (~ ((s x) /\ (t x)))) ==> (((!x. ((s' x) ==> (s x))) /\ (!x. (~ ((s' x) /\ ((u x) /\ (~ (t x))))))) ==> (!x. (~ ((u x) /\ (s' x))))))) ==> F) /\ ((~ ((!x. (~ ((s x) /\ (t x)))) ==> (((!x. ((s' x) ==> (s x))) /\ (!x. (~ ((s' x) /\ ((u x) /\ (~ (t x))))))) ==> (!x. (~ ((u x) /\ (s' x))))))) ==> F))
+T c==> c==> c~ c==> ! c~ c/\ * f0 b0 * f1 b0 c==> c/\ ! c==> * f2 b0 * f0 b0 ! c~ c/\ * f2 b0 c/\ * f3 b0 c~ * f1 b0 ! c~ c/\ * f3 b0 * f2 b0 cF c/\ c==> c~ c==> ! c~ c/\ * f0 b0 * f1 b0 c==> c/\ ! c==> * f2 b0 * f0 b0 ! c~ c/\ * f2 b0 c/\ * f3 b0 c~ * f1 b0 ! c~ c/\ * f3 b0 * f2 b0 cF c==> c~ c==> ! c~ c/\ * f0 b0 * f1 b0 c==> c/\ ! c==> * f2 b0 * f0 b0 ! c~ c/\ * f2 b0 c/\ * f3 b0 c~ * f1 b0 ! c~ c/\ * f3 b0 * f2 b0 cF

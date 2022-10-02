@@ -1,0 +1,83 @@
+N Reduction3.size_core_triple
+C |- (!L. (!N. (!r. (!x. ((sizel ((((core_triple_v4 L) N) r) x)) = ((((transform_count L) N) r) x))))))
+T c= csizel ccore_triple_v4 f0 f1 f2 f3 ctransform_count f0 f1 f2 f3
+D TRUTH
+A |- T
+T cT
+D LET_DEF
+A |- (!f. (!x. (((LET f) x) = (f x))))
+T c= cLET f0 f1 * f0 f1
+D LET_END_DEF
+A |- (!t. ((LET_END t) = t))
+T c= cLET_END f0 f0
+D Seq.size_map
+A |- (!f. (!s. ((sizel ((map f) s)) = (sizel s))))
+T c= csizel cmap f0 f1 csizel f1
+D Seq.size_iota
+A |- (!m. (!n. ((sizel ((iota m) n)) = n)))
+T c= csizel ciota f0 f1 f1
+D Tame_list.lower_case
+A |- ((MAP = map) /\ ((LENGTH = sizel) /\ ((FILTER = filter) /\ ((REVERSE = rev) /\ ((!s. (!x0. ((~ (NIL = s)) ==> ((LAST s) = ((last x0) s))))) /\ ((APPEND = cat) /\ (ALL = all)))))))
+T c/\ c= part cMAP part cmap c/\ c= part cLENGTH part csizel c/\ c= part cFILTER part cfilter c/\ c= part cREVERSE part crev c/\ ! ! c==> c~ c= cNIL b0 c= cLAST b0 clast b1 b0 c/\ c= part cAPPEND part ccat c= part cALL part call
+D Reduction3.triple_data
+A |- (!L. (!N. (!r. (!x. (((((triple_data_v4 L) N) r) x) = ((LET (\k. (LET_END ((MAP (\i. ((((((ytrans L) N) r) x) i) , ((((((ztrans L) N) r) x) i) , (((betwn ((find_face L) x)) (((((ytrans L) N) r) x) i)) (((((ztrans L) N) r) x) i)))))) ((iota (NUMERAL _0)) k))))) ((((transform_count L) N) r) x)))))))
+T c= ctriple_data_v4 f0 f1 f2 f3 cLET / cLET_END cMAP / c, cytrans f0 f1 f2 f3 b1 c, cztrans f0 f1 f2 f3 b1 cbetwn cfind_face f0 f3 cytrans f0 f1 f2 f3 b1 cztrans f0 f1 f2 f3 b1 ciota cNUMERAL c_0 b0 ctransform_count f0 f1 f2 f3
+D Reduction3.core_triple
+A |- (!L. (!N. (!r. (!x. (((((core_triple_v4 L) N) r) x) = ((MAP (GABS (\f. (!u. (!v. (!ns. ((GEQ (f (u , (v , ns)))) ((FST u) , ((FST v) , (sizel ns)))))))))) ((((triple_data_v4 L) N) r) x)))))))
+T c= ccore_triple_v4 f0 f1 f2 f3 cMAP * part cGABS / ! ! ! cGEQ * b0 c, b1 c, b2 b3 c, cFST b1 c, cFST b2 csizel b3 ctriple_data_v4 f0 f1 f2 f3
+- |- ((REVERSE = rev) /\ ((!s. (!x0. ((~ (NIL = s)) ==> ((LAST s) = ((last x0) s))))) /\ ((APPEND = cat) /\ (ALL = all))))
+T c/\ c= part cREVERSE part crev c/\ ! ! c==> c~ c= cNIL b0 c= cLAST b0 clast b1 b0 c/\ c= part cAPPEND part ccat c= part cALL part call
++ |- (((!s. ((sizel ((map f) s)) = (sizel s))) ==> ((\s. ((sizel ((map f) s)) = (sizel s))) s)) = ((\s. ((sizel ((map f) s)) = (sizel s))) s))
+T c= c==> ! c= csizel cmap f0 b0 csizel b0 * / c= csizel cmap f0 b0 csizel b0 f1 * / c= csizel cmap f0 b0 csizel b0 f1
++ |- ((\L. (!N. (!r. (!x. (((((core_triple_v4 L) N) r) x) = ((MAP (GABS (\f. (!u. (!v. (!ns. ((GEQ (f (u , (v , ns)))) ((FST u) , ((FST v) , (sizel ns)))))))))) ((((triple_data_v4 L) N) r) x))))))) L)
+T * / ! ! ! c= ccore_triple_v4 b0 b1 b2 b3 cMAP * part cGABS / ! ! ! cGEQ * b4 c, b5 c, b6 b7 c, cFST b5 c, cFST b6 csizel b7 ctriple_data_v4 b0 b1 b2 b3 f0
++ |- ((\x. (((LET f) x) = (f x))) x)
+T * / c= cLET f0 b0 * f0 b0 f1
+- |- ((FILTER = filter) /\ ((REVERSE = rev) /\ ((!s. (!x0. ((~ (NIL = s)) ==> ((LAST s) = ((last x0) s))))) /\ ((APPEND = cat) /\ (ALL = all)))))
+T c/\ c= part cFILTER part cfilter c/\ c= part cREVERSE part crev c/\ ! ! c==> c~ c= cNIL b0 c= cLAST b0 clast b1 b0 c/\ c= part cAPPEND part ccat c= part cALL part call
++ |- (((!x. (((LET f) x) = (f x))) ==> ((\x. (((LET f) x) = (f x))) x)) = ((\x. (((LET f) x) = (f x))) x))
+T c= c==> ! c= cLET f0 b0 * f0 b0 * / c= cLET f0 b0 * f0 b0 f1 * / c= cLET f0 b0 * f0 b0 f1
+- |- ((!s. (!x0. ((~ (NIL = s)) ==> ((LAST s) = ((last x0) s))))) /\ ((APPEND = cat) /\ (ALL = all)))
+T c/\ ! ! c==> c~ c= cNIL b0 c= cLAST b0 clast b1 b0 c/\ c= part cAPPEND part ccat c= part cALL part call
++ |- (MAP = map)
+T c= part cMAP part cmap
+- |- (LENGTH = sizel)
+T c= part cLENGTH part csizel
+- |- ((\x0. ((~ (NIL = s)) ==> ((LAST s) = ((last x0) s)))) x0)
+T * / c==> c~ c= cNIL f0 c= cLAST f0 clast b0 f0 f1
+- (~ (NIL = s)) |- ((LAST s) = ((last x0) s))
+T c==> c~ c= cNIL f0 c= cLAST f0 clast f1 f0
++ |- (((!N. (!r. (!x. (((((core_triple_v4 L) N) r) x) = ((MAP (GABS (\f. (!u. (!v. (!ns. ((GEQ (f (u , (v , ns)))) ((FST u) , ((FST v) , (sizel ns)))))))))) ((((triple_data_v4 L) N) r) x)))))) ==> ((\N. (!r. (!x. (((((core_triple_v4 L) N) r) x) = ((MAP (GABS (\f. (!u. (!v. (!ns. ((GEQ (f (u , (v , ns)))) ((FST u) , ((FST v) , (sizel ns)))))))))) ((((triple_data_v4 L) N) r) x)))))) N)) = ((\N. (!r. (!x. (((((core_triple_v4 L) N) r) x) = ((MAP (GABS (\f. (!u. (!v. (!ns. ((GEQ (f (u , (v , ns)))) ((FST u) , ((FST v) , (sizel ns)))))))))) ((((triple_data_v4 L) N) r) x)))))) N))
+T c= c==> ! ! ! c= ccore_triple_v4 f0 b0 b1 b2 cMAP * part cGABS / ! ! ! cGEQ * b3 c, b4 c, b5 b6 c, cFST b4 c, cFST b5 csizel b6 ctriple_data_v4 f0 b0 b1 b2 * / ! ! c= ccore_triple_v4 f0 b0 b1 b2 cMAP * part cGABS / ! ! ! cGEQ * b3 c, b4 c, b5 b6 c, cFST b4 c, cFST b5 csizel b6 ctriple_data_v4 f0 b0 b1 b2 f1 * / ! ! c= ccore_triple_v4 f0 b0 b1 b2 cMAP * part cGABS / ! ! ! cGEQ * b3 c, b4 c, b5 b6 c, cFST b4 c, cFST b5 csizel b6 ctriple_data_v4 f0 b0 b1 b2 f1
++ |- ((\L. (!N. (!r. (!x. (((((triple_data_v4 L) N) r) x) = ((LET (\k. (LET_END ((MAP (\i. ((((((ytrans L) N) r) x) i) , ((((((ztrans L) N) r) x) i) , (((betwn ((find_face L) x)) (((((ytrans L) N) r) x) i)) (((((ztrans L) N) r) x) i)))))) ((iota (NUMERAL _0)) k))))) ((((transform_count L) N) r) x))))))) L)
+T * / ! ! ! c= ctriple_data_v4 b0 b1 b2 b3 cLET / cLET_END cMAP / c, cytrans b0 b1 b2 b3 b5 c, cztrans b0 b1 b2 b3 b5 cbetwn cfind_face b0 b3 cytrans b0 b1 b2 b3 b5 cztrans b0 b1 b2 b3 b5 ciota cNUMERAL c_0 b4 ctransform_count b0 b1 b2 b3 f0
++ |- ((\f. (!x. (((LET f) x) = (f x)))) f)
+T * / ! c= cLET b0 b1 * b0 b1 f0
++ |- (((!x. (((((core_triple_v4 L) N) r) x) = ((MAP (GABS (\f. (!u. (!v. (!ns. ((GEQ (f (u , (v , ns)))) ((FST u) , ((FST v) , (sizel ns)))))))))) ((((triple_data_v4 L) N) r) x)))) ==> ((\x. (((((core_triple_v4 L) N) r) x) = ((MAP (GABS (\f. (!u. (!v. (!ns. ((GEQ (f (u , (v , ns)))) ((FST u) , ((FST v) , (sizel ns)))))))))) ((((triple_data_v4 L) N) r) x)))) x)) = ((\x. (((((core_triple_v4 L) N) r) x) = ((MAP (GABS (\f. (!u. (!v. (!ns. ((GEQ (f (u , (v , ns)))) ((FST u) , ((FST v) , (sizel ns)))))))))) ((((triple_data_v4 L) N) r) x)))) x))
+T c= c==> ! c= ccore_triple_v4 f0 f1 f2 b0 cMAP * part cGABS / ! ! ! cGEQ * b1 c, b2 c, b3 b4 c, cFST b2 c, cFST b3 csizel b4 ctriple_data_v4 f0 f1 f2 b0 * / c= ccore_triple_v4 f0 f1 f2 b0 cMAP * part cGABS / ! ! ! cGEQ * b1 c, b2 c, b3 b4 c, cFST b2 c, cFST b3 csizel b4 ctriple_data_v4 f0 f1 f2 b0 f3 * / c= ccore_triple_v4 f0 f1 f2 b0 cMAP * part cGABS / ! ! ! cGEQ * b1 c, b2 c, b3 b4 c, cFST b2 c, cFST b3 csizel b4 ctriple_data_v4 f0 f1 f2 b0 f3
++ |- ((\n. ((sizel ((iota m) n)) = n)) n)
+T * / c= csizel ciota f0 b0 b0 f1
++ |- (((!t. ((LET_END t) = t)) ==> ((\t. ((LET_END t) = t)) t)) = ((\t. ((LET_END t) = t)) t))
+T c= c==> ! c= cLET_END b0 b0 * / c= cLET_END b0 b0 f0 * / c= cLET_END b0 b0 f0
++ |- ((\x. (((((core_triple_v4 L) N) r) x) = ((MAP (GABS (\f. (!u. (!v. (!ns. ((GEQ (f (u , (v , ns)))) ((FST u) , ((FST v) , (sizel ns)))))))))) ((((triple_data_v4 L) N) r) x)))) x)
+T * / c= ccore_triple_v4 f0 f1 f2 b0 cMAP * part cGABS / ! ! ! cGEQ * b1 c, b2 c, b3 b4 c, cFST b2 c, cFST b3 csizel b4 ctriple_data_v4 f0 f1 f2 b0 f3
++ |- ((\m. (!n. ((sizel ((iota m) n)) = n))) m)
+T * / ! c= csizel ciota b0 b1 b1 f0
++ |- ((\s. ((sizel ((map f) s)) = (sizel s))) s)
+T * / c= csizel cmap f0 b0 csizel b0 f1
+- (~ (NIL = s)) |- ((~ (NIL = s)) /\ ((LAST s) = ((last x0) s)))
+T c==> c~ c= cNIL f0 c/\ c~ c= cNIL f0 c= cLAST f0 clast f1 f0
+- |- (((!x0. ((~ (NIL = s)) ==> ((LAST s) = ((last x0) s)))) ==> ((\x0. ((~ (NIL = s)) ==> ((LAST s) = ((last x0) s)))) x0)) = ((\x0. ((~ (NIL = s)) ==> ((LAST s) = ((last x0) s)))) x0))
+T c= c==> ! c==> c~ c= cNIL f0 c= cLAST f0 clast b0 f0 * / c==> c~ c= cNIL f0 c= cLAST f0 clast b0 f0 f1 * / c==> c~ c= cNIL f0 c= cLAST f0 clast b0 f0 f1
+- |- (((!s. (!x0. ((~ (NIL = s)) ==> ((LAST s) = ((last x0) s))))) ==> ((\s. (!x0. ((~ (NIL = s)) ==> ((LAST s) = ((last x0) s))))) s)) = ((\s. (!x0. ((~ (NIL = s)) ==> ((LAST s) = ((last x0) s))))) s))
+T c= c==> ! ! c==> c~ c= cNIL b0 c= cLAST b0 clast b1 b0 * / ! c==> c~ c= cNIL b0 c= cLAST b0 clast b1 b0 f0 * / ! c==> c~ c= cNIL b0 c= cLAST b0 clast b1 b0 f0
+- |- ((LENGTH = sizel) /\ ((FILTER = filter) /\ ((REVERSE = rev) /\ ((!s. (!x0. ((~ (NIL = s)) ==> ((LAST s) = ((last x0) s))))) /\ ((APPEND = cat) /\ (ALL = all))))))
+T c/\ c= part cLENGTH part csizel c/\ c= part cFILTER part cfilter c/\ c= part cREVERSE part crev c/\ ! ! c==> c~ c= cNIL b0 c= cLAST b0 clast b1 b0 c/\ c= part cAPPEND part ccat c= part cALL part call
+- |- ((APPEND = cat) /\ (ALL = all))
+T c/\ c= part cAPPEND part ccat c= part cALL part call
+- |- (FILTER = filter)
+T c= part cFILTER part cfilter
+- |- (((\k. (f k)) y) = (f y))
+T c= * / * f0 b0 f1 * f0 f1
+- |- ((\s. (!x0. ((~ (NIL = s)) ==> ((LAST s) = ((last x0) s))))) s)
+T * / ! c==> c~ c= cNIL b0 c= cLAST b0 clast b1 b0 f0

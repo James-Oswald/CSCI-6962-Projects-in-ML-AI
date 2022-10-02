@@ -1,0 +1,34 @@
+N REAL_CONVEX_DISTANCE
+C |- (!s. (!a. ((real_convex_on (\x. (real_abs ((real_sub a) x)))) s)))
+T creal_convex_on / creal_abs creal_sub f0 b0 f1
+D TRUTH
+A |- T
+T cT
+D o_DEF
+A |- (!f. (!g. ((f o g) = (\x. (f (g x))))))
+T c= * * part co f0 f1 / * f0 * f1 b0
+D NORM_REAL
+A |- (!x. ((vector_norm x) = (real_abs (x $ (NUMERAL (BIT1 _0))))))
+T c= cvector_norm f0 creal_abs c$ f0 cNUMERAL cBIT1 c_0
+D dist
+A |- (!x. (!y. ((distance (x , y)) = (vector_norm ((vector_sub x) y)))))
+T c= cdistance c, f0 f1 cvector_norm cvector_sub f0 f1
+D drop
+A |- (!x. ((drop x) = (x $ (NUMERAL (BIT1 _0)))))
+T c= cdrop f0 c$ f0 cNUMERAL cBIT1 c_0
+D FORALL_DROP
+A |- ((!x. (P x)) = (!x. (P (drop x))))
+T c= ! * f0 b0 ! * f0 cdrop b0
+D DROP_SUB
+A |- (!x. (!y. ((drop ((vector_sub x) y)) = ((real_sub (drop x)) (drop y)))))
+T c= cdrop cvector_sub f0 f1 creal_sub cdrop f0 cdrop f1
+D CONVEX_DISTANCE
+A |- (!s. (!a. ((convex_on (\x. (distance (a , x)))) s)))
+T cconvex_on / cdistance c, f0 b0 f1
+D REAL_CONVEX_ON
+A |- (!f. (!s. (((real_convex_on f) s) = ((convex_on (f o drop)) ((IMAGE lift) s)))))
+T c= creal_convex_on f0 f1 cconvex_on * * part co f0 part cdrop * * part cIMAGE part clift f1
++ |- ((\x. (!y. ((vector_norm ((vector_sub x) y)) = (distance (x , y))))) x)
+T * / ! c= cvector_norm cvector_sub b0 b1 cdistance c, b0 b1 f0
+- |- (((\x. (f x)) y) = (f y))
+T c= * / * f0 b0 f1 * f0 f1

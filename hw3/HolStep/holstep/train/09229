@@ -1,0 +1,74 @@
+N OPEN_DELETE
+C |- (!s. (!x. ((open s) ==> (open (s DELETE x)))))
+T c==> copen f0 copen * * part cDELETE f0 f1
+D TRUTH
+A |- T
+T cT
+D IN
+A |- (!P. (!x. ((x IN P) = (P x))))
+T c= cIN f0 f1 * f1 f0
+D EXTENSION
+A |- (!s. (!t. ((s = t) = (!x. ((x IN s) = (x IN t))))))
+T c= c= f0 f1 ! c= cIN b0 f0 cIN b0 f1
+D NOT_IN_EMPTY
+A |- (!x. (~ (x IN EMPTY)))
+T c~ cIN f0 part cEMPTY
+D IN_DIFF
+A |- (!s. (!t. (!x. ((x IN (s DIFF t)) = ((x IN s) /\ (~ (x IN t)))))))
+T c= cIN f0 * * part cDIFF f1 f2 c/\ cIN f0 f1 c~ cIN f0 f2
+D IN_INSERT
+A |- (!x. (!y. (!s. ((x IN (y INSERT s)) = ((x = y) \/ (x IN s))))))
+T c= cIN f0 * * part cINSERT f1 f2 c\/ c= f0 f1 cIN f0 f2
+D IN_DELETE
+A |- (!s. (!x. (!y. ((x IN (s DELETE y)) = ((x IN s) /\ (~ (x = y)))))))
+T c= cIN f0 * * part cDELETE f1 f2 c/\ cIN f0 f1 c~ c= f0 f2
+D OPEN_DIFF
+A |- (!s. (!t. (((open s) /\ (closed t)) ==> (open (s DIFF t)))))
+T c==> c/\ copen f0 cclosed f1 copen * * part cDIFF f0 f1
+D CLOSED_SING
+A |- (!a. (closed (a INSERT EMPTY)))
+T cclosed * * part cINSERT f0 part cEMPTY
++ |- ((t \/ F) = t)
+T c= c\/ f0 cF f0
++ |- ((((open s) = (open s)) ==> (((open s) ==> ((open (s DELETE x)) = q')) ==> (((open s) ==> (open (s DELETE x))) = ((open s) ==> q')))) = (((open s) ==> ((open (s DELETE x)) = q')) ==> (((open s) ==> (open (s DELETE x))) = ((open s) ==> q'))))
+T c= c==> c= copen f0 copen f0 c==> c==> copen f0 c= copen * * part cDELETE f0 f1 f2 c= c==> copen f0 copen * * part cDELETE f0 f1 c==> copen f0 f2 c==> c==> copen f0 c= copen * * part cDELETE f0 f1 f2 c= c==> copen f0 copen * * part cDELETE f0 f1 c==> copen f0 f2
+- |- ((\t1. (!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))))) t1)
+T * / ! ! c= c\/ b0 c\/ b1 b2 c\/ c\/ b0 b1 b2 f0
++ |- (((open s) ==> ((open (s DELETE x)) = q')) ==> (((open s) ==> (open (s DELETE x))) = ((open s) ==> q')))
+T c==> c==> copen f0 c= copen * * part cDELETE f0 f1 f2 c= c==> copen f0 copen * * part cDELETE f0 f1 c==> copen f0 f2
++ |- ((open s) ==> ((open (s DELETE x)) = T))
+T c==> copen f0 c= copen * * part cDELETE f0 f1 cT
++ (open s) |- ((((open s) /\ (closed (x INSERT EMPTY))) ==> ((open (s DIFF (x INSERT EMPTY))) = T)) = ((open (s DIFF (x INSERT EMPTY))) = T))
+T c==> copen f0 c= c==> c/\ copen f0 cclosed * * part cINSERT f1 part cEMPTY c= copen * * part cDIFF f0 * * part cINSERT f1 part cEMPTY cT c= copen * * part cDIFF f0 * * part cINSERT f1 part cEMPTY cT
++ |- (((!t. (((open s) /\ (closed t)) ==> (open (s DIFF t)))) ==> ((\t. (((open s) /\ (closed t)) ==> (open (s DIFF t)))) t)) = ((\t. (((open s) /\ (closed t)) ==> (open (s DIFF t)))) t))
+T c= c==> ! c==> c/\ copen f0 cclosed b0 copen * * part cDIFF f0 b0 * / c==> c/\ copen f0 cclosed b0 copen * * part cDIFF f0 b0 f1 * / c==> c/\ copen f0 cclosed b0 copen * * part cDIFF f0 b0 f1
++ |- (((open s) = p') ==> ((p' ==> ((open (s DELETE x)) = q')) ==> (((open s) ==> (open (s DELETE x))) = (p' ==> q'))))
+T c==> c= copen f0 f1 c==> c==> f1 c= copen * * part cDELETE f0 f2 f3 c= c==> copen f0 copen * * part cDELETE f0 f2 c==> f1 f3
++ |- ((t ==> T) = T)
+T c= c==> f0 cT cT
+- |- ((t ==> t) = T)
+T c= c==> f0 f0 cT
+- |- ((t \/ t) = t)
+T c= c\/ f0 f0 f0
++ (open s) |- ((open s) /\ ((open (s DELETE x)) = T))
+T c==> copen f0 c/\ copen f0 c= copen * * part cDELETE f0 f1 cT
+- |- ((\t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))) t3)
+T * / c= c\/ f0 c\/ f1 b0 c\/ c\/ f0 f1 b0 f2
++ |- ((!x. t) = t)
+T c= ! f0 f0
++ |- (((!s. (!t. (((open s) /\ (closed t)) ==> (open (s DIFF t))))) ==> ((\s. (!t. (((open s) /\ (closed t)) ==> (open (s DIFF t))))) s)) = ((\s. (!t. (((open s) /\ (closed t)) ==> (open (s DIFF t))))) s))
+T c= c==> ! ! c==> c/\ copen b0 cclosed b1 copen * * part cDIFF b0 b1 * / ! c==> c/\ copen b0 cclosed b1 copen * * part cDIFF b0 b1 f0 * / ! c==> c/\ copen b0 cclosed b1 copen * * part cDIFF b0 b1 f0
+- |- ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))
+T c= c\/ f0 c\/ f1 f2 c\/ c\/ f0 f1 f2
+- |- ((\t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3)))) t2)
+T * / ! c= c\/ f0 c\/ b0 b1 c\/ c\/ f0 b0 b1 f1
+- |- (((!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3)))) ==> ((\t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3)))) t2)) = ((\t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3)))) t2))
+T c= c==> ! ! c= c\/ f0 c\/ b0 b1 c\/ c\/ f0 b0 b1 * / ! c= c\/ f0 c\/ b0 b1 c\/ c\/ f0 b0 b1 f1 * / ! c= c\/ f0 c\/ b0 b1 c\/ c\/ f0 b0 b1 f1
+- |- (((t1 \/ t2) \/ t3) = (t1 \/ (t2 \/ t3)))
+T c= c\/ c\/ f0 f1 f2 c\/ f0 c\/ f1 f2
+- |- (((!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))) ==> ((\t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))) t3)) = ((\t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))) t3))
+T c= c==> ! c= c\/ f0 c\/ f1 b0 c\/ c\/ f0 f1 b0 * / c= c\/ f0 c\/ f1 b0 c\/ c\/ f0 f1 b0 f2 * / c= c\/ f0 c\/ f1 b0 c\/ c\/ f0 f1 b0 f2
+- |- ((t /\ t) = t)
+T c= c/\ f0 f0 f0
+- |- (((!t1. (!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))))) ==> ((\t1. (!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))))) t1)) = ((\t1. (!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))))) t1))
+T c= c==> ! ! ! c= c\/ b0 c\/ b1 b2 c\/ c\/ b0 b1 b2 * / ! ! c= c\/ b0 c\/ b1 b2 c\/ c\/ b0 b1 b2 f0 * / ! ! c= c\/ b0 c\/ b1 b2 c\/ c\/ b0 b1 b2 f0

@@ -1,0 +1,96 @@
+N Reduction2.rotate1_rcons
+C |- (!x. ((~ (x = NIL)) ==> ((rotate1 x) = ((rcons (TL x)) (HD x)))))
+T c==> c~ c= f0 cNIL c= crotate1 f0 crcons cTL f0 cHD f0
+D TRUTH
+A |- T
+T cT
+D list_INDUCT
+A |- (!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x))))
+T c==> c/\ * f0 cNIL ! ! c==> * f0 b1 * f0 cCONS b0 b1 ! * f0 b0
+D HD
+A |- ((HD ((CONS h) t)) = h)
+T c= cHD cCONS f0 f1 f0
+D TL
+A |- ((TL ((CONS h) t)) = t)
+T c= cTL cCONS f0 f1 f1
+D Tame_defs.rotate1
+A |- (((rotate1 NIL) = NIL) /\ ((rotate1 ((CONS x) xs)) = ((APPEND xs) ((CONS x) NIL))))
+T c/\ c= crotate1 cNIL cNIL c= crotate1 cCONS f0 f1 cAPPEND f1 cCONS f0 cNIL
+D Seq.cats1
+A |- (!s. (!z. (((cat s) ((CONS z) NIL)) = ((rcons s) z))))
+T c= ccat f0 cCONS f1 cNIL crcons f0 f1
+D Tame_list.APPEND_cat
+A |- (APPEND = cat)
+T c= part cAPPEND part ccat
++ ((~ (t = NIL)) ==> ((rotate1 t) = ((rcons (TL t)) (HD t)))) |- (((~ (t = NIL)) ==> ((rotate1 t) = ((rcons (TL t)) (HD t)))) /\ ((~ (((CONS h) t) = NIL)) ==> ((rotate1 ((CONS h) t)) = ((rcons (TL ((CONS h) t))) (HD ((CONS h) t))))))
+T c==> c==> c~ c= f0 cNIL c= crotate1 f0 crcons cTL f0 cHD f0 c/\ c==> c~ c= f0 cNIL c= crotate1 f0 crcons cTL f0 cHD f0 c==> c~ c= cCONS f1 f0 cNIL c= crotate1 cCONS f1 f0 crcons cTL cCONS f1 f0 cHD cCONS f1 f0
+- |- ((REVERSE = rev) /\ ((!s. (!x0. ((~ (NIL = s)) ==> ((LAST s) = ((last x0) s))))) /\ ((APPEND = cat) /\ (ALL = all))))
+T c/\ c= part cREVERSE part crev c/\ ! ! c==> c~ c= cNIL b0 c= cLAST b0 clast b1 b0 c/\ c= part cAPPEND part ccat c= part cALL part call
+- |- ((FILTER = filter) /\ ((REVERSE = rev) /\ ((!s. (!x0. ((~ (NIL = s)) ==> ((LAST s) = ((last x0) s))))) /\ ((APPEND = cat) /\ (ALL = all)))))
+T c/\ c= part cFILTER part cfilter c/\ c= part cREVERSE part crev c/\ ! ! c==> c~ c= cNIL b0 c= cLAST b0 clast b1 b0 c/\ c= part cAPPEND part ccat c= part cALL part call
+- |- ((!s. (!x0. ((~ (NIL = s)) ==> ((LAST s) = ((last x0) s))))) /\ ((APPEND = cat) /\ (ALL = all)))
+T c/\ ! ! c==> c~ c= cNIL b0 c= cLAST b0 clast b1 b0 c/\ c= part cAPPEND part ccat c= part cALL part call
+- |- (MAP = map)
+T c= part cMAP part cmap
+- |- (LENGTH = sizel)
+T c= part cLENGTH part csizel
++ |- ((t ==> T) = T)
+T c= c==> f0 cT cT
++ |- (T = ((~ (((CONS h) t) = NIL)) ==> ((rotate1 ((CONS h) t)) = ((rcons (TL ((CONS h) t))) (HD ((CONS h) t))))))
+T c= cT c==> c~ c= cCONS f0 f1 cNIL c= crotate1 cCONS f0 f1 crcons cTL cCONS f0 f1 cHD cCONS f0 f1
+- |- ((t ==> t) = T)
+T c= c==> f0 f0 cT
+- (~ (!a. (!b. (!c. (!d. (((a = c) /\ (b = d)) ==> (((cat a) b) = ((cat c) d)))))))) |- F
+T c==> c~ ! ! ! ! c==> c/\ c= b0 b2 c= b1 b3 c= ccat b0 b1 ccat b2 b3 cF
+- |- ((\x0. ((~ (NIL = s)) ==> ((LAST s) = ((last x0) s)))) x0)
+T * / c==> c~ c= cNIL f0 c= cLAST f0 clast b0 f0 f1
+- |- ((~ (NIL = s)) ==> ((LAST s) = ((last x0) s)))
+T c==> c~ c= cNIL f0 c= cLAST f0 clast f1 f0
+- (~ (!a. (!b. (!c. (!d. (((a = c) /\ (b = d)) ==> (((cat a) b) = ((cat c) d)))))))) |- ((~ (!a. (!b. (!c. (!d. (((a = c) /\ (b = d)) ==> (((cat a) b) = ((cat c) d)))))))) /\ F)
+T c==> c~ ! ! ! ! c==> c/\ c= b0 b2 c= b1 b3 c= ccat b0 b1 ccat b2 b3 c/\ c~ ! ! ! ! c==> c/\ c= b0 b2 c= b1 b3 c= ccat b0 b1 ccat b2 b3 cF
++ |- ((~ (NIL = NIL)) ==> ((rotate1 NIL) = ((rcons (TL NIL)) (HD NIL))))
+T c==> c~ c= cNIL cNIL c= crotate1 cNIL crcons cTL cNIL cHD cNIL
++ |- (((~ (NIL = NIL)) ==> ((rotate1 NIL) = ((rcons (TL NIL)) (HD NIL)))) /\ (!h. (!t. (((~ (t = NIL)) ==> ((rotate1 t) = ((rcons (TL t)) (HD t)))) ==> ((~ (((CONS h) t) = NIL)) ==> ((rotate1 ((CONS h) t)) = ((rcons (TL ((CONS h) t))) (HD ((CONS h) t)))))))))
+T c/\ c==> c~ c= cNIL cNIL c= crotate1 cNIL crcons cTL cNIL cHD cNIL ! ! c==> c==> c~ c= b1 cNIL c= crotate1 b1 crcons cTL b1 cHD b1 c==> c~ c= cCONS b0 b1 cNIL c= crotate1 cCONS b0 b1 crcons cTL cCONS b0 b1 cHD cCONS b0 b1
++ |- (T = ((~ (NIL = NIL)) ==> ((rotate1 NIL) = ((rcons (TL NIL)) (HD NIL)))))
+T c= cT c==> c~ c= cNIL cNIL c= crotate1 cNIL crcons cTL cNIL cHD cNIL
+- |- ((((~ (!a. (!b. (!c. (!d. (((a = c) /\ (b = d)) ==> (((cat a) b) = ((cat c) d)))))))) ==> F) ==> ((~ (!a. (!b. (!c. (!d. (((a = c) /\ (b = d)) ==> (((cat a) b) = ((cat c) d)))))))) ==> F)) = ((~ (!a. (!b. (!c. (!d. (((a = c) /\ (b = d)) ==> (((cat a) b) = ((cat c) d)))))))) ==> F))
+T c= c==> c==> c~ ! ! ! ! c==> c/\ c= b0 b2 c= b1 b3 c= ccat b0 b1 ccat b2 b3 cF c==> c~ ! ! ! ! c==> c/\ c= b0 b2 c= b1 b3 c= ccat b0 b1 ccat b2 b3 cF c==> c~ ! ! ! ! c==> c/\ c= b0 b2 c= b1 b3 c= ccat b0 b1 ccat b2 b3 cF
++ |- ((\z. (((cat s) ((CONS z) NIL)) = ((rcons s) z))) z)
+T * / c= ccat f0 cCONS b0 cNIL crcons f0 b0 f1
++ |- ((\s. (!z. (((cat s) ((CONS z) NIL)) = ((rcons s) z)))) s)
+T * / ! c= ccat b0 cCONS b1 cNIL crcons b0 b1 f0
++ |- (((!s. (!z. (((cat s) ((CONS z) NIL)) = ((rcons s) z)))) ==> ((\s. (!z. (((cat s) ((CONS z) NIL)) = ((rcons s) z)))) s)) = ((\s. (!z. (((cat s) ((CONS z) NIL)) = ((rcons s) z)))) s))
+T c= c==> ! ! c= ccat b0 cCONS b1 cNIL crcons b0 b1 * / ! c= ccat b0 cCONS b1 cNIL crcons b0 b1 f0 * / ! c= ccat b0 cCONS b1 cNIL crcons b0 b1 f0
++ |- ((x = x) = T)
+T c= c= f0 f0 cT
++ |- ((((~ (t = NIL)) ==> ((rotate1 t) = ((rcons (TL t)) (HD t)))) ==> ((~ (((CONS h) t) = NIL)) ==> ((rotate1 ((CONS h) t)) = ((rcons (TL ((CONS h) t))) (HD ((CONS h) t)))))) = T)
+T c= c==> c==> c~ c= f0 cNIL c= crotate1 f0 crcons cTL f0 cHD f0 c==> c~ c= cCONS f1 f0 cNIL c= crotate1 cCONS f1 f0 crcons cTL cCONS f1 f0 cHD cCONS f1 f0 cT
++ |- ((rotate1 ((CONS x) xs)) = ((APPEND xs) ((CONS x) NIL)))
+T c= crotate1 cCONS f0 f1 cAPPEND f1 cCONS f0 cNIL
++ |- ((((~ (NIL = NIL)) ==> ((rotate1 NIL) = ((rcons (TL NIL)) (HD NIL)))) /\ (!h. (!t. (((~ (t = NIL)) ==> ((rotate1 t) = ((rcons (TL t)) (HD t)))) ==> ((~ (((CONS h) t) = NIL)) ==> ((rotate1 ((CONS h) t)) = ((rcons (TL ((CONS h) t))) (HD ((CONS h) t))))))))) ==> (!x. ((~ (x = NIL)) ==> ((rotate1 x) = ((rcons (TL x)) (HD x))))))
+T c==> c/\ c==> c~ c= cNIL cNIL c= crotate1 cNIL crcons cTL cNIL cHD cNIL ! ! c==> c==> c~ c= b1 cNIL c= crotate1 b1 crcons cTL b1 cHD b1 c==> c~ c= cCONS b0 b1 cNIL c= crotate1 cCONS b0 b1 crcons cTL cCONS b0 b1 cHD cCONS b0 b1 ! c==> c~ c= b0 cNIL c= crotate1 b0 crcons cTL b0 cHD b0
++ |- ((rotate1 NIL) = NIL)
+T c= crotate1 cNIL cNIL
+- |- (((!x0. ((~ (NIL = s)) ==> ((LAST s) = ((last x0) s)))) ==> ((\x0. ((~ (NIL = s)) ==> ((LAST s) = ((last x0) s)))) x0)) = ((\x0. ((~ (NIL = s)) ==> ((LAST s) = ((last x0) s)))) x0))
+T c= c==> ! c==> c~ c= cNIL f0 c= cLAST f0 clast b0 f0 * / c==> c~ c= cNIL f0 c= cLAST f0 clast b0 f0 f1 * / c==> c~ c= cNIL f0 c= cLAST f0 clast b0 f0 f1
++ |- (!h. (!t. (((~ (t = NIL)) ==> ((rotate1 t) = ((rcons (TL t)) (HD t)))) ==> ((~ (((CONS h) t) = NIL)) ==> ((rotate1 ((CONS h) t)) = ((rcons (TL ((CONS h) t))) (HD ((CONS h) t))))))))
+T c==> c==> c~ c= f0 cNIL c= crotate1 f0 crcons cTL f0 cHD f0 c==> c~ c= cCONS f1 f0 cNIL c= crotate1 cCONS f1 f0 crcons cTL cCONS f1 f0 cHD cCONS f1 f0
++ |- ((!h. (!t. (((~ (t = NIL)) ==> ((rotate1 t) = ((rcons (TL t)) (HD t)))) ==> ((~ (((CONS h) t) = NIL)) ==> ((rotate1 ((CONS h) t)) = ((rcons (TL ((CONS h) t))) (HD ((CONS h) t)))))))) = (((~ (NIL = NIL)) ==> ((rotate1 NIL) = ((rcons (TL NIL)) (HD NIL)))) /\ (!h. (!t. (((~ (t = NIL)) ==> ((rotate1 t) = ((rcons (TL t)) (HD t)))) ==> ((~ (((CONS h) t) = NIL)) ==> ((rotate1 ((CONS h) t)) = ((rcons (TL ((CONS h) t))) (HD ((CONS h) t))))))))))
+T c= ! ! c==> c==> c~ c= b1 cNIL c= crotate1 b1 crcons cTL b1 cHD b1 c==> c~ c= cCONS b0 b1 cNIL c= crotate1 cCONS b0 b1 crcons cTL cCONS b0 b1 cHD cCONS b0 b1 c/\ c==> c~ c= cNIL cNIL c= crotate1 cNIL crcons cTL cNIL cHD cNIL ! ! c==> c==> c~ c= b1 cNIL c= crotate1 b1 crcons cTL b1 cHD b1 c==> c~ c= cCONS b0 b1 cNIL c= crotate1 cCONS b0 b1 crcons cTL cCONS b0 b1 cHD cCONS b0 b1
+- |- (((!s. (!x0. ((~ (NIL = s)) ==> ((LAST s) = ((last x0) s))))) ==> ((\s. (!x0. ((~ (NIL = s)) ==> ((LAST s) = ((last x0) s))))) s)) = ((\s. (!x0. ((~ (NIL = s)) ==> ((LAST s) = ((last x0) s))))) s))
+T c= c==> ! ! c==> c~ c= cNIL b0 c= cLAST b0 clast b1 b0 * / ! c==> c~ c= cNIL b0 c= cLAST b0 clast b1 b0 f0 * / ! c==> c~ c= cNIL b0 c= cLAST b0 clast b1 b0 f0
++ |- ((F ==> t) = T)
+T c= c==> cF f0 cT
+- |- (((~ (NIL = s)) ==> ((LAST s) = ((last x0) s))) = T)
+T c= c==> c~ c= cNIL f0 c= cLAST f0 clast f1 f0 cT
+- |- ((LENGTH = sizel) /\ ((FILTER = filter) /\ ((REVERSE = rev) /\ ((!s. (!x0. ((~ (NIL = s)) ==> ((LAST s) = ((last x0) s))))) /\ ((APPEND = cat) /\ (ALL = all))))))
+T c/\ c= part cLENGTH part csizel c/\ c= part cFILTER part cfilter c/\ c= part cREVERSE part crev c/\ ! ! c==> c~ c= cNIL b0 c= cLAST b0 clast b1 b0 c/\ c= part cAPPEND part ccat c= part cALL part call
++ |- ((~ T) = F)
+T c= c~ cT cF
+- |- ((APPEND = cat) /\ (ALL = all))
+T c/\ c= part cAPPEND part ccat c= part cALL part call
+- |- (FILTER = filter)
+T c= part cFILTER part cfilter
+- |- ((\s. (!x0. ((~ (NIL = s)) ==> ((LAST s) = ((last x0) s))))) s)
+T * / ! c==> c~ c= cNIL b0 c= cLAST b0 clast b1 b0 f0

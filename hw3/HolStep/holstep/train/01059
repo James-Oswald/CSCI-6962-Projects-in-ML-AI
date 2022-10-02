@@ -1,0 +1,77 @@
+N Ssrnat.addn_minl
+C |- (!m1. (!m2. (!n. ((((minn m1) m2) + n) = ((minn (m1 + n)) (m2 + n))))))
+T c= c+ cminn f0 f1 f2 cminn c+ f0 f2 c+ f1 f2
+D TRUTH
+A |- T
+T cT
+D Ssrnat.addnC
+A |- (!m. (!n. ((m + n) = (n + m))))
+T c= c+ f0 f1 c+ f1 f0
+D LE_ADDR
+A |- (!m. (!n. (n <= (m + n))))
+T c<= f0 c+ f1 f0
+D Ssrnat.addnA
+A |- (!n. (!m. (!p. ((n + (m + p)) = ((n + m) + p)))))
+T c= c+ f0 c+ f1 f2 c+ c+ f0 f1 f2
+D Ssrnat.addnAC
+A |- (!m. (!n. (!p. (((n + m) + p) = ((n + p) + m)))))
+T c= c+ c+ f0 f1 f2 c+ c+ f0 f2 f1
+D Ssrnat.subn_add2r
+A |- (!p. (!m. (!n. (((m + p) - (n + p)) = (m - n)))))
+T c= c- c+ f0 f1 c+ f2 f1 c- f0 f2
+D Ssrnat.addn_subA
+A |- (!m. (!n. (!p. ((p <= n) ==> ((m + (n - p)) = ((m + n) - p))))))
+T c==> c<= f0 f1 c= c+ f2 c- f1 f0 c- c+ f2 f1 f0
+D Ssrnat.addn_maxl
+A |- (!m1. (!m2. (!n. ((((maxn m1) m2) + n) = ((maxn (m1 + n)) (m2 + n))))))
+T c= c+ cmaxn f0 f1 f2 cmaxn c+ f0 f2 c+ f1 f2
+D Ssrnat.addn_min_max
+A |- (!m. (!n. ((((minn m) n) + ((maxn m) n)) = (m + n))))
+T c= c+ cminn f0 f1 cmaxn f0 f1 c+ f0 f1
+D Ssrnat.minn_to_maxn
+A |- (!m. (!n. (((minn m) n) = ((m + n) - ((maxn m) n)))))
+T c= cminn f0 f1 c- c+ f0 f1 cmaxn f0 f1
++ (((maxn (m1 + n)) (m2 + n)) = (((maxn m1) m2) + n)) |- ((((maxn m1) m2) + n) = ((maxn (m1 + n)) (m2 + n)))
+T c==> c= cmaxn c+ f0 f1 c+ f2 f1 c+ cmaxn f0 f2 f1 c= c+ cmaxn f0 f2 f1 cmaxn c+ f0 f1 c+ f2 f1
++ |- (((!m. (!n. ((m + n) = (((minn m) n) + ((maxn m) n))))) ==> ((\m. (!n. ((m + n) = (((minn m) n) + ((maxn m) n))))) m)) = ((\m. (!n. ((m + n) = (((minn m) n) + ((maxn m) n))))) m))
+T c= c==> ! ! c= c+ b0 b1 c+ cminn b0 b1 cmaxn b0 b1 * / ! c= c+ b0 b1 c+ cminn b0 b1 cmaxn b0 b1 f0 * / ! c= c+ b0 b1 c+ cminn b0 b1 cmaxn b0 b1 f0
++ ((n + ((m1 + m2) - ((maxn m1) m2))) = ((n + (m1 + m2)) - ((maxn m1) m2))) |- (((n + ((m1 + m2) - ((maxn m1) m2))) = ((n + (m1 + m2)) - ((maxn m1) m2))) /\ ((n + ((m1 + m2) - ((maxn m1) m2))) = ((n + (m1 + m2)) - ((maxn m1) m2))))
+T c==> c= c+ f0 c- c+ f1 f2 cmaxn f1 f2 c- c+ f0 c+ f1 f2 cmaxn f1 f2 c/\ c= c+ f0 c- c+ f1 f2 cmaxn f1 f2 c- c+ f0 c+ f1 f2 cmaxn f1 f2 c= c+ f0 c- c+ f1 f2 cmaxn f1 f2 c- c+ f0 c+ f1 f2 cmaxn f1 f2
++ |- (((!n. (((minn m) n) = ((m + n) - ((maxn m) n)))) ==> ((\n. (((minn m) n) = ((m + n) - ((maxn m) n)))) n)) = ((\n. (((minn m) n) = ((m + n) - ((maxn m) n)))) n))
+T c= c==> ! c= cminn f0 b0 c- c+ f0 b0 cmaxn f0 b0 * / c= cminn f0 b0 c- c+ f0 b0 cmaxn f0 b0 f1 * / c= cminn f0 b0 c- c+ f0 b0 cmaxn f0 b0 f1
++ |- (((!p. (((n + m) + p) = ((n + p) + m))) ==> ((\p. (((n + m) + p) = ((n + p) + m))) p)) = ((\p. (((n + m) + p) = ((n + p) + m))) p))
+T c= c==> ! c= c+ c+ f0 f1 b0 c+ c+ f0 b0 f1 * / c= c+ c+ f0 f1 b0 c+ c+ f0 b0 f1 f2 * / c= c+ c+ f0 f1 b0 c+ c+ f0 b0 f1 f2
+- ((!x. (P ==> (Q x))) = (P ==> (!x. (Q x)))) |- ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))
+T c==> c= ! c==> f0 * f1 b0 c==> f0 ! * f1 b0 c= c==> f0 ! * f1 b0 ! c==> f0 * f1 b0
++ |- (((!p. ((n + (m + p)) = ((n + m) + p))) ==> ((\p. ((n + (m + p)) = ((n + m) + p))) p)) = ((\p. ((n + (m + p)) = ((n + m) + p))) p))
+T c= c==> ! c= c+ f0 c+ f1 b0 c+ c+ f0 f1 b0 * / c= c+ f0 c+ f1 b0 c+ c+ f0 f1 b0 f2 * / c= c+ f0 c+ f1 b0 c+ c+ f0 f1 b0 f2
++ |- (((!m. (!p. ((n + (m + p)) = ((n + m) + p)))) ==> ((\m. (!p. ((n + (m + p)) = ((n + m) + p)))) m)) = ((\m. (!p. ((n + (m + p)) = ((n + m) + p)))) m))
+T c= c==> ! ! c= c+ f0 c+ b0 b1 c+ c+ f0 b0 b1 * / ! c= c+ f0 c+ b0 b1 c+ c+ f0 b0 b1 f1 * / ! c= c+ f0 c+ b0 b1 c+ c+ f0 b0 b1 f1
++ |- ((n <= (m + n)) = T)
+T c= c<= f0 c+ f1 f0 cT
+- |- ((\P. (!Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x)))))) P)
+T * / ! c= c==> b0 ! * b1 b2 ! c==> b0 * b1 b2 f0
++ |- ((n + ((m1 + m2) - ((maxn m1) m2))) = ((n + (m1 + m2)) - ((maxn m1) m2)))
+T c= c+ f0 c- c+ f1 f2 cmaxn f1 f2 c- c+ f0 c+ f1 f2 cmaxn f1 f2
++ |- ((((m1 + m2) - ((maxn m1) m2)) + n) = (((m1 + n) + m2) - ((maxn m1) m2)))
+T c= c+ c- c+ f0 f1 cmaxn f0 f1 f2 c- c+ c+ f0 f2 f1 cmaxn f0 f1
++ |- ((\m. (!n. (!p. (((n + m) + p) = ((n + p) + m))))) m)
+T * / ! ! c= c+ c+ b1 b0 b2 c+ c+ b1 b2 b0 f0
+- (p <= n) |- ((p <= n) /\ ((m + (n - p)) = ((m + n) - p)))
+T c==> c<= f0 f1 c/\ c<= f0 f1 c= c+ f2 c- f1 f0 c- c+ f2 f1 f0
+- ((n + ((m1 + m2) - ((maxn m1) m2))) = ((n + (m1 + m2)) - ((maxn m1) m2))) |- ((((n + (m1 + m2)) - ((maxn m1) m2)) = ((n + (m1 + m2)) - ((maxn m1) m2))) = ((n + ((m1 + m2) - ((maxn m1) m2))) = ((n + (m1 + m2)) - ((maxn m1) m2))))
+T c==> c= c+ f0 c- c+ f1 f2 cmaxn f1 f2 c- c+ f0 c+ f1 f2 cmaxn f1 f2 c= c= c- c+ f0 c+ f1 f2 cmaxn f1 f2 c- c+ f0 c+ f1 f2 cmaxn f1 f2 c= c+ f0 c- c+ f1 f2 cmaxn f1 f2 c- c+ f0 c+ f1 f2 cmaxn f1 f2
+- |- ((x = x) = T)
+T c= c= f0 f0 cT
+- |- ((\Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))) Q)
+T * / c= c==> f0 ! * b0 b1 ! c==> f0 * b0 b1 f1
+- |- (T = (((n + (m1 + m2)) - ((maxn m1) m2)) = ((n + (m1 + m2)) - ((maxn m1) m2))))
+T c= cT c= c- c+ f0 c+ f1 f2 cmaxn f1 f2 c- c+ f0 c+ f1 f2 cmaxn f1 f2
+- |- (((!P. (!Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x)))))) ==> ((\P. (!Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x)))))) P)) = ((\P. (!Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x)))))) P))
+T c= c==> ! ! c= c==> b0 ! * b1 b2 ! c==> b0 * b1 b2 * / ! c= c==> b0 ! * b1 b2 ! c==> b0 * b1 b2 f0 * / ! c= c==> b0 ! * b1 b2 ! c==> b0 * b1 b2 f0
+- ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x)))) |- ((!x. (P ==> (Q x))) = (P ==> (!x. (Q x))))
+T c==> c= c==> f0 ! * f1 b0 ! c==> f0 * f1 b0 c= ! c==> f0 * f1 b0 c==> f0 ! * f1 b0
+- |- ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))
+T c= c==> f0 ! * f1 b0 ! c==> f0 * f1 b0
+- |- (((!Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))) ==> ((\Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))) Q)) = ((\Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))) Q))
+T c= c==> ! c= c==> f0 ! * b0 b1 ! c==> f0 * b0 b1 * / c= c==> f0 ! * b0 b1 ! c==> f0 * b0 b1 f1 * / c= c==> f0 ! * b0 b1 ! c==> f0 * b0 b1 f1

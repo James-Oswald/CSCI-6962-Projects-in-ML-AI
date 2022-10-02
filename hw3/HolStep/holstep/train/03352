@@ -1,0 +1,92 @@
+N Seq.nth_iota
+C |- (!m. (!n. (!i. ((i < n) ==> ((((nth (NUMERAL _0)) ((iota m) n)) i) = (m + i))))))
+T c==> c< f0 f1 c= cnth cNUMERAL c_0 ciota f2 f1 f0 c+ f2 f0
+D COND_CLAUSES
+A |- (!t1. (!t2. (((((COND T) t1) t2) = t1) /\ ((((COND F) t1) t2) = t2))))
+T c/\ c= cCOND cT f0 f1 f0 c= cCOND cF f0 f1 f1
+D Ssrnat.subnn
+A |- (!n. ((n - n) = (NUMERAL _0)))
+T c= c- f0 f0 cNUMERAL c_0
+D Seq.iota
+A |- ((((iota m) (SUC n)) = ((CONS m) ((iota (SUC m)) n))) /\ (((iota m) (NUMERAL _0)) = NIL))
+T c/\ c= ciota f0 cSUC f1 cCONS f0 ciota cSUC f0 f1 c= ciota f0 cNUMERAL c_0 cNIL
+D Ssrnat.addSnnS
+A |- (!m. (!n. (((SUC m) + n) = (m + (SUC n)))))
+T c= c+ cSUC f0 f1 c+ f0 cSUC f1
+D Ssrnat.ltnn
+A |- (!n. ((n < n) = F))
+T c= c< f0 f0 cF
+D Ssrnat.ltE
+A |- (!n. (!m. ((n < m) = ((SUC n) <= m))))
+T c= c< f0 f1 c<= cSUC f0 f1
+D Ssrnat.subnKC
+A |- (!m. (!n. ((m <= n) ==> ((m + (n - m)) = n))))
+T c==> c<= f0 f1 c= c+ f0 c- f1 f0 f1
+D Seq.nth
+A |- (!x0. (!h. (!t. (!n. (((((nth x0) NIL) n) = x0) /\ (((((nth x0) ((CONS h) t)) (NUMERAL _0)) = h) /\ ((((nth x0) ((CONS h) t)) (SUC n)) = (((nth x0) t) n))))))))
+T c/\ c= cnth f0 cNIL f1 f0 c/\ c= cnth f0 cCONS f2 f3 cNUMERAL c_0 f2 c= cnth f0 cCONS f2 f3 cSUC f1 cnth f0 f3 f1
+D Seq.nth_cat
+A |- (!x0. (!s1. (!s2. (!n. ((((nth x0) ((cat s1) s2)) n) = (((COND (n < (sizel s1))) (((nth x0) s1) n)) (((nth x0) s2) (n - (sizel s1)))))))))
+T c= cnth f0 ccat f1 f2 f3 cCOND c< f3 csizel f1 cnth f0 f1 f3 cnth f0 f2 c- f3 csizel f1
+D Seq.size_iota
+A |- (!m. (!n. ((sizel ((iota m) n)) = n)))
+T c= csizel ciota f0 f1 f1
+D Seq.iota_add
+A |- (!m. (!n1. (!n2. (((iota m) (n1 + n2)) = ((cat ((iota m) n1)) ((iota (m + n1)) n2))))))
+T c= ciota f0 c+ f1 f2 ccat ciota f0 f1 ciota c+ f0 f1 f2
+- |- ((((nth x0) ((CONS h) t)) (SUC n)) = (((nth x0) t) n))
+T c= cnth f0 cCONS f1 f2 cSUC f3 cnth f0 f2 f3
++ |- ((\n. ((n < n) = F)) n)
+T * / c= c< b0 b0 cF f0
++ |- ((\s1. (!s2. (!n. ((((nth x0) ((cat s1) s2)) n) = (((COND (n < (sizel s1))) (((nth x0) s1) n)) (((nth x0) s2) (n - (sizel s1)))))))) s1)
+T * / ! ! c= cnth f0 ccat b0 b1 b2 cCOND c< b2 csizel b0 cnth f0 b0 b2 cnth f0 b1 c- b2 csizel b0 f1
++ |- ((\m. (!n. ((m <= n) ==> ((m + (n - m)) = n)))) m)
+T * / ! c==> c<= b0 b1 c= c+ b0 c- b1 b0 b1 f0
+- ((!x. (P ==> (Q x))) = (P ==> (!x. (Q x)))) |- ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))
+T c==> c= ! c==> f0 * f1 b0 c==> f0 ! * f1 b0 c= c==> f0 ! * f1 b0 ! c==> f0 * f1 b0
+- |- ((\P. (!Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x)))))) P)
+T * / ! c= c==> b0 ! * b1 b2 ! c==> b0 * b1 b2 f0
++ |- (((!n1. (!n2. (((iota m) (n1 + n2)) = ((cat ((iota m) n1)) ((iota (m + n1)) n2))))) ==> ((\n1. (!n2. (((iota m) (n1 + n2)) = ((cat ((iota m) n1)) ((iota (m + n1)) n2))))) n1)) = ((\n1. (!n2. (((iota m) (n1 + n2)) = ((cat ((iota m) n1)) ((iota (m + n1)) n2))))) n1))
+T c= c==> ! ! c= ciota f0 c+ b0 b1 ccat ciota f0 b0 ciota c+ f0 b0 b1 * / ! c= ciota f0 c+ b0 b1 ccat ciota f0 b0 ciota c+ f0 b0 b1 f1 * / ! c= ciota f0 c+ b0 b1 ccat ciota f0 b0 ciota c+ f0 b0 b1 f1
++ |- ((\s2. (!n. ((((nth x0) ((cat s1) s2)) n) = (((COND (n < (sizel s1))) (((nth x0) s1) n)) (((nth x0) s2) (n - (sizel s1))))))) s2)
+T * / ! c= cnth f0 ccat f1 b0 b1 cCOND c< b1 csizel f1 cnth f0 f1 b1 cnth f0 b0 c- b1 csizel f1 f2
++ |- ((((nth (NUMERAL _0)) ((iota m) ((SUC i) + (n - (SUC i))))) i) = (m + i))
+T c= cnth cNUMERAL c_0 ciota f0 c+ cSUC f1 c- f2 cSUC f1 f1 c+ f0 f1
+- |- (((m + i) = (m + i)) = ((((nth (NUMERAL _0)) ((CONS (m + i)) ((iota (SUC (m + i))) (n - (SUC i))))) (NUMERAL _0)) = (m + i)))
+T c= c= c+ f0 f1 c+ f0 f1 c= cnth cNUMERAL c_0 cCONS c+ f0 f1 ciota cSUC c+ f0 f1 c- f2 cSUC f1 cNUMERAL c_0 c+ f0 f1
++ |- (((!m. ((n < m) = ((SUC n) <= m))) ==> ((\m. ((n < m) = ((SUC n) <= m))) m)) = ((\m. ((n < m) = ((SUC n) <= m))) m))
+T c= c==> ! c= c< f0 b0 c<= cSUC f0 b0 * / c= c< f0 b0 c<= cSUC f0 b0 f1 * / c= c< f0 b0 c<= cSUC f0 b0 f1
++ |- ((((COND F) (((nth (NUMERAL _0)) ((iota m) i)) i)) (((nth (NUMERAL _0)) ((iota (m + i)) (SUC (n - (SUC i))))) (i - i))) = (m + i))
+T c= cCOND cF cnth cNUMERAL c_0 ciota f0 f1 f1 cnth cNUMERAL c_0 ciota c+ f0 f1 cSUC c- f2 cSUC f1 c- f1 f1 c+ f0 f1
+- (n = ((SUC i) + (n - (SUC i)))) |- (((SUC i) + (n - (SUC i))) = n)
+T c==> c= f0 c+ cSUC f1 c- f0 cSUC f1 c= c+ cSUC f1 c- f0 cSUC f1 f0
++ |- (((((nth (NUMERAL _0)) ((cat ((iota m) i)) ((iota (m + i)) (SUC (n - (SUC i)))))) i) = (m + i)) = ((((nth (NUMERAL _0)) ((iota m) (i + (SUC (n - (SUC i)))))) i) = (m + i)))
+T c= c= cnth cNUMERAL c_0 ccat ciota f0 f1 ciota c+ f0 f1 cSUC c- f2 cSUC f1 f1 c+ f0 f1 c= cnth cNUMERAL c_0 ciota f0 c+ f1 cSUC c- f2 cSUC f1 f1 c+ f0 f1
++ |- ((!i. ((i < n) ==> ((((nth (NUMERAL _0)) ((iota m) n)) i) = (m + i)))) = T)
+T c= ! c==> c< b0 f0 c= cnth cNUMERAL c_0 ciota f1 f0 b0 c+ f1 b0 cT
++ |- ((\n. ((sizel ((iota m) n)) = n)) n)
+T * / c= csizel ciota f0 b0 b0 f1
++ |- ((((nth (NUMERAL _0)) ((iota (m + i)) (SUC (n - (SUC i))))) (NUMERAL _0)) = (m + i))
+T c= cnth cNUMERAL c_0 ciota c+ f0 f1 cSUC c- f2 cSUC f1 cNUMERAL c_0 c+ f0 f1
++ |- (((!t. (!n. (((((nth x0) NIL) n) = x0) /\ (((((nth x0) ((CONS h) t)) (NUMERAL _0)) = h) /\ ((((nth x0) ((CONS h) t)) (SUC n)) = (((nth x0) t) n)))))) ==> ((\t. (!n. (((((nth x0) NIL) n) = x0) /\ (((((nth x0) ((CONS h) t)) (NUMERAL _0)) = h) /\ ((((nth x0) ((CONS h) t)) (SUC n)) = (((nth x0) t) n)))))) t)) = ((\t. (!n. (((((nth x0) NIL) n) = x0) /\ (((((nth x0) ((CONS h) t)) (NUMERAL _0)) = h) /\ ((((nth x0) ((CONS h) t)) (SUC n)) = (((nth x0) t) n)))))) t))
+T c= c==> ! ! c/\ c= cnth f0 cNIL b1 f0 c/\ c= cnth f0 cCONS f1 b0 cNUMERAL c_0 f1 c= cnth f0 cCONS f1 b0 cSUC b1 cnth f0 b0 b1 * / ! c/\ c= cnth f0 cNIL b1 f0 c/\ c= cnth f0 cCONS f1 b0 cNUMERAL c_0 f1 c= cnth f0 cCONS f1 b0 cSUC b1 cnth f0 b0 b1 f2 * / ! c/\ c= cnth f0 cNIL b1 f0 c/\ c= cnth f0 cCONS f1 b0 cNUMERAL c_0 f1 c= cnth f0 cCONS f1 b0 cSUC b1 cnth f0 b0 b1 f2
++ |- (((!x0. (!h. (!t. (!n. (((((nth x0) NIL) n) = x0) /\ (((((nth x0) ((CONS h) t)) (NUMERAL _0)) = h) /\ ((((nth x0) ((CONS h) t)) (SUC n)) = (((nth x0) t) n)))))))) ==> ((\x0. (!h. (!t. (!n. (((((nth x0) NIL) n) = x0) /\ (((((nth x0) ((CONS h) t)) (NUMERAL _0)) = h) /\ ((((nth x0) ((CONS h) t)) (SUC n)) = (((nth x0) t) n)))))))) x0)) = ((\x0. (!h. (!t. (!n. (((((nth x0) NIL) n) = x0) /\ (((((nth x0) ((CONS h) t)) (NUMERAL _0)) = h) /\ ((((nth x0) ((CONS h) t)) (SUC n)) = (((nth x0) t) n)))))))) x0))
+T c= c==> ! ! ! ! c/\ c= cnth b0 cNIL b3 b0 c/\ c= cnth b0 cCONS b1 b2 cNUMERAL c_0 b1 c= cnth b0 cCONS b1 b2 cSUC b3 cnth b0 b2 b3 * / ! ! ! c/\ c= cnth b0 cNIL b3 b0 c/\ c= cnth b0 cCONS b1 b2 cNUMERAL c_0 b1 c= cnth b0 cCONS b1 b2 cSUC b3 cnth b0 b2 b3 f0 * / ! ! ! c/\ c= cnth b0 cNIL b3 b0 c/\ c= cnth b0 cCONS b1 b2 cNUMERAL c_0 b1 c= cnth b0 cCONS b1 b2 cSUC b3 cnth b0 b2 b3 f0
+- |- ((x = x) = T)
+T c= c= f0 f0 cT
+- |- ((\Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))) Q)
+T * / c= c==> f0 ! * b0 b1 ! c==> f0 * b0 b1 f1
+- |- (((!P. (!Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x)))))) ==> ((\P. (!Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x)))))) P)) = ((\P. (!Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x)))))) P))
+T c= c==> ! ! c= c==> b0 ! * b1 b2 ! c==> b0 * b1 b2 * / ! c= c==> b0 ! * b1 b2 ! c==> b0 * b1 b2 f0 * / ! c= c==> b0 ! * b1 b2 ! c==> b0 * b1 b2 f0
+- |- (T = ((m + i) = (m + i)))
+T c= cT c= c+ f0 f1 c+ f0 f1
+- |- ((((nth x0) NIL) n) = x0)
+T c= cnth f0 cNIL f1 f0
+- |- (((iota m) (NUMERAL _0)) = NIL)
+T c= ciota f0 cNUMERAL c_0 cNIL
+- ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x)))) |- ((!x. (P ==> (Q x))) = (P ==> (!x. (Q x))))
+T c==> c= c==> f0 ! * f1 b0 ! c==> f0 * f1 b0 c= ! c==> f0 * f1 b0 c==> f0 ! * f1 b0
+- |- ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))
+T c= c==> f0 ! * f1 b0 ! c==> f0 * f1 b0
+- |- (((!Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))) ==> ((\Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))) Q)) = ((\Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))) Q))
+T c= c==> ! c= c==> f0 ! * b0 b1 ! c==> f0 * b0 b1 * / c= c==> f0 ! * b0 b1 ! c==> f0 * b0 b1 f1 * / c= c==> f0 ! * b0 b1 ! c==> f0 * b0 b1 f1

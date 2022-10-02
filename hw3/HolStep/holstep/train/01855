@@ -1,0 +1,317 @@
+N SET_VARIATION_ON_EMPTY
+C |- (!f. (((set_variation EMPTY) f) = (real_of_num (NUMERAL _0))))
+T c= cset_variation part cEMPTY f0 creal_of_num cNUMERAL c_0
+D TRUTH
+A |- T
+T cT
+D ETA_AX
+A |- (!t. ((\x. (t x)) = t))
+T c= / * f0 b0 f0
+D BOOL_CASES_AX
+A |- (!t. ((t = T) \/ (t = F)))
+T c\/ c= f0 cT c= f0 cF
+D NOT_CLAUSES
+A |- ((!t. ((~ (~ t)) = t)) /\ (((~ T) = F) /\ ((~ F) = T)))
+T c/\ ! c= c~ c~ b0 b0 c/\ c= c~ cT cF c= c~ cF cT
+D NOT_EXISTS_THM
+A |- (!P. ((~ (?x. (P x))) = (!x. (~ (P x)))))
+T c= c~ c? / * f0 b0 ! c~ * f0 b0
+D EXTENSION
+A |- (!s. (!t. ((s = t) = (!x. ((x IN s) = (x IN t))))))
+T c= c= f0 f1 ! c= cIN b0 f0 cIN b0 f1
+D Misc_defs_and_lemmas.IN_ELIM_THM'
+A |- ((!P. (!x. ((x IN (GSPEC (\v. (P (SETSPEC v))))) = (P (\p. (\t. (p /\ (x = t)))))))) /\ ((!p. (!x. ((x IN (GSPEC (\v. (?y. (((SETSPEC v) (p y)) y))))) = (p x)))) /\ ((!P. (!x. (((GSPEC (\v. (P (SETSPEC v)))) x) = (P (\p. (\t. (p /\ (x = t)))))))) /\ ((!p. (!x. (((GSPEC (\v. (?y. (((SETSPEC v) (p y)) y)))) x) = (p x)))) /\ (!p. (!x. ((x IN (\y. (p y))) = (p x))))))))
+T c/\ ! ! c= cIN b1 * part cGSPEC / * b0 * part cSETSPEC b2 * b0 / / c/\ b2 c= b1 b3 c/\ ! ! c= cIN b1 * part cGSPEC / c? / cSETSPEC b2 * b0 b3 b3 * b0 b1 c/\ ! ! c= cGSPEC / * b0 * part cSETSPEC b2 b1 * b0 / / c/\ b2 c= b1 b3 c/\ ! ! c= cGSPEC / c? / cSETSPEC b2 * b0 b3 b3 b1 * b0 b1 ! ! c= cIN b1 / * b0 b2 * b0 b1
+D NOT_IN_EMPTY
+A |- (!x. (~ (x IN EMPTY)))
+T c~ cIN f0 part cEMPTY
+D IN_INSERT
+A |- (!x. (!y. (!s. ((x IN (y INSERT s)) = ((x = y) \/ (x IN s))))))
+T c= cIN f0 * * part cINSERT f1 f2 c\/ c= f0 f1 cIN f0 f2
+D SUBSET_EMPTY
+A |- (!s. ((s SUBSET EMPTY) = (s = EMPTY)))
+T c= cSUBSET f0 part cEMPTY c= f0 part cEMPTY
+D SUP_SING
+A |- (!a. ((sup (a INSERT EMPTY)) = a))
+T c= csup * * part cINSERT f0 part cEMPTY f0
+D SUM_CLAUSES
+A |- ((!f. (((sum EMPTY) f) = (real_of_num (NUMERAL _0)))) /\ (!x. (!f. (!s. ((FINITE s) ==> (((sum (x INSERT s)) f) = (((COND (x IN s)) ((sum s) f)) ((real_add (f x)) ((sum s) f)))))))))
+T c/\ ! c= csum part cEMPTY b0 creal_of_num cNUMERAL c_0 ! ! ! c==> cFINITE b2 c= csum * * part cINSERT b0 b2 b1 cCOND cIN b0 b2 csum b2 b1 creal_add * b1 b0 csum b2 b1
+D DIVISION_OF_TRIVIAL
+A |- (!s. (((division_of s) EMPTY) = (s = EMPTY)))
+T c= cdivision_of f0 part cEMPTY c= f0 part cEMPTY
+D set_variation
+A |- (!s. (!f. (((set_variation s) f) = (sup (GSPEC (\GEN%PVAR%2955. (?d. (((SETSPEC GEN%PVAR%2955) (?t. (((division_of d) t) /\ (t SUBSET s)))) ((sum d) (\k. (vector_norm (f k))))))))))))
+T c= cset_variation f0 f1 csup * part cGSPEC / c? / cSETSPEC b0 c? / c/\ cdivision_of b1 b2 cSUBSET b2 f0 csum b1 / cvector_norm * f1 b2
+- ((~ (!x. ((?x. ((x = a) /\ (x = (f x)))) = (x = (f a))))) ==> F) |- (((~ (!x. ((?x. ((x = a) /\ (x = (f x)))) = (x = (f a))))) ==> F) /\ ((~ (!x. ((?x. ((x = a) /\ (x = (f x)))) = (x = (f a))))) ==> F))
+T c==> c==> c~ ! c= c? / c/\ c= b1 f0 c= b0 * f1 b1 c= b0 * f1 f0 cF c/\ c==> c~ ! c= c? / c/\ c= b1 f0 c= b0 * f1 b1 c= b0 * f1 f0 cF c==> c~ ! c= c? / c/\ c= b1 f0 c= b0 * f1 b1 c= b0 * f1 f0 cF
++ |- (((~ ((?x. ((x = a) /\ (x = (f x)))) = (x = (f a)))) ==> F) = ((?x. ((x = a) /\ (x = (f x)))) = (x = (f a))))
+T c= c==> c~ c= c? / c/\ c= b0 f0 c= f1 * f2 b0 c= f1 * f2 f0 cF c= c? / c/\ c= b0 f0 c= f1 * f2 b0 c= f1 * f2 f0
++ |- ((t \/ F) = t)
+T c= c\/ f0 cF f0
++ (((x' = a) /\ (x = (f x'))) /\ (~ (x = (f a)))) |- (((f a) = (f a)) ==> F)
+T c==> c/\ c/\ c= f0 f1 c= f2 * f3 f0 c~ c= f2 * f3 f1 c==> c= * f3 f1 * f3 f1 cF
+- (((x' = a) /\ (x = (f x'))) /\ (~ (x = (f a)))) |- (F = F)
+T c==> c/\ c/\ c= f0 f1 c= f2 * f3 f0 c~ c= f2 * f3 f1 c= cF cF
+- |- ((\t1. (!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))))) t1)
+T * / ! ! c= c\/ b0 c\/ b1 b2 c\/ c\/ b0 b1 b2 f0
+- |- ((~ (a = a)) ==> (a = a))
+T c==> c~ c= f0 f0 c= f0 f0
++ |- ((!x. ((?x. ((x = a) /\ (x = (f x)))) = (x = (f a)))) = (!x. ((x IN (GSPEC (\GEN%PVAR%2959. (?x. (((SETSPEC GEN%PVAR%2959) (x = a)) (f x)))))) = (x IN ((f a) INSERT EMPTY)))))
+T c= ! c= c? / c/\ c= b1 f0 c= b0 * f1 b1 c= b0 * f1 f0 ! c= cIN b0 * part cGSPEC / c? / cSETSPEC b1 c= b2 f0 * f1 b2 cIN b0 * * part cINSERT * f1 f0 part cEMPTY
++ (((x' = a) /\ (x = (f x'))) /\ (~ (x = (f a)))) |- (x = (f x'))
+T c==> c/\ c/\ c= f0 f1 c= f2 * f3 f0 c~ c= f2 * f3 f1 c= f2 * f3 f0
++ |- ((GSPEC (\GEN%PVAR%2955. (?d. (((SETSPEC GEN%PVAR%2955) (d = a)) (f d))))) = ((f a) INSERT EMPTY))
+T c= * part cGSPEC / c? / cSETSPEC b0 c= b1 f0 * f1 b1 * * part cINSERT * f1 f0 part cEMPTY
++ |- (((?x. (P x)) \/ Q) = (?x. ((P x) \/ Q)))
+T c= c\/ c? / * f0 b0 f1 c? / c\/ * f0 b0 f1
+- |- ((!x'. ((~ (x' = a)) \/ (~ (x = (f x))))) = ((!x. (~ (x = a))) \/ (~ (x = (f x)))))
+T c= ! c\/ c~ c= b0 f0 c~ c= f1 * f2 f3 c\/ ! c~ c= b0 f0 c~ c= f1 * f2 f3
++ (((x' = a) /\ (x = (f x'))) /\ (~ (x = (f a)))) |- ((~ ((f x') = (f a))) = (~ ((f a) = (f a))))
+T c==> c/\ c/\ c= f0 f1 c= f2 * f3 f0 c~ c= f2 * f3 f1 c= c~ c= * f3 f0 * f3 f1 c~ c= * f3 f1 * f3 f1
+- |- ((?x. (P x)) = ((P T) \/ (P F)))
+T c= c? / * f0 b0 c\/ * f0 cT * f0 cF
++ (~ ((?x. ((x = a) /\ (x = (f x)))) = (x = (f a)))) |- (((?x. ((((x = a) /\ (x = (f x))) /\ (~ (x = (f a)))) \/ ((!x. ((~ (x = a)) \/ (~ (x = (f x))))) /\ (x = (f a))))) ==> F) = F)
+T c==> c~ c= c? / c/\ c= b0 f0 c= f1 * f2 b0 c= f1 * f2 f0 c= c==> c? / c\/ c/\ c/\ c= b0 f0 c= f1 * f2 b0 c~ c= f1 * f2 f0 c/\ ! c\/ c~ c= b1 f0 c~ c= f1 * f2 b1 c= f1 * f2 f0 cF cF
+- ((~ (!x. ((?x. ((x = a) /\ (x = (f x)))) = (x = (f a))))) ==> F), (((~ (!x. ((?x. ((x = a) /\ (x = (f x)))) = (x = (f a))))) ==> F) ==> ((~ (!x. ((?x. ((x = a) /\ (x = (f x)))) = (x = (f a))))) ==> F)) |- ((((~ (!x. ((?x. ((x = a) /\ (x = (f x)))) = (x = (f a))))) ==> F) ==> ((~ (!x. ((?x. ((x = a) /\ (x = (f x)))) = (x = (f a))))) ==> F)) /\ ((~ (!x. ((?x. ((x = a) /\ (x = (f x)))) = (x = (f a))))) ==> F))
+T c==> c==> c~ ! c= c? / c/\ c= b1 f0 c= b0 * f1 b1 c= b0 * f1 f0 cF c==> c==> c==> c~ ! c= c? / c/\ c= b1 f0 c= b0 * f1 b1 c= b0 * f1 f0 cF c==> c~ ! c= c? / c/\ c= b1 f0 c= b0 * f1 b1 c= b0 * f1 f0 cF c/\ c==> c==> c~ ! c= c? / c/\ c= b1 f0 c= b0 * f1 b1 c= b0 * f1 f0 cF c==> c~ ! c= c? / c/\ c= b1 f0 c= b0 * f1 b1 c= b0 * f1 f0 cF c==> c~ ! c= c? / c/\ c= b1 f0 c= b0 * f1 b1 c= b0 * f1 f0 cF
++ (((!x. ((~ (x = a)) \/ (~ (x = (f x))))) /\ (x = (f a))) ==> F), ((((x' = a) /\ (x = (f x'))) /\ (~ (x = (f a)))) \/ ((!x. ((~ (x = a)) \/ (~ (x = (f x))))) /\ (x = (f a)))) |- F
+T c==> c==> c/\ ! c\/ c~ c= b0 f0 c~ c= f1 * f2 b0 c= f1 * f2 f0 cF c==> c\/ c/\ c/\ c= f3 f0 c= f1 * f2 f3 c~ c= f1 * f2 f0 c/\ ! c\/ c~ c= b0 f0 c~ c= f1 * f2 b0 c= f1 * f2 f0 cF
++ (~ ((?x. ((x = a) /\ (x = (f x)))) = (x = (f a)))) |- (?x. ((((x = a) /\ (x = (f x))) /\ (~ (x = (f a)))) \/ ((!x. ((~ (x = a)) \/ (~ (x = (f x))))) /\ (x = (f a)))))
+T c==> c~ c= c? / c/\ c= b0 f0 c= f1 * f2 b0 c= f1 * f2 f0 c? / c\/ c/\ c/\ c= b0 f0 c= f1 * f2 b0 c~ c= f1 * f2 f0 c/\ ! c\/ c~ c= b1 f0 c~ c= f1 * f2 b1 c= f1 * f2 f0
++ |- (((?x. (P x)) /\ Q) = (?x. ((P x) /\ Q)))
+T c= c/\ c? / * f0 b0 f1 c? / c/\ * f0 b0 f1
+- |- ((t \/ t) = t)
+T c= c\/ f0 f0 f0
+- |- ((\t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))) t3)
+T * / c= c\/ f0 c\/ f1 b0 c\/ c\/ f0 f1 b0 f2
+- |- ((\f. ((~ (!x. ((?x. ((x = a) /\ (x = (f x)))) = (x = (f a))))) ==> F)) f)
+T * / c==> c~ ! c= c? / c/\ c= b2 f0 c= b1 * b0 b2 c= b1 * b0 f0 cF f1
+- |- (((~ p) ==> p) = p)
+T c= c==> c~ f0 f0 f0
+- |- ((((~ (!x. ((?x. ((x = a) /\ (x = (f x)))) = (x = (f a))))) ==> F) ==> ((~ (!x. ((?x. ((x = a) /\ (x = (f x)))) = (x = (f a))))) ==> F)) = ((~ (!x. ((?x. ((x = a) /\ (x = (f x)))) = (x = (f a))))) ==> F))
+T c= c==> c==> c~ ! c= c? / c/\ c= b1 f0 c= b0 * f1 b1 c= b0 * f1 f0 cF c==> c~ ! c= c? / c/\ c= b1 f0 c= b0 * f1 b1 c= b0 * f1 f0 cF c==> c~ ! c= c? / c/\ c= b1 f0 c= b0 * f1 b1 c= b0 * f1 f0 cF
++ |- (((!f. (((set_variation s) f) = (sup (GSPEC (\GEN%PVAR%2955. (?d. (((SETSPEC GEN%PVAR%2955) (?t. (((division_of d) t) /\ (t SUBSET s)))) ((sum d) (\k. (vector_norm (f k))))))))))) ==> ((\f. (((set_variation s) f) = (sup (GSPEC (\GEN%PVAR%2955. (?d. (((SETSPEC GEN%PVAR%2955) (?t. (((division_of d) t) /\ (t SUBSET s)))) ((sum d) (\k. (vector_norm (f k))))))))))) f)) = ((\f. (((set_variation s) f) = (sup (GSPEC (\GEN%PVAR%2955. (?d. (((SETSPEC GEN%PVAR%2955) (?t. (((division_of d) t) /\ (t SUBSET s)))) ((sum d) (\k. (vector_norm (f k))))))))))) f))
+T c= c==> ! c= cset_variation f0 b0 csup * part cGSPEC / c? / cSETSPEC b1 c? / c/\ cdivision_of b2 b3 cSUBSET b3 f0 csum b2 / cvector_norm * b0 b3 * / c= cset_variation f0 b0 csup * part cGSPEC / c? / cSETSPEC b1 c? / c/\ cdivision_of b2 b3 cSUBSET b3 f0 csum b2 / cvector_norm * b0 b3 f1 * / c= cset_variation f0 b0 csup * part cGSPEC / c? / cSETSPEC b1 c? / c/\ cdivision_of b2 b3 cSUBSET b3 f0 csum b2 / cvector_norm * b0 b3 f1
++ |- ((~ ((?x. ((x = a) /\ (x = (f x)))) = (x = (f a)))) ==> F)
+T c==> c~ c= c? / c/\ c= b0 f0 c= f1 * f2 b0 c= f1 * f2 f0 cF
+- |- (((((~ (!x. ((?x. ((x = a) /\ (x = (f x)))) = (x = (f a))))) ==> F) ==> ((~ (!x. ((?x. ((x = a) /\ (x = (f x)))) = (x = (f a))))) ==> F)) ==> (((~ (!x. ((?x. ((x = a) /\ (x = (f x)))) = (x = (f a))))) ==> F) ==> ((~ (!x. ((?x. ((x = a) /\ (x = (f x)))) = (x = (f a))))) ==> F))) = (((~ (!x. ((?x. ((x = a) /\ (x = (f x)))) = (x = (f a))))) ==> F) ==> ((~ (!x. ((?x. ((x = a) /\ (x = (f x)))) = (x = (f a))))) ==> F)))
+T c= c==> c==> c==> c~ ! c= c? / c/\ c= b1 f0 c= b0 * f1 b1 c= b0 * f1 f0 cF c==> c~ ! c= c? / c/\ c= b1 f0 c= b0 * f1 b1 c= b0 * f1 f0 cF c==> c==> c~ ! c= c? / c/\ c= b1 f0 c= b0 * f1 b1 c= b0 * f1 f0 cF c==> c~ ! c= c? / c/\ c= b1 f0 c= b0 * f1 b1 c= b0 * f1 f0 cF c==> c==> c~ ! c= c? / c/\ c= b1 f0 c= b0 * f1 b1 c= b0 * f1 f0 cF c==> c~ ! c= c? / c/\ c= b1 f0 c= b0 * f1 b1 c= b0 * f1 f0 cF
+- |- ((t ==> F) = (~ t))
+T c= c==> f0 cF c~ f0
++ |- ((?t. ((P t) /\ (t = a))) = (P a))
+T c= c? / c/\ * f0 b0 c= b0 f1 * f0 f1
+- |- ((!x. ((?x. ((x = a) /\ (x = (f x)))) = (x = (f a)))) = T)
+T c= ! c= c? / c/\ c= b1 f0 c= b0 * f1 b1 c= b0 * f1 f0 cT
+- |- ((!x'. ((~ (x = a)) \/ (~ (x = (f x'))))) = ((~ (x = a)) \/ (!x. (~ (x = (f x))))))
+T c= ! c\/ c~ c= f0 f1 c~ c= f2 * f3 b0 c\/ c~ c= f0 f1 ! c~ c= f2 * f3 b0
++ ((!x. ((~ (x = a)) \/ (~ (x = (f x))))) /\ (x = (f a))) |- ((~ (_1588968 = a)) \/ (~ (x = (f _1588968))))
+T c==> c/\ ! c\/ c~ c= b0 f0 c~ c= f1 * f2 b0 c= f1 * f2 f0 c\/ c~ c= f3 f0 c~ c= f1 * f2 f3
++ |- (p = ((~ p) ==> F))
+T c= f0 c==> c~ f0 cF
+- |- ((?t. t) = t)
+T c= c? / f0 f0
++ (((x' = a) /\ (x = (f x'))) /\ (~ (x = (f a)))) |- (~ ((f a) = (f a)))
+T c==> c/\ c/\ c= f0 f1 c= f2 * f3 f0 c~ c= f2 * f3 f1 c~ c= * f3 f1 * f3 f1
++ |- ((\s. ((s SUBSET EMPTY) = (s = EMPTY))) s)
+T * / c= cSUBSET b0 part cEMPTY c= b0 part cEMPTY f0
+- |- ((?x'. ((x' = a) /\ (x = (f x)))) = ((?x. (x = a)) /\ (x = (f x))))
+T c= c? / c/\ c= b0 f0 c= f1 * f2 f3 c/\ c? / c= b0 f0 c= f1 * f2 f3
++ ((((x' = a) /\ (x = (f x'))) /\ (~ (x = (f a)))) \/ ((!x. ((~ (x = a)) \/ (~ (x = (f x))))) /\ (x = (f a)))) |- (((((x' = a) /\ (x = (f x'))) /\ (~ (x = (f a)))) \/ ((!x. ((~ (x = a)) \/ (~ (x = (f x))))) /\ (x = (f a)))) /\ F)
+T c==> c\/ c/\ c/\ c= f0 f1 c= f2 * f3 f0 c~ c= f2 * f3 f1 c/\ ! c\/ c~ c= b0 f1 c~ c= f2 * f3 b0 c= f2 * f3 f1 c/\ c\/ c/\ c/\ c= f0 f1 c= f2 * f3 f0 c~ c= f2 * f3 f1 c/\ ! c\/ c~ c= b0 f1 c~ c= f2 * f3 b0 c= f2 * f3 f1 cF
+- |- ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))
+T c= c\/ f0 c\/ f1 f2 c\/ c\/ f0 f1 f2
++ ((\x. ((((x = a) /\ (x = (f x))) /\ (~ (x = (f a)))) \/ ((!x. ((~ (x = a)) \/ (~ (x = (f x))))) /\ (x = (f a))))) x') |- (((\x. ((((x = a) /\ (x = (f x))) /\ (~ (x = (f a)))) \/ ((!x. ((~ (x = a)) \/ (~ (x = (f x))))) /\ (x = (f a))))) x') /\ F)
+T c==> * / c\/ c/\ c/\ c= b0 f0 c= f1 * f2 b0 c~ c= f1 * f2 f0 c/\ ! c\/ c~ c= b1 f0 c~ c= f1 * f2 b1 c= f1 * f2 f0 f3 c/\ * / c\/ c/\ c/\ c= b0 f0 c= f1 * f2 b0 c~ c= f1 * f2 f0 c/\ ! c\/ c~ c= b1 f0 c~ c= f1 * f2 b1 c= f1 * f2 f0 f3 cF
++ |- ((a = a) /\ ((f a) = (f a)))
+T c/\ c= f0 f0 c= * f1 f0 * f1 f0
+- |- ((\s. ((FINITE s) ==> (((sum (x INSERT s)) f) = (((COND (x IN s)) ((sum s) f)) ((real_add (f x)) ((sum s) f)))))) s)
+T * / c==> cFINITE b0 c= csum * * part cINSERT f0 b0 f1 cCOND cIN f0 b0 csum b0 f1 creal_add * f1 f0 csum b0 f1 f2
+- |- ((\x. (!f. (!s. ((FINITE s) ==> (((sum (x INSERT s)) f) = (((COND (x IN s)) ((sum s) f)) ((real_add (f x)) ((sum s) f)))))))) x)
+T * / ! ! c==> cFINITE b2 c= csum * * part cINSERT b0 b2 b1 cCOND cIN b0 b2 csum b2 b1 creal_add * b1 b0 csum b2 b1 f0
++ |- (((!x. ((~ (x = a)) \/ (~ (x = (f x))))) /\ (x = (f a))) ==> F)
+T c==> c/\ ! c\/ c~ c= b0 f0 c~ c= f1 * f2 b0 c= f1 * f2 f0 cF
++ (((x' = a) /\ (x = (f x'))) /\ (~ (x = (f a)))) |- ((((x' = a) /\ (x = (f x'))) /\ (~ (x = (f a)))) /\ F)
+T c==> c/\ c/\ c= f0 f1 c= f2 * f3 f0 c~ c= f2 * f3 f1 c/\ c/\ c/\ c= f0 f1 c= f2 * f3 f0 c~ c= f2 * f3 f1 cF
+- |- ((\t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3)))) t2)
+T * / ! c= c\/ f0 c\/ b0 b1 c\/ c\/ f0 b0 b1 f1
+- |- ((!x. ((P x) \/ Q)) = ((!x. (P x)) \/ Q))
+T c= ! c\/ * f0 b0 f1 c\/ ! * f0 b0 f1
++ (~ ((?x. ((x = a) /\ (x = (f x)))) = (x = (f a)))) |- ((~ ((?x. ((x = a) /\ (x = (f x)))) = (x = (f a)))) /\ F)
+T c==> c~ c= c? / c/\ c= b0 f0 c= f1 * f2 b0 c= f1 * f2 f0 c/\ c~ c= c? / c/\ c= b0 f0 c= f1 * f2 b0 c= f1 * f2 f0 cF
++ |- ((?x. ((((x = a) /\ (x = (f x))) /\ (~ (x = (f a)))) \/ ((!x. ((~ (x = a)) \/ (~ (x = (f x))))) /\ (x = (f a))))) ==> F)
+T c==> c? / c\/ c/\ c/\ c= b0 f0 c= f1 * f2 b0 c~ c= f1 * f2 f0 c/\ ! c\/ c~ c= b1 f0 c~ c= f1 * f2 b1 c= f1 * f2 f0 cF
++ |- (((?x. ((x = a) /\ (x = (f x)))) /\ (~ (x = (f a)))) = (?x. (((x = a) /\ (x = (f x))) /\ (~ (x = (f a))))))
+T c= c/\ c? / c/\ c= b0 f0 c= f1 * f2 b0 c~ c= f1 * f2 f0 c? / c/\ c/\ c= b0 f0 c= f1 * f2 b0 c~ c= f1 * f2 f0
++ |- ((((f a) = (f a)) ==> F) = F)
+T c= c==> c= * f0 f1 * f0 f1 cF cF
++ |- ((!x. ((x IN (GSPEC (\GEN%PVAR%2959. (?x. (((SETSPEC GEN%PVAR%2959) (x = a)) (f x)))))) = (x IN ((f a) INSERT EMPTY)))) = ((GSPEC (\GEN%PVAR%2959. (?x. (((SETSPEC GEN%PVAR%2959) (x = a)) (f x))))) = ((f a) INSERT EMPTY)))
+T c= ! c= cIN b0 * part cGSPEC / c? / cSETSPEC b1 c= b2 f0 * f1 b2 cIN b0 * * part cINSERT * f1 f0 part cEMPTY c= * part cGSPEC / c? / cSETSPEC b0 c= b1 f0 * f1 b1 * * part cINSERT * f1 f0 part cEMPTY
++ |- ((\f. (((sum EMPTY) f) = (real_of_num (NUMERAL _0)))) f)
+T * / c= csum part cEMPTY b0 creal_of_num cNUMERAL c_0 f0
++ |- ((((x' = a) /\ (x = (f x'))) /\ (~ (x = (f a)))) ==> F)
+T c==> c/\ c/\ c= f0 f1 c= f2 * f3 f0 c~ c= f2 * f3 f1 cF
+- |- (((!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3)))) ==> ((\t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3)))) t2)) = ((\t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3)))) t2))
+T c= c==> ! ! c= c\/ f0 c\/ b0 b1 c\/ c\/ f0 b0 b1 * / ! c= c\/ f0 c\/ b0 b1 c\/ c\/ f0 b0 b1 f1 * / ! c= c\/ f0 c\/ b0 b1 c\/ c\/ f0 b0 b1 f1
++ |- (((!s. (!f. (((set_variation s) f) = (sup (GSPEC (\GEN%PVAR%2955. (?d. (((SETSPEC GEN%PVAR%2955) (?t. (((division_of d) t) /\ (t SUBSET s)))) ((sum d) (\k. (vector_norm (f k)))))))))))) ==> ((\s. (!f. (((set_variation s) f) = (sup (GSPEC (\GEN%PVAR%2955. (?d. (((SETSPEC GEN%PVAR%2955) (?t. (((division_of d) t) /\ (t SUBSET s)))) ((sum d) (\k. (vector_norm (f k)))))))))))) s)) = ((\s. (!f. (((set_variation s) f) = (sup (GSPEC (\GEN%PVAR%2955. (?d. (((SETSPEC GEN%PVAR%2955) (?t. (((division_of d) t) /\ (t SUBSET s)))) ((sum d) (\k. (vector_norm (f k)))))))))))) s))
+T c= c==> ! ! c= cset_variation b0 b1 csup * part cGSPEC / c? / cSETSPEC b2 c? / c/\ cdivision_of b3 b4 cSUBSET b4 b0 csum b3 / cvector_norm * b1 b4 * / ! c= cset_variation b0 b1 csup * part cGSPEC / c? / cSETSPEC b2 c? / c/\ cdivision_of b3 b4 cSUBSET b4 b0 csum b3 / cvector_norm * b1 b4 f0 * / ! c= cset_variation b0 b1 csup * part cGSPEC / c? / cSETSPEC b2 c? / c/\ cdivision_of b3 b4 cSUBSET b4 b0 csum b3 / cvector_norm * b1 b4 f0
++ |- ((\P. (!a. ((?x. ((P x) /\ (x = a))) = (P a)))) P)
+T * / ! c= c? / c/\ * b0 b2 c= b2 b1 * b0 b1 f0
+- (_1588985 = _1588986) |- ((_1588985 = _1588986) /\ ((f _1588985) = (f _1588986)))
+T c==> c= f0 f1 c/\ c= f0 f1 c= * f2 f0 * f2 f1
++ ((!x. ((~ (x = a)) \/ (~ (x = (f x))))) /\ (x = (f a))) |- (((!x. ((~ (x = a)) \/ (~ (x = (f x))))) /\ (x = (f a))) /\ F)
+T c==> c/\ ! c\/ c~ c= b0 f0 c~ c= f1 * f2 b0 c= f1 * f2 f0 c/\ c/\ ! c\/ c~ c= b0 f0 c~ c= f1 * f2 b0 c= f1 * f2 f0 cF
++ ((!x. ((~ (x = a)) \/ (~ (x = (f x))))) /\ (x = (f a))) |- (((_1588968 = a) /\ ((f a) = (f _1588968))) ==> F)
+T c==> c/\ ! c\/ c~ c= b0 f0 c~ c= f1 * f2 b0 c= f1 * f2 f0 c==> c/\ c= f3 f0 c= * f2 f0 * f2 f3 cF
++ |- ((x = x) = T)
+T c= c= f0 f0 cT
++ |- ((\t2. ((t1 /\ t2) = (t2 /\ t1))) t2)
+T * / c= c/\ f0 b0 c/\ b0 f0 f1
++ (((x' = a) /\ (x = (f x'))) /\ (~ (x = (f a)))) |- ((~ (x = (f a))) = (~ ((f x') = (f a))))
+T c==> c/\ c/\ c= f0 f1 c= f2 * f3 f0 c~ c= f2 * f3 f1 c= c~ c= f2 * f3 f1 c~ c= * f3 f0 * f3 f1
++ |- ((\s. (((division_of s) EMPTY) = (s = EMPTY))) s)
+T * / c= cdivision_of b0 part cEMPTY c= b0 part cEMPTY f0
+- |- ((a ==> b) = ((~ a) \/ b))
+T c= c==> f0 f1 c\/ c~ f0 f1
++ |- (((!P. (!a. ((?x. ((P x) /\ (x = a))) = (P a)))) ==> ((\P. (!a. ((?x. ((P x) /\ (x = a))) = (P a)))) P)) = ((\P. (!a. ((?x. ((P x) /\ (x = a))) = (P a)))) P))
+T c= c==> ! ! c= c? / c/\ * b0 b2 c= b2 b1 * b0 b1 * / ! c= c? / c/\ * b0 b2 c= b2 b1 * b0 b1 f0 * / ! c= c? / c/\ * b0 b2 c= b2 b1 * b0 b1 f0
++ ((!x. ((~ (x = a)) \/ (~ (x = (f x))))) /\ (x = (f a))) |- (((~ (_1588968 = a)) \/ (~ (x = (f _1588968)))) = ((~ (_1588968 = a)) \/ (~ ((f a) = (f _1588968)))))
+T c==> c/\ ! c\/ c~ c= b0 f0 c~ c= f1 * f2 b0 c= f1 * f2 f0 c= c\/ c~ c= f3 f0 c~ c= f1 * f2 f3 c\/ c~ c= f3 f0 c~ c= * f2 f0 * f2 f3
++ |- (T = (!f. ((sup (GSPEC (\GEN%PVAR%2955. (?d. (((SETSPEC GEN%PVAR%2955) (d = EMPTY)) ((sum d) (\k. (vector_norm (f k))))))))) = (real_of_num (NUMERAL _0)))))
+T c= cT ! c= csup * part cGSPEC / c? / cSETSPEC b1 c= b2 part cEMPTY csum b2 / cvector_norm * b0 b3 creal_of_num cNUMERAL c_0
++ |- (((~ a) \/ (~ b)) = (~ (a /\ b)))
+T c= c\/ c~ f0 c~ f1 c~ c/\ f0 f1
++ |- ((GSPEC (\GEN%PVAR%2955. (?d. (((SETSPEC GEN%PVAR%2955) (d = EMPTY)) ((sum d) (\k. (vector_norm (f k)))))))) = (((sum EMPTY) (\k. (vector_norm (f k)))) INSERT EMPTY))
+T c= * part cGSPEC / c? / cSETSPEC b0 c= b1 part cEMPTY csum b1 / cvector_norm * f0 b2 * * part cINSERT csum part cEMPTY / cvector_norm * f0 b0 part cEMPTY
+- |- ((_1588985 = _1588986) ==> ((f _1588985) = (f _1588986)))
+T c==> c= f0 f1 c= * f2 f0 * f2 f1
+- |- ((FINITE s) ==> (((sum (x INSERT s)) f) = (((COND (x IN s)) ((sum s) f)) ((real_add (f x)) ((sum s) f)))))
+T c==> cFINITE f0 c= csum * * part cINSERT f1 f0 f2 cCOND cIN f1 f0 csum f0 f2 creal_add * f2 f1 csum f0 f2
++ |- (((f a) = (f a)) = ((a = a) /\ ((f a) = (f a))))
+T c= c= * f0 f1 * f0 f1 c/\ c= f1 f1 c= * f0 f1 * f0 f1
++ ((\x. ((((x = a) /\ (x = (f x))) /\ (~ (x = (f a)))) \/ ((!x. ((~ (x = a)) \/ (~ (x = (f x))))) /\ (x = (f a))))) x') |- ((((x' = a) /\ (x = (f x'))) /\ (~ (x = (f a)))) \/ ((!x. ((~ (x = a)) \/ (~ (x = (f x))))) /\ (x = (f a))))
+T c==> * / c\/ c/\ c/\ c= b0 f0 c= f1 * f2 b0 c~ c= f1 * f2 f0 c/\ ! c\/ c~ c= b1 f0 c~ c= f1 * f2 b1 c= f1 * f2 f0 f3 c\/ c/\ c/\ c= f3 f0 c= f1 * f2 f3 c~ c= f1 * f2 f0 c/\ ! c\/ c~ c= b0 f0 c~ c= f1 * f2 b0 c= f1 * f2 f0
++ |- (!f. ((sup (GSPEC (\GEN%PVAR%2955. (?d. (((SETSPEC GEN%PVAR%2955) (d = EMPTY)) ((sum d) (\k. (vector_norm (f k))))))))) = (real_of_num (NUMERAL _0))))
+T c= csup * part cGSPEC / c? / cSETSPEC b0 c= b1 part cEMPTY csum b1 / cvector_norm * f0 b2 creal_of_num cNUMERAL c_0
+- |- ((!f. (!x. ((?x. ((x = a) /\ (x = (f x)))) = (x = (f a))))) = T)
+T c= ! ! c= c? / c/\ c= b2 f0 c= b1 * b0 b2 c= b1 * b0 f0 cT
++ |- ((\a. ((sup (a INSERT EMPTY)) = a)) a)
+T * / c= csup * * part cINSERT b0 part cEMPTY b0 f0
+- (~ ((f a) = (f a))) |- ((~ ((f a) = (f a))) /\ ((f a) = (f a)))
+T c==> c~ c= * f0 f1 * f0 f1 c/\ c~ c= * f0 f1 * f0 f1 c= * f0 f1 * f0 f1
++ |- (((sum EMPTY) f) = (real_of_num (NUMERAL _0)))
+T c= csum part cEMPTY f0 creal_of_num cNUMERAL c_0
++ (((x' = a) /\ (x = (f x'))) /\ (~ (x = (f a)))) |- (~ ((f x') = (f a)))
+T c==> c/\ c/\ c= f0 f1 c= f2 * f3 f0 c~ c= f2 * f3 f1 c~ c= * f3 f0 * f3 f1
+- (~ F), (((x' = a) /\ (x = (f x'))) /\ (~ (x = (f a)))) |- ((~ F) /\ F)
+T c==> c~ cF c==> c/\ c/\ c= f0 f1 c= f2 * f3 f0 c~ c= f2 * f3 f1 c/\ c~ cF cF
+- |- (((!f. ((~ (!x. ((?x. ((x = a) /\ (x = (f x)))) = (x = (f a))))) ==> F)) ==> ((\f. ((~ (!x. ((?x. ((x = a) /\ (x = (f x)))) = (x = (f a))))) ==> F)) f)) = ((\f. ((~ (!x. ((?x. ((x = a) /\ (x = (f x)))) = (x = (f a))))) ==> F)) f))
+T c= c==> ! c==> c~ ! c= c? / c/\ c= b2 f0 c= b1 * b0 b2 c= b1 * b0 f0 cF * / c==> c~ ! c= c? / c/\ c= b2 f0 c= b1 * b0 b2 c= b1 * b0 f0 cF f1 * / c==> c~ ! c= c? / c/\ c= b2 f0 c= b1 * b0 b2 c= b1 * b0 f0 cF f1
+- |- (((FINITE s) ==> (((sum (x INSERT s)) f) = (((COND (x IN s)) ((sum s) f)) ((real_add (f x)) ((sum s) f))))) = T)
+T c= c==> cFINITE f0 c= csum * * part cINSERT f1 f0 f2 cCOND cIN f1 f0 csum f0 f2 creal_add * f2 f1 csum f0 f2 cT
+- |- (((t1 \/ t2) \/ t3) = (t1 \/ (t2 \/ t3)))
+T c= c\/ c\/ f0 f1 f2 c\/ f0 c\/ f1 f2
++ |- (!x. ((x IN (GSPEC (\GEN%PVAR%2959. (?x. (((SETSPEC GEN%PVAR%2959) (x = a)) (f x)))))) = (x IN ((f a) INSERT EMPTY))))
+T c= cIN f0 * part cGSPEC / c? / cSETSPEC b0 c= b1 f1 * f2 b1 cIN f0 * * part cINSERT * f2 f1 part cEMPTY
++ |- (((!f. (((sum EMPTY) f) = (real_of_num (NUMERAL _0)))) ==> ((\f. (((sum EMPTY) f) = (real_of_num (NUMERAL _0)))) f)) = ((\f. (((sum EMPTY) f) = (real_of_num (NUMERAL _0)))) f))
+T c= c==> ! c= csum part cEMPTY b0 creal_of_num cNUMERAL c_0 * / c= csum part cEMPTY b0 creal_of_num cNUMERAL c_0 f0 * / c= csum part cEMPTY b0 creal_of_num cNUMERAL c_0 f0
++ |- (((((x' = a) /\ (x = (f x'))) /\ (~ (x = (f a)))) \/ ((!x. ((~ (x = a)) \/ (~ (x = (f x))))) /\ (x = (f a)))) ==> F)
+T c==> c\/ c/\ c/\ c= f0 f1 c= f2 * f3 f0 c~ c= f2 * f3 f1 c/\ ! c\/ c~ c= b0 f1 c~ c= f2 * f3 b0 c= f2 * f3 f1 cF
+- |- ((\f. (!s. ((FINITE s) ==> (((sum (x INSERT s)) f) = (((COND (x IN s)) ((sum s) f)) ((real_add (f x)) ((sum s) f))))))) f)
+T * / ! c==> cFINITE b1 c= csum * * part cINSERT f0 b1 b0 cCOND cIN f0 b1 csum b1 b0 creal_add * b0 f0 csum b1 b0 f1
++ |- (((!t1. (!t2. ((t1 /\ t2) = (t2 /\ t1)))) ==> ((\t1. (!t2. ((t1 /\ t2) = (t2 /\ t1)))) t1)) = ((\t1. (!t2. ((t1 /\ t2) = (t2 /\ t1)))) t1))
+T c= c==> ! ! c= c/\ b0 b1 c/\ b1 b0 * / ! c= c/\ b0 b1 c/\ b1 b0 f0 * / ! c= c/\ b0 b1 c/\ b1 b0 f0
+- ((~ (!x. ((?x. ((x = a) /\ (x = (f x)))) = (x = (f a))))) ==> F) |- ((((~ (!x. ((?x. ((x = a) /\ (x = (f x)))) = (x = (f a))))) ==> F) ==> ((~ (!x. ((?x. ((x = a) /\ (x = (f x)))) = (x = (f a))))) ==> F)) ==> ((~ (!x. ((?x. ((x = a) /\ (x = (f x)))) = (x = (f a))))) ==> F))
+T c==> c==> c~ ! c= c? / c/\ c= b1 f0 c= b0 * f1 b1 c= b0 * f1 f0 cF c==> c==> c==> c~ ! c= c? / c/\ c= b1 f0 c= b0 * f1 b1 c= b0 * f1 f0 cF c==> c~ ! c= c? / c/\ c= b1 f0 c= b0 * f1 b1 c= b0 * f1 f0 cF c==> c~ ! c= c? / c/\ c= b1 f0 c= b0 * f1 b1 c= b0 * f1 f0 cF
++ |- ((?t. (((division_of d) t) /\ (t = EMPTY))) = ((division_of d) EMPTY))
+T c= c? / c/\ cdivision_of f0 b0 c= b0 part cEMPTY cdivision_of f0 part cEMPTY
++ |- ((x IN (GSPEC (\GEN%PVAR%2959. (P (SETSPEC GEN%PVAR%2959))))) = (P (\p. (\t. (p /\ (x = t))))))
+T c= cIN f0 * part cGSPEC / * f1 * part cSETSPEC b0 * f1 / / c/\ b0 c= f0 b1
++ |- (((?x. (((x = a) /\ (x = (f x))) /\ (~ (x = (f a))))) \/ ((!x. ((~ (x = a)) \/ (~ (x = (f x))))) /\ (x = (f a)))) = (?x. ((((x = a) /\ (x = (f x))) /\ (~ (x = (f a)))) \/ ((!x. ((~ (x = a)) \/ (~ (x = (f x))))) /\ (x = (f a))))))
+T c= c\/ c? / c/\ c/\ c= b0 f0 c= f1 * f2 b0 c~ c= f1 * f2 f0 c/\ ! c\/ c~ c= b0 f0 c~ c= f1 * f2 b0 c= f1 * f2 f0 c? / c\/ c/\ c/\ c= b0 f0 c= f1 * f2 b0 c~ c= f1 * f2 f0 c/\ ! c\/ c~ c= b1 f0 c~ c= f1 * f2 b1 c= f1 * f2 f0
++ (((x' = a) /\ (x = (f x'))) /\ (~ (x = (f a)))) |- (x' = a)
+T c==> c/\ c/\ c= f0 f1 c= f2 * f3 f0 c~ c= f2 * f3 f1 c= f0 f1
+- |- (((!x. (!f. (!s. ((FINITE s) ==> (((sum (x INSERT s)) f) = (((COND (x IN s)) ((sum s) f)) ((real_add (f x)) ((sum s) f)))))))) ==> ((\x. (!f. (!s. ((FINITE s) ==> (((sum (x INSERT s)) f) = (((COND (x IN s)) ((sum s) f)) ((real_add (f x)) ((sum s) f)))))))) x)) = ((\x. (!f. (!s. ((FINITE s) ==> (((sum (x INSERT s)) f) = (((COND (x IN s)) ((sum s) f)) ((real_add (f x)) ((sum s) f)))))))) x))
+T c= c==> ! ! ! c==> cFINITE b2 c= csum * * part cINSERT b0 b2 b1 cCOND cIN b0 b2 csum b2 b1 creal_add * b1 b0 csum b2 b1 * / ! ! c==> cFINITE b2 c= csum * * part cINSERT b0 b2 b1 cCOND cIN b0 b2 csum b2 b1 creal_add * b1 b0 csum b2 b1 f0 * / ! ! c==> cFINITE b2 c= csum * * part cINSERT b0 b2 b1 cCOND cIN b0 b2 csum b2 b1 creal_add * b1 b0 csum b2 b1 f0
+- |- ((~ ((f a) = (f a))) ==> ((f a) = (f a)))
+T c==> c~ c= * f0 f1 * f0 f1 c= * f0 f1 * f0 f1
++ |- (((!a. ((sup (a INSERT EMPTY)) = a)) ==> ((\a. ((sup (a INSERT EMPTY)) = a)) a)) = ((\a. ((sup (a INSERT EMPTY)) = a)) a))
+T c= c==> ! c= csup * * part cINSERT b0 part cEMPTY b0 * / c= csup * * part cINSERT b0 part cEMPTY b0 f0 * / c= csup * * part cINSERT b0 part cEMPTY b0 f0
++ ((\x. ((((x = a) /\ (x = (f x))) /\ (~ (x = (f a)))) \/ ((!x. ((~ (x = a)) \/ (~ (x = (f x))))) /\ (x = (f a))))) x') |- ((((((x' = a) /\ (x = (f x'))) /\ (~ (x = (f a)))) \/ ((!x. ((~ (x = a)) \/ (~ (x = (f x))))) /\ (x = (f a)))) ==> F) = F)
+T c==> * / c\/ c/\ c/\ c= b0 f0 c= f1 * f2 b0 c~ c= f1 * f2 f0 c/\ ! c\/ c~ c= b1 f0 c~ c= f1 * f2 b1 c= f1 * f2 f0 f3 c= c==> c\/ c/\ c/\ c= f3 f0 c= f1 * f2 f3 c~ c= f1 * f2 f0 c/\ ! c\/ c~ c= b0 f0 c~ c= f1 * f2 b0 c= f1 * f2 f0 cF cF
+- |- ((!x. (P \/ (Q x))) = (P \/ (!x. (Q x))))
+T c= ! c\/ f0 * f1 b0 c\/ f0 ! * f1 b0
+- |- (((!s. ((FINITE s) ==> (((sum (x INSERT s)) f) = (((COND (x IN s)) ((sum s) f)) ((real_add (f x)) ((sum s) f)))))) ==> ((\s. ((FINITE s) ==> (((sum (x INSERT s)) f) = (((COND (x IN s)) ((sum s) f)) ((real_add (f x)) ((sum s) f)))))) s)) = ((\s. ((FINITE s) ==> (((sum (x INSERT s)) f) = (((COND (x IN s)) ((sum s) f)) ((real_add (f x)) ((sum s) f)))))) s))
+T c= c==> ! c==> cFINITE b0 c= csum * * part cINSERT f0 b0 f1 cCOND cIN f0 b0 csum b0 f1 creal_add * f1 f0 csum b0 f1 * / c==> cFINITE b0 c= csum * * part cINSERT f0 b0 f1 cCOND cIN f0 b0 csum b0 f1 creal_add * f1 f0 csum b0 f1 f2 * / c==> cFINITE b0 c= csum * * part cINSERT f0 b0 f1 cCOND cIN f0 b0 csum b0 f1 creal_add * f1 f0 csum b0 f1 f2
+- |- (((!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))) ==> ((\t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))) t3)) = ((\t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))) t3))
+T c= c==> ! c= c\/ f0 c\/ f1 b0 c\/ c\/ f0 f1 b0 * / c= c\/ f0 c\/ f1 b0 c\/ c\/ f0 f1 b0 f2 * / c= c\/ f0 c\/ f1 b0 c\/ c\/ f0 f1 b0 f2
++ ((!x. ((~ (x = a)) \/ (~ (x = (f x))))) /\ (x = (f a))) |- ((~ (_1588968 = a)) \/ (~ ((f a) = (f _1588968))))
+T c==> c/\ ! c\/ c~ c= b0 f0 c~ c= f1 * f2 b0 c= f1 * f2 f0 c\/ c~ c= f3 f0 c~ c= * f2 f0 * f2 f3
+- |- ((?x'. ((x = a) /\ (x = (f x')))) = ((x = a) /\ (?x. (x = (f x)))))
+T c= c? / c/\ c= f0 f1 c= f2 * f3 b0 c/\ c= f0 f1 c? / c= f2 * f3 b0
+- |- ((t /\ t) = t)
+T c= c/\ f0 f0 f0
+- ((~ (!x. ((?x. ((x = a) /\ (x = (f x)))) = (x = (f a))))) ==> F), (((~ (!x. ((?x. ((x = a) /\ (x = (f x)))) = (x = (f a))))) ==> F) ==> ((~ (!x. ((?x. ((x = a) /\ (x = (f x)))) = (x = (f a))))) ==> F)) |- (((~ (!x. ((?x. ((x = a) /\ (x = (f x)))) = (x = (f a))))) ==> F) /\ ((~ (!x. ((?x. ((x = a) /\ (x = (f x)))) = (x = (f a))))) ==> F))
+T c==> c==> c~ ! c= c? / c/\ c= b1 f0 c= b0 * f1 b1 c= b0 * f1 f0 cF c==> c==> c==> c~ ! c= c? / c/\ c= b1 f0 c= b0 * f1 b1 c= b0 * f1 f0 cF c==> c~ ! c= c? / c/\ c= b1 f0 c= b0 * f1 b1 c= b0 * f1 f0 cF c/\ c==> c~ ! c= c? / c/\ c= b1 f0 c= b0 * f1 b1 c= b0 * f1 f0 cF c==> c~ ! c= c? / c/\ c= b1 f0 c= b0 * f1 b1 c= b0 * f1 f0 cF
+- |- ((!a. (!f. (!x. ((?x. ((x = a) /\ (x = (f x)))) = (x = (f a)))))) = (!a. (!f. ((~ (!x. ((?x. ((x = a) /\ (x = (f x)))) = (x = (f a))))) ==> F))))
+T c= ! ! ! c= c? / c/\ c= b3 b0 c= b2 * b1 b3 c= b2 * b1 b0 ! ! c==> c~ ! c= c? / c/\ c= b3 b0 c= b2 * b1 b3 c= b2 * b1 b0 cF
+- |- ((((~ (!x. ((?x. ((x = a) /\ (x = (f x)))) = (x = (f a))))) ==> F) ==> ((~ (!x. ((?x. ((x = a) /\ (x = (f x)))) = (x = (f a))))) ==> F)) ==> (((~ (!x. ((?x. ((x = a) /\ (x = (f x)))) = (x = (f a))))) ==> F) ==> ((~ (!x. ((?x. ((x = a) /\ (x = (f x)))) = (x = (f a))))) ==> F)))
+T c==> c==> c==> c~ ! c= c? / c/\ c= b1 f0 c= b0 * f1 b1 c= b0 * f1 f0 cF c==> c~ ! c= c? / c/\ c= b1 f0 c= b0 * f1 b1 c= b0 * f1 f0 cF c==> c==> c~ ! c= c? / c/\ c= b1 f0 c= b0 * f1 b1 c= b0 * f1 f0 cF c==> c~ ! c= c? / c/\ c= b1 f0 c= b0 * f1 b1 c= b0 * f1 f0 cF
+- |- ((~ (_1588985 = _1588986)) \/ ((f _1588985) = (f _1588986)))
+T c\/ c~ c= f0 f1 c= * f2 f0 * f2 f1
+- ((!x. ((~ (x = a)) \/ (~ (x = (f x))))) /\ (x = (f a))) |- ((~ F) ==> F)
+T c==> c/\ ! c\/ c~ c= b0 f0 c~ c= f1 * f2 b0 c= f1 * f2 f0 c==> c~ cF cF
++ |- ((\f. (((set_variation s) f) = (sup (GSPEC (\GEN%PVAR%2955. (?d. (((SETSPEC GEN%PVAR%2955) (?t. (((division_of d) t) /\ (t SUBSET s)))) ((sum d) (\k. (vector_norm (f k))))))))))) f)
+T * / c= cset_variation f0 b0 csup * part cGSPEC / c? / cSETSPEC b1 c? / c/\ cdivision_of b2 b3 cSUBSET b3 f0 csum b2 / cvector_norm * b0 b3 f1
+- (~ (!x. ((?x. ((x = a) /\ (x = (f x)))) = (x = (f a))))) |- ((~ (!x. ((?x. ((x = a) /\ (x = (f x)))) = (x = (f a))))) /\ F)
+T c==> c~ ! c= c? / c/\ c= b1 f0 c= b0 * f1 b1 c= b0 * f1 f0 c/\ c~ ! c= c? / c/\ c= b1 f0 c= b0 * f1 b1 c= b0 * f1 f0 cF
++ |- ((t1 /\ t2) = (t2 /\ t1))
+T c= c/\ f0 f1 c/\ f1 f0
++ |- ((x IN EMPTY) = F)
+T c= cIN f0 part cEMPTY cF
++ |- (((!a. ((?x. ((P x) /\ (x = a))) = (P a))) ==> ((\a. ((?x. ((P x) /\ (x = a))) = (P a))) a)) = ((\a. ((?x. ((P x) /\ (x = a))) = (P a))) a))
+T c= c==> ! c= c? / c/\ * f0 b1 c= b1 b0 * f0 b0 * / c= c? / c/\ * f0 b1 c= b1 b0 * f0 b0 f1 * / c= c? / c/\ * f0 b1 c= b1 b0 * f0 b0 f1
++ |- (!x'. (((\x. ((((x = a) /\ (x = (f x))) /\ (~ (x = (f a)))) \/ ((!x. ((~ (x = a)) \/ (~ (x = (f x))))) /\ (x = (f a))))) x') ==> F))
+T c==> * / c\/ c/\ c/\ c= b0 f0 c= f1 * f2 b0 c~ c= f1 * f2 f0 c/\ ! c\/ c~ c= b1 f0 c~ c= f1 * f2 b1 c= f1 * f2 f0 f3 cF
++ |- ((\t1. (!t2. ((t1 /\ t2) = (t2 /\ t1)))) t1)
+T * / ! c= c/\ b0 b1 c/\ b1 b0 f0
++ |- ((\a. ((?x. ((P x) /\ (x = a))) = (P a))) a)
+T * / c= c? / c/\ * f0 b1 c= b1 b0 * f0 b0 f1
+- |- ((!x. (P x)) = ((P T) /\ (P F)))
+T c= ! * f0 b0 c/\ * f0 cT * f0 cF
+- |- (((!t1. (!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))))) ==> ((\t1. (!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))))) t1)) = ((\t1. (!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))))) t1))
+T c= c==> ! ! ! c= c\/ b0 c\/ b1 b2 c\/ c\/ b0 b1 b2 * / ! ! c= c\/ b0 c\/ b1 b2 c\/ c\/ b0 b1 b2 f0 * / ! ! c= c\/ b0 c\/ b1 b2 c\/ c\/ b0 b1 b2 f0
+- ((!x. ((~ (x = a)) \/ (~ (x = (f x))))) /\ (x = (f a))) |- (F = F)
+T c==> c/\ ! c\/ c~ c= b0 f0 c~ c= f1 * f2 b0 c= f1 * f2 f0 c= cF cF
+- |- ((~ (~ t)) = t)
+T c= c~ c~ f0 f0
+- |- ((?x. (P /\ (Q x))) = (P /\ (?x. (Q x))))
+T c= c? / c/\ f0 * f1 b0 c/\ f0 c? / * f1 b0
+- |- (((\t. (f t)) y) = (f y))
+T c= * / * f0 b0 f1 * f0 f1
+- |- (((~ (!x. ((?x. ((x = a) /\ (x = (f x)))) = (x = (f a))))) ==> F) = (!x. ((?x. ((x = a) /\ (x = (f x)))) = (x = (f a)))))
+T c= c==> c~ ! c= c? / c/\ c= b1 f0 c= b0 * f1 b1 c= b0 * f1 f0 cF ! c= c? / c/\ c= b1 f0 c= b0 * f1 b1 c= b0 * f1 f0
+- (~ (a = a)) |- ((~ (a = a)) /\ (a = a))
+T c==> c~ c= f0 f0 c/\ c~ c= f0 f0 c= f0 f0
+- (((~ (!x. ((?x. ((x = a) /\ (x = (f x)))) = (x = (f a))))) ==> F) ==> ((~ (!x. ((?x. ((x = a) /\ (x = (f x)))) = (x = (f a))))) ==> F)) |- ((((~ (!x. ((?x. ((x = a) /\ (x = (f x)))) = (x = (f a))))) ==> F) ==> ((~ (!x. ((?x. ((x = a) /\ (x = (f x)))) = (x = (f a))))) ==> F)) /\ (((~ (!x. ((?x. ((x = a) /\ (x = (f x)))) = (x = (f a))))) ==> F) ==> ((~ (!x. ((?x. ((x = a) /\ (x = (f x)))) = (x = (f a))))) ==> F)))
+T c==> c==> c==> c~ ! c= c? / c/\ c= b1 f0 c= b0 * f1 b1 c= b0 * f1 f0 cF c==> c~ ! c= c? / c/\ c= b1 f0 c= b0 * f1 b1 c= b0 * f1 f0 cF c/\ c==> c==> c~ ! c= c? / c/\ c= b1 f0 c= b0 * f1 b1 c= b0 * f1 f0 cF c==> c~ ! c= c? / c/\ c= b1 f0 c= b0 * f1 b1 c= b0 * f1 f0 cF c==> c==> c~ ! c= c? / c/\ c= b1 f0 c= b0 * f1 b1 c= b0 * f1 f0 cF c==> c~ ! c= c? / c/\ c= b1 f0 c= b0 * f1 b1 c= b0 * f1 f0 cF
+- |- ((\a. (!f. ((~ (!x. ((?x. ((x = a) /\ (x = (f x)))) = (x = (f a))))) ==> F))) a)
+T * / ! c==> c~ ! c= c? / c/\ c= b3 b0 c= b2 * b1 b3 c= b2 * b1 b0 cF f0
+- |- (((!a. (!f. ((~ (!x. ((?x. ((x = a) /\ (x = (f x)))) = (x = (f a))))) ==> F))) ==> ((\a. (!f. ((~ (!x. ((?x. ((x = a) /\ (x = (f x)))) = (x = (f a))))) ==> F))) a)) = ((\a. (!f. ((~ (!x. ((?x. ((x = a) /\ (x = (f x)))) = (x = (f a))))) ==> F))) a))
+T c= c==> ! ! c==> c~ ! c= c? / c/\ c= b3 b0 c= b2 * b1 b3 c= b2 * b1 b0 cF * / ! c==> c~ ! c= c? / c/\ c= b3 b0 c= b2 * b1 b3 c= b2 * b1 b0 cF f0 * / ! c==> c~ ! c= c? / c/\ c= b3 b0 c= b2 * b1 b3 c= b2 * b1 b0 cF f0
+- |- (((~ (!x. ((?x. ((x = a) /\ (x = (f x)))) = (x = (f a))))) ==> F) ==> ((~ (!x. ((?x. ((x = a) /\ (x = (f x)))) = (x = (f a))))) ==> F))
+T c==> c==> c~ ! c= c? / c/\ c= b1 f0 c= b0 * f1 b1 c= b0 * f1 f0 cF c==> c~ ! c= c? / c/\ c= b1 f0 c= b0 * f1 b1 c= b0 * f1 f0 cF
+- (((x' = a) /\ (x = (f x'))) /\ (~ (x = (f a)))) |- ((x' = a) = (x' = a))
+T c==> c/\ c/\ c= f0 f1 c= f2 * f3 f0 c~ c= f2 * f3 f1 c= c= f0 f1 c= f0 f1
+- (~ F), ((!x. ((~ (x = a)) \/ (~ (x = (f x))))) /\ (x = (f a))) |- ((~ F) /\ F)
+T c==> c~ cF c==> c/\ ! c\/ c~ c= b0 f0 c~ c= f1 * f2 b0 c= f1 * f2 f0 c/\ c~ cF cF
+- (~ (!x. ((?x. ((x = a) /\ (x = (f x)))) = (x = (f a))))) |- F
+T c==> c~ ! c= c? / c/\ c= b1 f0 c= b0 * f1 b1 c= b0 * f1 f0 cF
+- |- ((x IN (GSPEC (\GEN%PVAR%2959. (?x. (((SETSPEC GEN%PVAR%2959) (p x)) x))))) = (p x))
+T c= cIN f0 * part cGSPEC / c? / cSETSPEC b0 * f1 b1 b1 * f1 f0
+- (((x' = a) /\ (x = (f x'))) /\ (~ (x = (f a)))) |- ((~ F) ==> F)
+T c==> c/\ c/\ c= f0 f1 c= f2 * f3 f0 c~ c= f2 * f3 f1 c==> c~ cF cF
+- |- ((?x. ((P x) /\ Q)) = ((?x. (P x)) /\ Q))
+T c= c? / c/\ * f0 b0 f1 c/\ c? / * f0 b0 f1
+- |- (((!f. (!s. ((FINITE s) ==> (((sum (x INSERT s)) f) = (((COND (x IN s)) ((sum s) f)) ((real_add (f x)) ((sum s) f))))))) ==> ((\f. (!s. ((FINITE s) ==> (((sum (x INSERT s)) f) = (((COND (x IN s)) ((sum s) f)) ((real_add (f x)) ((sum s) f))))))) f)) = ((\f. (!s. ((FINITE s) ==> (((sum (x INSERT s)) f) = (((COND (x IN s)) ((sum s) f)) ((real_add (f x)) ((sum s) f))))))) f))
+T c= c==> ! ! c==> cFINITE b1 c= csum * * part cINSERT f0 b1 b0 cCOND cIN f0 b1 csum b1 b0 creal_add * b0 f0 csum b1 b0 * / ! c==> cFINITE b1 c= csum * * part cINSERT f0 b1 b0 cCOND cIN f0 b1 csum b1 b0 creal_add * b0 f0 csum b1 b0 f1 * / ! c==> cFINITE b1 c= csum * * part cINSERT f0 b1 b0 cCOND cIN f0 b1 csum b1 b0 creal_add * b0 f0 csum b1 b0 f1

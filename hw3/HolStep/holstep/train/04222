@@ -1,0 +1,88 @@
+N Tame_list.replace_id
+C |- (!f. (!a. (!b. ((~ ((MEM a) f)) ==> ((((replace a) b) f) = f)))))
+T c==> c~ cMEM f0 f1 c= creplace f0 f2 f1 f1
+D TRUTH
+A |- T
+T cT
+D BOOL_CASES_AX
+A |- (!t. ((t = T) \/ (t = F)))
+T c\/ c= f0 cT c= f0 cF
+D DE_MORGAN_THM
+A |- (!t1. (!t2. (((~ (t1 /\ t2)) = ((~ t1) \/ (~ t2))) /\ ((~ (t1 \/ t2)) = ((~ t1) /\ (~ t2))))))
+T c/\ c= c~ c/\ f0 f1 c\/ c~ f0 c~ f1 c= c~ c\/ f0 f1 c/\ c~ f0 c~ f1
+D COND_CLAUSES
+A |- (!t1. (!t2. (((((COND T) t1) t2) = t1) /\ ((((COND F) t1) t2) = t2))))
+T c/\ c= cCOND cT f0 f1 f0 c= cCOND cF f0 f1 f1
+D list_INDUCT
+A |- (!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x))))
+T c==> c/\ * f0 cNIL ! ! c==> * f0 b1 * f0 cCONS b0 b1 ! * f0 b0
+D MEM
+A |- ((((MEM x) NIL) = F) /\ (((MEM x) ((CONS h) t)) = ((x = h) \/ ((MEM x) t))))
+T c/\ c= cMEM f0 cNIL cF c= cMEM f0 cCONS f1 f2 c\/ c= f0 f1 cMEM f0 f2
+D Tame_defs.replace
+A |- (((((replace x) ys) NIL) = NIL) /\ ((((replace x) ys) ((CONS z) zs)) = (((COND (z = x)) ((APPEND ys) zs)) ((CONS z) (((replace x) ys) zs)))))
+T c/\ c= creplace f0 f1 cNIL cNIL c= creplace f0 f1 cCONS f2 f3 cCOND c= f2 f0 cAPPEND f1 f3 cCONS f2 creplace f0 f1 f3
++ |- ((\t'. (!e'. (((h = a) = g') ==> ((g' ==> (((APPEND b) t) = t')) ==> (((~ g') ==> (((CONS h) (((replace a) b) t)) = e')) ==> ((((COND (h = a)) ((APPEND b) t)) ((CONS h) (((replace a) b) t))) = (((COND g') t') e'))))))) t')
+T * / ! c==> c= c= f0 f1 f2 c==> c==> f2 c= cAPPEND f3 f4 b0 c==> c==> c~ f2 c= cCONS f0 creplace f1 f3 f4 b1 c= cCOND c= f0 f1 cAPPEND f3 f4 cCONS f0 creplace f1 f3 f4 cCOND f2 b0 b1 f5
++ ((~ (a = h)) /\ (~ ((MEM a) t))) |- ((((h = a) = F) ==> ((F ==> (((APPEND b) t) = t')) ==> (((~ F) ==> (((CONS h) (((replace a) b) t)) = e')) ==> ((((COND (h = a)) ((APPEND b) t)) ((CONS h) (((replace a) b) t))) = (((COND F) t') e'))))) = ((F ==> (((APPEND b) t) = t')) ==> (((~ F) ==> (((CONS h) (((replace a) b) t)) = e')) ==> ((((COND (h = a)) ((APPEND b) t)) ((CONS h) (((replace a) b) t))) = (((COND F) t') e')))))
+T c==> c/\ c~ c= f0 f1 c~ cMEM f0 f2 c= c==> c= c= f1 f0 cF c==> c==> cF c= cAPPEND f3 f2 f4 c==> c==> c~ cF c= cCONS f1 creplace f0 f3 f2 f5 c= cCOND c= f1 f0 cAPPEND f3 f2 cCONS f1 creplace f0 f3 f2 cCOND cF f4 f5 c==> c==> cF c= cAPPEND f3 f2 f4 c==> c==> c~ cF c= cCONS f1 creplace f0 f3 f2 f5 c= cCOND c= f1 f0 cAPPEND f3 f2 cCONS f1 creplace f0 f3 f2 cCOND cF f4 f5
+- ((~ (a = h)) /\ (~ ((MEM a) t))) |- ((a = h) = F)
+T c==> c/\ c~ c= f0 f1 c~ cMEM f0 f2 c= c= f0 f1 cF
++ (!a. (!b. ((~ ((MEM a) t)) ==> ((((replace a) b) t) = t)))) |- ((\b. ((~ ((MEM a) t)) ==> ((((replace a) b) t) = t))) b)
+T c==> ! ! c==> c~ cMEM b0 f0 c= creplace b0 b1 f0 f0 * / c==> c~ cMEM f1 f0 c= creplace f1 b0 f0 f0 f2
++ ((~ (a = h)) /\ (~ ((MEM a) t))) |- (((~ F) ==> (((CONS h) (((replace a) b) t)) = e')) ==> ((((COND (h = a)) ((APPEND b) t)) ((CONS h) (((replace a) b) t))) = (((COND F) ((APPEND b) t)) e')))
+T c==> c/\ c~ c= f0 f1 c~ cMEM f0 f2 c==> c==> c~ cF c= cCONS f1 creplace f0 f3 f2 f4 c= cCOND c= f1 f0 cAPPEND f3 f2 cCONS f1 creplace f0 f3 f2 cCOND cF cAPPEND f3 f2 f4
++ |- ((((~ (a = h)) /\ (~ ((MEM a) t))) ==> (((((replace a) b) ((CONS h) t)) = ((CONS h) t)) = q')) ==> (((~ ((MEM a) ((CONS h) t))) ==> ((((replace a) b) ((CONS h) t)) = ((CONS h) t))) = (((~ (a = h)) /\ (~ ((MEM a) t))) ==> q')))
+T c==> c==> c/\ c~ c= f0 f1 c~ cMEM f0 f2 c= c= creplace f0 f3 cCONS f1 f2 cCONS f1 f2 f4 c= c==> c~ cMEM f0 cCONS f1 f2 c= creplace f0 f3 cCONS f1 f2 cCONS f1 f2 c==> c/\ c~ c= f0 f1 c~ cMEM f0 f2 f4
++ ((~ (a = h)) /\ (~ ((MEM a) t))) |- (((~ ((MEM a) t)) ==> ((((replace a) b) t) = t)) = ((((replace a) b) t) = t))
+T c==> c/\ c~ c= f0 f1 c~ cMEM f0 f2 c= c==> c~ cMEM f0 f2 c= creplace f0 f3 f2 f2 c= creplace f0 f3 f2 f2
++ F |- (F /\ (((APPEND b) t) = ((APPEND b) t)))
+T c==> cF c/\ cF c= cAPPEND f0 f1 cAPPEND f0 f1
++ |- ((t ==> T) = T)
+T c= c==> f0 cT cT
+- |- ((t ==> t) = T)
+T c= c==> f0 f0 cT
+- |- ((t \/ t) = t)
+T c= c\/ f0 f0 f0
++ (!a. (!b. ((~ ((MEM a) t)) ==> ((((replace a) b) t) = t)))), ((~ (a = h)) /\ (~ ((MEM a) t))) |- ((((COND (h = a)) ((APPEND b) t)) ((CONS h) (((replace a) b) t))) = (((COND F) ((APPEND b) t)) ((CONS h) t)))
+T c==> ! ! c==> c~ cMEM b0 f0 c= creplace b0 b1 f0 f0 c==> c/\ c~ c= f1 f2 c~ cMEM f1 f0 c= cCOND c= f2 f1 cAPPEND f3 f0 cCONS f2 creplace f1 f3 f0 cCOND cF cAPPEND f3 f0 cCONS f2 f0
++ |- (((h = a) = g') ==> ((g' ==> (((APPEND b) t) = t')) ==> (((~ g') ==> (((CONS h) (((replace a) b) t)) = e')) ==> ((((COND (h = a)) ((APPEND b) t)) ((CONS h) (((replace a) b) t))) = (((COND g') t') e')))))
+T c==> c= c= f0 f1 f2 c==> c==> f2 c= cAPPEND f3 f4 f5 c==> c==> c~ f2 c= cCONS f0 creplace f1 f3 f4 f6 c= cCOND c= f0 f1 cAPPEND f3 f4 cCONS f0 creplace f1 f3 f4 cCOND f2 f5 f6
++ |- (((!e'. (((h = a) = g') ==> ((g' ==> (((APPEND b) t) = t')) ==> (((~ g') ==> (((CONS h) (((replace a) b) t)) = e')) ==> ((((COND (h = a)) ((APPEND b) t)) ((CONS h) (((replace a) b) t))) = (((COND g') t') e')))))) ==> ((\e'. (((h = a) = g') ==> ((g' ==> (((APPEND b) t) = t')) ==> (((~ g') ==> (((CONS h) (((replace a) b) t)) = e')) ==> ((((COND (h = a)) ((APPEND b) t)) ((CONS h) (((replace a) b) t))) = (((COND g') t') e')))))) e')) = ((\e'. (((h = a) = g') ==> ((g' ==> (((APPEND b) t) = t')) ==> (((~ g') ==> (((CONS h) (((replace a) b) t)) = e')) ==> ((((COND (h = a)) ((APPEND b) t)) ((CONS h) (((replace a) b) t))) = (((COND g') t') e')))))) e'))
+T c= c==> ! c==> c= c= f0 f1 f2 c==> c==> f2 c= cAPPEND f3 f4 f5 c==> c==> c~ f2 c= cCONS f0 creplace f1 f3 f4 b0 c= cCOND c= f0 f1 cAPPEND f3 f4 cCONS f0 creplace f1 f3 f4 cCOND f2 f5 b0 * / c==> c= c= f0 f1 f2 c==> c==> f2 c= cAPPEND f3 f4 f5 c==> c==> c~ f2 c= cCONS f0 creplace f1 f3 f4 b0 c= cCOND c= f0 f1 cAPPEND f3 f4 cCONS f0 creplace f1 f3 f4 cCOND f2 f5 b0 f6 * / c==> c= c= f0 f1 f2 c==> c==> f2 c= cAPPEND f3 f4 f5 c==> c==> c~ f2 c= cCONS f0 creplace f1 f3 f4 b0 c= cCOND c= f0 f1 cAPPEND f3 f4 cCONS f0 creplace f1 f3 f4 cCOND f2 f5 b0 f6
++ |- ((!b. t) = t)
+T c= ! f0 f0
++ |- (!h. (!t. ((!a. (!b. ((~ ((MEM a) t)) ==> ((((replace a) b) t) = t)))) ==> (!a. (!b. ((~ ((MEM a) ((CONS h) t))) ==> ((((replace a) b) ((CONS h) t)) = ((CONS h) t))))))))
+T c==> ! ! c==> c~ cMEM b0 f0 c= creplace b0 b1 f0 f0 ! ! c==> c~ cMEM b0 cCONS f1 f0 c= creplace b0 b1 cCONS f1 f0 cCONS f1 f0
++ (!a. (!b. ((~ ((MEM a) t)) ==> ((((replace a) b) t) = t)))) |- (T = (!a. (!b. ((~ ((MEM a) ((CONS h) t))) ==> ((((replace a) b) ((CONS h) t)) = ((CONS h) t))))))
+T c==> ! ! c==> c~ cMEM b0 f0 c= creplace b0 b1 f0 f0 c= cT ! ! c==> c~ cMEM b0 cCONS f1 f0 c= creplace b0 b1 cCONS f1 f0 cCONS f1 f0
++ |- (((F ==> (((APPEND b) t) = ((APPEND b) t))) ==> (((~ F) ==> (((CONS h) (((replace a) b) t)) = e')) ==> ((((COND (h = a)) ((APPEND b) t)) ((CONS h) (((replace a) b) t))) = (((COND F) ((APPEND b) t)) e')))) = (((~ F) ==> (((CONS h) (((replace a) b) t)) = e')) ==> ((((COND (h = a)) ((APPEND b) t)) ((CONS h) (((replace a) b) t))) = (((COND F) ((APPEND b) t)) e'))))
+T c= c==> c==> cF c= cAPPEND f0 f1 cAPPEND f0 f1 c==> c==> c~ cF c= cCONS f2 creplace f3 f0 f1 f4 c= cCOND c= f2 f3 cAPPEND f0 f1 cCONS f2 creplace f3 f0 f1 cCOND cF cAPPEND f0 f1 f4 c==> c==> c~ cF c= cCONS f2 creplace f3 f0 f1 f4 c= cCOND c= f2 f3 cAPPEND f0 f1 cCONS f2 creplace f3 f0 f1 cCOND cF cAPPEND f0 f1 f4
++ (!a. (!b. ((~ ((MEM a) t)) ==> ((((replace a) b) t) = t)))) |- (((!b. ((~ ((MEM a) t)) ==> ((((replace a) b) t) = t))) ==> ((\b. ((~ ((MEM a) t)) ==> ((((replace a) b) t) = t))) b)) = ((\b. ((~ ((MEM a) t)) ==> ((((replace a) b) t) = t))) b))
+T c==> ! ! c==> c~ cMEM b0 f0 c= creplace b0 b1 f0 f0 c= c==> ! c==> c~ cMEM f1 f0 c= creplace f1 b0 f0 f0 * / c==> c~ cMEM f1 f0 c= creplace f1 b0 f0 f0 f2 * / c==> c~ cMEM f1 f0 c= creplace f1 b0 f0 f0 f2
+- ((~ (a = h)) /\ (~ ((MEM a) t))) |- (((~ (a = h)) ==> ((a = h) = F)) = ((a = h) = F))
+T c==> c/\ c~ c= f0 f1 c~ cMEM f0 f2 c= c==> c~ c= f0 f1 c= c= f0 f1 cF c= c= f0 f1 cF
+- |- ((((COND (x = x)) y) z) = y)
+T c= cCOND c= f0 f0 f1 f2 f1
+- (~ F) |- ((F = F) = T)
+T c==> c~ cF c= c= cF cF cT
+- (!a. (!b. ((~ ((MEM a) t)) ==> ((((replace a) b) t) = t)))), (~ ((MEM a) t)) |- ((~ ((MEM a) t)) /\ ((((replace a) b) t) = t))
+T c==> ! ! c==> c~ cMEM b0 f0 c= creplace b0 b1 f0 f0 c==> c~ cMEM f1 f0 c/\ c~ cMEM f1 f0 c= creplace f1 f2 f0 f0
+- F |- (F = T)
+T c==> cF c= cF cT
+- |- ((~ (t1 /\ t2)) = ((~ t1) \/ (~ t2)))
+T c= c~ c/\ f0 f1 c\/ c~ f0 c~ f1
+- ((~ (a = h)) /\ (~ ((MEM a) t))) |- (((MEM a) t) = F)
+T c==> c/\ c~ c= f0 f1 c~ cMEM f0 f2 c= cMEM f0 f2 cF
+- |- ((t /\ t) = t)
+T c= c/\ f0 f0 f0
+- ((~ (a = h)) /\ (~ ((MEM a) t))) |- (((~ ((MEM a) t)) ==> (((MEM a) t) = F)) = (((MEM a) t) = F))
+T c==> c/\ c~ c= f0 f1 c~ cMEM f0 f2 c= c==> c~ cMEM f0 f2 c= cMEM f0 f2 cF c= cMEM f0 f2 cF
+- (~ F) |- (F = F)
+T c==> c~ cF c= cF cF
+- |- ((~ F) = T)
+T c= c~ cF cT
+- |- (((MEM x) NIL) = F)
+T c= cMEM f0 cNIL cF
+- ((~ (a = h)) /\ (~ ((MEM a) t))) |- (T = (~ ((MEM a) t)))
+T c==> c/\ c~ c= f0 f1 c~ cMEM f0 f2 c= cT c~ cMEM f0 f2

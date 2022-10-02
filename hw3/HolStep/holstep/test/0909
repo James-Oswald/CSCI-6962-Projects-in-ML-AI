@@ -1,0 +1,495 @@
+N MOD_MOD_EXP_MIN
+C |- (!x. (!p. (!m. (!n. ((~ (p = (NUMERAL _0))) ==> (((x MOD (p EXP m)) MOD (p EXP n)) = (x MOD (p EXP ((MIN m) n)))))))))
+T c==> c~ c= f0 cNUMERAL c_0 c= cMOD cMOD f1 cEXP f0 f2 cEXP f0 f3 cMOD f1 cEXP f0 cMIN f2 f3
+D TRUTH
+A |- T
+T cT
+D ETA_AX
+A |- (!t. ((\x. (t x)) = t))
+T c= / * f0 b0 f0
+D EXCLUDED_MIDDLE
+A |- (!t. (t \/ (~ t)))
+T c\/ f0 c~ f0
+D BOOL_CASES_AX
+A |- (!t. ((t = T) \/ (t = F)))
+T c\/ c= f0 cT c= f0 cF
+D NOT_CLAUSES
+A |- ((!t. ((~ (~ t)) = t)) /\ (((~ T) = F) /\ ((~ F) = T)))
+T c/\ ! c= c~ c~ b0 b0 c/\ c= c~ cT cF c= c~ cF cT
+D NOT_EXISTS_THM
+A |- (!P. ((~ (?x. (P x))) = (!x. (~ (P x)))))
+T c= c~ c? / * f0 b0 ! c~ * f0 b0
+D COND_CLAUSES
+A |- (!t1. (!t2. (((((COND T) t1) t2) = t1) /\ ((((COND F) t1) t2) = t2))))
+T c/\ c= cCOND cT f0 f1 f0 c= cCOND cF f0 f1 f1
+D SKOLEM_THM
+A |- (!P. ((!x. (?y. ((P x) y))) = (?y. (!x. ((P x) (y x))))))
+T c= ! c? / * * f0 b0 b1 c? / ! * * f0 b1 * b0 b1
+D MULT_EQ_0
+A |- (!m. (!n. (((m * n) = (NUMERAL _0)) = ((m = (NUMERAL _0)) \/ (n = (NUMERAL _0))))))
+T c= c= c* f0 f1 cNUMERAL c_0 c\/ c= f0 cNUMERAL c_0 c= f1 cNUMERAL c_0
+D EXP_EQ_0
+A |- (!m. (!n. (((m EXP n) = (NUMERAL _0)) = ((m = (NUMERAL _0)) /\ (~ (n = (NUMERAL _0)))))))
+T c= c= cEXP f0 f1 cNUMERAL c_0 c/\ c= f0 cNUMERAL c_0 c~ c= f1 cNUMERAL c_0
+D EXP_ADD
+A |- (!m. (!n. (!p. ((m EXP (n + p)) = ((m EXP n) * (m EXP p))))))
+T c= cEXP f0 c+ f1 f2 c* cEXP f0 f1 cEXP f0 f2
+D MIN
+A |- (!m. (!n. (((MIN m) n) = (((COND (m <= n)) m) n))))
+T c= cMIN f0 f1 cCOND c<= f0 f1 f0 f1
+D LTE_TRANS
+A |- (!m. (!n. (!p. (((m < n) /\ (n <= p)) ==> (m < p)))))
+T c==> c/\ c< f0 f1 c<= f1 f2 c< f0 f2
+D LE_CASES
+A |- (!m. (!n. ((m <= n) \/ (n <= m))))
+T c\/ c<= f0 f1 c<= f1 f0
+D LE_EXISTS
+A |- (!m. (!n. ((m <= n) = (?d. (n = (m + d))))))
+T c= c<= f0 f1 c? / c= f1 c+ f0 b0
+D LE_ADD
+A |- (!m. (!n. (m <= (m + n))))
+T c<= f0 c+ f0 f1
+D LE_EXP
+A |- (!x. (!m. (!n. (((x EXP m) <= (x EXP n)) = (((COND (x = (NUMERAL _0))) ((m = (NUMERAL _0)) ==> (n = (NUMERAL _0)))) ((x = (NUMERAL (BIT1 _0))) \/ (m <= n)))))))
+T c= c<= cEXP f0 f1 cEXP f0 f2 cCOND c= f0 cNUMERAL c_0 c==> c= f1 cNUMERAL c_0 c= f2 cNUMERAL c_0 c\/ c= f0 cNUMERAL cBIT1 c_0 c<= f1 f2
+D DIVISION
+A |- (!m. (!n. ((~ (n = (NUMERAL _0))) ==> ((m = (((m DIV n) * n) + (m MOD n))) /\ ((m MOD n) < n)))))
+T c==> c~ c= f0 cNUMERAL c_0 c/\ c= f1 c+ c* cDIV f1 f0 f0 cMOD f1 f0 c< cMOD f1 f0 f0
+D MOD_LT
+A |- (!m. (!n. ((m < n) ==> ((m MOD n) = m))))
+T c==> c< f0 f1 c= cMOD f0 f1 f0
+D MOD_MOD
+A |- (!m. (!n. (!p. ((~ ((n * p) = (NUMERAL _0))) ==> (((m MOD (n * p)) MOD n) = (m MOD n))))))
+T c==> c~ c= c* f0 f1 cNUMERAL c_0 c= cMOD cMOD f2 c* f0 f1 f0 cMOD f2 f0
++ |- ((\n. (!m. (!p. ((~ (p = (NUMERAL _0))) ==> ((~ (m <= n)) ==> ((~ (?d. (m = (n + d)))) ==> ((!m. (!n. ((m <= n) = (?d. (n = (m + d)))))) ==> ((!m. (!n. ((m <= n) \/ (n <= m)))) ==> F)))))))) n)
+T * / ! ! c==> c~ c= b2 cNUMERAL c_0 c==> c~ c<= b1 b0 c==> c~ c? / c= b1 c+ b0 b3 c==> ! ! c= c<= b3 b3 c? / c= b3 c+ b3 b3 c==> ! ! c\/ c<= b3 b3 c<= b3 b3 cF f0
++ (!m. (!n. ((m <= n) \/ (n <= m)))), (~ (?d. (m = (n + d)))), (~ (m <= n)) |- (((!x. (((\d. ((!m. (!n. ((m <= n) \/ (!d. (~ (n = (m + d))))))) /\ (!m. (!n. ((~ (m <= n)) \/ (n = (m + ((d m) n)))))))) x) ==> F)) ==> ((?d. ((!m. (!n. ((m <= n) \/ (!d. (~ (n = (m + d))))))) /\ (!m. (!n. ((~ (m <= n)) \/ (n = (m + ((d m) n)))))))) ==> F)) = ((?d. ((!m. (!n. ((m <= n) \/ (!d. (~ (n = (m + d))))))) /\ (!m. (!n. ((~ (m <= n)) \/ (n = (m + ((d m) n)))))))) ==> F))
+T c==> ! ! c\/ c<= b0 b1 c<= b1 b0 c==> c~ c? / c= f0 c+ f1 b0 c==> c~ c<= f0 f1 c= c==> ! c==> * / c/\ ! ! c\/ c<= b2 b3 ! c~ c= b3 c+ b2 b4 ! ! c\/ c~ c<= b2 b3 c= b3 c+ b2 * * b1 b2 b3 b0 cF c==> c? / c/\ ! ! c\/ c<= b1 b2 ! c~ c= b2 c+ b1 b3 ! ! c\/ c~ c<= b1 b2 c= b2 c+ b1 * * b0 b1 b2 cF c==> c? / c/\ ! ! c\/ c<= b1 b2 ! c~ c= b2 c+ b1 b3 ! ! c\/ c~ c<= b1 b2 c= b2 c+ b1 * * b0 b1 b2 cF
++ (~ F) |- ((~ F) /\ (((p = (NUMERAL (BIT1 _0))) \/ (m <= (m + d))) = T))
+T c==> c~ cF c/\ c~ cF c= c\/ c= f0 cNUMERAL cBIT1 c_0 c<= f1 c+ f1 f2 cT
+- |- ((!n'. ((m <= n) \/ (n' <= m))) = ((m <= n) \/ (!n. (n <= m))))
+T c= ! c\/ c<= f0 f1 c<= b0 f0 c\/ c<= f0 f1 ! c<= b0 f0
++ (~ (p = (NUMERAL _0))) |- ((((COND (p = (NUMERAL _0))) ((m = (NUMERAL _0)) ==> ((m + d) = (NUMERAL _0)))) ((p = (NUMERAL (BIT1 _0))) \/ (m <= (m + d)))) = (((COND F) ((m = (NUMERAL _0)) ==> (((NUMERAL _0) + d) = (NUMERAL _0)))) T))
+T c==> c~ c= f0 cNUMERAL c_0 c= cCOND c= f0 cNUMERAL c_0 c==> c= f1 cNUMERAL c_0 c= c+ f1 f2 cNUMERAL c_0 c\/ c= f0 cNUMERAL cBIT1 c_0 c<= f1 c+ f1 f2 cCOND cF c==> c= f1 cNUMERAL c_0 c= c+ cNUMERAL c_0 f2 cNUMERAL c_0 cT
++ |- (((!m. ((m < n) ==> ((m MOD n) = m))) ==> ((\m. ((m < n) ==> ((m MOD n) = m))) m)) = ((\m. ((m < n) ==> ((m MOD n) = m))) m))
+T c= c==> ! c==> c< b0 f0 c= cMOD b0 f0 b0 * / c==> c< b0 f0 c= cMOD b0 f0 b0 f1 * / c==> c< b0 f0 c= cMOD b0 f0 b0 f1
++ (!m. (!n. (!p. (((m < n) /\ (n <= p)) ==> (m < p))))), ((m < n) /\ (n <= p)) |- ((!m. (!n. (!p. (((m < n) /\ (n <= p)) ==> (m < p))))) /\ (m < p))
+T c==> ! ! ! c==> c/\ c< b0 b1 c<= b1 b2 c< b0 b2 c==> c/\ c< f0 f1 c<= f1 f2 c/\ ! ! ! c==> c/\ c< b0 b1 c<= b1 b2 c< b0 b2 c< f0 f2
++ |- (((!m. (!n. ((m <= n) \/ (!d. (~ (n = (m + d))))))) /\ (?d. (!m. (!n. ((~ (m <= n)) \/ (n = (m + ((d m) n)))))))) = (?d. ((!m. (!n. ((m <= n) \/ (!d. (~ (n = (m + d))))))) /\ (!m. (!n. ((~ (m <= n)) \/ (n = (m + ((d m) n)))))))))
+T c= c/\ ! ! c\/ c<= b0 b1 ! c~ c= b1 c+ b0 b2 c? / ! ! c\/ c~ c<= b1 b2 c= b2 c+ b1 * * b0 b1 b2 c? / c/\ ! ! c\/ c<= b1 b2 ! c~ c= b2 c+ b1 b3 ! ! c\/ c~ c<= b1 b2 c= b2 c+ b1 * * b0 b1 b2
++ |- (((!p'. (!q'. (((m = (NUMERAL _0)) = p') ==> ((p' ==> (((m + d) = (NUMERAL _0)) = q')) ==> (((m = (NUMERAL _0)) ==> ((m + d) = (NUMERAL _0))) = (p' ==> q')))))) ==> ((\p'. (!q'. (((m = (NUMERAL _0)) = p') ==> ((p' ==> (((m + d) = (NUMERAL _0)) = q')) ==> (((m = (NUMERAL _0)) ==> ((m + d) = (NUMERAL _0))) = (p' ==> q')))))) p')) = ((\p'. (!q'. (((m = (NUMERAL _0)) = p') ==> ((p' ==> (((m + d) = (NUMERAL _0)) = q')) ==> (((m = (NUMERAL _0)) ==> ((m + d) = (NUMERAL _0))) = (p' ==> q')))))) p'))
+T c= c==> ! ! c==> c= c= f0 cNUMERAL c_0 b0 c==> c==> b0 c= c= c+ f0 f1 cNUMERAL c_0 b1 c= c==> c= f0 cNUMERAL c_0 c= c+ f0 f1 cNUMERAL c_0 c==> b0 b1 * / ! c==> c= c= f0 cNUMERAL c_0 b0 c==> c==> b0 c= c= c+ f0 f1 cNUMERAL c_0 b1 c= c==> c= f0 cNUMERAL c_0 c= c+ f0 f1 cNUMERAL c_0 c==> b0 b1 f2 * / ! c==> c= c= f0 cNUMERAL c_0 b0 c==> c==> b0 c= c= c+ f0 f1 cNUMERAL c_0 b1 c= c==> c= f0 cNUMERAL c_0 c= c+ f0 f1 cNUMERAL c_0 c==> b0 b1 f2
++ |- ((!m. ((!n. ((m <= n) \/ (!d. (~ (n = (m + d)))))) /\ (!n. ((~ (m <= n)) \/ (?d. (n = (m + d))))))) = ((!m. (!n. ((m <= n) \/ (!d. (~ (n = (m + d))))))) /\ (!m. (!n. ((~ (m <= n)) \/ (?d. (n = (m + d))))))))
+T c= ! c/\ ! c\/ c<= b0 b1 ! c~ c= b1 c+ b0 b2 ! c\/ c~ c<= b0 b1 c? / c= b1 c+ b0 b2 c/\ ! ! c\/ c<= b0 b1 ! c~ c= b1 c+ b0 b2 ! ! c\/ c~ c<= b0 b1 c? / c= b1 c+ b0 b2
++ |- ((\m. (!n. (m <= (m + n)))) m)
+T * / ! c<= b0 c+ b0 b1 f0
++ (!m. (!n. ((m < n) ==> ((m MOD n) = m)))) |- ((!m. (!n. ((m < n) ==> ((m MOD n) = m)))) /\ (!n. (!m. ((m < n) ==> ((m MOD n) = m)))))
+T c==> ! ! c==> c< b0 b1 c= cMOD b0 b1 b0 c/\ ! ! c==> c< b0 b1 c= cMOD b0 b1 b0 ! ! c==> c< b1 b0 c= cMOD b1 b0 b1
++ (~ (p = (NUMERAL _0))) |- ((n = (m + d)) ==> (((x MOD (p EXP m)) MOD (p EXP n)) = (x MOD (p EXP m))))
+T c==> c~ c= f0 cNUMERAL c_0 c==> c= f1 c+ f2 f3 c= cMOD cMOD f4 cEXP f0 f2 cEXP f0 f1 cMOD f4 cEXP f0 f2
++ (~ (p = (NUMERAL _0))) |- (~ (((p EXP n) * (p EXP d)) = (NUMERAL _0)))
+T c==> c~ c= f0 cNUMERAL c_0 c~ c= c* cEXP f0 f1 cEXP f0 f2 cNUMERAL c_0
++ |- (((!m. (!n. (!p. ((m EXP (n + p)) = ((m EXP n) * (m EXP p)))))) ==> ((\m. (!n. (!p. ((m EXP (n + p)) = ((m EXP n) * (m EXP p)))))) m)) = ((\m. (!n. (!p. ((m EXP (n + p)) = ((m EXP n) * (m EXP p)))))) m))
+T c= c==> ! ! ! c= cEXP b0 c+ b1 b2 c* cEXP b0 b1 cEXP b0 b2 * / ! ! c= cEXP b0 c+ b1 b2 c* cEXP b0 b1 cEXP b0 b2 f0 * / ! ! c= cEXP b0 c+ b1 b2 c* cEXP b0 b1 cEXP b0 b2 f0
++ |- (((!m. (!p. ((?n. ((m < n) /\ (n <= p))) ==> (m < p)))) ==> ((\m. (!p. ((?n. ((m < n) /\ (n <= p))) ==> (m < p)))) m)) = ((\m. (!p. ((?n. ((m < n) /\ (n <= p))) ==> (m < p)))) m))
+T c= c==> ! ! c==> c? / c/\ c< b0 b2 c<= b2 b1 c< b0 b1 * / ! c==> c? / c/\ c< b0 b2 c<= b2 b1 c< b0 b1 f0 * / ! c==> c? / c/\ c< b0 b2 c<= b2 b1 c< b0 b1 f0
+- |- ((\t1. (!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))))) t1)
+T * / ! ! c= c\/ b0 c\/ b1 b2 c\/ c\/ b0 b1 b2 f0
++ |- ((~ (m <= n)) ==> ((~ (?d. (m = (n + d)))) ==> ((!m. (!n. ((m <= n) = (?d. (n = (m + d)))))) ==> (~ (!m. (!n. ((m <= n) \/ (n <= m))))))))
+T c==> c~ c<= f0 f1 c==> c~ c? / c= f0 c+ f1 b0 c==> ! ! c= c<= b0 b1 c? / c= b1 c+ b0 b2 c~ ! ! c\/ c<= b0 b1 c<= b1 b0
++ |- (((m = (NUMERAL _0)) ==> ((m + d) = (NUMERAL _0))) = ((m = (NUMERAL _0)) ==> (((NUMERAL _0) + d) = (NUMERAL _0))))
+T c= c==> c= f0 cNUMERAL c_0 c= c+ f0 f1 cNUMERAL c_0 c==> c= f0 cNUMERAL c_0 c= c+ cNUMERAL c_0 f1 cNUMERAL c_0
++ (~ (p = (NUMERAL _0))) |- (((x MOD (p EXP m)) < (p EXP m)) /\ ((p EXP m) <= (p EXP (m + d))))
+T c==> c~ c= f0 cNUMERAL c_0 c/\ c< cMOD f1 cEXP f0 f2 cEXP f0 f2 c<= cEXP f0 f2 cEXP f0 c+ f2 f3
+- (~ (p = (NUMERAL _0))) |- (((~ ((NUMERAL _0) = p)) ==> (((NUMERAL _0) = p) = F)) = (((NUMERAL _0) = p) = F))
+T c==> c~ c= f0 cNUMERAL c_0 c= c==> c~ c= cNUMERAL c_0 f0 c= c= cNUMERAL c_0 f0 cF c= c= cNUMERAL c_0 f0 cF
++ |- ((\t. (t \/ (~ t))) (m <= n))
+T * / c\/ b0 c~ b0 c<= f0 f1
++ (~ (?d. (m = (n + d)))), (~ (p = (NUMERAL _0))), (~ (m <= n)) |- ((!m. (!n. ((m <= n) \/ (n <= m)))) ==> F)
+T c==> c~ c? / c= f0 c+ f1 b0 c==> c~ c= f2 cNUMERAL c_0 c==> c~ c<= f0 f1 c==> ! ! c\/ c<= b0 b1 c<= b1 b0 cF
++ (!m. (!n. (!p. (((m < n) /\ (n <= p)) ==> (m < p))))) |- ((\n. (!p. (((m < n) /\ (n <= p)) ==> (m < p)))) n)
+T c==> ! ! ! c==> c/\ c< b0 b1 c<= b1 b2 c< b0 b2 * / ! c==> c/\ c< f0 b0 c<= b0 b1 c< f0 b1 f1
+- |- ((!n'. ((m <= n') \/ (!d. (~ (n = (m + d)))))) = ((!n. (m <= n)) \/ (!d. (~ (n = (m + d))))))
+T c= ! c\/ c<= f0 b0 ! c~ c= f1 c+ f0 b1 c\/ ! c<= f0 b0 ! c~ c= f1 c+ f0 b0
++ (!m. (!n. ((m <= n) \/ (n <= m)))), (~ (?d. (m = (n + d)))), (~ (m <= n)) |- ((?d. ((!m. (!n. ((m <= n) \/ (!d. (~ (n = (m + d))))))) /\ (!m. (!n. ((~ (m <= n)) \/ (n = (m + ((d m) n)))))))) ==> F)
+T c==> ! ! c\/ c<= b0 b1 c<= b1 b0 c==> c~ c? / c= f0 c+ f1 b0 c==> c~ c<= f0 f1 c==> c? / c/\ ! ! c\/ c<= b1 b2 ! c~ c= b2 c+ b1 b3 ! ! c\/ c~ c<= b1 b2 c= b2 c+ b1 * * b0 b1 b2 cF
++ |- ((a \/ b) = ((~ b) ==> a))
+T c= c\/ f0 f1 c==> c~ f1 f0
++ ((\d. ((!m. (!n. ((m <= n) \/ (!d. (~ (n = (m + d))))))) /\ (!m. (!n. ((~ (m <= n)) \/ (n = (m + ((d m) n)))))))) d) |- ((!m. (!n. ((m <= n) \/ (!d. (~ (n = (m + d))))))) /\ (!m. (!n. ((~ (m <= n)) \/ (n = (m + ((d m) n)))))))
+T c==> * / c/\ ! ! c\/ c<= b1 b2 ! c~ c= b2 c+ b1 b3 ! ! c\/ c~ c<= b1 b2 c= b2 c+ b1 * * b0 b1 b2 f0 c/\ ! ! c\/ c<= b0 b1 ! c~ c= b1 c+ b0 b2 ! ! c\/ c~ c<= b0 b1 c= b1 c+ b0 * * f0 b0 b1
++ |- ((((x MOD (p EXP m)) MOD (p EXP n)) = (x MOD (p EXP (((COND (m <= n)) m) n)))) = (((x MOD (p EXP m)) MOD (p EXP n)) = (x MOD (p EXP ((MIN m) n)))))
+T c= c= cMOD cMOD f0 cEXP f1 f2 cEXP f1 f3 cMOD f0 cEXP f1 cCOND c<= f2 f3 f2 f3 c= cMOD cMOD f0 cEXP f1 f2 cEXP f1 f3 cMOD f0 cEXP f1 cMIN f2 f3
++ ((\d. (n = (m + d))) d) |- (((n = (m + d)) ==> (((x MOD (p EXP m)) MOD (p EXP n)) = (x MOD (p EXP m)))) = (((x MOD (p EXP m)) MOD (p EXP n)) = (x MOD (p EXP m))))
+T c==> * / c= f0 c+ f1 b0 f2 c= c==> c= f0 c+ f1 f2 c= cMOD cMOD f3 cEXP f4 f1 cEXP f4 f0 cMOD f3 cEXP f4 f1 c= cMOD cMOD f3 cEXP f4 f1 cEXP f4 f0 cMOD f3 cEXP f4 f1
++ (~ (p = (NUMERAL _0))), ((~ (m <= n)) ==> (((x MOD (p EXP m)) MOD (p EXP n)) = (x MOD (p EXP (((COND (m <= n)) m) n))))) |- (((x MOD (p EXP m)) MOD (p EXP n)) = (x MOD (p EXP (((COND (m <= n)) m) n))))
+T c==> c~ c= f0 cNUMERAL c_0 c==> c==> c~ c<= f1 f2 c= cMOD cMOD f3 cEXP f0 f1 cEXP f0 f2 cMOD f3 cEXP f0 cCOND c<= f1 f2 f1 f2 c= cMOD cMOD f3 cEXP f0 f1 cEXP f0 f2 cMOD f3 cEXP f0 cCOND c<= f1 f2 f1 f2
++ (~ (p = (NUMERAL _0))) |- ((~ (p = (NUMERAL _0))) /\ ((~ (m <= n)) ==> ((~ (?d. (m = (n + d)))) ==> ((!m. (!n. ((m <= n) = (?d. (n = (m + d)))))) ==> (~ (!m. (!n. ((m <= n) \/ (n <= m)))))))))
+T c==> c~ c= f0 cNUMERAL c_0 c/\ c~ c= f0 cNUMERAL c_0 c==> c~ c<= f1 f2 c==> c~ c? / c= f1 c+ f2 b0 c==> ! ! c= c<= b0 b1 c? / c= b1 c+ b0 b2 c~ ! ! c\/ c<= b0 b1 c<= b1 b0
+- ((!m. (!n. ((m <= n) \/ (!d. (~ (n = (m + d))))))) /\ (!m. (!n. ((~ (m <= n)) \/ (n = (m + ((d m) n))))))) |- (!d. ((_3739 <= _3740) \/ (~ (_3740 = (_3739 + d)))))
+T c==> c/\ ! ! c\/ c<= b0 b1 ! c~ c= b1 c+ b0 b2 ! ! c\/ c~ c<= b0 b1 c= b1 c+ b0 * * f0 b0 b1 ! c\/ c<= f1 f2 c~ c= f2 c+ f1 b0
++ (!m. (!n. ((m <= n) = (?d. (n = (m + d)))))), (!m. (!n. ((m <= n) \/ (n <= m)))), (~ (?d. (m = (n + d)))), (~ (m <= n)) |- F
+T c==> ! ! c= c<= b0 b1 c? / c= b1 c+ b0 b2 c==> ! ! c\/ c<= b0 b1 c<= b1 b0 c==> c~ c? / c= f0 c+ f1 b0 c==> c~ c<= f0 f1 cF
+- |- ((P \/ (!d. (Q d))) = (!d. (P \/ (Q d))))
+T c= c\/ f0 ! * f1 b0 ! c\/ f0 * f1 b0
++ |- (((!t. (t \/ (~ t))) ==> ((\t. (t \/ (~ t))) (m <= n))) = ((\t. (t \/ (~ t))) (m <= n)))
+T c= c==> ! c\/ b0 c~ b0 * / c\/ b0 c~ b0 c<= f0 f1 * / c\/ b0 c~ b0 c<= f0 f1
++ |- ((~ F) ==> (((p = (NUMERAL (BIT1 _0))) \/ (m <= (m + d))) = T))
+T c==> c~ cF c= c\/ c= f0 cNUMERAL cBIT1 c_0 c<= f1 c+ f1 f2 cT
++ (~ (p = (NUMERAL _0))) |- ((F ==> (((m = (NUMERAL _0)) ==> ((m + d) = (NUMERAL _0))) = t')) ==> (((~ F) ==> (((p = (NUMERAL (BIT1 _0))) \/ (m <= (m + d))) = e')) ==> ((((COND (p = (NUMERAL _0))) ((m = (NUMERAL _0)) ==> ((m + d) = (NUMERAL _0)))) ((p = (NUMERAL (BIT1 _0))) \/ (m <= (m + d)))) = (((COND F) t') e'))))
+T c==> c~ c= f0 cNUMERAL c_0 c==> c==> cF c= c==> c= f1 cNUMERAL c_0 c= c+ f1 f2 cNUMERAL c_0 f3 c==> c==> c~ cF c= c\/ c= f0 cNUMERAL cBIT1 c_0 c<= f1 c+ f1 f2 f4 c= cCOND c= f0 cNUMERAL c_0 c==> c= f1 cNUMERAL c_0 c= c+ f1 f2 cNUMERAL c_0 c\/ c= f0 cNUMERAL cBIT1 c_0 c<= f1 c+ f1 f2 cCOND cF f3 f4
++ |- ((t \/ T) = T)
+T c= c\/ f0 cT cT
+- (m < n) |- ((!m. (!n. ((m < n) ==> ((m MOD n) = m)))) ==> ((m MOD n) = m))
+T c==> c< f0 f1 c==> ! ! c==> c< b0 b1 c= cMOD b0 b1 b0 c= cMOD f0 f1 f0
++ ((!m. (!n. ((m <= n) \/ (!d. (~ (n = (m + d))))))) /\ (!m. (!n. ((~ (m <= n)) \/ (n = (m + ((d m) n))))))) |- ((~ (_3742 <= _3743)) \/ (_3743 = (_3742 + ((d _3742) _3743))))
+T c==> c/\ ! ! c\/ c<= b0 b1 ! c~ c= b1 c+ b0 b2 ! ! c\/ c~ c<= b0 b1 c= b1 c+ b0 * * f0 b0 b1 c\/ c~ c<= f1 f2 c= f2 c+ f1 * * f0 f1 f2
++ (!m. (!n. ((m <= n) \/ (n <= m)))), (~ (m <= n)) |- (((n <= m) ==> (m = (n + ((d n) m)))) = (m = (n + ((d n) m))))
+T c==> ! ! c\/ c<= b0 b1 c<= b1 b0 c==> c~ c<= f0 f1 c= c==> c<= f1 f0 c= f0 c+ f1 * * f2 f1 f0 c= f0 c+ f1 * * f2 f1 f0
++ ((!m. (!n. ((m <= n) \/ (!d. (~ (n = (m + d))))))) /\ (!m. (!n. ((~ (m <= n)) \/ (n = (m + ((d m) n))))))) |- ((\m. (!n. ((~ (m <= n)) \/ (n = (m + ((d m) n)))))) _3742)
+T c==> c/\ ! ! c\/ c<= b0 b1 ! c~ c= b1 c+ b0 b2 ! ! c\/ c~ c<= b0 b1 c= b1 c+ b0 * * f0 b0 b1 * / ! c\/ c~ c<= b0 b1 c= b1 c+ b0 * * f0 b0 b1 f1
+- |- ((~ (n = (NUMERAL _0))) ==> ((m = (((m DIV n) * n) + (m MOD n))) = T))
+T c==> c~ c= f0 cNUMERAL c_0 c= c= f1 c+ c* cDIV f1 f0 f0 cMOD f1 f0 cT
++ |- ((\n. (!m. ((m < n) ==> ((m MOD n) = m)))) n)
+T * / ! c==> c< b1 b0 c= cMOD b1 b0 b1 f0
+- |- ((?d. (P d)) = ((P T) \/ (P F)))
+T c= c? / * f0 b0 c\/ * f0 cT * f0 cF
+- |- ((((~ (p = (NUMERAL _0))) ==> ((~ (m <= n)) ==> ((~ (?d. (m = (n + d)))) ==> ((!m. (!n. ((m <= n) = (?d. (n = (m + d)))))) ==> ((!m. (!n. ((m <= n) \/ (n <= m)))) ==> F))))) ==> ((~ (p = (NUMERAL _0))) ==> ((~ (m <= n)) ==> ((~ (?d. (m = (n + d)))) ==> ((!m. (!n. ((m <= n) = (?d. (n = (m + d)))))) ==> ((!m. (!n. ((m <= n) \/ (n <= m)))) ==> F)))))) = ((~ (p = (NUMERAL _0))) ==> ((~ (m <= n)) ==> ((~ (?d. (m = (n + d)))) ==> ((!m. (!n. ((m <= n) = (?d. (n = (m + d)))))) ==> ((!m. (!n. ((m <= n) \/ (n <= m)))) ==> F))))))
+T c= c==> c==> c~ c= f0 cNUMERAL c_0 c==> c~ c<= f1 f2 c==> c~ c? / c= f1 c+ f2 b0 c==> ! ! c= c<= b0 b1 c? / c= b1 c+ b0 b2 c==> ! ! c\/ c<= b0 b1 c<= b1 b0 cF c==> c~ c= f0 cNUMERAL c_0 c==> c~ c<= f1 f2 c==> c~ c? / c= f1 c+ f2 b0 c==> ! ! c= c<= b0 b1 c? / c= b1 c+ b0 b2 c==> ! ! c\/ c<= b0 b1 c<= b1 b0 cF c==> c~ c= f0 cNUMERAL c_0 c==> c~ c<= f1 f2 c==> c~ c? / c= f1 c+ f2 b0 c==> ! ! c= c<= b0 b1 c? / c= b1 c+ b0 b2 c==> ! ! c\/ c<= b0 b1 c<= b1 b0 cF
++ |- ((((~ F) ==> (((p = (NUMERAL (BIT1 _0))) \/ (m <= (m + d))) = T)) ==> ((((COND (p = (NUMERAL _0))) ((m = (NUMERAL _0)) ==> ((m + d) = (NUMERAL _0)))) ((p = (NUMERAL (BIT1 _0))) \/ (m <= (m + d)))) = (((COND F) ((m = (NUMERAL _0)) ==> (((NUMERAL _0) + d) = (NUMERAL _0)))) T))) = ((((COND (p = (NUMERAL _0))) ((m = (NUMERAL _0)) ==> ((m + d) = (NUMERAL _0)))) ((p = (NUMERAL (BIT1 _0))) \/ (m <= (m + d)))) = (((COND F) ((m = (NUMERAL _0)) ==> (((NUMERAL _0) + d) = (NUMERAL _0)))) T)))
+T c= c==> c==> c~ cF c= c\/ c= f0 cNUMERAL cBIT1 c_0 c<= f1 c+ f1 f2 cT c= cCOND c= f0 cNUMERAL c_0 c==> c= f1 cNUMERAL c_0 c= c+ f1 f2 cNUMERAL c_0 c\/ c= f0 cNUMERAL cBIT1 c_0 c<= f1 c+ f1 f2 cCOND cF c==> c= f1 cNUMERAL c_0 c= c+ cNUMERAL c_0 f2 cNUMERAL c_0 cT c= cCOND c= f0 cNUMERAL c_0 c==> c= f1 cNUMERAL c_0 c= c+ f1 f2 cNUMERAL c_0 c\/ c= f0 cNUMERAL cBIT1 c_0 c<= f1 c+ f1 f2 cCOND cF c==> c= f1 cNUMERAL c_0 c= c+ cNUMERAL c_0 f2 cNUMERAL c_0 cT
++ (!m. (!n. ((m <= n) = (?d. (n = (m + d)))))), (~ (?d. (m = (n + d)))), (~ (m <= n)) |- ((!m. (!n. ((m <= n) = (?d. (n = (m + d)))))) /\ (~ (!m. (!n. ((m <= n) \/ (n <= m))))))
+T c==> ! ! c= c<= b0 b1 c? / c= b1 c+ b0 b2 c==> c~ c? / c= f0 c+ f1 b0 c==> c~ c<= f0 f1 c/\ ! ! c= c<= b0 b1 c? / c= b1 c+ b0 b2 c~ ! ! c\/ c<= b0 b1 c<= b1 b0
++ |- ((\m. (!p. ((?n. ((m < n) /\ (n <= p))) ==> (m < p)))) m)
+T * / ! c==> c? / c/\ c< b0 b2 c<= b2 b1 c< b0 b1 f0
++ |- ((\p. ((?n. ((m < n) /\ (n <= p))) ==> (m < p))) p)
+T * / c==> c? / c/\ c< f0 b1 c<= b1 b0 c< f0 b0 f1
+- |- ((t ==> t) = T)
+T c= c==> f0 f0 cT
++ |- ((~ (n = (NUMERAL _0))) ==> (((m MOD n) < n) = T))
+T c==> c~ c= f0 cNUMERAL c_0 c= c< cMOD f1 f0 f0 cT
+- |- ((p \/ p) = p)
+T c= c\/ f0 f0 f0
++ |- (((!m. (!n. ((~ (n = (NUMERAL _0))) ==> ((m = (((m DIV n) * n) + (m MOD n))) /\ ((m MOD n) < n))))) ==> ((\m. (!n. ((~ (n = (NUMERAL _0))) ==> ((m = (((m DIV n) * n) + (m MOD n))) /\ ((m MOD n) < n))))) m)) = ((\m. (!n. ((~ (n = (NUMERAL _0))) ==> ((m = (((m DIV n) * n) + (m MOD n))) /\ ((m MOD n) < n))))) m))
+T c= c==> ! ! c==> c~ c= b1 cNUMERAL c_0 c/\ c= b0 c+ c* cDIV b0 b1 b1 cMOD b0 b1 c< cMOD b0 b1 b1 * / ! c==> c~ c= b1 cNUMERAL c_0 c/\ c= b0 c+ c* cDIV b0 b1 b1 cMOD b0 b1 c< cMOD b0 b1 b1 f0 * / ! c==> c~ c= b1 cNUMERAL c_0 c/\ c= b0 c+ c* cDIV b0 b1 b1 cMOD b0 b1 c< cMOD b0 b1 b1 f0
++ |- ((!n. (!m. (!p. ((~ (p = (NUMERAL _0))) ==> ((~ (m <= n)) ==> ((~ (?d. (m = (n + d)))) ==> ((!m. (!n. ((m <= n) = (?d. (n = (m + d)))))) ==> (~ (!m. (!n. ((m <= n) \/ (n <= m)))))))))))) = (!n. (!m. (!p. ((~ (p = (NUMERAL _0))) ==> ((~ (m <= n)) ==> ((~ (?d. (m = (n + d)))) ==> ((!m. (!n. ((m <= n) = (?d. (n = (m + d)))))) ==> ((!m. (!n. ((m <= n) \/ (n <= m)))) ==> F)))))))))
+T c= ! ! ! c==> c~ c= b2 cNUMERAL c_0 c==> c~ c<= b1 b0 c==> c~ c? / c= b1 c+ b0 b3 c==> ! ! c= c<= b3 b3 c? / c= b3 c+ b3 b3 c~ ! ! c\/ c<= b3 b3 c<= b3 b3 ! ! ! c==> c~ c= b2 cNUMERAL c_0 c==> c~ c<= b1 b0 c==> c~ c? / c= b1 c+ b0 b3 c==> ! ! c= c<= b3 b3 c? / c= b3 c+ b3 b3 c==> ! ! c\/ c<= b3 b3 c<= b3 b3 cF
++ |- ((\q'. (((m = (NUMERAL _0)) = p') ==> ((p' ==> (((m + d) = (NUMERAL _0)) = q')) ==> (((m = (NUMERAL _0)) ==> ((m + d) = (NUMERAL _0))) = (p' ==> q'))))) q')
+T * / c==> c= c= f0 cNUMERAL c_0 f1 c==> c==> f1 c= c= c+ f0 f2 cNUMERAL c_0 b0 c= c==> c= f0 cNUMERAL c_0 c= c+ f0 f2 cNUMERAL c_0 c==> f1 b0 f3
++ |- (((!p. ((~ ((n * p) = (NUMERAL _0))) ==> (((m MOD (n * p)) MOD n) = (m MOD n)))) ==> ((\p. ((~ ((n * p) = (NUMERAL _0))) ==> (((m MOD (n * p)) MOD n) = (m MOD n)))) p)) = ((\p. ((~ ((n * p) = (NUMERAL _0))) ==> (((m MOD (n * p)) MOD n) = (m MOD n)))) p))
+T c= c==> ! c==> c~ c= c* f0 b0 cNUMERAL c_0 c= cMOD cMOD f1 c* f0 b0 f0 cMOD f1 f0 * / c==> c~ c= c* f0 b0 cNUMERAL c_0 c= cMOD cMOD f1 c* f0 b0 f0 cMOD f1 f0 f2 * / c==> c~ c= c* f0 b0 cNUMERAL c_0 c= cMOD cMOD f1 c* f0 b0 f0 cMOD f1 f0 f2
++ ((!m. (!n. ((m <= n) \/ (!d. (~ (n = (m + d))))))) /\ (!m. (!n. ((~ (m <= n)) \/ (n = (m + ((d m) n))))))) |- (!n. ((~ (_3742 <= n)) \/ (n = (_3742 + ((d _3742) n)))))
+T c==> c/\ ! ! c\/ c<= b0 b1 ! c~ c= b1 c+ b0 b2 ! ! c\/ c~ c<= b0 b1 c= b1 c+ b0 * * f0 b0 b1 ! c\/ c~ c<= f1 b0 c= b0 c+ f1 * * f0 f1 b0
++ (!m. (!n. (!p. (((m < n) /\ (n <= p)) ==> (m < p))))) |- (!n. (!p. (((m < n) /\ (n <= p)) ==> (m < p))))
+T c==> ! ! ! c==> c/\ c< b0 b1 c<= b1 b2 c< b0 b2 ! ! c==> c/\ c< f0 b0 c<= b0 b1 c< f0 b1
++ |- ((!m. (!n. ((~ (p = (NUMERAL _0))) ==> (((x MOD (p EXP m)) MOD (p EXP n)) = (x MOD (p EXP ((MIN m) n))))))) = T)
+T c= ! ! c==> c~ c= f0 cNUMERAL c_0 c= cMOD cMOD f1 cEXP f0 b0 cEXP f0 b1 cMOD f1 cEXP f0 cMIN b0 b1 cT
+- |- ((\t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))) t3)
+T * / c= c\/ f0 c\/ f1 b0 c\/ c\/ f0 f1 b0 f2
++ |- ((\p. ((~ (p = (NUMERAL _0))) ==> ((~ (m <= n)) ==> ((~ (?d. (m = (n + d)))) ==> ((!m. (!n. ((m <= n) = (?d. (n = (m + d)))))) ==> ((!m. (!n. ((m <= n) \/ (n <= m)))) ==> F)))))) p)
+T * / c==> c~ c= b0 cNUMERAL c_0 c==> c~ c<= f0 f1 c==> c~ c? / c= f0 c+ f1 b1 c==> ! ! c= c<= b1 b2 c? / c= b2 c+ b1 b3 c==> ! ! c\/ c<= b1 b2 c<= b2 b1 cF f2
++ (m = (n + d)) |- ((((x MOD (p EXP m)) MOD (p EXP n)) = (x MOD (p EXP n))) = (((x MOD (p EXP (n + d))) MOD (p EXP n)) = (x MOD (p EXP n))))
+T c==> c= f0 c+ f1 f2 c= c= cMOD cMOD f3 cEXP f4 f0 cEXP f4 f1 cMOD f3 cEXP f4 f1 c= cMOD cMOD f3 cEXP f4 c+ f1 f2 cEXP f4 f1 cMOD f3 cEXP f4 f1
+- |- (((~ p) ==> p) = p)
+T c= c==> c~ f0 f0 f0
+- |- (((x = x) ==> p) = p)
+T c= c==> c= f0 f0 f1 f1
+- (_3748 = _3750) |- ((_3748 = _3750) /\ ((~ (_3749 = _3751)) \/ (((d _3748) _3749) = ((d _3750) _3751))))
+T c==> c= f0 f1 c/\ c= f0 f1 c\/ c~ c= f2 f3 c= * * f4 f0 f2 * * f4 f1 f3
+- |- ((!d. t) = t)
+T c= ! f0 f0
++ |- ((\m. (!n. (!p. ((~ ((n * p) = (NUMERAL _0))) ==> (((m MOD (n * p)) MOD n) = (m MOD n)))))) m)
+T * / ! ! c==> c~ c= c* b1 b2 cNUMERAL c_0 c= cMOD cMOD b0 c* b1 b2 b1 cMOD b0 b1 f0
++ (!m. (!n. (!p. (((m < n) /\ (n <= p)) ==> (m < p))))) |- (((?n. ((m < n) /\ (n <= p))) ==> (m < p)) = T)
+T c==> ! ! ! c==> c/\ c< b0 b1 c<= b1 b2 c< b0 b2 c= c==> c? / c/\ c< f0 b0 c<= b0 f1 c< f0 f1 cT
++ |- ((\m. (!n. ((~ (n = (NUMERAL _0))) ==> ((m = (((m DIV n) * n) + (m MOD n))) /\ ((m MOD n) < n))))) m)
+T * / ! c==> c~ c= b1 cNUMERAL c_0 c/\ c= b0 c+ c* cDIV b0 b1 b1 cMOD b0 b1 c< cMOD b0 b1 b1 f0
++ |- ((\n. (((MIN m) n) = (((COND (m <= n)) m) n))) n)
+T * / c= cMIN f0 b0 cCOND c<= f0 b0 f0 b0 f1
++ (!m. (!n. (!p. (((m < n) /\ (n <= p)) ==> (m < p))))) |- (!p. (((m < n) /\ (n <= p)) ==> (m < p)))
+T c==> ! ! ! c==> c/\ c< b0 b1 c<= b1 b2 c< b0 b2 ! c==> c/\ c< f0 f1 c<= f1 b0 c< f0 b0
++ ((\n. ((m < n) /\ (n <= p))) n) |- (((\n. ((m < n) /\ (n <= p))) n) /\ ((!m. (!n. (!p. (((m < n) /\ (n <= p)) ==> (m < p))))) ==> (m < p)))
+T c==> * / c/\ c< f0 b0 c<= b0 f1 f2 c/\ * / c/\ c< f0 b0 c<= b0 f1 f2 c==> ! ! ! c==> c/\ c< b0 b1 c<= b1 b2 c< b0 b2 c< f0 f1
+- |- ((((m = (NUMERAL _0)) ==> ((((NUMERAL _0) + d) = (NUMERAL _0)) = (((NUMERAL _0) + d) = (NUMERAL _0)))) ==> (((m = (NUMERAL _0)) ==> (((NUMERAL _0) + d) = (NUMERAL _0))) = ((m = (NUMERAL _0)) ==> (((NUMERAL _0) + d) = (NUMERAL _0))))) = (((m = (NUMERAL _0)) ==> (((NUMERAL _0) + d) = (NUMERAL _0))) = ((m = (NUMERAL _0)) ==> (((NUMERAL _0) + d) = (NUMERAL _0)))))
+T c= c==> c==> c= f0 cNUMERAL c_0 c= c= c+ cNUMERAL c_0 f1 cNUMERAL c_0 c= c+ cNUMERAL c_0 f1 cNUMERAL c_0 c= c==> c= f0 cNUMERAL c_0 c= c+ cNUMERAL c_0 f1 cNUMERAL c_0 c==> c= f0 cNUMERAL c_0 c= c+ cNUMERAL c_0 f1 cNUMERAL c_0 c= c==> c= f0 cNUMERAL c_0 c= c+ cNUMERAL c_0 f1 cNUMERAL c_0 c==> c= f0 cNUMERAL c_0 c= c+ cNUMERAL c_0 f1 cNUMERAL c_0
+- |- ((_3752 = _3754) ==> ((~ (_3753 = _3755)) \/ ((_3752 + _3753) = (_3754 + _3755))))
+T c==> c= f0 f1 c\/ c~ c= f2 f3 c= c+ f0 f2 c+ f1 f3
++ (!m. (!n. (!p. (((m < n) /\ (n <= p)) ==> (m < p))))) |- ((?n. ((m < n) /\ (n <= p))) ==> (m < p))
+T c==> ! ! ! c==> c/\ c< b0 b1 c<= b1 b2 c< b0 b2 c==> c? / c/\ c< f0 b0 c<= b0 f1 c< f0 f1
++ |- ((t ==> F) = (~ t))
+T c= c==> f0 cF c~ f0
+- |- (((m = (NUMERAL _0)) ==> ((((NUMERAL _0) + d) = (NUMERAL _0)) = q')) ==> (((m = (NUMERAL _0)) ==> (((NUMERAL _0) + d) = (NUMERAL _0))) = ((m = (NUMERAL _0)) ==> q')))
+T c==> c==> c= f0 cNUMERAL c_0 c= c= c+ cNUMERAL c_0 f1 cNUMERAL c_0 f2 c= c==> c= f0 cNUMERAL c_0 c= c+ cNUMERAL c_0 f1 cNUMERAL c_0 c==> c= f0 cNUMERAL c_0 f2
+- ((!m. (!n. ((m <= n) \/ (!d. (~ (n = (m + d))))))) /\ (!m. (!n. ((~ (m <= n)) \/ (n = (m + ((d m) n))))))) |- ((\d. ((_3739 <= _3740) \/ (~ (_3740 = (_3739 + d))))) _3741)
+T c==> c/\ ! ! c\/ c<= b0 b1 ! c~ c= b1 c+ b0 b2 ! ! c\/ c~ c<= b0 b1 c= b1 c+ b0 * * f0 b0 b1 * / c\/ c<= f1 f2 c~ c= f2 c+ f1 b0 f3
+- |- ((!n'. ((~ (m <= n')) \/ (?d. (n = (m + d))))) = ((!n. (~ (m <= n))) \/ (?d. (n = (m + d)))))
+T c= ! c\/ c~ c<= f0 b0 c? / c= f1 c+ f0 b1 c\/ ! c~ c<= f0 b0 c? / c= f1 c+ f0 b0
++ |- (((!p. ((?n. ((m < n) /\ (n <= p))) ==> (m < p))) ==> ((\p. ((?n. ((m < n) /\ (n <= p))) ==> (m < p))) p)) = ((\p. ((?n. ((m < n) /\ (n <= p))) ==> (m < p))) p))
+T c= c==> ! c==> c? / c/\ c< f0 b1 c<= b1 b0 c< f0 b0 * / c==> c? / c/\ c< f0 b1 c<= b1 b0 c< f0 b0 f1 * / c==> c? / c/\ c< f0 b1 c<= b1 b0 c< f0 b0 f1
++ |- (((!g'. (!t'. (!e'. (((p = (NUMERAL _0)) = g') ==> ((g' ==> (((m = (NUMERAL _0)) ==> ((m + d) = (NUMERAL _0))) = t')) ==> (((~ g') ==> (((p = (NUMERAL (BIT1 _0))) \/ (m <= (m + d))) = e')) ==> ((((COND (p = (NUMERAL _0))) ((m = (NUMERAL _0)) ==> ((m + d) = (NUMERAL _0)))) ((p = (NUMERAL (BIT1 _0))) \/ (m <= (m + d)))) = (((COND g') t') e')))))))) ==> ((\g'. (!t'. (!e'. (((p = (NUMERAL _0)) = g') ==> ((g' ==> (((m = (NUMERAL _0)) ==> ((m + d) = (NUMERAL _0))) = t')) ==> (((~ g') ==> (((p = (NUMERAL (BIT1 _0))) \/ (m <= (m + d))) = e')) ==> ((((COND (p = (NUMERAL _0))) ((m = (NUMERAL _0)) ==> ((m + d) = (NUMERAL _0)))) ((p = (NUMERAL (BIT1 _0))) \/ (m <= (m + d)))) = (((COND g') t') e')))))))) g')) = ((\g'. (!t'. (!e'. (((p = (NUMERAL _0)) = g') ==> ((g' ==> (((m = (NUMERAL _0)) ==> ((m + d) = (NUMERAL _0))) = t')) ==> (((~ g') ==> (((p = (NUMERAL (BIT1 _0))) \/ (m <= (m + d))) = e')) ==> ((((COND (p = (NUMERAL _0))) ((m = (NUMERAL _0)) ==> ((m + d) = (NUMERAL _0)))) ((p = (NUMERAL (BIT1 _0))) \/ (m <= (m + d)))) = (((COND g') t') e')))))))) g'))
+T c= c==> ! ! ! c==> c= c= f0 cNUMERAL c_0 b0 c==> c==> b0 c= c==> c= f1 cNUMERAL c_0 c= c+ f1 f2 cNUMERAL c_0 b1 c==> c==> c~ b0 c= c\/ c= f0 cNUMERAL cBIT1 c_0 c<= f1 c+ f1 f2 b2 c= cCOND c= f0 cNUMERAL c_0 c==> c= f1 cNUMERAL c_0 c= c+ f1 f2 cNUMERAL c_0 c\/ c= f0 cNUMERAL cBIT1 c_0 c<= f1 c+ f1 f2 cCOND b0 b1 b2 * / ! ! c==> c= c= f0 cNUMERAL c_0 b0 c==> c==> b0 c= c==> c= f1 cNUMERAL c_0 c= c+ f1 f2 cNUMERAL c_0 b1 c==> c==> c~ b0 c= c\/ c= f0 cNUMERAL cBIT1 c_0 c<= f1 c+ f1 f2 b2 c= cCOND c= f0 cNUMERAL c_0 c==> c= f1 cNUMERAL c_0 c= c+ f1 f2 cNUMERAL c_0 c\/ c= f0 cNUMERAL cBIT1 c_0 c<= f1 c+ f1 f2 cCOND b0 b1 b2 f3 * / ! ! c==> c= c= f0 cNUMERAL c_0 b0 c==> c==> b0 c= c==> c= f1 cNUMERAL c_0 c= c+ f1 f2 cNUMERAL c_0 b1 c==> c==> c~ b0 c= c\/ c= f0 cNUMERAL cBIT1 c_0 c<= f1 c+ f1 f2 b2 c= cCOND c= f0 cNUMERAL c_0 c==> c= f1 cNUMERAL c_0 c= c+ f1 f2 cNUMERAL c_0 c\/ c= f0 cNUMERAL cBIT1 c_0 c<= f1 c+ f1 f2 cCOND b0 b1 b2 f3
++ (!m. (!n. ((m < n) ==> ((m MOD n) = m)))) |- (!m. ((m < n) ==> ((m MOD n) = m)))
+T c==> ! ! c==> c< b0 b1 c= cMOD b0 b1 b0 ! c==> c< b0 f0 c= cMOD b0 f0 b0
++ |- (p = ((~ p) ==> F))
+T c= f0 c==> c~ f0 cF
+- |- ((?d. t) = t)
+T c= c? / f0 f0
++ |- ((m = (NUMERAL _0)) ==> (((m + d) = (NUMERAL _0)) = (((NUMERAL _0) + d) = (NUMERAL _0))))
+T c==> c= f0 cNUMERAL c_0 c= c= c+ f0 f1 cNUMERAL c_0 c= c+ cNUMERAL c_0 f1 cNUMERAL c_0
++ |- ((\m. (!p. ((~ (p = (NUMERAL _0))) ==> ((~ (m <= n)) ==> ((~ (?d. (m = (n + d)))) ==> ((!m. (!n. ((m <= n) = (?d. (n = (m + d)))))) ==> ((!m. (!n. ((m <= n) \/ (n <= m)))) ==> F))))))) m)
+T * / ! c==> c~ c= b1 cNUMERAL c_0 c==> c~ c<= b0 f0 c==> c~ c? / c= b0 c+ f0 b2 c==> ! ! c= c<= b2 b2 c? / c= b2 c+ b2 b3 c==> ! ! c\/ c<= b2 b2 c<= b2 b2 cF f1
+- (~ (p = (NUMERAL _0))) |- (~ ((NUMERAL _0) = p))
+T c==> c~ c= f0 cNUMERAL c_0 c~ c= cNUMERAL c_0 f0
++ ((\d. ((!m. (!n. ((m <= n) \/ (!d. (~ (n = (m + d))))))) /\ (!m. (!n. ((~ (m <= n)) \/ (n = (m + ((d m) n)))))))) d) |- ((((!m. (!n. ((m <= n) \/ (!d. (~ (n = (m + d))))))) /\ (!m. (!n. ((~ (m <= n)) \/ (n = (m + ((d m) n))))))) ==> F) = F)
+T c==> * / c/\ ! ! c\/ c<= b1 b2 ! c~ c= b2 c+ b1 b3 ! ! c\/ c~ c<= b1 b2 c= b2 c+ b1 * * b0 b1 b2 f0 c= c==> c/\ ! ! c\/ c<= b0 b1 ! c~ c= b1 c+ b0 b2 ! ! c\/ c~ c<= b0 b1 c= b1 c+ b0 * * f0 b0 b1 cF cF
++ ((\d. (m = (n + d))) d) |- (((m = (n + d)) ==> (((x MOD (p EXP m)) MOD (p EXP n)) = (x MOD (p EXP n)))) = (((x MOD (p EXP m)) MOD (p EXP n)) = (x MOD (p EXP n))))
+T c==> * / c= f0 c+ f1 b0 f2 c= c==> c= f0 c+ f1 f2 c= cMOD cMOD f3 cEXP f4 f0 cEXP f4 f1 cMOD f3 cEXP f4 f1 c= cMOD cMOD f3 cEXP f4 f0 cEXP f4 f1 cMOD f3 cEXP f4 f1
++ (~ (p = (NUMERAL _0))) |- (((~ (((p EXP n) * (p EXP d)) = (NUMERAL _0))) ==> (((x MOD ((p EXP n) * (p EXP d))) MOD (p EXP n)) = (x MOD (p EXP n)))) = (((x MOD ((p EXP n) * (p EXP d))) MOD (p EXP n)) = (x MOD (p EXP n))))
+T c==> c~ c= f0 cNUMERAL c_0 c= c==> c~ c= c* cEXP f0 f1 cEXP f0 f2 cNUMERAL c_0 c= cMOD cMOD f3 c* cEXP f0 f1 cEXP f0 f2 cEXP f0 f1 cMOD f3 cEXP f0 f1 c= cMOD cMOD f3 c* cEXP f0 f1 cEXP f0 f2 cEXP f0 f1 cMOD f3 cEXP f0 f1
++ (!m. (!n. (!p. (((m < n) /\ (n <= p)) ==> (m < p))))) |- ((\m. (!n. (!p. (((m < n) /\ (n <= p)) ==> (m < p))))) m)
+T c==> ! ! ! c==> c/\ c< b0 b1 c<= b1 b2 c< b0 b2 * / ! ! c==> c/\ c< b0 b1 c<= b1 b2 c< b0 b2 f0
++ (~ (n = (NUMERAL _0))) |- ((m MOD n) < n)
+T c==> c~ c= f0 cNUMERAL c_0 c< cMOD f1 f0 f0
+- |- (((m <= n) \/ (!d. (~ (n = (m + d))))) = (!d. ((m <= n) \/ (~ (n = (m + d))))))
+T c= c\/ c<= f0 f1 ! c~ c= f1 c+ f0 b0 ! c\/ c<= f0 f1 c~ c= f1 c+ f0 b0
+- (~ (m <= n)), (m <= n) |- ((m <= n) /\ (~ (m <= n)))
+T c==> c~ c<= f0 f1 c==> c<= f0 f1 c/\ c<= f0 f1 c~ c<= f0 f1
++ |- ((\p. ((~ ((n * p) = (NUMERAL _0))) ==> (((m MOD (n * p)) MOD n) = (m MOD n)))) p)
+T * / c==> c~ c= c* f0 b0 cNUMERAL c_0 c= cMOD cMOD f1 c* f0 b0 f0 cMOD f1 f0 f2
++ |- (((!m. (!n. (m <= (m + n)))) ==> ((\m. (!n. (m <= (m + n)))) m)) = ((\m. (!n. (m <= (m + n)))) m))
+T c= c==> ! ! c<= b0 c+ b0 b1 * / ! c<= b0 c+ b0 b1 f0 * / ! c<= b0 c+ b0 b1 f0
++ |- (((~ (p = (NUMERAL _0))) ==> (((x MOD (p EXP m)) MOD (p EXP n)) = (x MOD (p EXP ((MIN m) n))))) = T)
+T c= c==> c~ c= f0 cNUMERAL c_0 c= cMOD cMOD f1 cEXP f0 f2 cEXP f0 f3 cMOD f1 cEXP f0 cMIN f2 f3 cT
++ |- (((!n. (((m EXP n) = (NUMERAL _0)) = ((m = (NUMERAL _0)) /\ (~ (n = (NUMERAL _0)))))) ==> ((\n. (((m EXP n) = (NUMERAL _0)) = ((m = (NUMERAL _0)) /\ (~ (n = (NUMERAL _0)))))) n)) = ((\n. (((m EXP n) = (NUMERAL _0)) = ((m = (NUMERAL _0)) /\ (~ (n = (NUMERAL _0)))))) n))
+T c= c==> ! c= c= cEXP f0 b0 cNUMERAL c_0 c/\ c= f0 cNUMERAL c_0 c~ c= b0 cNUMERAL c_0 * / c= c= cEXP f0 b0 cNUMERAL c_0 c/\ c= f0 cNUMERAL c_0 c~ c= b0 cNUMERAL c_0 f1 * / c= c= cEXP f0 b0 cNUMERAL c_0 c/\ c= f0 cNUMERAL c_0 c~ c= b0 cNUMERAL c_0 f1
++ |- ((\p. ((m EXP (n + p)) = ((m EXP n) * (m EXP p)))) p)
+T * / c= cEXP f0 c+ f1 b0 c* cEXP f0 f1 cEXP f0 b0 f2
++ |- (((!m. (!n. ((m <= n) \/ (n <= m)))) ==> F) = F)
+T c= c==> ! ! c\/ c<= b0 b1 c<= b1 b0 cF cF
++ (!m. (!n. ((m <= n) = (?d. (n = (m + d)))))), (~ (?d. (m = (n + d)))), (~ (m <= n)) |- (~ (!m. (!n. ((m <= n) \/ (n <= m)))))
+T c==> ! ! c= c<= b0 b1 c? / c= b1 c+ b0 b2 c==> c~ c? / c= f0 c+ f1 b0 c==> c~ c<= f0 f1 c~ ! ! c\/ c<= b0 b1 c<= b1 b0
+- |- ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))
+T c= c\/ f0 c\/ f1 f2 c\/ c\/ f0 f1 f2
++ (~ (p = (NUMERAL _0))) |- (((!x'. (((\d. (m = (n + d))) x') ==> (((x MOD (p EXP m)) MOD (p EXP n)) = (x MOD (p EXP n))))) ==> ((?d. (m = (n + d))) ==> (((x MOD (p EXP m)) MOD (p EXP n)) = (x MOD (p EXP n))))) = ((?d. (m = (n + d))) ==> (((x MOD (p EXP m)) MOD (p EXP n)) = (x MOD (p EXP n)))))
+T c==> c~ c= f0 cNUMERAL c_0 c= c==> ! c==> * / c= f1 c+ f2 b1 b0 c= cMOD cMOD f3 cEXP f0 f1 cEXP f0 f2 cMOD f3 cEXP f0 f2 c==> c? / c= f1 c+ f2 b0 c= cMOD cMOD f3 cEXP f0 f1 cEXP f0 f2 cMOD f3 cEXP f0 f2 c==> c? / c= f1 c+ f2 b0 c= cMOD cMOD f3 cEXP f0 f1 cEXP f0 f2 cMOD f3 cEXP f0 f2
++ (!m. (!n. ((m <= n) \/ (n <= m)))), (~ (?d. (m = (n + d)))), (~ (m <= n)), ((\d. ((!m. (!n. ((m <= n) \/ (!d. (~ (n = (m + d))))))) /\ (!m. (!n. ((~ (m <= n)) \/ (n = (m + ((d m) n)))))))) d) |- (((\d. ((!m. (!n. ((m <= n) \/ (!d. (~ (n = (m + d))))))) /\ (!m. (!n. ((~ (m <= n)) \/ (n = (m + ((d m) n)))))))) d) /\ F)
+T c==> ! ! c\/ c<= b0 b1 c<= b1 b0 c==> c~ c? / c= f0 c+ f1 b0 c==> c~ c<= f0 f1 c==> * / c/\ ! ! c\/ c<= b1 b2 ! c~ c= b2 c+ b1 b3 ! ! c\/ c~ c<= b1 b2 c= b2 c+ b1 * * b0 b1 b2 f2 c/\ * / c/\ ! ! c\/ c<= b1 b2 ! c~ c= b2 c+ b1 b3 ! ! c\/ c~ c<= b1 b2 c= b2 c+ b1 * * b0 b1 b2 f2 cF
+- ((~ (p = (NUMERAL _0))) ==> ((~ (m <= n)) ==> ((~ (?d. (m = (n + d)))) ==> ((!m. (!n. ((m <= n) = (?d. (n = (m + d)))))) ==> ((!m. (!n. ((m <= n) \/ (n <= m)))) ==> F))))) |- ((((~ (p = (NUMERAL _0))) ==> ((~ (m <= n)) ==> ((~ (?d. (m = (n + d)))) ==> ((!m. (!n. ((m <= n) = (?d. (n = (m + d)))))) ==> ((!m. (!n. ((m <= n) \/ (n <= m)))) ==> F))))) ==> ((~ (p = (NUMERAL _0))) ==> ((~ (m <= n)) ==> ((~ (?d. (m = (n + d)))) ==> ((!m. (!n. ((m <= n) = (?d. (n = (m + d)))))) ==> ((!m. (!n. ((m <= n) \/ (n <= m)))) ==> F)))))) ==> ((~ (p = (NUMERAL _0))) ==> ((~ (m <= n)) ==> ((~ (?d. (m = (n + d)))) ==> ((!m. (!n. ((m <= n) = (?d. (n = (m + d)))))) ==> ((!m. (!n. ((m <= n) \/ (n <= m)))) ==> F))))))
+T c==> c==> c~ c= f0 cNUMERAL c_0 c==> c~ c<= f1 f2 c==> c~ c? / c= f1 c+ f2 b0 c==> ! ! c= c<= b0 b1 c? / c= b1 c+ b0 b2 c==> ! ! c\/ c<= b0 b1 c<= b1 b0 cF c==> c==> c==> c~ c= f0 cNUMERAL c_0 c==> c~ c<= f1 f2 c==> c~ c? / c= f1 c+ f2 b0 c==> ! ! c= c<= b0 b1 c? / c= b1 c+ b0 b2 c==> ! ! c\/ c<= b0 b1 c<= b1 b0 cF c==> c~ c= f0 cNUMERAL c_0 c==> c~ c<= f1 f2 c==> c~ c? / c= f1 c+ f2 b0 c==> ! ! c= c<= b0 b1 c? / c= b1 c+ b0 b2 c==> ! ! c\/ c<= b0 b1 c<= b1 b0 cF c==> c~ c= f0 cNUMERAL c_0 c==> c~ c<= f1 f2 c==> c~ c? / c= f1 c+ f2 b0 c==> ! ! c= c<= b0 b1 c? / c= b1 c+ b0 b2 c==> ! ! c\/ c<= b0 b1 c<= b1 b0 cF
++ (m = (n + d)) |- ((((x MOD (p EXP (n + d))) MOD (p EXP n)) = (x MOD (p EXP n))) = (((x MOD (p EXP m)) MOD (p EXP n)) = (x MOD (p EXP n))))
+T c==> c= f0 c+ f1 f2 c= c= cMOD cMOD f3 cEXP f4 c+ f1 f2 cEXP f4 f1 cMOD f3 cEXP f4 f1 c= cMOD cMOD f3 cEXP f4 f0 cEXP f4 f1 cMOD f3 cEXP f4 f1
+- (!m. (!n. ((m <= n) \/ (n <= m)))), (~ (m <= n)) |- ((~ (n <= m)) ==> (n <= m))
+T c==> ! ! c\/ c<= b0 b1 c<= b1 b0 c==> c~ c<= f0 f1 c==> c~ c<= f1 f0 c<= f1 f0
++ |- ((\n. (!p. ((~ ((n * p) = (NUMERAL _0))) ==> (((m MOD (n * p)) MOD n) = (m MOD n))))) n)
+T * / ! c==> c~ c= c* b0 b1 cNUMERAL c_0 c= cMOD cMOD f0 c* b0 b1 b0 cMOD f0 b0 f1
++ (!m. (!n. (!p. (((m < n) /\ (n <= p)) ==> (m < p))))), ((m < n) /\ (n <= p)) |- (m < p)
+T c==> ! ! ! c==> c/\ c< b0 b1 c<= b1 b2 c< b0 b2 c==> c/\ c< f0 f1 c<= f1 f2 c< f0 f2
++ |- ((\m. (!n. (((x EXP m) <= (x EXP n)) = (((COND (x = (NUMERAL _0))) ((m = (NUMERAL _0)) ==> (n = (NUMERAL _0)))) ((x = (NUMERAL (BIT1 _0))) \/ (m <= n)))))) m)
+T * / ! c= c<= cEXP f0 b0 cEXP f0 b1 cCOND c= f0 cNUMERAL c_0 c==> c= b0 cNUMERAL c_0 c= b1 cNUMERAL c_0 c\/ c= f0 cNUMERAL cBIT1 c_0 c<= b0 b1 f1
+- |- (((m = (NUMERAL _0)) ==> (((NUMERAL _0) + d) = (NUMERAL _0))) = ((m = (NUMERAL _0)) ==> (((NUMERAL _0) + d) = (NUMERAL _0))))
+T c= c==> c= f0 cNUMERAL c_0 c= c+ cNUMERAL c_0 f1 cNUMERAL c_0 c==> c= f0 cNUMERAL c_0 c= c+ cNUMERAL c_0 f1 cNUMERAL c_0
++ (~ (p = (NUMERAL _0))) |- (((x MOD ((p EXP n) * (p EXP d))) MOD (p EXP n)) = (x MOD (p EXP n)))
+T c==> c~ c= f0 cNUMERAL c_0 c= cMOD cMOD f1 c* cEXP f0 f2 cEXP f0 f3 cEXP f0 f2 cMOD f1 cEXP f0 f2
++ (~ (p = (NUMERAL _0))) |- (((!x'. (((\d. (n = (m + d))) x') ==> (((x MOD (p EXP m)) MOD (p EXP n)) = (x MOD (p EXP m))))) ==> ((?d. (n = (m + d))) ==> (((x MOD (p EXP m)) MOD (p EXP n)) = (x MOD (p EXP m))))) = ((?d. (n = (m + d))) ==> (((x MOD (p EXP m)) MOD (p EXP n)) = (x MOD (p EXP m)))))
+T c==> c~ c= f0 cNUMERAL c_0 c= c==> ! c==> * / c= f1 c+ f2 b1 b0 c= cMOD cMOD f3 cEXP f0 f2 cEXP f0 f1 cMOD f3 cEXP f0 f2 c==> c? / c= f1 c+ f2 b0 c= cMOD cMOD f3 cEXP f0 f2 cEXP f0 f1 cMOD f3 cEXP f0 f2 c==> c? / c= f1 c+ f2 b0 c= cMOD cMOD f3 cEXP f0 f2 cEXP f0 f1 cMOD f3 cEXP f0 f2
++ (~ (p = (NUMERAL _0))), (m = (n + d)) |- ((m = (n + d)) /\ (((x MOD (p EXP m)) MOD (p EXP n)) = (x MOD (p EXP n))))
+T c==> c~ c= f0 cNUMERAL c_0 c==> c= f1 c+ f2 f3 c/\ c= f1 c+ f2 f3 c= cMOD cMOD f4 cEXP f0 f1 cEXP f0 f2 cMOD f4 cEXP f0 f2
++ |- ((((\n. ((m < n) /\ (n <= p))) n) ==> ((!m. (!n. (!p. (((m < n) /\ (n <= p)) ==> (m < p))))) ==> (m < p))) = T)
+T c= c==> * / c/\ c< f0 b0 c<= b0 f1 f2 c==> ! ! ! c==> c/\ c< b0 b1 c<= b1 b2 c< b0 b2 c< f0 f1 cT
++ (~ (p = (NUMERAL _0))) |- (((x MOD (p EXP m)) MOD (p EXP n)) = (x MOD (p EXP (((COND (m <= n)) m) n))))
+T c==> c~ c= f0 cNUMERAL c_0 c= cMOD cMOD f1 cEXP f0 f2 cEXP f0 f3 cMOD f1 cEXP f0 cCOND c<= f2 f3 f2 f3
++ (~ (?d. (m = (n + d)))), (~ (p = (NUMERAL _0))), (~ (m <= n)) |- F
+T c==> c~ c? / c= f0 c+ f1 b0 c==> c~ c= f2 cNUMERAL c_0 c==> c~ c<= f0 f1 cF
++ (~ (m <= n)) |- ((m <= n) = F)
+T c==> c~ c<= f0 f1 c= c<= f0 f1 cF
++ |- ((!q'. ((p = p') ==> ((p' ==> (q = q')) ==> ((p ==> q) = (p' ==> q'))))) = T)
+T c= ! c==> c= f0 f1 c==> c==> f1 c= f2 b0 c= c==> f0 f2 c==> f1 b0 cT
+- |- ((_3748 = _3750) ==> ((~ (_3749 = _3751)) \/ (((d _3748) _3749) = ((d _3750) _3751))))
+T c==> c= f0 f1 c\/ c~ c= f2 f3 c= * * f4 f0 f2 * * f4 f1 f3
++ (!m. (!n. ((m < n) ==> ((m MOD n) = m)))) |- ((\n. ((m < n) ==> ((m MOD n) = m))) n)
+T c==> ! ! c==> c< b0 b1 c= cMOD b0 b1 b0 * / c==> c< f0 b0 c= cMOD f0 b0 f0 f1
++ (~ (p = (NUMERAL _0))), (n = (m + d)) |- ((n = (m + d)) /\ (((x MOD (p EXP m)) MOD (p EXP n)) = (x MOD (p EXP m))))
+T c==> c~ c= f0 cNUMERAL c_0 c==> c= f1 c+ f2 f3 c/\ c= f1 c+ f2 f3 c= cMOD cMOD f4 cEXP f0 f2 cEXP f0 f1 cMOD f4 cEXP f0 f2
++ |- ((\e'. (((p = (NUMERAL _0)) = g') ==> ((g' ==> (((m = (NUMERAL _0)) ==> ((m + d) = (NUMERAL _0))) = t')) ==> (((~ g') ==> (((p = (NUMERAL (BIT1 _0))) \/ (m <= (m + d))) = e')) ==> ((((COND (p = (NUMERAL _0))) ((m = (NUMERAL _0)) ==> ((m + d) = (NUMERAL _0)))) ((p = (NUMERAL (BIT1 _0))) \/ (m <= (m + d)))) = (((COND g') t') e')))))) e')
+T * / c==> c= c= f0 cNUMERAL c_0 f1 c==> c==> f1 c= c==> c= f2 cNUMERAL c_0 c= c+ f2 f3 cNUMERAL c_0 f4 c==> c==> c~ f1 c= c\/ c= f0 cNUMERAL cBIT1 c_0 c<= f2 c+ f2 f3 b0 c= cCOND c= f0 cNUMERAL c_0 c==> c= f2 cNUMERAL c_0 c= c+ f2 f3 cNUMERAL c_0 c\/ c= f0 cNUMERAL cBIT1 c_0 c<= f2 c+ f2 f3 cCOND f1 f4 b0 f5
++ (~ (?d. (m = (n + d)))), (~ (p = (NUMERAL _0))), (~ (m <= n)) |- ((~ (?d. (m = (n + d)))) /\ F)
+T c==> c~ c? / c= f0 c+ f1 b0 c==> c~ c= f2 cNUMERAL c_0 c==> c~ c<= f0 f1 c/\ c~ c? / c= f0 c+ f1 b0 cF
++ |- ((!m. (?d. (!n. ((~ (m <= n)) \/ (n = (m + (d n))))))) = (?d. (!m. (!n. ((~ (m <= n)) \/ (n = (m + ((d m) n))))))))
+T c= ! c? / ! c\/ c~ c<= b0 b2 c= b2 c+ b0 * b1 b2 c? / ! ! c\/ c~ c<= b1 b2 c= b2 c+ b1 * * b0 b1 b2
++ (~ (p = (NUMERAL _0))), (~ (m <= n)) |- ((~ (?d. (m = (n + d)))) ==> ((!m. (!n. ((m <= n) = (?d. (n = (m + d)))))) ==> ((!m. (!n. ((m <= n) \/ (n <= m)))) ==> F)))
+T c==> c~ c= f0 cNUMERAL c_0 c==> c~ c<= f1 f2 c==> c~ c? / c= f1 c+ f2 b0 c==> ! ! c= c<= b0 b1 c? / c= b1 c+ b0 b2 c==> ! ! c\/ c<= b0 b1 c<= b1 b0 cF
++ |- ((\n. (((x EXP m) <= (x EXP n)) = (((COND (x = (NUMERAL _0))) ((m = (NUMERAL _0)) ==> (n = (NUMERAL _0)))) ((x = (NUMERAL (BIT1 _0))) \/ (m <= n))))) n)
+T * / c= c<= cEXP f0 f1 cEXP f0 b0 cCOND c= f0 cNUMERAL c_0 c==> c= f1 cNUMERAL c_0 c= b0 cNUMERAL c_0 c\/ c= f0 cNUMERAL cBIT1 c_0 c<= f1 b0 f2
++ (!m. (!n. ((m <= n) = (?d. (n = (m + d)))))) |- (?d. ((!m. (!n. ((m <= n) \/ (!d. (~ (n = (m + d))))))) /\ (!m. (!n. ((~ (m <= n)) \/ (n = (m + ((d m) n))))))))
+T c==> ! ! c= c<= b0 b1 c? / c= b1 c+ b0 b2 c? / c/\ ! ! c\/ c<= b1 b2 ! c~ c= b2 c+ b1 b3 ! ! c\/ c~ c<= b1 b2 c= b2 c+ b1 * * b0 b1 b2
+- ((!m. (!n. ((m <= n) \/ (!d. (~ (n = (m + d))))))) /\ (!m. (!n. ((~ (m <= n)) \/ (n = (m + ((d m) n))))))) |- (((!d. ((_3739 <= _3740) \/ (~ (_3740 = (_3739 + d))))) ==> ((\d. ((_3739 <= _3740) \/ (~ (_3740 = (_3739 + d))))) _3741)) = ((\d. ((_3739 <= _3740) \/ (~ (_3740 = (_3739 + d))))) _3741))
+T c==> c/\ ! ! c\/ c<= b0 b1 ! c~ c= b1 c+ b0 b2 ! ! c\/ c~ c<= b0 b1 c= b1 c+ b0 * * f0 b0 b1 c= c==> ! c\/ c<= f1 f2 c~ c= f2 c+ f1 b0 * / c\/ c<= f1 f2 c~ c= f2 c+ f1 b0 f3 * / c\/ c<= f1 f2 c~ c= f2 c+ f1 b0 f3
++ |- (((g = g') ==> ((g' ==> (t = t')) ==> (((~ g') ==> (e = e')) ==> ((((COND g) t) e) = (((COND g') t') e'))))) = T)
+T c= c==> c= f0 f1 c==> c==> f1 c= f2 f3 c==> c==> c~ f1 c= f4 f5 c= cCOND f0 f2 f4 cCOND f1 f3 f5 cT
++ (~ (p = (NUMERAL _0))) |- ((?d. (m = (n + d))) ==> (((x MOD (p EXP m)) MOD (p EXP n)) = (x MOD (p EXP n))))
+T c==> c~ c= f0 cNUMERAL c_0 c==> c? / c= f1 c+ f2 b0 c= cMOD cMOD f3 cEXP f0 f1 cEXP f0 f2 cMOD f3 cEXP f0 f2
+- (_3752 = _3754), (_3753 = _3755) |- ((_3753 = _3755) /\ ((_3752 + _3753) = (_3754 + _3755)))
+T c==> c= f0 f1 c==> c= f2 f3 c/\ c= f2 f3 c= c+ f0 f2 c+ f1 f3
+- |- ((~ (_3748 = _3750)) \/ ((~ (_3749 = _3751)) \/ (((d _3748) _3749) = ((d _3750) _3751))))
+T c\/ c~ c= f0 f1 c\/ c~ c= f2 f3 c= * * f4 f0 f2 * * f4 f1 f3
++ |- ((\n. (m <= (m + n))) n)
+T * / c<= f0 c+ f0 b0 f1
+- (_3752 = _3754) |- ((_3752 = _3754) /\ ((~ (_3753 = _3755)) \/ ((_3752 + _3753) = (_3754 + _3755))))
+T c==> c= f0 f1 c/\ c= f0 f1 c\/ c~ c= f2 f3 c= c+ f0 f2 c+ f1 f3
+- |- ((\t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3)))) t2)
+T * / ! c= c\/ f0 c\/ b0 b1 c\/ c\/ f0 b0 b1 f1
++ ((\n. ((m < n) /\ (n <= p))) n) |- ((m < n) /\ (n <= p))
+T c==> * / c/\ c< f0 b0 c<= b0 f1 f2 c/\ c< f0 f2 c<= f2 f1
+- |- ((!n. ((P n) \/ Q)) = ((!n. (P n)) \/ Q))
+T c= ! c\/ * f0 b0 f1 c\/ ! * f0 b0 f1
++ (!m. (!n. ((m <= n) \/ (n <= m)))) |- (((!n. ((_3737 <= n) \/ (n <= _3737))) ==> ((\n. ((_3737 <= n) \/ (n <= _3737))) _3738)) = ((\n. ((_3737 <= n) \/ (n <= _3737))) _3738))
+T c==> ! ! c\/ c<= b0 b1 c<= b1 b0 c= c==> ! c\/ c<= f0 b0 c<= b0 f0 * / c\/ c<= f0 b0 c<= b0 f0 f1 * / c\/ c<= f0 b0 c<= b0 f0 f1
++ |- ((m <= n) \/ (~ (m <= n)))
+T c\/ c<= f0 f1 c~ c<= f0 f1
+- (((~ (p = (NUMERAL _0))) ==> ((~ (m <= n)) ==> ((~ (?d. (m = (n + d)))) ==> ((!m. (!n. ((m <= n) = (?d. (n = (m + d)))))) ==> ((!m. (!n. ((m <= n) \/ (n <= m)))) ==> F))))) ==> ((~ (p = (NUMERAL _0))) ==> ((~ (m <= n)) ==> ((~ (?d. (m = (n + d)))) ==> ((!m. (!n. ((m <= n) = (?d. (n = (m + d)))))) ==> ((!m. (!n. ((m <= n) \/ (n <= m)))) ==> F)))))) |- ((((~ (p = (NUMERAL _0))) ==> ((~ (m <= n)) ==> ((~ (?d. (m = (n + d)))) ==> ((!m. (!n. ((m <= n) = (?d. (n = (m + d)))))) ==> ((!m. (!n. ((m <= n) \/ (n <= m)))) ==> F))))) ==> ((~ (p = (NUMERAL _0))) ==> ((~ (m <= n)) ==> ((~ (?d. (m = (n + d)))) ==> ((!m. (!n. ((m <= n) = (?d. (n = (m + d)))))) ==> ((!m. (!n. ((m <= n) \/ (n <= m)))) ==> F)))))) /\ (((~ (p = (NUMERAL _0))) ==> ((~ (m <= n)) ==> ((~ (?d. (m = (n + d)))) ==> ((!m. (!n. ((m <= n) = (?d. (n = (m + d)))))) ==> ((!m. (!n. ((m <= n) \/ (n <= m)))) ==> F))))) ==> ((~ (p = (NUMERAL _0))) ==> ((~ (m <= n)) ==> ((~ (?d. (m = (n + d)))) ==> ((!m. (!n. ((m <= n) = (?d. (n = (m + d)))))) ==> ((!m. (!n. ((m <= n) \/ (n <= m)))) ==> F)))))))
+T c==> c==> c==> c~ c= f0 cNUMERAL c_0 c==> c~ c<= f1 f2 c==> c~ c? / c= f1 c+ f2 b0 c==> ! ! c= c<= b0 b1 c? / c= b1 c+ b0 b2 c==> ! ! c\/ c<= b0 b1 c<= b1 b0 cF c==> c~ c= f0 cNUMERAL c_0 c==> c~ c<= f1 f2 c==> c~ c? / c= f1 c+ f2 b0 c==> ! ! c= c<= b0 b1 c? / c= b1 c+ b0 b2 c==> ! ! c\/ c<= b0 b1 c<= b1 b0 cF c/\ c==> c==> c~ c= f0 cNUMERAL c_0 c==> c~ c<= f1 f2 c==> c~ c? / c= f1 c+ f2 b0 c==> ! ! c= c<= b0 b1 c? / c= b1 c+ b0 b2 c==> ! ! c\/ c<= b0 b1 c<= b1 b0 cF c==> c~ c= f0 cNUMERAL c_0 c==> c~ c<= f1 f2 c==> c~ c? / c= f1 c+ f2 b0 c==> ! ! c= c<= b0 b1 c? / c= b1 c+ b0 b2 c==> ! ! c\/ c<= b0 b1 c<= b1 b0 cF c==> c==> c~ c= f0 cNUMERAL c_0 c==> c~ c<= f1 f2 c==> c~ c? / c= f1 c+ f2 b0 c==> ! ! c= c<= b0 b1 c? / c= b1 c+ b0 b2 c==> ! ! c\/ c<= b0 b1 c<= b1 b0 cF c==> c~ c= f0 cNUMERAL c_0 c==> c~ c<= f1 f2 c==> c~ c? / c= f1 c+ f2 b0 c==> ! ! c= c<= b0 b1 c? / c= b1 c+ b0 b2 c==> ! ! c\/ c<= b0 b1 c<= b1 b0 cF
++ |- ((?n. ((m < n) /\ (n <= p))) ==> (m < p))
+T c==> c? / c/\ c< f0 b0 c<= b0 f1 c< f0 f1
++ (!m. (!n. ((m <= n) \/ (n <= m)))) |- ((_3738 <= _3737) \/ (_3737 <= _3738))
+T c==> ! ! c\/ c<= b0 b1 c<= b1 b0 c\/ c<= f0 f1 c<= f1 f0
+- |- (((m = (NUMERAL _0)) = p') ==> ((p' ==> ((((NUMERAL _0) + d) = (NUMERAL _0)) = q')) ==> (((m = (NUMERAL _0)) ==> (((NUMERAL _0) + d) = (NUMERAL _0))) = (p' ==> q'))))
+T c==> c= c= f0 cNUMERAL c_0 f1 c==> c==> f1 c= c= c+ cNUMERAL c_0 f2 cNUMERAL c_0 f3 c= c==> c= f0 cNUMERAL c_0 c= c+ cNUMERAL c_0 f2 cNUMERAL c_0 c==> f1 f3
++ (!m. (!n. ((m <= n) \/ (n <= m)))), (~ (?d. (m = (n + d)))), (~ (m <= n)) |- (((\d. ((!m. (!n. ((m <= n) \/ (!d. (~ (n = (m + d))))))) /\ (!m. (!n. ((~ (m <= n)) \/ (n = (m + ((d m) n)))))))) d) ==> F)
+T c==> ! ! c\/ c<= b0 b1 c<= b1 b0 c==> c~ c? / c= f0 c+ f1 b0 c==> c~ c<= f0 f1 c==> * / c/\ ! ! c\/ c<= b1 b2 ! c~ c= b2 c+ b1 b3 ! ! c\/ c~ c<= b1 b2 c= b2 c+ b1 * * b0 b1 b2 f2 cF
+- (p = (NUMERAL _0)) |- ((NUMERAL _0) = p)
+T c==> c= f0 cNUMERAL c_0 c= cNUMERAL c_0 f0
+- |- (((!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3)))) ==> ((\t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3)))) t2)) = ((\t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3)))) t2))
+T c= c==> ! ! c= c\/ f0 c\/ b0 b1 c\/ c\/ f0 b0 b1 * / ! c= c\/ f0 c\/ b0 b1 c\/ c\/ f0 b0 b1 f1 * / ! c= c\/ f0 c\/ b0 b1 c\/ c\/ f0 b0 b1 f1
+- ((!m. (!n. ((m <= n) \/ (!d. (~ (n = (m + d))))))) /\ (!m. (!n. ((~ (m <= n)) \/ (n = (m + ((d m) n))))))) |- ((_3739 <= _3740) \/ (~ (_3740 = (_3739 + _3741))))
+T c==> c/\ ! ! c\/ c<= b0 b1 ! c~ c= b1 c+ b0 b2 ! ! c\/ c~ c<= b0 b1 c= b1 c+ b0 * * f0 b0 b1 c\/ c<= f1 f2 c~ c= f2 c+ f1 f3
+- (_3756 = _3757) |- ((_3756 = _3757) /\ ((NUMERAL _3756) = (NUMERAL _3757)))
+T c==> c= f0 f1 c/\ c= f0 f1 c= cNUMERAL f0 cNUMERAL f1
+- |- ((((COND (x = x)) y) z) = y)
+T c= cCOND c= f0 f0 f1 f2 f1
+- (~ F) |- ((F = F) = T)
+T c==> c~ cF c= c= cF cF cT
+- ((!m. (!n. ((m <= n) \/ (!d. (~ (n = (m + d))))))) /\ (!m. (!n. ((~ (m <= n)) \/ (n = (m + ((d m) n))))))) |- (((!n. (!d. ((_3739 <= n) \/ (~ (n = (_3739 + d)))))) ==> ((\n. (!d. ((_3739 <= n) \/ (~ (n = (_3739 + d)))))) _3740)) = ((\n. (!d. ((_3739 <= n) \/ (~ (n = (_3739 + d)))))) _3740))
+T c==> c/\ ! ! c\/ c<= b0 b1 ! c~ c= b1 c+ b0 b2 ! ! c\/ c~ c<= b0 b1 c= b1 c+ b0 * * f0 b0 b1 c= c==> ! ! c\/ c<= f1 b0 c~ c= b0 c+ f1 b1 * / ! c\/ c<= f1 b0 c~ c= b0 c+ f1 b1 f2 * / ! c\/ c<= f1 b0 c~ c= b0 c+ f1 b1 f2
+- |- (T = (((_3737 <= _3738) \/ (_3738 <= _3737)) = ((_3738 <= _3737) \/ (_3737 <= _3738))))
+T c= cT c= c\/ c<= f0 f1 c<= f1 f0 c\/ c<= f1 f0 c<= f0 f1
+- |- ((m = (NUMERAL _0)) ==> ((((NUMERAL _0) + d) = (NUMERAL _0)) = (((NUMERAL _0) + d) = (NUMERAL _0))))
+T c==> c= f0 cNUMERAL c_0 c= c= c+ cNUMERAL c_0 f1 cNUMERAL c_0 c= c+ cNUMERAL c_0 f1 cNUMERAL c_0
+- (!m. (!n. ((m <= n) \/ (n <= m)))), (~ (m <= n)), ((!m. (!n. ((m <= n) \/ (!d. (~ (n = (m + d))))))) /\ (!m. (!n. ((~ (m <= n)) \/ (n = (m + ((d m) n))))))) |- ((~ (m = (n + ((d n) m)))) ==> (m = (n + ((d n) m))))
+T c==> ! ! c\/ c<= b0 b1 c<= b1 b0 c==> c~ c<= f0 f1 c==> c/\ ! ! c\/ c<= b0 b1 ! c~ c= b1 c+ b0 b2 ! ! c\/ c~ c<= b0 b1 c= b1 c+ b0 * * f2 b0 b1 c==> c~ c= f0 c+ f1 * * f2 f1 f0 c= f0 c+ f1 * * f2 f1 f0
+- (~ ((n * p) = (NUMERAL _0))) |- ((~ ((n * p) = (NUMERAL _0))) /\ (((m MOD (n * p)) MOD n) = (m MOD n)))
+T c==> c~ c= c* f0 f1 cNUMERAL c_0 c/\ c~ c= c* f0 f1 cNUMERAL c_0 c= cMOD cMOD f2 c* f0 f1 f0 cMOD f2 f0
+- |- ((~ (_3756 = _3757)) \/ ((NUMERAL _3756) = (NUMERAL _3757)))
+T c\/ c~ c= f0 f1 c= cNUMERAL f0 cNUMERAL f1
+- (!m. (!n. ((m <= n) \/ (n <= m)))), (~ (?d. (m = (n + d)))), (~ (m <= n)), ((!m. (!n. ((m <= n) \/ (!d. (~ (n = (m + d))))))) /\ (!m. (!n. ((~ (m <= n)) \/ (n = (m + ((d m) n))))))) |- ((~ F) ==> F)
+T c==> ! ! c\/ c<= b0 b1 c<= b1 b0 c==> c~ c? / c= f0 c+ f1 b0 c==> c~ c<= f0 f1 c==> c/\ ! ! c\/ c<= b0 b1 ! c~ c= b1 c+ b0 b2 ! ! c\/ c~ c<= b0 b1 c= b1 c+ b0 * * f2 b0 b1 c==> c~ cF cF
+- |- ((x = x) = T)
+T c= c= f0 f0 cT
+- |- ((a ==> b) = ((~ a) \/ b))
+T c= c==> f0 f1 c\/ c~ f0 f1
+- F |- (F = T)
+T c==> cF c= cF cT
+- |- ((_3756 = _3757) ==> ((NUMERAL _3756) = (NUMERAL _3757)))
+T c==> c= f0 f1 c= cNUMERAL f0 cNUMERAL f1
+- |- ((\p'. (!q'. (((m = (NUMERAL _0)) = p') ==> ((p' ==> ((((NUMERAL _0) + d) = (NUMERAL _0)) = q')) ==> (((m = (NUMERAL _0)) ==> (((NUMERAL _0) + d) = (NUMERAL _0))) = (p' ==> q')))))) p')
+T * / ! c==> c= c= f0 cNUMERAL c_0 b0 c==> c==> b0 c= c= c+ cNUMERAL c_0 f1 cNUMERAL c_0 b1 c= c==> c= f0 cNUMERAL c_0 c= c+ cNUMERAL c_0 f1 cNUMERAL c_0 c==> b0 b1 f2
+- (_3752 = _3754) |- ((_3753 = _3755) ==> ((_3752 + _3753) = (_3754 + _3755)))
+T c==> c= f0 f1 c==> c= f2 f3 c= c+ f0 f2 c+ f1 f3
+- |- ((p ==> (~ p)) = (~ p))
+T c= c==> f0 c~ f0 c~ f0
+- (_3744 = _3746) |- ((_3744 = _3746) /\ ((~ (_3745 = _3747)) \/ ((_3746 <= _3747) \/ (~ (_3744 <= _3745)))))
+T c==> c= f0 f1 c/\ c= f0 f1 c\/ c~ c= f2 f3 c\/ c<= f1 f3 c~ c<= f0 f2
+- |- (((t1 \/ t2) \/ t3) = (t1 \/ (t2 \/ t3)))
+T c= c\/ c\/ f0 f1 f2 c\/ f0 c\/ f1 f2
+- |- ((!n'. ((m <= n') \/ (n <= m))) = ((!n. (m <= n)) \/ (n <= m)))
+T c= ! c\/ c<= f0 b0 c<= f1 f0 c\/ ! c<= f0 b0 c<= f1 f0
+- (!m. (!n. ((m <= n) \/ (n <= m)))), (~ (m <= n)), (~ (n <= m)) |- ((~ (n <= m)) /\ (n <= m))
+T c==> ! ! c\/ c<= b0 b1 c<= b1 b0 c==> c~ c<= f0 f1 c==> c~ c<= f1 f0 c/\ c~ c<= f1 f0 c<= f1 f0
+- |- (((!p'. (!q'. (((m = (NUMERAL _0)) = p') ==> ((p' ==> ((((NUMERAL _0) + d) = (NUMERAL _0)) = q')) ==> (((m = (NUMERAL _0)) ==> (((NUMERAL _0) + d) = (NUMERAL _0))) = (p' ==> q')))))) ==> ((\p'. (!q'. (((m = (NUMERAL _0)) = p') ==> ((p' ==> ((((NUMERAL _0) + d) = (NUMERAL _0)) = q')) ==> (((m = (NUMERAL _0)) ==> (((NUMERAL _0) + d) = (NUMERAL _0))) = (p' ==> q')))))) p')) = ((\p'. (!q'. (((m = (NUMERAL _0)) = p') ==> ((p' ==> ((((NUMERAL _0) + d) = (NUMERAL _0)) = q')) ==> (((m = (NUMERAL _0)) ==> (((NUMERAL _0) + d) = (NUMERAL _0))) = (p' ==> q')))))) p'))
+T c= c==> ! ! c==> c= c= f0 cNUMERAL c_0 b0 c==> c==> b0 c= c= c+ cNUMERAL c_0 f1 cNUMERAL c_0 b1 c= c==> c= f0 cNUMERAL c_0 c= c+ cNUMERAL c_0 f1 cNUMERAL c_0 c==> b0 b1 * / ! c==> c= c= f0 cNUMERAL c_0 b0 c==> c==> b0 c= c= c+ cNUMERAL c_0 f1 cNUMERAL c_0 b1 c= c==> c= f0 cNUMERAL c_0 c= c+ cNUMERAL c_0 f1 cNUMERAL c_0 c==> b0 b1 f2 * / ! c==> c= c= f0 cNUMERAL c_0 b0 c==> c==> b0 c= c= c+ cNUMERAL c_0 f1 cNUMERAL c_0 b1 c= c==> c= f0 cNUMERAL c_0 c= c+ cNUMERAL c_0 f1 cNUMERAL c_0 c==> b0 b1 f2
+- (_3748 = _3750), (_3749 = _3751) |- ((_3749 = _3751) /\ (((d _3748) _3749) = ((d _3750) _3751)))
+T c==> c= f0 f1 c==> c= f2 f3 c/\ c= f2 f3 c= * * f4 f0 f2 * * f4 f1 f3
+- ((!m. (!n. ((m <= n) \/ (!d. (~ (n = (m + d))))))) /\ (!m. (!n. ((~ (m <= n)) \/ (n = (m + ((d m) n))))))) |- ((\n. (!d. ((_3739 <= n) \/ (~ (n = (_3739 + d)))))) _3740)
+T c==> c/\ ! ! c\/ c<= b0 b1 ! c~ c= b1 c+ b0 b2 ! ! c\/ c~ c<= b0 b1 c= b1 c+ b0 * * f0 b0 b1 * / ! c\/ c<= f1 b0 c~ c= b0 c+ f1 b1 f2
+- (~ (n = (NUMERAL _0))) |- ((~ (n = (NUMERAL _0))) /\ (m = (((m DIV n) * n) + (m MOD n))))
+T c==> c~ c= f0 cNUMERAL c_0 c/\ c~ c= f0 cNUMERAL c_0 c= f1 c+ c* cDIV f1 f0 f0 cMOD f1 f0
+- |- (((~ (p = (NUMERAL _0))) ==> ((~ (m <= n)) ==> ((~ (?d. (m = (n + d)))) ==> ((!m. (!n. ((m <= n) = (?d. (n = (m + d)))))) ==> ((!m. (!n. ((m <= n) \/ (n <= m)))) ==> F))))) ==> ((~ (p = (NUMERAL _0))) ==> ((~ (m <= n)) ==> ((~ (?d. (m = (n + d)))) ==> ((!m. (!n. ((m <= n) = (?d. (n = (m + d)))))) ==> ((!m. (!n. ((m <= n) \/ (n <= m)))) ==> F))))))
+T c==> c==> c~ c= f0 cNUMERAL c_0 c==> c~ c<= f1 f2 c==> c~ c? / c= f1 c+ f2 b0 c==> ! ! c= c<= b0 b1 c? / c= b1 c+ b0 b2 c==> ! ! c\/ c<= b0 b1 c<= b1 b0 cF c==> c~ c= f0 cNUMERAL c_0 c==> c~ c<= f1 f2 c==> c~ c? / c= f1 c+ f2 b0 c==> ! ! c= c<= b0 b1 c? / c= b1 c+ b0 b2 c==> ! ! c\/ c<= b0 b1 c<= b1 b0 cF
+- ((NUMERAL _0) = p) |- (p = (NUMERAL _0))
+T c==> c= cNUMERAL c_0 f0 c= f0 cNUMERAL c_0
+- |- ((!n. (P \/ (Q n))) = (P \/ (!n. (Q n))))
+T c= ! c\/ f0 * f1 b0 c\/ f0 ! * f1 b0
+- |- (((!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))) ==> ((\t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))) t3)) = ((\t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))) t3))
+T c= c==> ! c= c\/ f0 c\/ f1 b0 c\/ c\/ f0 f1 b0 * / c= c\/ f0 c\/ f1 b0 c\/ c\/ f0 f1 b0 f2 * / c= c\/ f0 c\/ f1 b0 c\/ c\/ f0 f1 b0 f2
+- ((~ (p = (NUMERAL _0))) ==> ((~ (m <= n)) ==> ((~ (?d. (m = (n + d)))) ==> ((!m. (!n. ((m <= n) = (?d. (n = (m + d)))))) ==> ((!m. (!n. ((m <= n) \/ (n <= m)))) ==> F))))), (((~ (p = (NUMERAL _0))) ==> ((~ (m <= n)) ==> ((~ (?d. (m = (n + d)))) ==> ((!m. (!n. ((m <= n) = (?d. (n = (m + d)))))) ==> ((!m. (!n. ((m <= n) \/ (n <= m)))) ==> F))))) ==> ((~ (p = (NUMERAL _0))) ==> ((~ (m <= n)) ==> ((~ (?d. (m = (n + d)))) ==> ((!m. (!n. ((m <= n) = (?d. (n = (m + d)))))) ==> ((!m. (!n. ((m <= n) \/ (n <= m)))) ==> F)))))) |- (((~ (p = (NUMERAL _0))) ==> ((~ (m <= n)) ==> ((~ (?d. (m = (n + d)))) ==> ((!m. (!n. ((m <= n) = (?d. (n = (m + d)))))) ==> ((!m. (!n. ((m <= n) \/ (n <= m)))) ==> F))))) /\ ((~ (p = (NUMERAL _0))) ==> ((~ (m <= n)) ==> ((~ (?d. (m = (n + d)))) ==> ((!m. (!n. ((m <= n) = (?d. (n = (m + d)))))) ==> ((!m. (!n. ((m <= n) \/ (n <= m)))) ==> F))))))
+T c==> c==> c~ c= f0 cNUMERAL c_0 c==> c~ c<= f1 f2 c==> c~ c? / c= f1 c+ f2 b0 c==> ! ! c= c<= b0 b1 c? / c= b1 c+ b0 b2 c==> ! ! c\/ c<= b0 b1 c<= b1 b0 cF c==> c==> c==> c~ c= f0 cNUMERAL c_0 c==> c~ c<= f1 f2 c==> c~ c? / c= f1 c+ f2 b0 c==> ! ! c= c<= b0 b1 c? / c= b1 c+ b0 b2 c==> ! ! c\/ c<= b0 b1 c<= b1 b0 cF c==> c~ c= f0 cNUMERAL c_0 c==> c~ c<= f1 f2 c==> c~ c? / c= f1 c+ f2 b0 c==> ! ! c= c<= b0 b1 c? / c= b1 c+ b0 b2 c==> ! ! c\/ c<= b0 b1 c<= b1 b0 cF c/\ c==> c~ c= f0 cNUMERAL c_0 c==> c~ c<= f1 f2 c==> c~ c? / c= f1 c+ f2 b0 c==> ! ! c= c<= b0 b1 c? / c= b1 c+ b0 b2 c==> ! ! c\/ c<= b0 b1 c<= b1 b0 cF c==> c~ c= f0 cNUMERAL c_0 c==> c~ c<= f1 f2 c==> c~ c? / c= f1 c+ f2 b0 c==> ! ! c= c<= b0 b1 c? / c= b1 c+ b0 b2 c==> ! ! c\/ c<= b0 b1 c<= b1 b0 cF
+- |- ((t /\ t) = t)
+T c= c/\ f0 f0 f0
+- |- ((a = b) ==> (b \/ (~ a)))
+T c==> c= f0 f1 c\/ f1 c~ f0
+- (~ (n = (NUMERAL _0))) |- ((~ (n = (NUMERAL _0))) /\ ((m = (((m DIV n) * n) + (m MOD n))) = T))
+T c==> c~ c= f0 cNUMERAL c_0 c/\ c~ c= f0 cNUMERAL c_0 c= c= f1 c+ c* cDIV f1 f0 f0 cMOD f1 f0 cT
+- ((!m. (!n. ((m <= n) \/ (!d. (~ (n = (m + d))))))) /\ (!m. (!n. ((~ (m <= n)) \/ (n = (m + ((d m) n))))))) |- (((!m. (!n. (!d. ((m <= n) \/ (~ (n = (m + d))))))) ==> ((\m. (!n. (!d. ((m <= n) \/ (~ (n = (m + d))))))) _3739)) = ((\m. (!n. (!d. ((m <= n) \/ (~ (n = (m + d))))))) _3739))
+T c==> c/\ ! ! c\/ c<= b0 b1 ! c~ c= b1 c+ b0 b2 ! ! c\/ c~ c<= b0 b1 c= b1 c+ b0 * * f0 b0 b1 c= c==> ! ! ! c\/ c<= b0 b1 c~ c= b1 c+ b0 b2 * / ! ! c\/ c<= b0 b1 c~ c= b1 c+ b0 b2 f1 * / ! ! c\/ c<= b0 b1 c~ c= b1 c+ b0 b2 f1
+- (!m. (!n. ((m < n) ==> ((m MOD n) = m)))), (m < n) |- ((m < n) /\ ((m MOD n) = m))
+T c==> ! ! c==> c< b0 b1 c= cMOD b0 b1 b0 c==> c< f0 f1 c/\ c< f0 f1 c= cMOD f0 f1 f0
+- (_3744 = _3746) |- ((_3745 = _3747) ==> ((_3746 <= _3747) \/ (~ (_3744 <= _3745))))
+T c==> c= f0 f1 c==> c= f2 f3 c\/ c<= f1 f3 c~ c<= f0 f2
+- |- ((!n'. ((m <= n) \/ (!d. (~ (n' = (m + d)))))) = ((m <= n) \/ (!n. (!d. (~ (n = (m + d)))))))
+T c= ! c\/ c<= f0 f1 ! c~ c= b0 c+ f0 b1 c\/ c<= f0 f1 ! ! c~ c= b0 c+ f0 b1
+- (~ (p = (NUMERAL _0))) |- (((NUMERAL _0) = p) = F)
+T c==> c~ c= f0 cNUMERAL c_0 c= c= cNUMERAL c_0 f0 cF
+- |- ((((~ (p = (NUMERAL _0))) ==> ((~ (m <= n)) ==> ((~ (?d. (m = (n + d)))) ==> ((!m. (!n. ((m <= n) = (?d. (n = (m + d)))))) ==> ((!m. (!n. ((m <= n) \/ (n <= m)))) ==> F))))) ==> ((~ (p = (NUMERAL _0))) ==> ((~ (m <= n)) ==> ((~ (?d. (m = (n + d)))) ==> ((!m. (!n. ((m <= n) = (?d. (n = (m + d)))))) ==> ((!m. (!n. ((m <= n) \/ (n <= m)))) ==> F)))))) ==> (((~ (p = (NUMERAL _0))) ==> ((~ (m <= n)) ==> ((~ (?d. (m = (n + d)))) ==> ((!m. (!n. ((m <= n) = (?d. (n = (m + d)))))) ==> ((!m. (!n. ((m <= n) \/ (n <= m)))) ==> F))))) ==> ((~ (p = (NUMERAL _0))) ==> ((~ (m <= n)) ==> ((~ (?d. (m = (n + d)))) ==> ((!m. (!n. ((m <= n) = (?d. (n = (m + d)))))) ==> ((!m. (!n. ((m <= n) \/ (n <= m)))) ==> F)))))))
+T c==> c==> c==> c~ c= f0 cNUMERAL c_0 c==> c~ c<= f1 f2 c==> c~ c? / c= f1 c+ f2 b0 c==> ! ! c= c<= b0 b1 c? / c= b1 c+ b0 b2 c==> ! ! c\/ c<= b0 b1 c<= b1 b0 cF c==> c~ c= f0 cNUMERAL c_0 c==> c~ c<= f1 f2 c==> c~ c? / c= f1 c+ f2 b0 c==> ! ! c= c<= b0 b1 c? / c= b1 c+ b0 b2 c==> ! ! c\/ c<= b0 b1 c<= b1 b0 cF c==> c==> c~ c= f0 cNUMERAL c_0 c==> c~ c<= f1 f2 c==> c~ c? / c= f1 c+ f2 b0 c==> ! ! c= c<= b0 b1 c? / c= b1 c+ b0 b2 c==> ! ! c\/ c<= b0 b1 c<= b1 b0 cF c==> c~ c= f0 cNUMERAL c_0 c==> c~ c<= f1 f2 c==> c~ c? / c= f1 c+ f2 b0 c==> ! ! c= c<= b0 b1 c? / c= b1 c+ b0 b2 c==> ! ! c\/ c<= b0 b1 c<= b1 b0 cF
+- (~ F) |- (F = F)
+T c==> c~ cF c= cF cF
+- |- ((\q'. (((m = (NUMERAL _0)) = p') ==> ((p' ==> ((((NUMERAL _0) + d) = (NUMERAL _0)) = q')) ==> (((m = (NUMERAL _0)) ==> (((NUMERAL _0) + d) = (NUMERAL _0))) = (p' ==> q'))))) q')
+T * / c==> c= c= f0 cNUMERAL c_0 f1 c==> c==> f1 c= c= c+ cNUMERAL c_0 f2 cNUMERAL c_0 b0 c= c==> c= f0 cNUMERAL c_0 c= c+ cNUMERAL c_0 f2 cNUMERAL c_0 c==> f1 b0 f3
+- (_3744 = _3746), (_3745 = _3747) |- ((_3745 = _3747) /\ ((_3746 <= _3747) \/ (~ (_3744 <= _3745))))
+T c==> c= f0 f1 c==> c= f2 f3 c/\ c= f2 f3 c\/ c<= f1 f3 c~ c<= f0 f2
+- (!m. (!n. ((m <= n) \/ (n <= m)))), (~ (m = (n + ((d n) m)))), (~ (m <= n)), ((!m. (!n. ((m <= n) \/ (!d. (~ (n = (m + d))))))) /\ (!m. (!n. ((~ (m <= n)) \/ (n = (m + ((d m) n))))))) |- ((~ (m = (n + ((d n) m)))) /\ (m = (n + ((d n) m))))
+T c==> ! ! c\/ c<= b0 b1 c<= b1 b0 c==> c~ c= f0 c+ f1 * * f2 f1 f0 c==> c~ c<= f0 f1 c==> c/\ ! ! c\/ c<= b0 b1 ! c~ c= b1 c+ b0 b2 ! ! c\/ c~ c<= b0 b1 c= b1 c+ b0 * * f2 b0 b1 c/\ c~ c= f0 c+ f1 * * f2 f1 f0 c= f0 c+ f1 * * f2 f1 f0
+- (~ (m <= n)) |- ((m <= n) ==> (~ (m <= n)))
+T c==> c~ c<= f0 f1 c==> c<= f0 f1 c~ c<= f0 f1
+- ((!m. (!n. ((m <= n) \/ (!d. (~ (n = (m + d))))))) /\ (!m. (!n. ((~ (m <= n)) \/ (n = (m + ((d m) n))))))) |- (!n. (!d. ((_3739 <= n) \/ (~ (n = (_3739 + d))))))
+T c==> c/\ ! ! c\/ c<= b0 b1 ! c~ c= b1 c+ b0 b2 ! ! c\/ c~ c<= b0 b1 c= b1 c+ b0 * * f0 b0 b1 ! ! c\/ c<= f1 b0 c~ c= b0 c+ f1 b1
+- |- (((!q'. (((m = (NUMERAL _0)) = p') ==> ((p' ==> ((((NUMERAL _0) + d) = (NUMERAL _0)) = q')) ==> (((m = (NUMERAL _0)) ==> (((NUMERAL _0) + d) = (NUMERAL _0))) = (p' ==> q'))))) ==> ((\q'. (((m = (NUMERAL _0)) = p') ==> ((p' ==> ((((NUMERAL _0) + d) = (NUMERAL _0)) = q')) ==> (((m = (NUMERAL _0)) ==> (((NUMERAL _0) + d) = (NUMERAL _0))) = (p' ==> q'))))) q')) = ((\q'. (((m = (NUMERAL _0)) = p') ==> ((p' ==> ((((NUMERAL _0) + d) = (NUMERAL _0)) = q')) ==> (((m = (NUMERAL _0)) ==> (((NUMERAL _0) + d) = (NUMERAL _0))) = (p' ==> q'))))) q'))
+T c= c==> ! c==> c= c= f0 cNUMERAL c_0 f1 c==> c==> f1 c= c= c+ cNUMERAL c_0 f2 cNUMERAL c_0 b0 c= c==> c= f0 cNUMERAL c_0 c= c+ cNUMERAL c_0 f2 cNUMERAL c_0 c==> f1 b0 * / c==> c= c= f0 cNUMERAL c_0 f1 c==> c==> f1 c= c= c+ cNUMERAL c_0 f2 cNUMERAL c_0 b0 c= c==> c= f0 cNUMERAL c_0 c= c+ cNUMERAL c_0 f2 cNUMERAL c_0 c==> f1 b0 f3 * / c==> c= c= f0 cNUMERAL c_0 f1 c==> c==> f1 c= c= c+ cNUMERAL c_0 f2 cNUMERAL c_0 b0 c= c==> c= f0 cNUMERAL c_0 c= c+ cNUMERAL c_0 f2 cNUMERAL c_0 c==> f1 b0 f3
+- |- ((~ (_3752 = _3754)) \/ ((~ (_3753 = _3755)) \/ ((_3752 + _3753) = (_3754 + _3755))))
+T c\/ c~ c= f0 f1 c\/ c~ c= f2 f3 c= c+ f0 f2 c+ f1 f3
+- ((~ (p = (NUMERAL _0))) ==> ((~ (m <= n)) ==> ((~ (?d. (m = (n + d)))) ==> ((!m. (!n. ((m <= n) = (?d. (n = (m + d)))))) ==> ((!m. (!n. ((m <= n) \/ (n <= m)))) ==> F))))) |- (((~ (p = (NUMERAL _0))) ==> ((~ (m <= n)) ==> ((~ (?d. (m = (n + d)))) ==> ((!m. (!n. ((m <= n) = (?d. (n = (m + d)))))) ==> ((!m. (!n. ((m <= n) \/ (n <= m)))) ==> F))))) /\ ((~ (p = (NUMERAL _0))) ==> ((~ (m <= n)) ==> ((~ (?d. (m = (n + d)))) ==> ((!m. (!n. ((m <= n) = (?d. (n = (m + d)))))) ==> ((!m. (!n. ((m <= n) \/ (n <= m)))) ==> F))))))
+T c==> c==> c~ c= f0 cNUMERAL c_0 c==> c~ c<= f1 f2 c==> c~ c? / c= f1 c+ f2 b0 c==> ! ! c= c<= b0 b1 c? / c= b1 c+ b0 b2 c==> ! ! c\/ c<= b0 b1 c<= b1 b0 cF c/\ c==> c~ c= f0 cNUMERAL c_0 c==> c~ c<= f1 f2 c==> c~ c? / c= f1 c+ f2 b0 c==> ! ! c= c<= b0 b1 c? / c= b1 c+ b0 b2 c==> ! ! c\/ c<= b0 b1 c<= b1 b0 cF c==> c~ c= f0 cNUMERAL c_0 c==> c~ c<= f1 f2 c==> c~ c? / c= f1 c+ f2 b0 c==> ! ! c= c<= b0 b1 c? / c= b1 c+ b0 b2 c==> ! ! c\/ c<= b0 b1 c<= b1 b0 cF
+- ((!m. (!n. ((m <= n) \/ (!d. (~ (n = (m + d))))))) /\ (!m. (!n. ((~ (m <= n)) \/ (n = (m + ((d m) n))))))) |- (!m. (!n. (!d. ((m <= n) \/ (~ (n = (m + d)))))))
+T c==> c/\ ! ! c\/ c<= b0 b1 ! c~ c= b1 c+ b0 b2 ! ! c\/ c~ c<= b0 b1 c= b1 c+ b0 * * f0 b0 b1 ! ! ! c\/ c<= b0 b1 c~ c= b1 c+ b0 b2
+- |- ((!p. (P p)) = ((P T) /\ (P F)))
+T c= ! * f0 b0 c/\ * f0 cT * f0 cF
+- (_3744 = _3746), (_3745 = _3747) |- ((((_3744 <= _3745) = (_3746 <= _3747)) ==> ((_3746 <= _3747) \/ (~ (_3744 <= _3745)))) = ((_3746 <= _3747) \/ (~ (_3744 <= _3745))))
+T c==> c= f0 f1 c==> c= f2 f3 c= c==> c= c<= f0 f2 c<= f1 f3 c\/ c<= f1 f3 c~ c<= f0 f2 c\/ c<= f1 f3 c~ c<= f0 f2
+- |- (((!t1. (!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))))) ==> ((\t1. (!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))))) t1)) = ((\t1. (!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))))) t1))
+T c= c==> ! ! ! c= c\/ b0 c\/ b1 b2 c\/ c\/ b0 b1 b2 * / ! ! c= c\/ b0 c\/ b1 b2 c\/ c\/ b0 b1 b2 f0 * / ! ! c= c\/ b0 c\/ b1 b2 c\/ c\/ b0 b1 b2 f0
+- |- (T = (((~ (_3742 <= _3743)) \/ (_3743 = (_3742 + ((d _3742) _3743)))) = ((_3743 = (_3742 + ((d _3742) _3743))) \/ (~ (_3742 <= _3743)))))
+T c= cT c= c\/ c~ c<= f0 f1 c= f1 c+ f0 * * f2 f0 f1 c\/ c= f1 c+ f0 * * f2 f0 f1 c~ c<= f0 f1
+- |- (((((~ (p = (NUMERAL _0))) ==> ((~ (m <= n)) ==> ((~ (?d. (m = (n + d)))) ==> ((!m. (!n. ((m <= n) = (?d. (n = (m + d)))))) ==> ((!m. (!n. ((m <= n) \/ (n <= m)))) ==> F))))) ==> ((~ (p = (NUMERAL _0))) ==> ((~ (m <= n)) ==> ((~ (?d. (m = (n + d)))) ==> ((!m. (!n. ((m <= n) = (?d. (n = (m + d)))))) ==> ((!m. (!n. ((m <= n) \/ (n <= m)))) ==> F)))))) ==> (((~ (p = (NUMERAL _0))) ==> ((~ (m <= n)) ==> ((~ (?d. (m = (n + d)))) ==> ((!m. (!n. ((m <= n) = (?d. (n = (m + d)))))) ==> ((!m. (!n. ((m <= n) \/ (n <= m)))) ==> F))))) ==> ((~ (p = (NUMERAL _0))) ==> ((~ (m <= n)) ==> ((~ (?d. (m = (n + d)))) ==> ((!m. (!n. ((m <= n) = (?d. (n = (m + d)))))) ==> ((!m. (!n. ((m <= n) \/ (n <= m)))) ==> F))))))) = (((~ (p = (NUMERAL _0))) ==> ((~ (m <= n)) ==> ((~ (?d. (m = (n + d)))) ==> ((!m. (!n. ((m <= n) = (?d. (n = (m + d)))))) ==> ((!m. (!n. ((m <= n) \/ (n <= m)))) ==> F))))) ==> ((~ (p = (NUMERAL _0))) ==> ((~ (m <= n)) ==> ((~ (?d. (m = (n + d)))) ==> ((!m. (!n. ((m <= n) = (?d. (n = (m + d)))))) ==> ((!m. (!n. ((m <= n) \/ (n <= m)))) ==> F)))))))
+T c= c==> c==> c==> c~ c= f0 cNUMERAL c_0 c==> c~ c<= f1 f2 c==> c~ c? / c= f1 c+ f2 b0 c==> ! ! c= c<= b0 b1 c? / c= b1 c+ b0 b2 c==> ! ! c\/ c<= b0 b1 c<= b1 b0 cF c==> c~ c= f0 cNUMERAL c_0 c==> c~ c<= f1 f2 c==> c~ c? / c= f1 c+ f2 b0 c==> ! ! c= c<= b0 b1 c? / c= b1 c+ b0 b2 c==> ! ! c\/ c<= b0 b1 c<= b1 b0 cF c==> c==> c~ c= f0 cNUMERAL c_0 c==> c~ c<= f1 f2 c==> c~ c? / c= f1 c+ f2 b0 c==> ! ! c= c<= b0 b1 c? / c= b1 c+ b0 b2 c==> ! ! c\/ c<= b0 b1 c<= b1 b0 cF c==> c~ c= f0 cNUMERAL c_0 c==> c~ c<= f1 f2 c==> c~ c? / c= f1 c+ f2 b0 c==> ! ! c= c<= b0 b1 c? / c= b1 c+ b0 b2 c==> ! ! c\/ c<= b0 b1 c<= b1 b0 cF c==> c==> c~ c= f0 cNUMERAL c_0 c==> c~ c<= f1 f2 c==> c~ c? / c= f1 c+ f2 b0 c==> ! ! c= c<= b0 b1 c? / c= b1 c+ b0 b2 c==> ! ! c\/ c<= b0 b1 c<= b1 b0 cF c==> c~ c= f0 cNUMERAL c_0 c==> c~ c<= f1 f2 c==> c~ c? / c= f1 c+ f2 b0 c==> ! ! c= c<= b0 b1 c? / c= b1 c+ b0 b2 c==> ! ! c\/ c<= b0 b1 c<= b1 b0 cF
+- ((!m. (!n. ((m <= n) \/ (!d. (~ (n = (m + d))))))) /\ (!m. (!n. ((~ (m <= n)) \/ (n = (m + ((d m) n))))))) |- ((\m. (!n. (!d. ((m <= n) \/ (~ (n = (m + d))))))) _3739)
+T c==> c/\ ! ! c\/ c<= b0 b1 ! c~ c= b1 c+ b0 b2 ! ! c\/ c~ c<= b0 b1 c= b1 c+ b0 * * f0 b0 b1 * / ! ! c\/ c<= b0 b1 c~ c= b1 c+ b0 b2 f1
+- |- ((_3744 = _3746) ==> ((~ (_3745 = _3747)) \/ ((_3746 <= _3747) \/ (~ (_3744 <= _3745)))))
+T c==> c= f0 f1 c\/ c~ c= f2 f3 c\/ c<= f1 f3 c~ c<= f0 f2
+- (~ (p = (NUMERAL _0))) |- (T = (((x MOD (p EXP (n + d))) MOD (p EXP n)) = (x MOD (p EXP n))))
+T c==> c~ c= f0 cNUMERAL c_0 c= cT c= cMOD cMOD f1 cEXP f0 c+ f2 f3 cEXP f0 f2 cMOD f1 cEXP f0 f2
+- (!m. (!n. ((m <= n) \/ (n <= m)))), (~ F), (~ (?d. (m = (n + d)))), (~ (m <= n)), ((!m. (!n. ((m <= n) \/ (!d. (~ (n = (m + d))))))) /\ (!m. (!n. ((~ (m <= n)) \/ (n = (m + ((d m) n))))))) |- ((~ F) /\ F)
+T c==> ! ! c\/ c<= b0 b1 c<= b1 b0 c==> c~ cF c==> c~ c? / c= f0 c+ f1 b0 c==> c~ c<= f0 f1 c==> c/\ ! ! c\/ c<= b0 b1 ! c~ c= b1 c+ b0 b2 ! ! c\/ c~ c<= b0 b1 c= b1 c+ b0 * * f2 b0 b1 c/\ c~ cF cF
+- |- ((((m = (NUMERAL _0)) = (m = (NUMERAL _0))) ==> (((m = (NUMERAL _0)) ==> ((((NUMERAL _0) + d) = (NUMERAL _0)) = q')) ==> (((m = (NUMERAL _0)) ==> (((NUMERAL _0) + d) = (NUMERAL _0))) = ((m = (NUMERAL _0)) ==> q')))) = (((m = (NUMERAL _0)) ==> ((((NUMERAL _0) + d) = (NUMERAL _0)) = q')) ==> (((m = (NUMERAL _0)) ==> (((NUMERAL _0) + d) = (NUMERAL _0))) = ((m = (NUMERAL _0)) ==> q'))))
+T c= c==> c= c= f0 cNUMERAL c_0 c= f0 cNUMERAL c_0 c==> c==> c= f0 cNUMERAL c_0 c= c= c+ cNUMERAL c_0 f1 cNUMERAL c_0 f2 c= c==> c= f0 cNUMERAL c_0 c= c+ cNUMERAL c_0 f1 cNUMERAL c_0 c==> c= f0 cNUMERAL c_0 f2 c==> c==> c= f0 cNUMERAL c_0 c= c= c+ cNUMERAL c_0 f1 cNUMERAL c_0 f2 c= c==> c= f0 cNUMERAL c_0 c= c+ cNUMERAL c_0 f1 cNUMERAL c_0 c==> c= f0 cNUMERAL c_0 f2
+- |- ((~ (n = (NUMERAL _0))) ==> (m = (((m DIV n) * n) + (m MOD n))))
+T c==> c~ c= f0 cNUMERAL c_0 c= f1 c+ c* cDIV f1 f0 f0 cMOD f1 f0
+- (!m. (!n. ((m < n) ==> ((m MOD n) = m)))), (m < n) |- ((!m. (!n. ((m < n) ==> ((m MOD n) = m)))) /\ ((m MOD n) = m))
+T c==> ! ! c==> c< b0 b1 c= cMOD b0 b1 b0 c==> c< f0 f1 c/\ ! ! c==> c< b0 b1 c= cMOD b0 b1 b0 c= cMOD f0 f1 f0
+- |- ((!n'. ((~ (m <= n)) \/ (?d. (n' = (m + d))))) = ((~ (m <= n)) \/ (!n. (?d. (n = (m + d))))))
+T c= ! c\/ c~ c<= f0 f1 c? / c= b0 c+ f0 b1 c\/ c~ c<= f0 f1 ! c? / c= b0 c+ f0 b1
+- ((~ (p = (NUMERAL _0))) ==> ((~ (m <= n)) ==> ((~ (?d. (m = (n + d)))) ==> ((!m. (!n. ((m <= n) = (?d. (n = (m + d)))))) ==> ((!m. (!n. ((m <= n) \/ (n <= m)))) ==> F))))), (((~ (p = (NUMERAL _0))) ==> ((~ (m <= n)) ==> ((~ (?d. (m = (n + d)))) ==> ((!m. (!n. ((m <= n) = (?d. (n = (m + d)))))) ==> ((!m. (!n. ((m <= n) \/ (n <= m)))) ==> F))))) ==> ((~ (p = (NUMERAL _0))) ==> ((~ (m <= n)) ==> ((~ (?d. (m = (n + d)))) ==> ((!m. (!n. ((m <= n) = (?d. (n = (m + d)))))) ==> ((!m. (!n. ((m <= n) \/ (n <= m)))) ==> F)))))) |- ((((~ (p = (NUMERAL _0))) ==> ((~ (m <= n)) ==> ((~ (?d. (m = (n + d)))) ==> ((!m. (!n. ((m <= n) = (?d. (n = (m + d)))))) ==> ((!m. (!n. ((m <= n) \/ (n <= m)))) ==> F))))) ==> ((~ (p = (NUMERAL _0))) ==> ((~ (m <= n)) ==> ((~ (?d. (m = (n + d)))) ==> ((!m. (!n. ((m <= n) = (?d. (n = (m + d)))))) ==> ((!m. (!n. ((m <= n) \/ (n <= m)))) ==> F)))))) /\ ((~ (p = (NUMERAL _0))) ==> ((~ (m <= n)) ==> ((~ (?d. (m = (n + d)))) ==> ((!m. (!n. ((m <= n) = (?d. (n = (m + d)))))) ==> ((!m. (!n. ((m <= n) \/ (n <= m)))) ==> F))))))
+T c==> c==> c~ c= f0 cNUMERAL c_0 c==> c~ c<= f1 f2 c==> c~ c? / c= f1 c+ f2 b0 c==> ! ! c= c<= b0 b1 c? / c= b1 c+ b0 b2 c==> ! ! c\/ c<= b0 b1 c<= b1 b0 cF c==> c==> c==> c~ c= f0 cNUMERAL c_0 c==> c~ c<= f1 f2 c==> c~ c? / c= f1 c+ f2 b0 c==> ! ! c= c<= b0 b1 c? / c= b1 c+ b0 b2 c==> ! ! c\/ c<= b0 b1 c<= b1 b0 cF c==> c~ c= f0 cNUMERAL c_0 c==> c~ c<= f1 f2 c==> c~ c? / c= f1 c+ f2 b0 c==> ! ! c= c<= b0 b1 c? / c= b1 c+ b0 b2 c==> ! ! c\/ c<= b0 b1 c<= b1 b0 cF c/\ c==> c==> c~ c= f0 cNUMERAL c_0 c==> c~ c<= f1 f2 c==> c~ c? / c= f1 c+ f2 b0 c==> ! ! c= c<= b0 b1 c? / c= b1 c+ b0 b2 c==> ! ! c\/ c<= b0 b1 c<= b1 b0 cF c==> c~ c= f0 cNUMERAL c_0 c==> c~ c<= f1 f2 c==> c~ c? / c= f1 c+ f2 b0 c==> ! ! c= c<= b0 b1 c? / c= b1 c+ b0 b2 c==> ! ! c\/ c<= b0 b1 c<= b1 b0 cF c==> c~ c= f0 cNUMERAL c_0 c==> c~ c<= f1 f2 c==> c~ c? / c= f1 c+ f2 b0 c==> ! ! c= c<= b0 b1 c? / c= b1 c+ b0 b2 c==> ! ! c\/ c<= b0 b1 c<= b1 b0 cF
+- |- ((~ (_3744 = _3746)) \/ ((~ (_3745 = _3747)) \/ ((_3746 <= _3747) \/ (~ (_3744 <= _3745)))))
+T c\/ c~ c= f0 f1 c\/ c~ c= f2 f3 c\/ c<= f1 f3 c~ c<= f0 f2
+- (_3748 = _3750) |- ((_3749 = _3751) ==> (((d _3748) _3749) = ((d _3750) _3751)))
+T c==> c= f0 f1 c==> c= f2 f3 c= * * f4 f0 f2 * * f4 f1 f3
+- (m = (NUMERAL _0)) |- ((m = (NUMERAL _0)) /\ ((((NUMERAL _0) + d) = (NUMERAL _0)) = (((NUMERAL _0) + d) = (NUMERAL _0))))
+T c==> c= f0 cNUMERAL c_0 c/\ c= f0 cNUMERAL c_0 c= c= c+ cNUMERAL c_0 f1 cNUMERAL c_0 c= c+ cNUMERAL c_0 f1 cNUMERAL c_0

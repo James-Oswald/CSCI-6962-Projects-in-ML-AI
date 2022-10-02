@@ -1,0 +1,56 @@
+N RATIONAL_NUM
+C |- (!n. (rational (real_of_num n)))
+T crational creal_of_num f0
+D TRUTH
+A |- T
+T cT
+D INTEGER_CLOSED
+A |- ((!n. (integer (real_of_num n))) /\ ((!x. (!y. (((integer x) /\ (integer y)) ==> (integer ((real_add x) y))))) /\ ((!x. (!y. (((integer x) /\ (integer y)) ==> (integer ((real_sub x) y))))) /\ ((!x. (!y. (((integer x) /\ (integer y)) ==> (integer ((real_mul x) y))))) /\ ((!x. (!r. ((integer x) ==> (integer ((real_pow x) r))))) /\ ((!x. ((integer x) ==> (integer (real_neg x)))) /\ ((!x. ((integer x) ==> (integer (real_abs x)))) /\ ((!x. (!y. (((integer x) /\ (integer y)) ==> (integer ((real_max x) y))))) /\ (!x. (!y. (((integer x) /\ (integer y)) ==> (integer ((real_min x) y)))))))))))))
+T c/\ ! cinteger creal_of_num b0 c/\ ! ! c==> c/\ cinteger b0 cinteger b1 cinteger creal_add b0 b1 c/\ ! ! c==> c/\ cinteger b0 cinteger b1 cinteger creal_sub b0 b1 c/\ ! ! c==> c/\ cinteger b0 cinteger b1 cinteger creal_mul b0 b1 c/\ ! ! c==> cinteger b0 cinteger creal_pow b0 b1 c/\ ! c==> cinteger b0 cinteger creal_neg b0 c/\ ! c==> cinteger b0 cinteger creal_abs b0 c/\ ! ! c==> c/\ cinteger b0 cinteger b1 cinteger creal_max b0 b1 ! ! c==> c/\ cinteger b0 cinteger b1 cinteger creal_min b0 b1
+D RATIONAL_INTEGER
+A |- (!x. ((integer x) ==> (rational x)))
+T c==> cinteger f0 crational f0
+- |- ((integer x) ==> ((integer ((real_pow x) r)) = T))
+T c==> cinteger f0 c= cinteger creal_pow f0 f1 cT
+- ((integer x) /\ (integer y)) |- (integer ((real_sub x) y))
+T c==> c/\ cinteger f0 cinteger f1 cinteger creal_sub f0 f1
+- ((integer x) /\ (integer y)) |- (integer ((real_add x) y))
+T c==> c/\ cinteger f0 cinteger f1 cinteger creal_add f0 f1
+- |- ((\x. (!y. (((integer x) /\ (integer y)) ==> (integer ((real_sub x) y))))) x)
+T * / ! c==> c/\ cinteger b0 cinteger b1 cinteger creal_sub b0 b1 f0
+- ((integer x) /\ (integer y)) |- (((integer x) /\ (integer y)) /\ ((integer ((real_max x) y)) = T))
+T c==> c/\ cinteger f0 cinteger f1 c/\ c/\ cinteger f0 cinteger f1 c= cinteger creal_max f0 f1 cT
+- ((integer x) /\ (integer y)) |- (integer ((real_min x) y))
+T c==> c/\ cinteger f0 cinteger f1 cinteger creal_min f0 f1
++ |- (integer (real_of_num n))
+T cinteger creal_of_num f0
+- |- ((!x. (!y. (((integer x) /\ (integer y)) ==> (integer ((real_mul x) y))))) /\ ((!x. (!r. ((integer x) ==> (integer ((real_pow x) r))))) /\ ((!x. ((integer x) ==> (integer (real_neg x)))) /\ ((!x. ((integer x) ==> (integer (real_abs x)))) /\ ((!x. (!y. (((integer x) /\ (integer y)) ==> (integer ((real_max x) y))))) /\ (!x. (!y. (((integer x) /\ (integer y)) ==> (integer ((real_min x) y))))))))))
+T c/\ ! ! c==> c/\ cinteger b0 cinteger b1 cinteger creal_mul b0 b1 c/\ ! ! c==> cinteger b0 cinteger creal_pow b0 b1 c/\ ! c==> cinteger b0 cinteger creal_neg b0 c/\ ! c==> cinteger b0 cinteger creal_abs b0 c/\ ! ! c==> c/\ cinteger b0 cinteger b1 cinteger creal_max b0 b1 ! ! c==> c/\ cinteger b0 cinteger b1 cinteger creal_min b0 b1
+- (integer x) |- (integer (real_neg x))
+T c==> cinteger f0 cinteger creal_neg f0
+- |- ((\y. (((integer x) /\ (integer y)) ==> (integer ((real_max x) y)))) y)
+T * / c==> c/\ cinteger f0 cinteger b0 cinteger creal_max f0 b0 f1
+- |- ((\y. (((integer x) /\ (integer y)) ==> (integer ((real_mul x) y)))) y)
+T * / c==> c/\ cinteger f0 cinteger b0 cinteger creal_mul f0 b0 f1
+- |- ((\x. ((integer x) ==> (integer (real_neg x)))) x)
+T * / c==> cinteger b0 cinteger creal_neg b0 f0
++ |- ((!n. t) = t)
+T c= ! f0 f0
++ |- ((\x. ((integer x) ==> (rational x))) x)
+T * / c==> cinteger b0 crational b0 f0
++ |- (T = (!n. (rational (real_of_num n))))
+T c= cT ! crational creal_of_num b0
++ (integer x) |- ((integer x) /\ ((rational x) = T))
+T c==> cinteger f0 c/\ cinteger f0 c= crational f0 cT
++ |- (((!x. ((integer x) ==> (rational x))) ==> ((\x. ((integer x) ==> (rational x))) x)) = ((\x. ((integer x) ==> (rational x))) x))
+T c= c==> ! c==> cinteger b0 crational b0 * / c==> cinteger b0 crational b0 f0 * / c==> cinteger b0 crational b0 f0
++ |- ((\n. (integer (real_of_num n))) n)
+T * / cinteger creal_of_num b0 f0
++ |- ((rational (real_of_num n)) = T)
+T c= crational creal_of_num f0 cT
++ |- ((integer x) ==> ((rational x) = T))
+T c==> cinteger f0 c= crational f0 cT
++ |- (((integer (real_of_num n)) ==> ((rational (real_of_num n)) = T)) = ((rational (real_of_num n)) = T))
+T c= c==> cinteger creal_of_num f0 c= crational creal_of_num f0 cT c= crational creal_of_num f0 cT
++ |- (((!n. (integer (real_of_num n))) ==> ((\n. (integer (real_of_num n))) n)) = ((\n. (integer (real_of_num n))) n))
+T c= c==> ! cinteger creal_of_num b0 * / cinteger creal_of_num b0 f0 * / cinteger creal_of_num b0 f0

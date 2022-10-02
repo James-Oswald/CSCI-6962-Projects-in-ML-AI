@@ -1,0 +1,109 @@
+N Aq8.uniq_imp_inj
+C |- (!y. ((uniq ((MAP f) y)) ==> (!u. (!v. ((((MEM u) y) /\ (((MEM v) y) /\ ((f u) = (f v)))) ==> (u = v))))))
+T c==> cuniq cMAP f0 f1 ! ! c==> c/\ cMEM b0 f1 c/\ cMEM b1 f1 c= * f0 b0 * f0 b1 c= b0 b1
+D TRUTH
+A |- T
+T cT
+D list_INDUCT
+A |- (!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x))))
+T c==> c/\ * f0 cNIL ! ! c==> * f0 b1 * f0 cCONS b0 b1 ! * f0 b0
+D MAP
+A |- ((!f. (((MAP f) NIL) = NIL)) /\ (!f. (!h. (!t. (((MAP f) ((CONS h) t)) = ((CONS (f h)) ((MAP f) t)))))))
+T c/\ ! c= cMAP b0 cNIL cNIL ! ! ! c= cMAP b0 cCONS b1 b2 cCONS * b0 b1 cMAP b0 b2
+D MEM
+A |- ((((MEM x) NIL) = F) /\ (((MEM x) ((CONS h) t)) = ((x = h) \/ ((MEM x) t))))
+T c/\ c= cMEM f0 cNIL cF c= cMEM f0 cCONS f1 f2 c\/ c= f0 f1 cMEM f0 f2
+D MEM_MAP
+A |- (!f. (!y. (!l. (((MEM y) ((MAP f) l)) = (?x. (((MEM x) l) /\ (y = (f x))))))))
+T c= cMEM f0 cMAP f1 f2 c? / c/\ cMEM b0 f2 c= f0 * f1 b0
+D Seq.uniq
+A |- (((uniq NIL) = T) /\ ((uniq ((CONS x) s')) = ((~ ((MEM x) s')) /\ (uniq s'))))
+T c/\ c= cuniq cNIL cT c= cuniq cCONS f0 f1 c/\ c~ cMEM f0 f1 cuniq f1
++ (!u. (!v. ((((MEM u) t) /\ (((MEM v) t) /\ ((f u) = (f v)))) ==> (u = v)))), (~ ((MEM (f h)) ((MAP f) t))), (uniq ((MAP f) t)), (((u = h) \/ ((MEM u) t)) /\ (((v = h) \/ ((MEM v) t)) /\ ((f u) = (f v)))) |- ((((u = h) \/ ((MEM u) t)) /\ (((v = h) \/ ((MEM v) t)) /\ ((f u) = (f v)))) /\ (u = v))
+T c==> ! ! c==> c/\ cMEM b0 f0 c/\ cMEM b1 f0 c= * f1 b0 * f1 b1 c= b0 b1 c==> c~ cMEM * f1 f2 cMAP f1 f0 c==> cuniq cMAP f1 f0 c==> c/\ c\/ c= f3 f2 cMEM f3 f0 c/\ c\/ c= f4 f2 cMEM f4 f0 c= * f1 f3 * f1 f4 c/\ c/\ c\/ c= f3 f2 cMEM f3 f0 c/\ c\/ c= f4 f2 cMEM f4 f0 c= * f1 f3 * f1 f4 c= f3 f4
++ |- ((((~ ((MEM (f h)) ((MAP f) t))) /\ (uniq ((MAP f) t))) ==> (!u. (!v. ((((u = h) \/ ((MEM u) t)) /\ (((v = h) \/ ((MEM v) t)) /\ ((f u) = (f v)))) ==> (u = v))))) = ((uniq ((MAP f) ((CONS h) t))) ==> (!u. (!v. ((((MEM u) ((CONS h) t)) /\ (((MEM v) ((CONS h) t)) /\ ((f u) = (f v)))) ==> (u = v))))))
+T c= c==> c/\ c~ cMEM * f0 f1 cMAP f0 f2 cuniq cMAP f0 f2 ! ! c==> c/\ c\/ c= b0 f1 cMEM b0 f2 c/\ c\/ c= b1 f1 cMEM b1 f2 c= * f0 b0 * f0 b1 c= b0 b1 c==> cuniq cMAP f0 cCONS f1 f2 ! ! c==> c/\ cMEM b0 cCONS f1 f2 c/\ cMEM b1 cCONS f1 f2 c= * f0 b0 * f0 b1 c= b0 b1
++ |- (((!f. (!h. (!t. (((MAP f) ((CONS h) t)) = ((CONS (f h)) ((MAP f) t)))))) ==> ((\f. (!h. (!t. (((MAP f) ((CONS h) t)) = ((CONS (f h)) ((MAP f) t)))))) f)) = ((\f. (!h. (!t. (((MAP f) ((CONS h) t)) = ((CONS (f h)) ((MAP f) t)))))) f))
+T c= c==> ! ! ! c= cMAP b0 cCONS b1 b2 cCONS * b0 b1 cMAP b0 b2 * / ! ! c= cMAP b0 cCONS b1 b2 cCONS * b0 b1 cMAP b0 b2 f0 * / ! ! c= cMAP b0 cCONS b1 b2 cCONS * b0 b1 cMAP b0 b2 f0
++ (v = h), ((MEM u) t) |- (((f u) = (f v)) ==> ((~ ((MEM (f h)) ((MAP f) t))) ==> (u = h)))
+T c==> c= f0 f1 c==> cMEM f2 f3 c==> c= * f4 f2 * f4 f0 c==> c~ cMEM * f4 f1 cMAP f4 f3 c= f2 f1
++ |- ((((uniq ((MAP f) NIL)) ==> (!u. (!v. ((((MEM u) NIL) /\ (((MEM v) NIL) /\ ((f u) = (f v)))) ==> (u = v))))) /\ (!h. (!t. (((uniq ((MAP f) t)) ==> (!u. (!v. ((((MEM u) t) /\ (((MEM v) t) /\ ((f u) = (f v)))) ==> (u = v))))) ==> ((uniq ((MAP f) ((CONS h) t))) ==> (!u. (!v. ((((MEM u) ((CONS h) t)) /\ (((MEM v) ((CONS h) t)) /\ ((f u) = (f v)))) ==> (u = v))))))))) ==> (!y. ((uniq ((MAP f) y)) ==> (!u. (!v. ((((MEM u) y) /\ (((MEM v) y) /\ ((f u) = (f v)))) ==> (u = v)))))))
+T c==> c/\ c==> cuniq cMAP f0 cNIL ! ! c==> c/\ cMEM b0 cNIL c/\ cMEM b1 cNIL c= * f0 b0 * f0 b1 c= b0 b1 ! ! c==> c==> cuniq cMAP f0 b1 ! ! c==> c/\ cMEM b2 b1 c/\ cMEM b3 b1 c= * f0 b2 * f0 b3 c= b2 b3 c==> cuniq cMAP f0 cCONS b0 b1 ! ! c==> c/\ cMEM b2 cCONS b0 b1 c/\ cMEM b3 cCONS b0 b1 c= * f0 b2 * f0 b3 c= b2 b3 ! c==> cuniq cMAP f0 b0 ! ! c==> c/\ cMEM b1 b0 c/\ cMEM b2 b0 c= * f0 b1 * f0 b2 c= b1 b2
+- (!u. (!v. ((((MEM u) t) /\ (((MEM v) t) /\ ((f u) = (f v)))) ==> (u = v)))) |- (((((MEM u) t) /\ (((MEM v) t) /\ ((f u) = (f v)))) ==> (u = v)) = T)
+T c==> ! ! c==> c/\ cMEM b0 f0 c/\ cMEM b1 f0 c= * f1 b0 * f1 b1 c= b0 b1 c= c==> c/\ cMEM f2 f0 c/\ cMEM f3 f0 c= * f1 f2 * f1 f3 c= f2 f3 cT
+- (!u. (!v. ((((MEM u) t) /\ (((MEM v) t) /\ ((f u) = (f v)))) ==> (u = v)))), ((MEM u) t), ((MEM v) t) |- (((MEM v) t) /\ (((f u) = (f v)) ==> (u = v)))
+T c==> ! ! c==> c/\ cMEM b0 f0 c/\ cMEM b1 f0 c= * f1 b0 * f1 b1 c= b0 b1 c==> cMEM f2 f0 c==> cMEM f3 f0 c/\ cMEM f3 f0 c==> c= * f1 f2 * f1 f3 c= f2 f3
+- (~ ((MEM (f h)) ((MAP f) t))), (uniq ((MAP f) t)), ((uniq ((MAP f) t)) ==> (!u. (!v. ((((MEM u) t) /\ (((MEM v) t) /\ ((f u) = (f v)))) ==> (u = v))))) |- ((uniq ((MAP f) t)) /\ (!u. (!v. ((((u = h) \/ ((MEM u) t)) /\ (((v = h) \/ ((MEM v) t)) /\ ((f u) = (f v)))) ==> (u = v)))))
+T c==> c~ cMEM * f0 f1 cMAP f0 f2 c==> cuniq cMAP f0 f2 c==> c==> cuniq cMAP f0 f2 ! ! c==> c/\ cMEM b0 f2 c/\ cMEM b1 f2 c= * f0 b0 * f0 b1 c= b0 b1 c/\ cuniq cMAP f0 f2 ! ! c==> c/\ c\/ c= b0 f1 cMEM b0 f2 c/\ c\/ c= b1 f1 cMEM b1 f2 c= * f0 b0 * f0 b1 c= b0 b1
++ (!u. (!v. ((((MEM u) t) /\ (((MEM v) t) /\ ((f u) = (f v)))) ==> (u = v)))), (~ ((MEM (f h)) ((MAP f) t))), (uniq ((MAP f) t)), (((v = h) \/ ((MEM v) t)) /\ ((f u) = (f v))), ((u = h) \/ ((MEM u) t)) |- (u = v)
+T c==> ! ! c==> c/\ cMEM b0 f0 c/\ cMEM b1 f0 c= * f1 b0 * f1 b1 c= b0 b1 c==> c~ cMEM * f1 f2 cMAP f1 f0 c==> cuniq cMAP f1 f0 c==> c/\ c\/ c= f3 f2 cMEM f3 f0 c= * f1 f4 * f1 f3 c==> c\/ c= f4 f2 cMEM f4 f0 c= f4 f3
++ ((f u) = (f h)), ((MEM u) t) |- (((MEM u) t) /\ ((f h) = (f u)))
+T c==> c= * f0 f1 * f0 f2 c==> cMEM f1 f3 c/\ cMEM f1 f3 c= * f0 f2 * f0 f1
++ (!u. (!v. ((((MEM u) t) /\ (((MEM v) t) /\ ((f u) = (f v)))) ==> (u = v)))), (~ ((MEM (f h)) ((MAP f) t))), (uniq ((MAP f) t)), ((f u) = (f v)), (((MEM v) t) ==> (u = v)), ((v = h) \/ ((MEM v) t)), ((MEM u) t) |- (u = v)
+T c==> ! ! c==> c/\ cMEM b0 f0 c/\ cMEM b1 f0 c= * f1 b0 * f1 b1 c= b0 b1 c==> c~ cMEM * f1 f2 cMAP f1 f0 c==> cuniq cMAP f1 f0 c==> c= * f1 f3 * f1 f4 c==> c==> cMEM f4 f0 c= f3 f4 c==> c\/ c= f4 f2 cMEM f4 f0 c==> cMEM f3 f0 c= f3 f4
++ (!u. (!v. ((((MEM u) t) /\ (((MEM v) t) /\ ((f u) = (f v)))) ==> (u = v)))), (~ ((MEM (f h)) ((MAP f) t))), (uniq ((MAP f) t)), (u = h), (((v = h) \/ ((MEM v) t)) /\ ((f u) = (f v))) |- ((u = h) /\ (u = v))
+T c==> ! ! c==> c/\ cMEM b0 f0 c/\ cMEM b1 f0 c= * f1 b0 * f1 b1 c= b0 b1 c==> c~ cMEM * f1 f2 cMAP f1 f0 c==> cuniq cMAP f1 f0 c==> c= f3 f2 c==> c/\ c\/ c= f4 f2 cMEM f4 f0 c= * f1 f3 * f1 f4 c/\ c= f3 f2 c= f3 f4
++ (!u. (!v. ((((MEM u) t) /\ (((MEM v) t) /\ ((f u) = (f v)))) ==> (u = v)))), (~ ((MEM (f h)) ((MAP f) t))), (uniq ((MAP f) t)), ((f u) = (f v)), (u = h), ((MEM v) t) |- (h = v)
+T c==> ! ! c==> c/\ cMEM b0 f0 c/\ cMEM b1 f0 c= * f1 b0 * f1 b1 c= b0 b1 c==> c~ cMEM * f1 f2 cMAP f1 f0 c==> cuniq cMAP f1 f0 c==> c= * f1 f3 * f1 f4 c==> c= f3 f2 c==> cMEM f4 f0 c= f2 f4
++ (!u. (!v. ((((MEM u) t) /\ (((MEM v) t) /\ ((f u) = (f v)))) ==> (u = v)))), (~ ((MEM (f h)) ((MAP f) t))), (uniq ((MAP f) t)) |- ((!v. ((((u = h) \/ ((MEM u) t)) /\ (((v = h) \/ ((MEM v) t)) /\ ((f u) = (f v)))) ==> (u = v))) = T)
+T c==> ! ! c==> c/\ cMEM b0 f0 c/\ cMEM b1 f0 c= * f1 b0 * f1 b1 c= b0 b1 c==> c~ cMEM * f1 f2 cMAP f1 f0 c==> cuniq cMAP f1 f0 c= ! c==> c/\ c\/ c= f3 f2 cMEM f3 f0 c/\ c\/ c= b0 f2 cMEM b0 f0 c= * f1 f3 * f1 b0 c= f3 b0 cT
+- |- ((t ==> t) = T)
+T c= c==> f0 f0 cT
+- |- ((t \/ t) = t)
+T c= c\/ f0 f0 f0
++ (!u. (!v. ((((MEM u) t) /\ (((MEM v) t) /\ ((f u) = (f v)))) ==> (u = v)))), (~ ((MEM (f h)) ((MAP f) t))), (uniq ((MAP f) t)) |- ((!u. (!v. ((((MEM u) t) /\ (((MEM v) t) /\ ((f u) = (f v)))) ==> (u = v)))) /\ (!u. (!v. ((((u = h) \/ ((MEM u) t)) /\ (((v = h) \/ ((MEM v) t)) /\ ((f u) = (f v)))) ==> (u = v)))))
+T c==> ! ! c==> c/\ cMEM b0 f0 c/\ cMEM b1 f0 c= * f1 b0 * f1 b1 c= b0 b1 c==> c~ cMEM * f1 f2 cMAP f1 f0 c==> cuniq cMAP f1 f0 c/\ ! ! c==> c/\ cMEM b0 f0 c/\ cMEM b1 f0 c= * f1 b0 * f1 b1 c= b0 b1 ! ! c==> c/\ c\/ c= b0 f2 cMEM b0 f0 c/\ c\/ c= b1 f2 cMEM b1 f0 c= * f1 b0 * f1 b1 c= b0 b1
++ ((f h) = (f v)), ((MEM v) t) |- (((f h) = (f v)) /\ ((~ (?x. (((MEM x) t) /\ ((f h) = (f x))))) ==> (h = v)))
+T c==> c= * f0 f1 * f0 f2 c==> cMEM f2 f3 c/\ c= * f0 f1 * f0 f2 c==> c~ c? / c/\ cMEM b0 f3 c= * f0 f1 * f0 b0 c= f1 f2
++ (u = h), (v = h) |- (T = (u = v))
+T c==> c= f0 f1 c==> c= f2 f1 c= cT c= f0 f2
++ (~ ((MEM (f h)) ((MAP f) t))), ((f u) = (f v)), (u = h), ((MEM v) t) |- (((f u) = (f v)) /\ (h = v))
+T c==> c~ cMEM * f0 f1 cMAP f0 f2 c==> c= * f0 f3 * f0 f4 c==> c= f3 f1 c==> cMEM f4 f2 c/\ c= * f0 f3 * f0 f4 c= f1 f4
++ (~ ((MEM (f h)) ((MAP f) t))), (u = h) |- ((u = h) /\ (((MEM v) t) ==> (((f u) = (f v)) ==> (h = v))))
+T c==> c~ cMEM * f0 f1 cMAP f0 f2 c==> c= f3 f1 c/\ c= f3 f1 c==> cMEM f4 f2 c==> c= * f0 f3 * f0 f4 c= f1 f4
++ (~ ((MEM (f h)) ((MAP f) t))), (uniq ((MAP f) t)) |- ((uniq ((MAP f) t)) /\ ((!u. (!v. ((((MEM u) t) /\ (((MEM v) t) /\ ((f u) = (f v)))) ==> (u = v)))) ==> (((MEM u) t) ==> ((v = h) ==> (((f u) = (f v)) ==> (u = h))))))
+T c==> c~ cMEM * f0 f1 cMAP f0 f2 c==> cuniq cMAP f0 f2 c/\ cuniq cMAP f0 f2 c==> ! ! c==> c/\ cMEM b0 f2 c/\ cMEM b1 f2 c= * f0 b0 * f0 b1 c= b0 b1 c==> cMEM f3 f2 c==> c= f4 f1 c==> c= * f0 f3 * f0 f4 c= f3 f1
+- |- (((x = x) ==> p) = p)
+T c= c==> c= f0 f0 f1 f1
++ |- ((\l. (((MEM y) ((MAP f) l)) = (?x. (((MEM x) l) /\ (y = (f x)))))) l)
+T * / c= cMEM f0 cMAP f1 b0 c? / c/\ cMEM b1 b0 c= f0 * f1 b1 f2
++ |- ((!v. t) = t)
+T c= ! f0 f0
++ (~ ((MEM (f h)) ((MAP f) t))), (uniq ((MAP f) t)) |- ((!u. (!v. ((((MEM u) t) /\ (((MEM v) t) /\ ((f u) = (f v)))) ==> (u = v)))) ==> ((u = h) ==> (((MEM v) t) ==> (((f u) = (f v)) ==> (h = v)))))
+T c==> c~ cMEM * f0 f1 cMAP f0 f2 c==> cuniq cMAP f0 f2 c==> ! ! c==> c/\ cMEM b0 f2 c/\ cMEM b1 f2 c= * f0 b0 * f0 b1 c= b0 b1 c==> c= f3 f1 c==> cMEM f4 f2 c==> c= * f0 f3 * f0 f4 c= f1 f4
+- (!u. (!v. ((((MEM u) t) /\ (((MEM v) t) /\ ((f u) = (f v)))) ==> (u = v)))) |- ((!u. (!v. ((((MEM u) t) /\ (((MEM v) t) /\ ((f u) = (f v)))) ==> (u = v)))) /\ (!u. (!v. ((((MEM u) t) /\ (((MEM v) t) /\ ((f u) = (f v)))) ==> (u = v)))))
+T c==> ! ! c==> c/\ cMEM b0 f0 c/\ cMEM b1 f0 c= * f1 b0 * f1 b1 c= b0 b1 c/\ ! ! c==> c/\ cMEM b0 f0 c/\ cMEM b1 f0 c= * f1 b0 * f1 b1 c= b0 b1 ! ! c==> c/\ cMEM b0 f0 c/\ cMEM b1 f0 c= * f1 b0 * f1 b1 c= b0 b1
++ (~ ((MEM (f h)) ((MAP f) t))), (u = h), ((MEM v) t) |- (((MEM v) t) /\ (((f u) = (f v)) ==> (h = v)))
+T c==> c~ cMEM * f0 f1 cMAP f0 f2 c==> c= f3 f1 c==> cMEM f4 f2 c/\ cMEM f4 f2 c==> c= * f0 f3 * f0 f4 c= f1 f4
++ ((f u) = (f h)), ((MEM u) t) |- (?x. (((MEM x) t) /\ ((f h) = (f x))))
+T c==> c= * f0 f1 * f0 f2 c==> cMEM f1 f3 c? / c/\ cMEM b0 f3 c= * f0 f2 * f0 b0
+- |- ((?x. t) = t)
+T c= c? / f0 f0
+- (((MEM u) t) /\ (((MEM v) t) /\ ((f u) = (f v)))) |- ((!u. (!v. ((((MEM u) t) /\ (((MEM v) t) /\ ((f u) = (f v)))) ==> (u = v)))) ==> (u = v))
+T c==> c/\ cMEM f0 f1 c/\ cMEM f2 f1 c= * f3 f0 * f3 f2 c==> ! ! c==> c/\ cMEM b0 f1 c/\ cMEM b1 f1 c= * f3 b0 * f3 b1 c= b0 b1 c= f0 f2
+- (!u. (!v. ((((MEM u) t) /\ (((MEM v) t) /\ ((f u) = (f v)))) ==> (u = v)))) |- (((MEM u) t) ==> (((MEM v) t) ==> (((f u) = (f v)) ==> (u = v))))
+T c==> ! ! c==> c/\ cMEM b0 f0 c/\ cMEM b1 f0 c= * f1 b0 * f1 b1 c= b0 b1 c==> cMEM f2 f0 c==> cMEM f3 f0 c==> c= * f1 f2 * f1 f3 c= f2 f3
+- (!u. (!v. ((((MEM u) t) /\ (((MEM v) t) /\ ((f u) = (f v)))) ==> (u = v)))), (((MEM u) t) /\ (((MEM v) t) /\ ((f u) = (f v)))) |- ((((MEM u) t) /\ (((MEM v) t) /\ ((f u) = (f v)))) /\ (u = v))
+T c==> ! ! c==> c/\ cMEM b0 f0 c/\ cMEM b1 f0 c= * f1 b0 * f1 b1 c= b0 b1 c==> c/\ cMEM f2 f0 c/\ cMEM f3 f0 c= * f1 f2 * f1 f3 c/\ c/\ cMEM f2 f0 c/\ cMEM f3 f0 c= * f1 f2 * f1 f3 c= f2 f3
+- (~ ((MEM (f h)) ((MAP f) t))) |- (((MEM (f h)) ((MAP f) t)) = F)
+T c==> c~ cMEM * f0 f1 cMAP f0 f2 c= cMEM * f0 f1 cMAP f0 f2 cF
+- (~ ((MEM (f h)) ((MAP f) t))), ((uniq ((MAP f) t)) ==> (!u. (!v. ((((MEM u) t) /\ (((MEM v) t) /\ ((f u) = (f v)))) ==> (u = v))))) |- ((~ ((MEM (f h)) ((MAP f) t))) /\ ((uniq ((MAP f) t)) ==> (!u. (!v. ((((u = h) \/ ((MEM u) t)) /\ (((v = h) \/ ((MEM v) t)) /\ ((f u) = (f v)))) ==> (u = v))))))
+T c==> c~ cMEM * f0 f1 cMAP f0 f2 c==> c==> cuniq cMAP f0 f2 ! ! c==> c/\ cMEM b0 f2 c/\ cMEM b1 f2 c= * f0 b0 * f0 b1 c= b0 b1 c/\ c~ cMEM * f0 f1 cMAP f0 f2 c==> cuniq cMAP f0 f2 ! ! c==> c/\ c\/ c= b0 f1 cMEM b0 f2 c/\ c\/ c= b1 f1 cMEM b1 f2 c= * f0 b0 * f0 b1 c= b0 b1
+- ((uniq ((MAP f) t)) ==> (!u. (!v. ((((MEM u) t) /\ (((MEM v) t) /\ ((f u) = (f v)))) ==> (u = v))))) |- ((~ ((MEM (f h)) ((MAP f) t))) ==> ((uniq ((MAP f) t)) ==> (!u. (!v. ((((u = h) \/ ((MEM u) t)) /\ (((v = h) \/ ((MEM v) t)) /\ ((f u) = (f v)))) ==> (u = v))))))
+T c==> c==> cuniq cMAP f0 f1 ! ! c==> c/\ cMEM b0 f1 c/\ cMEM b1 f1 c= * f0 b0 * f0 b1 c= b0 b1 c==> c~ cMEM * f0 f2 cMAP f0 f1 c==> cuniq cMAP f0 f1 ! ! c==> c/\ c\/ c= b0 f2 cMEM b0 f1 c/\ c\/ c= b1 f2 cMEM b1 f1 c= * f0 b0 * f0 b1 c= b0 b1
+- ((uniq ((MAP f) t)) ==> (!u. (!v. ((((MEM u) t) /\ (((MEM v) t) /\ ((f u) = (f v)))) ==> (u = v))))) |- (((uniq ((MAP f) t)) ==> (!u. (!v. ((((MEM u) t) /\ (((MEM v) t) /\ ((f u) = (f v)))) ==> (u = v))))) = T)
+T c==> c==> cuniq cMAP f0 f1 ! ! c==> c/\ cMEM b0 f1 c/\ cMEM b1 f1 c= * f0 b0 * f0 b1 c= b0 b1 c= c==> cuniq cMAP f0 f1 ! ! c==> c/\ cMEM b0 f1 c/\ cMEM b1 f1 c= * f0 b0 * f0 b1 c= b0 b1 cT
+- |- ((t /\ t) = t)
+T c= c/\ f0 f0 f0
+- (~ ((MEM (f h)) ((MAP f) t))), ((uniq ((MAP f) t)) ==> (!u. (!v. ((((MEM u) t) /\ (((MEM v) t) /\ ((f u) = (f v)))) ==> (u = v))))) |- ((uniq ((MAP f) t)) ==> (!u. (!v. ((((u = h) \/ ((MEM u) t)) /\ (((v = h) \/ ((MEM v) t)) /\ ((f u) = (f v)))) ==> (u = v)))))
+T c==> c~ cMEM * f0 f1 cMAP f0 f2 c==> c==> cuniq cMAP f0 f2 ! ! c==> c/\ cMEM b0 f2 c/\ cMEM b1 f2 c= * f0 b0 * f0 b1 c= b0 b1 c==> cuniq cMAP f0 f2 ! ! c==> c/\ c\/ c= b0 f1 cMEM b0 f2 c/\ c\/ c= b1 f1 cMEM b1 f2 c= * f0 b0 * f0 b1 c= b0 b1
+- |- ((!u. (!v. ((((MEM u) t) /\ (((MEM v) t) /\ ((f u) = (f v)))) ==> (u = v)))) ==> (!u. (!v. ((((MEM u) t) /\ (((MEM v) t) /\ ((f u) = (f v)))) ==> (u = v)))))
+T c==> ! ! c==> c/\ cMEM b0 f0 c/\ cMEM b1 f0 c= * f1 b0 * f1 b1 c= b0 b1 ! ! c==> c/\ cMEM b0 f0 c/\ cMEM b1 f0 c= * f1 b0 * f1 b1 c= b0 b1
+- (!u. (!v. ((((MEM u) t) /\ (((MEM v) t) /\ ((f u) = (f v)))) ==> (u = v)))), ((MEM u) t) |- (((MEM u) t) /\ (((MEM v) t) ==> (((f u) = (f v)) ==> (u = v))))
+T c==> ! ! c==> c/\ cMEM b0 f0 c/\ cMEM b1 f0 c= * f1 b0 * f1 b1 c= b0 b1 c==> cMEM f2 f0 c/\ cMEM f2 f0 c==> cMEM f3 f0 c==> c= * f1 f2 * f1 f3 c= f2 f3
+- (!u. (!v. ((((MEM u) t) /\ (((MEM v) t) /\ ((f u) = (f v)))) ==> (u = v)))), (((MEM u) t) /\ (((MEM v) t) /\ ((f u) = (f v)))) |- ((!u. (!v. ((((MEM u) t) /\ (((MEM v) t) /\ ((f u) = (f v)))) ==> (u = v)))) /\ (u = v))
+T c==> ! ! c==> c/\ cMEM b0 f0 c/\ cMEM b1 f0 c= * f1 b0 * f1 b1 c= b0 b1 c==> c/\ cMEM f2 f0 c/\ cMEM f3 f0 c= * f1 f2 * f1 f3 c/\ ! ! c==> c/\ cMEM b0 f0 c/\ cMEM b1 f0 c= * f1 b0 * f1 b1 c= b0 b1 c= f2 f3
+- (!u. (!v. ((((MEM u) t) /\ (((MEM v) t) /\ ((f u) = (f v)))) ==> (u = v)))) |- ((!v. ((((MEM u) t) /\ (((MEM v) t) /\ ((f u) = (f v)))) ==> (u = v))) = T)
+T c==> ! ! c==> c/\ cMEM b0 f0 c/\ cMEM b1 f0 c= * f1 b0 * f1 b1 c= b0 b1 c= ! c==> c/\ cMEM f2 f0 c/\ cMEM b0 f0 c= * f1 f2 * f1 b0 c= f2 b0 cT
+- (!u. (!v. ((((MEM u) t) /\ (((MEM v) t) /\ ((f u) = (f v)))) ==> (u = v)))), ((f u) = (f v)), ((MEM u) t), ((MEM v) t) |- (((f u) = (f v)) /\ (u = v))
+T c==> ! ! c==> c/\ cMEM b0 f0 c/\ cMEM b1 f0 c= * f1 b0 * f1 b1 c= b0 b1 c==> c= * f1 f2 * f1 f3 c==> cMEM f2 f0 c==> cMEM f3 f0 c/\ c= * f1 f2 * f1 f3 c= f2 f3

@@ -1,0 +1,257 @@
+N Seq2.not_mem_delete1
+C |- (!x. (!s. ((~ ((MEM x) s)) ==> (((delete1 x) s) = s))))
+T c==> c~ cMEM f0 f1 c= cdelete1 f0 f1 f1
+D TRUTH
+A |- T
+T cT
+D COND_CLAUSES
+A |- (!t1. (!t2. (((((COND T) t1) t2) = t1) /\ ((((COND F) t1) t2) = t2))))
+T c/\ c= cCOND cT f0 f1 f0 c= cCOND cF f0 f1 f1
+D list_INDUCT
+A |- (!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x))))
+T c==> c/\ * f0 cNIL ! ! c==> * f0 b1 * f0 cCONS b0 b1 ! * f0 b0
+D MEM
+A |- ((((MEM x) NIL) = F) /\ (((MEM x) ((CONS h) t)) = ((x = h) \/ ((MEM x) t))))
+T c/\ c= cMEM f0 cNIL cF c= cMEM f0 cCONS f1 f2 c\/ c= f0 f1 cMEM f0 f2
+D Ssrbool.negb_or
+A |- (!a. (!b. ((~ (a \/ b)) = ((~ a) /\ (~ b)))))
+T c= c~ c\/ f0 f1 c/\ c~ f0 c~ f1
+D Seq2.delete1
+A |- (!h. (!x. (!t. ((((delete1 x) NIL) = NIL) /\ (((delete1 x) ((CONS h) t)) = (((COND (x = h)) t) ((CONS h) ((delete1 x) t))))))))
+T c/\ c= cdelete1 f0 cNIL cNIL c= cdelete1 f0 cCONS f1 f2 cCOND c= f0 f1 f2 cCONS f1 cdelete1 f0 f2
++ (~ ((MEM x) t)), ((~ ((MEM x) t)) ==> (((delete1 x) t) = t)) |- ((~ ((MEM x) t)) /\ ((((COND F) t) ((CONS h) ((delete1 x) t))) = ((CONS h) t)))
+T c==> c~ cMEM f0 f1 c==> c==> c~ cMEM f0 f1 c= cdelete1 f0 f1 f1 c/\ c~ cMEM f0 f1 c= cCOND cF f1 cCONS f2 cdelete1 f0 f1 cCONS f2 f1
++ |- ((t = F) = (~ t))
+T c= c= f0 cF c~ f0
++ ((~ ((MEM x) t)) ==> (((delete1 x) t) = t)) |- (((~ (x = h)) /\ (~ ((MEM x) t))) ==> ((((COND (x = h)) t) ((CONS h) ((delete1 x) t))) = ((CONS h) t)))
+T c==> c==> c~ cMEM f0 f1 c= cdelete1 f0 f1 f1 c==> c/\ c~ c= f0 f2 c~ cMEM f0 f1 c= cCOND c= f0 f2 f1 cCONS f2 cdelete1 f0 f1 cCONS f2 f1
+- (s = s1) |- ((~ ((MEM x) s1)) ==> (((delete1 x) s1) = s))
+T c==> c= f0 f1 c==> c~ cMEM f2 f1 c= cdelete1 f2 f1 f0
++ |- ((!s. ((~ ((MEM x) s)) ==> (((delete1 x) s) = s))) = T)
+T c= ! c==> c~ cMEM f0 b0 c= cdelete1 f0 b0 b0 cT
++ |- (((delete1 x) NIL) = NIL)
+T c= cdelete1 f0 cNIL cNIL
+- |- (((!t. ((((MEM x) NIL) = F) /\ (((MEM x) ((CONS h) t)) = ((x = h) \/ ((MEM x) t))))) ==> ((\t. ((((MEM x) NIL) = F) /\ (((MEM x) ((CONS h) t)) = ((x = h) \/ ((MEM x) t))))) t)) = ((\t. ((((MEM x) NIL) = F) /\ (((MEM x) ((CONS h) t)) = ((x = h) \/ ((MEM x) t))))) t))
+T c= c==> ! c/\ c= cMEM f0 cNIL cF c= cMEM f0 cCONS f1 b0 c\/ c= f0 f1 cMEM f0 b0 * / c/\ c= cMEM f0 cNIL cF c= cMEM f0 cCONS f1 b0 c\/ c= f0 f1 cMEM f0 b0 f2 * / c/\ c= cMEM f0 cNIL cF c= cMEM f0 cCONS f1 b0 c\/ c= f0 f1 cMEM f0 b0 f2
+- ((!x. (P ==> (Q x))) = (P ==> (!x. (Q x)))) |- ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))
+T c==> c= ! c==> f0 * f1 b0 c==> f0 ! * f1 b0 c= c==> f0 ! * f1 b0 ! c==> f0 * f1 b0
++ |- ((!a1. (((~ ((MEM x) a1)) ==> (((delete1 x) a1) = a1)) ==> ((~ ((MEM x) ((CONS h) a1))) ==> (((delete1 x) ((CONS h) a1)) = ((CONS h) a1))))) = T)
+T c= ! c==> c==> c~ cMEM f0 b0 c= cdelete1 f0 b0 b0 c==> c~ cMEM f0 cCONS f1 b0 c= cdelete1 f0 cCONS f1 b0 cCONS f1 b0 cT
++ |- (((~ ((x = h) \/ ((MEM x) t))) ==> ((((COND (x = h)) t) ((CONS h) ((delete1 x) t))) = ((CONS h) t))) = ((~ ((x = h) \/ ((MEM x) t))) ==> (((delete1 x) ((CONS h) t)) = ((CONS h) t))))
+T c= c==> c~ c\/ c= f0 f1 cMEM f0 f2 c= cCOND c= f0 f1 f2 cCONS f1 cdelete1 f0 f2 cCONS f1 f2 c==> c~ c\/ c= f0 f1 cMEM f0 f2 c= cdelete1 f0 cCONS f1 f2 cCONS f1 f2
++ |- ((((delete1 x) t) = t) ==> ((((COND F) t) ((CONS h) ((delete1 x) t))) = ((CONS h) t)))
+T c==> c= cdelete1 f0 f1 f1 c= cCOND cF f1 cCONS f2 cdelete1 f0 f1 cCONS f2 f1
++ |- (((~ ((MEM x) NIL)) ==> (((delete1 x) NIL) = NIL)) /\ (!a0. (!a1. (((~ ((MEM x) a1)) ==> (((delete1 x) a1) = a1)) ==> ((~ ((MEM x) ((CONS a0) a1))) ==> (((delete1 x) ((CONS a0) a1)) = ((CONS a0) a1)))))))
+T c/\ c==> c~ cMEM f0 cNIL c= cdelete1 f0 cNIL cNIL ! ! c==> c==> c~ cMEM f0 b1 c= cdelete1 f0 b1 b1 c==> c~ cMEM f0 cCONS b0 b1 c= cdelete1 f0 cCONS b0 b1 cCONS b0 b1
++ |- ((((~ (x = h)) /\ (~ ((MEM x) t))) ==> ((((COND (x = h)) t) ((CONS h) ((delete1 x) t))) = ((CONS h) t))) = ((~ ((x = h) \/ ((MEM x) t))) ==> ((((COND (x = h)) t) ((CONS h) ((delete1 x) t))) = ((CONS h) t))))
+T c= c==> c/\ c~ c= f0 f1 c~ cMEM f0 f2 c= cCOND c= f0 f1 f2 cCONS f1 cdelete1 f0 f2 cCONS f1 f2 c==> c~ c\/ c= f0 f1 cMEM f0 f2 c= cCOND c= f0 f1 f2 cCONS f1 cdelete1 f0 f2 cCONS f1 f2
+- |- ((\P. (!Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x)))))) P)
+T * / ! c= c==> b0 ! * b1 b2 ! c==> b0 * b1 b2 f0
++ (~ ((MEM x) t)), ((~ ((MEM x) t)) ==> (((delete1 x) t) = t)) |- ((((COND F) t) ((CONS h) ((delete1 x) t))) = ((CONS h) t))
+T c==> c~ cMEM f0 f1 c==> c==> c~ cMEM f0 f1 c= cdelete1 f0 f1 f1 c= cCOND cF f1 cCONS f2 cdelete1 f0 f1 cCONS f2 f1
++ |- (((!b. ((~ (a \/ b)) = ((~ a) /\ (~ b)))) ==> ((\b. ((~ (a \/ b)) = ((~ a) /\ (~ b)))) b)) = ((\b. ((~ (a \/ b)) = ((~ a) /\ (~ b)))) b))
+T c= c==> ! c= c~ c\/ f0 b0 c/\ c~ f0 c~ b0 * / c= c~ c\/ f0 b0 c/\ c~ f0 c~ b0 f1 * / c= c~ c\/ f0 b0 c/\ c~ f0 c~ b0 f1
++ |- ((\a. (!b. ((~ (a \/ b)) = ((~ a) /\ (~ b))))) a)
+T * / ! c= c~ c\/ b0 b1 c/\ c~ b0 c~ b1 f0
++ |- ((\P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))) P)
+T * / c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 f0
+- |- ((t ==> t) = T)
+T c= c==> f0 f0 cT
+- |- ((t \/ t) = t)
+T c= c\/ f0 f0 f0
+- |- (((!x. (((\s1. (s = s1)) x) ==> ((~ ((MEM x) s)) ==> (((delete1 x) s) = s)))) ==> ((?s1. (s = s1)) ==> ((~ ((MEM x) s)) ==> (((delete1 x) s) = s)))) = ((?s1. (s = s1)) ==> ((~ ((MEM x) s)) ==> (((delete1 x) s) = s))))
+T c= c==> ! c==> * / c= f0 b1 b0 c==> c~ cMEM f1 f0 c= cdelete1 f1 f0 f0 c==> c? / c= f0 b0 c==> c~ cMEM f1 f0 c= cdelete1 f1 f0 f0 c==> c? / c= f0 b0 c==> c~ cMEM f1 f0 c= cdelete1 f1 f0 f0
+- |- ((\x. (!t. ((((MEM x) NIL) = F) /\ (((MEM x) ((CONS h) t)) = ((x = h) \/ ((MEM x) t)))))) x)
+T * / ! c/\ c= cMEM b0 cNIL cF c= cMEM b0 cCONS f0 b1 c\/ c= b0 f0 cMEM b0 b1 f1
++ (~ ((MEM x) t)), ((~ ((MEM x) t)) ==> (((delete1 x) t) = t)) |- (((((delete1 x) t) = t) ==> ((((COND F) t) ((CONS h) ((delete1 x) t))) = ((CONS h) t))) = ((((COND F) t) ((CONS h) ((delete1 x) t))) = ((CONS h) t)))
+T c==> c~ cMEM f0 f1 c==> c==> c~ cMEM f0 f1 c= cdelete1 f0 f1 f1 c= c==> c= cdelete1 f0 f1 f1 c= cCOND cF f1 cCONS f2 cdelete1 f0 f1 cCONS f2 f1 c= cCOND cF f1 cCONS f2 cdelete1 f0 f1 cCONS f2 f1
+- |- (!s1. (((\s1. (s = s1)) s1) ==> (?s1. (s = s1))))
+T c==> * / c= f0 b0 f1 c? / c= f0 b0
+- |- ((\s1. (s = s1)) s)
+T * / c= f0 b0 f0
+- (s = s1) |- (((~ ((MEM x) s1)) ==> (((delete1 x) s) = s)) = ((~ ((MEM x) s)) ==> (((delete1 x) s) = s)))
+T c==> c= f0 f1 c= c==> c~ cMEM f2 f1 c= cdelete1 f2 f0 f0 c==> c~ cMEM f2 f0 c= cdelete1 f2 f0 f0
++ ((~ ((MEM x) t)) ==> (((delete1 x) t) = t)) |- ((~ ((x = h) \/ ((MEM x) t))) ==> ((((COND (x = h)) t) ((CONS h) ((delete1 x) t))) = ((CONS h) t)))
+T c==> c==> c~ cMEM f0 f1 c= cdelete1 f0 f1 f1 c==> c~ c\/ c= f0 f2 cMEM f0 f1 c= cCOND c= f0 f2 f1 cCONS f2 cdelete1 f0 f1 cCONS f2 f1
++ (((delete1 x) t) = t) |- (((((COND F) t) ((CONS h) t)) = ((CONS h) t)) = ((((COND F) t) ((CONS h) ((delete1 x) t))) = ((CONS h) t)))
+T c==> c= cdelete1 f0 f1 f1 c= c= cCOND cF f1 cCONS f2 f1 cCONS f2 f1 c= cCOND cF f1 cCONS f2 cdelete1 f0 f1 cCONS f2 f1
++ (~ ((MEM x) t)), ((~ ((MEM x) t)) ==> (((delete1 x) t) = t)) |- (((delete1 x) t) = t)
+T c==> c~ cMEM f0 f1 c==> c==> c~ cMEM f0 f1 c= cdelete1 f0 f1 f1 c= cdelete1 f0 f1 f1
+- |- ((\t. ((((MEM x) NIL) = F) /\ (((MEM x) ((CONS h) t)) = ((x = h) \/ ((MEM x) t))))) t)
+T * / c/\ c= cMEM f0 cNIL cF c= cMEM f0 cCONS f1 b0 c\/ c= f0 f1 cMEM f0 b0 f2
+- (!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))), ((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) |- ((!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))) /\ (!x. (P x)))
+T c==> ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 c==> c/\ * f0 cNIL ! ! c==> * f0 b1 * f0 cCONS b0 b1 c/\ ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 ! * f0 b0
+- |- (((?s1. (s = s1)) ==> ((~ ((MEM x) s)) ==> (((delete1 x) s) = s))) = ((~ ((MEM x) s)) ==> (((delete1 x) s) = s)))
+T c= c==> c? / c= f0 b0 c==> c~ cMEM f1 f0 c= cdelete1 f1 f0 f0 c==> c~ cMEM f1 f0 c= cdelete1 f1 f0 f0
++ (~ (x = h)), ((~ ((MEM x) t)) ==> (((delete1 x) t) = t)) |- ((~ ((MEM x) t)) ==> ((((COND (x = h)) t) ((CONS h) ((delete1 x) t))) = ((CONS h) t)))
+T c==> c~ c= f0 f1 c==> c==> c~ cMEM f0 f2 c= cdelete1 f0 f2 f2 c==> c~ cMEM f0 f2 c= cCOND c= f0 f1 f2 cCONS f1 cdelete1 f0 f2 cCONS f1 f2
++ |- ((~ F) ==> (NIL = NIL))
+T c==> c~ cF c= cNIL cNIL
++ ((~ ((MEM x) t)) ==> (((delete1 x) t) = t)) |- ((~ ((MEM x) t)) ==> ((((COND F) t) ((CONS h) ((delete1 x) t))) = ((CONS h) t)))
+T c==> c==> c~ cMEM f0 f1 c= cdelete1 f0 f1 f1 c==> c~ cMEM f0 f1 c= cCOND cF f1 cCONS f2 cdelete1 f0 f1 cCONS f2 f1
+- |- (((!s. ((~ ((MEM x) s)) ==> (((delete1 x) s) = s))) ==> ((\s. ((~ ((MEM x) s)) ==> (((delete1 x) s) = s))) s1)) = ((\s. ((~ ((MEM x) s)) ==> (((delete1 x) s) = s))) s1))
+T c= c==> ! c==> c~ cMEM f0 b0 c= cdelete1 f0 b0 b0 * / c==> c~ cMEM f0 b0 c= cdelete1 f0 b0 b0 f1 * / c==> c~ cMEM f0 b0 c= cdelete1 f0 b0 b0 f1
++ |- (((MEM x) ((CONS h) t)) = ((x = h) \/ ((MEM x) t)))
+T c= cMEM f0 cCONS f1 f2 c\/ c= f0 f1 cMEM f0 f2
++ |- (((!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))) ==> ((\P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))) P)) = ((\P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))) P))
+T c= c==> ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 * / c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 f0 * / c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 f0
++ |- ((T ==> t) = t)
+T c= c==> cT f0 f0
++ ((~ (x = h)) /\ (~ ((MEM x) t))), ((~ ((MEM x) t)) ==> (((delete1 x) t) = t)) |- ((((COND (x = h)) t) ((CONS h) ((delete1 x) t))) = ((CONS h) t))
+T c==> c/\ c~ c= f0 f1 c~ cMEM f0 f2 c==> c==> c~ cMEM f0 f2 c= cdelete1 f0 f2 f2 c= cCOND c= f0 f1 f2 cCONS f1 cdelete1 f0 f2 cCONS f1 f2
+- (!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))), ((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) |- (!x. (P x))
+T c==> ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 c==> c/\ * f0 cNIL ! ! c==> * f0 b1 * f0 cCONS b0 b1 ! * f0 b0
++ |- (((!t. ((((delete1 x) NIL) = NIL) /\ (((delete1 x) ((CONS h) t)) = (((COND (x = h)) t) ((CONS h) ((delete1 x) t)))))) ==> ((\t. ((((delete1 x) NIL) = NIL) /\ (((delete1 x) ((CONS h) t)) = (((COND (x = h)) t) ((CONS h) ((delete1 x) t)))))) t)) = ((\t. ((((delete1 x) NIL) = NIL) /\ (((delete1 x) ((CONS h) t)) = (((COND (x = h)) t) ((CONS h) ((delete1 x) t)))))) t))
+T c= c==> ! c/\ c= cdelete1 f0 cNIL cNIL c= cdelete1 f0 cCONS f1 b0 cCOND c= f0 f1 b0 cCONS f1 cdelete1 f0 b0 * / c/\ c= cdelete1 f0 cNIL cNIL c= cdelete1 f0 cCONS f1 b0 cCOND c= f0 f1 b0 cCONS f1 cdelete1 f0 b0 f2 * / c/\ c= cdelete1 f0 cNIL cNIL c= cdelete1 f0 cCONS f1 b0 cCOND c= f0 f1 b0 cCONS f1 cdelete1 f0 b0 f2
+- |- (((!h. (!x. (!t. ((((MEM x) NIL) = F) /\ (((MEM x) ((CONS h) t)) = ((x = h) \/ ((MEM x) t))))))) ==> ((\h. (!x. (!t. ((((MEM x) NIL) = F) /\ (((MEM x) ((CONS h) t)) = ((x = h) \/ ((MEM x) t))))))) h)) = ((\h. (!x. (!t. ((((MEM x) NIL) = F) /\ (((MEM x) ((CONS h) t)) = ((x = h) \/ ((MEM x) t))))))) h))
+T c= c==> ! ! ! c/\ c= cMEM b1 cNIL cF c= cMEM b1 cCONS b0 b2 c\/ c= b1 b0 cMEM b1 b2 * / ! ! c/\ c= cMEM b1 cNIL cF c= cMEM b1 cCONS b0 b2 c\/ c= b1 b0 cMEM b1 b2 f0 * / ! ! c/\ c= cMEM b1 cNIL cF c= cMEM b1 cCONS b0 b2 c\/ c= b1 b0 cMEM b1 b2 f0
++ |- ((\h. (!x. (!t. ((((delete1 x) NIL) = NIL) /\ (((delete1 x) ((CONS h) t)) = (((COND (x = h)) t) ((CONS h) ((delete1 x) t)))))))) h)
+T * / ! ! c/\ c= cdelete1 b1 cNIL cNIL c= cdelete1 b1 cCONS b0 b2 cCOND c= b1 b0 b2 cCONS b0 cdelete1 b1 b2 f0
++ |- (T = ((~ P) = (P = F)))
+T c= cT c= c~ f0 c= f0 cF
+- |- ((s = s1) = ((\s1. (s = s1)) s1))
+T c= c= f0 f1 * / c= f0 b0 f1
++ (~ (x = h)) |- ((x = h) = F)
+T c==> c~ c= f0 f1 c= c= f0 f1 cF
++ (~ (x = h)) |- (((~ ((MEM x) t)) ==> ((((COND F) t) ((CONS h) ((delete1 x) t))) = ((CONS h) t))) = ((~ ((MEM x) t)) ==> ((((COND (x = h)) t) ((CONS h) ((delete1 x) t))) = ((CONS h) t))))
+T c==> c~ c= f0 f1 c= c==> c~ cMEM f0 f2 c= cCOND cF f2 cCONS f1 cdelete1 f0 f2 cCONS f1 f2 c==> c~ cMEM f0 f2 c= cCOND c= f0 f1 f2 cCONS f1 cdelete1 f0 f2 cCONS f1 f2
+- (~ (x = h)), ((~ ((MEM x) t)) ==> (((delete1 x) t) = t)) |- ((~ (x = h)) /\ ((~ ((MEM x) t)) ==> ((((COND (x = h)) t) ((CONS h) ((delete1 x) t))) = ((CONS h) t))))
+T c==> c~ c= f0 f1 c==> c==> c~ cMEM f0 f2 c= cdelete1 f0 f2 f2 c/\ c~ c= f0 f1 c==> c~ cMEM f0 f2 c= cCOND c= f0 f1 f2 cCONS f1 cdelete1 f0 f2 cCONS f1 f2
+- |- (((!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))) ==> (!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x))))) = (!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))))
+T c= c==> ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1
+- (!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))), ((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) |- (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) /\ (!x. (P x)))
+T c==> ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 c==> c/\ * f0 cNIL ! ! c==> * f0 b1 * f0 cCONS b0 b1 c/\ c/\ * f0 cNIL ! ! c==> * f0 b1 * f0 cCONS b0 b1 ! * f0 b0
+- ((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) |- ((!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))) ==> (!x. (P x)))
+T c==> c/\ * f0 cNIL ! ! c==> * f0 b1 * f0 cCONS b0 b1 c==> ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 ! * f0 b0
++ |- (((~ F) ==> (((delete1 x) NIL) = NIL)) = ((~ ((MEM x) NIL)) ==> (((delete1 x) NIL) = NIL)))
+T c= c==> c~ cF c= cdelete1 f0 cNIL cNIL c==> c~ cMEM f0 cNIL c= cdelete1 f0 cNIL cNIL
++ |- ((~ P) = (P = F))
+T c= c~ f0 c= f0 cF
+- |- ((((COND (x = x)) y) z) = y)
+T c= cCOND c= f0 f0 f1 f2 f1
+- |- ((\s. ((~ ((MEM x) s)) ==> (((delete1 x) s) = s))) s1)
+T * / c==> c~ cMEM f0 b0 c= cdelete1 f0 b0 b0 f1
++ |- (((delete1 x) ((CONS h) t)) = (((COND (x = h)) t) ((CONS h) ((delete1 x) t))))
+T c= cdelete1 f0 cCONS f1 f2 cCOND c= f0 f1 f2 cCONS f1 cdelete1 f0 f2
+- (s = s1) |- (((~ ((MEM x) s1)) ==> (((delete1 x) s1) = s1)) = ((~ ((MEM x) s1)) ==> (((delete1 x) s1) = s)))
+T c==> c= f0 f1 c= c==> c~ cMEM f2 f1 c= cdelete1 f2 f1 f1 c==> c~ cMEM f2 f1 c= cdelete1 f2 f1 f0
+- |- ((?s1. (s = s1)) ==> (?s1. (s = s1)))
+T c==> c? / c= f0 b0 c? / c= f0 b0
++ |- ((x = x) = T)
+T c= c= f0 f0 cT
+- |- ((\Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))) Q)
+T * / c= c==> f0 ! * b0 b1 ! c==> f0 * b0 b1 f1
+- (!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))) |- ((\P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))) P)
+T c==> ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 * / c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 f0
++ ((~ ((MEM x) t)) ==> (((delete1 x) t) = t)) |- (((~ ((MEM x) t)) ==> (((delete1 x) t) = t)) /\ ((~ ((MEM x) ((CONS h) t))) ==> (((delete1 x) ((CONS h) t)) = ((CONS h) t))))
+T c==> c==> c~ cMEM f0 f1 c= cdelete1 f0 f1 f1 c/\ c==> c~ cMEM f0 f1 c= cdelete1 f0 f1 f1 c==> c~ cMEM f0 cCONS f2 f1 c= cdelete1 f0 cCONS f2 f1 cCONS f2 f1
++ |- (((!a. (!b. ((~ (a \/ b)) = ((~ a) /\ (~ b))))) ==> ((\a. (!b. ((~ (a \/ b)) = ((~ a) /\ (~ b))))) a)) = ((\a. (!b. ((~ (a \/ b)) = ((~ a) /\ (~ b))))) a))
+T c= c==> ! ! c= c~ c\/ b0 b1 c/\ c~ b0 c~ b1 * / ! c= c~ c\/ b0 b1 c/\ c~ b0 c~ b1 f0 * / ! c= c~ c\/ b0 b1 c/\ c~ b0 c~ b1 f0
+- (s = s1) |- (s1 = s)
+T c==> c= f0 f1 c= f1 f0
++ |- ((!a0. (!a1. (((~ ((MEM x) a1)) ==> (((delete1 x) a1) = a1)) ==> ((~ ((MEM x) ((CONS a0) a1))) ==> (((delete1 x) ((CONS a0) a1)) = ((CONS a0) a1)))))) = (((~ ((MEM x) NIL)) ==> (((delete1 x) NIL) = NIL)) /\ (!a0. (!a1. (((~ ((MEM x) a1)) ==> (((delete1 x) a1) = a1)) ==> ((~ ((MEM x) ((CONS a0) a1))) ==> (((delete1 x) ((CONS a0) a1)) = ((CONS a0) a1))))))))
+T c= ! ! c==> c==> c~ cMEM f0 b1 c= cdelete1 f0 b1 b1 c==> c~ cMEM f0 cCONS b0 b1 c= cdelete1 f0 cCONS b0 b1 cCONS b0 b1 c/\ c==> c~ cMEM f0 cNIL c= cdelete1 f0 cNIL cNIL ! ! c==> c==> c~ cMEM f0 b1 c= cdelete1 f0 b1 b1 c==> c~ cMEM f0 cCONS b0 b1 c= cdelete1 f0 cCONS b0 b1 cCONS b0 b1
+- ((\s1. (s = s1)) s1) |- (((s = s1) ==> (?s1. (s = s1))) = (?s1. (s = s1)))
+T c==> * / c= f0 b0 f1 c= c==> c= f0 f1 c? / c= f0 b0 c? / c= f0 b0
++ ((~ ((MEM x) t)) ==> (((delete1 x) t) = t)) |- ((~ ((x = h) \/ ((MEM x) t))) ==> (((delete1 x) ((CONS h) t)) = ((CONS h) t)))
+T c==> c==> c~ cMEM f0 f1 c= cdelete1 f0 f1 f1 c==> c~ c\/ c= f0 f2 cMEM f0 f1 c= cdelete1 f0 cCONS f2 f1 cCONS f2 f1
+- |- ((!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))) ==> (!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))))
+T c==> ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1
+- |- ((s = s) = ((\s1. (s = s1)) s))
+T c= c= f0 f0 * / c= f0 b0 f0
++ |- (((!h. (!x. (!t. ((((delete1 x) NIL) = NIL) /\ (((delete1 x) ((CONS h) t)) = (((COND (x = h)) t) ((CONS h) ((delete1 x) t)))))))) ==> ((\h. (!x. (!t. ((((delete1 x) NIL) = NIL) /\ (((delete1 x) ((CONS h) t)) = (((COND (x = h)) t) ((CONS h) ((delete1 x) t)))))))) h)) = ((\h. (!x. (!t. ((((delete1 x) NIL) = NIL) /\ (((delete1 x) ((CONS h) t)) = (((COND (x = h)) t) ((CONS h) ((delete1 x) t)))))))) h))
+T c= c==> ! ! ! c/\ c= cdelete1 b1 cNIL cNIL c= cdelete1 b1 cCONS b0 b2 cCOND c= b1 b0 b2 cCONS b0 cdelete1 b1 b2 * / ! ! c/\ c= cdelete1 b1 cNIL cNIL c= cdelete1 b1 cCONS b0 b2 cCOND c= b1 b0 b2 cCONS b0 cdelete1 b1 b2 f0 * / ! ! c/\ c= cdelete1 b1 cNIL cNIL c= cdelete1 b1 cCONS b0 b2 cCOND c= b1 b0 b2 cCONS b0 cdelete1 b1 b2 f0
+- |- (T = ((((COND F) t) ((CONS h) t)) = ((CONS h) t)))
+T c= cT c= cCOND cF f0 cCONS f1 f0 cCONS f1 f0
++ |- ((~ F) ==> (((delete1 x) NIL) = NIL))
+T c==> c~ cF c= cdelete1 f0 cNIL cNIL
++ |- ((((~ ((MEM x) NIL)) ==> (((delete1 x) NIL) = NIL)) /\ (!a0. (!a1. (((~ ((MEM x) a1)) ==> (((delete1 x) a1) = a1)) ==> ((~ ((MEM x) ((CONS a0) a1))) ==> (((delete1 x) ((CONS a0) a1)) = ((CONS a0) a1))))))) ==> (!s. ((~ ((MEM x) s)) ==> (((delete1 x) s) = s))))
+T c==> c/\ c==> c~ cMEM f0 cNIL c= cdelete1 f0 cNIL cNIL ! ! c==> c==> c~ cMEM f0 b1 c= cdelete1 f0 b1 b1 c==> c~ cMEM f0 cCONS b0 b1 c= cdelete1 f0 cCONS b0 b1 cCONS b0 b1 ! c==> c~ cMEM f0 b0 c= cdelete1 f0 b0 b0
+- (s = s1) |- ((~ ((MEM x) s1)) ==> (((delete1 x) s1) = s1))
+T c==> c= f0 f1 c==> c~ cMEM f2 f1 c= cdelete1 f2 f1 f1
+- ((~ ((MEM x) t)) ==> (((delete1 x) t) = t)) |- ((~ (x = h)) ==> ((~ ((MEM x) t)) ==> ((((COND (x = h)) t) ((CONS h) ((delete1 x) t))) = ((CONS h) t))))
+T c==> c==> c~ cMEM f0 f1 c= cdelete1 f0 f1 f1 c==> c~ c= f0 f2 c==> c~ cMEM f0 f1 c= cCOND c= f0 f2 f1 cCONS f2 cdelete1 f0 f1 cCONS f2 f1
+- |- (((!P. (!Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x)))))) ==> ((\P. (!Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x)))))) P)) = ((\P. (!Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x)))))) P))
+T c= c==> ! ! c= c==> b0 ! * b1 b2 ! c==> b0 * b1 b2 * / ! c= c==> b0 ! * b1 b2 ! c==> b0 * b1 b2 f0 * / ! c= c==> b0 ! * b1 b2 ! c==> b0 * b1 b2 f0
+- (s = s1) |- ((~ ((MEM x) s1)) ==> (((delete1 x) s) = s))
+T c==> c= f0 f1 c==> c~ cMEM f2 f1 c= cdelete1 f2 f0 f0
+- ((\s1. (s = s1)) s1) |- (s = s1)
+T c==> * / c= f0 b0 f1 c= f0 f1
+- (s = s1) |- ((s = s1) /\ (?s1. (s = s1)))
+T c==> c= f0 f1 c/\ c= f0 f1 c? / c= f0 b0
+- ((\s1. (s = s1)) s1) |- (((\s1. (s = s1)) s1) /\ (?s1. (s = s1)))
+T c==> * / c= f0 b0 f1 c/\ * / c= f0 b0 f1 c? / c= f0 b0
++ (((delete1 x) t) = t) |- ((((delete1 x) t) = t) /\ ((((COND F) t) ((CONS h) ((delete1 x) t))) = ((CONS h) t)))
+T c==> c= cdelete1 f0 f1 f1 c/\ c= cdelete1 f0 f1 f1 c= cCOND cF f1 cCONS f2 cdelete1 f0 f1 cCONS f2 f1
+- ((~ ((MEM x) t)) ==> (((delete1 x) t) = t)) |- (((~ ((MEM x) t)) ==> (((delete1 x) t) = t)) = T)
+T c==> c==> c~ cMEM f0 f1 c= cdelete1 f0 f1 f1 c= c==> c~ cMEM f0 f1 c= cdelete1 f0 f1 f1 cT
++ |- ((((COND F) t1) t2) = t2)
+T c= cCOND cF f0 f1 f1
+- (s = s1) |- (((~ ((MEM x) s1)) ==> (((delete1 x) s1) = s1)) = ((~ ((MEM x) s)) ==> (((delete1 x) s) = s)))
+T c==> c= f0 f1 c= c==> c~ cMEM f2 f1 c= cdelete1 f2 f1 f1 c==> c~ cMEM f2 f0 c= cdelete1 f2 f0 f0
++ (~ (x = h)), ((~ (x = h)) /\ (~ ((MEM x) t))), ((~ ((MEM x) t)) ==> (((delete1 x) t) = t)) |- ((((COND (x = h)) t) ((CONS h) ((delete1 x) t))) = ((CONS h) t))
+T c==> c~ c= f0 f1 c==> c/\ c~ c= f0 f1 c~ cMEM f0 f2 c==> c==> c~ cMEM f0 f2 c= cdelete1 f0 f2 f2 c= cCOND c= f0 f1 f2 cCONS f1 cdelete1 f0 f2 cCONS f1 f2
+- |- (((!x. (((\s1. (s = s1)) x) ==> (?s1. (s = s1)))) ==> ((?s1. (s = s1)) ==> (?s1. (s = s1)))) = ((?s1. (s = s1)) ==> (?s1. (s = s1))))
+T c= c==> ! c==> * / c= f0 b1 b0 c? / c= f0 b1 c==> c? / c= f0 b0 c? / c= f0 b0 c==> c? / c= f0 b0 c? / c= f0 b0
++ ((~ (x = h)) /\ (~ ((MEM x) t))), ((~ ((MEM x) t)) ==> (((delete1 x) t) = t)) |- (((~ (x = h)) /\ (~ ((MEM x) t))) /\ ((((COND (x = h)) t) ((CONS h) ((delete1 x) t))) = ((CONS h) t)))
+T c==> c/\ c~ c= f0 f1 c~ cMEM f0 f2 c==> c==> c~ cMEM f0 f2 c= cdelete1 f0 f2 f2 c/\ c/\ c~ c= f0 f1 c~ cMEM f0 f2 c= cCOND c= f0 f1 f2 cCONS f1 cdelete1 f0 f2 cCONS f1 f2
+- |- ((((\s1. (s = s1)) s1) ==> ((~ ((MEM x) s)) ==> (((delete1 x) s) = s))) = T)
+T c= c==> * / c= f0 b0 f1 c==> c~ cMEM f2 f0 c= cdelete1 f2 f0 f0 cT
++ |- ((\b. ((~ (a \/ b)) = ((~ a) /\ (~ b)))) b)
+T * / c= c~ c\/ f0 b0 c/\ c~ f0 c~ b0 f1
+- ((\s1. (s = s1)) s1) |- (((\s1. (s = s1)) s1) /\ ((~ ((MEM x) s)) ==> (((delete1 x) s) = s)))
+T c==> * / c= f0 b0 f1 c/\ * / c= f0 b0 f1 c==> c~ cMEM f2 f0 c= cdelete1 f2 f0 f0
+- |- ((s = s1) ==> (?s1. (s = s1)))
+T c==> c= f0 f1 c? / c= f0 b0
+- |- ((\h. (!x. (!t. ((((MEM x) NIL) = F) /\ (((MEM x) ((CONS h) t)) = ((x = h) \/ ((MEM x) t))))))) h)
+T * / ! ! c/\ c= cMEM b1 cNIL cF c= cMEM b1 cCONS b0 b2 c\/ c= b1 b0 cMEM b1 b2 f0
+- ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x)))) |- ((!x. (P ==> (Q x))) = (P ==> (!x. (Q x))))
+T c==> c= c==> f0 ! * f1 b0 ! c==> f0 * f1 b0 c= ! c==> f0 * f1 b0 c==> f0 ! * f1 b0
++ |- (((((~ ((MEM x) NIL)) ==> (((delete1 x) NIL) = NIL)) /\ (!a0. (!a1. (((~ ((MEM x) a1)) ==> (((delete1 x) a1) = a1)) ==> ((~ ((MEM x) ((CONS a0) a1))) ==> (((delete1 x) ((CONS a0) a1)) = ((CONS a0) a1))))))) ==> (!s. ((~ ((MEM x) s)) ==> (((delete1 x) s) = s)))) = (!s. ((~ ((MEM x) s)) ==> (((delete1 x) s) = s))))
+T c= c==> c/\ c==> c~ cMEM f0 cNIL c= cdelete1 f0 cNIL cNIL ! ! c==> c==> c~ cMEM f0 b1 c= cdelete1 f0 b1 b1 c==> c~ cMEM f0 cCONS b0 b1 c= cdelete1 f0 cCONS b0 b1 cCONS b0 b1 ! c==> c~ cMEM f0 b0 c= cdelete1 f0 b0 b0 ! c==> c~ cMEM f0 b0 c= cdelete1 f0 b0 b0
+- (!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x)))) |- ((((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x))) = T)
+T c==> ! c==> c/\ * b0 cNIL ! ! c==> * b0 b2 * b0 cCONS b1 b2 ! * b0 b1 c= c==> c/\ * f0 cNIL ! ! c==> * f0 b1 * f0 cCONS b0 b1 ! * f0 b0 cT
++ |- (((~ F) ==> (NIL = NIL)) = ((~ F) ==> (((delete1 x) NIL) = NIL)))
+T c= c==> c~ cF c= cNIL cNIL c==> c~ cF c= cdelete1 f0 cNIL cNIL
++ |- ((((~ ((MEM x) t)) ==> (((delete1 x) t) = t)) ==> ((~ ((MEM x) ((CONS h) t))) ==> (((delete1 x) ((CONS h) t)) = ((CONS h) t)))) = T)
+T c= c==> c==> c~ cMEM f0 f1 c= cdelete1 f0 f1 f1 c==> c~ cMEM f0 cCONS f2 f1 c= cdelete1 f0 cCONS f2 f1 cCONS f2 f1 cT
++ |- (((!x. (!t. ((((delete1 x) NIL) = NIL) /\ (((delete1 x) ((CONS h) t)) = (((COND (x = h)) t) ((CONS h) ((delete1 x) t))))))) ==> ((\x. (!t. ((((delete1 x) NIL) = NIL) /\ (((delete1 x) ((CONS h) t)) = (((COND (x = h)) t) ((CONS h) ((delete1 x) t))))))) x)) = ((\x. (!t. ((((delete1 x) NIL) = NIL) /\ (((delete1 x) ((CONS h) t)) = (((COND (x = h)) t) ((CONS h) ((delete1 x) t))))))) x))
+T c= c==> ! ! c/\ c= cdelete1 b0 cNIL cNIL c= cdelete1 b0 cCONS f0 b1 cCOND c= b0 f0 b1 cCONS f0 cdelete1 b0 b1 * / ! c/\ c= cdelete1 b0 cNIL cNIL c= cdelete1 b0 cCONS f0 b1 cCOND c= b0 f0 b1 cCONS f0 cdelete1 b0 b1 f1 * / ! c/\ c= cdelete1 b0 cNIL cNIL c= cdelete1 b0 cCONS f0 b1 cCOND c= b0 f0 b1 cCONS f0 cdelete1 b0 b1 f1
++ |- ((~ F) = T)
+T c= c~ cF cT
+- |- (((~ ((MEM x) s)) ==> (((delete1 x) s) = s)) = T)
+T c= c==> c~ cMEM f0 f1 c= cdelete1 f0 f1 f1 cT
+- (s = s1) |- ((\s1. (s = s1)) s1)
+T c==> c= f0 f1 * / c= f0 b0 f1
+- |- ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))
+T c= c==> f0 ! * f1 b0 ! c==> f0 * f1 b0
+- ((\s1. (s = s1)) s1) |- (((s = s1) ==> ((~ ((MEM x) s)) ==> (((delete1 x) s) = s))) = ((~ ((MEM x) s)) ==> (((delete1 x) s) = s)))
+T c==> * / c= f0 b0 f1 c= c==> c= f0 f1 c==> c~ cMEM f2 f0 c= cdelete1 f2 f0 f0 c==> c~ cMEM f2 f0 c= cdelete1 f2 f0 f0
++ |- ((~ ((MEM x) NIL)) ==> (((delete1 x) NIL) = NIL))
+T c==> c~ cMEM f0 cNIL c= cdelete1 f0 cNIL cNIL
++ |- (!a0. (!a1. (((~ ((MEM x) a1)) ==> (((delete1 x) a1) = a1)) ==> ((~ ((MEM x) ((CONS a0) a1))) ==> (((delete1 x) ((CONS a0) a1)) = ((CONS a0) a1))))))
+T c==> c==> c~ cMEM f0 f1 c= cdelete1 f0 f1 f1 c==> c~ cMEM f0 cCONS f2 f1 c= cdelete1 f0 cCONS f2 f1 cCONS f2 f1
+- |- (!s1. (((\s1. (s = s1)) s1) ==> ((~ ((MEM x) s)) ==> (((delete1 x) s) = s))))
+T c==> * / c= f0 b0 f1 c==> c~ cMEM f2 f0 c= cdelete1 f2 f0 f0
+- |- (?s1. (s = s1))
+T c? / c= f0 b0
+- (s = s1) |- ((s = s1) /\ ((~ ((MEM x) s)) ==> (((delete1 x) s) = s)))
+T c==> c= f0 f1 c/\ c= f0 f1 c==> c~ cMEM f2 f0 c= cdelete1 f2 f0 f0
++ |- ((\t. ((((delete1 x) NIL) = NIL) /\ (((delete1 x) ((CONS h) t)) = (((COND (x = h)) t) ((CONS h) ((delete1 x) t)))))) t)
+T * / c/\ c= cdelete1 f0 cNIL cNIL c= cdelete1 f0 cCONS f1 b0 cCOND c= f0 f1 b0 cCONS f1 cdelete1 f0 b0 f2
++ |- (((~ ((x = h) \/ ((MEM x) t))) ==> (((delete1 x) ((CONS h) t)) = ((CONS h) t))) = ((~ ((MEM x) ((CONS h) t))) ==> (((delete1 x) ((CONS h) t)) = ((CONS h) t))))
+T c= c==> c~ c\/ c= f0 f1 cMEM f0 f2 c= cdelete1 f0 cCONS f1 f2 cCONS f1 f2 c==> c~ cMEM f0 cCONS f1 f2 c= cdelete1 f0 cCONS f1 f2 cCONS f1 f2
++ |- (((MEM x) NIL) = F)
+T c= cMEM f0 cNIL cF
++ |- (T = ((~ F) ==> (NIL = NIL)))
+T c= cT c==> c~ cF c= cNIL cNIL
+- |- (((!Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))) ==> ((\Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))) Q)) = ((\Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))) Q))
+T c= c==> ! c= c==> f0 ! * b0 b1 ! c==> f0 * b0 b1 * / c= c==> f0 ! * b0 b1 ! c==> f0 * b0 b1 f1 * / c= c==> f0 ! * b0 b1 ! c==> f0 * b0 b1 f1
+- |- ((((\s1. (s = s1)) s1) ==> (?s1. (s = s1))) = T)
+T c= c==> * / c= f0 b0 f1 c? / c= f0 b0 cT
++ |- ((\x. (!t. ((((delete1 x) NIL) = NIL) /\ (((delete1 x) ((CONS h) t)) = (((COND (x = h)) t) ((CONS h) ((delete1 x) t))))))) x)
+T * / ! c/\ c= cdelete1 b0 cNIL cNIL c= cdelete1 b0 cCONS f0 b1 cCOND c= b0 f0 b1 cCONS f0 cdelete1 b0 b1 f1
+- |- (((!x. (!t. ((((MEM x) NIL) = F) /\ (((MEM x) ((CONS h) t)) = ((x = h) \/ ((MEM x) t)))))) ==> ((\x. (!t. ((((MEM x) NIL) = F) /\ (((MEM x) ((CONS h) t)) = ((x = h) \/ ((MEM x) t)))))) x)) = ((\x. (!t. ((((MEM x) NIL) = F) /\ (((MEM x) ((CONS h) t)) = ((x = h) \/ ((MEM x) t)))))) x))
+T c= c==> ! ! c/\ c= cMEM b0 cNIL cF c= cMEM b0 cCONS f0 b1 c\/ c= b0 f0 cMEM b0 b1 * / ! c/\ c= cMEM b0 cNIL cF c= cMEM b0 cCONS f0 b1 c\/ c= b0 f0 cMEM b0 b1 f1 * / ! c/\ c= cMEM b0 cNIL cF c= cMEM b0 cCONS f0 b1 c\/ c= b0 f0 cMEM b0 b1 f1
++ (~ (x = h)), (~ ((MEM x) t)), ((~ ((MEM x) t)) ==> (((delete1 x) t) = t)) |- ((((COND (x = h)) t) ((CONS h) ((delete1 x) t))) = ((CONS h) t))
+T c==> c~ c= f0 f1 c==> c~ cMEM f0 f2 c==> c==> c~ cMEM f0 f2 c= cdelete1 f0 f2 f2 c= cCOND c= f0 f1 f2 cCONS f1 cdelete1 f0 f2 cCONS f1 f2

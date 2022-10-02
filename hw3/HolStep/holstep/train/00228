@@ -1,0 +1,37 @@
+N RANK_MATRIX_INV_RMUL
+C |- (!A. ((rank ((matrix_mul A) (matrix_inv A))) = (rank A)))
+T c= crank cmatrix_mul f0 cmatrix_inv f0 crank f0
+D TRUTH
+A |- T
+T cT
+D Ssrnat.eqn_leq
+A |- (!m. (!n. ((m = n) = ((m <= n) /\ (n <= m)))))
+T c= c= f0 f1 c/\ c<= f0 f1 c<= f1 f0
+D RANK_MUL_LE_RIGHT
+A |- (!A. (!B. ((rank ((matrix_mul A) B)) <= (rank B))))
+T c<= crank cmatrix_mul f0 f1 crank f1
+D RANK_MUL_LE_LEFT
+A |- (!A. (!B. ((rank ((matrix_mul A) B)) <= (rank A))))
+T c<= crank cmatrix_mul f0 f1 crank f0
+D MATRIX_INV_MUL_OUTER
+A |- (!A. (((matrix_mul (matrix_inv A)) ((matrix_mul A) (matrix_inv A))) = (matrix_inv A)))
+T c= cmatrix_mul cmatrix_inv f0 cmatrix_mul f0 cmatrix_inv f0 cmatrix_inv f0
+D RANK_MATRIX_INV
+A |- (!A. ((rank (matrix_inv A)) = (rank A)))
+T c= crank cmatrix_inv f0 crank f0
++ |- ((((rank ((matrix_mul A) (matrix_inv A))) <= (rank A)) /\ ((rank A) <= (rank ((matrix_mul A) (matrix_inv A))))) = ((rank ((matrix_mul A) (matrix_inv A))) = (rank A)))
+T c= c/\ c<= crank cmatrix_mul f0 cmatrix_inv f0 crank f0 c<= crank f0 crank cmatrix_mul f0 cmatrix_inv f0 c= crank cmatrix_mul f0 cmatrix_inv f0 crank f0
++ ((rank (matrix_inv A)) = (rank A)) |- ((rank A) = (rank (matrix_inv A)))
+T c==> c= crank cmatrix_inv f0 crank f0 c= crank f0 crank cmatrix_inv f0
++ |- (((!B. ((rank ((matrix_mul A) B)) <= (rank B))) ==> ((\B. ((rank ((matrix_mul A) B)) <= (rank B))) B)) = ((\B. ((rank ((matrix_mul A) B)) <= (rank B))) B))
+T c= c==> ! c<= crank cmatrix_mul f0 b0 crank b0 * / c<= crank cmatrix_mul f0 b0 crank b0 f1 * / c<= crank cmatrix_mul f0 b0 crank b0 f1
++ |- (((rank ((matrix_mul A) (matrix_inv A))) <= (rank A)) /\ ((rank A) <= (rank ((matrix_mul A) (matrix_inv A)))))
+T c/\ c<= crank cmatrix_mul f0 cmatrix_inv f0 crank f0 c<= crank f0 crank cmatrix_mul f0 cmatrix_inv f0
+- |- ((x = x) = T)
+T c= c= f0 f0 cT
+- ((m = n) = ((m <= n) /\ (n <= m))) |- (((m <= n) /\ (n <= m)) = (m = n))
+T c==> c= c= f0 f1 c/\ c<= f0 f1 c<= f1 f0 c= c/\ c<= f0 f1 c<= f1 f0 c= f0 f1
+- (((m <= n) /\ (n <= m)) = (m = n)) |- ((m = n) = ((m <= n) /\ (n <= m)))
+T c==> c= c/\ c<= f0 f1 c<= f1 f0 c= f0 f1 c= c= f0 f1 c/\ c<= f0 f1 c<= f1 f0
+- |- ((t /\ t) = t)
+T c= c/\ f0 f0 f0

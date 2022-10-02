@@ -1,0 +1,86 @@
+N RELATIVE_FRONTIER_OF_TRIANGLE
+C |- (!a. (!b. (!c. ((~ (collinear (a INSERT (b INSERT (c INSERT EMPTY))))) ==> ((relative_frontier ((hull convex) (a INSERT (b INSERT (c INSERT EMPTY))))) = ((closed_segment ((CONS (a , b)) NIL)) UNION ((closed_segment ((CONS (b , c)) NIL)) UNION (closed_segment ((CONS (c , a)) NIL)))))))))
+T c==> c~ ccollinear * * part cINSERT f0 * * part cINSERT f1 * * part cINSERT f2 part cEMPTY c= * part crelative_frontier * * part chull part cconvex * * part cINSERT f0 * * part cINSERT f1 * * part cINSERT f2 part cEMPTY * * part cUNION * part cclosed_segment cCONS c, f0 f1 cNIL * * part cUNION * part cclosed_segment cCONS c, f1 f2 cNIL * part cclosed_segment cCONS c, f2 f0 cNIL
+D TRUTH
+A |- T
+T cT
+D FINITE_EMPTY
+A |- (FINITE EMPTY)
+T cFINITE part cEMPTY
+D FINITE_INSERT
+A |- (!s. (!x. ((FINITE (x INSERT s)) = (FINITE s))))
+T c= cFINITE * * part cINSERT f0 f1 cFINITE f1
+D CLOSURE_CLOSED
+A |- (!s. ((closed s) ==> ((closure s) = s)))
+T c==> cclosed f0 c= * part cclosure f0 f0
+D COMPACT_IMP_CLOSED
+A |- (!s. ((compact s) ==> (closed s)))
+T c==> ccompact f0 cclosed f0
+D FINITE_IMP_COMPACT
+A |- (!s. ((FINITE s) ==> (compact s)))
+T c==> cFINITE f0 ccompact f0
+D COMPACT_CONVEX_HULL
+A |- (!s. ((compact s) ==> (compact ((hull convex) s))))
+T c==> ccompact f0 ccompact * * part chull part cconvex f0
+D relative_frontier
+A |- (!s. ((relative_frontier s) = ((closure s) DIFF (relative_interior s))))
+T c= * part crelative_frontier f0 * * part cDIFF * part cclosure f0 * part crelative_interior f0
+D RELATIVE_BOUNDARY_OF_TRIANGLE
+A |- (!a. (!b. (!c. ((~ (collinear (a INSERT (b INSERT (c INSERT EMPTY))))) ==> ((((hull convex) (a INSERT (b INSERT (c INSERT EMPTY)))) DIFF (relative_interior ((hull convex) (a INSERT (b INSERT (c INSERT EMPTY)))))) = ((closed_segment ((CONS (a , b)) NIL)) UNION ((closed_segment ((CONS (b , c)) NIL)) UNION (closed_segment ((CONS (c , a)) NIL)))))))))
+T c==> c~ ccollinear * * part cINSERT f0 * * part cINSERT f1 * * part cINSERT f2 part cEMPTY c= * * part cDIFF * * part chull part cconvex * * part cINSERT f0 * * part cINSERT f1 * * part cINSERT f2 part cEMPTY * part crelative_interior * * part chull part cconvex * * part cINSERT f0 * * part cINSERT f1 * * part cINSERT f2 part cEMPTY * * part cUNION * part cclosed_segment cCONS c, f0 f1 cNIL * * part cUNION * part cclosed_segment cCONS c, f1 f2 cNIL * part cclosed_segment cCONS c, f2 f0 cNIL
++ |- ((\s. ((closed s) ==> ((closure s) = s))) s)
+T * / c==> cclosed b0 c= * part cclosure b0 b0 f0
++ |- (FINITE (a INSERT (b INSERT (c INSERT EMPTY))))
+T cFINITE * * part cINSERT f0 * * part cINSERT f1 * * part cINSERT f2 part cEMPTY
++ |- ((\s. ((compact s) ==> (compact ((hull convex) s)))) s)
+T * / c==> ccompact b0 ccompact * * part chull part cconvex b0 f0
++ |- ((compact s) ==> ((closed s) = T))
+T c==> ccompact f0 c= cclosed f0 cT
+- (closed s) |- ((!s. ((closed s) ==> ((closure s) = s))) ==> ((closure s) = s))
+T c==> cclosed f0 c==> ! c==> cclosed b0 c= * part cclosure b0 b0 c= * part cclosure f0 f0
++ |- (T = (closed ((hull convex) (a INSERT (b INSERT (c INSERT EMPTY))))))
+T c= cT cclosed * * part chull part cconvex * * part cINSERT f0 * * part cINSERT f1 * * part cINSERT f2 part cEMPTY
+- (!s. ((closed s) ==> ((closure s) = s))) |- (((closed s) ==> ((closure s) = s)) = T)
+T c==> ! c==> cclosed b0 c= * part cclosure b0 b0 c= c==> cclosed f0 c= * part cclosure f0 f0 cT
++ |- ((compact (a INSERT (b INSERT (c INSERT EMPTY)))) = T)
+T c= ccompact * * part cINSERT f0 * * part cINSERT f1 * * part cINSERT f2 part cEMPTY cT
++ |- (((!s. ((closed s) ==> ((closure s) = s))) ==> ((\s. ((closed s) ==> ((closure s) = s))) s)) = ((\s. ((closed s) ==> ((closure s) = s))) s))
+T c= c==> ! c==> cclosed b0 c= * part cclosure b0 b0 * / c==> cclosed b0 c= * part cclosure b0 b0 f0 * / c==> cclosed b0 c= * part cclosure b0 b0 f0
++ |- ((FINITE EMPTY) = T)
+T c= cFINITE part cEMPTY cT
+- (!s. ((closed s) ==> ((closure s) = s))), (closed s) |- ((!s. ((closed s) ==> ((closure s) = s))) /\ ((closure s) = s))
+T c==> ! c==> cclosed b0 c= * part cclosure b0 b0 c==> cclosed f0 c/\ ! c==> cclosed b0 c= * part cclosure b0 b0 c= * part cclosure f0 f0
++ |- ((\c. ((~ (collinear (a INSERT (b INSERT (c INSERT EMPTY))))) ==> (((closed_segment ((CONS (a , b)) NIL)) UNION ((closed_segment ((CONS (b , c)) NIL)) UNION (closed_segment ((CONS (c , a)) NIL)))) = (((hull convex) (a INSERT (b INSERT (c INSERT EMPTY)))) DIFF (relative_interior ((hull convex) (a INSERT (b INSERT (c INSERT EMPTY))))))))) c)
+T * / c==> c~ ccollinear * * part cINSERT f0 * * part cINSERT f1 * * part cINSERT b0 part cEMPTY c= * * part cUNION * part cclosed_segment cCONS c, f0 f1 cNIL * * part cUNION * part cclosed_segment cCONS c, f1 b0 cNIL * part cclosed_segment cCONS c, b0 f0 cNIL * * part cDIFF * * part chull part cconvex * * part cINSERT f0 * * part cINSERT f1 * * part cINSERT b0 part cEMPTY * part crelative_interior * * part chull part cconvex * * part cINSERT f0 * * part cINSERT f1 * * part cINSERT b0 part cEMPTY f2
++ |- (((!s. ((compact s) ==> (closed s))) ==> ((\s. ((compact s) ==> (closed s))) s)) = ((\s. ((compact s) ==> (closed s))) s))
+T c= c==> ! c==> ccompact b0 cclosed b0 * / c==> ccompact b0 cclosed b0 f0 * / c==> ccompact b0 cclosed b0 f0
++ |- ((\a. (!b. (!c. ((~ (collinear (a INSERT (b INSERT (c INSERT EMPTY))))) ==> (((closed_segment ((CONS (a , b)) NIL)) UNION ((closed_segment ((CONS (b , c)) NIL)) UNION (closed_segment ((CONS (c , a)) NIL)))) = (((hull convex) (a INSERT (b INSERT (c INSERT EMPTY)))) DIFF (relative_interior ((hull convex) (a INSERT (b INSERT (c INSERT EMPTY))))))))))) a)
+T * / ! ! c==> c~ ccollinear * * part cINSERT b0 * * part cINSERT b1 * * part cINSERT b2 part cEMPTY c= * * part cUNION * part cclosed_segment cCONS c, b0 b1 cNIL * * part cUNION * part cclosed_segment cCONS c, b1 b2 cNIL * part cclosed_segment cCONS c, b2 b0 cNIL * * part cDIFF * * part chull part cconvex * * part cINSERT b0 * * part cINSERT b1 * * part cINSERT b2 part cEMPTY * part crelative_interior * * part chull part cconvex * * part cINSERT b0 * * part cINSERT b1 * * part cINSERT b2 part cEMPTY f0
++ (((closed_segment ((CONS (a , b)) NIL)) UNION ((closed_segment ((CONS (b , c)) NIL)) UNION (closed_segment ((CONS (c , a)) NIL)))) = (((hull convex) (a INSERT (b INSERT (c INSERT EMPTY)))) DIFF (relative_interior ((hull convex) (a INSERT (b INSERT (c INSERT EMPTY))))))) |- ((((hull convex) (a INSERT (b INSERT (c INSERT EMPTY)))) DIFF (relative_interior ((hull convex) (a INSERT (b INSERT (c INSERT EMPTY)))))) = ((closed_segment ((CONS (a , b)) NIL)) UNION ((closed_segment ((CONS (b , c)) NIL)) UNION (closed_segment ((CONS (c , a)) NIL)))))
+T c==> c= * * part cUNION * part cclosed_segment cCONS c, f0 f1 cNIL * * part cUNION * part cclosed_segment cCONS c, f1 f2 cNIL * part cclosed_segment cCONS c, f2 f0 cNIL * * part cDIFF * * part chull part cconvex * * part cINSERT f0 * * part cINSERT f1 * * part cINSERT f2 part cEMPTY * part crelative_interior * * part chull part cconvex * * part cINSERT f0 * * part cINSERT f1 * * part cINSERT f2 part cEMPTY c= * * part cDIFF * * part chull part cconvex * * part cINSERT f0 * * part cINSERT f1 * * part cINSERT f2 part cEMPTY * part crelative_interior * * part chull part cconvex * * part cINSERT f0 * * part cINSERT f1 * * part cINSERT f2 part cEMPTY * * part cUNION * part cclosed_segment cCONS c, f0 f1 cNIL * * part cUNION * part cclosed_segment cCONS c, f1 f2 cNIL * part cclosed_segment cCONS c, f2 f0 cNIL
++ (compact s) |- ((compact s) /\ ((closed s) = T))
+T c==> ccompact f0 c/\ ccompact f0 c= cclosed f0 cT
++ (~ (collinear (a INSERT (b INSERT (c INSERT EMPTY))))) |- ((~ (collinear (a INSERT (b INSERT (c INSERT EMPTY))))) /\ ((relative_frontier ((hull convex) (a INSERT (b INSERT (c INSERT EMPTY))))) = ((closed_segment ((CONS (a , b)) NIL)) UNION ((closed_segment ((CONS (b , c)) NIL)) UNION (closed_segment ((CONS (c , a)) NIL))))))
+T c==> c~ ccollinear * * part cINSERT f0 * * part cINSERT f1 * * part cINSERT f2 part cEMPTY c/\ c~ ccollinear * * part cINSERT f0 * * part cINSERT f1 * * part cINSERT f2 part cEMPTY c= * part crelative_frontier * * part chull part cconvex * * part cINSERT f0 * * part cINSERT f1 * * part cINSERT f2 part cEMPTY * * part cUNION * part cclosed_segment cCONS c, f0 f1 cNIL * * part cUNION * part cclosed_segment cCONS c, f1 f2 cNIL * part cclosed_segment cCONS c, f2 f0 cNIL
+- (~ (collinear (a INSERT (b INSERT (c INSERT EMPTY))))) |- ((~ (collinear (a INSERT (b INSERT (c INSERT EMPTY))))) /\ (((closed_segment ((CONS (a , b)) NIL)) UNION ((closed_segment ((CONS (b , c)) NIL)) UNION (closed_segment ((CONS (c , a)) NIL)))) = (((hull convex) (a INSERT (b INSERT (c INSERT EMPTY)))) DIFF (relative_interior ((hull convex) (a INSERT (b INSERT (c INSERT EMPTY))))))))
+T c==> c~ ccollinear * * part cINSERT f0 * * part cINSERT f1 * * part cINSERT f2 part cEMPTY c/\ c~ ccollinear * * part cINSERT f0 * * part cINSERT f1 * * part cINSERT f2 part cEMPTY c= * * part cUNION * part cclosed_segment cCONS c, f0 f1 cNIL * * part cUNION * part cclosed_segment cCONS c, f1 f2 cNIL * part cclosed_segment cCONS c, f2 f0 cNIL * * part cDIFF * * part chull part cconvex * * part cINSERT f0 * * part cINSERT f1 * * part cINSERT f2 part cEMPTY * part crelative_interior * * part chull part cconvex * * part cINSERT f0 * * part cINSERT f1 * * part cINSERT f2 part cEMPTY
+- (!s. ((closed s) ==> ((closure s) = s))) |- ((!s. ((closed s) ==> ((closure s) = s))) /\ (!s. ((closed s) ==> ((closure s) = s))))
+T c==> ! c==> cclosed b0 c= * part cclosure b0 b0 c/\ ! c==> cclosed b0 c= * part cclosure b0 b0 ! c==> cclosed b0 c= * part cclosure b0 b0
+- |- ((x = x) = T)
+T c= c= f0 f0 cT
+- (!s. ((closed s) ==> ((closure s) = s))) |- ((\s. ((closed s) ==> ((closure s) = s))) s)
+T c==> ! c==> cclosed b0 c= * part cclosure b0 b0 * / c==> cclosed b0 c= * part cclosure b0 b0 f0
+- |- (((!s. ((closed s) ==> ((closure s) = s))) ==> (!s. ((closed s) ==> ((closure s) = s)))) = (!s. ((closed s) ==> ((closure s) = s))))
+T c= c==> ! c==> cclosed b0 c= * part cclosure b0 b0 ! c==> cclosed b0 c= * part cclosure b0 b0 ! c==> cclosed b0 c= * part cclosure b0 b0
+- (~ (collinear (a INSERT (b INSERT (c INSERT EMPTY))))) |- ((collinear (a INSERT (b INSERT (c INSERT EMPTY)))) = F)
+T c==> c~ ccollinear * * part cINSERT f0 * * part cINSERT f1 * * part cINSERT f2 part cEMPTY c= ccollinear * * part cINSERT f0 * * part cINSERT f1 * * part cINSERT f2 part cEMPTY cF
+- |- ((!s. ((closed s) ==> ((closure s) = s))) ==> (!s. ((closed s) ==> ((closure s) = s))))
+T c==> ! c==> cclosed b0 c= * part cclosure b0 b0 ! c==> cclosed b0 c= * part cclosure b0 b0
+- (!s. ((closed s) ==> ((closure s) = s))), (closed s) |- ((closed s) /\ ((closure s) = s))
+T c==> ! c==> cclosed b0 c= * part cclosure b0 b0 c==> cclosed f0 c/\ cclosed f0 c= * part cclosure f0 f0
+- |- ((~ F) = T)
+T c= c~ cF cT
+- (!s. ((closed s) ==> ((closure s) = s))), (closed s) |- ((closure s) = s)
+T c==> ! c==> cclosed b0 c= * part cclosure b0 b0 c==> cclosed f0 c= * part cclosure f0 f0
+- (~ (collinear (a INSERT (b INSERT (c INSERT EMPTY))))) |- (T = (~ (collinear (a INSERT (b INSERT (c INSERT EMPTY))))))
+T c==> c~ ccollinear * * part cINSERT f0 * * part cINSERT f1 * * part cINSERT f2 part cEMPTY c= cT c~ ccollinear * * part cINSERT f0 * * part cINSERT f1 * * part cINSERT f2 part cEMPTY

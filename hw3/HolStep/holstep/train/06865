@@ -1,0 +1,234 @@
+N Pwssrat.FST_SPLIT_AT_EMPTY
+C |- (!r. ((((MEM x) r) /\ ((FST ((split_at x) r)) = NIL)) ==> ((HD r) = x)))
+T c==> c/\ cMEM f0 f1 c= cFST csplit_at f0 f1 cNIL c= cHD f1 f0
+D TRUTH
+A |- T
+T cT
+D COND_CLAUSES
+A |- (!t1. (!t2. (((((COND T) t1) t2) = t1) /\ ((((COND F) t1) t2) = t2))))
+T c/\ c= cCOND cT f0 f1 f0 c= cCOND cF f0 f1 f1
+D FST
+A |- (!x. (!y. ((FST (x , y)) = x)))
+T c= cFST c, f0 f1 f0
+D list_INDUCT
+A |- (!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x))))
+T c==> c/\ * f0 cNIL ! ! c==> * f0 b1 * f0 cCONS b0 b1 ! * f0 b0
+D HD
+A |- ((HD ((CONS h) t)) = h)
+T c= cHD cCONS f0 f1 f0
+D APPEND
+A |- ((!l. (((APPEND NIL) l) = l)) /\ (!h. (!t. (!l. (((APPEND ((CONS h) t)) l) = ((CONS h) ((APPEND t) l)))))))
+T c/\ ! c= cAPPEND cNIL b0 b0 ! ! ! c= cAPPEND cCONS b0 b1 b2 cCONS b0 cAPPEND b1 b2
+D MEM
+A |- ((((MEM x) NIL) = F) /\ (((MEM x) ((CONS h) t)) = ((x = h) \/ ((MEM x) t))))
+T c/\ c= cMEM f0 cNIL cF c= cMEM f0 cCONS f1 f2 c\/ c= f0 f1 cMEM f0 f2
+D NOT_CONS_NIL
+A |- (!h. (!t. (~ (((CONS h) t) = NIL))))
+T c~ c= cCONS f0 f1 cNIL
+D APPEND_NIL
+A |- (!l. (((APPEND l) NIL) = l))
+T c= cAPPEND f0 cNIL f0
+D Nkezbfc_local.lemma
+A |- (!A. (A \/ (~ A)))
+T c\/ f0 c~ f0
+D Tame_defs.split_at_rec
+A |- (((((split_at_rec c) bs) NIL) = (bs , NIL)) /\ ((((split_at_rec c) bs) ((CONS a) xs)) = (((COND (a = c)) (bs , xs)) (((split_at_rec c) ((APPEND bs) ((CONS a) NIL))) xs))))
+T c/\ c= csplit_at_rec f0 f1 cNIL c, f1 cNIL c= csplit_at_rec f0 f1 cCONS f2 f3 cCOND c= f2 f0 c, f1 f3 csplit_at_rec f0 cAPPEND f1 cCONS f2 cNIL f3
+D Tame_defs.split_at
+A |- (!c. (!xs. (((split_at c) xs) = (((split_at_rec c) NIL) xs))))
+T c= csplit_at f0 f1 csplit_at_rec f0 cNIL f1
+D Dangeyj.APPEND_FST_SPLIT
+A |- (!l. (!u. (!v. ((FST (((split_at_rec r1) ((APPEND u) v)) l)) = ((APPEND u) (FST (((split_at_rec r1) v) l)))))))
+T c= cFST csplit_at_rec f0 cAPPEND f1 f2 f3 cAPPEND f1 cFST csplit_at_rec f0 f2 f3
++ (h = x) |- (T = (((FST (((COND (h = x)) (NIL , t)) (((split_at_rec x) ((APPEND NIL) ((CONS h) NIL))) t))) = NIL) ==> (h = x)))
+T c==> c= f0 f1 c= cT c==> c= cFST cCOND c= f0 f1 c, cNIL f2 csplit_at_rec f1 cAPPEND cNIL cCONS f0 cNIL f2 cNIL c= f0 f1
+- |- (~ (NIL = ((CONS h) t)))
+T c~ c= cNIL cCONS f0 f1
++ |- (((FST (((split_at_rec x) ((CONS h) NIL)) t)) = ((CONS h) (FST (((split_at_rec x) NIL) t)))) ==> (~ ((FST (((split_at_rec x) ((CONS h) NIL)) t)) = NIL)))
+T c==> c= cFST csplit_at_rec f0 cCONS f1 cNIL f2 cCONS f1 cFST csplit_at_rec f0 cNIL f2 c~ c= cFST csplit_at_rec f0 cCONS f1 cNIL f2 cNIL
++ |- ((\c. (!xs. (((split_at c) xs) = (((split_at_rec c) NIL) xs)))) c)
+T * / ! c= csplit_at b0 b1 csplit_at_rec b0 cNIL b1 f0
+- |- ((\t1. (!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))))) t1)
+T * / ! ! c= c\/ b0 c\/ b1 b2 c\/ c\/ b0 b1 b2 f0
++ |- (((!xs. (((split_at c) xs) = (((split_at_rec c) NIL) xs))) ==> ((\xs. (((split_at c) xs) = (((split_at_rec c) NIL) xs))) xs)) = ((\xs. (((split_at c) xs) = (((split_at_rec c) NIL) xs))) xs))
+T c= c==> ! c= csplit_at f0 b0 csplit_at_rec f0 cNIL b0 * / c= csplit_at f0 b0 csplit_at_rec f0 cNIL b0 f1 * / c= csplit_at f0 b0 csplit_at_rec f0 cNIL b0 f1
++ |- (((((x = h) \/ ((MEM x) t)) /\ ((FST (((COND (h = x)) (NIL , t)) (((split_at_rec x) ((APPEND NIL) ((CONS h) NIL))) t))) = NIL)) ==> (h = x)) = ((((MEM x) ((CONS h) t)) /\ ((FST ((split_at x) ((CONS h) t))) = NIL)) ==> ((HD ((CONS h) t)) = x)))
+T c= c==> c/\ c\/ c= f0 f1 cMEM f0 f2 c= cFST cCOND c= f1 f0 c, cNIL f2 csplit_at_rec f0 cAPPEND cNIL cCONS f1 cNIL f2 cNIL c= f1 f0 c==> c/\ cMEM f0 cCONS f1 f2 c= cFST csplit_at f0 cCONS f1 f2 cNIL c= cHD cCONS f1 f2 f0
++ |- ((((CONS h) t) = NIL) = F)
+T c= c= cCONS f0 f1 cNIL cF
++ |- ((((x = h) \/ ((MEM x) t)) /\ ((FST (((COND (h = x)) (NIL , t)) (((split_at_rec x) ((APPEND NIL) ((CONS h) NIL))) t))) = NIL)) ==> (h = x))
+T c==> c/\ c\/ c= f0 f1 cMEM f0 f2 c= cFST cCOND c= f1 f0 c, cNIL f2 csplit_at_rec f0 cAPPEND cNIL cCONS f1 cNIL f2 cNIL c= f1 f0
+- |- (T = ((~ (!A. (A \/ (~ A)))) ==> F))
+T c= cT c==> c~ ! c\/ b0 c~ b0 cF
+- |- (((~ (!A. (A \/ (~ A)))) ==> F) ==> ((~ (!A. (A \/ (~ A)))) ==> F))
+T c==> c==> c~ ! c\/ b0 c~ b0 cF c==> c~ ! c\/ b0 c~ b0 cF
+- |- ((t ==> t) = T)
+T c= c==> f0 f0 cT
+- |- ((t \/ t) = t)
+T c= c\/ f0 f0 f0
++ (h = x) |- ((h = x) /\ (((FST (((COND (h = x)) (NIL , t)) (((split_at_rec x) ((APPEND NIL) ((CONS h) NIL))) t))) = NIL) ==> (h = x)))
+T c==> c= f0 f1 c/\ c= f0 f1 c==> c= cFST cCOND c= f0 f1 c, cNIL f2 csplit_at_rec f1 cAPPEND cNIL cCONS f0 cNIL f2 cNIL c= f0 f1
+- |- ((!A'. (A' \/ (~ A))) = ((!A. A) \/ (~ A)))
+T c= ! c\/ b0 c~ f0 c\/ ! b0 c~ f0
+- |- ((\t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))) t3)
+T * / c= c\/ f0 c\/ f1 b0 c\/ c\/ f0 f1 b0 f2
+- |- (((x = x) ==> p) = p)
+T c= c==> c= f0 f0 f1 f1
++ |- ((!t. (((((MEM x) t) /\ ((FST ((split_at x) t)) = NIL)) ==> ((HD t) = x)) ==> ((((MEM x) ((CONS h) t)) /\ ((FST ((split_at x) ((CONS h) t))) = NIL)) ==> ((HD ((CONS h) t)) = x)))) = T)
+T c= ! c==> c==> c/\ cMEM f0 b0 c= cFST csplit_at f0 b0 cNIL c= cHD b0 f0 c==> c/\ cMEM f0 cCONS f1 b0 c= cFST csplit_at f0 cCONS f1 b0 cNIL c= cHD cCONS f1 b0 f0 cT
+- |- ((!A. t) = t)
+T c= ! f0 f0
++ |- ((\h. (!t. (~ (((CONS h) t) = NIL)))) h)
+T * / ! c~ c= cCONS b0 b1 cNIL f0
++ |- (((((MEM x) NIL) /\ ((FST ((split_at x) NIL)) = NIL)) ==> ((HD NIL) = x)) /\ (!h. (!t. (((((MEM x) t) /\ ((FST ((split_at x) t)) = NIL)) ==> ((HD t) = x)) ==> ((((MEM x) ((CONS h) t)) /\ ((FST ((split_at x) ((CONS h) t))) = NIL)) ==> ((HD ((CONS h) t)) = x))))))
+T c/\ c==> c/\ cMEM f0 cNIL c= cFST csplit_at f0 cNIL cNIL c= cHD cNIL f0 ! ! c==> c==> c/\ cMEM f0 b1 c= cFST csplit_at f0 b1 cNIL c= cHD b1 f0 c==> c/\ cMEM f0 cCONS b0 b1 c= cFST csplit_at f0 cCONS b0 b1 cNIL c= cHD cCONS b0 b1 f0
++ |- ((\xs. (((split_at c) xs) = (((split_at_rec c) NIL) xs))) xs)
+T * / c= csplit_at f0 b0 csplit_at_rec f0 cNIL b0 f1
++ |- (T = ((((MEM x) NIL) /\ ((FST ((split_at x) NIL)) = NIL)) ==> ((HD NIL) = x)))
+T c= cT c==> c/\ cMEM f0 cNIL c= cFST csplit_at f0 cNIL cNIL c= cHD cNIL f0
++ |- ((t ==> F) = (~ t))
+T c= c==> f0 cF c~ f0
+- |- (p = ((~ p) ==> F))
+T c= f0 c==> c~ f0 cF
++ |- ((\l. (((APPEND ((CONS h) t)) l) = ((CONS h) ((APPEND t) l)))) l)
+T * / c= cAPPEND cCONS f0 f1 b0 cCONS f0 cAPPEND f1 b0 f2
+- ((((MEM x) t) /\ ((FST ((split_at x) t)) = NIL)) ==> ((HD t) = x)) |- (((((MEM x) t) /\ ((FST ((split_at x) t)) = NIL)) ==> ((HD t) = x)) = T)
+T c==> c==> c/\ cMEM f0 f1 c= cFST csplit_at f0 f1 cNIL c= cHD f1 f0 c= c==> c/\ cMEM f0 f1 c= cFST csplit_at f0 f1 cNIL c= cHD f1 f0 cT
++ |- (((((((MEM x) NIL) /\ ((FST ((split_at x) NIL)) = NIL)) ==> ((HD NIL) = x)) /\ (!h. (!t. (((((MEM x) t) /\ ((FST ((split_at x) t)) = NIL)) ==> ((HD t) = x)) ==> ((((MEM x) ((CONS h) t)) /\ ((FST ((split_at x) ((CONS h) t))) = NIL)) ==> ((HD ((CONS h) t)) = x)))))) ==> (!r. ((((MEM x) r) /\ ((FST ((split_at x) r)) = NIL)) ==> ((HD r) = x)))) = (!r. ((((MEM x) r) /\ ((FST ((split_at x) r)) = NIL)) ==> ((HD r) = x))))
+T c= c==> c/\ c==> c/\ cMEM f0 cNIL c= cFST csplit_at f0 cNIL cNIL c= cHD cNIL f0 ! ! c==> c==> c/\ cMEM f0 b1 c= cFST csplit_at f0 b1 cNIL c= cHD b1 f0 c==> c/\ cMEM f0 cCONS b0 b1 c= cFST csplit_at f0 cCONS b0 b1 cNIL c= cHD cCONS b0 b1 f0 ! c==> c/\ cMEM f0 b0 c= cFST csplit_at f0 b0 cNIL c= cHD b0 f0 ! c==> c/\ cMEM f0 b0 c= cFST csplit_at f0 b0 cNIL c= cHD b0 f0
++ |- (((!h. (!t. (!l. (((APPEND ((CONS h) t)) l) = ((CONS h) ((APPEND t) l)))))) ==> ((\h. (!t. (!l. (((APPEND ((CONS h) t)) l) = ((CONS h) ((APPEND t) l)))))) h)) = ((\h. (!t. (!l. (((APPEND ((CONS h) t)) l) = ((CONS h) ((APPEND t) l)))))) h))
+T c= c==> ! ! ! c= cAPPEND cCONS b0 b1 b2 cCONS b0 cAPPEND b1 b2 * / ! ! c= cAPPEND cCONS b0 b1 b2 cCONS b0 cAPPEND b1 b2 f0 * / ! ! c= cAPPEND cCONS b0 b1 b2 cCONS b0 cAPPEND b1 b2 f0
++ |- ((\A. (A \/ (~ A))) (h = x))
+T * / c\/ b0 c~ b0 c= f0 f1
++ |- ((\l. (((APPEND NIL) l) = l)) l)
+T * / c= cAPPEND cNIL b0 b0 f0
+- |- ((!A. (A \/ (~ A))) = ((T \/ (~ T)) /\ (F \/ (~ F))))
+T c= ! c\/ b0 c~ b0 c/\ c\/ cT c~ cT c\/ cF c~ cF
++ |- (((MEM x) ((CONS h) t)) = ((x = h) \/ ((MEM x) t)))
+T c= cMEM f0 cCONS f1 f2 c\/ c= f0 f1 cMEM f0 f2
++ |- ((T ==> t) = t)
+T c= c==> cT f0 f0
+- |- ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))
+T c= c\/ f0 c\/ f1 f2 c\/ c\/ f0 f1 f2
++ |- (((!t. (~ (((CONS h) t) = NIL))) ==> ((\t. (~ (((CONS h) t) = NIL))) t)) = ((\t. (~ (((CONS h) t) = NIL))) t))
+T c= c==> ! c~ c= cCONS f0 b0 cNIL * / c~ c= cCONS f0 b0 cNIL f1 * / c~ c= cCONS f0 b0 cNIL f1
++ ((h = x) \/ (~ (h = x))) |- (((h = x) \/ (~ (h = x))) /\ (((FST (((COND (h = x)) (NIL , t)) (((split_at_rec x) ((APPEND NIL) ((CONS h) NIL))) t))) = NIL) ==> (h = x)))
+T c==> c\/ c= f0 f1 c~ c= f0 f1 c/\ c\/ c= f0 f1 c~ c= f0 f1 c==> c= cFST cCOND c= f0 f1 c, cNIL f2 csplit_at_rec f1 cAPPEND cNIL cCONS f0 cNIL f2 cNIL c= f0 f1
++ |- (((FST (((split_at_rec x) ((APPEND ((APPEND NIL) ((CONS h) NIL))) NIL)) t)) = ((APPEND ((APPEND NIL) ((CONS h) NIL))) (FST (((split_at_rec x) NIL) t)))) ==> (~ ((FST (((split_at_rec x) ((APPEND NIL) ((CONS h) NIL))) t)) = NIL)))
+T c==> c= cFST csplit_at_rec f0 cAPPEND cAPPEND cNIL cCONS f1 cNIL cNIL f2 cAPPEND cAPPEND cNIL cCONS f1 cNIL cFST csplit_at_rec f0 cNIL f2 c~ c= cFST csplit_at_rec f0 cAPPEND cNIL cCONS f1 cNIL f2 cNIL
+- (~ (h = x)) |- (((~ (x = h)) ==> ((x = h) = F)) = ((x = h) = F))
+T c==> c~ c= f0 f1 c= c==> c~ c= f1 f0 c= c= f1 f0 cF c= c= f1 f0 cF
+- (~ (!A. (A \/ (~ A)))) |- F
+T c==> c~ ! c\/ b0 c~ b0 cF
++ (~ (h = x)) |- ((h = x) = F)
+T c==> c~ c= f0 f1 c= c= f0 f1 cF
+- |- ((\t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3)))) t2)
+T * / ! c= c\/ f0 c\/ b0 b1 c\/ c\/ f0 b0 b1 f1
+- |- ((!A. ((P A) \/ Q)) = ((!A. (P A)) \/ Q))
+T c= ! c\/ * f0 b0 f1 c\/ ! * f0 b0 f1
+- |- ((((~ (!A. (A \/ (~ A)))) ==> F) ==> ((~ (!A. (A \/ (~ A)))) ==> F)) = ((~ (!A. (A \/ (~ A)))) ==> F))
+T c= c==> c==> c~ ! c\/ b0 c~ b0 cF c==> c~ ! c\/ b0 c~ b0 cF c==> c~ ! c\/ b0 c~ b0 cF
+- |- ((((~ (!A. (A \/ (~ A)))) ==> F) ==> ((~ (!A. (A \/ (~ A)))) ==> F)) ==> (((~ (!A. (A \/ (~ A)))) ==> F) ==> ((~ (!A. (A \/ (~ A)))) ==> F)))
+T c==> c==> c==> c~ ! c\/ b0 c~ b0 cF c==> c~ ! c\/ b0 c~ b0 cF c==> c==> c~ ! c\/ b0 c~ b0 cF c==> c~ ! c\/ b0 c~ b0 cF
+- ((~ (!A. (A \/ (~ A)))) ==> F), (((~ (!A. (A \/ (~ A)))) ==> F) ==> ((~ (!A. (A \/ (~ A)))) ==> F)) |- (((~ (!A. (A \/ (~ A)))) ==> F) /\ ((~ (!A. (A \/ (~ A)))) ==> F))
+T c==> c==> c~ ! c\/ b0 c~ b0 cF c==> c==> c==> c~ ! c\/ b0 c~ b0 cF c==> c~ ! c\/ b0 c~ b0 cF c/\ c==> c~ ! c\/ b0 c~ b0 cF c==> c~ ! c\/ b0 c~ b0 cF
++ |- (((!t. (!l. (((APPEND ((CONS h) t)) l) = ((CONS h) ((APPEND t) l))))) ==> ((\t. (!l. (((APPEND ((CONS h) t)) l) = ((CONS h) ((APPEND t) l))))) t)) = ((\t. (!l. (((APPEND ((CONS h) t)) l) = ((CONS h) ((APPEND t) l))))) t))
+T c= c==> ! ! c= cAPPEND cCONS f0 b0 b1 cCONS f0 cAPPEND b0 b1 * / ! c= cAPPEND cCONS f0 b0 b1 cCONS f0 cAPPEND b0 b1 f1 * / ! c= cAPPEND cCONS f0 b0 b1 cCONS f0 cAPPEND b0 b1 f1
++ |- ((~ (h = x)) ==> (((FST (((COND (h = x)) (NIL , t)) (((split_at_rec x) ((APPEND NIL) ((CONS h) NIL))) t))) = NIL) ==> (h = x)))
+T c==> c~ c= f0 f1 c==> c= cFST cCOND c= f0 f1 c, cNIL f2 csplit_at_rec f1 cAPPEND cNIL cCONS f0 cNIL f2 cNIL c= f0 f1
++ |- ((((MEM x) NIL) /\ ((FST ((split_at x) NIL)) = NIL)) ==> ((HD NIL) = x))
+T c==> c/\ cMEM f0 cNIL c= cFST csplit_at f0 cNIL cNIL c= cHD cNIL f0
+- |- (((~ (NIL = ((CONS h) t))) ==> ((NIL = ((CONS h) t)) = F)) = ((NIL = ((CONS h) t)) = F))
+T c= c==> c~ c= cNIL cCONS f0 f1 c= c= cNIL cCONS f0 f1 cF c= c= cNIL cCONS f0 f1 cF
+- |- (((!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3)))) ==> ((\t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3)))) t2)) = ((\t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3)))) t2))
+T c= c==> ! ! c= c\/ f0 c\/ b0 b1 c\/ c\/ f0 b0 b1 * / ! c= c\/ f0 c\/ b0 b1 c\/ c\/ f0 b0 b1 f1 * / ! c= c\/ f0 c\/ b0 b1 c\/ c\/ f0 b0 b1 f1
++ |- (((!h. (!t. (~ (((CONS h) t) = NIL)))) ==> ((\h. (!t. (~ (((CONS h) t) = NIL)))) h)) = ((\h. (!t. (~ (((CONS h) t) = NIL)))) h))
+T c= c==> ! ! c~ c= cCONS b0 b1 cNIL * / ! c~ c= cCONS b0 b1 cNIL f0 * / ! c~ c= cCONS b0 b1 cNIL f0
++ ((((MEM x) t) /\ ((FST ((split_at x) t)) = NIL)) ==> ((HD t) = x)) |- (((((MEM x) t) /\ ((FST ((split_at x) t)) = NIL)) ==> ((HD t) = x)) /\ ((((MEM x) ((CONS h) t)) /\ ((FST ((split_at x) ((CONS h) t))) = NIL)) ==> ((HD ((CONS h) t)) = x)))
+T c==> c==> c/\ cMEM f0 f1 c= cFST csplit_at f0 f1 cNIL c= cHD f1 f0 c/\ c==> c/\ cMEM f0 f1 c= cFST csplit_at f0 f1 cNIL c= cHD f1 f0 c==> c/\ cMEM f0 cCONS f2 f1 c= cFST csplit_at f0 cCONS f2 f1 cNIL c= cHD cCONS f2 f1 f0
+- |- ((((COND (x = x)) y) z) = y)
+T c= cCOND c= f0 f0 f1 f2 f1
++ ((FST (((COND (h = x)) (NIL , t)) (((split_at_rec x) ((APPEND NIL) ((CONS h) NIL))) t))) = NIL) |- (h = x)
+T c==> c= cFST cCOND c= f0 f1 c, cNIL f2 csplit_at_rec f1 cAPPEND cNIL cCONS f0 cNIL f2 cNIL c= f0 f1
+- (NIL = ((CONS h) t)) |- (((CONS h) t) = NIL)
+T c==> c= cNIL cCONS f0 f1 c= cCONS f0 f1 cNIL
++ (~ (h = x)) |- ((~ ((FST (((split_at_rec x) ((APPEND NIL) ((CONS h) NIL))) t)) = NIL)) = (((FST (((COND (h = x)) (NIL , t)) (((split_at_rec x) ((APPEND NIL) ((CONS h) NIL))) t))) = NIL) ==> (h = x)))
+T c==> c~ c= f0 f1 c= c~ c= cFST csplit_at_rec f1 cAPPEND cNIL cCONS f0 cNIL f2 cNIL c==> c= cFST cCOND c= f0 f1 c, cNIL f2 csplit_at_rec f1 cAPPEND cNIL cCONS f0 cNIL f2 cNIL c= f0 f1
++ |- ((x = x) = T)
+T c= c= f0 f0 cT
++ |- (((!v. ((FST (((split_at_rec x) ((APPEND ((APPEND NIL) ((CONS h) NIL))) v)) t)) = ((APPEND ((APPEND NIL) ((CONS h) NIL))) (FST (((split_at_rec x) v) t))))) ==> ((\v. ((FST (((split_at_rec x) ((APPEND ((APPEND NIL) ((CONS h) NIL))) v)) t)) = ((APPEND ((APPEND NIL) ((CONS h) NIL))) (FST (((split_at_rec x) v) t))))) NIL)) = ((\v. ((FST (((split_at_rec x) ((APPEND ((APPEND NIL) ((CONS h) NIL))) v)) t)) = ((APPEND ((APPEND NIL) ((CONS h) NIL))) (FST (((split_at_rec x) v) t))))) NIL))
+T c= c==> ! c= cFST csplit_at_rec f0 cAPPEND cAPPEND cNIL cCONS f1 cNIL b0 f2 cAPPEND cAPPEND cNIL cCONS f1 cNIL cFST csplit_at_rec f0 b0 f2 * / c= cFST csplit_at_rec f0 cAPPEND cAPPEND cNIL cCONS f1 cNIL b0 f2 cAPPEND cAPPEND cNIL cCONS f1 cNIL cFST csplit_at_rec f0 b0 f2 cNIL * / c= cFST csplit_at_rec f0 cAPPEND cAPPEND cNIL cCONS f1 cNIL b0 f2 cAPPEND cAPPEND cNIL cCONS f1 cNIL cFST csplit_at_rec f0 b0 f2 cNIL
+- (~ (!A. (A \/ (~ A)))) |- ((~ (!A. (A \/ (~ A)))) /\ F)
+T c==> c~ ! c\/ b0 c~ b0 c/\ c~ ! c\/ b0 c~ b0 cF
++ |- ((\r1. (!l. (!u. (!v. ((FST (((split_at_rec r1) ((APPEND u) v)) l)) = ((APPEND u) (FST (((split_at_rec r1) v) l)))))))) x)
+T * / ! ! ! c= cFST csplit_at_rec b0 cAPPEND b2 b3 b1 cAPPEND b2 cFST csplit_at_rec b0 b3 b1 f0
++ |- (((!l. (((APPEND NIL) l) = l)) ==> ((\l. (((APPEND NIL) l) = l)) l)) = ((\l. (((APPEND NIL) l) = l)) l))
+T c= c==> ! c= cAPPEND cNIL b0 b0 * / c= cAPPEND cNIL b0 b0 f0 * / c= cAPPEND cNIL b0 b0 f0
+- (((~ (!A. (A \/ (~ A)))) ==> F) ==> ((~ (!A. (A \/ (~ A)))) ==> F)) |- ((((~ (!A. (A \/ (~ A)))) ==> F) ==> ((~ (!A. (A \/ (~ A)))) ==> F)) /\ (((~ (!A. (A \/ (~ A)))) ==> F) ==> ((~ (!A. (A \/ (~ A)))) ==> F)))
+T c==> c==> c==> c~ ! c\/ b0 c~ b0 cF c==> c~ ! c\/ b0 c~ b0 cF c/\ c==> c==> c~ ! c\/ b0 c~ b0 cF c==> c~ ! c\/ b0 c~ b0 cF c==> c==> c~ ! c\/ b0 c~ b0 cF c==> c~ ! c\/ b0 c~ b0 cF
++ |- (((~ (((CONS h) t) = NIL)) ==> ((((CONS h) t) = NIL) = F)) = ((((CONS h) t) = NIL) = F))
+T c= c==> c~ c= cCONS f0 f1 cNIL c= c= cCONS f0 f1 cNIL cF c= c= cCONS f0 f1 cNIL cF
++ |- ((\t. (~ (((CONS h) t) = NIL))) t)
+T * / c~ c= cCONS f0 b0 cNIL f1
++ ((FST (((COND (h = x)) (NIL , t)) (((split_at_rec x) ((APPEND NIL) ((CONS h) NIL))) t))) = NIL), ((MEM x) t) |- (((MEM x) t) /\ (h = x))
+T c==> c= cFST cCOND c= f0 f1 c, cNIL f2 csplit_at_rec f1 cAPPEND cNIL cCONS f0 cNIL f2 cNIL c==> cMEM f1 f2 c/\ cMEM f1 f2 c= f0 f1
++ |- ((h = x) ==> (((FST (((COND (h = x)) (NIL , t)) (((split_at_rec x) ((APPEND NIL) ((CONS h) NIL))) t))) = NIL) ==> (h = x)))
+T c==> c= f0 f1 c==> c= cFST cCOND c= f0 f1 c, cNIL f2 csplit_at_rec f1 cAPPEND cNIL cCONS f0 cNIL f2 cNIL c= f0 f1
+- (((CONS h) t) = NIL) |- (NIL = ((CONS h) t))
+T c==> c= cCONS f0 f1 cNIL c= cNIL cCONS f0 f1
++ |- (((!c. (!xs. (((split_at c) xs) = (((split_at_rec c) NIL) xs)))) ==> ((\c. (!xs. (((split_at c) xs) = (((split_at_rec c) NIL) xs)))) c)) = ((\c. (!xs. (((split_at c) xs) = (((split_at_rec c) NIL) xs)))) c))
+T c= c==> ! ! c= csplit_at b0 b1 csplit_at_rec b0 cNIL b1 * / ! c= csplit_at b0 b1 csplit_at_rec b0 cNIL b1 f0 * / ! c= csplit_at b0 b1 csplit_at_rec b0 cNIL b1 f0
++ |- ((\l. (((APPEND l) NIL) = l)) l)
+T * / c= cAPPEND b0 cNIL b0 f0
++ |- ((FST (((split_at_rec x) ((APPEND ((APPEND NIL) ((CONS h) NIL))) NIL)) t)) = ((APPEND ((APPEND NIL) ((CONS h) NIL))) (FST (((split_at_rec x) NIL) t))))
+T c= cFST csplit_at_rec f0 cAPPEND cAPPEND cNIL cCONS f1 cNIL cNIL f2 cAPPEND cAPPEND cNIL cCONS f1 cNIL cFST csplit_at_rec f0 cNIL f2
++ |- (((!A. (A \/ (~ A))) ==> ((\A. (A \/ (~ A))) (h = x))) = ((\A. (A \/ (~ A))) (h = x)))
+T c= c==> ! c\/ b0 c~ b0 * / c\/ b0 c~ b0 c= f0 f1 * / c\/ b0 c~ b0 c= f0 f1
++ (~ (h = x)) |- ((~ (h = x)) /\ (((FST (((COND (h = x)) (NIL , t)) (((split_at_rec x) ((APPEND NIL) ((CONS h) NIL))) t))) = NIL) ==> (h = x)))
+T c==> c~ c= f0 f1 c/\ c~ c= f0 f1 c==> c= cFST cCOND c= f0 f1 c, cNIL f2 csplit_at_rec f1 cAPPEND cNIL cCONS f0 cNIL f2 cNIL c= f0 f1
+- |- (((t1 \/ t2) \/ t3) = (t1 \/ (t2 \/ t3)))
+T c= c\/ c\/ f0 f1 f2 c\/ f0 c\/ f1 f2
++ (((x = h) \/ ((MEM x) t)) /\ ((FST (((COND (h = x)) (NIL , t)) (((split_at_rec x) ((APPEND NIL) ((CONS h) NIL))) t))) = NIL)) |- ((((x = h) \/ ((MEM x) t)) /\ ((FST (((COND (h = x)) (NIL , t)) (((split_at_rec x) ((APPEND NIL) ((CONS h) NIL))) t))) = NIL)) /\ (h = x))
+T c==> c/\ c\/ c= f0 f1 cMEM f0 f2 c= cFST cCOND c= f1 f0 c, cNIL f2 csplit_at_rec f0 cAPPEND cNIL cCONS f1 cNIL f2 cNIL c/\ c/\ c\/ c= f0 f1 cMEM f0 f2 c= cFST cCOND c= f1 f0 c, cNIL f2 csplit_at_rec f0 cAPPEND cNIL cCONS f1 cNIL f2 cNIL c= f1 f0
++ |- (((!r1. (!l. (!u. (!v. ((FST (((split_at_rec r1) ((APPEND u) v)) l)) = ((APPEND u) (FST (((split_at_rec r1) v) l)))))))) ==> ((\r1. (!l. (!u. (!v. ((FST (((split_at_rec r1) ((APPEND u) v)) l)) = ((APPEND u) (FST (((split_at_rec r1) v) l)))))))) x)) = ((\r1. (!l. (!u. (!v. ((FST (((split_at_rec r1) ((APPEND u) v)) l)) = ((APPEND u) (FST (((split_at_rec r1) v) l)))))))) x))
+T c= c==> ! ! ! ! c= cFST csplit_at_rec b0 cAPPEND b2 b3 b1 cAPPEND b2 cFST csplit_at_rec b0 b3 b1 * / ! ! ! c= cFST csplit_at_rec b0 cAPPEND b2 b3 b1 cAPPEND b2 cFST csplit_at_rec b0 b3 b1 f0 * / ! ! ! c= cFST csplit_at_rec b0 cAPPEND b2 b3 b1 cAPPEND b2 cFST csplit_at_rec b0 b3 b1 f0
++ |- (!h. (!t. (((((MEM x) t) /\ ((FST ((split_at x) t)) = NIL)) ==> ((HD t) = x)) ==> ((((MEM x) ((CONS h) t)) /\ ((FST ((split_at x) ((CONS h) t))) = NIL)) ==> ((HD ((CONS h) t)) = x)))))
+T c==> c==> c/\ cMEM f0 f1 c= cFST csplit_at f0 f1 cNIL c= cHD f1 f0 c==> c/\ cMEM f0 cCONS f2 f1 c= cFST csplit_at f0 cCONS f2 f1 cNIL c= cHD cCONS f2 f1 f0
+- ((~ (!A. (A \/ (~ A)))) ==> F), (((~ (!A. (A \/ (~ A)))) ==> F) ==> ((~ (!A. (A \/ (~ A)))) ==> F)) |- ((((~ (!A. (A \/ (~ A)))) ==> F) ==> ((~ (!A. (A \/ (~ A)))) ==> F)) /\ ((~ (!A. (A \/ (~ A)))) ==> F))
+T c==> c==> c~ ! c\/ b0 c~ b0 cF c==> c==> c==> c~ ! c\/ b0 c~ b0 cF c==> c~ ! c\/ b0 c~ b0 cF c/\ c==> c==> c~ ! c\/ b0 c~ b0 cF c==> c~ ! c\/ b0 c~ b0 cF c==> c~ ! c\/ b0 c~ b0 cF
+- |- ((T \/ t) = T)
+T c= c\/ cT f0 cT
+- |- ((!A. (P \/ (Q A))) = (P \/ (!A. (Q A))))
+T c= ! c\/ f0 * f1 b0 c\/ f0 ! * f1 b0
+- |- (((!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))) ==> ((\t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))) t3)) = ((\t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))) t3))
+T c= c==> ! c= c\/ f0 c\/ f1 b0 c\/ c\/ f0 f1 b0 * / c= c\/ f0 c\/ f1 b0 c\/ c\/ f0 f1 b0 f2 * / c= c\/ f0 c\/ f1 b0 c\/ c\/ f0 f1 b0 f2
+- |- ((t /\ t) = t)
+T c= c/\ f0 f0 f0
+- |- (((((~ (!A. (A \/ (~ A)))) ==> F) ==> ((~ (!A. (A \/ (~ A)))) ==> F)) ==> (((~ (!A. (A \/ (~ A)))) ==> F) ==> ((~ (!A. (A \/ (~ A)))) ==> F))) = (((~ (!A. (A \/ (~ A)))) ==> F) ==> ((~ (!A. (A \/ (~ A)))) ==> F)))
+T c= c==> c==> c==> c~ ! c\/ b0 c~ b0 cF c==> c~ ! c\/ b0 c~ b0 cF c==> c==> c~ ! c\/ b0 c~ b0 cF c==> c~ ! c\/ b0 c~ b0 cF c==> c==> c~ ! c\/ b0 c~ b0 cF c==> c~ ! c\/ b0 c~ b0 cF
+- (~ (h = x)) |- (~ (x = h))
+T c==> c~ c= f0 f1 c~ c= f1 f0
+- |- ((NIL = ((CONS h) t)) = F)
+T c= c= cNIL cCONS f0 f1 cF
+- ((~ (!A. (A \/ (~ A)))) ==> F) |- (((~ (!A. (A \/ (~ A)))) ==> F) /\ ((~ (!A. (A \/ (~ A)))) ==> F))
+T c==> c==> c~ ! c\/ b0 c~ b0 cF c/\ c==> c~ ! c\/ b0 c~ b0 cF c==> c~ ! c\/ b0 c~ b0 cF
+- (~ (h = x)) |- ((x = h) = F)
+T c==> c~ c= f0 f1 c= c= f1 f0 cF
+- |- ((F \/ t) = t)
+T c= c\/ cF f0 f0
+- |- (T = (((rotate_to ((CONS h) t)) h) = ((CONS h) t)))
+T c= cT c= crotate_to cCONS f0 f1 f0 cCONS f0 f1
+- |- ((!A. (P A)) = ((P T) /\ (P F)))
+T c= ! * f0 b0 c/\ * f0 cT * f0 cF
+- |- (((!t1. (!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))))) ==> ((\t1. (!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))))) t1)) = ((\t1. (!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))))) t1))
+T c= c==> ! ! ! c= c\/ b0 c\/ b1 b2 c\/ c\/ b0 b1 b2 * / ! ! c= c\/ b0 c\/ b1 b2 c\/ c\/ b0 b1 b2 f0 * / ! ! c= c\/ b0 c\/ b1 b2 c\/ c\/ b0 b1 b2 f0
+- |- ((~ (~ t)) = t)
+T c= c~ c~ f0 f0
+- |- ((T /\ t) = t)
+T c= c/\ cT f0 f0
+- |- (((~ (!A. (A \/ (~ A)))) ==> F) = (!A. (A \/ (~ A))))
+T c= c==> c~ ! c\/ b0 c~ b0 cF ! c\/ b0 c~ b0
+- ((~ (!A. (A \/ (~ A)))) ==> F) |- ((((~ (!A. (A \/ (~ A)))) ==> F) ==> ((~ (!A. (A \/ (~ A)))) ==> F)) ==> ((~ (!A. (A \/ (~ A)))) ==> F))
+T c==> c==> c~ ! c\/ b0 c~ b0 cF c==> c==> c==> c~ ! c\/ b0 c~ b0 cF c==> c~ ! c\/ b0 c~ b0 cF c==> c~ ! c\/ b0 c~ b0 cF
+- ((MEM x) t) |- (((MEM x) t) = T)
+T c==> cMEM f0 f1 c= cMEM f0 f1 cT

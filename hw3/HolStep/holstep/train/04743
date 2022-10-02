@@ -1,0 +1,371 @@
+N SUM_LT
+C |- (!f. (!g. (!s. (((FINITE s) /\ ((!x. ((x IN s) ==> ((real_le (f x)) (g x)))) /\ (?x. ((x IN s) /\ ((real_lt (f x)) (g x)))))) ==> ((real_lt ((sum s) f)) ((sum s) g))))))
+T c==> c/\ cFINITE f0 c/\ ! c==> cIN b0 f0 creal_le * f1 b0 * f2 b0 c? / c/\ cIN b0 f0 creal_lt * f1 b0 * f2 b0 creal_lt csum f0 f1 csum f0 f2
+D TRUTH
+A |- T
+T cT
+D BOOL_CASES_AX
+A |- (!t. ((t = T) \/ (t = F)))
+T c\/ c= f0 cT c= f0 cF
+D NOT_CLAUSES
+A |- ((!t. ((~ (~ t)) = t)) /\ (((~ T) = F) /\ ((~ F) = T)))
+T c/\ ! c= c~ c~ b0 b0 c/\ c= c~ cT cF c= c~ cF cT
+D COND_CLAUSES
+A |- (!t1. (!t2. (((((COND T) t1) t2) = t1) /\ ((((COND F) t1) t2) = t2))))
+T c/\ c= cCOND cT f0 f1 f0 c= cCOND cF f0 f1 f1
+D REAL_LTE_ADD2
+A |- (!w. (!x. (!y. (!z. ((((real_lt w) x) /\ ((real_le y) z)) ==> ((real_lt ((real_add w) y)) ((real_add x) z)))))))
+T c==> c/\ creal_lt f0 f1 creal_le f2 f3 creal_lt creal_add f0 f2 creal_add f1 f3
+D IN
+A |- (!P. (!x. ((x IN P) = (P x))))
+T c= cIN f0 f1 * f1 f0
+D EXTENSION
+A |- (!s. (!t. ((s = t) = (!x. ((x IN s) = (x IN t))))))
+T c= c= f0 f1 ! c= cIN b0 f0 cIN b0 f1
+D IN_INSERT
+A |- (!x. (!y. (!s. ((x IN (y INSERT s)) = ((x = y) \/ (x IN s))))))
+T c= cIN f0 * * part cINSERT f1 f2 c\/ c= f0 f1 cIN f0 f2
+D IN_DELETE
+A |- (!s. (!x. (!y. ((x IN (s DELETE y)) = ((x IN s) /\ (~ (x = y)))))))
+T c= cIN f0 * * part cDELETE f1 f2 c/\ cIN f0 f1 c~ c= f0 f2
+D FINITE_DELETE
+A |- (!s. (!x. ((FINITE (s DELETE x)) = (FINITE s))))
+T c= cFINITE * * part cDELETE f0 f1 cFINITE f0
+D SUM_CLAUSES
+A |- ((!f. (((sum EMPTY) f) = (real_of_num (NUMERAL _0)))) /\ (!x. (!f. (!s. ((FINITE s) ==> (((sum (x INSERT s)) f) = (((COND (x IN s)) ((sum s) f)) ((real_add (f x)) ((sum s) f)))))))))
+T c/\ ! c= csum part cEMPTY b0 creal_of_num cNUMERAL c_0 ! ! ! c==> cFINITE b2 c= csum * * part cINSERT b0 b2 b1 cCOND cIN b0 b2 csum b2 b1 creal_add * b1 b0 csum b2 b1
+D SUM_LE
+A |- (!f. (!g. (!s. (((FINITE s) /\ (!x. ((x IN s) ==> ((real_le (f x)) (g x))))) ==> ((real_le ((sum s) f)) ((sum s) g))))))
+T c==> c/\ cFINITE f0 ! c==> cIN b0 f0 creal_le * f1 b0 * f2 b0 creal_le csum f0 f1 csum f0 f2
++ (!x. ((x IN s) ==> ((real_le (f x)) (g x)))), (FINITE s) |- (!a. (((\x. ((x IN s) /\ ((real_lt (f x)) (g x)))) a) ==> ((real_lt ((sum s) f)) ((sum s) g))))
+T c==> ! c==> cIN b0 f0 creal_le * f1 b0 * f2 b0 c==> cFINITE f0 ! c==> * / c/\ cIN b1 f0 creal_lt * f1 b1 * f2 b1 b0 creal_lt csum f0 f1 csum f0 f2
++ (s a), ((~ (s x)) /\ ((x = a) \/ ((s x) /\ (~ (x = a))))) |- ((x = a) ==> F)
+T c==> * f0 f1 c==> c/\ c~ * f0 f2 c\/ c= f2 f1 c/\ * f0 f2 c~ c= f2 f1 c==> c= f2 f1 cF
+- |- ((((~ ((s a) ==> (!x. ((s x) = ((x = a) \/ ((s x) /\ (~ (x = a)))))))) ==> F) ==> ((~ ((s a) ==> (!x. ((s x) = ((x = a) \/ ((s x) /\ (~ (x = a)))))))) ==> F)) = ((~ ((s a) ==> (!x. ((s x) = ((x = a) \/ ((s x) /\ (~ (x = a)))))))) ==> F))
+T c= c==> c==> c~ c==> * f0 f1 ! c= * f0 b0 c\/ c= b0 f1 c/\ * f0 b0 c~ c= b0 f1 cF c==> c~ c==> * f0 f1 ! c= * f0 b0 c\/ c= b0 f1 c/\ * f0 b0 c~ c= b0 f1 cF c==> c~ c==> * f0 f1 ! c= * f0 b0 c\/ c= b0 f1 c/\ * f0 b0 c~ c= b0 f1 cF
++ (FINITE s) |- ((FINITE s) = T)
+T c==> cFINITE f0 c= cFINITE f0 cT
+- |- ((!s. ((s a) ==> (!x. ((s x) = ((x = a) \/ ((s x) /\ (~ (x = a)))))))) = T)
+T c= ! c==> * b0 f0 ! c= * b0 b1 c\/ c= b1 f0 c/\ * b0 b1 c~ c= b1 f0 cT
+- (x = a), ((s x) /\ ((~ (x = a)) /\ ((~ (s x)) \/ (x = a)))) |- ((~ F) ==> F)
+T c==> c= f0 f1 c==> c/\ * f2 f0 c/\ c~ c= f0 f1 c\/ c~ * f2 f0 c= f0 f1 c==> c~ cF cF
+- |- ((\t1. (!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))))) t1)
+T * / ! ! c= c\/ b0 c\/ b1 b2 c\/ c\/ b0 b1 b2 f0
++ |- (((!e'. (((a IN (s DELETE a)) = g') ==> ((g' ==> (((sum (s DELETE a)) g) = t')) ==> (((~ g') ==> (((real_add (g a)) ((sum (s DELETE a)) g)) = e')) ==> ((((COND (a IN (s DELETE a))) ((sum (s DELETE a)) g)) ((real_add (g a)) ((sum (s DELETE a)) g))) = (((COND g') t') e')))))) ==> ((\e'. (((a IN (s DELETE a)) = g') ==> ((g' ==> (((sum (s DELETE a)) g) = t')) ==> (((~ g') ==> (((real_add (g a)) ((sum (s DELETE a)) g)) = e')) ==> ((((COND (a IN (s DELETE a))) ((sum (s DELETE a)) g)) ((real_add (g a)) ((sum (s DELETE a)) g))) = (((COND g') t') e')))))) e')) = ((\e'. (((a IN (s DELETE a)) = g') ==> ((g' ==> (((sum (s DELETE a)) g) = t')) ==> (((~ g') ==> (((real_add (g a)) ((sum (s DELETE a)) g)) = e')) ==> ((((COND (a IN (s DELETE a))) ((sum (s DELETE a)) g)) ((real_add (g a)) ((sum (s DELETE a)) g))) = (((COND g') t') e')))))) e'))
+T c= c==> ! c==> c= cIN f0 * * part cDELETE f1 f0 f2 c==> c==> f2 c= csum * * part cDELETE f1 f0 f3 f4 c==> c==> c~ f2 c= creal_add * f3 f0 csum * * part cDELETE f1 f0 f3 b0 c= cCOND cIN f0 * * part cDELETE f1 f0 csum * * part cDELETE f1 f0 f3 creal_add * f3 f0 csum * * part cDELETE f1 f0 f3 cCOND f2 f4 b0 * / c==> c= cIN f0 * * part cDELETE f1 f0 f2 c==> c==> f2 c= csum * * part cDELETE f1 f0 f3 f4 c==> c==> c~ f2 c= creal_add * f3 f0 csum * * part cDELETE f1 f0 f3 b0 c= cCOND cIN f0 * * part cDELETE f1 f0 csum * * part cDELETE f1 f0 f3 creal_add * f3 f0 csum * * part cDELETE f1 f0 f3 cCOND f2 f4 b0 f5 * / c==> c= cIN f0 * * part cDELETE f1 f0 f2 c==> c==> f2 c= csum * * part cDELETE f1 f0 f3 f4 c==> c==> c~ f2 c= creal_add * f3 f0 csum * * part cDELETE f1 f0 f3 b0 c= cCOND cIN f0 * * part cDELETE f1 f0 csum * * part cDELETE f1 f0 f3 creal_add * f3 f0 csum * * part cDELETE f1 f0 f3 cCOND f2 f4 b0 f5
+- |- ((~ (a = a)) ==> (a = a))
+T c==> c~ c= f0 f0 c= f0 f0
++ (!x. ((x IN s) ==> ((real_le (f x)) (g x)))), (FINITE s), ((a IN s) /\ ((real_lt (f a)) (g a))), (a IN s) |- ((real_lt ((sum s) f)) ((sum s) g))
+T c==> ! c==> cIN b0 f0 creal_le * f1 b0 * f2 b0 c==> cFINITE f0 c==> c/\ cIN f3 f0 creal_lt * f1 f3 * f2 f3 c==> cIN f3 f0 creal_lt csum f0 f1 csum f0 f2
++ (!x. ((x IN s) ==> ((real_le (f x)) (g x)))), (FINITE s) |- ((((FINITE (s DELETE a)) /\ (!x. ((x IN (s DELETE a)) ==> ((real_le (f x)) (g x))))) ==> (((real_le ((sum (s DELETE a)) f)) ((sum (s DELETE a)) g)) = T)) = (((real_le ((sum (s DELETE a)) f)) ((sum (s DELETE a)) g)) = T))
+T c==> ! c==> cIN b0 f0 creal_le * f1 b0 * f2 b0 c==> cFINITE f0 c= c==> c/\ cFINITE * * part cDELETE f0 f3 ! c==> cIN b0 * * part cDELETE f0 f3 creal_le * f1 b0 * f2 b0 c= creal_le csum * * part cDELETE f0 f3 f1 csum * * part cDELETE f0 f3 f2 cT c= creal_le csum * * part cDELETE f0 f3 f1 csum * * part cDELETE f0 f3 f2 cT
++ (!x. ((x IN s) ==> ((real_le (f x)) (g x)))), ((x IN s) /\ (~ (x = a))) |- (((x IN s) /\ (~ (x = a))) /\ (((real_le (f x)) (g x)) = T))
+T c==> ! c==> cIN b0 f0 creal_le * f1 b0 * f2 b0 c==> c/\ cIN f3 f0 c~ c= f3 f4 c/\ c/\ cIN f3 f0 c~ c= f3 f4 c= creal_le * f1 f3 * f2 f3 cT
++ (!x. ((x IN s) ==> ((real_le (f x)) (g x)))), (?x. ((x IN s) /\ ((real_lt (f x)) (g x)))), (FINITE s) |- ((real_lt ((sum s) f)) ((sum s) g))
+T c==> ! c==> cIN b0 f0 creal_le * f1 b0 * f2 b0 c==> c? / c/\ cIN b0 f0 creal_lt * f1 b0 * f2 b0 c==> cFINITE f0 creal_lt csum f0 f1 csum f0 f2
++ |- (((!f. (!g. (!s. (((FINITE s) /\ (!x. ((x IN s) ==> ((real_le (f x)) (g x))))) ==> ((real_le ((sum s) f)) ((sum s) g)))))) ==> ((\f. (!g. (!s. (((FINITE s) /\ (!x. ((x IN s) ==> ((real_le (f x)) (g x))))) ==> ((real_le ((sum s) f)) ((sum s) g)))))) f)) = ((\f. (!g. (!s. (((FINITE s) /\ (!x. ((x IN s) ==> ((real_le (f x)) (g x))))) ==> ((real_le ((sum s) f)) ((sum s) g)))))) f))
+T c= c==> ! ! ! c==> c/\ cFINITE b2 ! c==> cIN b3 b2 creal_le * b0 b3 * b1 b3 creal_le csum b2 b0 csum b2 b1 * / ! ! c==> c/\ cFINITE b2 ! c==> cIN b3 b2 creal_le * b0 b3 * b1 b3 creal_le csum b2 b0 csum b2 b1 f0 * / ! ! c==> c/\ cFINITE b2 ! c==> cIN b3 b2 creal_le * b0 b3 * b1 b3 creal_le csum b2 b0 csum b2 b1 f0
+- (~ F), (s a), (x = a), ((~ (s x)) /\ ((x = a) \/ ((s x) /\ (~ (x = a))))) |- ((~ F) /\ F)
+T c==> c~ cF c==> * f0 f1 c==> c= f2 f1 c==> c/\ c~ * f0 f2 c\/ c= f2 f1 c/\ * f0 f2 c~ c= f2 f1 c/\ c~ cF cF
++ |- ((t ==> T) = T)
+T c= c==> f0 cT cT
++ (FINITE s), (a IN s) |- (((real_lt ((real_add (f a)) ((sum (s DELETE a)) f))) ((real_add (g a)) ((sum (s DELETE a)) g))) = ((real_lt ((sum (a INSERT (s DELETE a))) f)) ((sum (a INSERT (s DELETE a))) g)))
+T c==> cFINITE f0 c==> cIN f1 f0 c= creal_lt creal_add * f2 f1 csum * * part cDELETE f0 f1 f2 creal_add * f3 f1 csum * * part cDELETE f0 f1 f3 creal_lt csum * * part cINSERT f1 * * part cDELETE f0 f1 f2 csum * * part cINSERT f1 * * part cDELETE f0 f1 f3
++ |- ((\g'. (!t'. (!e'. (((a IN (s DELETE a)) = g') ==> ((g' ==> (((sum (s DELETE a)) g) = t')) ==> (((~ g') ==> (((real_add (g a)) ((sum (s DELETE a)) g)) = e')) ==> ((((COND (a IN (s DELETE a))) ((sum (s DELETE a)) g)) ((real_add (g a)) ((sum (s DELETE a)) g))) = (((COND g') t') e')))))))) g')
+T * / ! ! c==> c= cIN f0 * * part cDELETE f1 f0 b0 c==> c==> b0 c= csum * * part cDELETE f1 f0 f2 b1 c==> c==> c~ b0 c= creal_add * f2 f0 csum * * part cDELETE f1 f0 f2 b2 c= cCOND cIN f0 * * part cDELETE f1 f0 csum * * part cDELETE f1 f0 f2 creal_add * f2 f0 csum * * part cDELETE f1 f0 f2 cCOND b0 b1 b2 f3
++ (!x. ((x IN s) ==> ((real_le (f x)) (g x)))), (FINITE s) |- ((((\x. ((x IN s) /\ ((real_lt (f x)) (g x)))) a) ==> ((real_lt ((sum s) f)) ((sum s) g))) = T)
+T c==> ! c==> cIN b0 f0 creal_le * f1 b0 * f2 b0 c==> cFINITE f0 c= c==> * / c/\ cIN b0 f0 creal_lt * f1 b0 * f2 b0 f3 creal_lt csum f0 f1 csum f0 f2 cT
+- |- ((t ==> t) = T)
+T c= c==> f0 f0 cT
+- |- ((t \/ t) = t)
+T c= c\/ f0 f0 f0
++ (x = a), ((s x) /\ ((~ (x = a)) /\ ((~ (s x)) \/ (x = a)))) |- F
+T c==> c= f0 f1 c==> c/\ * f2 f0 c/\ c~ c= f0 f1 c\/ c~ * f2 f0 c= f0 f1 cF
++ ((~ (s x)) /\ ((x = a) \/ ((s x) /\ (~ (x = a))))), ((s x) /\ (~ (x = a))) |- (((s x) /\ (~ (x = a))) /\ F)
+T c==> c/\ c~ * f0 f1 c\/ c= f1 f2 c/\ * f0 f1 c~ c= f1 f2 c==> c/\ * f0 f1 c~ c= f1 f2 c/\ c/\ * f0 f1 c~ c= f1 f2 cF
+- |- (((!x. (!y. ((x IN (s DELETE y)) = ((x IN s) /\ (~ (x = y)))))) ==> ((\x. (!y. ((x IN (s DELETE y)) = ((x IN s) /\ (~ (x = y)))))) x)) = ((\x. (!y. ((x IN (s DELETE y)) = ((x IN s) /\ (~ (x = y)))))) x))
+T c= c==> ! ! c= cIN b0 * * part cDELETE f0 b1 c/\ cIN b0 f0 c~ c= b0 b1 * / ! c= cIN b0 * * part cDELETE f0 b1 c/\ cIN b0 f0 c~ c= b0 b1 f1 * / ! c= cIN b0 * * part cDELETE f0 b1 c/\ cIN b0 f0 c~ c= b0 b1 f1
+- |- ((\t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))) t3)
+T * / c= c\/ f0 c\/ f1 b0 c\/ c\/ f0 f1 b0 f2
++ |- ((\z. ((((real_lt w) x) /\ ((real_le y) z)) ==> ((real_lt ((real_add w) y)) ((real_add x) z)))) z)
+T * / c==> c/\ creal_lt f0 f1 creal_le f2 b0 creal_lt creal_add f0 f2 creal_add f1 b0 f3
+- |- (((~ p) ==> p) = p)
+T c= c==> c~ f0 f0 f0
++ (!x. ((x IN s) ==> ((real_le (f x)) (g x)))), (FINITE s), ((real_lt (f a)) (g a)) |- (T = (((real_lt (f a)) (g a)) /\ ((real_le ((sum (s DELETE a)) f)) ((sum (s DELETE a)) g))))
+T c==> ! c==> cIN b0 f0 creal_le * f1 b0 * f2 b0 c==> cFINITE f0 c==> creal_lt * f1 f3 * f2 f3 c= cT c/\ creal_lt * f1 f3 * f2 f3 creal_le csum * * part cDELETE f0 f3 f1 csum * * part cDELETE f0 f3 f2
++ ((x IN s) /\ (~ (x = a))) |- (((x IN s) ==> (((real_le (f x)) (g x)) = T)) = (((real_le (f x)) (g x)) = T))
+T c==> c/\ cIN f0 f1 c~ c= f0 f2 c= c==> cIN f0 f1 c= creal_le * f3 f0 * f4 f0 cT c= creal_le * f3 f0 * f4 f0 cT
++ (a IN s) |- ((F ==> (((sum (s DELETE a)) g) = t')) ==> (((~ F) ==> (((real_add (g a)) ((sum (s DELETE a)) g)) = e')) ==> ((((COND (a IN (s DELETE a))) ((sum (s DELETE a)) g)) ((real_add (g a)) ((sum (s DELETE a)) g))) = (((COND F) t') e'))))
+T c==> cIN f0 f1 c==> c==> cF c= csum * * part cDELETE f1 f0 f2 f3 c==> c==> c~ cF c= creal_add * f2 f0 csum * * part cDELETE f1 f0 f2 f4 c= cCOND cIN f0 * * part cDELETE f1 f0 csum * * part cDELETE f1 f0 f2 creal_add * f2 f0 csum * * part cDELETE f1 f0 f2 cCOND cF f3 f4
+- (x = a) |- ((s a) = (s a))
+T c==> c= f0 f1 c= * f2 f1 * f2 f1
++ |- ((~ F) ==> (((real_add (g a)) ((sum (s DELETE a)) g)) = ((real_add (g a)) ((sum (s DELETE a)) g))))
+T c==> c~ cF c= creal_add * f0 f1 csum * * part cDELETE f2 f1 f0 creal_add * f0 f1 csum * * part cDELETE f2 f1 f0
++ ((FINITE s) /\ ((!x. ((x IN s) ==> ((real_le (f x)) (g x)))) /\ (?x. ((x IN s) /\ ((real_lt (f x)) (g x)))))) |- (((FINITE s) /\ ((!x. ((x IN s) ==> ((real_le (f x)) (g x)))) /\ (?x. ((x IN s) /\ ((real_lt (f x)) (g x)))))) /\ ((real_lt ((sum s) f)) ((sum s) g)))
+T c==> c/\ cFINITE f0 c/\ ! c==> cIN b0 f0 creal_le * f1 b0 * f2 b0 c? / c/\ cIN b0 f0 creal_lt * f1 b0 * f2 b0 c/\ c/\ cFINITE f0 c/\ ! c==> cIN b0 f0 creal_le * f1 b0 * f2 b0 c? / c/\ cIN b0 f0 creal_lt * f1 b0 * f2 b0 creal_lt csum f0 f1 csum f0 f2
++ (~ (s x)), ((s x) /\ ((~ (x = a)) /\ ((~ (s x)) \/ (x = a)))) |- ((~ (s x)) /\ F)
+T c==> c~ * f0 f1 c==> c/\ * f0 f1 c/\ c~ c= f1 f2 c\/ c~ * f0 f1 c= f1 f2 c/\ c~ * f0 f1 cF
++ |- ((\e'. (((a IN (s DELETE a)) = g') ==> ((g' ==> (((sum (s DELETE a)) g) = t')) ==> (((~ g') ==> (((real_add (g a)) ((sum (s DELETE a)) g)) = e')) ==> ((((COND (a IN (s DELETE a))) ((sum (s DELETE a)) g)) ((real_add (g a)) ((sum (s DELETE a)) g))) = (((COND g') t') e')))))) e')
+T * / c==> c= cIN f0 * * part cDELETE f1 f0 f2 c==> c==> f2 c= csum * * part cDELETE f1 f0 f3 f4 c==> c==> c~ f2 c= creal_add * f3 f0 csum * * part cDELETE f1 f0 f3 b0 c= cCOND cIN f0 * * part cDELETE f1 f0 csum * * part cDELETE f1 f0 f3 creal_add * f3 f0 csum * * part cDELETE f1 f0 f3 cCOND f2 f4 b0 f5
+- |- ((t ==> F) = (~ t))
+T c= c==> f0 cF c~ f0
++ |- (p = ((~ p) ==> F))
+T c= f0 c==> c~ f0 cF
++ (!x. ((x IN s) ==> ((real_le (f x)) (g x)))) |- ((x IN s) ==> (((real_le (f x)) (g x)) = T))
+T c==> ! c==> cIN b0 f0 creal_le * f1 b0 * f2 b0 c==> cIN f3 f0 c= creal_le * f1 f3 * f2 f3 cT
++ (s a), (x = a), ((~ (s x)) /\ ((x = a) \/ ((s x) /\ (~ (x = a))))) |- F
+T c==> * f0 f1 c==> c= f2 f1 c==> c/\ c~ * f0 f2 c\/ c= f2 f1 c/\ * f0 f2 c~ c= f2 f1 cF
++ (a IN s) |- ((a IN s) = T)
+T c==> cIN f0 f1 c= cIN f0 f1 cT
++ (FINITE s) |- (((FINITE (s DELETE a)) ==> (((sum (a INSERT (s DELETE a))) g) = (((COND (a IN (s DELETE a))) ((sum (s DELETE a)) g)) ((real_add (g a)) ((sum (s DELETE a)) g))))) = (((sum (a INSERT (s DELETE a))) g) = (((COND (a IN (s DELETE a))) ((sum (s DELETE a)) g)) ((real_add (g a)) ((sum (s DELETE a)) g)))))
+T c==> cFINITE f0 c= c==> cFINITE * * part cDELETE f0 f1 c= csum * * part cINSERT f1 * * part cDELETE f0 f1 f2 cCOND cIN f1 * * part cDELETE f0 f1 csum * * part cDELETE f0 f1 f2 creal_add * f2 f1 csum * * part cDELETE f0 f1 f2 c= csum * * part cINSERT f1 * * part cDELETE f0 f1 f2 cCOND cIN f1 * * part cDELETE f0 f1 csum * * part cDELETE f0 f1 f2 creal_add * f2 f1 csum * * part cDELETE f0 f1 f2
+- |- (((!s. ((~ ((s a) ==> (!x. ((s x) = ((x = a) \/ ((s x) /\ (~ (x = a)))))))) ==> F)) ==> ((\s. ((~ ((s a) ==> (!x. ((s x) = ((x = a) \/ ((s x) /\ (~ (x = a)))))))) ==> F)) s)) = ((\s. ((~ ((s a) ==> (!x. ((s x) = ((x = a) \/ ((s x) /\ (~ (x = a)))))))) ==> F)) s))
+T c= c==> ! c==> c~ c==> * b0 f0 ! c= * b0 b1 c\/ c= b1 f0 c/\ * b0 b1 c~ c= b1 f0 cF * / c==> c~ c==> * b0 f0 ! c= * b0 b1 c\/ c= b1 f0 c/\ * b0 b1 c~ c= b1 f0 cF f1 * / c==> c~ c==> * b0 f0 ! c= * b0 b1 c\/ c= b1 f0 c/\ * b0 b1 c~ c= b1 f0 cF f1
++ |- (((~ ((s x) = ((x = a) \/ ((s x) /\ (~ (x = a)))))) ==> F) = ((s x) = ((x = a) \/ ((s x) /\ (~ (x = a))))))
+T c= c==> c~ c= * f0 f1 c\/ c= f1 f2 c/\ * f0 f1 c~ c= f1 f2 cF c= * f0 f1 c\/ c= f1 f2 c/\ * f0 f1 c~ c= f1 f2
+- ((s x) /\ ((~ (x = a)) /\ ((~ (s x)) \/ (x = a)))) |- ((~ (s x)) ==> (s x))
+T c==> c/\ * f0 f1 c/\ c~ c= f1 f2 c\/ c~ * f0 f1 c= f1 f2 c==> c~ * f0 f1 * f0 f1
++ (!x. ((x IN s) ==> ((real_le (f x)) (g x)))), (FINITE s), ((real_lt (f a)) (g a)), (a IN s) |- ((real_lt ((sum (a INSERT (s DELETE a))) f)) ((sum (a INSERT (s DELETE a))) g))
+T c==> ! c==> cIN b0 f0 creal_le * f1 b0 * f2 b0 c==> cFINITE f0 c==> creal_lt * f1 f3 * f2 f3 c==> cIN f3 f0 creal_lt csum * * part cINSERT f3 * * part cDELETE f0 f3 f1 csum * * part cINSERT f3 * * part cDELETE f0 f3 f2
++ (!x. ((x IN s) ==> ((real_le (f x)) (g x)))), (FINITE s) |- ((FINITE (s DELETE a)) /\ (!x. ((x IN (s DELETE a)) ==> ((real_le (f x)) (g x)))))
+T c==> ! c==> cIN b0 f0 creal_le * f1 b0 * f2 b0 c==> cFINITE f0 c/\ cFINITE * * part cDELETE f0 f3 ! c==> cIN b0 * * part cDELETE f0 f3 creal_le * f1 b0 * f2 b0
++ |- ((\t'. (!e'. (((a IN (s DELETE a)) = g') ==> ((g' ==> (((sum (s DELETE a)) g) = t')) ==> (((~ g') ==> (((real_add (g a)) ((sum (s DELETE a)) g)) = e')) ==> ((((COND (a IN (s DELETE a))) ((sum (s DELETE a)) g)) ((real_add (g a)) ((sum (s DELETE a)) g))) = (((COND g') t') e'))))))) t')
+T * / ! c==> c= cIN f0 * * part cDELETE f1 f0 f2 c==> c==> f2 c= csum * * part cDELETE f1 f0 f3 b0 c==> c==> c~ f2 c= creal_add * f3 f0 csum * * part cDELETE f1 f0 f3 b1 c= cCOND cIN f0 * * part cDELETE f1 f0 csum * * part cDELETE f1 f0 f3 creal_add * f3 f0 csum * * part cDELETE f1 f0 f3 cCOND f2 b0 b1 f4
+- |- (((!y. ((x IN (s DELETE y)) = ((x IN s) /\ (~ (x = y))))) ==> ((\y. ((x IN (s DELETE y)) = ((x IN s) /\ (~ (x = y))))) y)) = ((\y. ((x IN (s DELETE y)) = ((x IN s) /\ (~ (x = y))))) y))
+T c= c==> ! c= cIN f0 * * part cDELETE f1 b0 c/\ cIN f0 f1 c~ c= f0 b0 * / c= cIN f0 * * part cDELETE f1 b0 c/\ cIN f0 f1 c~ c= f0 b0 f2 * / c= cIN f0 * * part cDELETE f1 b0 c/\ cIN f0 f1 c~ c= f0 b0 f2
+- (~ F), ((~ (s x)) /\ ((x = a) \/ ((s x) /\ (~ (x = a))))), ((s x) /\ (~ (x = a))) |- ((~ F) /\ F)
+T c==> c~ cF c==> c/\ c~ * f0 f1 c\/ c= f1 f2 c/\ * f0 f1 c~ c= f1 f2 c==> c/\ * f0 f1 c~ c= f1 f2 c/\ c~ cF cF
+- (FINITE s), ((!x. ((x IN s) ==> ((real_le (f x)) (g x)))) /\ (?x. ((x IN s) /\ ((real_lt (f x)) (g x))))) |- (((!x. ((x IN s) ==> ((real_le (f x)) (g x)))) /\ (?x. ((x IN s) /\ ((real_lt (f x)) (g x))))) /\ ((real_lt ((sum s) f)) ((sum s) g)))
+T c==> cFINITE f0 c==> c/\ ! c==> cIN b0 f0 creal_le * f1 b0 * f2 b0 c? / c/\ cIN b0 f0 creal_lt * f1 b0 * f2 b0 c/\ c/\ ! c==> cIN b0 f0 creal_le * f1 b0 * f2 b0 c? / c/\ cIN b0 f0 creal_lt * f1 b0 * f2 b0 creal_lt csum f0 f1 csum f0 f2
++ (!x. ((x IN s) ==> ((real_le (f x)) (g x)))), (FINITE s), ((real_lt (f a)) (g a)) |- (((((real_lt (f a)) (g a)) /\ ((real_le ((sum (s DELETE a)) f)) ((sum (s DELETE a)) g))) ==> (((real_lt ((real_add (f a)) ((sum (s DELETE a)) f))) ((real_add (g a)) ((sum (s DELETE a)) g))) = T)) = (((real_lt ((real_add (f a)) ((sum (s DELETE a)) f))) ((real_add (g a)) ((sum (s DELETE a)) g))) = T))
+T c==> ! c==> cIN b0 f0 creal_le * f1 b0 * f2 b0 c==> cFINITE f0 c==> creal_lt * f1 f3 * f2 f3 c= c==> c/\ creal_lt * f1 f3 * f2 f3 creal_le csum * * part cDELETE f0 f3 f1 csum * * part cDELETE f0 f3 f2 c= creal_lt creal_add * f1 f3 csum * * part cDELETE f0 f3 f1 creal_add * f2 f3 csum * * part cDELETE f0 f3 f2 cT c= creal_lt creal_add * f1 f3 csum * * part cDELETE f0 f3 f1 creal_add * f2 f3 csum * * part cDELETE f0 f3 f2 cT
++ |- (((!q'. (((x IN (s DELETE a)) = p') ==> ((p' ==> (((real_le (f x)) (g x)) = q')) ==> (((x IN (s DELETE a)) ==> ((real_le (f x)) (g x))) = (p' ==> q'))))) ==> ((\q'. (((x IN (s DELETE a)) = p') ==> ((p' ==> (((real_le (f x)) (g x)) = q')) ==> (((x IN (s DELETE a)) ==> ((real_le (f x)) (g x))) = (p' ==> q'))))) q')) = ((\q'. (((x IN (s DELETE a)) = p') ==> ((p' ==> (((real_le (f x)) (g x)) = q')) ==> (((x IN (s DELETE a)) ==> ((real_le (f x)) (g x))) = (p' ==> q'))))) q'))
+T c= c==> ! c==> c= cIN f0 * * part cDELETE f1 f2 f3 c==> c==> f3 c= creal_le * f4 f0 * f5 f0 b0 c= c==> cIN f0 * * part cDELETE f1 f2 creal_le * f4 f0 * f5 f0 c==> f3 b0 * / c==> c= cIN f0 * * part cDELETE f1 f2 f3 c==> c==> f3 c= creal_le * f4 f0 * f5 f0 b0 c= c==> cIN f0 * * part cDELETE f1 f2 creal_le * f4 f0 * f5 f0 c==> f3 b0 f6 * / c==> c= cIN f0 * * part cDELETE f1 f2 f3 c==> c==> f3 c= creal_le * f4 f0 * f5 f0 b0 c= c==> cIN f0 * * part cDELETE f1 f2 creal_le * f4 f0 * f5 f0 c==> f3 b0 f6
++ |- ((\w. (!x. (!y. (!z. ((((real_lt w) x) /\ ((real_le y) z)) ==> ((real_lt ((real_add w) y)) ((real_add x) z))))))) w)
+T * / ! ! ! c==> c/\ creal_lt b0 b1 creal_le b2 b3 creal_lt creal_add b0 b2 creal_add b1 b3 f0
+- |- ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))
+T c= c\/ f0 c\/ f1 f2 c\/ c\/ f0 f1 f2
++ |- (((F ==> (((sum (s DELETE a)) g) = ((sum (s DELETE a)) g))) ==> (((~ F) ==> (((real_add (g a)) ((sum (s DELETE a)) g)) = e')) ==> ((((COND (a IN (s DELETE a))) ((sum (s DELETE a)) g)) ((real_add (g a)) ((sum (s DELETE a)) g))) = (((COND F) ((sum (s DELETE a)) g)) e')))) = (((~ F) ==> (((real_add (g a)) ((sum (s DELETE a)) g)) = e')) ==> ((((COND (a IN (s DELETE a))) ((sum (s DELETE a)) g)) ((real_add (g a)) ((sum (s DELETE a)) g))) = (((COND F) ((sum (s DELETE a)) g)) e'))))
+T c= c==> c==> cF c= csum * * part cDELETE f0 f1 f2 csum * * part cDELETE f0 f1 f2 c==> c==> c~ cF c= creal_add * f2 f1 csum * * part cDELETE f0 f1 f2 f3 c= cCOND cIN f1 * * part cDELETE f0 f1 csum * * part cDELETE f0 f1 f2 creal_add * f2 f1 csum * * part cDELETE f0 f1 f2 cCOND cF csum * * part cDELETE f0 f1 f2 f3 c==> c==> c~ cF c= creal_add * f2 f1 csum * * part cDELETE f0 f1 f2 f3 c= cCOND cIN f1 * * part cDELETE f0 f1 csum * * part cDELETE f0 f1 f2 creal_add * f2 f1 csum * * part cDELETE f0 f1 f2 cCOND cF csum * * part cDELETE f0 f1 f2 f3
++ (!x. ((x IN s) ==> ((real_le (f x)) (g x)))) |- (((((x IN s) /\ (~ (x = a))) ==> (((real_le (f x)) (g x)) = T)) ==> (((x IN (s DELETE a)) ==> ((real_le (f x)) (g x))) = (((x IN s) /\ (~ (x = a))) ==> T))) = (((x IN (s DELETE a)) ==> ((real_le (f x)) (g x))) = (((x IN s) /\ (~ (x = a))) ==> T)))
+T c==> ! c==> cIN b0 f0 creal_le * f1 b0 * f2 b0 c= c==> c==> c/\ cIN f3 f0 c~ c= f3 f4 c= creal_le * f1 f3 * f2 f3 cT c= c==> cIN f3 * * part cDELETE f0 f4 creal_le * f1 f3 * f2 f3 c==> c/\ cIN f3 f0 c~ c= f3 f4 cT c= c==> cIN f3 * * part cDELETE f0 f4 creal_le * f1 f3 * f2 f3 c==> c/\ cIN f3 f0 c~ c= f3 f4 cT
++ |- (((!w. (!x. (!y. (!z. ((((real_lt w) x) /\ ((real_le y) z)) ==> ((real_lt ((real_add w) y)) ((real_add x) z))))))) ==> ((\w. (!x. (!y. (!z. ((((real_lt w) x) /\ ((real_le y) z)) ==> ((real_lt ((real_add w) y)) ((real_add x) z))))))) w)) = ((\w. (!x. (!y. (!z. ((((real_lt w) x) /\ ((real_le y) z)) ==> ((real_lt ((real_add w) y)) ((real_add x) z))))))) w))
+T c= c==> ! ! ! ! c==> c/\ creal_lt b0 b1 creal_le b2 b3 creal_lt creal_add b0 b2 creal_add b1 b3 * / ! ! ! c==> c/\ creal_lt b0 b1 creal_le b2 b3 creal_lt creal_add b0 b2 creal_add b1 b3 f0 * / ! ! ! c==> c/\ creal_lt b0 b1 creal_le b2 b3 creal_lt creal_add b0 b2 creal_add b1 b3 f0
++ (~ (s x)) |- ((s x) ==> F)
+T c==> c~ * f0 f1 c==> * f0 f1 cF
++ ((s x) /\ ((~ (x = a)) /\ ((~ (s x)) \/ (x = a)))), ((x = a) ==> F) |- F
+T c==> c/\ * f0 f1 c/\ c~ c= f1 f2 c\/ c~ * f0 f1 c= f1 f2 c==> c==> c= f1 f2 cF cF
+- |- (((((~ ((s a) ==> (!x. ((s x) = ((x = a) \/ ((s x) /\ (~ (x = a)))))))) ==> F) ==> ((~ ((s a) ==> (!x. ((s x) = ((x = a) \/ ((s x) /\ (~ (x = a)))))))) ==> F)) ==> (((~ ((s a) ==> (!x. ((s x) = ((x = a) \/ ((s x) /\ (~ (x = a)))))))) ==> F) ==> ((~ ((s a) ==> (!x. ((s x) = ((x = a) \/ ((s x) /\ (~ (x = a)))))))) ==> F))) = (((~ ((s a) ==> (!x. ((s x) = ((x = a) \/ ((s x) /\ (~ (x = a)))))))) ==> F) ==> ((~ ((s a) ==> (!x. ((s x) = ((x = a) \/ ((s x) /\ (~ (x = a)))))))) ==> F)))
+T c= c==> c==> c==> c~ c==> * f0 f1 ! c= * f0 b0 c\/ c= b0 f1 c/\ * f0 b0 c~ c= b0 f1 cF c==> c~ c==> * f0 f1 ! c= * f0 b0 c\/ c= b0 f1 c/\ * f0 b0 c~ c= b0 f1 cF c==> c==> c~ c==> * f0 f1 ! c= * f0 b0 c\/ c= b0 f1 c/\ * f0 b0 c~ c= b0 f1 cF c==> c~ c==> * f0 f1 ! c= * f0 b0 c\/ c= b0 f1 c/\ * f0 b0 c~ c= b0 f1 cF c==> c==> c~ c==> * f0 f1 ! c= * f0 b0 c\/ c= b0 f1 c/\ * f0 b0 c~ c= b0 f1 cF c==> c~ c==> * f0 f1 ! c= * f0 b0 c\/ c= b0 f1 c/\ * f0 b0 c~ c= b0 f1 cF
+- (!x. ((x IN s) ==> ((real_le (f x)) (g x)))), (?x. ((x IN s) /\ ((real_lt (f x)) (g x)))), (FINITE s) |- ((?x. ((x IN s) /\ ((real_lt (f x)) (g x)))) /\ ((real_lt ((sum s) f)) ((sum s) g)))
+T c==> ! c==> cIN b0 f0 creal_le * f1 b0 * f2 b0 c==> c? / c/\ cIN b0 f0 creal_lt * f1 b0 * f2 b0 c==> cFINITE f0 c/\ c? / c/\ cIN b0 f0 creal_lt * f1 b0 * f2 b0 creal_lt csum f0 f1 csum f0 f2
++ |- ((((~ F) ==> (((real_add (g a)) ((sum (s DELETE a)) g)) = ((real_add (g a)) ((sum (s DELETE a)) g)))) ==> ((((COND (a IN (s DELETE a))) ((sum (s DELETE a)) g)) ((real_add (g a)) ((sum (s DELETE a)) g))) = (((COND F) ((sum (s DELETE a)) g)) ((real_add (g a)) ((sum (s DELETE a)) g))))) = ((((COND (a IN (s DELETE a))) ((sum (s DELETE a)) g)) ((real_add (g a)) ((sum (s DELETE a)) g))) = (((COND F) ((sum (s DELETE a)) g)) ((real_add (g a)) ((sum (s DELETE a)) g)))))
+T c= c==> c==> c~ cF c= creal_add * f0 f1 csum * * part cDELETE f2 f1 f0 creal_add * f0 f1 csum * * part cDELETE f2 f1 f0 c= cCOND cIN f1 * * part cDELETE f2 f1 csum * * part cDELETE f2 f1 f0 creal_add * f0 f1 csum * * part cDELETE f2 f1 f0 cCOND cF csum * * part cDELETE f2 f1 f0 creal_add * f0 f1 csum * * part cDELETE f2 f1 f0 c= cCOND cIN f1 * * part cDELETE f2 f1 csum * * part cDELETE f2 f1 f0 creal_add * f0 f1 csum * * part cDELETE f2 f1 f0 cCOND cF csum * * part cDELETE f2 f1 f0 creal_add * f0 f1 csum * * part cDELETE f2 f1 f0
++ (~ ((s x) = ((x = a) \/ ((s x) /\ (~ (x = a)))))), (s a) |- F
+T c==> c~ c= * f0 f1 c\/ c= f1 f2 c/\ * f0 f1 c~ c= f1 f2 c==> * f0 f2 cF
++ |- ((!q'. ((p = p') ==> ((p' ==> (q = q')) ==> ((p ==> q) = (p' ==> q'))))) = T)
+T c= ! c==> c= f0 f1 c==> c==> f1 c= f2 b0 c= c==> f0 f2 c==> f1 b0 cT
++ (!x. ((x IN s) ==> ((real_le (f x)) (g x)))), (FINITE s) |- (T = ((FINITE (s DELETE a)) /\ (!x. ((x IN (s DELETE a)) ==> ((real_le (f x)) (g x))))))
+T c==> ! c==> cIN b0 f0 creal_le * f1 b0 * f2 b0 c==> cFINITE f0 c= cT c/\ cFINITE * * part cDELETE f0 f3 ! c==> cIN b0 * * part cDELETE f0 f3 creal_le * f1 b0 * f2 b0
++ |- ((\s. ((FINITE s) ==> (((sum (x INSERT s)) f) = (((COND (x IN s)) ((sum s) f)) ((real_add (f x)) ((sum s) f)))))) s)
+T * / c==> cFINITE b0 c= csum * * part cINSERT f0 b0 f1 cCOND cIN f0 b0 csum b0 f1 creal_add * f1 f0 csum b0 f1 f2
++ (~ ((s x) = ((x = a) \/ ((s x) /\ (~ (x = a)))))), (((~ (s x)) /\ ((x = a) \/ ((s x) /\ (~ (x = a))))) ==> F), (((s x) /\ ((~ (x = a)) /\ ((~ (s x)) \/ (x = a)))) ==> F) |- F
+T c==> c~ c= * f0 f1 c\/ c= f1 f2 c/\ * f0 f1 c~ c= f1 f2 c==> c==> c/\ c~ * f0 f1 c\/ c= f1 f2 c/\ * f0 f1 c~ c= f1 f2 cF c==> c==> c/\ * f0 f1 c/\ c~ c= f1 f2 c\/ c~ * f0 f1 c= f1 f2 cF cF
+- |- ((_62036 = _62037) ==> ((s _62037) \/ (~ (s _62036))))
+T c==> c= f0 f1 c\/ * f2 f1 c~ * f2 f0
++ ((s x) /\ ((~ (x = a)) /\ ((~ (s x)) \/ (x = a)))) |- ((~ (s x)) \/ (x = a))
+T c==> c/\ * f0 f1 c/\ c~ c= f1 f2 c\/ c~ * f0 f1 c= f1 f2 c\/ c~ * f0 f1 c= f1 f2
++ (FINITE s), ((FINITE s) /\ ((!x. ((x IN s) ==> ((real_le (f x)) (g x)))) /\ (?x. ((x IN s) /\ ((real_lt (f x)) (g x)))))) |- ((real_lt ((sum s) f)) ((sum s) g))
+T c==> cFINITE f0 c==> c/\ cFINITE f0 c/\ ! c==> cIN b0 f0 creal_le * f1 b0 * f2 b0 c? / c/\ cIN b0 f0 creal_lt * f1 b0 * f2 b0 creal_lt csum f0 f1 csum f0 f2
++ |- ((\x. (!f. (!s. ((FINITE s) ==> (((sum (x INSERT s)) f) = (((COND (x IN s)) ((sum s) f)) ((real_add (f x)) ((sum s) f)))))))) x)
+T * / ! ! c==> cFINITE b2 c= csum * * part cINSERT b0 b2 b1 cCOND cIN b0 b2 csum b2 b1 creal_add * b1 b0 csum b2 b1 f0
++ |- (((g = g') ==> ((g' ==> (t = t')) ==> (((~ g') ==> (e = e')) ==> ((((COND g) t) e) = (((COND g') t') e'))))) = T)
+T c= c==> c= f0 f1 c==> c==> f1 c= f2 f3 c==> c==> c~ f1 c= f4 f5 c= cCOND f0 f2 f4 cCOND f1 f3 f5 cT
++ (!x. ((x IN s) ==> ((real_le (f x)) (g x)))), (FINITE s), (s = (a INSERT (s DELETE a))), ((real_lt (f a)) (g a)), (a IN s) |- ((real_lt ((sum s) f)) ((sum s) g))
+T c==> ! c==> cIN b0 f0 creal_le * f1 b0 * f2 b0 c==> cFINITE f0 c==> c= f0 * * part cINSERT f3 * * part cDELETE f0 f3 c==> creal_lt * f1 f3 * f2 f3 c==> cIN f3 f0 creal_lt csum f0 f1 csum f0 f2
+- |- ((\t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3)))) t2)
+T * / ! c= c\/ f0 c\/ b0 b1 c\/ c\/ f0 b0 b1 f1
++ |- ((((real_lt w) x) /\ ((real_le y) z)) ==> (((real_lt ((real_add w) y)) ((real_add x) z)) = T))
+T c==> c/\ creal_lt f0 f1 creal_le f2 f3 c= creal_lt creal_add f0 f2 creal_add f1 f3 cT
+- (~ ((s a) ==> (!x. ((s x) = ((x = a) \/ ((s x) /\ (~ (x = a)))))))) |- F
+T c==> c~ c==> * f0 f1 ! c= * f0 b0 c\/ c= b0 f1 c/\ * f0 b0 c~ c= b0 f1 cF
+- |- ((!a. (!s. ((s a) ==> (!x. ((s x) = ((x = a) \/ ((s x) /\ (~ (x = a))))))))) = (!a. (!s. ((~ ((s a) ==> (!x. ((s x) = ((x = a) \/ ((s x) /\ (~ (x = a)))))))) ==> F))))
+T c= ! ! c==> * b1 b0 ! c= * b1 b2 c\/ c= b2 b0 c/\ * b1 b2 c~ c= b2 b0 ! ! c==> c~ c==> * b1 b0 ! c= * b1 b2 c\/ c= b2 b0 c/\ * b1 b2 c~ c= b2 b0 cF
++ (!x. ((x IN s) ==> ((real_le (f x)) (g x)))), (FINITE s) |- (((a IN s) /\ ((real_lt (f a)) (g a))) ==> ((real_lt ((sum s) f)) ((sum s) g)))
+T c==> ! c==> cIN b0 f0 creal_le * f1 b0 * f2 b0 c==> cFINITE f0 c==> c/\ cIN f3 f0 creal_lt * f1 f3 * f2 f3 creal_lt csum f0 f1 csum f0 f2
+- |- (((!a. (!s. ((~ ((s a) ==> (!x. ((s x) = ((x = a) \/ ((s x) /\ (~ (x = a)))))))) ==> F))) ==> ((\a. (!s. ((~ ((s a) ==> (!x. ((s x) = ((x = a) \/ ((s x) /\ (~ (x = a)))))))) ==> F))) a)) = ((\a. (!s. ((~ ((s a) ==> (!x. ((s x) = ((x = a) \/ ((s x) /\ (~ (x = a)))))))) ==> F))) a))
+T c= c==> ! ! c==> c~ c==> * b1 b0 ! c= * b1 b2 c\/ c= b2 b0 c/\ * b1 b2 c~ c= b2 b0 cF * / ! c==> c~ c==> * b1 b0 ! c= * b1 b2 c\/ c= b2 b0 c/\ * b1 b2 c~ c= b2 b0 cF f0 * / ! c==> c~ c==> * b1 b0 ! c= * b1 b2 c\/ c= b2 b0 c/\ * b1 b2 c~ c= b2 b0 cF f0
+- |- ((\a. (!s. ((~ ((s a) ==> (!x. ((s x) = ((x = a) \/ ((s x) /\ (~ (x = a)))))))) ==> F))) a)
+T * / ! c==> c~ c==> * b1 b0 ! c= * b1 b2 c\/ c= b2 b0 c/\ * b1 b2 c~ c= b2 b0 cF f0
++ |- (((a = a) ==> F) = F)
+T c= c==> c= f0 f0 cF cF
++ |- (((!x. (!y. (!z. ((((real_lt w) x) /\ ((real_le y) z)) ==> ((real_lt ((real_add w) y)) ((real_add x) z)))))) ==> ((\x. (!y. (!z. ((((real_lt w) x) /\ ((real_le y) z)) ==> ((real_lt ((real_add w) y)) ((real_add x) z)))))) x)) = ((\x. (!y. (!z. ((((real_lt w) x) /\ ((real_le y) z)) ==> ((real_lt ((real_add w) y)) ((real_add x) z)))))) x))
+T c= c==> ! ! ! c==> c/\ creal_lt f0 b0 creal_le b1 b2 creal_lt creal_add f0 b1 creal_add b0 b2 * / ! ! c==> c/\ creal_lt f0 b0 creal_le b1 b2 creal_lt creal_add f0 b1 creal_add b0 b2 f1 * / ! ! c==> c/\ creal_lt f0 b0 creal_le b1 b2 creal_lt creal_add f0 b1 creal_add b0 b2 f1
+- ((~ (s x)) /\ ((x = a) \/ ((s x) /\ (~ (x = a))))), ((s x) /\ (~ (x = a))) |- ((~ F) ==> F)
+T c==> c/\ c~ * f0 f1 c\/ c= f1 f2 c/\ * f0 f1 c~ c= f1 f2 c==> c/\ * f0 f1 c~ c= f1 f2 c==> c~ cF cF
+- (~ (s x)), ((s x) /\ ((~ (x = a)) /\ ((~ (s x)) \/ (x = a)))) |- ((~ F) ==> F)
+T c==> c~ * f0 f1 c==> c/\ * f0 f1 c/\ c~ c= f1 f2 c\/ c~ * f0 f1 c= f1 f2 c==> c~ cF cF
+- (s a), (x = a), ((~ (s x)) /\ ((x = a) \/ ((s x) /\ (~ (x = a))))) |- ((~ F) ==> F)
+T c==> * f0 f1 c==> c= f2 f1 c==> c/\ c~ * f0 f2 c\/ c= f2 f1 c/\ * f0 f2 c~ c= f2 f1 c==> c~ cF cF
+- |- ((\f. (((sum EMPTY) f) = (real_of_num (NUMERAL _0)))) f)
+T * / c= csum part cEMPTY b0 creal_of_num cNUMERAL c_0 f0
+- (~ F), (~ (s x)), ((s x) /\ ((~ (x = a)) /\ ((~ (s x)) \/ (x = a)))) |- ((~ F) /\ F)
+T c==> c~ cF c==> c~ * f0 f1 c==> c/\ * f0 f1 c/\ c~ c= f1 f2 c\/ c~ * f0 f1 c= f1 f2 c/\ c~ cF cF
++ |- ((((FINITE s) /\ ((!x. ((x IN s) ==> ((real_le (f x)) (g x)))) /\ (?x. ((x IN s) /\ ((real_lt (f x)) (g x)))))) ==> ((real_lt ((sum s) f)) ((sum s) g))) = T)
+T c= c==> c/\ cFINITE f0 c/\ ! c==> cIN b0 f0 creal_le * f1 b0 * f2 b0 c? / c/\ cIN b0 f0 creal_lt * f1 b0 * f2 b0 creal_lt csum f0 f1 csum f0 f2 cT
++ (!x. ((x IN s) ==> ((real_le (f x)) (g x)))), (FINITE s) |- (((real_le ((sum (s DELETE a)) f)) ((sum (s DELETE a)) g)) = T)
+T c==> ! c==> cIN b0 f0 creal_le * f1 b0 * f2 b0 c==> cFINITE f0 c= creal_le csum * * part cDELETE f0 f3 f1 csum * * part cDELETE f0 f3 f2 cT
++ |- ((\x. (!y. (!z. ((((real_lt w) x) /\ ((real_le y) z)) ==> ((real_lt ((real_add w) y)) ((real_add x) z)))))) x)
+T * / ! ! c==> c/\ creal_lt f0 b0 creal_le b1 b2 creal_lt creal_add f0 b1 creal_add b0 b2 f1
+- |- (((!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3)))) ==> ((\t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3)))) t2)) = ((\t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3)))) t2))
+T c= c==> ! ! c= c\/ f0 c\/ b0 b1 c\/ c\/ f0 b0 b1 * / ! c= c\/ f0 c\/ b0 b1 c\/ c\/ f0 b0 b1 f1 * / ! c= c\/ f0 c\/ b0 b1 c\/ c\/ f0 b0 b1 f1
+- ((~ ((s a) ==> (!x. ((s x) = ((x = a) \/ ((s x) /\ (~ (x = a)))))))) ==> F), (((~ ((s a) ==> (!x. ((s x) = ((x = a) \/ ((s x) /\ (~ (x = a)))))))) ==> F) ==> ((~ ((s a) ==> (!x. ((s x) = ((x = a) \/ ((s x) /\ (~ (x = a)))))))) ==> F)) |- (((~ ((s a) ==> (!x. ((s x) = ((x = a) \/ ((s x) /\ (~ (x = a)))))))) ==> F) /\ ((~ ((s a) ==> (!x. ((s x) = ((x = a) \/ ((s x) /\ (~ (x = a)))))))) ==> F))
+T c==> c==> c~ c==> * f0 f1 ! c= * f0 b0 c\/ c= b0 f1 c/\ * f0 b0 c~ c= b0 f1 cF c==> c==> c==> c~ c==> * f0 f1 ! c= * f0 b0 c\/ c= b0 f1 c/\ * f0 b0 c~ c= b0 f1 cF c==> c~ c==> * f0 f1 ! c= * f0 b0 c\/ c= b0 f1 c/\ * f0 b0 c~ c= b0 f1 cF c/\ c==> c~ c==> * f0 f1 ! c= * f0 b0 c\/ c= b0 f1 c/\ * f0 b0 c~ c= b0 f1 cF c==> c~ c==> * f0 f1 ! c= * f0 b0 c\/ c= b0 f1 c/\ * f0 b0 c~ c= b0 f1 cF
++ (~ ((s x) = ((x = a) \/ ((s x) /\ (~ (x = a)))))), (((~ (s x)) /\ ((x = a) \/ ((s x) /\ (~ (x = a))))) ==> F) |- F
+T c==> c~ c= * f0 f1 c\/ c= f1 f2 c/\ * f0 f1 c~ c= f1 f2 c==> c==> c/\ c~ * f0 f1 c\/ c= f1 f2 c/\ * f0 f1 c~ c= f1 f2 cF cF
++ |- ((\x. ((FINITE (s DELETE x)) = (FINITE s))) x)
+T * / c= cFINITE * * part cDELETE f0 b0 cFINITE f0 f1
+- (~ F) |- ((F = F) = T)
+T c==> c~ cF c= c= cF cF cT
+- |- (((!s. (!x. (!y. ((x IN (s DELETE y)) = ((x IN s) /\ (~ (x = y))))))) ==> ((\s. (!x. (!y. ((x IN (s DELETE y)) = ((x IN s) /\ (~ (x = y))))))) s)) = ((\s. (!x. (!y. ((x IN (s DELETE y)) = ((x IN s) /\ (~ (x = y))))))) s))
+T c= c==> ! ! ! c= cIN b1 * * part cDELETE b0 b2 c/\ cIN b1 b0 c~ c= b1 b2 * / ! ! c= cIN b1 * * part cDELETE b0 b2 c/\ cIN b1 b0 c~ c= b1 b2 f0 * / ! ! c= cIN b1 * * part cDELETE b0 b2 c/\ cIN b1 b0 c~ c= b1 b2 f0
++ (x = a), ((s x) /\ ((~ (x = a)) /\ ((~ (s x)) \/ (x = a)))) |- ((x = a) /\ F)
+T c==> c= f0 f1 c==> c/\ * f2 f0 c/\ c~ c= f0 f1 c\/ c~ * f2 f0 c= f0 f1 c/\ c= f0 f1 cF
++ |- ((x = x) = T)
+T c= c= f0 f0 cT
+- (x = a), ((s x) /\ ((~ (x = a)) /\ ((~ (s x)) \/ (x = a)))) |- (s a)
+T c==> c= f0 f1 c==> c/\ * f2 f0 c/\ c~ c= f0 f1 c\/ c~ * f2 f0 c= f0 f1 * f2 f1
+- (a = x) |- (x = a)
+T c==> c= f0 f1 c= f1 f0
+- |- ((a ==> b) = ((~ a) \/ b))
+T c= c==> f0 f1 c\/ c~ f0 f1
++ |- ((\y. (!z. ((((real_lt w) x) /\ ((real_le y) z)) ==> ((real_lt ((real_add w) y)) ((real_add x) z))))) y)
+T * / ! c==> c/\ creal_lt f0 f1 creal_le b0 b1 creal_lt creal_add f0 b0 creal_add f1 b1 f2
++ (s a) |- (((~ (s x)) /\ ((x = a) \/ ((s x) /\ (~ (x = a))))) ==> F)
+T c==> * f0 f1 c==> c/\ c~ * f0 f2 c\/ c= f2 f1 c/\ * f0 f2 c~ c= f2 f1 cF
++ |- ((\s. (!x. ((FINITE (s DELETE x)) = (FINITE s)))) s)
+T * / ! c= cFINITE * * part cDELETE b0 b1 cFINITE b0 f0
+- |- ((\y. ((x IN (s DELETE y)) = ((x IN s) /\ (~ (x = y))))) y)
+T * / c= cIN f0 * * part cDELETE f1 b0 c/\ cIN f0 f1 c~ c= f0 b0 f2
+- F |- (F = T)
+T c==> cF c= cF cT
++ (!x. ((x IN s) ==> ((real_le (f x)) (g x)))), (FINITE s), ((real_lt (f a)) (g a)) |- (((real_lt (f a)) (g a)) /\ ((real_le ((sum (s DELETE a)) f)) ((sum (s DELETE a)) g)))
+T c==> ! c==> cIN b0 f0 creal_le * f1 b0 * f2 b0 c==> cFINITE f0 c==> creal_lt * f1 f3 * f2 f3 c/\ creal_lt * f1 f3 * f2 f3 creal_le csum * * part cDELETE f0 f3 f1 csum * * part cDELETE f0 f3 f2
++ (s = (a INSERT (s DELETE a))) |- (((real_lt ((sum (a INSERT (s DELETE a))) f)) ((sum (a INSERT (s DELETE a))) g)) = ((real_lt ((sum s) f)) ((sum s) g)))
+T c==> c= f0 * * part cINSERT f1 * * part cDELETE f0 f1 c= creal_lt csum * * part cINSERT f1 * * part cDELETE f0 f1 f2 csum * * part cINSERT f1 * * part cDELETE f0 f1 f3 creal_lt csum f0 f2 csum f0 f3
++ (!x. ((x IN s) ==> ((real_le (f x)) (g x)))), (FINITE s) |- (((\x. ((x IN s) /\ ((real_lt (f x)) (g x)))) a) ==> ((real_lt ((sum s) f)) ((sum s) g)))
+T c==> ! c==> cIN b0 f0 creal_le * f1 b0 * f2 b0 c==> cFINITE f0 c==> * / c/\ cIN b0 f0 creal_lt * f1 b0 * f2 b0 f3 creal_lt csum f0 f1 csum f0 f2
++ ((FINITE s) /\ (!x. ((x IN s) ==> ((real_le (f x)) (g x))))) |- (((FINITE s) /\ (!x. ((x IN s) ==> ((real_le (f x)) (g x))))) /\ (((real_le ((sum s) f)) ((sum s) g)) = T))
+T c==> c/\ cFINITE f0 ! c==> cIN b0 f0 creal_le * f1 b0 * f2 b0 c/\ c/\ cFINITE f0 ! c==> cIN b0 f0 creal_le * f1 b0 * f2 b0 c= creal_le csum f0 f1 csum f0 f2 cT
++ (!x. ((x IN s) ==> ((real_le (f x)) (g x)))), (FINITE s), ((real_lt (f a)) (g a)) |- (T = ((real_lt ((real_add (f a)) ((sum (s DELETE a)) f))) ((real_add (g a)) ((sum (s DELETE a)) g))))
+T c==> ! c==> cIN b0 f0 creal_le * f1 b0 * f2 b0 c==> cFINITE f0 c==> creal_lt * f1 f3 * f2 f3 c= cT creal_lt creal_add * f1 f3 csum * * part cDELETE f0 f3 f1 creal_add * f2 f3 csum * * part cDELETE f0 f3 f2
+- (x = a) |- ((s x) = (s a))
+T c==> c= f0 f1 c= * f2 f0 * f2 f1
++ |- (((!p'. (!q'. (((x IN (s DELETE a)) = p') ==> ((p' ==> (((real_le (f x)) (g x)) = q')) ==> (((x IN (s DELETE a)) ==> ((real_le (f x)) (g x))) = (p' ==> q')))))) ==> ((\p'. (!q'. (((x IN (s DELETE a)) = p') ==> ((p' ==> (((real_le (f x)) (g x)) = q')) ==> (((x IN (s DELETE a)) ==> ((real_le (f x)) (g x))) = (p' ==> q')))))) p')) = ((\p'. (!q'. (((x IN (s DELETE a)) = p') ==> ((p' ==> (((real_le (f x)) (g x)) = q')) ==> (((x IN (s DELETE a)) ==> ((real_le (f x)) (g x))) = (p' ==> q')))))) p'))
+T c= c==> ! ! c==> c= cIN f0 * * part cDELETE f1 f2 b0 c==> c==> b0 c= creal_le * f3 f0 * f4 f0 b1 c= c==> cIN f0 * * part cDELETE f1 f2 creal_le * f3 f0 * f4 f0 c==> b0 b1 * / ! c==> c= cIN f0 * * part cDELETE f1 f2 b0 c==> c==> b0 c= creal_le * f3 f0 * f4 f0 b1 c= c==> cIN f0 * * part cDELETE f1 f2 creal_le * f3 f0 * f4 f0 c==> b0 b1 f5 * / ! c==> c= cIN f0 * * part cDELETE f1 f2 b0 c==> c==> b0 c= creal_le * f3 f0 * f4 f0 b1 c= c==> cIN f0 * * part cDELETE f1 f2 creal_le * f3 f0 * f4 f0 c==> b0 b1 f5
+- |- (((~ ((s a) ==> (!x. ((s x) = ((x = a) \/ ((s x) /\ (~ (x = a)))))))) ==> F) ==> ((~ ((s a) ==> (!x. ((s x) = ((x = a) \/ ((s x) /\ (~ (x = a)))))))) ==> F))
+T c==> c==> c~ c==> * f0 f1 ! c= * f0 b0 c\/ c= b0 f1 c/\ * f0 b0 c~ c= b0 f1 cF c==> c~ c==> * f0 f1 ! c= * f0 b0 c\/ c= b0 f1 c/\ * f0 b0 c~ c= b0 f1 cF
++ |- (((!y. (!z. ((((real_lt w) x) /\ ((real_le y) z)) ==> ((real_lt ((real_add w) y)) ((real_add x) z))))) ==> ((\y. (!z. ((((real_lt w) x) /\ ((real_le y) z)) ==> ((real_lt ((real_add w) y)) ((real_add x) z))))) y)) = ((\y. (!z. ((((real_lt w) x) /\ ((real_le y) z)) ==> ((real_lt ((real_add w) y)) ((real_add x) z))))) y))
+T c= c==> ! ! c==> c/\ creal_lt f0 f1 creal_le b0 b1 creal_lt creal_add f0 b0 creal_add f1 b1 * / ! c==> c/\ creal_lt f0 f1 creal_le b0 b1 creal_lt creal_add f0 b0 creal_add f1 b1 f2 * / ! c==> c/\ creal_lt f0 f1 creal_le b0 b1 creal_lt creal_add f0 b0 creal_add f1 b1 f2
++ ((s x) /\ ((~ (x = a)) /\ ((~ (s x)) \/ (x = a)))), ((~ (s x)) ==> F), ((x = a) ==> F) |- F
+T c==> c/\ * f0 f1 c/\ c~ c= f1 f2 c\/ c~ * f0 f1 c= f1 f2 c==> c==> c~ * f0 f1 cF c==> c==> c= f1 f2 cF cF
+- (_62036 = _62037) |- ((_62036 = _62037) /\ ((s _62037) \/ (~ (s _62036))))
+T c==> c= f0 f1 c/\ c= f0 f1 c\/ * f2 f1 c~ * f2 f0
++ |- (((!g. (!s. (((FINITE s) /\ (!x. ((x IN s) ==> ((real_le (f x)) (g x))))) ==> ((real_le ((sum s) f)) ((sum s) g))))) ==> ((\g. (!s. (((FINITE s) /\ (!x. ((x IN s) ==> ((real_le (f x)) (g x))))) ==> ((real_le ((sum s) f)) ((sum s) g))))) g)) = ((\g. (!s. (((FINITE s) /\ (!x. ((x IN s) ==> ((real_le (f x)) (g x))))) ==> ((real_le ((sum s) f)) ((sum s) g))))) g))
+T c= c==> ! ! c==> c/\ cFINITE b1 ! c==> cIN b2 b1 creal_le * f0 b2 * b0 b2 creal_le csum b1 f0 csum b1 b0 * / ! c==> c/\ cFINITE b1 ! c==> cIN b2 b1 creal_le * f0 b2 * b0 b2 creal_le csum b1 f0 csum b1 b0 f1 * / ! c==> c/\ cFINITE b1 ! c==> cIN b2 b1 creal_le * f0 b2 * b0 b2 creal_le csum b1 f0 csum b1 b0 f1
+- ((~ ((s a) ==> (!x. ((s x) = ((x = a) \/ ((s x) /\ (~ (x = a)))))))) ==> F) |- (((~ ((s a) ==> (!x. ((s x) = ((x = a) \/ ((s x) /\ (~ (x = a)))))))) ==> F) /\ ((~ ((s a) ==> (!x. ((s x) = ((x = a) \/ ((s x) /\ (~ (x = a)))))))) ==> F))
+T c==> c==> c~ c==> * f0 f1 ! c= * f0 b0 c\/ c= b0 f1 c/\ * f0 b0 c~ c= b0 f1 cF c/\ c==> c~ c==> * f0 f1 ! c= * f0 b0 c\/ c= b0 f1 c/\ * f0 b0 c~ c= b0 f1 cF c==> c~ c==> * f0 f1 ! c= * f0 b0 c\/ c= b0 f1 c/\ * f0 b0 c~ c= b0 f1 cF
+- (x = a) |- (F = F)
+T c==> c= f0 f1 c= cF cF
++ (FINITE s) |- (FINITE (s DELETE a))
+T c==> cFINITE f0 cFINITE * * part cDELETE f0 f1
++ |- (!g'. (!t'. (!e'. ((g = g') ==> ((g' ==> (t = t')) ==> (((~ g') ==> (e = e')) ==> ((((COND g) t) e) = (((COND g') t') e'))))))))
+T c==> c= f0 f1 c==> c==> f1 c= f2 f3 c==> c==> c~ f1 c= f4 f5 c= cCOND f0 f2 f4 cCOND f1 f3 f5
+- |- (((sum EMPTY) f) = (real_of_num (NUMERAL _0)))
+T c= csum part cEMPTY f0 creal_of_num cNUMERAL c_0
++ |- (((!z. ((((real_lt w) x) /\ ((real_le y) z)) ==> ((real_lt ((real_add w) y)) ((real_add x) z)))) ==> ((\z. ((((real_lt w) x) /\ ((real_le y) z)) ==> ((real_lt ((real_add w) y)) ((real_add x) z)))) z)) = ((\z. ((((real_lt w) x) /\ ((real_le y) z)) ==> ((real_lt ((real_add w) y)) ((real_add x) z)))) z))
+T c= c==> ! c==> c/\ creal_lt f0 f1 creal_le f2 b0 creal_lt creal_add f0 f2 creal_add f1 b0 * / c==> c/\ creal_lt f0 f1 creal_le f2 b0 creal_lt creal_add f0 f2 creal_add f1 b0 f3 * / c==> c/\ creal_lt f0 f1 creal_le f2 b0 creal_lt creal_add f0 f2 creal_add f1 b0 f3
++ |- (((!s. (!x. ((FINITE (s DELETE x)) = (FINITE s)))) ==> ((\s. (!x. ((FINITE (s DELETE x)) = (FINITE s)))) s)) = ((\s. (!x. ((FINITE (s DELETE x)) = (FINITE s)))) s))
+T c= c==> ! ! c= cFINITE * * part cDELETE b0 b1 cFINITE b0 * / ! c= cFINITE * * part cDELETE b0 b1 cFINITE b0 f0 * / ! c= cFINITE * * part cDELETE b0 b1 cFINITE b0 f0
++ |- ((\g. (!s. (((FINITE s) /\ (!x. ((x IN s) ==> ((real_le (f x)) (g x))))) ==> ((real_le ((sum s) f)) ((sum s) g))))) g)
+T * / ! c==> c/\ cFINITE b1 ! c==> cIN b2 b1 creal_le * f0 b2 * b0 b2 creal_le csum b1 f0 csum b1 b0 f1
+- ((x IN s) /\ (~ (x = a))) |- ((x = a) = F)
+T c==> c/\ cIN f0 f1 c~ c= f0 f2 c= c= f0 f2 cF
+- |- (((t1 \/ t2) \/ t3) = (t1 \/ (t2 \/ t3)))
+T c= c\/ c\/ f0 f1 f2 c\/ f0 c\/ f1 f2
++ |- (((!t'. (!e'. (((a IN (s DELETE a)) = g') ==> ((g' ==> (((sum (s DELETE a)) g) = t')) ==> (((~ g') ==> (((real_add (g a)) ((sum (s DELETE a)) g)) = e')) ==> ((((COND (a IN (s DELETE a))) ((sum (s DELETE a)) g)) ((real_add (g a)) ((sum (s DELETE a)) g))) = (((COND g') t') e'))))))) ==> ((\t'. (!e'. (((a IN (s DELETE a)) = g') ==> ((g' ==> (((sum (s DELETE a)) g) = t')) ==> (((~ g') ==> (((real_add (g a)) ((sum (s DELETE a)) g)) = e')) ==> ((((COND (a IN (s DELETE a))) ((sum (s DELETE a)) g)) ((real_add (g a)) ((sum (s DELETE a)) g))) = (((COND g') t') e'))))))) t')) = ((\t'. (!e'. (((a IN (s DELETE a)) = g') ==> ((g' ==> (((sum (s DELETE a)) g) = t')) ==> (((~ g') ==> (((real_add (g a)) ((sum (s DELETE a)) g)) = e')) ==> ((((COND (a IN (s DELETE a))) ((sum (s DELETE a)) g)) ((real_add (g a)) ((sum (s DELETE a)) g))) = (((COND g') t') e'))))))) t'))
+T c= c==> ! ! c==> c= cIN f0 * * part cDELETE f1 f0 f2 c==> c==> f2 c= csum * * part cDELETE f1 f0 f3 b0 c==> c==> c~ f2 c= creal_add * f3 f0 csum * * part cDELETE f1 f0 f3 b1 c= cCOND cIN f0 * * part cDELETE f1 f0 csum * * part cDELETE f1 f0 f3 creal_add * f3 f0 csum * * part cDELETE f1 f0 f3 cCOND f2 b0 b1 * / ! c==> c= cIN f0 * * part cDELETE f1 f0 f2 c==> c==> f2 c= csum * * part cDELETE f1 f0 f3 b0 c==> c==> c~ f2 c= creal_add * f3 f0 csum * * part cDELETE f1 f0 f3 b1 c= cCOND cIN f0 * * part cDELETE f1 f0 csum * * part cDELETE f1 f0 f3 creal_add * f3 f0 csum * * part cDELETE f1 f0 f3 cCOND f2 b0 b1 f4 * / ! c==> c= cIN f0 * * part cDELETE f1 f0 f2 c==> c==> f2 c= csum * * part cDELETE f1 f0 f3 b0 c==> c==> c~ f2 c= creal_add * f3 f0 csum * * part cDELETE f1 f0 f3 b1 c= cCOND cIN f0 * * part cDELETE f1 f0 csum * * part cDELETE f1 f0 f3 creal_add * f3 f0 csum * * part cDELETE f1 f0 f3 cCOND f2 b0 b1 f4
++ (!x. ((x IN s) ==> ((real_le (f x)) (g x)))) |- (((x IN s) /\ (~ (x = a))) ==> (((real_le (f x)) (g x)) = T))
+T c==> ! c==> cIN b0 f0 creal_le * f1 b0 * f2 b0 c==> c/\ cIN f3 f0 c~ c= f3 f4 c= creal_le * f1 f3 * f2 f3 cT
+- (~ (s x)), ((s x) /\ ((~ (x = a)) /\ ((~ (s x)) \/ (x = a)))) |- ((~ (s x)) /\ (s x))
+T c==> c~ * f0 f1 c==> c/\ * f0 f1 c/\ c~ c= f1 f2 c\/ c~ * f0 f1 c= f1 f2 c/\ c~ * f0 f1 * f0 f1
+- ((x IN s) /\ (~ (x = a))) |- (~ (a = x))
+T c==> c/\ cIN f0 f1 c~ c= f0 f2 c~ c= f2 f0
+- (~ (s x)), ((s x) /\ (~ (x = a))) |- ((~ (s x)) /\ (s x))
+T c==> c~ * f0 f1 c==> c/\ * f0 f1 c~ c= f1 f2 c/\ c~ * f0 f1 * f0 f1
+- |- (((!f. (((sum EMPTY) f) = (real_of_num (NUMERAL _0)))) ==> ((\f. (((sum EMPTY) f) = (real_of_num (NUMERAL _0)))) f)) = ((\f. (((sum EMPTY) f) = (real_of_num (NUMERAL _0)))) f))
+T c= c==> ! c= csum part cEMPTY b0 creal_of_num cNUMERAL c_0 * / c= csum part cEMPTY b0 creal_of_num cNUMERAL c_0 f0 * / c= csum part cEMPTY b0 creal_of_num cNUMERAL c_0 f0
++ (s a), ((~ (s x)) /\ ((x = a) \/ ((s x) /\ (~ (x = a))))) |- (((~ (s x)) /\ ((x = a) \/ ((s x) /\ (~ (x = a))))) /\ F)
+T c==> * f0 f1 c==> c/\ c~ * f0 f2 c\/ c= f2 f1 c/\ * f0 f2 c~ c= f2 f1 c/\ c/\ c~ * f0 f2 c\/ c= f2 f1 c/\ * f0 f2 c~ c= f2 f1 cF
++ |- (((a IN (s DELETE a)) = g') ==> ((g' ==> (((sum (s DELETE a)) g) = t')) ==> (((~ g') ==> (((real_add (g a)) ((sum (s DELETE a)) g)) = e')) ==> ((((COND (a IN (s DELETE a))) ((sum (s DELETE a)) g)) ((real_add (g a)) ((sum (s DELETE a)) g))) = (((COND g') t') e')))))
+T c==> c= cIN f0 * * part cDELETE f1 f0 f2 c==> c==> f2 c= csum * * part cDELETE f1 f0 f3 f4 c==> c==> c~ f2 c= creal_add * f3 f0 csum * * part cDELETE f1 f0 f3 f5 c= cCOND cIN f0 * * part cDELETE f1 f0 csum * * part cDELETE f1 f0 f3 creal_add * f3 f0 csum * * part cDELETE f1 f0 f3 cCOND f2 f4 f5
+- (~ F), (x = a), ((s x) /\ ((~ (x = a)) /\ ((~ (s x)) \/ (x = a)))) |- ((~ F) /\ F)
+T c==> c~ cF c==> c= f0 f1 c==> c/\ * f2 f0 c/\ c~ c= f0 f1 c\/ c~ * f2 f0 c= f0 f1 c/\ c~ cF cF
+- (~ (s a)), (s a) |- ((~ (s a)) /\ (s a))
+T c==> c~ * f0 f1 c==> * f0 f1 c/\ c~ * f0 f1 * f0 f1
+- |- (((~ ((s a) ==> (!x. ((s x) = ((x = a) \/ ((s x) /\ (~ (x = a)))))))) ==> F) = ((s a) ==> (!x. ((s x) = ((x = a) \/ ((s x) /\ (~ (x = a))))))))
+T c= c==> c~ c==> * f0 f1 ! c= * f0 b0 c\/ c= b0 f1 c/\ * f0 b0 c~ c= b0 f1 cF c==> * f0 f1 ! c= * f0 b0 c\/ c= b0 f1 c/\ * f0 b0 c~ c= b0 f1
+- |- (((!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))) ==> ((\t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))) t3)) = ((\t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))) t3))
+T c= c==> ! c= c\/ f0 c\/ f1 b0 c\/ c\/ f0 f1 b0 * / c= c\/ f0 c\/ f1 b0 c\/ c\/ f0 f1 b0 f2 * / c= c\/ f0 c\/ f1 b0 c\/ c\/ f0 f1 b0 f2
+- |- ((((~ ((s a) ==> (!x. ((s x) = ((x = a) \/ ((s x) /\ (~ (x = a)))))))) ==> F) ==> ((~ ((s a) ==> (!x. ((s x) = ((x = a) \/ ((s x) /\ (~ (x = a)))))))) ==> F)) ==> (((~ ((s a) ==> (!x. ((s x) = ((x = a) \/ ((s x) /\ (~ (x = a)))))))) ==> F) ==> ((~ ((s a) ==> (!x. ((s x) = ((x = a) \/ ((s x) /\ (~ (x = a)))))))) ==> F)))
+T c==> c==> c==> c~ c==> * f0 f1 ! c= * f0 b0 c\/ c= b0 f1 c/\ * f0 b0 c~ c= b0 f1 cF c==> c~ c==> * f0 f1 ! c= * f0 b0 c\/ c= b0 f1 c/\ * f0 b0 c~ c= b0 f1 cF c==> c==> c~ c==> * f0 f1 ! c= * f0 b0 c\/ c= b0 f1 c/\ * f0 b0 c~ c= b0 f1 cF c==> c~ c==> * f0 f1 ! c= * f0 b0 c\/ c= b0 f1 c/\ * f0 b0 c~ c= b0 f1 cF
+- |- ((t /\ t) = t)
+T c= c/\ f0 f0 f0
+- |- ((a = b) ==> (b \/ (~ a)))
+T c==> c= f0 f1 c\/ f1 c~ f0
+- |- ((\s. ((~ ((s a) ==> (!x. ((s x) = ((x = a) \/ ((s x) /\ (~ (x = a)))))))) ==> F)) s)
+T * / c==> c~ c==> * b0 f0 ! c= * b0 b1 c\/ c= b1 f0 c/\ * b0 b1 c~ c= b1 f0 cF f1
+- (((~ ((s a) ==> (!x. ((s x) = ((x = a) \/ ((s x) /\ (~ (x = a)))))))) ==> F) ==> ((~ ((s a) ==> (!x. ((s x) = ((x = a) \/ ((s x) /\ (~ (x = a)))))))) ==> F)) |- ((((~ ((s a) ==> (!x. ((s x) = ((x = a) \/ ((s x) /\ (~ (x = a)))))))) ==> F) ==> ((~ ((s a) ==> (!x. ((s x) = ((x = a) \/ ((s x) /\ (~ (x = a)))))))) ==> F)) /\ (((~ ((s a) ==> (!x. ((s x) = ((x = a) \/ ((s x) /\ (~ (x = a)))))))) ==> F) ==> ((~ ((s a) ==> (!x. ((s x) = ((x = a) \/ ((s x) /\ (~ (x = a)))))))) ==> F)))
+T c==> c==> c==> c~ c==> * f0 f1 ! c= * f0 b0 c\/ c= b0 f1 c/\ * f0 b0 c~ c= b0 f1 cF c==> c~ c==> * f0 f1 ! c= * f0 b0 c\/ c= b0 f1 c/\ * f0 b0 c~ c= b0 f1 cF c/\ c==> c==> c~ c==> * f0 f1 ! c= * f0 b0 c\/ c= b0 f1 c/\ * f0 b0 c~ c= b0 f1 cF c==> c~ c==> * f0 f1 ! c= * f0 b0 c\/ c= b0 f1 c/\ * f0 b0 c~ c= b0 f1 cF c==> c==> c~ c==> * f0 f1 ! c= * f0 b0 c\/ c= b0 f1 c/\ * f0 b0 c~ c= b0 f1 cF c==> c~ c==> * f0 f1 ! c= * f0 b0 c\/ c= b0 f1 c/\ * f0 b0 c~ c= b0 f1 cF
+- (~ F) |- (F = F)
+T c==> c~ cF c= cF cF
+- ((x IN s) /\ (~ (x = a))) |- (T = (x IN s))
+T c==> c/\ cIN f0 f1 c~ c= f0 f2 c= cT cIN f0 f1
+- |- (((s a) ==> (!x. ((s x) = ((x = a) \/ ((s x) /\ (~ (x = a))))))) = T)
+T c= c==> * f0 f1 ! c= * f0 b0 c\/ c= b0 f1 c/\ * f0 b0 c~ c= b0 f1 cT
+- ((~ ((s a) ==> (!x. ((s x) = ((x = a) \/ ((s x) /\ (~ (x = a)))))))) ==> F), (((~ ((s a) ==> (!x. ((s x) = ((x = a) \/ ((s x) /\ (~ (x = a)))))))) ==> F) ==> ((~ ((s a) ==> (!x. ((s x) = ((x = a) \/ ((s x) /\ (~ (x = a)))))))) ==> F)) |- ((((~ ((s a) ==> (!x. ((s x) = ((x = a) \/ ((s x) /\ (~ (x = a)))))))) ==> F) ==> ((~ ((s a) ==> (!x. ((s x) = ((x = a) \/ ((s x) /\ (~ (x = a)))))))) ==> F)) /\ ((~ ((s a) ==> (!x. ((s x) = ((x = a) \/ ((s x) /\ (~ (x = a)))))))) ==> F))
+T c==> c==> c~ c==> * f0 f1 ! c= * f0 b0 c\/ c= b0 f1 c/\ * f0 b0 c~ c= b0 f1 cF c==> c==> c==> c~ c==> * f0 f1 ! c= * f0 b0 c\/ c= b0 f1 c/\ * f0 b0 c~ c= b0 f1 cF c==> c~ c==> * f0 f1 ! c= * f0 b0 c\/ c= b0 f1 c/\ * f0 b0 c~ c= b0 f1 cF c/\ c==> c==> c~ c==> * f0 f1 ! c= * f0 b0 c\/ c= b0 f1 c/\ * f0 b0 c~ c= b0 f1 cF c==> c~ c==> * f0 f1 ! c= * f0 b0 c\/ c= b0 f1 c/\ * f0 b0 c~ c= b0 f1 cF c==> c~ c==> * f0 f1 ! c= * f0 b0 c\/ c= b0 f1 c/\ * f0 b0 c~ c= b0 f1 cF
+- |- ((!x. (P x)) = ((P T) /\ (P F)))
+T c= ! * f0 b0 c/\ * f0 cT * f0 cF
+- |- (((!t1. (!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))))) ==> ((\t1. (!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))))) t1)) = ((\t1. (!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))))) t1))
+T c= c==> ! ! ! c= c\/ b0 c\/ b1 b2 c\/ c\/ b0 b1 b2 * / ! ! c= c\/ b0 c\/ b1 b2 c\/ c\/ b0 b1 b2 f0 * / ! ! c= c\/ b0 c\/ b1 b2 c\/ c\/ b0 b1 b2 f0
+- ((x IN s) /\ (~ (x = a))) |- ((a = x) = F)
+T c==> c/\ cIN f0 f1 c~ c= f0 f2 c= c= f2 f0 cF
+- ((x IN s) /\ (~ (x = a))) |- ((x IN s) = T)
+T c==> c/\ cIN f0 f1 c~ c= f0 f2 c= cIN f0 f1 cT
+- |- ((~ (~ t)) = t)
+T c= c~ c~ f0 f0
+- ((s x) /\ (~ (x = a))) |- ((~ (s x)) ==> (s x))
+T c==> c/\ * f0 f1 c~ c= f1 f2 c==> c~ * f0 f1 * f0 f1
+- (s a) |- ((~ (s a)) ==> (s a))
+T c==> * f0 f1 c==> c~ * f0 f1 * f0 f1
+- (~ ((s a) ==> (!x. ((s x) = ((x = a) \/ ((s x) /\ (~ (x = a)))))))) |- ((~ ((s a) ==> (!x. ((s x) = ((x = a) \/ ((s x) /\ (~ (x = a)))))))) /\ F)
+T c==> c~ c==> * f0 f1 ! c= * f0 b0 c\/ c= b0 f1 c/\ * f0 b0 c~ c= b0 f1 c/\ c~ c==> * f0 f1 ! c= * f0 b0 c\/ c= b0 f1 c/\ * f0 b0 c~ c= b0 f1 cF
+- (_62036 = _62037) |- ((((s _62036) = (s _62037)) ==> ((s _62037) \/ (~ (s _62036)))) = ((s _62037) \/ (~ (s _62036))))
+T c==> c= f0 f1 c= c==> c= * f2 f0 * f2 f1 c\/ * f2 f1 c~ * f2 f0 c\/ * f2 f1 c~ * f2 f0
+- (~ (a = a)) |- ((~ (a = a)) /\ (a = a))
+T c==> c~ c= f0 f0 c/\ c~ c= f0 f0 c= f0 f0
+- |- ((~ (_62036 = _62037)) \/ ((s _62037) \/ (~ (s _62036))))
+T c\/ c~ c= f0 f1 c\/ * f2 f1 c~ * f2 f0
+- ((x IN s) /\ (~ (x = a))) |- (((~ (x = a)) ==> ((x = a) = F)) = ((x = a) = F))
+T c==> c/\ cIN f0 f1 c~ c= f0 f2 c= c==> c~ c= f0 f2 c= c= f0 f2 cF c= c= f0 f2 cF
+- ((~ ((s a) ==> (!x. ((s x) = ((x = a) \/ ((s x) /\ (~ (x = a)))))))) ==> F) |- ((((~ ((s a) ==> (!x. ((s x) = ((x = a) \/ ((s x) /\ (~ (x = a)))))))) ==> F) ==> ((~ ((s a) ==> (!x. ((s x) = ((x = a) \/ ((s x) /\ (~ (x = a)))))))) ==> F)) ==> ((~ ((s a) ==> (!x. ((s x) = ((x = a) \/ ((s x) /\ (~ (x = a)))))))) ==> F))
+T c==> c==> c~ c==> * f0 f1 ! c= * f0 b0 c\/ c= b0 f1 c/\ * f0 b0 c~ c= b0 f1 cF c==> c==> c==> c~ c==> * f0 f1 ! c= * f0 b0 c\/ c= b0 f1 c/\ * f0 b0 c~ c= b0 f1 cF c==> c~ c==> * f0 f1 ! c= * f0 b0 c\/ c= b0 f1 c/\ * f0 b0 c~ c= b0 f1 cF c==> c~ c==> * f0 f1 ! c= * f0 b0 c\/ c= b0 f1 c/\ * f0 b0 c~ c= b0 f1 cF
+- |- ((\s. (!x. (!y. ((x IN (s DELETE y)) = ((x IN s) /\ (~ (x = y))))))) s)
+T * / ! ! c= cIN b1 * * part cDELETE b0 b2 c/\ cIN b1 b0 c~ c= b1 b2 f0
+- |- ((\x. (!y. ((x IN (s DELETE y)) = ((x IN s) /\ (~ (x = y)))))) x)
+T * / ! c= cIN b0 * * part cDELETE f0 b1 c/\ cIN b0 f0 c~ c= b0 b1 f1
+- (FINITE s) |- ((FINITE s) /\ (((sum (x INSERT s)) f) = (((COND (x IN s)) ((sum s) f)) ((real_add (f x)) ((sum s) f)))))
+T c==> cFINITE f0 c/\ cFINITE f0 c= csum * * part cINSERT f1 f0 f2 cCOND cIN f1 f0 csum f0 f2 creal_add * f2 f1 csum f0 f2
+- ((x IN s) /\ (~ (x = a))) |- (((~ (a = x)) ==> ((a = x) = F)) = ((a = x) = F))
+T c==> c/\ cIN f0 f1 c~ c= f0 f2 c= c==> c~ c= f2 f0 c= c= f2 f0 cF c= c= f2 f0 cF

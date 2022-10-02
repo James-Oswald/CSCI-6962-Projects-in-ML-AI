@@ -1,0 +1,44 @@
+N NPRODUCT_DELTA
+C |- (!s. (!a. (((nproduct s) (\x. (((COND (x = a)) b) (NUMERAL (BIT1 _0))))) = (((COND (a IN s)) b) (NUMERAL (BIT1 _0))))))
+T c= cnproduct f0 / cCOND c= b0 f1 f2 cNUMERAL cBIT1 c_0 cCOND cIN f1 f0 f2 cNUMERAL cBIT1 c_0
+D TRUTH
+A |- T
+T cT
+D BOOL_CASES_AX
+A |- (!t. ((t = T) \/ (t = F)))
+T c\/ c= f0 cT c= f0 cF
+D COND_CLAUSES
+A |- (!t1. (!t2. (((((COND T) t1) t2) = t1) /\ ((((COND F) t1) t2) = t2))))
+T c/\ c= cCOND cT f0 f1 f0 c= cCOND cF f0 f1 f1
+D ITERATE_DELTA
+A |- (!op. ((monoidal op) ==> (!f. (!a. (!s. ((((iterate op) s) (\x. (((COND (x = a)) (f x)) (neutral op)))) = (((COND (a IN s)) (f a)) (neutral op))))))))
+T c==> cmonoidal f0 ! ! ! c= citerate f0 b2 / cCOND c= b3 b1 * b0 b3 cneutral f0 cCOND cIN b1 b2 * b0 b1 cneutral f0
+D NEUTRAL_MUL
+A |- ((neutral *) = (NUMERAL (BIT1 _0)))
+T c= cneutral part c* cNUMERAL cBIT1 c_0
+D MONOIDAL_MUL
+A |- (monoidal *)
+T cmonoidal part c*
+D nproduct
+A |- (nproduct = (iterate *))
+T c= part cnproduct * part citerate part c*
++ |- (((!g'. (!t'. (!e'. (((a IN s) = g') ==> ((g' ==> (b = t')) ==> (((~ g') ==> ((neutral *) = e')) ==> ((((COND (a IN s)) b) (neutral *)) = (((COND g') t') e')))))))) ==> ((\g'. (!t'. (!e'. (((a IN s) = g') ==> ((g' ==> (b = t')) ==> (((~ g') ==> ((neutral *) = e')) ==> ((((COND (a IN s)) b) (neutral *)) = (((COND g') t') e')))))))) g')) = ((\g'. (!t'. (!e'. (((a IN s) = g') ==> ((g' ==> (b = t')) ==> (((~ g') ==> ((neutral *) = e')) ==> ((((COND (a IN s)) b) (neutral *)) = (((COND g') t') e')))))))) g'))
+T c= c==> ! ! ! c==> c= cIN f0 f1 b0 c==> c==> b0 c= f2 b1 c==> c==> c~ b0 c= cneutral part c* b2 c= cCOND cIN f0 f1 f2 cneutral part c* cCOND b0 b1 b2 * / ! ! c==> c= cIN f0 f1 b0 c==> c==> b0 c= f2 b1 c==> c==> c~ b0 c= cneutral part c* b2 c= cCOND cIN f0 f1 f2 cneutral part c* cCOND b0 b1 b2 f3 * / ! ! c==> c= cIN f0 f1 b0 c==> c==> b0 c= f2 b1 c==> c==> c~ b0 c= cneutral part c* b2 c= cCOND cIN f0 f1 f2 cneutral part c* cCOND b0 b1 b2 f3
++ |- ((\e'. (((a IN s) = g') ==> ((g' ==> (b = t')) ==> (((~ g') ==> ((neutral *) = e')) ==> ((((COND (a IN s)) b) (neutral *)) = (((COND g') t') e')))))) e')
+T * / c==> c= cIN f0 f1 f2 c==> c==> f2 c= f3 f4 c==> c==> c~ f2 c= cneutral part c* b0 c= cCOND cIN f0 f1 f3 cneutral part c* cCOND f2 f4 b0 f5
++ (monoidal op) |- ((\s. ((((iterate op) s) (\x. (((COND (x = a)) (f x)) (neutral op)))) = (((COND (a IN s)) (f a)) (neutral op)))) s)
+T c==> cmonoidal f0 * / c= citerate f0 b0 / cCOND c= b1 f1 * f2 b1 cneutral f0 cCOND cIN f1 b0 * f2 f1 cneutral f0 f3
++ (monoidal op) |- ((\a. (!s. ((((iterate op) s) (\x. (((COND (x = a)) (f x)) (neutral op)))) = (((COND (a IN s)) (f a)) (neutral op))))) a)
+T c==> cmonoidal f0 * / ! c= citerate f0 b1 / cCOND c= b2 b0 * f1 b2 cneutral f0 cCOND cIN b0 b1 * f1 b0 cneutral f0 f2
++ (monoidal op) |- ((\f. (!a. (!s. ((((iterate op) s) (\x. (((COND (x = a)) (f x)) (neutral op)))) = (((COND (a IN s)) (f a)) (neutral op)))))) f)
+T c==> cmonoidal f0 * / ! ! c= citerate f0 b2 / cCOND c= b3 b1 * b0 b3 cneutral f0 cCOND cIN b1 b2 * b0 b1 cneutral f0 f1
+- (a IN s) |- ((a IN s) = T)
+T c==> cIN f0 f1 c= cIN f0 f1 cT
+- |- ((((COND (x = x)) y) z) = y)
+T c= cCOND c= f0 f0 f1 f2 f1
+- (~ (a IN s)) |- ((a IN s) = F)
+T c==> c~ cIN f0 f1 c= cIN f0 f1 cF
+- |- ((monoidal *) = T)
+T c= cmonoidal part c* cT
+- |- (T = (monoidal *))
+T c= cT cmonoidal part c*

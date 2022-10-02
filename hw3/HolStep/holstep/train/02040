@@ -1,0 +1,80 @@
+N CNJ_ADD
+C |- (!w. (!z. ((cnj ((vector_add w) z)) = ((vector_add (cnj w)) (cnj z)))))
+T c= ccnj cvector_add f0 f1 cvector_add ccnj f0 ccnj f1
+D TRUTH
+A |- T
+T cT
+D REAL_NEG_ADD
+A |- (!x. (!y. ((real_neg ((real_add x) y)) = ((real_add (real_neg x)) (real_neg y)))))
+T c= creal_neg creal_add f0 f1 creal_add creal_neg f0 creal_neg f1
+D RE
+A |- ((Re (complex (x , y))) = x)
+T c= cRe ccomplex c, f0 f1 f0
+D IM
+A |- ((Im (complex (x , y))) = y)
+T c= cIm ccomplex c, f0 f1 f1
+D COMPLEX_EQ
+A |- (!w. (!z. ((w = z) = (((Re w) = (Re z)) /\ ((Im w) = (Im z))))))
+T c= c= f0 f1 c/\ c= cRe f0 cRe f1 c= cIm f0 cIm f1
+D complex_add
+A |- (((vector_add w) z) = (complex (((real_add (Re w)) (Re z)) , ((real_add (Im w)) (Im z)))))
+T c= cvector_add f0 f1 ccomplex c, creal_add cRe f0 cRe f1 creal_add cIm f0 cIm f1
+D cnj
+A |- (!z. ((cnj z) = (complex ((Re z) , (real_neg (Im z))))))
+T c= ccnj f0 ccomplex c, cRe f0 creal_neg cIm f0
+- |- ((\x. (!y. (((real_mul x) (real_neg y)) = (real_neg ((real_mul x) y))))) x)
+T * / ! c= creal_mul b0 creal_neg b1 creal_neg creal_mul b0 b1 f0
++ |- ((\z. ((w = z) = (((Re w) = (Re z)) /\ ((Im w) = (Im z))))) z)
+T * / c= c= f0 b0 c/\ c= cRe f0 cRe b0 c= cIm f0 cIm b0 f1
+- |- ((\y. (((real_mul (real_neg x)) y) = (real_neg ((real_mul x) y)))) y)
+T * / c= creal_mul creal_neg f0 b0 creal_neg creal_mul f0 b0 f1
++ |- ((\x. (!y. ((real_neg ((real_add x) y)) = ((real_add (real_neg x)) (real_neg y))))) x)
+T * / ! c= creal_neg creal_add b0 b1 creal_add creal_neg b0 creal_neg b1 f0
++ |- (T = (!w. (!z. ((real_neg ((real_add (Im w)) (Im z))) = ((real_add (real_neg (Im w))) (real_neg (Im z)))))))
+T c= cT ! ! c= creal_neg creal_add cIm b0 cIm b1 creal_add creal_neg cIm b0 creal_neg cIm b1
++ |- ((!z. t) = t)
+T c= ! f0 f0
+- |- ((\x. ((real_neg (real_neg x)) = x)) x)
+T * / c= creal_neg creal_neg b0 b0 f0
+- |- (((!x. ((real_neg (real_neg x)) = x)) ==> ((\x. ((real_neg (real_neg x)) = x)) x)) = ((\x. ((real_neg (real_neg x)) = x)) x))
+T c= c==> ! c= creal_neg creal_neg b0 b0 * / c= creal_neg creal_neg b0 b0 f0 * / c= creal_neg creal_neg b0 b0 f0
++ |- (((!y. ((real_neg ((real_add x) y)) = ((real_add (real_neg x)) (real_neg y)))) ==> ((\y. ((real_neg ((real_add x) y)) = ((real_add (real_neg x)) (real_neg y)))) y)) = ((\y. ((real_neg ((real_add x) y)) = ((real_add (real_neg x)) (real_neg y)))) y))
+T c= c==> ! c= creal_neg creal_add f0 b0 creal_add creal_neg f0 creal_neg b0 * / c= creal_neg creal_add f0 b0 creal_add creal_neg f0 creal_neg b0 f1 * / c= creal_neg creal_add f0 b0 creal_add creal_neg f0 creal_neg b0 f1
++ |- (((!w. (!z. ((w = z) = (((Re w) = (Re z)) /\ ((Im w) = (Im z)))))) ==> ((\w. (!z. ((w = z) = (((Re w) = (Re z)) /\ ((Im w) = (Im z)))))) w)) = ((\w. (!z. ((w = z) = (((Re w) = (Re z)) /\ ((Im w) = (Im z)))))) w))
+T c= c==> ! ! c= c= b0 b1 c/\ c= cRe b0 cRe b1 c= cIm b0 cIm b1 * / ! c= c= b0 b1 c/\ c= cRe b0 cRe b1 c= cIm b0 cIm b1 f0 * / ! c= c= b0 b1 c/\ c= cRe b0 cRe b1 c= cIm b0 cIm b1 f0
+- |- (((!y. (((real_mul (real_neg x)) y) = (real_neg ((real_mul x) y)))) ==> ((\y. (((real_mul (real_neg x)) y) = (real_neg ((real_mul x) y)))) y)) = ((\y. (((real_mul (real_neg x)) y) = (real_neg ((real_mul x) y)))) y))
+T c= c==> ! c= creal_mul creal_neg f0 b0 creal_neg creal_mul f0 b0 * / c= creal_mul creal_neg f0 b0 creal_neg creal_mul f0 b0 f1 * / c= creal_mul creal_neg f0 b0 creal_neg creal_mul f0 b0 f1
++ |- ((\z. ((cnj z) = (complex ((Re z) , (real_neg (Im z)))))) z)
+T * / c= ccnj b0 ccomplex c, cRe b0 creal_neg cIm b0 f0
++ |- ((x = x) = T)
+T c= c= f0 f0 cT
+- |- (((!x. (!y. (((real_mul (real_neg x)) y) = (real_neg ((real_mul x) y))))) ==> ((\x. (!y. (((real_mul (real_neg x)) y) = (real_neg ((real_mul x) y))))) x)) = ((\x. (!y. (((real_mul (real_neg x)) y) = (real_neg ((real_mul x) y))))) x))
+T c= c==> ! ! c= creal_mul creal_neg b0 b1 creal_neg creal_mul b0 b1 * / ! c= creal_mul creal_neg b0 b1 creal_neg creal_mul b0 b1 f0 * / ! c= creal_mul creal_neg b0 b1 creal_neg creal_mul b0 b1 f0
+- |- ((\x. (!y. (((real_mul (real_neg x)) y) = (real_neg ((real_mul x) y))))) x)
+T * / ! c= creal_mul creal_neg b0 b1 creal_neg creal_mul b0 b1 f0
+- |- ((real_neg (real_neg x)) = x)
+T c= creal_neg creal_neg f0 f0
++ |- ((!w. (!z. ((real_neg ((real_add (Im w)) (Im z))) = ((real_add (real_neg (Im w))) (real_neg (Im z)))))) = (!w. (!z. ((cnj ((vector_add w) z)) = ((vector_add (cnj w)) (cnj z))))))
+T c= ! ! c= creal_neg creal_add cIm b0 cIm b1 creal_add creal_neg cIm b0 creal_neg cIm b1 ! ! c= ccnj cvector_add b0 b1 cvector_add ccnj b0 ccnj b1
+- |- (((!y. (((real_mul x) (real_neg y)) = (real_neg ((real_mul x) y)))) ==> ((\y. (((real_mul x) (real_neg y)) = (real_neg ((real_mul x) y)))) y)) = ((\y. (((real_mul x) (real_neg y)) = (real_neg ((real_mul x) y)))) y))
+T c= c==> ! c= creal_mul f0 creal_neg b0 creal_neg creal_mul f0 b0 * / c= creal_mul f0 creal_neg b0 creal_neg creal_mul f0 b0 f1 * / c= creal_mul f0 creal_neg b0 creal_neg creal_mul f0 b0 f1
++ |- (((!z. ((w = z) = (((Re w) = (Re z)) /\ ((Im w) = (Im z))))) ==> ((\z. ((w = z) = (((Re w) = (Re z)) /\ ((Im w) = (Im z))))) z)) = ((\z. ((w = z) = (((Re w) = (Re z)) /\ ((Im w) = (Im z))))) z))
+T c= c==> ! c= c= f0 b0 c/\ c= cRe f0 cRe b0 c= cIm f0 cIm b0 * / c= c= f0 b0 c/\ c= cRe f0 cRe b0 c= cIm f0 cIm b0 f1 * / c= c= f0 b0 c/\ c= cRe f0 cRe b0 c= cIm f0 cIm b0 f1
+- |- ((\y. (((real_mul x) (real_neg y)) = (real_neg ((real_mul x) y)))) y)
+T * / c= creal_mul f0 creal_neg b0 creal_neg creal_mul f0 b0 f1
+- |- ((t /\ t) = t)
+T c= c/\ f0 f0 f0
++ |- ((\y. ((real_neg ((real_add x) y)) = ((real_add (real_neg x)) (real_neg y)))) y)
+T * / c= creal_neg creal_add f0 b0 creal_add creal_neg f0 creal_neg b0 f1
+- |- (((real_mul (real_neg x)) y) = (real_neg ((real_mul x) y)))
+T c= creal_mul creal_neg f0 f1 creal_neg creal_mul f0 f1
++ |- (!w. (!z. ((real_neg ((real_add (Im w)) (Im z))) = ((real_add (real_neg (Im w))) (real_neg (Im z))))))
+T c= creal_neg creal_add cIm f0 cIm f1 creal_add creal_neg cIm f0 creal_neg cIm f1
++ |- (((!x. (!y. ((real_neg ((real_add x) y)) = ((real_add (real_neg x)) (real_neg y))))) ==> ((\x. (!y. ((real_neg ((real_add x) y)) = ((real_add (real_neg x)) (real_neg y))))) x)) = ((\x. (!y. ((real_neg ((real_add x) y)) = ((real_add (real_neg x)) (real_neg y))))) x))
+T c= c==> ! ! c= creal_neg creal_add b0 b1 creal_add creal_neg b0 creal_neg b1 * / ! c= creal_neg creal_add b0 b1 creal_add creal_neg b0 creal_neg b1 f0 * / ! c= creal_neg creal_add b0 b1 creal_add creal_neg b0 creal_neg b1 f0
++ |- ((T /\ t) = t)
+T c= c/\ cT f0 f0
+- |- (((!x. (!y. (((real_mul x) (real_neg y)) = (real_neg ((real_mul x) y))))) ==> ((\x. (!y. (((real_mul x) (real_neg y)) = (real_neg ((real_mul x) y))))) x)) = ((\x. (!y. (((real_mul x) (real_neg y)) = (real_neg ((real_mul x) y))))) x))
+T c= c==> ! ! c= creal_mul b0 creal_neg b1 creal_neg creal_mul b0 b1 * / ! c= creal_mul b0 creal_neg b1 creal_neg creal_mul b0 b1 f0 * / ! c= creal_mul b0 creal_neg b1 creal_neg creal_mul b0 b1 f0
+- |- (((real_mul x) (real_neg y)) = (real_neg ((real_mul x) y)))
+T c= creal_mul f0 creal_neg f1 creal_neg creal_mul f0 f1

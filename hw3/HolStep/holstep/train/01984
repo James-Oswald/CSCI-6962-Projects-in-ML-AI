@@ -1,0 +1,40 @@
+N Reduction3.subdivFace0_alt2_foldl_steps
+C |- (!uvns. (!p. (((((subdivFace0_alt2 (SND (SND p))) (FST (SND p))) (FST p)) uvns) = (SND (((foldl subdiv_triple_step) p) uvns)))))
+T c= csubdivFace0_alt2 cSND cSND f0 cFST cSND f0 cFST f0 f1 cSND cfoldl part csubdiv_triple_step f0 f1
+D TRUTH
+A |- T
+T cT
+D LET_DEF
+A |- (!f. (!x. (((LET f) x) = (f x))))
+T c= cLET f0 f1 * f0 f1
+D LET_END_DEF
+A |- (!t. ((LET_END t) = t))
+T c= cLET_END f0 f0
+D FST
+A |- (!x. (!y. ((FST (x , y)) = x)))
+T c= cFST c, f0 f1 f0
+D SND
+A |- (!x. (!y. ((SND (x , y)) = y)))
+T c= cSND c, f0 f1 f1
+D PAIR
+A |- (!x. (((FST x) , (SND x)) = x))
+T c= c, cFST f0 cSND f0 f0
+D list_INDUCT
+A |- (!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x))))
+T c==> c/\ * f0 cNIL ! ! c==> * f0 b1 * f0 cCONS b0 b1 ! * f0 b0
+D Seq.foldl
+A |- (((((foldl f) z) ((CONS x) s)) = (((foldl f) ((f z) x)) s)) /\ ((((foldl f) z) NIL) = z))
+T c/\ c= cfoldl f0 f1 cCONS f2 f3 cfoldl f0 * * f0 f1 f2 f3 c= cfoldl f0 f1 cNIL f1
+D Tame_defs2.subdivFace0_alt2
+A |- ((((((subdivFace0_alt2 g) f) n0) NIL) = (f , g)) /\ (((((subdivFace0_alt2 g) f) n0) ((CONS uvn) uvnos)) = ((LET (GABS (\f. (!u. (!v. (!n. ((GEQ (f (u , (v , n)))) (LET_END ((LET (\ws. (LET_END ((LET (GABS (\f. (!f1. (!f2. (!g'. ((GEQ (f (f1 , (f2 , g')))) (LET_END ((((subdivFace0_alt2 g') f2) (n + n0)) uvnos))))))))) (((((splitFace g) u) v) f) ws))))) ((upt n0) (n0 + n))))))))))) uvn)))
+T c/\ c= csubdivFace0_alt2 f0 f1 f2 cNIL c, f1 f0 c= csubdivFace0_alt2 f0 f1 f2 cCONS f3 f4 cLET * part cGABS / ! ! ! cGEQ * b0 c, b1 c, b2 b3 cLET_END cLET / cLET_END cLET * part cGABS / ! ! ! cGEQ * b5 c, b6 c, b7 b8 cLET_END csubdivFace0_alt2 b8 b7 c+ b3 f2 f4 csplitFace f0 b1 b2 f1 b4 cupt f2 c+ f2 b3 f3
+D Reduction3.LAMBDA_TRIPLE
+A |- ((GABS (\f. (!x. (!y. (!z. ((GEQ (f (x , (y , z)))) (((P x) y) z))))))) = (\p. (((P (FST p)) (FST (SND p))) (SND (SND p)))))
+T c= * part cGABS / ! ! ! cGEQ * b0 c, b1 c, b2 b3 * * * f0 b1 b2 b3 / * * * f0 cFST b0 cFST cSND b0 cSND cSND b0
+D Reduction3.subdiv_triple_step_paired
+A |- (!p. (!uvn. (((subdiv_triple_step p) uvn) = ((LET (GABS (\f. (!u. (!v. (!n. ((GEQ (f (u , (v , n)))) (LET_END ((LET (\ws. (LET_END ((LET (GABS (\f. (!f1. (!f2. (!g'. ((GEQ (f (f1 , (f2 , g')))) (LET_END ((n + (FST p)) , (f2 , g')))))))))) (((((splitFace (SND (SND p))) u) v) (FST (SND p))) ws))))) ((upt (FST p)) ((FST p) + n))))))))))) uvn))))
+T c= csubdiv_triple_step f0 f1 cLET * part cGABS / ! ! ! cGEQ * b0 c, b1 c, b2 b3 cLET_END cLET / cLET_END cLET * part cGABS / ! ! ! cGEQ * b5 c, b6 c, b7 b8 cLET_END c, c+ b3 cFST f0 c, b7 b8 csplitFace cSND cSND f0 b1 b2 cFST cSND f0 b4 cupt cFST f0 c+ cFST f0 b3 f1
++ |- (((!p. ((SND (((foldl subdiv_triple_step) p) NIL)) = ((((subdivFace0_alt2 (SND (SND p))) (FST (SND p))) (FST p)) NIL))) /\ (!h. (!t. ((!p. ((SND (((foldl subdiv_triple_step) p) t)) = ((((subdivFace0_alt2 (SND (SND p))) (FST (SND p))) (FST p)) t))) ==> (!p. ((SND (((foldl subdiv_triple_step) p) ((CONS h) t))) = ((((subdivFace0_alt2 (SND (SND p))) (FST (SND p))) (FST p)) ((CONS h) t)))))))) ==> (!uvns. (!p. ((SND (((foldl subdiv_triple_step) p) uvns)) = ((((subdivFace0_alt2 (SND (SND p))) (FST (SND p))) (FST p)) uvns)))))
+T c==> c/\ ! c= cSND cfoldl part csubdiv_triple_step b0 cNIL csubdivFace0_alt2 cSND cSND b0 cFST cSND b0 cFST b0 cNIL ! ! c==> ! c= cSND cfoldl part csubdiv_triple_step b2 b1 csubdivFace0_alt2 cSND cSND b2 cFST cSND b2 cFST b2 b1 ! c= cSND cfoldl part csubdiv_triple_step b2 cCONS b0 b1 csubdivFace0_alt2 cSND cSND b2 cFST cSND b2 cFST b2 cCONS b0 b1 ! ! c= cSND cfoldl part csubdiv_triple_step b1 b0 csubdivFace0_alt2 cSND cSND b1 cFST cSND b1 cFST b1 b0
+- |- (((\p. (f p)) y) = (f y))
+T c= * / * f0 b0 f1 * f0 f1

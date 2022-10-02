@@ -1,0 +1,54 @@
+N MATRIX_ADD
+C |- (!f. (!g. (((linear f) /\ (linear g)) ==> ((matrix (\x. ((vector_add (f x)) (g x)))) = ((matrix_add (matrix f)) (matrix g))))))
+T c==> c/\ clinear f0 clinear f1 c= cmatrix / cvector_add * f0 b0 * f1 b0 cmatrix_add cmatrix f0 cmatrix f1
+D TRUTH
+A |- T
+T cT
+D LINEAR_COMPOSE_ADD
+A |- (!f. (!g. (((linear f) /\ (linear g)) ==> (linear (\x. ((vector_add (f x)) (g x)))))))
+T c==> c/\ clinear f0 clinear f1 clinear / cvector_add * f0 b0 * f1 b0
+D MATRIX_VECTOR_MUL_ADD_RDISTRIB
+A |- (!A. (!B. (!x. (((matrix_vector_mul ((matrix_add A) B)) x) = ((vector_add ((matrix_vector_mul A) x)) ((matrix_vector_mul B) x))))))
+T c= cmatrix_vector_mul cmatrix_add f0 f1 f2 cvector_add cmatrix_vector_mul f0 f2 cmatrix_vector_mul f1 f2
+D MATRIX_EQ
+A |- (!A. (!B. ((A = B) = (!x. (((matrix_vector_mul A) x) = ((matrix_vector_mul B) x))))))
+T c= c= f0 f1 ! c= cmatrix_vector_mul f0 b0 cmatrix_vector_mul f1 b0
+D MATRIX_WORKS
+A |- (!f. ((linear f) ==> (!x. (((matrix_vector_mul (matrix f)) x) = (f x)))))
+T c==> clinear f0 ! c= cmatrix_vector_mul cmatrix f0 b0 * f0 b0
++ |- (((!B. (!x. (((matrix_vector_mul ((matrix_add A) B)) x) = ((vector_add ((matrix_vector_mul A) x)) ((matrix_vector_mul B) x))))) ==> ((\B. (!x. (((matrix_vector_mul ((matrix_add A) B)) x) = ((vector_add ((matrix_vector_mul A) x)) ((matrix_vector_mul B) x))))) B)) = ((\B. (!x. (((matrix_vector_mul ((matrix_add A) B)) x) = ((vector_add ((matrix_vector_mul A) x)) ((matrix_vector_mul B) x))))) B))
+T c= c==> ! ! c= cmatrix_vector_mul cmatrix_add f0 b0 b1 cvector_add cmatrix_vector_mul f0 b1 cmatrix_vector_mul b0 b1 * / ! c= cmatrix_vector_mul cmatrix_add f0 b0 b1 cvector_add cmatrix_vector_mul f0 b1 cmatrix_vector_mul b0 b1 f1 * / ! c= cmatrix_vector_mul cmatrix_add f0 b0 b1 cvector_add cmatrix_vector_mul f0 b1 cmatrix_vector_mul b0 b1 f1
++ |- ((\x. (((matrix_vector_mul ((matrix_add A) B)) x) = ((vector_add ((matrix_vector_mul A) x)) ((matrix_vector_mul B) x)))) x)
+T * / c= cmatrix_vector_mul cmatrix_add f0 f1 b0 cvector_add cmatrix_vector_mul f0 b0 cmatrix_vector_mul f1 b0 f2
++ |- (!f. (!g. (((linear f) /\ (linear g)) ==> (!x. (((matrix_vector_mul (matrix (\x. ((vector_add (f x)) (g x))))) x) = ((vector_add ((matrix_vector_mul (matrix f)) x)) ((matrix_vector_mul (matrix g)) x)))))))
+T c==> c/\ clinear f0 clinear f1 ! c= cmatrix_vector_mul cmatrix / cvector_add * f0 b1 * f1 b1 b0 cvector_add cmatrix_vector_mul cmatrix f0 b0 cmatrix_vector_mul cmatrix f1 b0
++ (linear f) |- ((\x. (((matrix_vector_mul (matrix f)) x) = (f x))) x)
+T c==> clinear f0 * / c= cmatrix_vector_mul cmatrix f0 b0 * f0 b0 f1
++ |- ((t ==> T) = T)
+T c= c==> f0 cT cT
+- |- ((t ==> t) = T)
+T c= c==> f0 f0 cT
++ |- ((!x. t) = t)
+T c= ! f0 f0
++ |- ((\B. ((A = B) = (!x. (((matrix_vector_mul A) x) = ((matrix_vector_mul B) x))))) B)
+T * / c= c= f0 b0 ! c= cmatrix_vector_mul f0 b1 cmatrix_vector_mul b0 b1 f1
++ ((linear f) /\ (linear g)) |- (((linear f) /\ (linear g)) /\ ((linear (\x. ((vector_add (f x)) (g x)))) = T))
+T c==> c/\ clinear f0 clinear f1 c/\ c/\ clinear f0 clinear f1 c= clinear / cvector_add * f0 b0 * f1 b0 cT
++ ((linear f) /\ (linear g)) |- (((matrix_vector_mul (matrix g)) x) = (g x))
+T c==> c/\ clinear f0 clinear f1 c= cmatrix_vector_mul cmatrix f1 f2 * f1 f2
+- ((linear f) /\ (linear g)) |- (T = ((linear f) /\ (linear g)))
+T c==> c/\ clinear f0 clinear f1 c= cT c/\ clinear f0 clinear f1
+- ((linear f) /\ (linear g)) |- (T = (linear g))
+T c==> c/\ clinear f0 clinear f1 c= cT clinear f1
+- ((linear f) /\ (linear g)) |- (T = (linear f))
+T c==> c/\ clinear f0 clinear f1 c= cT clinear f0
+- |- ((t /\ t) = t)
+T c= c/\ f0 f0 f0
+- ((linear f) /\ (linear g)) |- ((linear f) = T)
+T c==> c/\ clinear f0 clinear f1 c= clinear f0 cT
+- ((linear f) /\ (linear g)) |- ((linear g) = T)
+T c==> c/\ clinear f0 clinear f1 c= clinear f1 cT
+- |- (((\x. (f x)) y) = (f y))
+T c= * / * f0 b0 f1 * f0 f1
+- |- ((T /\ t) = t)
+T c= c/\ cT f0 f0

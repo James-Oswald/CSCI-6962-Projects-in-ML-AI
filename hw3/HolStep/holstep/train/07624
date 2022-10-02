@@ -1,0 +1,296 @@
+N SLICE_SUBSET
+C |- (!s. (!t. (!k. (!a. ((s SUBSET t) ==> ((((slice k) a) s) SUBSET (((slice k) a) t)))))))
+T c==> cSUBSET f0 f1 cSUBSET * * * part cslice f2 f3 f0 * * * part cslice f2 f3 f1
+D TRUTH
+A |- T
+T cT
+D ETA_AX
+A |- (!t. ((\x. (t x)) = t))
+T c= / * f0 b0 f0
+D BOOL_CASES_AX
+A |- (!t. ((t = T) \/ (t = F)))
+T c\/ c= f0 cT c= f0 cF
+D NOT_CLAUSES
+A |- ((!t. ((~ (~ t)) = t)) /\ (((~ T) = F) /\ ((~ F) = T)))
+T c/\ ! c= c~ c~ b0 b0 c/\ c= c~ cT cF c= c~ cF cT
+D NOT_EXISTS_THM
+A |- (!P. ((~ (?x. (P x))) = (!x. (~ (P x)))))
+T c= c~ c? / * f0 b0 ! c~ * f0 b0
+D IN
+A |- (!P. (!x. ((x IN P) = (P x))))
+T c= cIN f0 f1 * f1 f0
+D Hypermap_iso.inE
+A |- ((!p. (!x. ((x IN (GSPEC (\v. (?y. (((SETSPEC v) (p y)) y))))) = (p x)))) /\ ((!P. (!x. (((GSPEC (\v. (P (SETSPEC v)))) x) = (P (\p. (\t. (p /\ (x = t)))))))) /\ ((!p. (!x. (((GSPEC (\v. (?y. (((SETSPEC v) (p y)) y)))) x) = (p x)))) /\ (!p. (!x. ((x IN (\y. (p y))) = (p x)))))))
+T c/\ ! ! c= cIN b1 * part cGSPEC / c? / cSETSPEC b2 * b0 b3 b3 * b0 b1 c/\ ! ! c= cGSPEC / * b0 * part cSETSPEC b2 b1 * b0 / / c/\ b2 c= b1 b3 c/\ ! ! c= cGSPEC / c? / cSETSPEC b2 * b0 b3 b3 b1 * b0 b1 ! ! c= cIN b1 / * b0 b2 * b0 b1
+D SUBSET
+A |- (!s. (!t. ((s SUBSET t) = (!x. ((x IN s) ==> (x IN t))))))
+T c= cSUBSET f0 f1 ! c==> cIN b0 f0 cIN b0 f1
+D IN_INTER
+A |- (!s. (!t. (!x. ((x IN (s INTER t)) = ((x IN s) /\ (x IN t))))))
+T c= cIN f0 * * part cINTER f1 f2 c/\ cIN f0 f1 cIN f0 f2
+D IN_IMAGE
+A |- (!y. (!s. (!f. ((y IN ((IMAGE f) s)) = (?x. ((y = (f x)) /\ (x IN s)))))))
+T c= cIN f0 * * part cIMAGE f1 f2 c? / c/\ c= f0 * f1 b0 cIN b0 f2
+D slice
+A |- (!s. (!k. (!t. ((((slice k) t) s) = ((IMAGE (dropout k)) (s INTER (GSPEC (\GEN%PVAR%4965. (?x. (((SETSPEC GEN%PVAR%4965) ((x $ k) = t)) x))))))))))
+T c= * * * part cslice f0 f1 f2 * * part cIMAGE * part cdropout f0 * * part cINTER f2 * part cGSPEC / c? / cSETSPEC b0 c= c$ b1 f0 f1 b1
+- ((x = ((dropout k) x')) /\ ((s x') /\ ((x' $ k) = a))) |- ((s x') = (s x'))
+T c==> c/\ c= f0 cdropout f1 f2 c/\ * f3 f2 c= c$ f2 f1 f4 c= * f3 f2 * f3 f2
+- (_2048296 = _2048298) |- ((_2048297 = _2048299) ==> ((_2048296 $ _2048297) = (_2048298 $ _2048299)))
+T c==> c= f0 f1 c==> c= f2 f3 c= c$ f0 f2 c$ f1 f3
++ (~ (?x. ((x = ((dropout k) x)) /\ ((t x) /\ ((x $ k) = a))))) |- ((~ (x = ((dropout k) _2048269))) \/ ((~ (t _2048269)) \/ (~ ((_2048269 $ k) = a))))
+T c==> c~ c? / c/\ c= f0 cdropout f1 b0 c/\ * f2 b0 c= c$ b0 f1 f3 c\/ c~ c= f0 cdropout f1 f4 c\/ c~ * f2 f4 c~ c= c$ f4 f1 f3
+- (!x. ((s x) ==> (t x))), ((x = ((dropout k) x')) /\ ((s x') /\ ((x' $ k) = a))) |- ((~ (t x')) ==> (t x'))
+T c==> ! c==> * f0 b0 * f1 b0 c==> c/\ c= f2 cdropout f3 f4 c/\ * f0 f4 c= c$ f4 f3 f5 c==> c~ * f1 f4 * f1 f4
+- |- ((!x'. ((~ (s x')) \/ (t x))) = ((!x. (~ (s x))) \/ (t x)))
+T c= ! c\/ c~ * f0 b0 * f1 f2 c\/ ! c~ * f0 b0 * f1 f2
++ (!x. ((s x) ==> (t x))), (~ (?x. ((x = ((dropout k) x)) /\ ((t x) /\ ((x $ k) = a))))) |- (((x = ((dropout k) x')) /\ ((s x') /\ ((x' $ k) = a))) ==> F)
+T c==> ! c==> * f0 b0 * f1 b0 c==> c~ c? / c/\ c= f2 cdropout f3 b0 c/\ * f1 b0 c= c$ b0 f3 f4 c==> c/\ c= f2 cdropout f3 f5 c/\ * f0 f5 c= c$ f5 f3 f4 cF
+- |- (((((~ (!s. (!t. (!k. (!a. ((!x. ((s x) ==> (t x))) ==> (!x. ((?x. ((x = ((dropout k) x)) /\ ((s x) /\ ((x $ k) = a)))) ==> (?x. ((x = ((dropout k) x)) /\ ((t x) /\ ((x $ k) = a)))))))))))) ==> F) ==> ((~ (!s. (!t. (!k. (!a. ((!x. ((s x) ==> (t x))) ==> (!x. ((?x. ((x = ((dropout k) x)) /\ ((s x) /\ ((x $ k) = a)))) ==> (?x. ((x = ((dropout k) x)) /\ ((t x) /\ ((x $ k) = a)))))))))))) ==> F)) ==> (((~ (!s. (!t. (!k. (!a. ((!x. ((s x) ==> (t x))) ==> (!x. ((?x. ((x = ((dropout k) x)) /\ ((s x) /\ ((x $ k) = a)))) ==> (?x. ((x = ((dropout k) x)) /\ ((t x) /\ ((x $ k) = a)))))))))))) ==> F) ==> ((~ (!s. (!t. (!k. (!a. ((!x. ((s x) ==> (t x))) ==> (!x. ((?x. ((x = ((dropout k) x)) /\ ((s x) /\ ((x $ k) = a)))) ==> (?x. ((x = ((dropout k) x)) /\ ((t x) /\ ((x $ k) = a)))))))))))) ==> F))) = (((~ (!s. (!t. (!k. (!a. ((!x. ((s x) ==> (t x))) ==> (!x. ((?x. ((x = ((dropout k) x)) /\ ((s x) /\ ((x $ k) = a)))) ==> (?x. ((x = ((dropout k) x)) /\ ((t x) /\ ((x $ k) = a)))))))))))) ==> F) ==> ((~ (!s. (!t. (!k. (!a. ((!x. ((s x) ==> (t x))) ==> (!x. ((?x. ((x = ((dropout k) x)) /\ ((s x) /\ ((x $ k) = a)))) ==> (?x. ((x = ((dropout k) x)) /\ ((t x) /\ ((x $ k) = a)))))))))))) ==> F)))
+T c= c==> c==> c==> c~ ! ! ! ! c==> ! c==> * b0 b4 * b1 b4 ! c==> c? / c/\ c= b4 cdropout b2 b5 c/\ * b0 b5 c= c$ b5 b2 b3 c? / c/\ c= b4 cdropout b2 b5 c/\ * b1 b5 c= c$ b5 b2 b3 cF c==> c~ ! ! ! ! c==> ! c==> * b0 b4 * b1 b4 ! c==> c? / c/\ c= b4 cdropout b2 b5 c/\ * b0 b5 c= c$ b5 b2 b3 c? / c/\ c= b4 cdropout b2 b5 c/\ * b1 b5 c= c$ b5 b2 b3 cF c==> c==> c~ ! ! ! ! c==> ! c==> * b0 b4 * b1 b4 ! c==> c? / c/\ c= b4 cdropout b2 b5 c/\ * b0 b5 c= c$ b5 b2 b3 c? / c/\ c= b4 cdropout b2 b5 c/\ * b1 b5 c= c$ b5 b2 b3 cF c==> c~ ! ! ! ! c==> ! c==> * b0 b4 * b1 b4 ! c==> c? / c/\ c= b4 cdropout b2 b5 c/\ * b0 b5 c= c$ b5 b2 b3 c? / c/\ c= b4 cdropout b2 b5 c/\ * b1 b5 c= c$ b5 b2 b3 cF c==> c==> c~ ! ! ! ! c==> ! c==> * b0 b4 * b1 b4 ! c==> c? / c/\ c= b4 cdropout b2 b5 c/\ * b0 b5 c= c$ b5 b2 b3 c? / c/\ c= b4 cdropout b2 b5 c/\ * b1 b5 c= c$ b5 b2 b3 cF c==> c~ ! ! ! ! c==> ! c==> * b0 b4 * b1 b4 ! c==> c? / c/\ c= b4 cdropout b2 b5 c/\ * b0 b5 c= c$ b5 b2 b3 c? / c/\ c= b4 cdropout b2 b5 c/\ * b1 b5 c= c$ b5 b2 b3 cF
+- |- ((\t1. (!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))))) t1)
+T * / ! ! c= c\/ b0 c\/ b1 b2 c\/ c\/ b0 b1 b2 f0
+- (~ (!s. (!t. (!k. (!a. ((!x. ((s x) ==> (t x))) ==> (!x. ((?x. ((x = ((dropout k) x)) /\ ((s x) /\ ((x $ k) = a)))) ==> (?x. ((x = ((dropout k) x)) /\ ((t x) /\ ((x $ k) = a)))))))))))) |- F
+T c==> c~ ! ! ! ! c==> ! c==> * b0 b4 * b1 b4 ! c==> c? / c/\ c= b4 cdropout b2 b5 c/\ * b0 b5 c= c$ b5 b2 b3 c? / c/\ c= b4 cdropout b2 b5 c/\ * b1 b5 c= c$ b5 b2 b3 cF
++ |- ((\t. ((((slice k) t) s) = ((IMAGE (dropout k)) (s INTER (GSPEC (\GEN%PVAR%4965. (?x. (((SETSPEC GEN%PVAR%4965) ((x $ k) = t)) x)))))))) t)
+T * / c= * * * part cslice f0 b0 f1 * * part cIMAGE * part cdropout f0 * * part cINTER f1 * part cGSPEC / c? / cSETSPEC b1 c= c$ b2 f0 b0 b2 f2
+- |- (T = (((~ (s _2048268)) \/ (t _2048268)) = ((t _2048268) \/ (~ (s _2048268)))))
+T c= cT c= c\/ c~ * f0 f1 * f2 f1 c\/ * f2 f1 c~ * f0 f1
++ |- ((a \/ b) = ((~ b) ==> a))
+T c= c\/ f0 f1 c==> c~ f1 f0
++ (!x. ((s x) ==> (t x))), (?x. ((x = ((dropout k) x)) /\ ((s x) /\ ((x $ k) = a)))) |- ((~ (?x. ((x = ((dropout k) x)) /\ ((t x) /\ ((x $ k) = a))))) ==> F)
+T c==> ! c==> * f0 b0 * f1 b0 c==> c? / c/\ c= f2 cdropout f3 b0 c/\ * f0 b0 c= c$ b0 f3 f4 c==> c~ c? / c/\ c= f2 cdropout f3 b0 c/\ * f1 b0 c= c$ b0 f3 f4 cF
+- (((~ (!s. (!t. (!k. (!a. ((!x. ((s x) ==> (t x))) ==> (!x. ((?x. ((x = ((dropout k) x)) /\ ((s x) /\ ((x $ k) = a)))) ==> (?x. ((x = ((dropout k) x)) /\ ((t x) /\ ((x $ k) = a)))))))))))) ==> F) ==> ((~ (!s. (!t. (!k. (!a. ((!x. ((s x) ==> (t x))) ==> (!x. ((?x. ((x = ((dropout k) x)) /\ ((s x) /\ ((x $ k) = a)))) ==> (?x. ((x = ((dropout k) x)) /\ ((t x) /\ ((x $ k) = a)))))))))))) ==> F)) |- ((((~ (!s. (!t. (!k. (!a. ((!x. ((s x) ==> (t x))) ==> (!x. ((?x. ((x = ((dropout k) x)) /\ ((s x) /\ ((x $ k) = a)))) ==> (?x. ((x = ((dropout k) x)) /\ ((t x) /\ ((x $ k) = a)))))))))))) ==> F) ==> ((~ (!s. (!t. (!k. (!a. ((!x. ((s x) ==> (t x))) ==> (!x. ((?x. ((x = ((dropout k) x)) /\ ((s x) /\ ((x $ k) = a)))) ==> (?x. ((x = ((dropout k) x)) /\ ((t x) /\ ((x $ k) = a)))))))))))) ==> F)) /\ (((~ (!s. (!t. (!k. (!a. ((!x. ((s x) ==> (t x))) ==> (!x. ((?x. ((x = ((dropout k) x)) /\ ((s x) /\ ((x $ k) = a)))) ==> (?x. ((x = ((dropout k) x)) /\ ((t x) /\ ((x $ k) = a)))))))))))) ==> F) ==> ((~ (!s. (!t. (!k. (!a. ((!x. ((s x) ==> (t x))) ==> (!x. ((?x. ((x = ((dropout k) x)) /\ ((s x) /\ ((x $ k) = a)))) ==> (?x. ((x = ((dropout k) x)) /\ ((t x) /\ ((x $ k) = a)))))))))))) ==> F)))
+T c==> c==> c==> c~ ! ! ! ! c==> ! c==> * b0 b4 * b1 b4 ! c==> c? / c/\ c= b4 cdropout b2 b5 c/\ * b0 b5 c= c$ b5 b2 b3 c? / c/\ c= b4 cdropout b2 b5 c/\ * b1 b5 c= c$ b5 b2 b3 cF c==> c~ ! ! ! ! c==> ! c==> * b0 b4 * b1 b4 ! c==> c? / c/\ c= b4 cdropout b2 b5 c/\ * b0 b5 c= c$ b5 b2 b3 c? / c/\ c= b4 cdropout b2 b5 c/\ * b1 b5 c= c$ b5 b2 b3 cF c/\ c==> c==> c~ ! ! ! ! c==> ! c==> * b0 b4 * b1 b4 ! c==> c? / c/\ c= b4 cdropout b2 b5 c/\ * b0 b5 c= c$ b5 b2 b3 c? / c/\ c= b4 cdropout b2 b5 c/\ * b1 b5 c= c$ b5 b2 b3 cF c==> c~ ! ! ! ! c==> ! c==> * b0 b4 * b1 b4 ! c==> c? / c/\ c= b4 cdropout b2 b5 c/\ * b0 b5 c= c$ b5 b2 b3 c? / c/\ c= b4 cdropout b2 b5 c/\ * b1 b5 c= c$ b5 b2 b3 cF c==> c==> c~ ! ! ! ! c==> ! c==> * b0 b4 * b1 b4 ! c==> c? / c/\ c= b4 cdropout b2 b5 c/\ * b0 b5 c= c$ b5 b2 b3 c? / c/\ c= b4 cdropout b2 b5 c/\ * b1 b5 c= c$ b5 b2 b3 cF c==> c~ ! ! ! ! c==> ! c==> * b0 b4 * b1 b4 ! c==> c? / c/\ c= b4 cdropout b2 b5 c/\ * b0 b5 c= c$ b5 b2 b3 c? / c/\ c= b4 cdropout b2 b5 c/\ * b1 b5 c= c$ b5 b2 b3 cF
++ (~ (?x. ((x = ((dropout k) x)) /\ ((t x) /\ ((x $ k) = a))))), ((x = ((dropout k) x')) /\ ((s x') /\ ((x' $ k) = a))) |- (((((dropout k) x') = ((dropout k) _2048269)) /\ ((t _2048269) /\ ((_2048269 $ k) = (x' $ k)))) ==> F)
+T c==> c~ c? / c/\ c= f0 cdropout f1 b0 c/\ * f2 b0 c= c$ b0 f1 f3 c==> c/\ c= f0 cdropout f1 f4 c/\ * f5 f4 c= c$ f4 f1 f3 c==> c/\ c= cdropout f1 f4 cdropout f1 f6 c/\ * f2 f6 c= c$ f6 f1 c$ f4 f1 cF
+- |- ((?x. (P x)) = ((P T) \/ (P F)))
+T c= c? / * f0 b0 c\/ * f0 cT * f0 cF
+- |- (((~ (!s. (!t. (!k. (!a. ((!x. ((s x) ==> (t x))) ==> (!x. ((?x. ((x = ((dropout k) x)) /\ ((s x) /\ ((x $ k) = a)))) ==> (?x. ((x = ((dropout k) x)) /\ ((t x) /\ ((x $ k) = a)))))))))))) ==> F) = (!s. (!t. (!k. (!a. ((!x. ((s x) ==> (t x))) ==> (!x. ((?x. ((x = ((dropout k) x)) /\ ((s x) /\ ((x $ k) = a)))) ==> (?x. ((x = ((dropout k) x)) /\ ((t x) /\ ((x $ k) = a))))))))))))
+T c= c==> c~ ! ! ! ! c==> ! c==> * b0 b4 * b1 b4 ! c==> c? / c/\ c= b4 cdropout b2 b5 c/\ * b0 b5 c= c$ b5 b2 b3 c? / c/\ c= b4 cdropout b2 b5 c/\ * b1 b5 c= c$ b5 b2 b3 cF ! ! ! ! c==> ! c==> * b0 b4 * b1 b4 ! c==> c? / c/\ c= b4 cdropout b2 b5 c/\ * b0 b5 c= c$ b5 b2 b3 c? / c/\ c= b4 cdropout b2 b5 c/\ * b1 b5 c= c$ b5 b2 b3
+- ((~ (!s. (!t. (!k. (!a. ((!x. ((s x) ==> (t x))) ==> (!x. ((?x. ((x = ((dropout k) x)) /\ ((s x) /\ ((x $ k) = a)))) ==> (?x. ((x = ((dropout k) x)) /\ ((t x) /\ ((x $ k) = a)))))))))))) ==> F), (((~ (!s. (!t. (!k. (!a. ((!x. ((s x) ==> (t x))) ==> (!x. ((?x. ((x = ((dropout k) x)) /\ ((s x) /\ ((x $ k) = a)))) ==> (?x. ((x = ((dropout k) x)) /\ ((t x) /\ ((x $ k) = a)))))))))))) ==> F) ==> ((~ (!s. (!t. (!k. (!a. ((!x. ((s x) ==> (t x))) ==> (!x. ((?x. ((x = ((dropout k) x)) /\ ((s x) /\ ((x $ k) = a)))) ==> (?x. ((x = ((dropout k) x)) /\ ((t x) /\ ((x $ k) = a)))))))))))) ==> F)) |- (((~ (!s. (!t. (!k. (!a. ((!x. ((s x) ==> (t x))) ==> (!x. ((?x. ((x = ((dropout k) x)) /\ ((s x) /\ ((x $ k) = a)))) ==> (?x. ((x = ((dropout k) x)) /\ ((t x) /\ ((x $ k) = a)))))))))))) ==> F) /\ ((~ (!s. (!t. (!k. (!a. ((!x. ((s x) ==> (t x))) ==> (!x. ((?x. ((x = ((dropout k) x)) /\ ((s x) /\ ((x $ k) = a)))) ==> (?x. ((x = ((dropout k) x)) /\ ((t x) /\ ((x $ k) = a)))))))))))) ==> F))
+T c==> c==> c~ ! ! ! ! c==> ! c==> * b0 b4 * b1 b4 ! c==> c? / c/\ c= b4 cdropout b2 b5 c/\ * b0 b5 c= c$ b5 b2 b3 c? / c/\ c= b4 cdropout b2 b5 c/\ * b1 b5 c= c$ b5 b2 b3 cF c==> c==> c==> c~ ! ! ! ! c==> ! c==> * b0 b4 * b1 b4 ! c==> c? / c/\ c= b4 cdropout b2 b5 c/\ * b0 b5 c= c$ b5 b2 b3 c? / c/\ c= b4 cdropout b2 b5 c/\ * b1 b5 c= c$ b5 b2 b3 cF c==> c~ ! ! ! ! c==> ! c==> * b0 b4 * b1 b4 ! c==> c? / c/\ c= b4 cdropout b2 b5 c/\ * b0 b5 c= c$ b5 b2 b3 c? / c/\ c= b4 cdropout b2 b5 c/\ * b1 b5 c= c$ b5 b2 b3 cF c/\ c==> c~ ! ! ! ! c==> ! c==> * b0 b4 * b1 b4 ! c==> c? / c/\ c= b4 cdropout b2 b5 c/\ * b0 b5 c= c$ b5 b2 b3 c? / c/\ c= b4 cdropout b2 b5 c/\ * b1 b5 c= c$ b5 b2 b3 cF c==> c~ ! ! ! ! c==> ! c==> * b0 b4 * b1 b4 ! c==> c? / c/\ c= b4 cdropout b2 b5 c/\ * b0 b5 c= c$ b5 b2 b3 c? / c/\ c= b4 cdropout b2 b5 c/\ * b1 b5 c= c$ b5 b2 b3 cF
+- |- ((t ==> t) = T)
+T c= c==> f0 f0 cT
+- |- ((p \/ p) = p)
+T c= c\/ f0 f0 f0
++ |- (!s. (!t. (!k. (!a. ((s SUBSET t) ==> (((IMAGE (dropout k)) (s INTER (GSPEC (\GEN%PVAR%4965. (?x. (((SETSPEC GEN%PVAR%4965) ((x $ k) = a)) x)))))) SUBSET ((IMAGE (dropout k)) (t INTER (GSPEC (\GEN%PVAR%4965. (?x. (((SETSPEC GEN%PVAR%4965) ((x $ k) = a)) x))))))))))))
+T c==> cSUBSET f0 f1 cSUBSET * * part cIMAGE * part cdropout f2 * * part cINTER f0 * part cGSPEC / c? / cSETSPEC b0 c= c$ b1 f2 f3 b1 * * part cIMAGE * part cdropout f2 * * part cINTER f1 * part cGSPEC / c? / cSETSPEC b0 c= c$ b1 f2 f3 b1
++ |- ((x IN (GSPEC (\GEN%PVAR%4965. (?x. (((SETSPEC GEN%PVAR%4965) ((x $ k) = a)) x))))) = ((x $ k) = a))
+T c= cIN f0 * part cGSPEC / c? / cSETSPEC b0 c= c$ b1 f1 f2 b1 c= c$ f0 f1 f2
+- |- ((\t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))) t3)
+T * / c= c\/ f0 c\/ f1 b0 c\/ c\/ f0 f1 b0 f2
+- |- (((~ p) ==> p) = p)
+T c= c==> c~ f0 f0 f0
+- |- ((!x. t) = t)
+T c= ! f0 f0
++ |- ((\s. (!k. (!t. ((((slice k) t) s) = ((IMAGE (dropout k)) (s INTER (GSPEC (\GEN%PVAR%4965. (?x. (((SETSPEC GEN%PVAR%4965) ((x $ k) = t)) x)))))))))) s)
+T * / ! ! c= * * * part cslice b1 b2 b0 * * part cIMAGE * part cdropout b1 * * part cINTER b0 * part cGSPEC / c? / cSETSPEC b3 c= c$ b4 b1 b2 b4 f0
+- (~ (!s. (!t. (!k. (!a. ((!x. ((s x) ==> (t x))) ==> (!x. ((?x. ((x = ((dropout k) x)) /\ ((s x) /\ ((x $ k) = a)))) ==> (?x. ((x = ((dropout k) x)) /\ ((t x) /\ ((x $ k) = a)))))))))))) |- ((~ (!s. (!t. (!k. (!a. ((!x. ((s x) ==> (t x))) ==> (!x. ((?x. ((x = ((dropout k) x)) /\ ((s x) /\ ((x $ k) = a)))) ==> (?x. ((x = ((dropout k) x)) /\ ((t x) /\ ((x $ k) = a)))))))))))) /\ F)
+T c==> c~ ! ! ! ! c==> ! c==> * b0 b4 * b1 b4 ! c==> c? / c/\ c= b4 cdropout b2 b5 c/\ * b0 b5 c= c$ b5 b2 b3 c? / c/\ c= b4 cdropout b2 b5 c/\ * b1 b5 c= c$ b5 b2 b3 c/\ c~ ! ! ! ! c==> ! c==> * b0 b4 * b1 b4 ! c==> c? / c/\ c= b4 cdropout b2 b5 c/\ * b0 b5 c= c$ b5 b2 b3 c? / c/\ c= b4 cdropout b2 b5 c/\ * b1 b5 c= c$ b5 b2 b3 cF
++ (~ (?x. ((x = ((dropout k) x)) /\ ((t x) /\ ((x $ k) = a))))), ((x = ((dropout k) x')) /\ ((s x') /\ ((x' $ k) = a))) |- ((~ (((dropout k) x') = ((dropout k) _2048269))) \/ ((~ (t _2048269)) \/ (~ ((_2048269 $ k) = (x' $ k)))))
+T c==> c~ c? / c/\ c= f0 cdropout f1 b0 c/\ * f2 b0 c= c$ b0 f1 f3 c==> c/\ c= f0 cdropout f1 f4 c/\ * f5 f4 c= c$ f4 f1 f3 c\/ c~ c= cdropout f1 f4 cdropout f1 f6 c\/ c~ * f2 f6 c~ c= c$ f6 f1 c$ f4 f1
++ (!x. ((s x) ==> (t x))) |- ((?x. ((x = ((dropout k) x)) /\ ((s x) /\ ((x $ k) = a)))) ==> (?x. ((x = ((dropout k) x)) /\ ((t x) /\ ((x $ k) = a)))))
+T c==> ! c==> * f0 b0 * f1 b0 c==> c? / c/\ c= f2 cdropout f3 b0 c/\ * f0 b0 c= c$ b0 f3 f4 c? / c/\ c= f2 cdropout f3 b0 c/\ * f1 b0 c= c$ b0 f3 f4
+- |- ((t ==> F) = (~ t))
+T c= c==> f0 cF c~ f0
++ |- ((!k. (!a. ((!x. ((s x) ==> (t x))) ==> (!x. ((?x. ((x = ((dropout k) x)) /\ ((s x) /\ ((x $ k) = a)))) ==> (?x. ((x = ((dropout k) x)) /\ ((t x) /\ ((x $ k) = a))))))))) = T)
+T c= ! ! c==> ! c==> * f0 b2 * f1 b2 ! c==> c? / c/\ c= b2 cdropout b0 b3 c/\ * f0 b3 c= c$ b3 b0 b1 c? / c/\ c= b2 cdropout b0 b3 c/\ * f1 b3 c= c$ b3 b0 b1 cT
++ |- (!s. (!t. (!k. (!a. ((!x. ((x IN s) ==> (x IN t))) ==> (!x. ((x IN ((IMAGE (dropout k)) (s INTER (GSPEC (\GEN%PVAR%4965. (?x. (((SETSPEC GEN%PVAR%4965) ((x $ k) = a)) x))))))) ==> (x IN ((IMAGE (dropout k)) (t INTER (GSPEC (\GEN%PVAR%4965. (?x. (((SETSPEC GEN%PVAR%4965) ((x $ k) = a)) x))))))))))))))
+T c==> ! c==> cIN b0 f0 cIN b0 f1 ! c==> cIN b0 * * part cIMAGE * part cdropout f2 * * part cINTER f0 * part cGSPEC / c? / cSETSPEC b1 c= c$ b2 f2 f3 b2 cIN b0 * * part cIMAGE * part cdropout f2 * * part cINTER f1 * part cGSPEC / c? / cSETSPEC b1 c= c$ b2 f2 f3 b2
++ |- ((!s. (!t. (!k. (!a. ((!x. ((x IN s) ==> (x IN t))) ==> (!x. ((x IN ((IMAGE (dropout k)) (s INTER (GSPEC (\GEN%PVAR%4965. (?x. (((SETSPEC GEN%PVAR%4965) ((x $ k) = a)) x))))))) ==> (x IN ((IMAGE (dropout k)) (t INTER (GSPEC (\GEN%PVAR%4965. (?x. (((SETSPEC GEN%PVAR%4965) ((x $ k) = a)) x)))))))))))))) = (!s. (!t. (!k. (!a. ((s SUBSET t) ==> (((IMAGE (dropout k)) (s INTER (GSPEC (\GEN%PVAR%4965. (?x. (((SETSPEC GEN%PVAR%4965) ((x $ k) = a)) x)))))) SUBSET ((IMAGE (dropout k)) (t INTER (GSPEC (\GEN%PVAR%4965. (?x. (((SETSPEC GEN%PVAR%4965) ((x $ k) = a)) x)))))))))))))
+T c= ! ! ! ! c==> ! c==> cIN b4 b0 cIN b4 b1 ! c==> cIN b4 * * part cIMAGE * part cdropout b2 * * part cINTER b0 * part cGSPEC / c? / cSETSPEC b5 c= c$ b6 b2 b3 b6 cIN b4 * * part cIMAGE * part cdropout b2 * * part cINTER b1 * part cGSPEC / c? / cSETSPEC b5 c= c$ b6 b2 b3 b6 ! ! ! ! c==> cSUBSET b0 b1 cSUBSET * * part cIMAGE * part cdropout b2 * * part cINTER b0 * part cGSPEC / c? / cSETSPEC b4 c= c$ b5 b2 b3 b5 * * part cIMAGE * part cdropout b2 * * part cINTER b1 * part cGSPEC / c? / cSETSPEC b4 c= c$ b5 b2 b3 b5
++ |- (p = ((~ p) ==> F))
+T c= f0 c==> c~ f0 cF
+- |- ((?x. t) = t)
+T c= c? / f0 f0
++ (~ (?x. ((x = ((dropout k) x)) /\ ((t x) /\ ((x $ k) = a))))) |- (((!x. ((~ (x = ((dropout k) x))) \/ ((~ (t x)) \/ (~ ((x $ k) = a))))) ==> ((\x. ((~ (x = ((dropout k) x))) \/ ((~ (t x)) \/ (~ ((x $ k) = a))))) _2048269)) = ((\x. ((~ (x = ((dropout k) x))) \/ ((~ (t x)) \/ (~ ((x $ k) = a))))) _2048269))
+T c==> c~ c? / c/\ c= f0 cdropout f1 b0 c/\ * f2 b0 c= c$ b0 f1 f3 c= c==> ! c\/ c~ c= f0 cdropout f1 b0 c\/ c~ * f2 b0 c~ c= c$ b0 f1 f3 * / c\/ c~ c= f0 cdropout f1 b0 c\/ c~ * f2 b0 c~ c= c$ b0 f1 f3 f4 * / c\/ c~ c= f0 cdropout f1 b0 c\/ c~ * f2 b0 c~ c= c$ b0 f1 f3 f4
++ (!x. ((s x) ==> (t x))) |- ((~ (s _2048268)) \/ (t _2048268))
+T c==> ! c==> * f0 b0 * f1 b0 c\/ c~ * f0 f2 * f1 f2
++ |- ((!s. (!t. (!k. (!a. ((!x. ((s x) ==> (t x))) ==> (!x. ((?x. ((x = ((dropout k) x)) /\ ((s x) /\ ((x $ k) = a)))) ==> (?x. ((x = ((dropout k) x)) /\ ((t x) /\ ((x $ k) = a))))))))))) = (!s. (!t. (!k. (!a. ((!x. ((x IN s) ==> (x IN t))) ==> (!x. ((x IN ((IMAGE (dropout k)) (s INTER (GSPEC (\GEN%PVAR%4965. (?x. (((SETSPEC GEN%PVAR%4965) ((x $ k) = a)) x))))))) ==> (x IN ((IMAGE (dropout k)) (t INTER (GSPEC (\GEN%PVAR%4965. (?x. (((SETSPEC GEN%PVAR%4965) ((x $ k) = a)) x)))))))))))))))
+T c= ! ! ! ! c==> ! c==> * b0 b4 * b1 b4 ! c==> c? / c/\ c= b4 cdropout b2 b5 c/\ * b0 b5 c= c$ b5 b2 b3 c? / c/\ c= b4 cdropout b2 b5 c/\ * b1 b5 c= c$ b5 b2 b3 ! ! ! ! c==> ! c==> cIN b4 b0 cIN b4 b1 ! c==> cIN b4 * * part cIMAGE * part cdropout b2 * * part cINTER b0 * part cGSPEC / c? / cSETSPEC b5 c= c$ b6 b2 b3 b6 cIN b4 * * part cIMAGE * part cdropout b2 * * part cINTER b1 * part cGSPEC / c? / cSETSPEC b5 c= c$ b6 b2 b3 b6
+- (_2048296 = _2048298) |- ((_2048296 = _2048298) /\ ((~ (_2048297 = _2048299)) \/ ((_2048296 $ _2048297) = (_2048298 $ _2048299))))
+T c==> c= f0 f1 c/\ c= f0 f1 c\/ c~ c= f2 f3 c= c$ f0 f2 c$ f1 f3
++ (!x. ((s x) ==> (t x))), ((x = ((dropout k) x')) /\ ((s x') /\ ((x' $ k) = a))) |- (t x')
+T c==> ! c==> * f0 b0 * f1 b0 c==> c/\ c= f2 cdropout f3 f4 c/\ * f0 f4 c= c$ f4 f3 f5 * f1 f4
+- ((x = ((dropout k) x')) /\ ((s x') /\ ((x' $ k) = a))) |- ((~ (s x')) ==> (s x'))
+T c==> c/\ c= f0 cdropout f1 f2 c/\ * f3 f2 c= c$ f2 f1 f4 c==> c~ * f3 f2 * f3 f2
++ (!x. ((s x) ==> (t x))) |- ((s _2048268) ==> (t _2048268))
+T c==> ! c==> * f0 b0 * f1 b0 c==> * f0 f2 * f1 f2
+- |- ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))
+T c= c\/ f0 c\/ f1 f2 c\/ c\/ f0 f1 f2
++ (!x. ((s x) ==> (t x))), (~ (?x. ((x = ((dropout k) x)) /\ ((t x) /\ ((x $ k) = a))))) |- ((?x. ((x = ((dropout k) x)) /\ ((s x) /\ ((x $ k) = a)))) ==> F)
+T c==> ! c==> * f0 b0 * f1 b0 c==> c~ c? / c/\ c= f2 cdropout f3 b0 c/\ * f1 b0 c= c$ b0 f3 f4 c==> c? / c/\ c= f2 cdropout f3 b0 c/\ * f0 b0 c= c$ b0 f3 f4 cF
++ |- (((~ (?x. ((x = ((dropout k) x)) /\ ((t x) /\ ((x $ k) = a))))) ==> F) = (?x. ((x = ((dropout k) x)) /\ ((t x) /\ ((x $ k) = a)))))
+T c= c==> c~ c? / c/\ c= f0 cdropout f1 b0 c/\ * f2 b0 c= c$ b0 f1 f3 cF c? / c/\ c= f0 cdropout f1 b0 c/\ * f2 b0 c= c$ b0 f1 f3
++ |- ((!t. (!k. (!a. ((!x. ((s x) ==> (t x))) ==> (!x. ((?x. ((x = ((dropout k) x)) /\ ((s x) /\ ((x $ k) = a)))) ==> (?x. ((x = ((dropout k) x)) /\ ((t x) /\ ((x $ k) = a)))))))))) = T)
+T c= ! ! ! c==> ! c==> * f0 b3 * b0 b3 ! c==> c? / c/\ c= b3 cdropout b1 b4 c/\ * f0 b4 c= c$ b4 b1 b2 c? / c/\ c= b3 cdropout b1 b4 c/\ * b0 b4 c= c$ b4 b1 b2 cT
++ (~ (?x. ((x = ((dropout k) x)) /\ ((t x) /\ ((x $ k) = a))))) |- ((\x. ((~ (x = ((dropout k) x))) \/ ((~ (t x)) \/ (~ ((x $ k) = a))))) _2048269)
+T c==> c~ c? / c/\ c= f0 cdropout f1 b0 c/\ * f2 b0 c= c$ b0 f1 f3 * / c\/ c~ c= f0 cdropout f1 b0 c\/ c~ * f2 b0 c~ c= c$ b0 f1 f3 f4
++ (!x. ((s x) ==> (t x))), ((x = ((dropout k) x')) /\ ((s x') /\ ((x' $ k) = a))) |- ((t x') /\ ((x' $ k) = (x' $ k)))
+T c==> ! c==> * f0 b0 * f1 b0 c==> c/\ c= f2 cdropout f3 f4 c/\ * f0 f4 c= c$ f4 f3 f5 c/\ * f1 f4 c= c$ f4 f3 c$ f4 f3
+- (!x. ((s x) ==> (t x))), (~ (t x')), ((x = ((dropout k) x')) /\ ((s x') /\ ((x' $ k) = a))) |- ((~ (t x')) /\ (t x'))
+T c==> ! c==> * f0 b0 * f1 b0 c==> c~ * f1 f2 c==> c/\ c= f3 cdropout f4 f2 c/\ * f0 f2 c= c$ f2 f4 f5 c/\ c~ * f1 f2 * f1 f2
++ (!x. ((s x) ==> (t x))), (~ (?x. ((x = ((dropout k) x)) /\ ((t x) /\ ((x $ k) = a))))) |- (((!x. (((\x. ((x = ((dropout k) x)) /\ ((s x) /\ ((x $ k) = a)))) x) ==> F)) ==> ((?x. ((x = ((dropout k) x)) /\ ((s x) /\ ((x $ k) = a)))) ==> F)) = ((?x. ((x = ((dropout k) x)) /\ ((s x) /\ ((x $ k) = a)))) ==> F))
+T c==> ! c==> * f0 b0 * f1 b0 c==> c~ c? / c/\ c= f2 cdropout f3 b0 c/\ * f1 b0 c= c$ b0 f3 f4 c= c==> ! c==> * / c/\ c= f2 cdropout f3 b1 c/\ * f0 b1 c= c$ b1 f3 f4 b0 cF c==> c? / c/\ c= f2 cdropout f3 b0 c/\ * f0 b0 c= c$ b0 f3 f4 cF c==> c? / c/\ c= f2 cdropout f3 b0 c/\ * f0 b0 c= c$ b0 f3 f4 cF
++ |- (((t x') /\ ((x' $ k) = (x' $ k))) = ((((dropout k) x') = ((dropout k) x')) /\ ((t x') /\ ((x' $ k) = (x' $ k)))))
+T c= c/\ * f0 f1 c= c$ f1 f2 c$ f1 f2 c/\ c= cdropout f2 f1 cdropout f2 f1 c/\ * f0 f1 c= c$ f1 f2 c$ f1 f2
++ ((x = ((dropout k) x')) /\ ((s x') /\ ((x' $ k) = a))) |- (s x')
+T c==> c/\ c= f0 cdropout f1 f2 c/\ * f3 f2 c= c$ f2 f1 f4 * f3 f2
+- |- ((_2048290 = _2048291) ==> ((t _2048291) \/ (~ (t _2048290))))
+T c==> c= f0 f1 c\/ * f2 f1 c~ * f2 f0
+- (_2048297 = _2048299), (_2048296 = _2048298) |- ((_2048297 = _2048299) /\ ((_2048296 $ _2048297) = (_2048298 $ _2048299)))
+T c==> c= f0 f1 c==> c= f2 f3 c/\ c= f0 f1 c= c$ f2 f0 c$ f3 f1
+- |- ((\t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3)))) t2)
+T * / ! c= c\/ f0 c\/ b0 b1 c\/ c\/ f0 b0 b1 f1
+- |- ((!x. ((P x) \/ Q)) = ((!x. (P x)) \/ Q))
+T c= ! c\/ * f0 b0 f1 c\/ ! * f0 b0 f1
+- |- ((?x'. ((x = ((dropout k) x)) /\ ((t x') /\ ((x' $ k) = a)))) = ((x = ((dropout k) x)) /\ (?x. ((t x) /\ ((x $ k) = a)))))
+T c= c? / c/\ c= f0 cdropout f1 f2 c/\ * f3 b0 c= c$ b0 f1 f4 c/\ c= f0 cdropout f1 f2 c? / c/\ * f3 b0 c= c$ b0 f1 f4
++ ((\x. ((x = ((dropout k) x)) /\ ((s x) /\ ((x $ k) = a)))) x') |- ((((x = ((dropout k) x')) /\ ((s x') /\ ((x' $ k) = a))) ==> F) = F)
+T c==> * / c/\ c= f0 cdropout f1 b0 c/\ * f2 b0 c= c$ b0 f1 f3 f4 c= c==> c/\ c= f0 cdropout f1 f4 c/\ * f2 f4 c= c$ f4 f1 f3 cF cF
++ (!x. ((s x) ==> (t x))) |- (((?x. ((x = ((dropout k) x)) /\ ((s x) /\ ((x $ k) = a)))) ==> (?x. ((x = ((dropout k) x)) /\ ((t x) /\ ((x $ k) = a))))) = T)
+T c==> ! c==> * f0 b0 * f1 b0 c= c==> c? / c/\ c= f2 cdropout f3 b0 c/\ * f0 b0 c= c$ b0 f3 f4 c? / c/\ c= f2 cdropout f3 b0 c/\ * f1 b0 c= c$ b0 f3 f4 cT
++ (!x. ((s x) ==> (t x))), (~ (?x. ((x = ((dropout k) x)) /\ ((t x) /\ ((x $ k) = a))))), ((x = ((dropout k) x')) /\ ((s x') /\ ((x' $ k) = a))) |- (((x = ((dropout k) x')) /\ ((s x') /\ ((x' $ k) = a))) /\ F)
+T c==> ! c==> * f0 b0 * f1 b0 c==> c~ c? / c/\ c= f2 cdropout f3 b0 c/\ * f1 b0 c= c$ b0 f3 f4 c==> c/\ c= f2 cdropout f3 f5 c/\ * f0 f5 c= c$ f5 f3 f4 c/\ c/\ c= f2 cdropout f3 f5 c/\ * f0 f5 c= c$ f5 f3 f4 cF
++ (~ (?x. ((x = ((dropout k) x)) /\ ((t x) /\ ((x $ k) = a))))), ((x = ((dropout k) x')) /\ ((s x') /\ ((x' $ k) = a))) |- ((~ (x = ((dropout k) _2048269))) \/ ((~ (t _2048269)) \/ (~ ((_2048269 $ k) = (x' $ k)))))
+T c==> c~ c? / c/\ c= f0 cdropout f1 b0 c/\ * f2 b0 c= c$ b0 f1 f3 c==> c/\ c= f0 cdropout f1 f4 c/\ * f5 f4 c= c$ f4 f1 f3 c\/ c~ c= f0 cdropout f1 f6 c\/ c~ * f2 f6 c~ c= c$ f6 f1 c$ f4 f1
++ (!x. ((s x) ==> (t x))), ((x = ((dropout k) x')) /\ ((s x') /\ ((x' $ k) = a))) |- ((((dropout k) x') = ((dropout k) x')) /\ ((t x') /\ ((x' $ k) = (x' $ k))))
+T c==> ! c==> * f0 b0 * f1 b0 c==> c/\ c= f2 cdropout f3 f4 c/\ * f0 f4 c= c$ f4 f3 f5 c/\ c= cdropout f3 f4 cdropout f3 f4 c/\ * f1 f4 c= c$ f4 f3 c$ f4 f3
+- (~ (s x')), ((x = ((dropout k) x')) /\ ((s x') /\ ((x' $ k) = a))) |- ((~ (s x')) /\ (s x'))
+T c==> c~ * f0 f1 c==> c/\ c= f2 cdropout f3 f1 c/\ * f0 f1 c= c$ f1 f3 f4 c/\ c~ * f0 f1 * f0 f1
+- |- (((!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3)))) ==> ((\t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3)))) t2)) = ((\t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3)))) t2))
+T c= c==> ! ! c= c\/ f0 c\/ b0 b1 c\/ c\/ f0 b0 b1 * / ! c= c\/ f0 c\/ b0 b1 c\/ c\/ f0 b0 b1 f1 * / ! c= c\/ f0 c\/ b0 b1 c\/ c\/ f0 b0 b1 f1
++ (!x. ((s x) ==> (t x))), (~ (?x. ((x = ((dropout k) x)) /\ ((t x) /\ ((x $ k) = a))))) |- ((((\x. ((x = ((dropout k) x)) /\ ((s x) /\ ((x $ k) = a)))) x') ==> F) = T)
+T c==> ! c==> * f0 b0 * f1 b0 c==> c~ c? / c/\ c= f2 cdropout f3 b0 c/\ * f1 b0 c= c$ b0 f3 f4 c= c==> * / c/\ c= f2 cdropout f3 b0 c/\ * f0 b0 c= c$ b0 f3 f4 f5 cF cT
+- |- ((_2048296 = _2048298) ==> ((~ (_2048297 = _2048299)) \/ ((_2048296 $ _2048297) = (_2048298 $ _2048299))))
+T c==> c= f0 f1 c\/ c~ c= f2 f3 c= c$ f0 f2 c$ f1 f3
+- ((~ (!s. (!t. (!k. (!a. ((!x. ((s x) ==> (t x))) ==> (!x. ((?x. ((x = ((dropout k) x)) /\ ((s x) /\ ((x $ k) = a)))) ==> (?x. ((x = ((dropout k) x)) /\ ((t x) /\ ((x $ k) = a)))))))))))) ==> F) |- ((((~ (!s. (!t. (!k. (!a. ((!x. ((s x) ==> (t x))) ==> (!x. ((?x. ((x = ((dropout k) x)) /\ ((s x) /\ ((x $ k) = a)))) ==> (?x. ((x = ((dropout k) x)) /\ ((t x) /\ ((x $ k) = a)))))))))))) ==> F) ==> ((~ (!s. (!t. (!k. (!a. ((!x. ((s x) ==> (t x))) ==> (!x. ((?x. ((x = ((dropout k) x)) /\ ((s x) /\ ((x $ k) = a)))) ==> (?x. ((x = ((dropout k) x)) /\ ((t x) /\ ((x $ k) = a)))))))))))) ==> F)) ==> ((~ (!s. (!t. (!k. (!a. ((!x. ((s x) ==> (t x))) ==> (!x. ((?x. ((x = ((dropout k) x)) /\ ((s x) /\ ((x $ k) = a)))) ==> (?x. ((x = ((dropout k) x)) /\ ((t x) /\ ((x $ k) = a)))))))))))) ==> F))
+T c==> c==> c~ ! ! ! ! c==> ! c==> * b0 b4 * b1 b4 ! c==> c? / c/\ c= b4 cdropout b2 b5 c/\ * b0 b5 c= c$ b5 b2 b3 c? / c/\ c= b4 cdropout b2 b5 c/\ * b1 b5 c= c$ b5 b2 b3 cF c==> c==> c==> c~ ! ! ! ! c==> ! c==> * b0 b4 * b1 b4 ! c==> c? / c/\ c= b4 cdropout b2 b5 c/\ * b0 b5 c= c$ b5 b2 b3 c? / c/\ c= b4 cdropout b2 b5 c/\ * b1 b5 c= c$ b5 b2 b3 cF c==> c~ ! ! ! ! c==> ! c==> * b0 b4 * b1 b4 ! c==> c? / c/\ c= b4 cdropout b2 b5 c/\ * b0 b5 c= c$ b5 b2 b3 c? / c/\ c= b4 cdropout b2 b5 c/\ * b1 b5 c= c$ b5 b2 b3 cF c==> c~ ! ! ! ! c==> ! c==> * b0 b4 * b1 b4 ! c==> c? / c/\ c= b4 cdropout b2 b5 c/\ * b0 b5 c= c$ b5 b2 b3 c? / c/\ c= b4 cdropout b2 b5 c/\ * b1 b5 c= c$ b5 b2 b3 cF
++ |- (((!t. ((((slice k) t) s) = ((IMAGE (dropout k)) (s INTER (GSPEC (\GEN%PVAR%4965. (?x. (((SETSPEC GEN%PVAR%4965) ((x $ k) = t)) x)))))))) ==> ((\t. ((((slice k) t) s) = ((IMAGE (dropout k)) (s INTER (GSPEC (\GEN%PVAR%4965. (?x. (((SETSPEC GEN%PVAR%4965) ((x $ k) = t)) x)))))))) t)) = ((\t. ((((slice k) t) s) = ((IMAGE (dropout k)) (s INTER (GSPEC (\GEN%PVAR%4965. (?x. (((SETSPEC GEN%PVAR%4965) ((x $ k) = t)) x)))))))) t))
+T c= c==> ! c= * * * part cslice f0 b0 f1 * * part cIMAGE * part cdropout f0 * * part cINTER f1 * part cGSPEC / c? / cSETSPEC b1 c= c$ b2 f0 b0 b2 * / c= * * * part cslice f0 b0 f1 * * part cIMAGE * part cdropout f0 * * part cINTER f1 * part cGSPEC / c? / cSETSPEC b1 c= c$ b2 f0 b0 b2 f2 * / c= * * * part cslice f0 b0 f1 * * part cIMAGE * part cdropout f0 * * part cINTER f1 * part cGSPEC / c? / cSETSPEC b1 c= c$ b2 f0 b0 b2 f2
++ ((\x. ((x = ((dropout k) x)) /\ ((s x) /\ ((x $ k) = a)))) x') |- ((x = ((dropout k) x')) /\ ((s x') /\ ((x' $ k) = a)))
+T c==> * / c/\ c= f0 cdropout f1 b0 c/\ * f2 b0 c= c$ b0 f1 f3 f4 c/\ c= f0 cdropout f1 f4 c/\ * f2 f4 c= c$ f4 f1 f3
++ |- (((!k. (!t. ((((slice k) t) s) = ((IMAGE (dropout k)) (s INTER (GSPEC (\GEN%PVAR%4965. (?x. (((SETSPEC GEN%PVAR%4965) ((x $ k) = t)) x))))))))) ==> ((\k. (!t. ((((slice k) t) s) = ((IMAGE (dropout k)) (s INTER (GSPEC (\GEN%PVAR%4965. (?x. (((SETSPEC GEN%PVAR%4965) ((x $ k) = t)) x))))))))) k)) = ((\k. (!t. ((((slice k) t) s) = ((IMAGE (dropout k)) (s INTER (GSPEC (\GEN%PVAR%4965. (?x. (((SETSPEC GEN%PVAR%4965) ((x $ k) = t)) x))))))))) k))
+T c= c==> ! ! c= * * * part cslice b0 b1 f0 * * part cIMAGE * part cdropout b0 * * part cINTER f0 * part cGSPEC / c? / cSETSPEC b2 c= c$ b3 b0 b1 b3 * / ! c= * * * part cslice b0 b1 f0 * * part cIMAGE * part cdropout b0 * * part cINTER f0 * part cGSPEC / c? / cSETSPEC b2 c= c$ b3 b0 b1 b3 f1 * / ! c= * * * part cslice b0 b1 f0 * * part cIMAGE * part cdropout b0 * * part cINTER f0 * part cGSPEC / c? / cSETSPEC b2 c= c$ b3 b0 b1 b3 f1
+- |- ((x = x) = T)
+T c= c= f0 f0 cT
++ |- (((!x. ((s x) ==> (t x))) ==> (!x. ((?x. ((x = ((dropout k) x)) /\ ((s x) /\ ((x $ k) = a)))) ==> (?x. ((x = ((dropout k) x)) /\ ((t x) /\ ((x $ k) = a))))))) = T)
+T c= c==> ! c==> * f0 b0 * f1 b0 ! c==> c? / c/\ c= b0 cdropout f2 b1 c/\ * f0 b1 c= c$ b1 f2 f3 c? / c/\ c= b0 cdropout f2 b1 c/\ * f1 b1 c= c$ b1 f2 f3 cT
++ |- ((!a. ((!x. ((s x) ==> (t x))) ==> (!x. ((?x. ((x = ((dropout k) x)) /\ ((s x) /\ ((x $ k) = a)))) ==> (?x. ((x = ((dropout k) x)) /\ ((t x) /\ ((x $ k) = a)))))))) = T)
+T c= ! c==> ! c==> * f0 b1 * f1 b1 ! c==> c? / c/\ c= b1 cdropout f2 b2 c/\ * f0 b2 c= c$ b2 f2 b0 c? / c/\ c= b1 cdropout f2 b2 c/\ * f1 b2 c= c$ b2 f2 b0 cT
++ ((x = ((dropout k) x')) /\ ((s x') /\ ((x' $ k) = a))) |- (((~ (x = ((dropout k) _2048269))) \/ ((~ (t _2048269)) \/ (~ ((_2048269 $ k) = a)))) = ((~ (x = ((dropout k) _2048269))) \/ ((~ (t _2048269)) \/ (~ ((_2048269 $ k) = (x' $ k))))))
+T c==> c/\ c= f0 cdropout f1 f2 c/\ * f3 f2 c= c$ f2 f1 f4 c= c\/ c~ c= f0 cdropout f1 f5 c\/ c~ * f6 f5 c~ c= c$ f5 f1 f4 c\/ c~ c= f0 cdropout f1 f5 c\/ c~ * f6 f5 c~ c= c$ f5 f1 c$ f2 f1
++ (!x. ((s x) ==> (t x))), (~ (?x. ((x = ((dropout k) x)) /\ ((t x) /\ ((x $ k) = a))))), ((\x. ((x = ((dropout k) x)) /\ ((s x) /\ ((x $ k) = a)))) x') |- (((\x. ((x = ((dropout k) x)) /\ ((s x) /\ ((x $ k) = a)))) x') /\ F)
+T c==> ! c==> * f0 b0 * f1 b0 c==> c~ c? / c/\ c= f2 cdropout f3 b0 c/\ * f1 b0 c= c$ b0 f3 f4 c==> * / c/\ c= f2 cdropout f3 b0 c/\ * f0 b0 c= c$ b0 f3 f4 f5 c/\ * / c/\ c= f2 cdropout f3 b0 c/\ * f0 b0 c= c$ b0 f3 f4 f5 cF
+- |- ((a ==> b) = ((~ a) \/ b))
+T c= c==> f0 f1 c\/ c~ f0 f1
++ (!x. ((s x) ==> (t x))), (?x. ((x = ((dropout k) x)) /\ ((s x) /\ ((x $ k) = a)))) |- ((?x. ((x = ((dropout k) x)) /\ ((s x) /\ ((x $ k) = a)))) /\ (?x. ((x = ((dropout k) x)) /\ ((t x) /\ ((x $ k) = a)))))
+T c==> ! c==> * f0 b0 * f1 b0 c==> c? / c/\ c= f2 cdropout f3 b0 c/\ * f0 b0 c= c$ b0 f3 f4 c/\ c? / c/\ c= f2 cdropout f3 b0 c/\ * f0 b0 c= c$ b0 f3 f4 c? / c/\ c= f2 cdropout f3 b0 c/\ * f1 b0 c= c$ b0 f3 f4
+- (!x. ((s x) ==> (t x))), (~ (?x. ((x = ((dropout k) x)) /\ ((t x) /\ ((x $ k) = a))))), ((x = ((dropout k) x')) /\ ((s x') /\ ((x' $ k) = a))) |- ((~ F) ==> F)
+T c==> ! c==> * f0 b0 * f1 b0 c==> c~ c? / c/\ c= f2 cdropout f3 b0 c/\ * f1 b0 c= c$ b0 f3 f4 c==> c/\ c= f2 cdropout f3 f5 c/\ * f0 f5 c= c$ f5 f3 f4 c==> c~ cF cF
++ |- (((~ a) \/ (~ b)) = (~ (a /\ b)))
+T c= c\/ c~ f0 c~ f1 c~ c/\ f0 f1
++ |- (((!s. (!k. (!t. ((((slice k) t) s) = ((IMAGE (dropout k)) (s INTER (GSPEC (\GEN%PVAR%4965. (?x. (((SETSPEC GEN%PVAR%4965) ((x $ k) = t)) x)))))))))) ==> ((\s. (!k. (!t. ((((slice k) t) s) = ((IMAGE (dropout k)) (s INTER (GSPEC (\GEN%PVAR%4965. (?x. (((SETSPEC GEN%PVAR%4965) ((x $ k) = t)) x)))))))))) s)) = ((\s. (!k. (!t. ((((slice k) t) s) = ((IMAGE (dropout k)) (s INTER (GSPEC (\GEN%PVAR%4965. (?x. (((SETSPEC GEN%PVAR%4965) ((x $ k) = t)) x)))))))))) s))
+T c= c==> ! ! ! c= * * * part cslice b1 b2 b0 * * part cIMAGE * part cdropout b1 * * part cINTER b0 * part cGSPEC / c? / cSETSPEC b3 c= c$ b4 b1 b2 b4 * / ! ! c= * * * part cslice b1 b2 b0 * * part cIMAGE * part cdropout b1 * * part cINTER b0 * part cGSPEC / c? / cSETSPEC b3 c= c$ b4 b1 b2 b4 f0 * / ! ! c= * * * part cslice b1 b2 b0 * * part cIMAGE * part cdropout b1 * * part cINTER b0 * part cGSPEC / c? / cSETSPEC b3 c= c$ b4 b1 b2 b4 f0
++ |- ((p \/ q) = (q \/ p))
+T c= c\/ f0 f1 c\/ f1 f0
+- |- ((~ (((dropout k) x') = ((dropout k) x'))) ==> (((dropout k) x') = ((dropout k) x')))
+T c==> c~ c= cdropout f0 f1 cdropout f0 f1 c= cdropout f0 f1 cdropout f0 f1
+- ((x = ((dropout k) x')) /\ ((s x') /\ ((x' $ k) = a))) |- (F = F)
+T c==> c/\ c= f0 cdropout f1 f2 c/\ * f3 f2 c= c$ f2 f1 f4 c= cF cF
+- (~ (((dropout k) x') = ((dropout k) x'))) |- ((~ (((dropout k) x') = ((dropout k) x'))) /\ (((dropout k) x') = ((dropout k) x')))
+T c==> c~ c= cdropout f0 f1 cdropout f0 f1 c/\ c~ c= cdropout f0 f1 cdropout f0 f1 c= cdropout f0 f1 cdropout f0 f1
+- |- ((_2048293 = _2048295) ==> ((~ (_2048292 = _2048294)) \/ (((dropout _2048292) _2048293) = ((dropout _2048294) _2048295))))
+T c==> c= f0 f1 c\/ c~ c= f2 f3 c= cdropout f2 f0 cdropout f3 f1
+- |- ((((~ (!s. (!t. (!k. (!a. ((!x. ((s x) ==> (t x))) ==> (!x. ((?x. ((x = ((dropout k) x)) /\ ((s x) /\ ((x $ k) = a)))) ==> (?x. ((x = ((dropout k) x)) /\ ((t x) /\ ((x $ k) = a)))))))))))) ==> F) ==> ((~ (!s. (!t. (!k. (!a. ((!x. ((s x) ==> (t x))) ==> (!x. ((?x. ((x = ((dropout k) x)) /\ ((s x) /\ ((x $ k) = a)))) ==> (?x. ((x = ((dropout k) x)) /\ ((t x) /\ ((x $ k) = a)))))))))))) ==> F)) ==> (((~ (!s. (!t. (!k. (!a. ((!x. ((s x) ==> (t x))) ==> (!x. ((?x. ((x = ((dropout k) x)) /\ ((s x) /\ ((x $ k) = a)))) ==> (?x. ((x = ((dropout k) x)) /\ ((t x) /\ ((x $ k) = a)))))))))))) ==> F) ==> ((~ (!s. (!t. (!k. (!a. ((!x. ((s x) ==> (t x))) ==> (!x. ((?x. ((x = ((dropout k) x)) /\ ((s x) /\ ((x $ k) = a)))) ==> (?x. ((x = ((dropout k) x)) /\ ((t x) /\ ((x $ k) = a)))))))))))) ==> F)))
+T c==> c==> c==> c~ ! ! ! ! c==> ! c==> * b0 b4 * b1 b4 ! c==> c? / c/\ c= b4 cdropout b2 b5 c/\ * b0 b5 c= c$ b5 b2 b3 c? / c/\ c= b4 cdropout b2 b5 c/\ * b1 b5 c= c$ b5 b2 b3 cF c==> c~ ! ! ! ! c==> ! c==> * b0 b4 * b1 b4 ! c==> c? / c/\ c= b4 cdropout b2 b5 c/\ * b0 b5 c= c$ b5 b2 b3 c? / c/\ c= b4 cdropout b2 b5 c/\ * b1 b5 c= c$ b5 b2 b3 cF c==> c==> c~ ! ! ! ! c==> ! c==> * b0 b4 * b1 b4 ! c==> c? / c/\ c= b4 cdropout b2 b5 c/\ * b0 b5 c= c$ b5 b2 b3 c? / c/\ c= b4 cdropout b2 b5 c/\ * b1 b5 c= c$ b5 b2 b3 cF c==> c~ ! ! ! ! c==> ! c==> * b0 b4 * b1 b4 ! c==> c? / c/\ c= b4 cdropout b2 b5 c/\ * b0 b5 c= c$ b5 b2 b3 c? / c/\ c= b4 cdropout b2 b5 c/\ * b1 b5 c= c$ b5 b2 b3 cF
+- (_2048290 = _2048291) |- ((_2048290 = _2048291) /\ ((t _2048291) \/ (~ (t _2048290))))
+T c==> c= f0 f1 c/\ c= f0 f1 c\/ * f2 f1 c~ * f2 f0
+- |- ((!x'. ((~ (x = ((dropout k) x'))) \/ ((~ (t x)) \/ (~ ((x $ k) = a))))) = ((!x. (~ (x = ((dropout k) x)))) \/ ((~ (t x)) \/ (~ ((x $ k) = a)))))
+T c= ! c\/ c~ c= f0 cdropout f1 b0 c\/ c~ * f2 f3 c~ c= c$ f3 f1 f4 c\/ ! c~ c= f0 cdropout f1 b0 c\/ c~ * f2 f3 c~ c= c$ f3 f1 f4
+- |- ((!x'. ((~ (x = ((dropout k) x))) \/ ((~ (t x')) \/ (~ ((x' $ k) = a))))) = ((~ (x = ((dropout k) x))) \/ (!x. ((~ (t x)) \/ (~ ((x $ k) = a))))))
+T c= ! c\/ c~ c= f0 cdropout f1 f2 c\/ c~ * f3 b0 c~ c= c$ b0 f1 f4 c\/ c~ c= f0 cdropout f1 f2 ! c\/ c~ * f3 b0 c~ c= c$ b0 f1 f4
++ (!x. ((s x) ==> (t x))) |- (!x. ((~ (s x)) \/ (t x)))
+T c==> ! c==> * f0 b0 * f1 b0 ! c\/ c~ * f0 b0 * f1 b0
++ ((x = ((dropout k) x')) /\ ((s x') /\ ((x' $ k) = a))) |- (((s x') ==> (t x')) = (t x'))
+T c==> c/\ c= f0 cdropout f1 f2 c/\ * f3 f2 c= c$ f2 f1 f4 c= c==> * f3 f2 * f5 f2 * f5 f2
+- |- (((t1 \/ t2) \/ t3) = (t1 \/ (t2 \/ t3)))
+T c= c\/ c\/ f0 f1 f2 c\/ f0 c\/ f1 f2
+- |- ((~ (_2048293 = _2048295)) \/ ((~ (_2048292 = _2048294)) \/ (((dropout _2048292) _2048293) = ((dropout _2048294) _2048295))))
+T c\/ c~ c= f0 f1 c\/ c~ c= f2 f3 c= cdropout f2 f0 cdropout f3 f1
+- |- ((((~ (!s. (!t. (!k. (!a. ((!x. ((s x) ==> (t x))) ==> (!x. ((?x. ((x = ((dropout k) x)) /\ ((s x) /\ ((x $ k) = a)))) ==> (?x. ((x = ((dropout k) x)) /\ ((t x) /\ ((x $ k) = a)))))))))))) ==> F) ==> ((~ (!s. (!t. (!k. (!a. ((!x. ((s x) ==> (t x))) ==> (!x. ((?x. ((x = ((dropout k) x)) /\ ((s x) /\ ((x $ k) = a)))) ==> (?x. ((x = ((dropout k) x)) /\ ((t x) /\ ((x $ k) = a)))))))))))) ==> F)) = ((~ (!s. (!t. (!k. (!a. ((!x. ((s x) ==> (t x))) ==> (!x. ((?x. ((x = ((dropout k) x)) /\ ((s x) /\ ((x $ k) = a)))) ==> (?x. ((x = ((dropout k) x)) /\ ((t x) /\ ((x $ k) = a)))))))))))) ==> F))
+T c= c==> c==> c~ ! ! ! ! c==> ! c==> * b0 b4 * b1 b4 ! c==> c? / c/\ c= b4 cdropout b2 b5 c/\ * b0 b5 c= c$ b5 b2 b3 c? / c/\ c= b4 cdropout b2 b5 c/\ * b1 b5 c= c$ b5 b2 b3 cF c==> c~ ! ! ! ! c==> ! c==> * b0 b4 * b1 b4 ! c==> c? / c/\ c= b4 cdropout b2 b5 c/\ * b0 b5 c= c$ b5 b2 b3 c? / c/\ c= b4 cdropout b2 b5 c/\ * b1 b5 c= c$ b5 b2 b3 cF c==> c~ ! ! ! ! c==> ! c==> * b0 b4 * b1 b4 ! c==> c? / c/\ c= b4 cdropout b2 b5 c/\ * b0 b5 c= c$ b5 b2 b3 c? / c/\ c= b4 cdropout b2 b5 c/\ * b1 b5 c= c$ b5 b2 b3 cF
++ (!x. ((s x) ==> (t x))), (~ (?x. ((x = ((dropout k) x)) /\ ((t x) /\ ((x $ k) = a))))) |- (((\x. ((x = ((dropout k) x)) /\ ((s x) /\ ((x $ k) = a)))) x') ==> F)
+T c==> ! c==> * f0 b0 * f1 b0 c==> c~ c? / c/\ c= f2 cdropout f3 b0 c/\ * f1 b0 c= c$ b0 f3 f4 c==> * / c/\ c= f2 cdropout f3 b0 c/\ * f0 b0 c= c$ b0 f3 f4 f5 cF
++ |- ((!s. (!t. (!k. (!a. ((s SUBSET t) ==> (((IMAGE (dropout k)) (s INTER (GSPEC (\GEN%PVAR%4965. (?x. (((SETSPEC GEN%PVAR%4965) ((x $ k) = a)) x)))))) SUBSET ((IMAGE (dropout k)) (t INTER (GSPEC (\GEN%PVAR%4965. (?x. (((SETSPEC GEN%PVAR%4965) ((x $ k) = a)) x)))))))))))) = (!s. (!t. (!k. (!a. ((s SUBSET t) ==> ((((slice k) a) s) SUBSET (((slice k) a) t))))))))
+T c= ! ! ! ! c==> cSUBSET b0 b1 cSUBSET * * part cIMAGE * part cdropout b2 * * part cINTER b0 * part cGSPEC / c? / cSETSPEC b4 c= c$ b5 b2 b3 b5 * * part cIMAGE * part cdropout b2 * * part cINTER b1 * part cGSPEC / c? / cSETSPEC b4 c= c$ b5 b2 b3 b5 ! ! ! ! c==> cSUBSET b0 b1 cSUBSET * * * part cslice b2 b3 b0 * * * part cslice b2 b3 b1
+- |- ((~ ((x' $ k) = (x' $ k))) ==> ((x' $ k) = (x' $ k)))
+T c==> c~ c= c$ f0 f1 c$ f0 f1 c= c$ f0 f1 c$ f0 f1
++ (!x. ((s x) ==> (t x))) |- ((t _2048268) \/ (~ (s _2048268)))
+T c==> ! c==> * f0 b0 * f1 b0 c\/ * f1 f2 c~ * f0 f2
+- |- ((!x. (P \/ (Q x))) = (P \/ (!x. (Q x))))
+T c= ! c\/ f0 * f1 b0 c\/ f0 ! * f1 b0
++ |- (!s. (!t. (!k. (!a. ((!x. ((s x) ==> (t x))) ==> (!x. ((?x. ((x = ((dropout k) x)) /\ ((s x) /\ ((x $ k) = a)))) ==> (?x. ((x = ((dropout k) x)) /\ ((t x) /\ ((x $ k) = a)))))))))))
+T c==> ! c==> * f0 b0 * f1 b0 ! c==> c? / c/\ c= b0 cdropout f2 b1 c/\ * f0 b1 c= c$ b1 f2 f3 c? / c/\ c= b0 cdropout f2 b1 c/\ * f1 b1 c= c$ b1 f2 f3
+- |- (((!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))) ==> ((\t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))) t3)) = ((\t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))) t3))
+T c= c==> ! c= c\/ f0 c\/ f1 b0 c\/ c\/ f0 f1 b0 * / c= c\/ f0 c\/ f1 b0 c\/ c\/ f0 f1 b0 f2 * / c= c\/ f0 c\/ f1 b0 c\/ c\/ f0 f1 b0 f2
+- |- ((t /\ t) = t)
+T c= c/\ f0 f0 f0
+- |- ((a = b) ==> (b \/ (~ a)))
+T c==> c= f0 f1 c\/ f1 c~ f0
++ (!x. ((s x) ==> (t x))), ((x = ((dropout k) x')) /\ ((s x') /\ ((x' $ k) = a))) |- ((((((dropout k) x') = ((dropout k) x')) /\ ((t x') /\ ((x' $ k) = (x' $ k)))) ==> F) = F)
+T c==> ! c==> * f0 b0 * f1 b0 c==> c/\ c= f2 cdropout f3 f4 c/\ * f0 f4 c= c$ f4 f3 f5 c= c==> c/\ c= cdropout f3 f4 cdropout f3 f4 c/\ * f1 f4 c= c$ f4 f3 c$ f4 f3 cF cF
++ ((x = ((dropout k) x')) /\ ((s x') /\ ((x' $ k) = a))) |- (a = (x' $ k))
+T c==> c/\ c= f0 cdropout f1 f2 c/\ * f3 f2 c= c$ f2 f1 f4 c= f4 c$ f2 f1
+- ((x = ((dropout k) x')) /\ ((s x') /\ ((x' $ k) = a))) |- ((x = ((dropout k) x')) = (x = ((dropout k) x')))
+T c==> c/\ c= f0 cdropout f1 f2 c/\ * f3 f2 c= c$ f2 f1 f4 c= c= f0 cdropout f1 f2 c= f0 cdropout f1 f2
++ (!x. ((s x) ==> (t x))) |- ((\x. ((~ (s x)) \/ (t x))) _2048268)
+T c==> ! c==> * f0 b0 * f1 b0 * / c\/ c~ * f0 b0 * f1 b0 f2
+- ((x = ((dropout k) x')) /\ ((s x') /\ ((x' $ k) = a))) |- (((~ (s _2048268)) \/ (t _2048268)) = ((~ (s _2048268)) \/ (t _2048268)))
+T c==> c/\ c= f0 cdropout f1 f2 c/\ * f3 f2 c= c$ f2 f1 f4 c= c\/ c~ * f3 f5 * f6 f5 c\/ c~ * f3 f5 * f6 f5
+- |- (((~ (!s. (!t. (!k. (!a. ((!x. ((s x) ==> (t x))) ==> (!x. ((?x. ((x = ((dropout k) x)) /\ ((s x) /\ ((x $ k) = a)))) ==> (?x. ((x = ((dropout k) x)) /\ ((t x) /\ ((x $ k) = a)))))))))))) ==> F) ==> ((~ (!s. (!t. (!k. (!a. ((!x. ((s x) ==> (t x))) ==> (!x. ((?x. ((x = ((dropout k) x)) /\ ((s x) /\ ((x $ k) = a)))) ==> (?x. ((x = ((dropout k) x)) /\ ((t x) /\ ((x $ k) = a)))))))))))) ==> F))
+T c==> c==> c~ ! ! ! ! c==> ! c==> * b0 b4 * b1 b4 ! c==> c? / c/\ c= b4 cdropout b2 b5 c/\ * b0 b5 c= c$ b5 b2 b3 c? / c/\ c= b4 cdropout b2 b5 c/\ * b1 b5 c= c$ b5 b2 b3 cF c==> c~ ! ! ! ! c==> ! c==> * b0 b4 * b1 b4 ! c==> c? / c/\ c= b4 cdropout b2 b5 c/\ * b0 b5 c= c$ b5 b2 b3 c? / c/\ c= b4 cdropout b2 b5 c/\ * b1 b5 c= c$ b5 b2 b3 cF
+- |- ((s = t) = (!x. ((x IN s) = (x IN t))))
+T c= c= f0 f1 ! c= cIN b0 f0 cIN b0 f1
++ (!x. ((s x) ==> (t x))) |- (((!x. ((~ (s x)) \/ (t x))) ==> ((\x. ((~ (s x)) \/ (t x))) _2048268)) = ((\x. ((~ (s x)) \/ (t x))) _2048268))
+T c==> ! c==> * f0 b0 * f1 b0 c= c==> ! c\/ c~ * f0 b0 * f1 b0 * / c\/ c~ * f0 b0 * f1 b0 f2 * / c\/ c~ * f0 b0 * f1 b0 f2
+- (~ ((x' $ k) = (x' $ k))) |- ((~ ((x' $ k) = (x' $ k))) /\ ((x' $ k) = (x' $ k)))
+T c==> c~ c= c$ f0 f1 c$ f0 f1 c/\ c~ c= c$ f0 f1 c$ f0 f1 c= c$ f0 f1 c$ f0 f1
++ (!x. ((s x) ==> (t x))) |- ((!x. ((s x) ==> (t x))) /\ (!x. ((?x. ((x = ((dropout k) x)) /\ ((s x) /\ ((x $ k) = a)))) ==> (?x. ((x = ((dropout k) x)) /\ ((t x) /\ ((x $ k) = a)))))))
+T c==> ! c==> * f0 b0 * f1 b0 c/\ ! c==> * f0 b0 * f1 b0 ! c==> c? / c/\ c= b0 cdropout f2 b1 c/\ * f0 b1 c= c$ b1 f2 f3 c? / c/\ c= b0 cdropout f2 b1 c/\ * f1 b1 c= c$ b1 f2 f3
+- |- ((~ (_2048296 = _2048298)) \/ ((~ (_2048297 = _2048299)) \/ ((_2048296 $ _2048297) = (_2048298 $ _2048299))))
+T c\/ c~ c= f0 f1 c\/ c~ c= f2 f3 c= c$ f0 f2 c$ f1 f3
++ (!x. ((s x) ==> (t x))), (~ (?x. ((x = ((dropout k) x)) /\ ((t x) /\ ((x $ k) = a))))) |- (!x'. (((\x. ((x = ((dropout k) x)) /\ ((s x) /\ ((x $ k) = a)))) x') ==> F))
+T c==> ! c==> * f0 b0 * f1 b0 c==> c~ c? / c/\ c= f2 cdropout f3 b0 c/\ * f1 b0 c= c$ b0 f3 f4 ! c==> * / c/\ c= f2 cdropout f3 b1 c/\ * f0 b1 c= c$ b1 f3 f4 b0 cF
+- |- ((!x. (P x)) = ((P T) /\ (P F)))
+T c= ! * f0 b0 c/\ * f0 cT * f0 cF
+- |- (((!t1. (!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))))) ==> ((\t1. (!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))))) t1)) = ((\t1. (!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))))) t1))
+T c= c==> ! ! ! c= c\/ b0 c\/ b1 b2 c\/ c\/ b0 b1 b2 * / ! ! c= c\/ b0 c\/ b1 b2 c\/ c\/ b0 b1 b2 f0 * / ! ! c= c\/ b0 c\/ b1 b2 c\/ c\/ b0 b1 b2 f0
+- (_2048293 = _2048295) |- ((_2048292 = _2048294) ==> (((dropout _2048292) _2048293) = ((dropout _2048294) _2048295)))
+T c==> c= f0 f1 c==> c= f2 f3 c= cdropout f2 f0 cdropout f3 f1
+- |- ((?x'. ((x = ((dropout k) x')) /\ ((t x) /\ ((x $ k) = a)))) = ((?x. (x = ((dropout k) x))) /\ ((t x) /\ ((x $ k) = a))))
+T c= c? / c/\ c= f0 cdropout f1 b0 c/\ * f2 f3 c= c$ f3 f1 f4 c/\ c? / c= f0 cdropout f1 b0 c/\ * f2 f3 c= c$ f3 f1 f4
+- |- ((?x. (P /\ (Q x))) = (P /\ (?x. (Q x))))
+T c= c? / c/\ f0 * f1 b0 c/\ f0 c? / * f1 b0
+- (_2048292 = _2048294), (_2048293 = _2048295) |- ((_2048292 = _2048294) /\ (((dropout _2048292) _2048293) = ((dropout _2048294) _2048295)))
+T c==> c= f0 f1 c==> c= f2 f3 c/\ c= f0 f1 c= cdropout f0 f2 cdropout f1 f3
++ (!x. ((s x) ==> (t x))), (?x. ((x = ((dropout k) x)) /\ ((s x) /\ ((x $ k) = a)))), (~ (?x. ((x = ((dropout k) x)) /\ ((t x) /\ ((x $ k) = a))))) |- ((~ (?x. ((x = ((dropout k) x)) /\ ((t x) /\ ((x $ k) = a))))) /\ F)
+T c==> ! c==> * f0 b0 * f1 b0 c==> c? / c/\ c= f2 cdropout f3 b0 c/\ * f0 b0 c= c$ b0 f3 f4 c==> c~ c? / c/\ c= f2 cdropout f3 b0 c/\ * f1 b0 c= c$ b0 f3 f4 c/\ c~ c? / c/\ c= f2 cdropout f3 b0 c/\ * f1 b0 c= c$ b0 f3 f4 cF
+- (_2048290 = _2048291) |- ((((t _2048290) = (t _2048291)) ==> ((t _2048291) \/ (~ (t _2048290)))) = ((t _2048291) \/ (~ (t _2048290))))
+T c==> c= f0 f1 c= c==> c= * f2 f0 * f2 f1 c\/ * f2 f1 c~ * f2 f0 c\/ * f2 f1 c~ * f2 f0
++ (!x. ((s x) ==> (t x))), ((x = ((dropout k) x')) /\ ((s x') /\ ((x' $ k) = a))) |- (((x' $ k) = (x' $ k)) = ((t x') /\ ((x' $ k) = (x' $ k))))
+T c==> ! c==> * f0 b0 * f1 b0 c==> c/\ c= f2 cdropout f3 f4 c/\ * f0 f4 c= c$ f4 f3 f5 c= c= c$ f4 f3 c$ f4 f3 c/\ * f1 f4 c= c$ f4 f3 c$ f4 f3
++ (~ (?x. ((x = ((dropout k) x)) /\ ((t x) /\ ((x $ k) = a))))) |- (!x. ((~ (x = ((dropout k) x))) \/ ((~ (t x)) \/ (~ ((x $ k) = a)))))
+T c==> c~ c? / c/\ c= f0 cdropout f1 b0 c/\ * f2 b0 c= c$ b0 f1 f3 ! c\/ c~ c= f0 cdropout f1 b0 c\/ c~ * f2 b0 c~ c= c$ b0 f1 f3
++ |- ((~ p) = (p ==> F))
+T c= c~ f0 c==> f0 cF
++ ((x = ((dropout k) x')) /\ ((s x') /\ ((x' $ k) = a))) |- ((x' $ k) = a)
+T c==> c/\ c= f0 cdropout f1 f2 c/\ * f3 f2 c= c$ f2 f1 f4 c= c$ f2 f1 f4
++ ((x = ((dropout k) x')) /\ ((s x') /\ ((x' $ k) = a))) |- (((~ (x = ((dropout k) _2048269))) \/ ((~ (t _2048269)) \/ (~ ((_2048269 $ k) = (x' $ k))))) = ((~ (((dropout k) x') = ((dropout k) _2048269))) \/ ((~ (t _2048269)) \/ (~ ((_2048269 $ k) = (x' $ k))))))
+T c==> c/\ c= f0 cdropout f1 f2 c/\ * f3 f2 c= c$ f2 f1 f4 c= c\/ c~ c= f0 cdropout f1 f5 c\/ c~ * f6 f5 c~ c= c$ f5 f1 c$ f2 f1 c\/ c~ c= cdropout f1 f2 cdropout f1 f5 c\/ c~ * f6 f5 c~ c= c$ f5 f1 c$ f2 f1
++ |- ((x IN (GSPEC (\GEN%PVAR%4965. (?x. (((SETSPEC GEN%PVAR%4965) (p x)) x))))) = (p x))
+T c= cIN f0 * part cGSPEC / c? / cSETSPEC b0 * f1 b1 b1 * f1 f0
++ |- ((\k. (!t. ((((slice k) t) s) = ((IMAGE (dropout k)) (s INTER (GSPEC (\GEN%PVAR%4965. (?x. (((SETSPEC GEN%PVAR%4965) ((x $ k) = t)) x))))))))) k)
+T * / ! c= * * * part cslice b0 b1 f0 * * part cIMAGE * part cdropout b0 * * part cINTER f0 * part cGSPEC / c? / cSETSPEC b2 c= c$ b3 b0 b1 b3 f1

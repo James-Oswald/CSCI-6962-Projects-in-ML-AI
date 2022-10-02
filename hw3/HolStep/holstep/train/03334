@@ -1,0 +1,128 @@
+N Seq2.perm_eq_flatten
+C |- (!s1. (!s2. (((perm_eq s1) s2) ==> ((perm_eq (flatten s1)) (flatten s2)))))
+T c==> cperm_eq f0 f1 cperm_eq cflatten f0 cflatten f1
+D TRUTH
+A |- T
+T cT
+D REAL_OF_NUM_EQ
+A |- (!m. (!n. (((real_of_num m) = (real_of_num n)) = (m = n))))
+T c= c= creal_of_num f0 creal_of_num f1 c= f0 f1
+D Seq.perm_eqP
+A |- (!s1. (!s2. (((perm_eq s1) s2) = (!a. (((count a) s1) = ((count a) s2))))))
+T c= cperm_eq f0 f1 ! c= ccount b0 f0 ccount b0 f1
+D Seq2.perm_eq_map
+A |- (!f. (!s1. (!s2. (((perm_eq s1) s2) ==> ((perm_eq ((map f) s1)) ((map f) s2))))))
+T c==> cperm_eq f0 f1 cperm_eq cmap f2 f0 cmap f2 f1
+D Seq2.list_sum_perm_eq
+A |- (!s1. (!s2. (!f. (((perm_eq s1) s2) ==> (((list_sum s1) f) = ((list_sum s2) f))))))
+T c==> cperm_eq f0 f1 c= clist_sum f0 f2 clist_sum f1 f2
+D Seq2.list_sum_eq_list_sumn
+A |- (!s. (!f. (((list_sum s) (real_of_num o f)) = (real_of_num ((list_sumn s) f)))))
+T c= clist_sum f0 * * part co part creal_of_num f1 creal_of_num clist_sumn f0 f1
+D Seq2.count_flatten
+A |- (!s. (!a. (((count a) (flatten s)) = ((list_sumn ((map (count a)) s)) I))))
+T c= ccount f0 cflatten f1 clist_sumn cmap * part ccount f0 f1 part cI
++ ((perm_eq s1) s2) |- ((((perm_eq ((map (count a)) s1)) ((map (count a)) s2)) ==> (((list_sum ((map (count a)) s1)) (real_of_num o I)) = ((list_sum ((map (count a)) s2)) (real_of_num o I)))) = (((list_sum ((map (count a)) s1)) (real_of_num o I)) = ((list_sum ((map (count a)) s2)) (real_of_num o I))))
+T c==> cperm_eq f0 f1 c= c==> cperm_eq cmap * part ccount f2 f0 cmap * part ccount f2 f1 c= clist_sum cmap * part ccount f2 f0 * * part co part creal_of_num part cI clist_sum cmap * part ccount f2 f1 * * part co part creal_of_num part cI c= clist_sum cmap * part ccount f2 f0 * * part co part creal_of_num part cI clist_sum cmap * part ccount f2 f1 * * part co part creal_of_num part cI
++ |- ((\s2. (!f. (((perm_eq s1) s2) ==> (((list_sum s1) f) = ((list_sum s2) f))))) s2)
+T * / ! c==> cperm_eq f0 b0 c= clist_sum f0 b1 clist_sum b0 b1 f1
+- (!s1. (!s2. (!f. (((perm_eq s1) s2) ==> (((list_sum s1) f) = ((list_sum s2) f)))))) |- ((!s1. (!s2. (!f. (((perm_eq s1) s2) ==> (((list_sum s1) f) = ((list_sum s2) f)))))) /\ (!s1. (!s2. (!f. (((perm_eq s1) s2) ==> (((list_sum s1) f) = ((list_sum s2) f)))))))
+T c==> ! ! ! c==> cperm_eq b0 b1 c= clist_sum b0 b2 clist_sum b1 b2 c/\ ! ! ! c==> cperm_eq b0 b1 c= clist_sum b0 b2 clist_sum b1 b2 ! ! ! c==> cperm_eq b0 b1 c= clist_sum b0 b2 clist_sum b1 b2
++ ((perm_eq s1) s2) |- (((((perm_eq s1) s2) /\ ((((perm_eq ((map (count a)) s1)) ((map (count a)) s2)) = T) ==> ((perm_eq ((map (count a)) s1)) ((map (count a)) s2)))) ==> ((((perm_eq s1) s2) ==> (((perm_eq ((map (count a)) s1)) ((map (count a)) s2)) = T)) ==> ((perm_eq ((map (count a)) s1)) ((map (count a)) s2)))) = ((((perm_eq s1) s2) ==> (((perm_eq ((map (count a)) s1)) ((map (count a)) s2)) = T)) ==> ((perm_eq ((map (count a)) s1)) ((map (count a)) s2))))
+T c==> cperm_eq f0 f1 c= c==> c/\ cperm_eq f0 f1 c==> c= cperm_eq cmap * part ccount f2 f0 cmap * part ccount f2 f1 cT cperm_eq cmap * part ccount f2 f0 cmap * part ccount f2 f1 c==> c==> cperm_eq f0 f1 c= cperm_eq cmap * part ccount f2 f0 cmap * part ccount f2 f1 cT cperm_eq cmap * part ccount f2 f0 cmap * part ccount f2 f1 c==> c==> cperm_eq f0 f1 c= cperm_eq cmap * part ccount f2 f0 cmap * part ccount f2 f1 cT cperm_eq cmap * part ccount f2 f0 cmap * part ccount f2 f1
++ |- ((!s2. (((perm_eq s1) s2) ==> ((perm_eq (flatten s1)) (flatten s2)))) = T)
+T c= ! c==> cperm_eq f0 b0 cperm_eq cflatten f0 cflatten b0 cT
+- ((!x. (P ==> (Q x))) = (P ==> (!x. (Q x)))) |- ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))
+T c==> c= ! c==> f0 * f1 b0 c==> f0 ! * f1 b0 c= c==> f0 ! * f1 b0 ! c==> f0 * f1 b0
++ |- (((!a. (((count a) (flatten s)) = ((list_sumn ((map (count a)) s)) I))) ==> ((\a. (((count a) (flatten s)) = ((list_sumn ((map (count a)) s)) I))) a)) = ((\a. (((count a) (flatten s)) = ((list_sumn ((map (count a)) s)) I))) a))
+T c= c==> ! c= ccount b0 cflatten f0 clist_sumn cmap * part ccount b0 f0 part cI * / c= ccount b0 cflatten f0 clist_sumn cmap * part ccount b0 f0 part cI f1 * / c= ccount b0 cflatten f0 clist_sumn cmap * part ccount b0 f0 part cI f1
++ |- (((!s1. (!s2. (!f. (((perm_eq s1) s2) ==> (((list_sum s1) f) = ((list_sum s2) f)))))) ==> ((\s1. (!s2. (!f. (((perm_eq s1) s2) ==> (((list_sum s1) f) = ((list_sum s2) f)))))) s1)) = ((\s1. (!s2. (!f. (((perm_eq s1) s2) ==> (((list_sum s1) f) = ((list_sum s2) f)))))) s1))
+T c= c==> ! ! ! c==> cperm_eq b0 b1 c= clist_sum b0 b2 clist_sum b1 b2 * / ! ! c==> cperm_eq b0 b1 c= clist_sum b0 b2 clist_sum b1 b2 f0 * / ! ! c==> cperm_eq b0 b1 c= clist_sum b0 b2 clist_sum b1 b2 f0
+- |- ((\P. (!Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x)))))) P)
+T * / ! c= c==> b0 ! * b1 b2 ! c==> b0 * b1 b2 f0
++ ((perm_eq s1) s2) |- (((list_sumn ((map (count a)) s1)) I) = ((list_sumn ((map (count a)) s2)) I))
+T c==> cperm_eq f0 f1 c= clist_sumn cmap * part ccount f2 f0 part cI clist_sumn cmap * part ccount f2 f1 part cI
++ ((perm_eq s1) s2) |- (((list_sumn ((map (count a)) s1)) I) = ((count a) (flatten s2)))
+T c==> cperm_eq f0 f1 c= clist_sumn cmap * part ccount f2 f0 part cI ccount f2 cflatten f1
++ |- (((!s2. (((perm_eq s1) s2) = (!a. (((count a) s1) = ((count a) s2))))) ==> ((\s2. (((perm_eq s1) s2) = (!a. (((count a) s1) = ((count a) s2))))) s2)) = ((\s2. (((perm_eq s1) s2) = (!a. (((count a) s1) = ((count a) s2))))) s2))
+T c= c==> ! c= cperm_eq f0 b0 ! c= ccount b1 f0 ccount b1 b0 * / c= cperm_eq f0 b0 ! c= ccount b1 f0 ccount b1 b0 f1 * / c= cperm_eq f0 b0 ! c= ccount b1 f0 ccount b1 b0 f1
++ (((list_sum s) (real_of_num o f)) = (real_of_num ((list_sumn s) f))) |- ((real_of_num ((list_sumn s) f)) = ((list_sum s) (real_of_num o f)))
+T c==> c= clist_sum f0 * * part co part creal_of_num f1 creal_of_num clist_sumn f0 f1 c= creal_of_num clist_sumn f0 f1 clist_sum f0 * * part co part creal_of_num f1
++ |- ((\f. (!s1. (!s2. (((perm_eq s1) s2) ==> ((perm_eq ((map f) s1)) ((map f) s2)))))) f)
+T * / ! ! c==> cperm_eq b1 b2 cperm_eq cmap b0 b1 cmap b0 b2 f0
++ ((perm_eq s1) s2) |- (!a. (((count a) (flatten s1)) = ((count a) (flatten s2))))
+T c==> cperm_eq f0 f1 ! c= ccount b0 cflatten f0 ccount b0 cflatten f1
++ |- ((!a. (((count a) (flatten s1)) = ((count a) (flatten s2)))) = ((perm_eq (flatten s1)) (flatten s2)))
+T c= ! c= ccount b0 cflatten f0 ccount b0 cflatten f1 cperm_eq cflatten f0 cflatten f1
++ |- (((!s2. (!f. (((perm_eq s1) s2) ==> (((list_sum s1) f) = ((list_sum s2) f))))) ==> ((\s2. (!f. (((perm_eq s1) s2) ==> (((list_sum s1) f) = ((list_sum s2) f))))) s2)) = ((\s2. (!f. (((perm_eq s1) s2) ==> (((list_sum s1) f) = ((list_sum s2) f))))) s2))
+T c= c==> ! ! c==> cperm_eq f0 b0 c= clist_sum f0 b1 clist_sum b0 b1 * / ! c==> cperm_eq f0 b0 c= clist_sum f0 b1 clist_sum b0 b1 f1 * / ! c==> cperm_eq f0 b0 c= clist_sum f0 b1 clist_sum b0 b1 f1
+- (!s1. (!s2. (!f. (((perm_eq s1) s2) ==> (((list_sum s1) f) = ((list_sum s2) f)))))), ((perm_eq s1) s2) |- (((list_sum s1) f) = ((list_sum s2) f))
+T c==> ! ! ! c==> cperm_eq b0 b1 c= clist_sum b0 b2 clist_sum b1 b2 c==> cperm_eq f0 f1 c= clist_sum f0 f2 clist_sum f1 f2
+- (!s1. (!s2. (!f. (((perm_eq s1) s2) ==> (((list_sum s1) f) = ((list_sum s2) f)))))) |- ((!f. (((perm_eq s1) s2) ==> (((list_sum s1) f) = ((list_sum s2) f)))) = T)
+T c==> ! ! ! c==> cperm_eq b0 b1 c= clist_sum b0 b2 clist_sum b1 b2 c= ! c==> cperm_eq f0 f1 c= clist_sum f0 b0 clist_sum f1 b0 cT
+- (!s1. (!s2. (!f. (((perm_eq s1) s2) ==> (((list_sum s1) f) = ((list_sum s2) f)))))) |- ((\s2. (!f. (((perm_eq s1) s2) ==> (((list_sum s1) f) = ((list_sum s2) f))))) s2)
+T c==> ! ! ! c==> cperm_eq b0 b1 c= clist_sum b0 b2 clist_sum b1 b2 * / ! c==> cperm_eq f0 b0 c= clist_sum f0 b1 clist_sum b0 b1 f1
++ |- ((\s2. (((perm_eq s1) s2) ==> ((perm_eq ((map f) s1)) ((map f) s2)))) s2)
+T * / c==> cperm_eq f0 b0 cperm_eq cmap f1 f0 cmap f1 b0 f2
++ |- ((((list_sumn ((map (count a)) s1)) I) = ((count a) (flatten s2))) = (((count a) (flatten s1)) = ((count a) (flatten s2))))
+T c= c= clist_sumn cmap * part ccount f0 f1 part cI ccount f0 cflatten f2 c= ccount f0 cflatten f1 ccount f0 cflatten f2
++ ((perm_eq s1) s2) |- (((perm_eq s1) s2) /\ ((perm_eq (flatten s1)) (flatten s2)))
+T c==> cperm_eq f0 f1 c/\ cperm_eq f0 f1 cperm_eq cflatten f0 cflatten f1
++ |- (((!s. (!f. ((real_of_num ((list_sumn s) f)) = ((list_sum s) (real_of_num o f))))) ==> ((\s. (!f. ((real_of_num ((list_sumn s) f)) = ((list_sum s) (real_of_num o f))))) s)) = ((\s. (!f. ((real_of_num ((list_sumn s) f)) = ((list_sum s) (real_of_num o f))))) s))
+T c= c==> ! ! c= creal_of_num clist_sumn b0 b1 clist_sum b0 * * part co part creal_of_num b1 * / ! c= creal_of_num clist_sumn b0 b1 clist_sum b0 * * part co part creal_of_num b1 f0 * / ! c= creal_of_num clist_sumn b0 b1 clist_sum b0 * * part co part creal_of_num b1 f0
++ |- ((\s. (!f. ((real_of_num ((list_sumn s) f)) = ((list_sum s) (real_of_num o f))))) s)
+T * / ! c= creal_of_num clist_sumn b0 b1 clist_sum b0 * * part co part creal_of_num b1 f0
++ |- (((!f. (!s1. (!s2. (((perm_eq s1) s2) ==> ((perm_eq ((map f) s1)) ((map f) s2)))))) ==> ((\f. (!s1. (!s2. (((perm_eq s1) s2) ==> ((perm_eq ((map f) s1)) ((map f) s2)))))) f)) = ((\f. (!s1. (!s2. (((perm_eq s1) s2) ==> ((perm_eq ((map f) s1)) ((map f) s2)))))) f))
+T c= c==> ! ! ! c==> cperm_eq b1 b2 cperm_eq cmap b0 b1 cmap b0 b2 * / ! ! c==> cperm_eq b1 b2 cperm_eq cmap b0 b1 cmap b0 b2 f0 * / ! ! c==> cperm_eq b1 b2 cperm_eq cmap b0 b1 cmap b0 b2 f0
++ ((perm_eq s1) s2) |- ((real_of_num ((list_sumn ((map (count a)) s1)) I)) = (real_of_num ((list_sumn ((map (count a)) s2)) I)))
+T c==> cperm_eq f0 f1 c= creal_of_num clist_sumn cmap * part ccount f2 f0 part cI creal_of_num clist_sumn cmap * part ccount f2 f1 part cI
++ |- ((\s. (!a. (((count a) (flatten s)) = ((list_sumn ((map (count a)) s)) I)))) s)
+T * / ! c= ccount b1 cflatten b0 clist_sumn cmap * part ccount b1 b0 part cI f0
++ |- ((\f. ((real_of_num ((list_sumn s) f)) = ((list_sum s) (real_of_num o f)))) f)
+T * / c= creal_of_num clist_sumn f0 b0 clist_sum f0 * * part co part creal_of_num b0 f1
++ |- ((((list_sumn ((map (count a)) s1)) I) = ((list_sumn ((map (count a)) s2)) I)) = (((list_sumn ((map (count a)) s1)) I) = ((count a) (flatten s2))))
+T c= c= clist_sumn cmap * part ccount f0 f1 part cI clist_sumn cmap * part ccount f0 f2 part cI c= clist_sumn cmap * part ccount f0 f1 part cI ccount f0 cflatten f2
+- (!s1. (!s2. (!f. (((perm_eq s1) s2) ==> (((list_sum s1) f) = ((list_sum s2) f)))))) |- ((\f. (((perm_eq s1) s2) ==> (((list_sum s1) f) = ((list_sum s2) f)))) f)
+T c==> ! ! ! c==> cperm_eq b0 b1 c= clist_sum b0 b2 clist_sum b1 b2 * / c==> cperm_eq f0 f1 c= clist_sum f0 b0 clist_sum f1 b0 f2
++ ((perm_eq s1) s2) |- (((list_sum ((map (count a)) s1)) (real_of_num o I)) = ((list_sum ((map (count a)) s2)) (real_of_num o I)))
+T c==> cperm_eq f0 f1 c= clist_sum cmap * part ccount f2 f0 * * part co part creal_of_num part cI clist_sum cmap * part ccount f2 f1 * * part co part creal_of_num part cI
++ ((perm_eq s1) s2) |- (((perm_eq s1) s2) /\ (((perm_eq ((map f) s1)) ((map f) s2)) = T))
+T c==> cperm_eq f0 f1 c/\ cperm_eq f0 f1 c= cperm_eq cmap f2 f0 cmap f2 f1 cT
+- ((perm_eq s1) s2) |- ((!s1. (!s2. (!f. (((perm_eq s1) s2) ==> (((list_sum s1) f) = ((list_sum s2) f)))))) ==> (((list_sum s1) f) = ((list_sum s2) f)))
+T c==> cperm_eq f0 f1 c==> ! ! ! c==> cperm_eq b0 b1 c= clist_sum b0 b2 clist_sum b1 b2 c= clist_sum f0 f2 clist_sum f1 f2
+- (!s1. (!s2. (!f. (((perm_eq s1) s2) ==> (((list_sum s1) f) = ((list_sum s2) f)))))) |- (!s2. (!f. (((perm_eq s1) s2) ==> (((list_sum s1) f) = ((list_sum s2) f)))))
+T c==> ! ! ! c==> cperm_eq b0 b1 c= clist_sum b0 b2 clist_sum b1 b2 ! ! c==> cperm_eq f0 b0 c= clist_sum f0 b1 clist_sum b0 b1
+- |- ((\Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))) Q)
+T * / c= c==> f0 ! * b0 b1 ! c==> f0 * b0 b1 f1
+- (!s1. (!s2. (!f. (((perm_eq s1) s2) ==> (((list_sum s1) f) = ((list_sum s2) f)))))), ((perm_eq s1) s2) |- (((perm_eq s1) s2) /\ (((list_sum s1) f) = ((list_sum s2) f)))
+T c==> ! ! ! c==> cperm_eq b0 b1 c= clist_sum b0 b2 clist_sum b1 b2 c==> cperm_eq f0 f1 c/\ cperm_eq f0 f1 c= clist_sum f0 f2 clist_sum f1 f2
+- (!s1. (!s2. (!f. (((perm_eq s1) s2) ==> (((list_sum s1) f) = ((list_sum s2) f)))))) |- ((\s1. (!s2. (!f. (((perm_eq s1) s2) ==> (((list_sum s1) f) = ((list_sum s2) f)))))) s1)
+T c==> ! ! ! c==> cperm_eq b0 b1 c= clist_sum b0 b2 clist_sum b1 b2 * / ! ! c==> cperm_eq b0 b1 c= clist_sum b0 b2 clist_sum b1 b2 f0
+- |- (((!P. (!Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x)))))) ==> ((\P. (!Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x)))))) P)) = ((\P. (!Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x)))))) P))
+T c= c==> ! ! c= c==> b0 ! * b1 b2 ! c==> b0 * b1 b2 * / ! c= c==> b0 ! * b1 b2 ! c==> b0 * b1 b2 f0 * / ! c= c==> b0 ! * b1 b2 ! c==> b0 * b1 b2 f0
+- (!s1. (!s2. (!f. (((perm_eq s1) s2) ==> (((list_sum s1) f) = ((list_sum s2) f)))))) |- (!f. (((perm_eq s1) s2) ==> (((list_sum s1) f) = ((list_sum s2) f))))
+T c==> ! ! ! c==> cperm_eq b0 b1 c= clist_sum b0 b2 clist_sum b1 b2 ! c==> cperm_eq f0 f1 c= clist_sum f0 b0 clist_sum f1 b0
+- (!s1. (!s2. (!f. (((perm_eq s1) s2) ==> (((list_sum s1) f) = ((list_sum s2) f)))))) |- ((((perm_eq s1) s2) ==> (((list_sum s1) f) = ((list_sum s2) f))) = T)
+T c==> ! ! ! c==> cperm_eq b0 b1 c= clist_sum b0 b2 clist_sum b1 b2 c= c==> cperm_eq f0 f1 c= clist_sum f0 f2 clist_sum f1 f2 cT
+- (!s1. (!s2. (!f. (((perm_eq s1) s2) ==> (((list_sum s1) f) = ((list_sum s2) f)))))) |- (((!f. (((perm_eq s1) s2) ==> (((list_sum s1) f) = ((list_sum s2) f)))) ==> ((\f. (((perm_eq s1) s2) ==> (((list_sum s1) f) = ((list_sum s2) f)))) f)) = ((\f. (((perm_eq s1) s2) ==> (((list_sum s1) f) = ((list_sum s2) f)))) f))
+T c==> ! ! ! c==> cperm_eq b0 b1 c= clist_sum b0 b2 clist_sum b1 b2 c= c==> ! c==> cperm_eq f0 f1 c= clist_sum f0 b0 clist_sum f1 b0 * / c==> cperm_eq f0 f1 c= clist_sum f0 b0 clist_sum f1 b0 f2 * / c==> cperm_eq f0 f1 c= clist_sum f0 b0 clist_sum f1 b0 f2
+- ((perm_eq s1) s2) |- (T = ((perm_eq s1) s2))
+T c==> cperm_eq f0 f1 c= cT cperm_eq f0 f1
+- (!s1. (!s2. (!f. (((perm_eq s1) s2) ==> (((list_sum s1) f) = ((list_sum s2) f)))))) |- (((!s2. (!f. (((perm_eq s1) s2) ==> (((list_sum s1) f) = ((list_sum s2) f))))) ==> ((\s2. (!f. (((perm_eq s1) s2) ==> (((list_sum s1) f) = ((list_sum s2) f))))) s2)) = ((\s2. (!f. (((perm_eq s1) s2) ==> (((list_sum s1) f) = ((list_sum s2) f))))) s2))
+T c==> ! ! ! c==> cperm_eq b0 b1 c= clist_sum b0 b2 clist_sum b1 b2 c= c==> ! ! c==> cperm_eq f0 b0 c= clist_sum f0 b1 clist_sum b0 b1 * / ! c==> cperm_eq f0 b0 c= clist_sum f0 b1 clist_sum b0 b1 f1 * / ! c==> cperm_eq f0 b0 c= clist_sum f0 b1 clist_sum b0 b1 f1
+- |- (((!s1. (!s2. (!f. (((perm_eq s1) s2) ==> (((list_sum s1) f) = ((list_sum s2) f)))))) ==> (!s1. (!s2. (!f. (((perm_eq s1) s2) ==> (((list_sum s1) f) = ((list_sum s2) f))))))) = (!s1. (!s2. (!f. (((perm_eq s1) s2) ==> (((list_sum s1) f) = ((list_sum s2) f)))))))
+T c= c==> ! ! ! c==> cperm_eq b0 b1 c= clist_sum b0 b2 clist_sum b1 b2 ! ! ! c==> cperm_eq b0 b1 c= clist_sum b0 b2 clist_sum b1 b2 ! ! ! c==> cperm_eq b0 b1 c= clist_sum b0 b2 clist_sum b1 b2
+- ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x)))) |- ((!x. (P ==> (Q x))) = (P ==> (!x. (Q x))))
+T c==> c= c==> f0 ! * f1 b0 ! c==> f0 * f1 b0 c= ! c==> f0 * f1 b0 c==> f0 ! * f1 b0
+- ((perm_eq s1) s2) |- (((perm_eq s1) s2) = T)
+T c==> cperm_eq f0 f1 c= cperm_eq f0 f1 cT
+- |- ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))
+T c= c==> f0 ! * f1 b0 ! c==> f0 * f1 b0
+- (!s1. (!s2. (!f. (((perm_eq s1) s2) ==> (((list_sum s1) f) = ((list_sum s2) f)))))), ((perm_eq s1) s2) |- ((!s1. (!s2. (!f. (((perm_eq s1) s2) ==> (((list_sum s1) f) = ((list_sum s2) f)))))) /\ (((list_sum s1) f) = ((list_sum s2) f)))
+T c==> ! ! ! c==> cperm_eq b0 b1 c= clist_sum b0 b2 clist_sum b1 b2 c==> cperm_eq f0 f1 c/\ ! ! ! c==> cperm_eq b0 b1 c= clist_sum b0 b2 clist_sum b1 b2 c= clist_sum f0 f2 clist_sum f1 f2
+- |- (((!Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))) ==> ((\Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))) Q)) = ((\Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))) Q))
+T c= c==> ! c= c==> f0 ! * b0 b1 ! c==> f0 * b0 b1 * / c= c==> f0 ! * b0 b1 ! c==> f0 * b0 b1 f1 * / c= c==> f0 ! * b0 b1 ! c==> f0 * b0 b1 f1
+- (!s1. (!s2. (!f. (((perm_eq s1) s2) ==> (((list_sum s1) f) = ((list_sum s2) f)))))) |- ((!s2. (!f. (((perm_eq s1) s2) ==> (((list_sum s1) f) = ((list_sum s2) f))))) = T)
+T c==> ! ! ! c==> cperm_eq b0 b1 c= clist_sum b0 b2 clist_sum b1 b2 c= ! ! c==> cperm_eq f0 b0 c= clist_sum f0 b1 clist_sum b0 b1 cT
+- |- ((!s1. (!s2. (!f. (((perm_eq s1) s2) ==> (((list_sum s1) f) = ((list_sum s2) f)))))) ==> (!s1. (!s2. (!f. (((perm_eq s1) s2) ==> (((list_sum s1) f) = ((list_sum s2) f)))))))
+T c==> ! ! ! c==> cperm_eq b0 b1 c= clist_sum b0 b2 clist_sum b1 b2 ! ! ! c==> cperm_eq b0 b1 c= clist_sum b0 b2 clist_sum b1 b2

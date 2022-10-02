@@ -1,0 +1,228 @@
+N CROSS_EQ_EMPTY
+C |- (!s. (!t. (((s CROSS t) = EMPTY) = ((s = EMPTY) \/ (t = EMPTY)))))
+T c= c= * * part cCROSS f0 f1 part cEMPTY c\/ c= f0 part cEMPTY c= f1 part cEMPTY
+D TRUTH
+A |- T
+T cT
+D ETA_AX
+A |- (!t. ((\x. (t x)) = t))
+T c= / * f0 b0 f0
+D BOOL_CASES_AX
+A |- (!t. ((t = T) \/ (t = F)))
+T c\/ c= f0 cT c= f0 cF
+D NOT_CLAUSES
+A |- ((!t. ((~ (~ t)) = t)) /\ (((~ T) = F) /\ ((~ F) = T)))
+T c/\ ! c= c~ c~ b0 b0 c/\ c= c~ cT cF c= c~ cF cT
+D NOT_FORALL_THM
+A |- (!P. ((~ (!x. (P x))) = (?x. (~ (P x)))))
+T c= c~ ! * f0 b0 c? / c~ * f0 b0
+D LEFT_FORALL_OR_THM
+A |- (!P. (!Q. ((!x. ((P x) \/ Q)) = ((!x. (P x)) \/ Q))))
+T c= ! c\/ * f0 b0 f1 c\/ ! * f0 b0 f1
+D RIGHT_FORALL_OR_THM
+A |- (!P. (!Q. ((!x. (P \/ (Q x))) = (P \/ (!x. (Q x))))))
+T c= ! c\/ f0 * f1 b0 c\/ f0 ! * f1 b0
+D FORALL_PAIR_THM
+A |- (!P. ((!p. (P p)) = (!p1. (!p2. (P (p1 , p2))))))
+T c= ! * f0 b0 ! ! * f0 c, b0 b1
+D EXTENSION
+A |- (!s. (!t. ((s = t) = (!x. ((x IN s) = (x IN t))))))
+T c= c= f0 f1 ! c= cIN b0 f0 cIN b0 f1
+D NOT_IN_EMPTY
+A |- (!x. (~ (x IN EMPTY)))
+T c~ cIN f0 part cEMPTY
+D IN_CROSS
+A |- (!x. (!y. (!s. (!t. (((x , y) IN (s CROSS t)) = ((x IN s) /\ (y IN t)))))))
+T c= cIN c, f0 f1 * * part cCROSS f2 f3 c/\ cIN f0 f2 cIN f1 f3
++ |- ((t = F) = (~ t))
+T c= c= f0 cF c~ f0
+- |- ((\t1. (!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))))) t1)
+T * / ! ! c= c\/ b0 c\/ b1 b2 c\/ c\/ b0 b1 b2 f0
+- |- ((?p1'. ((p1 IN s) /\ (?p2. (p2 IN t)))) = ((p1 IN s) /\ (?p1. (?p2. (p2 IN t)))))
+T c= c? / c/\ cIN f0 f1 c? / cIN b1 f2 c/\ cIN f0 f1 c? / c? / cIN b1 f2
++ |- (((((!p1. (~ (p1 IN s))) \/ (!p2. (~ (p2 IN t)))) /\ ((p1 IN s) /\ (p2 IN t))) \/ (((p1 IN s) /\ (p2 IN t)) /\ ((!x. (~ (x IN s))) \/ (!x. (~ (x IN t)))))) ==> F)
+T c==> c\/ c/\ c\/ ! c~ cIN b0 f0 ! c~ cIN b0 f1 c/\ cIN f2 f0 cIN f3 f1 c/\ c/\ cIN f2 f0 cIN f3 f1 c\/ ! c~ cIN b0 f0 ! c~ cIN b0 f1 cF
++ |- ((\s. (!t. (((x , y) IN (s CROSS t)) = ((x IN s) /\ (y IN t))))) s)
+T * / ! c= cIN c, f0 f1 * * part cCROSS b0 b1 c/\ cIN f0 b0 cIN f1 b1 f2
++ |- ((!p2. ((~ (p1 IN s)) \/ (~ (p2 IN t)))) = ((~ (p1 IN s)) \/ (!p2. (~ (p2 IN t)))))
+T c= ! c\/ c~ cIN f0 f1 c~ cIN b0 f2 c\/ c~ cIN f0 f1 ! c~ cIN b0 f2
+- (!p1. (~ (p1 IN s))), (~ F), (((!p1. (~ (p1 IN s))) \/ (!p2. (~ (p2 IN t)))) /\ ((p1 IN s) /\ (p2 IN t))) |- ((~ F) /\ F)
+T c==> ! c~ cIN b0 f0 c==> c~ cF c==> c/\ c\/ ! c~ cIN b0 f0 ! c~ cIN b0 f1 c/\ cIN f2 f0 cIN f3 f1 c/\ c~ cF cF
++ ((\p1. (?p2. ((((!p1. (~ (p1 IN s))) \/ (!p2. (~ (p2 IN t)))) /\ ((p1 IN s) /\ (p2 IN t))) \/ (((p1 IN s) /\ (p2 IN t)) /\ ((!x. (~ (x IN s))) \/ (!x. (~ (x IN t)))))))) p1) |- (((\p1. (?p2. ((((!p1. (~ (p1 IN s))) \/ (!p2. (~ (p2 IN t)))) /\ ((p1 IN s) /\ (p2 IN t))) \/ (((p1 IN s) /\ (p2 IN t)) /\ ((!x. (~ (x IN s))) \/ (!x. (~ (x IN t)))))))) p1) /\ F)
+T c==> * / c? / c\/ c/\ c\/ ! c~ cIN b2 f0 ! c~ cIN b2 f1 c/\ cIN b0 f0 cIN b1 f1 c/\ c/\ cIN b0 f0 cIN b1 f1 c\/ ! c~ cIN b2 f0 ! c~ cIN b2 f1 f2 c/\ * / c? / c\/ c/\ c\/ ! c~ cIN b2 f0 ! c~ cIN b2 f1 c/\ cIN b0 f0 cIN b1 f1 c/\ c/\ cIN b0 f0 cIN b1 f1 c\/ ! c~ cIN b2 f0 ! c~ cIN b2 f1 f2 cF
++ |- (((?p2. (P p2)) /\ Q) = (?p2. ((P p2) /\ Q)))
+T c= c/\ c? / * f0 b0 f1 c? / c/\ * f0 b0 f1
+- |- ((t \/ t) = t)
+T c= c\/ f0 f0 f0
++ |- ((~ ((!p1. (!p2. (~ ((p1 IN s) /\ (p2 IN t))))) = ((!x. (~ (x IN s))) \/ (!x. (~ (x IN t)))))) ==> F)
+T c==> c~ c= ! ! c~ c/\ cIN b0 f0 cIN b1 f1 c\/ ! c~ cIN b0 f0 ! c~ cIN b0 f1 cF
+- |- ((\t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))) t3)
+T * / c= c\/ f0 c\/ f1 b0 c\/ c\/ f0 f1 b0 f2
++ |- (!p1. (((\p1. (?p2. ((((!p1. (~ (p1 IN s))) \/ (!p2. (~ (p2 IN t)))) /\ ((p1 IN s) /\ (p2 IN t))) \/ (((p1 IN s) /\ (p2 IN t)) /\ ((!x. (~ (x IN s))) \/ (!x. (~ (x IN t)))))))) p1) ==> F))
+T c==> * / c? / c\/ c/\ c\/ ! c~ cIN b2 f0 ! c~ cIN b2 f1 c/\ cIN b0 f0 cIN b1 f1 c/\ c/\ cIN b0 f0 cIN b1 f1 c\/ ! c~ cIN b2 f0 ! c~ cIN b2 f1 f2 cF
+- (!p1. (~ (p1 IN s))), (((!p1. (~ (p1 IN s))) \/ (!p2. (~ (p2 IN t)))) /\ ((p1 IN s) /\ (p2 IN t))) |- ((~ F) ==> F)
+T c==> ! c~ cIN b0 f0 c==> c/\ c\/ ! c~ cIN b0 f0 ! c~ cIN b0 f1 c/\ cIN f2 f0 cIN f3 f1 c==> c~ cF cF
++ (((p1 IN s) /\ (p2 IN t)) /\ ((!x. (~ (x IN s))) \/ (!x. (~ (x IN t))))), ((!x. (~ (x IN t))) ==> F) |- F
+T c==> c/\ c/\ cIN f0 f1 cIN f2 f3 c\/ ! c~ cIN b0 f1 ! c~ cIN b0 f3 c==> c==> ! c~ cIN b0 f3 cF cF
+- (((p1 IN s) /\ (p2 IN t)) /\ ((!x. (~ (x IN s))) \/ (!x. (~ (x IN t))))) |- ((~ (p1 IN s)) ==> (p1 IN s))
+T c==> c/\ c/\ cIN f0 f1 cIN f2 f3 c\/ ! c~ cIN b0 f1 ! c~ cIN b0 f3 c==> c~ cIN f0 f1 cIN f0 f1
+- |- (((~ p) ==> p) = p)
+T c= c==> c~ f0 f0 f0
+- |- ((!p2. t) = t)
+T c= ! f0 f0
++ |- ((!s. (!t. ((!p1. (!p2. (~ ((p1 IN s) /\ (p2 IN t))))) = ((!x. (~ (x IN s))) \/ (!x. (~ (x IN t))))))) = (!s. (!t. (((s CROSS t) = EMPTY) = ((s = EMPTY) \/ (t = EMPTY))))))
+T c= ! ! c= ! ! c~ c/\ cIN b2 b0 cIN b3 b1 c\/ ! c~ cIN b2 b0 ! c~ cIN b2 b1 ! ! c= c= * * part cCROSS b0 b1 part cEMPTY c\/ c= b0 part cEMPTY c= b1 part cEMPTY
+- |- ((t ==> F) = (~ t))
+T c= c==> f0 cF c~ f0
++ (!x. (~ (x IN t))) |- ((\x. (~ (x IN t))) _36251)
+T c==> ! c~ cIN b0 f0 * / c~ cIN b0 f0 f1
++ |- (p = ((~ p) ==> F))
+T c= f0 c==> c~ f0 cF
+- |- ((?p2. t) = t)
+T c= c? / f0 f0
+- (((~ (!s. (!t. ((!p1. (!p2. (~ ((p1 IN s) /\ (p2 IN t))))) = ((!x. (~ (x IN s))) \/ (!x. (~ (x IN t)))))))) ==> F) ==> ((~ (!s. (!t. ((!p1. (!p2. (~ ((p1 IN s) /\ (p2 IN t))))) = ((!x. (~ (x IN s))) \/ (!x. (~ (x IN t)))))))) ==> F)) |- ((((~ (!s. (!t. ((!p1. (!p2. (~ ((p1 IN s) /\ (p2 IN t))))) = ((!x. (~ (x IN s))) \/ (!x. (~ (x IN t)))))))) ==> F) ==> ((~ (!s. (!t. ((!p1. (!p2. (~ ((p1 IN s) /\ (p2 IN t))))) = ((!x. (~ (x IN s))) \/ (!x. (~ (x IN t)))))))) ==> F)) /\ (((~ (!s. (!t. ((!p1. (!p2. (~ ((p1 IN s) /\ (p2 IN t))))) = ((!x. (~ (x IN s))) \/ (!x. (~ (x IN t)))))))) ==> F) ==> ((~ (!s. (!t. ((!p1. (!p2. (~ ((p1 IN s) /\ (p2 IN t))))) = ((!x. (~ (x IN s))) \/ (!x. (~ (x IN t)))))))) ==> F)))
+T c==> c==> c==> c~ ! ! c= ! ! c~ c/\ cIN b2 b0 cIN b3 b1 c\/ ! c~ cIN b2 b0 ! c~ cIN b2 b1 cF c==> c~ ! ! c= ! ! c~ c/\ cIN b2 b0 cIN b3 b1 c\/ ! c~ cIN b2 b0 ! c~ cIN b2 b1 cF c/\ c==> c==> c~ ! ! c= ! ! c~ c/\ cIN b2 b0 cIN b3 b1 c\/ ! c~ cIN b2 b0 ! c~ cIN b2 b1 cF c==> c~ ! ! c= ! ! c~ c/\ cIN b2 b0 cIN b3 b1 c\/ ! c~ cIN b2 b0 ! c~ cIN b2 b1 cF c==> c==> c~ ! ! c= ! ! c~ c/\ cIN b2 b0 cIN b3 b1 c\/ ! c~ cIN b2 b0 ! c~ cIN b2 b1 cF c==> c~ ! ! c= ! ! c~ c/\ cIN b2 b0 cIN b3 b1 c\/ ! c~ cIN b2 b0 ! c~ cIN b2 b1 cF
++ ((\p1. (?p2. ((((!p1. (~ (p1 IN s))) \/ (!p2. (~ (p2 IN t)))) /\ ((p1 IN s) /\ (p2 IN t))) \/ (((p1 IN s) /\ (p2 IN t)) /\ ((!x. (~ (x IN s))) \/ (!x. (~ (x IN t)))))))) p1) |- (((?p2. ((((!p1. (~ (p1 IN s))) \/ (!p2. (~ (p2 IN t)))) /\ ((p1 IN s) /\ (p2 IN t))) \/ (((p1 IN s) /\ (p2 IN t)) /\ ((!x. (~ (x IN s))) \/ (!x. (~ (x IN t))))))) ==> F) = F)
+T c==> * / c? / c\/ c/\ c\/ ! c~ cIN b2 f0 ! c~ cIN b2 f1 c/\ cIN b0 f0 cIN b1 f1 c/\ c/\ cIN b0 f0 cIN b1 f1 c\/ ! c~ cIN b2 f0 ! c~ cIN b2 f1 f2 c= c==> c? / c\/ c/\ c\/ ! c~ cIN b1 f0 ! c~ cIN b1 f1 c/\ cIN f2 f0 cIN b0 f1 c/\ c/\ cIN f2 f0 cIN b0 f1 c\/ ! c~ cIN b1 f0 ! c~ cIN b1 f1 cF cF
+- (~ (p2 IN t)), (((!p1. (~ (p1 IN s))) \/ (!p2. (~ (p2 IN t)))) /\ ((p1 IN s) /\ (p2 IN t))) |- ((~ (p2 IN t)) /\ (p2 IN t))
+T c==> c~ cIN f0 f1 c==> c/\ c\/ ! c~ cIN b0 f2 ! c~ cIN b0 f1 c/\ cIN f3 f2 cIN f0 f1 c/\ c~ cIN f0 f1 cIN f0 f1
+- |- (((((~ (!s. (!t. ((!p1. (!p2. (~ ((p1 IN s) /\ (p2 IN t))))) = ((!x. (~ (x IN s))) \/ (!x. (~ (x IN t)))))))) ==> F) ==> ((~ (!s. (!t. ((!p1. (!p2. (~ ((p1 IN s) /\ (p2 IN t))))) = ((!x. (~ (x IN s))) \/ (!x. (~ (x IN t)))))))) ==> F)) ==> (((~ (!s. (!t. ((!p1. (!p2. (~ ((p1 IN s) /\ (p2 IN t))))) = ((!x. (~ (x IN s))) \/ (!x. (~ (x IN t)))))))) ==> F) ==> ((~ (!s. (!t. ((!p1. (!p2. (~ ((p1 IN s) /\ (p2 IN t))))) = ((!x. (~ (x IN s))) \/ (!x. (~ (x IN t)))))))) ==> F))) = (((~ (!s. (!t. ((!p1. (!p2. (~ ((p1 IN s) /\ (p2 IN t))))) = ((!x. (~ (x IN s))) \/ (!x. (~ (x IN t)))))))) ==> F) ==> ((~ (!s. (!t. ((!p1. (!p2. (~ ((p1 IN s) /\ (p2 IN t))))) = ((!x. (~ (x IN s))) \/ (!x. (~ (x IN t)))))))) ==> F)))
+T c= c==> c==> c==> c~ ! ! c= ! ! c~ c/\ cIN b2 b0 cIN b3 b1 c\/ ! c~ cIN b2 b0 ! c~ cIN b2 b1 cF c==> c~ ! ! c= ! ! c~ c/\ cIN b2 b0 cIN b3 b1 c\/ ! c~ cIN b2 b0 ! c~ cIN b2 b1 cF c==> c==> c~ ! ! c= ! ! c~ c/\ cIN b2 b0 cIN b3 b1 c\/ ! c~ cIN b2 b0 ! c~ cIN b2 b1 cF c==> c~ ! ! c= ! ! c~ c/\ cIN b2 b0 cIN b3 b1 c\/ ! c~ cIN b2 b0 ! c~ cIN b2 b1 cF c==> c==> c~ ! ! c= ! ! c~ c/\ cIN b2 b0 cIN b3 b1 c\/ ! c~ cIN b2 b0 ! c~ cIN b2 b1 cF c==> c~ ! ! c= ! ! c~ c/\ cIN b2 b0 cIN b3 b1 c\/ ! c~ cIN b2 b0 ! c~ cIN b2 b1 cF
++ |- ((\y. (!s. (!t. (((x , y) IN (s CROSS t)) = ((x IN s) /\ (y IN t)))))) y)
+T * / ! ! c= cIN c, f0 b0 * * part cCROSS b1 b2 c/\ cIN f0 b1 cIN b0 b2 f1
+- |- ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))
+T c= c\/ f0 c\/ f1 f2 c\/ c\/ f0 f1 f2
++ (((!p1. (~ (p1 IN s))) \/ (!p2. (~ (p2 IN t)))) /\ ((p1 IN s) /\ (p2 IN t))) |- ((!p2. (~ (p2 IN t))) ==> F)
+T c==> c/\ c\/ ! c~ cIN b0 f0 ! c~ cIN b0 f1 c/\ cIN f2 f0 cIN f3 f1 c==> ! c~ cIN b0 f1 cF
+- (~ (!s. (!t. ((!p1. (!p2. (~ ((p1 IN s) /\ (p2 IN t))))) = ((!x. (~ (x IN s))) \/ (!x. (~ (x IN t)))))))) |- F
+T c==> c~ ! ! c= ! ! c~ c/\ cIN b2 b0 cIN b3 b1 c\/ ! c~ cIN b2 b0 ! c~ cIN b2 b1 cF
++ |- (((!x. (~ (x IN EMPTY))) ==> ((\x. (~ (x IN EMPTY))) x)) = ((\x. (~ (x IN EMPTY))) x))
+T c= c==> ! c~ cIN b0 part cEMPTY * / c~ cIN b0 part cEMPTY f0 * / c~ cIN b0 part cEMPTY f0
++ ((\p2. ((((!p1. (~ (p1 IN s))) \/ (!p2. (~ (p2 IN t)))) /\ ((p1 IN s) /\ (p2 IN t))) \/ (((p1 IN s) /\ (p2 IN t)) /\ ((!x. (~ (x IN s))) \/ (!x. (~ (x IN t))))))) p2) |- (((\p2. ((((!p1. (~ (p1 IN s))) \/ (!p2. (~ (p2 IN t)))) /\ ((p1 IN s) /\ (p2 IN t))) \/ (((p1 IN s) /\ (p2 IN t)) /\ ((!x. (~ (x IN s))) \/ (!x. (~ (x IN t))))))) p2) /\ F)
+T c==> * / c\/ c/\ c\/ ! c~ cIN b1 f0 ! c~ cIN b1 f1 c/\ cIN f2 f0 cIN b0 f1 c/\ c/\ cIN f2 f0 cIN b0 f1 c\/ ! c~ cIN b1 f0 ! c~ cIN b1 f1 f3 c/\ * / c\/ c/\ c\/ ! c~ cIN b1 f0 ! c~ cIN b1 f1 c/\ cIN f2 f0 cIN b0 f1 c/\ c/\ cIN f2 f0 cIN b0 f1 c\/ ! c~ cIN b1 f0 ! c~ cIN b1 f1 f3 cF
++ (((!p1. (~ (p1 IN s))) \/ (!p2. (~ (p2 IN t)))) /\ ((p1 IN s) /\ (p2 IN t))) |- (p1 IN s)
+T c==> c/\ c\/ ! c~ cIN b0 f0 ! c~ cIN b0 f1 c/\ cIN f2 f0 cIN f3 f1 cIN f2 f0
++ |- (((?x. (((!p1. (~ (p1 IN s))) \/ (!p2. (~ (p2 IN t)))) /\ ((p1 IN s) /\ (x IN t)))) \/ (?p2. (((p1 IN s) /\ (p2 IN t)) /\ ((!x. (~ (x IN s))) \/ (!x. (~ (x IN t))))))) = (?p2. ((((!p1. (~ (p1 IN s))) \/ (!p2. (~ (p2 IN t)))) /\ ((p1 IN s) /\ (p2 IN t))) \/ (((p1 IN s) /\ (p2 IN t)) /\ ((!x. (~ (x IN s))) \/ (!x. (~ (x IN t))))))))
+T c= c\/ c? / c/\ c\/ ! c~ cIN b1 f0 ! c~ cIN b1 f1 c/\ cIN f2 f0 cIN b0 f1 c? / c/\ c/\ cIN f2 f0 cIN b0 f1 c\/ ! c~ cIN b1 f0 ! c~ cIN b1 f1 c? / c\/ c/\ c\/ ! c~ cIN b1 f0 ! c~ cIN b1 f1 c/\ cIN f2 f0 cIN b0 f1 c/\ c/\ cIN f2 f0 cIN b0 f1 c\/ ! c~ cIN b1 f0 ! c~ cIN b1 f1
++ |- ((((\p2. ((((!p1. (~ (p1 IN s))) \/ (!p2. (~ (p2 IN t)))) /\ ((p1 IN s) /\ (p2 IN t))) \/ (((p1 IN s) /\ (p2 IN t)) /\ ((!x. (~ (x IN s))) \/ (!x. (~ (x IN t))))))) p2) ==> F) = T)
+T c= c==> * / c\/ c/\ c\/ ! c~ cIN b1 f0 ! c~ cIN b1 f1 c/\ cIN f2 f0 cIN b0 f1 c/\ c/\ cIN f2 f0 cIN b0 f1 c\/ ! c~ cIN b1 f0 ! c~ cIN b1 f1 f3 cF cT
++ (~ ((!p1. (!p2. (~ ((p1 IN s) /\ (p2 IN t))))) = ((!x. (~ (x IN s))) \/ (!x. (~ (x IN t)))))) |- (((?p1. (?p2. ((((!p1. (~ (p1 IN s))) \/ (!p2. (~ (p2 IN t)))) /\ ((p1 IN s) /\ (p2 IN t))) \/ (((p1 IN s) /\ (p2 IN t)) /\ ((!x. (~ (x IN s))) \/ (!x. (~ (x IN t)))))))) ==> F) = F)
+T c==> c~ c= ! ! c~ c/\ cIN b0 f0 cIN b1 f1 c\/ ! c~ cIN b0 f0 ! c~ cIN b0 f1 c= c==> c? / c? / c\/ c/\ c\/ ! c~ cIN b2 f0 ! c~ cIN b2 f1 c/\ cIN b0 f0 cIN b1 f1 c/\ c/\ cIN b0 f0 cIN b1 f1 c\/ ! c~ cIN b2 f0 ! c~ cIN b2 f1 cF cF
++ |- (((~ ((!p1. (!p2. (~ ((p1 IN s) /\ (p2 IN t))))) = ((!x. (~ (x IN s))) \/ (!x. (~ (x IN t)))))) ==> F) = ((!p1. (!p2. (~ ((p1 IN s) /\ (p2 IN t))))) = ((!x. (~ (x IN s))) \/ (!x. (~ (x IN t))))))
+T c= c==> c~ c= ! ! c~ c/\ cIN b0 f0 cIN b1 f1 c\/ ! c~ cIN b0 f0 ! c~ cIN b0 f1 cF c= ! ! c~ c/\ cIN b0 f0 cIN b1 f1 c\/ ! c~ cIN b0 f0 ! c~ cIN b0 f1
++ |- (((!p1. (!p2. (~ ((p1 IN s) /\ (p2 IN t))))) = ((!x. (~ (x IN s))) \/ (!x. (~ (x IN t))))) = T)
+T c= c= ! ! c~ c/\ cIN b0 f0 cIN b1 f1 c\/ ! c~ cIN b0 f0 ! c~ cIN b0 f1 cT
+- (((!p1. (~ (p1 IN s))) \/ (!p2. (~ (p2 IN t)))) /\ ((p1 IN s) /\ (p2 IN t))) |- ((~ (p1 IN s)) ==> (p1 IN s))
+T c==> c/\ c\/ ! c~ cIN b0 f0 ! c~ cIN b0 f1 c/\ cIN f2 f0 cIN f3 f1 c==> c~ cIN f2 f0 cIN f2 f0
+- |- ((\t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3)))) t2)
+T * / ! c= c\/ f0 c\/ b0 b1 c\/ c\/ f0 b0 b1 f1
++ (((p1 IN s) /\ (p2 IN t)) /\ ((!x. (~ (x IN s))) \/ (!x. (~ (x IN t))))) |- ((((p1 IN s) /\ (p2 IN t)) /\ ((!x. (~ (x IN s))) \/ (!x. (~ (x IN t))))) /\ F)
+T c==> c/\ c/\ cIN f0 f1 cIN f2 f3 c\/ ! c~ cIN b0 f1 ! c~ cIN b0 f3 c/\ c/\ c/\ cIN f0 f1 cIN f2 f3 c\/ ! c~ cIN b0 f1 ! c~ cIN b0 f3 cF
+- |- ((((~ (!s. (!t. ((!p1. (!p2. (~ ((p1 IN s) /\ (p2 IN t))))) = ((!x. (~ (x IN s))) \/ (!x. (~ (x IN t)))))))) ==> F) ==> ((~ (!s. (!t. ((!p1. (!p2. (~ ((p1 IN s) /\ (p2 IN t))))) = ((!x. (~ (x IN s))) \/ (!x. (~ (x IN t)))))))) ==> F)) = ((~ (!s. (!t. ((!p1. (!p2. (~ ((p1 IN s) /\ (p2 IN t))))) = ((!x. (~ (x IN s))) \/ (!x. (~ (x IN t)))))))) ==> F))
+T c= c==> c==> c~ ! ! c= ! ! c~ c/\ cIN b2 b0 cIN b3 b1 c\/ ! c~ cIN b2 b0 ! c~ cIN b2 b1 cF c==> c~ ! ! c= ! ! c~ c/\ cIN b2 b0 cIN b3 b1 c\/ ! c~ cIN b2 b0 ! c~ cIN b2 b1 cF c==> c~ ! ! c= ! ! c~ c/\ cIN b2 b0 cIN b3 b1 c\/ ! c~ cIN b2 b0 ! c~ cIN b2 b1 cF
++ |- (((~ (x IN EMPTY)) ==> ((x IN EMPTY) = F)) = ((x IN EMPTY) = F))
+T c= c==> c~ cIN f0 part cEMPTY c= cIN f0 part cEMPTY cF c= cIN f0 part cEMPTY cF
++ (((!p1. (~ (p1 IN s))) \/ (!p2. (~ (p2 IN t)))) /\ ((p1 IN s) /\ (p2 IN t))) |- ((((!p1. (~ (p1 IN s))) \/ (!p2. (~ (p2 IN t)))) /\ ((p1 IN s) /\ (p2 IN t))) /\ F)
+T c==> c/\ c\/ ! c~ cIN b0 f0 ! c~ cIN b0 f1 c/\ cIN f2 f0 cIN f3 f1 c/\ c/\ c\/ ! c~ cIN b0 f0 ! c~ cIN b0 f1 c/\ cIN f2 f0 cIN f3 f1 cF
+- |- (((!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3)))) ==> ((\t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3)))) t2)) = ((\t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3)))) t2))
+T c= c==> ! ! c= c\/ f0 c\/ b0 b1 c\/ c\/ f0 b0 b1 * / ! c= c\/ f0 c\/ b0 b1 c\/ c\/ f0 b0 b1 f1 * / ! c= c\/ f0 c\/ b0 b1 c\/ c\/ f0 b0 b1 f1
+- ((~ (!s. (!t. ((!p1. (!p2. (~ ((p1 IN s) /\ (p2 IN t))))) = ((!x. (~ (x IN s))) \/ (!x. (~ (x IN t)))))))) ==> F) |- ((((~ (!s. (!t. ((!p1. (!p2. (~ ((p1 IN s) /\ (p2 IN t))))) = ((!x. (~ (x IN s))) \/ (!x. (~ (x IN t)))))))) ==> F) ==> ((~ (!s. (!t. ((!p1. (!p2. (~ ((p1 IN s) /\ (p2 IN t))))) = ((!x. (~ (x IN s))) \/ (!x. (~ (x IN t)))))))) ==> F)) ==> ((~ (!s. (!t. ((!p1. (!p2. (~ ((p1 IN s) /\ (p2 IN t))))) = ((!x. (~ (x IN s))) \/ (!x. (~ (x IN t)))))))) ==> F))
+T c==> c==> c~ ! ! c= ! ! c~ c/\ cIN b2 b0 cIN b3 b1 c\/ ! c~ cIN b2 b0 ! c~ cIN b2 b1 cF c==> c==> c==> c~ ! ! c= ! ! c~ c/\ cIN b2 b0 cIN b3 b1 c\/ ! c~ cIN b2 b0 ! c~ cIN b2 b1 cF c==> c~ ! ! c= ! ! c~ c/\ cIN b2 b0 cIN b3 b1 c\/ ! c~ cIN b2 b0 ! c~ cIN b2 b1 cF c==> c~ ! ! c= ! ! c~ c/\ cIN b2 b0 cIN b3 b1 c\/ ! c~ cIN b2 b0 ! c~ cIN b2 b1 cF
++ |- ((\s. (!t. ((s = t) = (!x. ((x IN s) = (x IN t)))))) s)
+T * / ! c= c= b0 b1 ! c= cIN b2 b0 cIN b2 b1 f0
++ |- ((((!p1. (~ (p1 IN s))) \/ (!p2. (~ (p2 IN t)))) /\ (?x. (?x. ((x IN s) /\ (x IN t))))) = (?x. (((!p1. (~ (p1 IN s))) \/ (!p2. (~ (p2 IN t)))) /\ (?x. ((x IN s) /\ (x IN t))))))
+T c= c/\ c\/ ! c~ cIN b0 f0 ! c~ cIN b0 f1 c? / c? / c/\ cIN b0 f0 cIN b1 f1 c? / c/\ c\/ ! c~ cIN b1 f0 ! c~ cIN b1 f1 c? / c/\ cIN b0 f0 cIN b1 f1
+- |- ((!p1'. ((~ (p1 IN s)) \/ (!p2. (~ (p2 IN t))))) = ((~ (p1 IN s)) \/ (!p1. (!p2. (~ (p2 IN t))))))
+T c= ! c\/ c~ cIN f0 f1 ! c~ cIN b1 f2 c\/ c~ cIN f0 f1 ! ! c~ cIN b1 f2
+- |- ((x = x) = T)
+T c= c= f0 f0 cT
+- (~ (p1 IN s)), (((!p1. (~ (p1 IN s))) \/ (!p2. (~ (p2 IN t)))) /\ ((p1 IN s) /\ (p2 IN t))) |- ((~ (p1 IN s)) /\ (p1 IN s))
+T c==> c~ cIN f0 f1 c==> c/\ c\/ ! c~ cIN b0 f1 ! c~ cIN b0 f2 c/\ cIN f0 f1 cIN f3 f2 c/\ c~ cIN f0 f1 cIN f0 f1
++ (((!p1. (~ (p1 IN s))) \/ (!p2. (~ (p2 IN t)))) /\ ((p1 IN s) /\ (p2 IN t))) |- ((!p1. (~ (p1 IN s))) ==> F)
+T c==> c/\ c\/ ! c~ cIN b0 f0 ! c~ cIN b0 f1 c/\ cIN f2 f0 cIN f3 f1 c==> ! c~ cIN b0 f0 cF
++ (((p1 IN s) /\ (p2 IN t)) /\ ((!x. (~ (x IN s))) \/ (!x. (~ (x IN t))))) |- ((!x. (~ (x IN t))) ==> F)
+T c==> c/\ c/\ cIN f0 f1 cIN f2 f3 c\/ ! c~ cIN b0 f1 ! c~ cIN b0 f3 c==> ! c~ cIN b0 f3 cF
++ (((p1 IN s) /\ (p2 IN t)) /\ ((!x. (~ (x IN s))) \/ (!x. (~ (x IN t))))) |- (p1 IN s)
+T c==> c/\ c/\ cIN f0 f1 cIN f2 f3 c\/ ! c~ cIN b0 f1 ! c~ cIN b0 f3 cIN f0 f1
++ (!p1. (~ (p1 IN s))), (((!p1. (~ (p1 IN s))) \/ (!p2. (~ (p2 IN t)))) /\ ((p1 IN s) /\ (p2 IN t))) |- F
+T c==> ! c~ cIN b0 f0 c==> c/\ c\/ ! c~ cIN b0 f0 ! c~ cIN b0 f1 c/\ cIN f2 f0 cIN f3 f1 cF
+- (!x. (~ (x IN s))), (((p1 IN s) /\ (p2 IN t)) /\ ((!x. (~ (x IN s))) \/ (!x. (~ (x IN t))))) |- ((~ F) ==> F)
+T c==> ! c~ cIN b0 f0 c==> c/\ c/\ cIN f1 f0 cIN f2 f3 c\/ ! c~ cIN b0 f0 ! c~ cIN b0 f3 c==> c~ cF cF
++ |- (((!s. (!t. ((s = t) = (!x. ((x IN s) = (x IN t)))))) ==> ((\s. (!t. ((s = t) = (!x. ((x IN s) = (x IN t)))))) s)) = ((\s. (!t. ((s = t) = (!x. ((x IN s) = (x IN t)))))) s))
+T c= c==> ! ! c= c= b0 b1 ! c= cIN b2 b0 cIN b2 b1 * / ! c= c= b0 b1 ! c= cIN b2 b0 cIN b2 b1 f0 * / ! c= c= b0 b1 ! c= cIN b2 b0 cIN b2 b1 f0
++ |- ((\x. (!y. (!s. (!t. (((x , y) IN (s CROSS t)) = ((x IN s) /\ (y IN t))))))) x)
+T * / ! ! ! c= cIN c, b0 b1 * * part cCROSS b2 b3 c/\ cIN b0 b2 cIN b1 b3 f0
++ |- ((((?p2. (((!p1. (~ (p1 IN s))) \/ (!p2. (~ (p2 IN t)))) /\ ((p1 IN s) /\ (p2 IN t)))) \/ (?p2. (((p1 IN s) /\ (p2 IN t)) /\ ((!x. (~ (x IN s))) \/ (!x. (~ (x IN t))))))) = (?p2. ((((!p1. (~ (p1 IN s))) \/ (!p2. (~ (p2 IN t)))) /\ ((p1 IN s) /\ (p2 IN t))) \/ (((p1 IN s) /\ (p2 IN t)) /\ ((!x. (~ (x IN s))) \/ (!x. (~ (x IN t)))))))) = (((?x. (((!p1. (~ (p1 IN s))) \/ (!p2. (~ (p2 IN t)))) /\ ((p1 IN s) /\ (x IN t)))) \/ (?p2. (((p1 IN s) /\ (p2 IN t)) /\ ((!x. (~ (x IN s))) \/ (!x. (~ (x IN t))))))) = (?p2. ((((!p1. (~ (p1 IN s))) \/ (!p2. (~ (p2 IN t)))) /\ ((p1 IN s) /\ (p2 IN t))) \/ (((p1 IN s) /\ (p2 IN t)) /\ ((!x. (~ (x IN s))) \/ (!x. (~ (x IN t)))))))))
+T c= c= c\/ c? / c/\ c\/ ! c~ cIN b1 f0 ! c~ cIN b1 f1 c/\ cIN f2 f0 cIN b0 f1 c? / c/\ c/\ cIN f2 f0 cIN b0 f1 c\/ ! c~ cIN b1 f0 ! c~ cIN b1 f1 c? / c\/ c/\ c\/ ! c~ cIN b1 f0 ! c~ cIN b1 f1 c/\ cIN f2 f0 cIN b0 f1 c/\ c/\ cIN f2 f0 cIN b0 f1 c\/ ! c~ cIN b1 f0 ! c~ cIN b1 f1 c= c\/ c? / c/\ c\/ ! c~ cIN b1 f0 ! c~ cIN b1 f1 c/\ cIN f2 f0 cIN b0 f1 c? / c/\ c/\ cIN f2 f0 cIN b0 f1 c\/ ! c~ cIN b1 f0 ! c~ cIN b1 f1 c? / c\/ c/\ c\/ ! c~ cIN b1 f0 ! c~ cIN b1 f1 c/\ cIN f2 f0 cIN b0 f1 c/\ c/\ cIN f2 f0 cIN b0 f1 c\/ ! c~ cIN b1 f0 ! c~ cIN b1 f1
++ |- ((((p1 IN s) /\ (p2 IN t)) /\ ((!x. (~ (x IN s))) \/ (!x. (~ (x IN t))))) ==> F)
+T c==> c/\ c/\ cIN f0 f1 cIN f2 f3 c\/ ! c~ cIN b0 f1 ! c~ cIN b0 f3 cF
++ (~ ((!p1. (!p2. (~ ((p1 IN s) /\ (p2 IN t))))) = ((!x. (~ (x IN s))) \/ (!x. (~ (x IN t)))))) |- (?p1. (?p2. ((((!p1. (~ (p1 IN s))) \/ (!p2. (~ (p2 IN t)))) /\ ((p1 IN s) /\ (p2 IN t))) \/ (((p1 IN s) /\ (p2 IN t)) /\ ((!x. (~ (x IN s))) \/ (!x. (~ (x IN t))))))))
+T c==> c~ c= ! ! c~ c/\ cIN b0 f0 cIN b1 f1 c\/ ! c~ cIN b0 f0 ! c~ cIN b0 f1 c? / c? / c\/ c/\ c\/ ! c~ cIN b2 f0 ! c~ cIN b2 f1 c/\ cIN b0 f0 cIN b1 f1 c/\ c/\ cIN b0 f0 cIN b1 f1 c\/ ! c~ cIN b2 f0 ! c~ cIN b2 f1
+- (~ (!s. (!t. ((!p1. (!p2. (~ ((p1 IN s) /\ (p2 IN t))))) = ((!x. (~ (x IN s))) \/ (!x. (~ (x IN t)))))))) |- ((~ (!s. (!t. ((!p1. (!p2. (~ ((p1 IN s) /\ (p2 IN t))))) = ((!x. (~ (x IN s))) \/ (!x. (~ (x IN t)))))))) /\ F)
+T c==> c~ ! ! c= ! ! c~ c/\ cIN b2 b0 cIN b3 b1 c\/ ! c~ cIN b2 b0 ! c~ cIN b2 b1 c/\ c~ ! ! c= ! ! c~ c/\ cIN b2 b0 cIN b3 b1 c\/ ! c~ cIN b2 b0 ! c~ cIN b2 b1 cF
++ |- ((\x. (~ (x IN EMPTY))) x)
+T * / c~ cIN b0 part cEMPTY f0
+- |- (((t1 \/ t2) \/ t3) = (t1 \/ (t2 \/ t3)))
+T c= c\/ c\/ f0 f1 f2 c\/ f0 c\/ f1 f2
++ ((((!p1. (~ (p1 IN s))) \/ (!p2. (~ (p2 IN t)))) /\ ((p1 IN s) /\ (p2 IN t))) \/ (((p1 IN s) /\ (p2 IN t)) /\ ((!x. (~ (x IN s))) \/ (!x. (~ (x IN t)))))) |- (((((!p1. (~ (p1 IN s))) \/ (!p2. (~ (p2 IN t)))) /\ ((p1 IN s) /\ (p2 IN t))) \/ (((p1 IN s) /\ (p2 IN t)) /\ ((!x. (~ (x IN s))) \/ (!x. (~ (x IN t)))))) /\ F)
+T c==> c\/ c/\ c\/ ! c~ cIN b0 f0 ! c~ cIN b0 f1 c/\ cIN f2 f0 cIN f3 f1 c/\ c/\ cIN f2 f0 cIN f3 f1 c\/ ! c~ cIN b0 f0 ! c~ cIN b0 f1 c/\ c\/ c/\ c\/ ! c~ cIN b0 f0 ! c~ cIN b0 f1 c/\ cIN f2 f0 cIN f3 f1 c/\ c/\ cIN f2 f0 cIN f3 f1 c\/ ! c~ cIN b0 f0 ! c~ cIN b0 f1 cF
+- (!x. (~ (x IN t))), (((p1 IN s) /\ (p2 IN t)) /\ ((!x. (~ (x IN s))) \/ (!x. (~ (x IN t))))) |- ((~ F) ==> F)
+T c==> ! c~ cIN b0 f0 c==> c/\ c/\ cIN f1 f2 cIN f3 f0 c\/ ! c~ cIN b0 f2 ! c~ cIN b0 f0 c==> c~ cF cF
++ (((p1 IN s) /\ (p2 IN t)) /\ ((!x. (~ (x IN s))) \/ (!x. (~ (x IN t))))), ((!x. (~ (x IN s))) ==> F), ((!x. (~ (x IN t))) ==> F) |- F
+T c==> c/\ c/\ cIN f0 f1 cIN f2 f3 c\/ ! c~ cIN b0 f1 ! c~ cIN b0 f3 c==> c==> ! c~ cIN b0 f1 cF c==> c==> ! c~ cIN b0 f3 cF cF
++ |- (!p2. (((\p2. ((((!p1. (~ (p1 IN s))) \/ (!p2. (~ (p2 IN t)))) /\ ((p1 IN s) /\ (p2 IN t))) \/ (((p1 IN s) /\ (p2 IN t)) /\ ((!x. (~ (x IN s))) \/ (!x. (~ (x IN t))))))) p2) ==> F))
+T c==> * / c\/ c/\ c\/ ! c~ cIN b1 f0 ! c~ cIN b1 f1 c/\ cIN f2 f0 cIN b0 f1 c/\ c/\ cIN f2 f0 cIN b0 f1 c\/ ! c~ cIN b1 f0 ! c~ cIN b1 f1 f3 cF
++ (((!p1. (~ (p1 IN s))) \/ (!p2. (~ (p2 IN t)))) /\ ((p1 IN s) /\ (p2 IN t))) |- (((p1 IN s) ==> F) = F)
+T c==> c/\ c\/ ! c~ cIN b0 f0 ! c~ cIN b0 f1 c/\ cIN f2 f0 cIN f3 f1 c= c==> cIN f2 f0 cF cF
++ (!p2. (~ (p2 IN t))), (((!p1. (~ (p1 IN s))) \/ (!p2. (~ (p2 IN t)))) /\ ((p1 IN s) /\ (p2 IN t))) |- F
+T c==> ! c~ cIN b0 f0 c==> c/\ c\/ ! c~ cIN b0 f1 ! c~ cIN b0 f0 c/\ cIN f2 f1 cIN f3 f0 cF
+- ((~ (!s. (!t. ((!p1. (!p2. (~ ((p1 IN s) /\ (p2 IN t))))) = ((!x. (~ (x IN s))) \/ (!x. (~ (x IN t)))))))) ==> F), (((~ (!s. (!t. ((!p1. (!p2. (~ ((p1 IN s) /\ (p2 IN t))))) = ((!x. (~ (x IN s))) \/ (!x. (~ (x IN t)))))))) ==> F) ==> ((~ (!s. (!t. ((!p1. (!p2. (~ ((p1 IN s) /\ (p2 IN t))))) = ((!x. (~ (x IN s))) \/ (!x. (~ (x IN t)))))))) ==> F)) |- ((((~ (!s. (!t. ((!p1. (!p2. (~ ((p1 IN s) /\ (p2 IN t))))) = ((!x. (~ (x IN s))) \/ (!x. (~ (x IN t)))))))) ==> F) ==> ((~ (!s. (!t. ((!p1. (!p2. (~ ((p1 IN s) /\ (p2 IN t))))) = ((!x. (~ (x IN s))) \/ (!x. (~ (x IN t)))))))) ==> F)) /\ ((~ (!s. (!t. ((!p1. (!p2. (~ ((p1 IN s) /\ (p2 IN t))))) = ((!x. (~ (x IN s))) \/ (!x. (~ (x IN t)))))))) ==> F))
+T c==> c==> c~ ! ! c= ! ! c~ c/\ cIN b2 b0 cIN b3 b1 c\/ ! c~ cIN b2 b0 ! c~ cIN b2 b1 cF c==> c==> c==> c~ ! ! c= ! ! c~ c/\ cIN b2 b0 cIN b3 b1 c\/ ! c~ cIN b2 b0 ! c~ cIN b2 b1 cF c==> c~ ! ! c= ! ! c~ c/\ cIN b2 b0 cIN b3 b1 c\/ ! c~ cIN b2 b0 ! c~ cIN b2 b1 cF c/\ c==> c==> c~ ! ! c= ! ! c~ c/\ cIN b2 b0 cIN b3 b1 c\/ ! c~ cIN b2 b0 ! c~ cIN b2 b1 cF c==> c~ ! ! c= ! ! c~ c/\ cIN b2 b0 cIN b3 b1 c\/ ! c~ cIN b2 b0 ! c~ cIN b2 b1 cF c==> c~ ! ! c= ! ! c~ c/\ cIN b2 b0 cIN b3 b1 c\/ ! c~ cIN b2 b0 ! c~ cIN b2 b1 cF
++ |- ((?p1. (?p2. ((((!p1. (~ (p1 IN s))) \/ (!p2. (~ (p2 IN t)))) /\ ((p1 IN s) /\ (p2 IN t))) \/ (((p1 IN s) /\ (p2 IN t)) /\ ((!x. (~ (x IN s))) \/ (!x. (~ (x IN t)))))))) ==> F)
+T c==> c? / c? / c\/ c/\ c\/ ! c~ cIN b2 f0 ! c~ cIN b2 f1 c/\ cIN b0 f0 cIN b1 f1 c/\ c/\ cIN b0 f0 cIN b1 f1 c\/ ! c~ cIN b2 f0 ! c~ cIN b2 f1 cF
+- (!x. (~ (x IN t))), (~ F), (((p1 IN s) /\ (p2 IN t)) /\ ((!x. (~ (x IN s))) \/ (!x. (~ (x IN t))))) |- ((~ F) /\ F)
+T c==> ! c~ cIN b0 f0 c==> c~ cF c==> c/\ c/\ cIN f1 f2 cIN f3 f0 c\/ ! c~ cIN b0 f2 ! c~ cIN b0 f0 c/\ c~ cF cF
++ (((p1 IN s) /\ (p2 IN t)) /\ ((!x. (~ (x IN s))) \/ (!x. (~ (x IN t))))) |- (p2 IN t)
+T c==> c/\ c/\ cIN f0 f1 cIN f2 f3 c\/ ! c~ cIN b0 f1 ! c~ cIN b0 f3 cIN f2 f3
++ |- ((!p1. ((~ (p1 IN s)) \/ (!p2. (~ (p2 IN t))))) = ((!p1. (~ (p1 IN s))) \/ (!p2. (~ (p2 IN t)))))
+T c= ! c\/ c~ cIN b0 f0 ! c~ cIN b1 f1 c\/ ! c~ cIN b0 f0 ! c~ cIN b0 f1
++ |- (((!x. (!y. (!s. (!t. (((x , y) IN (s CROSS t)) = ((x IN s) /\ (y IN t))))))) ==> ((\x. (!y. (!s. (!t. (((x , y) IN (s CROSS t)) = ((x IN s) /\ (y IN t))))))) x)) = ((\x. (!y. (!s. (!t. (((x , y) IN (s CROSS t)) = ((x IN s) /\ (y IN t))))))) x))
+T c= c==> ! ! ! ! c= cIN c, b0 b1 * * part cCROSS b2 b3 c/\ cIN b0 b2 cIN b1 b3 * / ! ! ! c= cIN c, b0 b1 * * part cCROSS b2 b3 c/\ cIN b0 b2 cIN b1 b3 f0 * / ! ! ! c= cIN c, b0 b1 * * part cCROSS b2 b3 c/\ cIN b0 b2 cIN b1 b3 f0
++ |- (((!t. ((s = t) = (!x. ((x IN s) = (x IN t))))) ==> ((\t. ((s = t) = (!x. ((x IN s) = (x IN t))))) t)) = ((\t. ((s = t) = (!x. ((x IN s) = (x IN t))))) t))
+T c= c==> ! c= c= f0 b0 ! c= cIN b1 f0 cIN b1 b0 * / c= c= f0 b0 ! c= cIN b1 f0 cIN b1 b0 f1 * / c= c= f0 b0 ! c= cIN b1 f0 cIN b1 b0 f1
+- (!p2. (~ (p2 IN t))), (~ F), (((!p1. (~ (p1 IN s))) \/ (!p2. (~ (p2 IN t)))) /\ ((p1 IN s) /\ (p2 IN t))) |- ((~ F) /\ F)
+T c==> ! c~ cIN b0 f0 c==> c~ cF c==> c/\ c\/ ! c~ cIN b0 f1 ! c~ cIN b0 f0 c/\ cIN f2 f1 cIN f3 f0 c/\ c~ cF cF
+- |- (((!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))) ==> ((\t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))) t3)) = ((\t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))) t3))
+T c= c==> ! c= c\/ f0 c\/ f1 b0 c\/ c\/ f0 f1 b0 * / c= c\/ f0 c\/ f1 b0 c\/ c\/ f0 f1 b0 f2 * / c= c\/ f0 c\/ f1 b0 c\/ c\/ f0 f1 b0 f2
+- |- ((t /\ t) = t)
+T c= c/\ f0 f0 f0
+- (~ (p1 IN s)), (((p1 IN s) /\ (p2 IN t)) /\ ((!x. (~ (x IN s))) \/ (!x. (~ (x IN t))))) |- ((~ (p1 IN s)) /\ (p1 IN s))
+T c==> c~ cIN f0 f1 c==> c/\ c/\ cIN f0 f1 cIN f2 f3 c\/ ! c~ cIN b0 f1 ! c~ cIN b0 f3 c/\ c~ cIN f0 f1 cIN f0 f1
+- |- ((((~ (!s. (!t. ((!p1. (!p2. (~ ((p1 IN s) /\ (p2 IN t))))) = ((!x. (~ (x IN s))) \/ (!x. (~ (x IN t)))))))) ==> F) ==> ((~ (!s. (!t. ((!p1. (!p2. (~ ((p1 IN s) /\ (p2 IN t))))) = ((!x. (~ (x IN s))) \/ (!x. (~ (x IN t)))))))) ==> F)) ==> (((~ (!s. (!t. ((!p1. (!p2. (~ ((p1 IN s) /\ (p2 IN t))))) = ((!x. (~ (x IN s))) \/ (!x. (~ (x IN t)))))))) ==> F) ==> ((~ (!s. (!t. ((!p1. (!p2. (~ ((p1 IN s) /\ (p2 IN t))))) = ((!x. (~ (x IN s))) \/ (!x. (~ (x IN t)))))))) ==> F)))
+T c==> c==> c==> c~ ! ! c= ! ! c~ c/\ cIN b2 b0 cIN b3 b1 c\/ ! c~ cIN b2 b0 ! c~ cIN b2 b1 cF c==> c~ ! ! c= ! ! c~ c/\ cIN b2 b0 cIN b3 b1 c\/ ! c~ cIN b2 b0 ! c~ cIN b2 b1 cF c==> c==> c~ ! ! c= ! ! c~ c/\ cIN b2 b0 cIN b3 b1 c\/ ! c~ cIN b2 b0 ! c~ cIN b2 b1 cF c==> c~ ! ! c= ! ! c~ c/\ cIN b2 b0 cIN b3 b1 c\/ ! c~ cIN b2 b0 ! c~ cIN b2 b1 cF
+- (!x. (~ (x IN s))), (~ F), (((p1 IN s) /\ (p2 IN t)) /\ ((!x. (~ (x IN s))) \/ (!x. (~ (x IN t))))) |- ((~ F) /\ F)
+T c==> ! c~ cIN b0 f0 c==> c~ cF c==> c/\ c/\ cIN f1 f0 cIN f2 f3 c\/ ! c~ cIN b0 f0 ! c~ cIN b0 f3 c/\ c~ cF cF
+- (((p1 IN s) /\ (p2 IN t)) /\ ((!x. (~ (x IN s))) \/ (!x. (~ (x IN t))))) |- ((~ (p2 IN t)) ==> (p2 IN t))
+T c==> c/\ c/\ cIN f0 f1 cIN f2 f3 c\/ ! c~ cIN b0 f1 ! c~ cIN b0 f3 c==> c~ cIN f2 f3 cIN f2 f3
+- |- (((~ (!s. (!t. ((!p1. (!p2. (~ ((p1 IN s) /\ (p2 IN t))))) = ((!x. (~ (x IN s))) \/ (!x. (~ (x IN t)))))))) ==> F) ==> ((~ (!s. (!t. ((!p1. (!p2. (~ ((p1 IN s) /\ (p2 IN t))))) = ((!x. (~ (x IN s))) \/ (!x. (~ (x IN t)))))))) ==> F))
+T c==> c==> c~ ! ! c= ! ! c~ c/\ cIN b2 b0 cIN b3 b1 c\/ ! c~ cIN b2 b0 ! c~ cIN b2 b1 cF c==> c~ ! ! c= ! ! c~ c/\ cIN b2 b0 cIN b3 b1 c\/ ! c~ cIN b2 b0 ! c~ cIN b2 b1 cF
+- |- (((~ (!s. (!t. ((!p1. (!p2. (~ ((p1 IN s) /\ (p2 IN t))))) = ((!x. (~ (x IN s))) \/ (!x. (~ (x IN t)))))))) ==> F) = (!s. (!t. ((!p1. (!p2. (~ ((p1 IN s) /\ (p2 IN t))))) = ((!x. (~ (x IN s))) \/ (!x. (~ (x IN t))))))))
+T c= c==> c~ ! ! c= ! ! c~ c/\ cIN b2 b0 cIN b3 b1 c\/ ! c~ cIN b2 b0 ! c~ cIN b2 b1 cF ! ! c= ! ! c~ c/\ cIN b2 b0 cIN b3 b1 c\/ ! c~ cIN b2 b0 ! c~ cIN b2 b1
+- (!p2. (~ (p2 IN t))), (((!p1. (~ (p1 IN s))) \/ (!p2. (~ (p2 IN t)))) /\ ((p1 IN s) /\ (p2 IN t))) |- ((~ F) ==> F)
+T c==> ! c~ cIN b0 f0 c==> c/\ c\/ ! c~ cIN b0 f1 ! c~ cIN b0 f0 c/\ cIN f2 f1 cIN f3 f0 c==> c~ cF cF
+- |- ((!x. (P x)) = ((P T) /\ (P F)))
+T c= ! * f0 b0 c/\ * f0 cT * f0 cF
+- |- (((!t1. (!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))))) ==> ((\t1. (!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))))) t1)) = ((\t1. (!t2. (!t3. ((t1 \/ (t2 \/ t3)) = ((t1 \/ t2) \/ t3))))) t1))
+T c= c==> ! ! ! c= c\/ b0 c\/ b1 b2 c\/ c\/ b0 b1 b2 * / ! ! c= c\/ b0 c\/ b1 b2 c\/ c\/ b0 b1 b2 f0 * / ! ! c= c\/ b0 c\/ b1 b2 c\/ c\/ b0 b1 b2 f0
+- |- ((~ (~ t)) = t)
+T c= c~ c~ f0 f0
+- ((~ (!s. (!t. ((!p1. (!p2. (~ ((p1 IN s) /\ (p2 IN t))))) = ((!x. (~ (x IN s))) \/ (!x. (~ (x IN t)))))))) ==> F) |- (((~ (!s. (!t. ((!p1. (!p2. (~ ((p1 IN s) /\ (p2 IN t))))) = ((!x. (~ (x IN s))) \/ (!x. (~ (x IN t)))))))) ==> F) /\ ((~ (!s. (!t. ((!p1. (!p2. (~ ((p1 IN s) /\ (p2 IN t))))) = ((!x. (~ (x IN s))) \/ (!x. (~ (x IN t)))))))) ==> F))
+T c==> c==> c~ ! ! c= ! ! c~ c/\ cIN b2 b0 cIN b3 b1 c\/ ! c~ cIN b2 b0 ! c~ cIN b2 b1 cF c/\ c==> c~ ! ! c= ! ! c~ c/\ cIN b2 b0 cIN b3 b1 c\/ ! c~ cIN b2 b0 ! c~ cIN b2 b1 cF c==> c~ ! ! c= ! ! c~ c/\ cIN b2 b0 cIN b3 b1 c\/ ! c~ cIN b2 b0 ! c~ cIN b2 b1 cF
+- ((~ (!s. (!t. ((!p1. (!p2. (~ ((p1 IN s) /\ (p2 IN t))))) = ((!x. (~ (x IN s))) \/ (!x. (~ (x IN t)))))))) ==> F), (((~ (!s. (!t. ((!p1. (!p2. (~ ((p1 IN s) /\ (p2 IN t))))) = ((!x. (~ (x IN s))) \/ (!x. (~ (x IN t)))))))) ==> F) ==> ((~ (!s. (!t. ((!p1. (!p2. (~ ((p1 IN s) /\ (p2 IN t))))) = ((!x. (~ (x IN s))) \/ (!x. (~ (x IN t)))))))) ==> F)) |- (((~ (!s. (!t. ((!p1. (!p2. (~ ((p1 IN s) /\ (p2 IN t))))) = ((!x. (~ (x IN s))) \/ (!x. (~ (x IN t)))))))) ==> F) /\ ((~ (!s. (!t. ((!p1. (!p2. (~ ((p1 IN s) /\ (p2 IN t))))) = ((!x. (~ (x IN s))) \/ (!x. (~ (x IN t)))))))) ==> F))
+T c==> c==> c~ ! ! c= ! ! c~ c/\ cIN b2 b0 cIN b3 b1 c\/ ! c~ cIN b2 b0 ! c~ cIN b2 b1 cF c==> c==> c==> c~ ! ! c= ! ! c~ c/\ cIN b2 b0 cIN b3 b1 c\/ ! c~ cIN b2 b0 ! c~ cIN b2 b1 cF c==> c~ ! ! c= ! ! c~ c/\ cIN b2 b0 cIN b3 b1 c\/ ! c~ cIN b2 b0 ! c~ cIN b2 b1 cF c/\ c==> c~ ! ! c= ! ! c~ c/\ cIN b2 b0 cIN b3 b1 c\/ ! c~ cIN b2 b0 ! c~ cIN b2 b1 cF c==> c~ ! ! c= ! ! c~ c/\ cIN b2 b0 cIN b3 b1 c\/ ! c~ cIN b2 b0 ! c~ cIN b2 b1 cF
+- (?p2. ((((!p1. (~ (p1 IN s))) \/ (!p2. (~ (p2 IN t)))) /\ ((p1 IN s) /\ (p2 IN t))) \/ (((p1 IN s) /\ (p2 IN t)) /\ ((!x. (~ (x IN s))) \/ (!x. (~ (x IN t))))))) |- ((?p2. ((((!p1. (~ (p1 IN s))) \/ (!p2. (~ (p2 IN t)))) /\ ((p1 IN s) /\ (p2 IN t))) \/ (((p1 IN s) /\ (p2 IN t)) /\ ((!x. (~ (x IN s))) \/ (!x. (~ (x IN t))))))) /\ F)
+T c==> c? / c\/ c/\ c\/ ! c~ cIN b1 f0 ! c~ cIN b1 f1 c/\ cIN f2 f0 cIN b0 f1 c/\ c/\ cIN f2 f0 cIN b0 f1 c\/ ! c~ cIN b1 f0 ! c~ cIN b1 f1 c/\ c? / c\/ c/\ c\/ ! c~ cIN b1 f0 ! c~ cIN b1 f1 c/\ cIN f2 f0 cIN b0 f1 c/\ c/\ cIN f2 f0 cIN b0 f1 c\/ ! c~ cIN b1 f0 ! c~ cIN b1 f1 cF
+- (((!p1. (~ (p1 IN s))) \/ (!p2. (~ (p2 IN t)))) /\ ((p1 IN s) /\ (p2 IN t))) |- ((~ (p2 IN t)) ==> (p2 IN t))
+T c==> c/\ c\/ ! c~ cIN b0 f0 ! c~ cIN b0 f1 c/\ cIN f2 f0 cIN f3 f1 c==> c~ cIN f3 f1 cIN f3 f1
+- (~ (p2 IN t)), (((p1 IN s) /\ (p2 IN t)) /\ ((!x. (~ (x IN s))) \/ (!x. (~ (x IN t))))) |- ((~ (p2 IN t)) /\ (p2 IN t))
+T c==> c~ cIN f0 f1 c==> c/\ c/\ cIN f2 f3 cIN f0 f1 c\/ ! c~ cIN b0 f3 ! c~ cIN b0 f1 c/\ c~ cIN f0 f1 cIN f0 f1

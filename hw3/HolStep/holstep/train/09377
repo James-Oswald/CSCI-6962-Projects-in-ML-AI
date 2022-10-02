@@ -1,0 +1,124 @@
+N Aq1.filter_has_not_mem
+C |- (!r. ((~ ((has (\x. ((MEM x) h))) r)) ==> (((filter (\d. (~ ((MEM d) h)))) r) = r)))
+T c==> c~ chas / cMEM b0 f0 f1 c= cfilter / c~ cMEM b0 f0 f1 f1
+D TRUTH
+A |- T
+T cT
+D BOOL_CASES_AX
+A |- (!t. ((t = T) \/ (t = F)))
+T c\/ c= f0 cT c= f0 cF
+D DE_MORGAN_THM
+A |- (!t1. (!t2. (((~ (t1 /\ t2)) = ((~ t1) \/ (~ t2))) /\ ((~ (t1 \/ t2)) = ((~ t1) /\ (~ t2))))))
+T c/\ c= c~ c/\ f0 f1 c\/ c~ f0 c~ f1 c= c~ c\/ f0 f1 c/\ c~ f0 c~ f1
+D COND_CLAUSES
+A |- (!t1. (!t2. (((((COND T) t1) t2) = t1) /\ ((((COND F) t1) t2) = t2))))
+T c/\ c= cCOND cT f0 f1 f0 c= cCOND cF f0 f1 f1
+D list_INDUCT
+A |- (!P. (((P NIL) /\ (!a0. (!a1. ((P a1) ==> (P ((CONS a0) a1)))))) ==> (!x. (P x))))
+T c==> c/\ * f0 cNIL ! ! c==> * f0 b1 * f0 cCONS b0 b1 ! * f0 b0
+D Seq.has
+A |- (!a. (!x. (!s'. ((((has a) NIL) = F) /\ (((has a) ((CONS x) s')) = ((a x) \/ ((has a) s')))))))
+T c/\ c= chas f0 cNIL cF c= chas f0 cCONS f1 f2 c\/ * f0 f1 chas f0 f2
+D Tame_list.filter_rec
+A |- ((((filter f) NIL) = NIL) /\ (((filter f) ((CONS x) xs)) = (((COND (f x)) ((CONS x) ((filter f) xs))) ((filter f) xs))))
+T c/\ c= cfilter f0 cNIL cNIL c= cfilter f0 cCONS f1 f2 cCOND * f0 f1 cCONS f1 cfilter f0 f2 cfilter f0 f2
++ |- (((!s'. ((((has a) NIL) = F) /\ (((has a) ((CONS x) s')) = ((a x) \/ ((has a) s'))))) ==> ((\s'. ((((has a) NIL) = F) /\ (((has a) ((CONS x) s')) = ((a x) \/ ((has a) s'))))) s')) = ((\s'. ((((has a) NIL) = F) /\ (((has a) ((CONS x) s')) = ((a x) \/ ((has a) s'))))) s'))
+T c= c==> ! c/\ c= chas f0 cNIL cF c= chas f0 cCONS f1 b0 c\/ * f0 f1 chas f0 b0 * / c/\ c= chas f0 cNIL cF c= chas f0 cCONS f1 b0 c\/ * f0 f1 chas f0 b0 f2 * / c/\ c= chas f0 cNIL cF c= chas f0 cCONS f1 b0 c\/ * f0 f1 chas f0 b0 f2
++ T |- (T /\ ((((filter (\d. (~ ((MEM d) h)))) NIL) = NIL) = T))
+T c==> cT c/\ cT c= c= cfilter / c~ cMEM b0 f0 cNIL cNIL cT
++ (~ ((has (\x. ((MEM x) h))) t)), ((~ ((has (\x. ((MEM x) h))) t)) ==> (((filter (\d. (~ ((MEM d) h)))) t) = t)) |- ((~ ((has (\x. ((MEM x) h))) t)) /\ (((CONS h') ((filter (\d. (~ ((MEM d) h)))) t)) = ((CONS h') t)))
+T c==> c~ chas / cMEM b0 f0 f1 c==> c==> c~ chas / cMEM b0 f0 f1 c= cfilter / c~ cMEM b0 f0 f1 f1 c/\ c~ chas / cMEM b0 f0 f1 c= cCONS f2 cfilter / c~ cMEM b0 f0 f1 cCONS f2 f1
++ |- (T ==> ((((filter (\d. (~ ((MEM d) h)))) NIL) = NIL) = T))
+T c==> cT c= c= cfilter / c~ cMEM b0 f0 cNIL cNIL cT
++ |- ((((~ ((has (\x. ((MEM x) h))) NIL)) ==> (((filter (\d. (~ ((MEM d) h)))) NIL) = NIL)) /\ (!h. (!t. (((~ ((has (\x. ((MEM x) h))) t)) ==> (((filter (\d. (~ ((MEM d) h)))) t) = t)) ==> ((~ ((has (\x. ((MEM x) h))) ((CONS h) t))) ==> (((filter (\d. (~ ((MEM d) h)))) ((CONS h) t)) = ((CONS h) t))))))) ==> (!r. ((~ ((has (\x. ((MEM x) h))) r)) ==> (((filter (\d. (~ ((MEM d) h)))) r) = r))))
+T c==> c/\ c==> c~ chas / cMEM b0 f0 cNIL c= cfilter / c~ cMEM b0 f0 cNIL cNIL ! ! c==> c==> c~ chas / cMEM b2 f0 b1 c= cfilter / c~ cMEM b2 f0 b1 b1 c==> c~ chas / cMEM b2 f0 cCONS b0 b1 c= cfilter / c~ cMEM b2 f0 cCONS b0 b1 cCONS b0 b1 ! c==> c~ chas / cMEM b1 f0 b0 c= cfilter / c~ cMEM b1 f0 b0 b0
++ |- ((T ==> ((((filter (\d. (~ ((MEM d) h)))) NIL) = NIL) = q')) ==> (((~ ((has (\x. ((MEM x) h))) NIL)) ==> (((filter (\d. (~ ((MEM d) h)))) NIL) = NIL)) = (T ==> q')))
+T c==> c==> cT c= c= cfilter / c~ cMEM b0 f0 cNIL cNIL f1 c= c==> c~ chas / cMEM b0 f0 cNIL c= cfilter / c~ cMEM b0 f0 cNIL cNIL c==> cT f1
++ |- ((((~ ((has (\x. ((MEM x) h))) ((CONS h') t))) = ((~ ((MEM h') h)) /\ (~ ((has (\x. ((MEM x) h))) t)))) ==> ((((~ ((MEM h') h)) /\ (~ ((has (\x. ((MEM x) h))) t))) ==> ((((filter (\d. (~ ((MEM d) h)))) ((CONS h') t)) = ((CONS h') t)) = q')) ==> (((~ ((has (\x. ((MEM x) h))) ((CONS h') t))) ==> (((filter (\d. (~ ((MEM d) h)))) ((CONS h') t)) = ((CONS h') t))) = (((~ ((MEM h') h)) /\ (~ ((has (\x. ((MEM x) h))) t))) ==> q')))) = ((((~ ((MEM h') h)) /\ (~ ((has (\x. ((MEM x) h))) t))) ==> ((((filter (\d. (~ ((MEM d) h)))) ((CONS h') t)) = ((CONS h') t)) = q')) ==> (((~ ((has (\x. ((MEM x) h))) ((CONS h') t))) ==> (((filter (\d. (~ ((MEM d) h)))) ((CONS h') t)) = ((CONS h') t))) = (((~ ((MEM h') h)) /\ (~ ((has (\x. ((MEM x) h))) t))) ==> q'))))
+T c= c==> c= c~ chas / cMEM b0 f0 cCONS f1 f2 c/\ c~ cMEM f1 f0 c~ chas / cMEM b0 f0 f2 c==> c==> c/\ c~ cMEM f1 f0 c~ chas / cMEM b0 f0 f2 c= c= cfilter / c~ cMEM b0 f0 cCONS f1 f2 cCONS f1 f2 f3 c= c==> c~ chas / cMEM b0 f0 cCONS f1 f2 c= cfilter / c~ cMEM b0 f0 cCONS f1 f2 cCONS f1 f2 c==> c/\ c~ cMEM f1 f0 c~ chas / cMEM b0 f0 f2 f3 c==> c==> c/\ c~ cMEM f1 f0 c~ chas / cMEM b0 f0 f2 c= c= cfilter / c~ cMEM b0 f0 cCONS f1 f2 cCONS f1 f2 f3 c= c==> c~ chas / cMEM b0 f0 cCONS f1 f2 c= cfilter / c~ cMEM b0 f0 cCONS f1 f2 cCONS f1 f2 c==> c/\ c~ cMEM f1 f0 c~ chas / cMEM b0 f0 f2 f3
+- |- ((((~ ((MEM h') h)) /\ (~ ((has (\x. ((MEM x) h))) t))) ==> (((CONS h') ((filter (\d. (~ ((MEM d) h)))) t)) = ((CONS h') t))) = (((~ ((MEM h') h)) /\ (~ ((has (\x. ((MEM x) h))) t))) ==> (((CONS h') ((filter (\d. (~ ((MEM d) h)))) t)) = ((CONS h') t))))
+T c= c==> c/\ c~ cMEM f0 f1 c~ chas / cMEM b0 f1 f2 c= cCONS f0 cfilter / c~ cMEM b0 f1 f2 cCONS f0 f2 c==> c/\ c~ cMEM f0 f1 c~ chas / cMEM b0 f1 f2 c= cCONS f0 cfilter / c~ cMEM b0 f1 f2 cCONS f0 f2
++ |- (((!a. (!x. (!s'. ((((has a) NIL) = F) /\ (((has a) ((CONS x) s')) = ((a x) \/ ((has a) s'))))))) ==> ((\a. (!x. (!s'. ((((has a) NIL) = F) /\ (((has a) ((CONS x) s')) = ((a x) \/ ((has a) s'))))))) a)) = ((\a. (!x. (!s'. ((((has a) NIL) = F) /\ (((has a) ((CONS x) s')) = ((a x) \/ ((has a) s'))))))) a))
+T c= c==> ! ! ! c/\ c= chas b0 cNIL cF c= chas b0 cCONS b1 b2 c\/ * b0 b1 chas b0 b2 * / ! ! c/\ c= chas b0 cNIL cF c= chas b0 cCONS b1 b2 c\/ * b0 b1 chas b0 b2 f0 * / ! ! c/\ c= chas b0 cNIL cF c= chas b0 cCONS b1 b2 c\/ * b0 b1 chas b0 b2 f0
++ |- ((\t'. (!e'. ((((\d. (~ ((MEM d) h))) h') = g') ==> ((g' ==> (((CONS h') ((filter (\d. (~ ((MEM d) h)))) t)) = t')) ==> (((~ g') ==> (((filter (\d. (~ ((MEM d) h)))) t) = e')) ==> ((((COND ((\d. (~ ((MEM d) h))) h')) ((CONS h') ((filter (\d. (~ ((MEM d) h)))) t))) ((filter (\d. (~ ((MEM d) h)))) t)) = (((COND g') t') e'))))))) t')
+T * / ! c==> c= * / c~ cMEM b2 f0 f1 f2 c==> c==> f2 c= cCONS f1 cfilter / c~ cMEM b2 f0 f3 b0 c==> c==> c~ f2 c= cfilter / c~ cMEM b2 f0 f3 b1 c= cCOND * / c~ cMEM b2 f0 f1 cCONS f1 cfilter / c~ cMEM b2 f0 f3 cfilter / c~ cMEM b2 f0 f3 cCOND f2 b0 b1 f4
++ |- (((~ ((has (\x. ((MEM x) h))) ((CONS h') t))) ==> (((filter (\d. (~ ((MEM d) h)))) ((CONS h') t)) = ((CONS h') t))) = (((~ ((MEM h') h)) /\ (~ ((has (\x. ((MEM x) h))) t))) ==> (((CONS h') ((filter (\d. (~ ((MEM d) h)))) t)) = ((CONS h') t))))
+T c= c==> c~ chas / cMEM b0 f0 cCONS f1 f2 c= cfilter / c~ cMEM b0 f0 cCONS f1 f2 cCONS f1 f2 c==> c/\ c~ cMEM f1 f0 c~ chas / cMEM b0 f0 f2 c= cCONS f1 cfilter / c~ cMEM b0 f0 f2 cCONS f1 f2
++ |- ((((~ ((MEM h') h)) /\ (~ ((has (\x. ((MEM x) h))) t))) ==> ((((filter (\d. (~ ((MEM d) h)))) ((CONS h') t)) = ((CONS h') t)) = q')) ==> (((~ ((has (\x. ((MEM x) h))) ((CONS h') t))) ==> (((filter (\d. (~ ((MEM d) h)))) ((CONS h') t)) = ((CONS h') t))) = (((~ ((MEM h') h)) /\ (~ ((has (\x. ((MEM x) h))) t))) ==> q')))
+T c==> c==> c/\ c~ cMEM f0 f1 c~ chas / cMEM b0 f1 f2 c= c= cfilter / c~ cMEM b0 f1 cCONS f0 f2 cCONS f0 f2 f3 c= c==> c~ chas / cMEM b0 f1 cCONS f0 f2 c= cfilter / c~ cMEM b0 f1 cCONS f0 f2 cCONS f0 f2 c==> c/\ c~ cMEM f0 f1 c~ chas / cMEM b0 f1 f2 f3
++ ((~ ((MEM h') h)) /\ (~ ((has (\x. ((MEM x) h))) t))), ((~ ((has (\x. ((MEM x) h))) t)) ==> (((filter (\d. (~ ((MEM d) h)))) t) = t)) |- (((~ ((MEM h') h)) /\ (~ ((has (\x. ((MEM x) h))) t))) /\ (((CONS h') ((filter (\d. (~ ((MEM d) h)))) t)) = ((CONS h') t)))
+T c==> c/\ c~ cMEM f0 f1 c~ chas / cMEM b0 f1 f2 c==> c==> c~ chas / cMEM b0 f1 f2 c= cfilter / c~ cMEM b0 f1 f2 f2 c/\ c/\ c~ cMEM f0 f1 c~ chas / cMEM b0 f1 f2 c= cCONS f0 cfilter / c~ cMEM b0 f1 f2 cCONS f0 f2
+- |- ((t ==> t) = T)
+T c= c==> f0 f0 cT
+- |- ((t \/ t) = t)
+T c= c\/ f0 f0 f0
++ |- ((((~ ((MEM h') h)) /\ (~ ((has (\x. ((MEM x) h))) t))) ==> (((CONS h') ((filter (\d. (~ ((MEM d) h)))) t)) = ((CONS h') t))) = ((~ ((has (\x. ((MEM x) h))) ((CONS h') t))) ==> (((filter (\d. (~ ((MEM d) h)))) ((CONS h') t)) = ((CONS h') t))))
+T c= c==> c/\ c~ cMEM f0 f1 c~ chas / cMEM b0 f1 f2 c= cCONS f0 cfilter / c~ cMEM b0 f1 f2 cCONS f0 f2 c==> c~ chas / cMEM b0 f1 cCONS f0 f2 c= cfilter / c~ cMEM b0 f1 cCONS f0 f2 cCONS f0 f2
++ |- (T ==> (((CONS h') ((filter (\d. (~ ((MEM d) h)))) t)) = ((CONS h') ((filter (\d. (~ ((MEM d) h)))) t))))
+T c==> cT c= cCONS f0 cfilter / c~ cMEM b0 f1 f2 cCONS f0 cfilter / c~ cMEM b0 f1 f2
+- |- (((!p'. (!q'. ((((~ ((MEM h') h)) /\ (~ ((has (\x. ((MEM x) h))) t))) = p') ==> ((p' ==> ((((CONS h') ((filter (\d. (~ ((MEM d) h)))) t)) = ((CONS h') t)) = q')) ==> ((((~ ((MEM h') h)) /\ (~ ((has (\x. ((MEM x) h))) t))) ==> (((CONS h') ((filter (\d. (~ ((MEM d) h)))) t)) = ((CONS h') t))) = (p' ==> q')))))) ==> ((\p'. (!q'. ((((~ ((MEM h') h)) /\ (~ ((has (\x. ((MEM x) h))) t))) = p') ==> ((p' ==> ((((CONS h') ((filter (\d. (~ ((MEM d) h)))) t)) = ((CONS h') t)) = q')) ==> ((((~ ((MEM h') h)) /\ (~ ((has (\x. ((MEM x) h))) t))) ==> (((CONS h') ((filter (\d. (~ ((MEM d) h)))) t)) = ((CONS h') t))) = (p' ==> q')))))) p')) = ((\p'. (!q'. ((((~ ((MEM h') h)) /\ (~ ((has (\x. ((MEM x) h))) t))) = p') ==> ((p' ==> ((((CONS h') ((filter (\d. (~ ((MEM d) h)))) t)) = ((CONS h') t)) = q')) ==> ((((~ ((MEM h') h)) /\ (~ ((has (\x. ((MEM x) h))) t))) ==> (((CONS h') ((filter (\d. (~ ((MEM d) h)))) t)) = ((CONS h') t))) = (p' ==> q')))))) p'))
+T c= c==> ! ! c==> c= c/\ c~ cMEM f0 f1 c~ chas / cMEM b2 f1 f2 b0 c==> c==> b0 c= c= cCONS f0 cfilter / c~ cMEM b2 f1 f2 cCONS f0 f2 b1 c= c==> c/\ c~ cMEM f0 f1 c~ chas / cMEM b2 f1 f2 c= cCONS f0 cfilter / c~ cMEM b2 f1 f2 cCONS f0 f2 c==> b0 b1 * / ! c==> c= c/\ c~ cMEM f0 f1 c~ chas / cMEM b2 f1 f2 b0 c==> c==> b0 c= c= cCONS f0 cfilter / c~ cMEM b2 f1 f2 cCONS f0 f2 b1 c= c==> c/\ c~ cMEM f0 f1 c~ chas / cMEM b2 f1 f2 c= cCONS f0 cfilter / c~ cMEM b2 f1 f2 cCONS f0 f2 c==> b0 b1 f3 * / ! c==> c= c/\ c~ cMEM f0 f1 c~ chas / cMEM b2 f1 f2 b0 c==> c==> b0 c= c= cCONS f0 cfilter / c~ cMEM b2 f1 f2 cCONS f0 f2 b1 c= c==> c/\ c~ cMEM f0 f1 c~ chas / cMEM b2 f1 f2 c= cCONS f0 cfilter / c~ cMEM b2 f1 f2 cCONS f0 f2 c==> b0 b1 f3
+- |- (((x = x) ==> p) = p)
+T c= c==> c= f0 f0 f1 f1
++ |- ((\a. (!x. (!s'. ((((has a) NIL) = F) /\ (((has a) ((CONS x) s')) = ((a x) \/ ((has a) s'))))))) a)
+T * / ! ! c/\ c= chas b0 cNIL cF c= chas b0 cCONS b1 b2 c\/ * b0 b1 chas b0 b2 f0
+- |- (((!q'. ((((~ ((MEM h') h)) /\ (~ ((has (\x. ((MEM x) h))) t))) = p') ==> ((p' ==> ((((CONS h') ((filter (\d. (~ ((MEM d) h)))) t)) = ((CONS h') t)) = q')) ==> ((((~ ((MEM h') h)) /\ (~ ((has (\x. ((MEM x) h))) t))) ==> (((CONS h') ((filter (\d. (~ ((MEM d) h)))) t)) = ((CONS h') t))) = (p' ==> q'))))) ==> ((\q'. ((((~ ((MEM h') h)) /\ (~ ((has (\x. ((MEM x) h))) t))) = p') ==> ((p' ==> ((((CONS h') ((filter (\d. (~ ((MEM d) h)))) t)) = ((CONS h') t)) = q')) ==> ((((~ ((MEM h') h)) /\ (~ ((has (\x. ((MEM x) h))) t))) ==> (((CONS h') ((filter (\d. (~ ((MEM d) h)))) t)) = ((CONS h') t))) = (p' ==> q'))))) q')) = ((\q'. ((((~ ((MEM h') h)) /\ (~ ((has (\x. ((MEM x) h))) t))) = p') ==> ((p' ==> ((((CONS h') ((filter (\d. (~ ((MEM d) h)))) t)) = ((CONS h') t)) = q')) ==> ((((~ ((MEM h') h)) /\ (~ ((has (\x. ((MEM x) h))) t))) ==> (((CONS h') ((filter (\d. (~ ((MEM d) h)))) t)) = ((CONS h') t))) = (p' ==> q'))))) q'))
+T c= c==> ! c==> c= c/\ c~ cMEM f0 f1 c~ chas / cMEM b1 f1 f2 f3 c==> c==> f3 c= c= cCONS f0 cfilter / c~ cMEM b1 f1 f2 cCONS f0 f2 b0 c= c==> c/\ c~ cMEM f0 f1 c~ chas / cMEM b1 f1 f2 c= cCONS f0 cfilter / c~ cMEM b1 f1 f2 cCONS f0 f2 c==> f3 b0 * / c==> c= c/\ c~ cMEM f0 f1 c~ chas / cMEM b1 f1 f2 f3 c==> c==> f3 c= c= cCONS f0 cfilter / c~ cMEM b1 f1 f2 cCONS f0 f2 b0 c= c==> c/\ c~ cMEM f0 f1 c~ chas / cMEM b1 f1 f2 c= cCONS f0 cfilter / c~ cMEM b1 f1 f2 cCONS f0 f2 c==> f3 b0 f4 * / c==> c= c/\ c~ cMEM f0 f1 c~ chas / cMEM b1 f1 f2 f3 c==> c==> f3 c= c= cCONS f0 cfilter / c~ cMEM b1 f1 f2 cCONS f0 f2 b0 c= c==> c/\ c~ cMEM f0 f1 c~ chas / cMEM b1 f1 f2 c= cCONS f0 cfilter / c~ cMEM b1 f1 f2 cCONS f0 f2 c==> f3 b0 f4
++ |- (((!t'. (!e'. ((((\d. (~ ((MEM d) h))) h') = g') ==> ((g' ==> (((CONS h') ((filter (\d. (~ ((MEM d) h)))) t)) = t')) ==> (((~ g') ==> (((filter (\d. (~ ((MEM d) h)))) t) = e')) ==> ((((COND ((\d. (~ ((MEM d) h))) h')) ((CONS h') ((filter (\d. (~ ((MEM d) h)))) t))) ((filter (\d. (~ ((MEM d) h)))) t)) = (((COND g') t') e'))))))) ==> ((\t'. (!e'. ((((\d. (~ ((MEM d) h))) h') = g') ==> ((g' ==> (((CONS h') ((filter (\d. (~ ((MEM d) h)))) t)) = t')) ==> (((~ g') ==> (((filter (\d. (~ ((MEM d) h)))) t) = e')) ==> ((((COND ((\d. (~ ((MEM d) h))) h')) ((CONS h') ((filter (\d. (~ ((MEM d) h)))) t))) ((filter (\d. (~ ((MEM d) h)))) t)) = (((COND g') t') e'))))))) t')) = ((\t'. (!e'. ((((\d. (~ ((MEM d) h))) h') = g') ==> ((g' ==> (((CONS h') ((filter (\d. (~ ((MEM d) h)))) t)) = t')) ==> (((~ g') ==> (((filter (\d. (~ ((MEM d) h)))) t) = e')) ==> ((((COND ((\d. (~ ((MEM d) h))) h')) ((CONS h') ((filter (\d. (~ ((MEM d) h)))) t))) ((filter (\d. (~ ((MEM d) h)))) t)) = (((COND g') t') e'))))))) t'))
+T c= c==> ! ! c==> c= * / c~ cMEM b2 f0 f1 f2 c==> c==> f2 c= cCONS f1 cfilter / c~ cMEM b2 f0 f3 b0 c==> c==> c~ f2 c= cfilter / c~ cMEM b2 f0 f3 b1 c= cCOND * / c~ cMEM b2 f0 f1 cCONS f1 cfilter / c~ cMEM b2 f0 f3 cfilter / c~ cMEM b2 f0 f3 cCOND f2 b0 b1 * / ! c==> c= * / c~ cMEM b2 f0 f1 f2 c==> c==> f2 c= cCONS f1 cfilter / c~ cMEM b2 f0 f3 b0 c==> c==> c~ f2 c= cfilter / c~ cMEM b2 f0 f3 b1 c= cCOND * / c~ cMEM b2 f0 f1 cCONS f1 cfilter / c~ cMEM b2 f0 f3 cfilter / c~ cMEM b2 f0 f3 cCOND f2 b0 b1 f4 * / ! c==> c= * / c~ cMEM b2 f0 f1 f2 c==> c==> f2 c= cCONS f1 cfilter / c~ cMEM b2 f0 f3 b0 c==> c==> c~ f2 c= cfilter / c~ cMEM b2 f0 f3 b1 c= cCOND * / c~ cMEM b2 f0 f1 cCONS f1 cfilter / c~ cMEM b2 f0 f3 cfilter / c~ cMEM b2 f0 f3 cCOND f2 b0 b1 f4
++ ((~ ((has (\x. ((MEM x) h))) t)) ==> (((filter (\d. (~ ((MEM d) h)))) t) = t)) |- (((~ ((MEM h') h)) /\ (~ ((has (\x. ((MEM x) h))) t))) ==> (((CONS h') ((filter (\d. (~ ((MEM d) h)))) t)) = ((CONS h') t)))
+T c==> c==> c~ chas / cMEM b0 f0 f1 c= cfilter / c~ cMEM b0 f0 f1 f1 c==> c/\ c~ cMEM f2 f0 c~ chas / cMEM b0 f0 f1 c= cCONS f2 cfilter / c~ cMEM b0 f0 f1 cCONS f2 f1
++ |- (((!t2. (((~ (t1 /\ t2)) = ((~ t1) \/ (~ t2))) /\ ((~ (t1 \/ t2)) = ((~ t1) /\ (~ t2))))) ==> ((\t2. (((~ (t1 /\ t2)) = ((~ t1) \/ (~ t2))) /\ ((~ (t1 \/ t2)) = ((~ t1) /\ (~ t2))))) t2)) = ((\t2. (((~ (t1 /\ t2)) = ((~ t1) \/ (~ t2))) /\ ((~ (t1 \/ t2)) = ((~ t1) /\ (~ t2))))) t2))
+T c= c==> ! c/\ c= c~ c/\ f0 b0 c\/ c~ f0 c~ b0 c= c~ c\/ f0 b0 c/\ c~ f0 c~ b0 * / c/\ c= c~ c/\ f0 b0 c\/ c~ f0 c~ b0 c= c~ c\/ f0 b0 c/\ c~ f0 c~ b0 f1 * / c/\ c= c~ c/\ f0 b0 c\/ c~ f0 c~ b0 c= c~ c\/ f0 b0 c/\ c~ f0 c~ b0 f1
+- ((~ ((MEM h') h)) /\ (~ ((has (\x. ((MEM x) h))) t))) |- (((~ ((has (\x. ((MEM x) h))) t)) ==> (((has (\x. ((MEM x) h))) t) = F)) = (((has (\x. ((MEM x) h))) t) = F))
+T c==> c/\ c~ cMEM f0 f1 c~ chas / cMEM b0 f1 f2 c= c==> c~ chas / cMEM b0 f1 f2 c= chas / cMEM b0 f1 f2 cF c= chas / cMEM b0 f1 f2 cF
++ (~ T) |- ((~ T) /\ (((filter (\d. (~ ((MEM d) h)))) t) = ((filter (\d. (~ ((MEM d) h)))) t)))
+T c==> c~ cT c/\ c~ cT c= cfilter / c~ cMEM b0 f0 f1 cfilter / c~ cMEM b0 f0 f1
++ ((~ ((MEM h') h)) /\ (~ ((has (\x. ((MEM x) h))) t))) |- ((((COND ((\d. (~ ((MEM d) h))) h')) ((CONS h') ((filter (\d. (~ ((MEM d) h)))) t))) ((filter (\d. (~ ((MEM d) h)))) t)) = (((COND T) ((CONS h') ((filter (\d. (~ ((MEM d) h)))) t))) ((filter (\d. (~ ((MEM d) h)))) t)))
+T c==> c/\ c~ cMEM f0 f1 c~ chas / cMEM b0 f1 f2 c= cCOND * / c~ cMEM b0 f1 f0 cCONS f0 cfilter / c~ cMEM b0 f1 f2 cfilter / c~ cMEM b0 f1 f2 cCOND cT cCONS f0 cfilter / c~ cMEM b0 f1 f2 cfilter / c~ cMEM b0 f1 f2
++ |- (((~ ((has (\x. ((MEM x) h))) NIL)) ==> (((filter (\d. (~ ((MEM d) h)))) NIL) = NIL)) = (T ==> T))
+T c= c==> c~ chas / cMEM b0 f0 cNIL c= cfilter / c~ cMEM b0 f0 cNIL cNIL c==> cT cT
++ |- ((T ==> t) = t)
+T c= c==> cT f0 f0
+- T |- (T = T)
+T c==> cT c= cT cT
++ |- (((((~ ((has (\x. ((MEM x) h))) NIL)) ==> (((filter (\d. (~ ((MEM d) h)))) NIL) = NIL)) /\ (!h. (!t. (((~ ((has (\x. ((MEM x) h))) t)) ==> (((filter (\d. (~ ((MEM d) h)))) t) = t)) ==> ((~ ((has (\x. ((MEM x) h))) ((CONS h) t))) ==> (((filter (\d. (~ ((MEM d) h)))) ((CONS h) t)) = ((CONS h) t))))))) ==> (!r. ((~ ((has (\x. ((MEM x) h))) r)) ==> (((filter (\d. (~ ((MEM d) h)))) r) = r)))) = (!r. ((~ ((has (\x. ((MEM x) h))) r)) ==> (((filter (\d. (~ ((MEM d) h)))) r) = r))))
+T c= c==> c/\ c==> c~ chas / cMEM b0 f0 cNIL c= cfilter / c~ cMEM b0 f0 cNIL cNIL ! ! c==> c==> c~ chas / cMEM b2 f0 b1 c= cfilter / c~ cMEM b2 f0 b1 b1 c==> c~ chas / cMEM b2 f0 cCONS b0 b1 c= cfilter / c~ cMEM b2 f0 cCONS b0 b1 cCONS b0 b1 ! c==> c~ chas / cMEM b1 f0 b0 c= cfilter / c~ cMEM b1 f0 b0 b0 ! c==> c~ chas / cMEM b1 f0 b0 c= cfilter / c~ cMEM b1 f0 b0 b0
++ (~ ((has (\x. ((MEM x) h))) t)), ((~ ((has (\x. ((MEM x) h))) t)) ==> (((filter (\d. (~ ((MEM d) h)))) t) = t)) |- (((CONS h') ((filter (\d. (~ ((MEM d) h)))) t)) = ((CONS h') t))
+T c==> c~ chas / cMEM b0 f0 f1 c==> c==> c~ chas / cMEM b0 f0 f1 c= cfilter / c~ cMEM b0 f0 f1 f1 c= cCONS f2 cfilter / c~ cMEM b0 f0 f1 cCONS f2 f1
++ |- ((~ ((has (\x. ((MEM x) h))) NIL)) ==> (((filter (\d. (~ ((MEM d) h)))) NIL) = NIL))
+T c==> c~ chas / cMEM b0 f0 cNIL c= cfilter / c~ cMEM b0 f0 cNIL cNIL
+- ((~ ((has (\x. ((MEM x) h))) t)) ==> (((filter (\d. (~ ((MEM d) h)))) t) = t)) |- (((~ ((has (\x. ((MEM x) h))) t)) ==> (((filter (\d. (~ ((MEM d) h)))) t) = t)) = T)
+T c==> c==> c~ chas / cMEM b0 f0 f1 c= cfilter / c~ cMEM b0 f0 f1 f1 c= c==> c~ chas / cMEM b0 f0 f1 c= cfilter / c~ cMEM b0 f0 f1 f1 cT
+- ((~ ((MEM h') h)) /\ (~ ((has (\x. ((MEM x) h))) t))) |- (((has (\x. ((MEM x) h))) t) = F)
+T c==> c/\ c~ cMEM f0 f1 c~ chas / cMEM b0 f1 f2 c= chas / cMEM b0 f1 f2 cF
+- |- ((~ (t1 /\ t2)) = ((~ t1) \/ (~ t2)))
+T c= c~ c/\ f0 f1 c\/ c~ f0 c~ f1
+- |- ((\p'. (!q'. ((((~ ((MEM h') h)) /\ (~ ((has (\x. ((MEM x) h))) t))) = p') ==> ((p' ==> ((((CONS h') ((filter (\d. (~ ((MEM d) h)))) t)) = ((CONS h') t)) = q')) ==> ((((~ ((MEM h') h)) /\ (~ ((has (\x. ((MEM x) h))) t))) ==> (((CONS h') ((filter (\d. (~ ((MEM d) h)))) t)) = ((CONS h') t))) = (p' ==> q')))))) p')
+T * / ! c==> c= c/\ c~ cMEM f0 f1 c~ chas / cMEM b2 f1 f2 b0 c==> c==> b0 c= c= cCONS f0 cfilter / c~ cMEM b2 f1 f2 cCONS f0 f2 b1 c= c==> c/\ c~ cMEM f0 f1 c~ chas / cMEM b2 f1 f2 c= cCONS f0 cfilter / c~ cMEM b2 f1 f2 cCONS f0 f2 c==> b0 b1 f3
+- |- (((~ ((MEM h') h)) /\ (~ ((has (\x. ((MEM x) h))) t))) ==> ((((CONS h') ((filter (\d. (~ ((MEM d) h)))) t)) = ((CONS h') t)) = (((CONS h') ((filter (\d. (~ ((MEM d) h)))) t)) = ((CONS h') t))))
+T c==> c/\ c~ cMEM f0 f1 c~ chas / cMEM b0 f1 f2 c= c= cCONS f0 cfilter / c~ cMEM b0 f1 f2 cCONS f0 f2 c= cCONS f0 cfilter / c~ cMEM b0 f1 f2 cCONS f0 f2
+- |- ((t /\ t) = t)
+T c= c/\ f0 f0 f0
+- |- (((((~ ((MEM h') h)) /\ (~ ((has (\x. ((MEM x) h))) t))) ==> ((((CONS h') ((filter (\d. (~ ((MEM d) h)))) t)) = ((CONS h') t)) = (((CONS h') ((filter (\d. (~ ((MEM d) h)))) t)) = ((CONS h') t)))) ==> ((((~ ((MEM h') h)) /\ (~ ((has (\x. ((MEM x) h))) t))) ==> (((CONS h') ((filter (\d. (~ ((MEM d) h)))) t)) = ((CONS h') t))) = (((~ ((MEM h') h)) /\ (~ ((has (\x. ((MEM x) h))) t))) ==> (((CONS h') ((filter (\d. (~ ((MEM d) h)))) t)) = ((CONS h') t))))) = ((((~ ((MEM h') h)) /\ (~ ((has (\x. ((MEM x) h))) t))) ==> (((CONS h') ((filter (\d. (~ ((MEM d) h)))) t)) = ((CONS h') t))) = (((~ ((MEM h') h)) /\ (~ ((has (\x. ((MEM x) h))) t))) ==> (((CONS h') ((filter (\d. (~ ((MEM d) h)))) t)) = ((CONS h') t)))))
+T c= c==> c==> c/\ c~ cMEM f0 f1 c~ chas / cMEM b0 f1 f2 c= c= cCONS f0 cfilter / c~ cMEM b0 f1 f2 cCONS f0 f2 c= cCONS f0 cfilter / c~ cMEM b0 f1 f2 cCONS f0 f2 c= c==> c/\ c~ cMEM f0 f1 c~ chas / cMEM b0 f1 f2 c= cCONS f0 cfilter / c~ cMEM b0 f1 f2 cCONS f0 f2 c==> c/\ c~ cMEM f0 f1 c~ chas / cMEM b0 f1 f2 c= cCONS f0 cfilter / c~ cMEM b0 f1 f2 cCONS f0 f2 c= c==> c/\ c~ cMEM f0 f1 c~ chas / cMEM b0 f1 f2 c= cCONS f0 cfilter / c~ cMEM b0 f1 f2 cCONS f0 f2 c==> c/\ c~ cMEM f0 f1 c~ chas / cMEM b0 f1 f2 c= cCONS f0 cfilter / c~ cMEM b0 f1 f2 cCONS f0 f2
+- |- ((((~ ((MEM h') h)) /\ (~ ((has (\x. ((MEM x) h))) t))) = p') ==> ((p' ==> ((((CONS h') ((filter (\d. (~ ((MEM d) h)))) t)) = ((CONS h') t)) = q')) ==> ((((~ ((MEM h') h)) /\ (~ ((has (\x. ((MEM x) h))) t))) ==> (((CONS h') ((filter (\d. (~ ((MEM d) h)))) t)) = ((CONS h') t))) = (p' ==> q'))))
+T c==> c= c/\ c~ cMEM f0 f1 c~ chas / cMEM b0 f1 f2 f3 c==> c==> f3 c= c= cCONS f0 cfilter / c~ cMEM b0 f1 f2 cCONS f0 f2 f4 c= c==> c/\ c~ cMEM f0 f1 c~ chas / cMEM b0 f1 f2 c= cCONS f0 cfilter / c~ cMEM b0 f1 f2 cCONS f0 f2 c==> f3 f4
+- (((filter (\d. (~ ((MEM d) h)))) t) = t) |- (T = (((CONS h') ((filter (\d. (~ ((MEM d) h)))) t)) = ((CONS h') t)))
+T c==> c= cfilter / c~ cMEM b0 f0 f1 f1 c= cT c= cCONS f2 cfilter / c~ cMEM b0 f0 f1 cCONS f2 f1
+- |- ((((~ ((MEM h') h)) /\ (~ ((has (\x. ((MEM x) h))) t))) ==> ((((CONS h') ((filter (\d. (~ ((MEM d) h)))) t)) = ((CONS h') t)) = q')) ==> ((((~ ((MEM h') h)) /\ (~ ((has (\x. ((MEM x) h))) t))) ==> (((CONS h') ((filter (\d. (~ ((MEM d) h)))) t)) = ((CONS h') t))) = (((~ ((MEM h') h)) /\ (~ ((has (\x. ((MEM x) h))) t))) ==> q')))
+T c==> c==> c/\ c~ cMEM f0 f1 c~ chas / cMEM b0 f1 f2 c= c= cCONS f0 cfilter / c~ cMEM b0 f1 f2 cCONS f0 f2 f3 c= c==> c/\ c~ cMEM f0 f1 c~ chas / cMEM b0 f1 f2 c= cCONS f0 cfilter / c~ cMEM b0 f1 f2 cCONS f0 f2 c==> c/\ c~ cMEM f0 f1 c~ chas / cMEM b0 f1 f2 f3
+- |- ((\q'. ((((~ ((MEM h') h)) /\ (~ ((has (\x. ((MEM x) h))) t))) = p') ==> ((p' ==> ((((CONS h') ((filter (\d. (~ ((MEM d) h)))) t)) = ((CONS h') t)) = q')) ==> ((((~ ((MEM h') h)) /\ (~ ((has (\x. ((MEM x) h))) t))) ==> (((CONS h') ((filter (\d. (~ ((MEM d) h)))) t)) = ((CONS h') t))) = (p' ==> q'))))) q')
+T * / c==> c= c/\ c~ cMEM f0 f1 c~ chas / cMEM b1 f1 f2 f3 c==> c==> f3 c= c= cCONS f0 cfilter / c~ cMEM b1 f1 f2 cCONS f0 f2 b0 c= c==> c/\ c~ cMEM f0 f1 c~ chas / cMEM b1 f1 f2 c= cCONS f0 cfilter / c~ cMEM b1 f1 f2 cCONS f0 f2 c==> f3 b0 f4
+- (~ T) |- (T = F)
+T c==> c~ cT c= cT cF
+- T |- ((T = T) = T)
+T c==> cT c= c= cT cT cT
+- |- (((\d. (f d)) y) = (f y))
+T c= * / * f0 b0 f1 * f0 f1
+- ((~ ((MEM h') h)) /\ (~ ((has (\x. ((MEM x) h))) t))) |- (((~ ((MEM h') h)) /\ (~ ((has (\x. ((MEM x) h))) t))) /\ ((((CONS h') ((filter (\d. (~ ((MEM d) h)))) t)) = ((CONS h') t)) = (((CONS h') ((filter (\d. (~ ((MEM d) h)))) t)) = ((CONS h') t))))
+T c==> c/\ c~ cMEM f0 f1 c~ chas / cMEM b0 f1 f2 c/\ c/\ c~ cMEM f0 f1 c~ chas / cMEM b0 f1 f2 c= c= cCONS f0 cfilter / c~ cMEM b0 f1 f2 cCONS f0 f2 c= cCONS f0 cfilter / c~ cMEM b0 f1 f2 cCONS f0 f2
+- |- (((((~ ((MEM h') h)) /\ (~ ((has (\x. ((MEM x) h))) t))) = ((~ ((MEM h') h)) /\ (~ ((has (\x. ((MEM x) h))) t)))) ==> ((((~ ((MEM h') h)) /\ (~ ((has (\x. ((MEM x) h))) t))) ==> ((((CONS h') ((filter (\d. (~ ((MEM d) h)))) t)) = ((CONS h') t)) = q')) ==> ((((~ ((MEM h') h)) /\ (~ ((has (\x. ((MEM x) h))) t))) ==> (((CONS h') ((filter (\d. (~ ((MEM d) h)))) t)) = ((CONS h') t))) = (((~ ((MEM h') h)) /\ (~ ((has (\x. ((MEM x) h))) t))) ==> q')))) = ((((~ ((MEM h') h)) /\ (~ ((has (\x. ((MEM x) h))) t))) ==> ((((CONS h') ((filter (\d. (~ ((MEM d) h)))) t)) = ((CONS h') t)) = q')) ==> ((((~ ((MEM h') h)) /\ (~ ((has (\x. ((MEM x) h))) t))) ==> (((CONS h') ((filter (\d. (~ ((MEM d) h)))) t)) = ((CONS h') t))) = (((~ ((MEM h') h)) /\ (~ ((has (\x. ((MEM x) h))) t))) ==> q'))))
+T c= c==> c= c/\ c~ cMEM f0 f1 c~ chas / cMEM b0 f1 f2 c/\ c~ cMEM f0 f1 c~ chas / cMEM b0 f1 f2 c==> c==> c/\ c~ cMEM f0 f1 c~ chas / cMEM b0 f1 f2 c= c= cCONS f0 cfilter / c~ cMEM b0 f1 f2 cCONS f0 f2 f3 c= c==> c/\ c~ cMEM f0 f1 c~ chas / cMEM b0 f1 f2 c= cCONS f0 cfilter / c~ cMEM b0 f1 f2 cCONS f0 f2 c==> c/\ c~ cMEM f0 f1 c~ chas / cMEM b0 f1 f2 f3 c==> c==> c/\ c~ cMEM f0 f1 c~ chas / cMEM b0 f1 f2 c= c= cCONS f0 cfilter / c~ cMEM b0 f1 f2 cCONS f0 f2 f3 c= c==> c/\ c~ cMEM f0 f1 c~ chas / cMEM b0 f1 f2 c= cCONS f0 cfilter / c~ cMEM b0 f1 f2 cCONS f0 f2 c==> c/\ c~ cMEM f0 f1 c~ chas / cMEM b0 f1 f2 f3
+- (~ ((MEM h') h)) |- (((MEM h') h) = F)
+T c==> c~ cMEM f0 f1 c= cMEM f0 f1 cF

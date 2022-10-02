@@ -1,0 +1,196 @@
+N NADD_LE_TOTAL
+C |- (!x. (!y. (((nadd_le x) y) \/ ((nadd_le y) x))))
+T c\/ cnadd_le f0 f1 cnadd_le f1 f0
+D TRUTH
+A |- T
+T cT
+D DE_MORGAN_THM
+A |- (!t1. (!t2. (((~ (t1 /\ t2)) = ((~ t1) \/ (~ t2))) /\ ((~ (t1 \/ t2)) = ((~ t1) /\ (~ t2))))))
+T c/\ c= c~ c/\ f0 f1 c\/ c~ f0 c~ f1 c= c~ c\/ f0 f1 c/\ c~ f0 c~ f1
+D NOT_CLAUSES
+A |- ((!t. ((~ (~ t)) = t)) /\ (((~ T) = F) /\ ((~ F) = T)))
+T c/\ ! c= c~ c~ b0 b0 c/\ c= c~ cT cF c= c~ cF cT
+D ADD_AC
+A |- (((m + n) = (n + m)) /\ ((((m + n) + p) = (m + (n + p))) /\ ((m + (n + p)) = (n + (m + p)))))
+T c/\ c= c+ f0 f1 c+ f1 f0 c/\ c= c+ c+ f0 f1 f2 c+ f0 c+ f1 f2 c= c+ f0 c+ f1 f2 c+ f1 c+ f0 f2
+D MULT_SYM
+A |- (!m. (!n. ((m * n) = (n * m))))
+T c= c* f0 f1 c* f1 f0
+D LEFT_ADD_DISTRIB
+A |- (!m. (!n. (!p. ((m * (n + p)) = ((m * n) + (m * p))))))
+T c= c* f0 c+ f1 f2 c+ c* f0 f1 c* f0 f2
+D RIGHT_ADD_DISTRIB
+A |- (!m. (!n. (!p. (((m + n) * p) = ((m * p) + (n * p))))))
+T c= c* c+ f0 f1 f2 c+ c* f0 f2 c* f1 f2
+D NOT_LE
+A |- (!m. (!n. ((~ (m <= n)) = (n < m))))
+T c= c~ c<= f0 f1 c< f1 f0
+D NOT_LT
+A |- (!m. (!n. ((~ (m < n)) = (n <= m))))
+T c= c~ c< f0 f1 c<= f1 f0
+D LE_ADD2
+A |- (!m. (!n. (!p. (!q. (((m <= p) /\ (n <= q)) ==> ((m + n) <= (p + q)))))))
+T c==> c/\ c<= f0 f1 c<= f2 f3 c<= c+ f0 f2 c+ f1 f3
+D LT_ADD2
+A |- (!m. (!n. (!p. (!q. (((m < p) /\ (n < q)) ==> ((m + n) < (p + q)))))))
+T c==> c/\ c< f0 f1 c< f2 f3 c< c+ f0 f2 c+ f1 f3
+D LE_MULT_LCANCEL
+A |- (!m. (!n. (!p. (((m * n) <= (m * p)) = ((m = (NUMERAL _0)) \/ (n <= p))))))
+T c= c<= c* f0 f1 c* f0 f2 c\/ c= f0 cNUMERAL c_0 c<= f1 f2
+D DIST_LE_CASES
+A |- (!m. (!n. (!p. (((dist (m , n)) <= p) = ((m <= (n + p)) /\ (n <= (m + p)))))))
+T c= c<= cdist c, f0 f1 f2 c/\ c<= f0 c+ f1 f2 c<= f1 c+ f0 f2
+D NADD_CAUCHY
+A |- (!x. (?B. (!m. (!n. ((dist ((m * ((dest_nadd x) n)) , (n * ((dest_nadd x) m)))) <= (B * (m + n)))))))
+T c? / ! ! c<= cdist c, c* b1 cdest_nadd f0 b2 c* b2 cdest_nadd f0 b1 c* b0 c+ b1 b2
+D NADD_LE_TOTAL_LEMMA
+A |- (!x. (!y. ((~ ((nadd_le x) y)) ==> (!B. (?n. ((~ (n = (NUMERAL _0))) /\ ((((dest_nadd y) n) + B) < ((dest_nadd x) n))))))))
+T c==> c~ cnadd_le f0 f1 ! c? / c/\ c~ c= b1 cNUMERAL c_0 c< c+ cdest_nadd f1 b1 b0 cdest_nadd f0 b1
++ |- (((!B. (?n. ((~ (n = (NUMERAL _0))) /\ ((((dest_nadd y) n) + B) < ((dest_nadd x) n))))) /\ (!B. (?n. ((~ (n = (NUMERAL _0))) /\ ((((dest_nadd x) n) + B) < ((dest_nadd y) n)))))) = (!B. ((?n. ((~ (n = (NUMERAL _0))) /\ ((((dest_nadd y) n) + B) < ((dest_nadd x) n)))) /\ (?n. ((~ (n = (NUMERAL _0))) /\ ((((dest_nadd x) n) + B) < ((dest_nadd y) n)))))))
+T c= c/\ ! c? / c/\ c~ c= b1 cNUMERAL c_0 c< c+ cdest_nadd f0 b1 b0 cdest_nadd f1 b1 ! c? / c/\ c~ c= b1 cNUMERAL c_0 c< c+ cdest_nadd f1 b1 b0 cdest_nadd f0 b1 ! c/\ c? / c/\ c~ c= b1 cNUMERAL c_0 c< c+ cdest_nadd f0 b1 b0 cdest_nadd f1 b1 c? / c/\ c~ c= b1 cNUMERAL c_0 c< c+ cdest_nadd f1 b1 b0 cdest_nadd f0 b1
++ |- ((\p. (((dist (m , n)) <= p) = ((m <= (n + p)) /\ (n <= (m + p))))) p)
+T * / c= c<= cdist c, f0 f1 b0 c/\ c<= f0 c+ f1 b0 c<= f1 c+ f0 b0 f2
+- (!m. (!n. ((dist ((m * ((dest_nadd y) n)) , (n * ((dest_nadd y) m)))) <= (B2 * (m + n))))) |- (((m * ((dest_nadd y) n)) <= ((n * ((dest_nadd y) m)) + (B2 * (m + n)))) = T)
+T c==> ! ! c<= cdist c, c* b0 cdest_nadd f0 b1 c* b1 cdest_nadd f0 b0 c* f1 c+ b0 b1 c= c<= c* f2 cdest_nadd f0 f3 c+ c* f3 cdest_nadd f0 f2 c* f1 c+ f2 f3 cT
+- (!m. (!n. ((dist ((m * ((dest_nadd y) n)) , (n * ((dest_nadd y) m)))) <= (B2 * (m + n))))) |- (((n * ((dest_nadd y) m)) <= ((m * ((dest_nadd y) n)) + (B2 * (m + n)))) = T)
+T c==> ! ! c<= cdist c, c* b0 cdest_nadd f0 b1 c* b1 cdest_nadd f0 b0 c* f1 c+ b0 b1 c= c<= c* f2 cdest_nadd f0 f3 c+ c* f3 cdest_nadd f0 f2 c* f1 c+ f3 f2 cT
+- (!m. (!n. (!p. (!q. (((m <= p) /\ (n <= q)) ==> ((m + n) <= (p + q))))))), ((m <= p) /\ (n <= q)) |- ((m + n) <= (p + q))
+T c==> ! ! ! ! c==> c/\ c<= b0 b2 c<= b1 b3 c<= c+ b0 b1 c+ b2 b3 c==> c/\ c<= f0 f1 c<= f2 f3 c<= c+ f0 f2 c+ f1 f3
++ (!B. ((?n. ((~ (n = (NUMERAL _0))) /\ ((((dest_nadd y) n) + B) < ((dest_nadd x) n)))) /\ (?n. ((~ (n = (NUMERAL _0))) /\ ((((dest_nadd x) n) + B) < ((dest_nadd y) n)))))) |- ((((?n. ((~ (n = (NUMERAL _0))) /\ ((((dest_nadd y) n) + (B1 + B2)) < ((dest_nadd x) n)))) /\ (?n. ((~ (n = (NUMERAL _0))) /\ ((((dest_nadd x) n) + (B1 + B2)) < ((dest_nadd y) n))))) ==> F) = F)
+T c==> ! c/\ c? / c/\ c~ c= b1 cNUMERAL c_0 c< c+ cdest_nadd f0 b1 b0 cdest_nadd f1 b1 c? / c/\ c~ c= b1 cNUMERAL c_0 c< c+ cdest_nadd f1 b1 b0 cdest_nadd f0 b1 c= c==> c/\ c? / c/\ c~ c= b0 cNUMERAL c_0 c< c+ cdest_nadd f0 b0 c+ f2 f3 cdest_nadd f1 b0 c? / c/\ c~ c= b0 cNUMERAL c_0 c< c+ cdest_nadd f1 b0 c+ f2 f3 cdest_nadd f0 b0 cF cF
++ ((~ ((nadd_le x) y)) /\ (~ ((nadd_le y) x))) |- ((((!B. (?n. ((~ (n = (NUMERAL _0))) /\ ((((dest_nadd y) n) + B) < ((dest_nadd x) n))))) /\ (!B. (?n. ((~ (n = (NUMERAL _0))) /\ ((((dest_nadd x) n) + B) < ((dest_nadd y) n)))))) ==> F) = F)
+T c==> c/\ c~ cnadd_le f0 f1 c~ cnadd_le f1 f0 c= c==> c/\ ! c? / c/\ c~ c= b1 cNUMERAL c_0 c< c+ cdest_nadd f1 b1 b0 cdest_nadd f0 b1 ! c? / c/\ c~ c= b1 cNUMERAL c_0 c< c+ cdest_nadd f0 b1 b0 cdest_nadd f1 b1 cF cF
++ |- ((((m * ((dest_nadd x) n)) <= ((n * ((dest_nadd x) m)) + ((m + n) * B1))) /\ ((n * ((dest_nadd y) m)) <= ((m * ((dest_nadd y) n)) + ((m + n) * B2)))) = (((m * ((dest_nadd x) n)) <= ((n * ((dest_nadd x) m)) + ((m * B1) + (n * B1)))) /\ ((n * ((dest_nadd y) m)) <= ((m * ((dest_nadd y) n)) + ((m * B2) + (n * B2))))))
+T c= c/\ c<= c* f0 cdest_nadd f1 f2 c+ c* f2 cdest_nadd f1 f0 c* c+ f0 f2 f3 c<= c* f2 cdest_nadd f4 f0 c+ c* f0 cdest_nadd f4 f2 c* c+ f0 f2 f5 c/\ c<= c* f0 cdest_nadd f1 f2 c+ c* f2 cdest_nadd f1 f0 c+ c* f0 f3 c* f2 f3 c<= c* f2 cdest_nadd f4 f0 c+ c* f0 cdest_nadd f4 f2 c+ c* f0 f5 c* f2 f5
++ (!m. (!n. ((dist ((m * ((dest_nadd x) n)) , (n * ((dest_nadd x) m)))) <= (B1 * (m + n))))) |- (((n * ((dest_nadd y) m)) <= ((m * ((dest_nadd y) n)) + ((m + n) * B2))) = (((m * ((dest_nadd x) n)) <= ((n * ((dest_nadd x) m)) + ((m + n) * B1))) /\ ((n * ((dest_nadd y) m)) <= ((m * ((dest_nadd y) n)) + ((m + n) * B2)))))
+T c==> ! ! c<= cdist c, c* b0 cdest_nadd f0 b1 c* b1 cdest_nadd f0 b0 c* f1 c+ b0 b1 c= c<= c* f2 cdest_nadd f3 f4 c+ c* f4 cdest_nadd f3 f2 c* c+ f4 f2 f5 c/\ c<= c* f4 cdest_nadd f0 f2 c+ c* f2 cdest_nadd f0 f4 c* c+ f4 f2 f1 c<= c* f2 cdest_nadd f3 f4 c+ c* f4 cdest_nadd f3 f2 c* c+ f4 f2 f5
++ |- ((\P. (!Q. (((?x. (P x)) /\ Q) = (?x. ((P x) /\ Q))))) P)
+T * / ! c= c/\ c? / * b0 b2 b1 c? / c/\ * b0 b2 b1 f0
++ (!m. (!n. ((dist ((m * ((dest_nadd y) n)) , (n * ((dest_nadd y) m)))) <= (B2 * (m + n))))) |- (((!n. (((m * ((dest_nadd y) n)) <= ((n * ((dest_nadd y) m)) + (B2 * (m + n)))) /\ ((n * ((dest_nadd y) m)) <= ((m * ((dest_nadd y) n)) + (B2 * (m + n)))))) ==> ((\n. (((m * ((dest_nadd y) n)) <= ((n * ((dest_nadd y) m)) + (B2 * (m + n)))) /\ ((n * ((dest_nadd y) m)) <= ((m * ((dest_nadd y) n)) + (B2 * (m + n)))))) n)) = ((\n. (((m * ((dest_nadd y) n)) <= ((n * ((dest_nadd y) m)) + (B2 * (m + n)))) /\ ((n * ((dest_nadd y) m)) <= ((m * ((dest_nadd y) n)) + (B2 * (m + n)))))) n))
+T c==> ! ! c<= cdist c, c* b0 cdest_nadd f0 b1 c* b1 cdest_nadd f0 b0 c* f1 c+ b0 b1 c= c==> ! c/\ c<= c* f2 cdest_nadd f0 b0 c+ c* b0 cdest_nadd f0 f2 c* f1 c+ f2 b0 c<= c* b0 cdest_nadd f0 f2 c+ c* f2 cdest_nadd f0 b0 c* f1 c+ f2 b0 * / c/\ c<= c* f2 cdest_nadd f0 b0 c+ c* b0 cdest_nadd f0 f2 c* f1 c+ f2 b0 c<= c* b0 cdest_nadd f0 f2 c+ c* f2 cdest_nadd f0 b0 c* f1 c+ f2 b0 f3 * / c/\ c<= c* f2 cdest_nadd f0 b0 c+ c* b0 cdest_nadd f0 f2 c* f1 c+ f2 b0 c<= c* b0 cdest_nadd f0 f2 c+ c* f2 cdest_nadd f0 b0 c* f1 c+ f2 b0 f3
++ ((\n'. (((~ (n' = (NUMERAL _0))) /\ ((((dest_nadd y) n') + (B1 + B2)) < ((dest_nadd x) n'))) /\ ((~ (m = (NUMERAL _0))) /\ ((((dest_nadd x) m) + (B1 + B2)) < ((dest_nadd y) m))))) n) |- (((((~ (n = (NUMERAL _0))) /\ ((((dest_nadd y) n) + (B1 + B2)) < ((dest_nadd x) n))) /\ ((~ (m = (NUMERAL _0))) /\ ((((dest_nadd x) m) + (B1 + B2)) < ((dest_nadd y) m)))) ==> F) = F)
+T c==> * / c/\ c/\ c~ c= b0 cNUMERAL c_0 c< c+ cdest_nadd f0 b0 c+ f1 f2 cdest_nadd f3 b0 c/\ c~ c= f4 cNUMERAL c_0 c< c+ cdest_nadd f3 f4 c+ f1 f2 cdest_nadd f0 f4 f5 c= c==> c/\ c/\ c~ c= f5 cNUMERAL c_0 c< c+ cdest_nadd f0 f5 c+ f1 f2 cdest_nadd f3 f5 c/\ c~ c= f4 cNUMERAL c_0 c< c+ cdest_nadd f3 f4 c+ f1 f2 cdest_nadd f0 f4 cF cF
++ (!m. (!n. ((dist ((m * ((dest_nadd x) n)) , (n * ((dest_nadd x) m)))) <= (B1 * (m + n))))) |- ((m * ((dest_nadd x) n)) <= ((n * ((dest_nadd x) m)) + ((m + n) * B1)))
+T c==> ! ! c<= cdist c, c* b0 cdest_nadd f0 b1 c* b1 cdest_nadd f0 b0 c* f1 c+ b0 b1 c<= c* f2 cdest_nadd f0 f3 c+ c* f3 cdest_nadd f0 f2 c* c+ f2 f3 f1
+- a, (((~ a) /\ b) /\ ((~ c) /\ d)) |- (a /\ F)
+T c==> f0 c==> c/\ c/\ c~ f0 f1 c/\ c~ f2 f3 c/\ f0 cF
++ |- ((~ ((~ ((nadd_le x) y)) /\ (~ ((nadd_le y) x)))) = (~ (~ (((nadd_le x) y) \/ ((nadd_le y) x)))))
+T c= c~ c/\ c~ cnadd_le f0 f1 c~ cnadd_le f1 f0 c~ c~ c\/ cnadd_le f0 f1 cnadd_le f1 f0
+- (!m. (!n. (!p. (!q. (((m <= p) /\ (n <= q)) ==> ((m + n) <= (p + q))))))) |- ((!n. (!p. (!q. (((m <= p) /\ (n <= q)) ==> ((m + n) <= (p + q)))))) = T)
+T c==> ! ! ! ! c==> c/\ c<= b0 b2 c<= b1 b3 c<= c+ b0 b1 c+ b2 b3 c= ! ! ! c==> c/\ c<= f0 b1 c<= b0 b2 c<= c+ f0 b0 c+ b1 b2 cT
+- c, (((~ a) /\ b) /\ ((~ c) /\ d)) |- (c /\ F)
+T c==> f0 c==> c/\ c/\ c~ f1 f2 c/\ c~ f0 f3 c/\ f0 cF
+- (!m. (!n. (!p. (!q. (((m <= p) /\ (n <= q)) ==> ((m + n) <= (p + q))))))) |- ((((m <= p) /\ (n <= q)) ==> ((m + n) <= (p + q))) = T)
+T c==> ! ! ! ! c==> c/\ c<= b0 b2 c<= b1 b3 c<= c+ b0 b1 c+ b2 b3 c= c==> c/\ c<= f0 f1 c<= f2 f3 c<= c+ f0 f2 c+ f1 f3 cT
++ |- (((!m. (!n. ((~ (m < n)) = (n <= m)))) ==> ((\m. (!n. ((~ (m < n)) = (n <= m)))) m)) = ((\m. (!n. ((~ (m < n)) = (n <= m)))) m))
+T c= c==> ! ! c= c~ c< b0 b1 c<= b1 b0 * / ! c= c~ c< b0 b1 c<= b1 b0 f0 * / ! c= c~ c< b0 b1 c<= b1 b0 f0
++ (!m. (!n. ((dist ((m * ((dest_nadd y) n)) , (n * ((dest_nadd y) m)))) <= (B2 * (m + n))))) |- ((\n. (((m * ((dest_nadd y) n)) <= ((n * ((dest_nadd y) m)) + (B2 * (m + n)))) /\ ((n * ((dest_nadd y) m)) <= ((m * ((dest_nadd y) n)) + (B2 * (m + n)))))) n)
+T c==> ! ! c<= cdist c, c* b0 cdest_nadd f0 b1 c* b1 cdest_nadd f0 b0 c* f1 c+ b0 b1 * / c/\ c<= c* f2 cdest_nadd f0 b0 c+ c* b0 cdest_nadd f0 f2 c* f1 c+ f2 b0 c<= c* b0 cdest_nadd f0 f2 c+ c* f2 cdest_nadd f0 b0 c* f1 c+ f2 b0 f3
++ (((m * p) + (n * p)) = ((m + n) * p)) |- (((m + n) * p) = ((m * p) + (n * p)))
+T c==> c= c+ c* f0 f1 c* f2 f1 c* c+ f0 f2 f1 c= c* c+ f0 f2 f1 c+ c* f0 f1 c* f2 f1
++ (((~ a) /\ b) /\ ((~ c) /\ d)) |- d
+T c==> c/\ c/\ c~ f0 f1 c/\ c~ f2 f3 f3
++ (!m. (!n. ((dist ((m * ((dest_nadd x) n)) , (n * ((dest_nadd x) m)))) <= (B1 * (m + n))))) |- (((\B. (!m. (!n. ((dist ((m * ((dest_nadd y) n)) , (n * ((dest_nadd y) m)))) <= (B * (m + n)))))) B2) ==> (~ (~ (((nadd_le x) y) \/ ((nadd_le y) x)))))
+T c==> ! ! c<= cdist c, c* b0 cdest_nadd f0 b1 c* b1 cdest_nadd f0 b0 c* f1 c+ b0 b1 c==> * / ! ! c<= cdist c, c* b1 cdest_nadd f2 b2 c* b2 cdest_nadd f2 b1 c* b0 c+ b1 b2 f3 c~ c~ c\/ cnadd_le f0 f2 cnadd_le f2 f0
++ (!m. (!n. ((dist ((m * ((dest_nadd x) n)) , (n * ((dest_nadd x) m)))) <= (B1 * (m + n))))), (!m. (!n. ((dist ((m * ((dest_nadd y) n)) , (n * ((dest_nadd y) m)))) <= (B2 * (m + n))))) |- (~ (((m * (((dest_nadd y) n) + (B1 + B2))) < (m * ((dest_nadd x) n))) /\ ((n * (((dest_nadd x) m) + (B1 + B2))) < (n * ((dest_nadd y) m)))))
+T c==> ! ! c<= cdist c, c* b0 cdest_nadd f0 b1 c* b1 cdest_nadd f0 b0 c* f1 c+ b0 b1 c==> ! ! c<= cdist c, c* b0 cdest_nadd f2 b1 c* b1 cdest_nadd f2 b0 c* f3 c+ b0 b1 c~ c/\ c< c* f4 c+ cdest_nadd f2 f5 c+ f1 f3 c* f4 cdest_nadd f0 f5 c< c* f5 c+ cdest_nadd f0 f4 c+ f1 f3 c* f5 cdest_nadd f2 f4
+- (!m. (!n. (!p. (!q. (((m <= p) /\ (n <= q)) ==> ((m + n) <= (p + q))))))) |- (((!q. (((m <= p) /\ (n <= q)) ==> ((m + n) <= (p + q)))) ==> ((\q. (((m <= p) /\ (n <= q)) ==> ((m + n) <= (p + q)))) q)) = ((\q. (((m <= p) /\ (n <= q)) ==> ((m + n) <= (p + q)))) q))
+T c==> ! ! ! ! c==> c/\ c<= b0 b2 c<= b1 b3 c<= c+ b0 b1 c+ b2 b3 c= c==> ! c==> c/\ c<= f0 f1 c<= f2 b0 c<= c+ f0 f2 c+ f1 b0 * / c==> c/\ c<= f0 f1 c<= f2 b0 c<= c+ f0 f2 c+ f1 b0 f3 * / c==> c/\ c<= f0 f1 c<= f2 b0 c<= c+ f0 f2 c+ f1 b0 f3
++ (((~ (n = (NUMERAL _0))) /\ ((((dest_nadd y) n) + (B1 + B2)) < ((dest_nadd x) n))) /\ ((~ (m = (NUMERAL _0))) /\ ((((dest_nadd x) m) + (B1 + B2)) < ((dest_nadd y) m)))) |- ((~ ((m = (NUMERAL _0)) \/ (~ ((((dest_nadd y) n) + (B1 + B2)) < ((dest_nadd x) n))))) /\ (~ ((n = (NUMERAL _0)) \/ (~ ((((dest_nadd x) m) + (B1 + B2)) < ((dest_nadd y) m))))))
+T c==> c/\ c/\ c~ c= f0 cNUMERAL c_0 c< c+ cdest_nadd f1 f0 c+ f2 f3 cdest_nadd f4 f0 c/\ c~ c= f5 cNUMERAL c_0 c< c+ cdest_nadd f4 f5 c+ f2 f3 cdest_nadd f1 f5 c/\ c~ c\/ c= f5 cNUMERAL c_0 c~ c< c+ cdest_nadd f1 f0 c+ f2 f3 cdest_nadd f4 f0 c~ c\/ c= f0 cNUMERAL c_0 c~ c< c+ cdest_nadd f4 f5 c+ f2 f3 cdest_nadd f1 f5
++ |- (((!n. (!p. ((m * (n + p)) = ((m * n) + (m * p))))) ==> ((\n. (!p. ((m * (n + p)) = ((m * n) + (m * p))))) n)) = ((\n. (!p. ((m * (n + p)) = ((m * n) + (m * p))))) n))
+T c= c==> ! ! c= c* f0 c+ b0 b1 c+ c* f0 b0 c* f0 b1 * / ! c= c* f0 c+ b0 b1 c+ c* f0 b0 c* f0 b1 f1 * / ! c= c* f0 c+ b0 b1 c+ c* f0 b0 c* f0 b1 f1
++ |- ((\m. (!n. (!p. (!q. (((m <= p) /\ (n <= q)) ==> ((m + n) <= (p + q))))))) m)
+T * / ! ! ! c==> c/\ c<= b0 b2 c<= b1 b3 c<= c+ b0 b1 c+ b2 b3 f0
++ (((m * (((dest_nadd y) n) + (B1 + B2))) < (m * ((dest_nadd x) n))) /\ ((n * (((dest_nadd x) m) + (B1 + B2))) < (n * ((dest_nadd y) m)))) |- (((((m * (((dest_nadd y) n) + (B1 + B2))) + (n * (((dest_nadd x) m) + (B1 + B2)))) < ((m * ((dest_nadd x) n)) + (n * ((dest_nadd y) m)))) ==> F) = F)
+T c==> c/\ c< c* f0 c+ cdest_nadd f1 f2 c+ f3 f4 c* f0 cdest_nadd f5 f2 c< c* f2 c+ cdest_nadd f5 f0 c+ f3 f4 c* f2 cdest_nadd f1 f0 c= c==> c< c+ c* f0 c+ cdest_nadd f1 f2 c+ f3 f4 c* f2 c+ cdest_nadd f5 f0 c+ f3 f4 c+ c* f0 cdest_nadd f5 f2 c* f2 cdest_nadd f1 f0 cF cF
++ (((~ a) /\ b) /\ ((~ c) /\ d)) |- ((~ (a \/ (~ d))) = ((~ (c \/ (~ b))) /\ (~ (a \/ (~ d)))))
+T c==> c/\ c/\ c~ f0 f1 c/\ c~ f2 f3 c= c~ c\/ f0 c~ f3 c/\ c~ c\/ f2 c~ f1 c~ c\/ f0 c~ f3
++ (!m. (!n. ((dist ((m * ((dest_nadd x) n)) , (n * ((dest_nadd x) m)))) <= (B1 * (m + n))))), (!m. (!n. ((dist ((m * ((dest_nadd y) n)) , (n * ((dest_nadd y) m)))) <= (B2 * (m + n))))), (((~ (n = (NUMERAL _0))) /\ ((((dest_nadd y) n) + (B1 + B2)) < ((dest_nadd x) n))) /\ ((~ (m = (NUMERAL _0))) /\ ((((dest_nadd x) m) + (B1 + B2)) < ((dest_nadd y) m)))) |- ((((~ (n = (NUMERAL _0))) /\ ((((dest_nadd y) n) + (B1 + B2)) < ((dest_nadd x) n))) /\ ((~ (m = (NUMERAL _0))) /\ ((((dest_nadd x) m) + (B1 + B2)) < ((dest_nadd y) m)))) /\ F)
+T c==> ! ! c<= cdist c, c* b0 cdest_nadd f0 b1 c* b1 cdest_nadd f0 b0 c* f1 c+ b0 b1 c==> ! ! c<= cdist c, c* b0 cdest_nadd f2 b1 c* b1 cdest_nadd f2 b0 c* f3 c+ b0 b1 c==> c/\ c/\ c~ c= f4 cNUMERAL c_0 c< c+ cdest_nadd f2 f4 c+ f1 f3 cdest_nadd f0 f4 c/\ c~ c= f5 cNUMERAL c_0 c< c+ cdest_nadd f0 f5 c+ f1 f3 cdest_nadd f2 f5 c/\ c/\ c/\ c~ c= f4 cNUMERAL c_0 c< c+ cdest_nadd f2 f4 c+ f1 f3 cdest_nadd f0 f4 c/\ c~ c= f5 cNUMERAL c_0 c< c+ cdest_nadd f0 f5 c+ f1 f3 cdest_nadd f2 f5 cF
++ |- ((!y. (((nadd_le x) y) \/ ((nadd_le y) x))) = T)
+T c= ! c\/ cnadd_le f0 b0 cnadd_le b0 f0 cT
++ |- (((?n. (P n)) /\ Q) = (?n. ((P n) /\ Q)))
+T c= c/\ c? / * f0 b0 f1 c? / c/\ * f0 b0 f1
+- (!m. (!n. (!p. (!q. (((m <= p) /\ (n <= q)) ==> ((m + n) <= (p + q))))))) |- ((!m. (!n. (!p. (!q. (((m <= p) /\ (n <= q)) ==> ((m + n) <= (p + q))))))) /\ (!m. (!n. (!p. (!q. (((m <= p) /\ (n <= q)) ==> ((m + n) <= (p + q))))))))
+T c==> ! ! ! ! c==> c/\ c<= b0 b2 c<= b1 b3 c<= c+ b0 b1 c+ b2 b3 c/\ ! ! ! ! c==> c/\ c<= b0 b2 c<= b1 b3 c<= c+ b0 b1 c+ b2 b3 ! ! ! ! c==> c/\ c<= b0 b2 c<= b1 b3 c<= c+ b0 b1 c+ b2 b3
++ |- (((!p. ((m * (n + p)) = ((m * n) + (m * p)))) ==> ((\p. ((m * (n + p)) = ((m * n) + (m * p)))) p)) = ((\p. ((m * (n + p)) = ((m * n) + (m * p)))) p))
+T c= c==> ! c= c* f0 c+ f1 b0 c+ c* f0 f1 c* f0 b0 * / c= c* f0 c+ f1 b0 c+ c* f0 f1 c* f0 b0 f2 * / c= c* f0 c+ f1 b0 c+ c* f0 f1 c* f0 b0 f2
++ (((m + n) * p) = ((m * p) + (n * p))) |- (((m * p) + (n * p)) = ((m + n) * p))
+T c==> c= c* c+ f0 f1 f2 c+ c* f0 f2 c* f1 f2 c= c+ c* f0 f2 c* f1 f2 c* c+ f0 f1 f2
++ (!m. (!n. ((dist ((m * ((dest_nadd x) n)) , (n * ((dest_nadd x) m)))) <= (B1 * (m + n))))), (!m. (!n. ((dist ((m * ((dest_nadd y) n)) , (n * ((dest_nadd y) m)))) <= (B2 * (m + n))))), ((~ ((nadd_le x) y)) /\ (~ ((nadd_le y) x))) |- (((~ ((nadd_le x) y)) /\ (~ ((nadd_le y) x))) /\ F)
+T c==> ! ! c<= cdist c, c* b0 cdest_nadd f0 b1 c* b1 cdest_nadd f0 b0 c* f1 c+ b0 b1 c==> ! ! c<= cdist c, c* b0 cdest_nadd f2 b1 c* b1 cdest_nadd f2 b0 c* f3 c+ b0 b1 c==> c/\ c~ cnadd_le f0 f2 c~ cnadd_le f2 f0 c/\ c/\ c~ cnadd_le f0 f2 c~ cnadd_le f2 f0 cF
+- |- ((t \/ t) = t)
+T c= c\/ f0 f0 f0
++ (!m. (!n. ((dist ((m * ((dest_nadd x) n)) , (n * ((dest_nadd x) m)))) <= (B1 * (m + n))))) |- ((!m. (!n. ((dist ((m * ((dest_nadd y) n)) , (n * ((dest_nadd y) m)))) <= (B2 * (m + n))))) ==> (~ (~ (((nadd_le x) y) \/ ((nadd_le y) x)))))
+T c==> ! ! c<= cdist c, c* b0 cdest_nadd f0 b1 c* b1 cdest_nadd f0 b0 c* f1 c+ b0 b1 c==> ! ! c<= cdist c, c* b0 cdest_nadd f2 b1 c* b1 cdest_nadd f2 b0 c* f3 c+ b0 b1 c~ c~ c\/ cnadd_le f0 f2 cnadd_le f2 f0
++ |- ((\p. (((m = (NUMERAL _0)) \/ (n <= p)) = ((m * n) <= (m * p)))) p)
+T * / c= c\/ c= f0 cNUMERAL c_0 c<= f1 b0 c<= c* f0 f1 c* f0 b0 f2
++ (((~ a) /\ b) /\ ((~ c) /\ d)) |- (a ==> F)
+T c==> c/\ c/\ c~ f0 f1 c/\ c~ f2 f3 c==> f0 cF
++ |- ((\m. (!n. (!p. (!q. (((m < p) /\ (n < q)) ==> ((m + n) < (p + q))))))) m)
+T * / ! ! ! c==> c/\ c< b0 b2 c< b1 b3 c< c+ b0 b1 c+ b2 b3 f0
++ |- (((!q. (((m <= p) /\ (n <= q)) ==> ((m + n) <= (p + q)))) ==> ((\q. (((m <= p) /\ (n <= q)) ==> ((m + n) <= (p + q)))) q)) = ((\q. (((m <= p) /\ (n <= q)) ==> ((m + n) <= (p + q)))) q))
+T c= c==> ! c==> c/\ c<= f0 f1 c<= f2 b0 c<= c+ f0 f2 c+ f1 b0 * / c==> c/\ c<= f0 f1 c<= f2 b0 c<= c+ f0 f2 c+ f1 b0 f3 * / c==> c/\ c<= f0 f1 c<= f2 b0 c<= c+ f0 f2 c+ f1 b0 f3
++ (!m. (!n. ((dist ((m * ((dest_nadd y) n)) , (n * ((dest_nadd y) m)))) <= (B2 * (m + n))))) |- (((m * ((dest_nadd y) n)) <= ((n * ((dest_nadd y) m)) + (B2 * (m + n)))) /\ ((n * ((dest_nadd y) m)) <= ((m * ((dest_nadd y) n)) + (B2 * (m + n)))))
+T c==> ! ! c<= cdist c, c* b0 cdest_nadd f0 b1 c* b1 cdest_nadd f0 b0 c* f1 c+ b0 b1 c/\ c<= c* f2 cdest_nadd f0 f3 c+ c* f3 cdest_nadd f0 f2 c* f1 c+ f2 f3 c<= c* f3 cdest_nadd f0 f2 c+ c* f2 cdest_nadd f0 f3 c* f1 c+ f2 f3
++ |- (((!Q. (((?x. (P x)) /\ Q) = (?x. ((P x) /\ Q)))) ==> ((\Q. (((?x. (P x)) /\ Q) = (?x. ((P x) /\ Q)))) Q)) = ((\Q. (((?x. (P x)) /\ Q) = (?x. ((P x) /\ Q)))) Q))
+T c= c==> ! c= c/\ c? / * f0 b1 b0 c? / c/\ * f0 b1 b0 * / c= c/\ c? / * f0 b1 b0 c? / c/\ * f0 b1 b0 f1 * / c= c/\ c? / * f0 b1 b0 c? / c/\ * f0 b1 b0 f1
+- |- ((!n. t) = t)
+T c= ! f0 f0
++ |- ((\x. (?B. (!m. (!n. ((dist ((m * ((dest_nadd x) n)) , (n * ((dest_nadd x) m)))) <= (B * (m + n))))))) x)
+T * / c? / ! ! c<= cdist c, c* b2 cdest_nadd b0 b3 c* b3 cdest_nadd b0 b2 c* b1 c+ b2 b3 f0
++ (~ b), (((~ a) /\ b) /\ ((~ c) /\ d)) |- ((~ b) /\ F)
+T c==> c~ f0 c==> c/\ c/\ c~ f1 f0 c/\ c~ f2 f3 c/\ c~ f0 cF
+- (!m. (!n. (!p. (!q. (((m <= p) /\ (n <= q)) ==> ((m + n) <= (p + q))))))) |- (((!n. (!p. (!q. (((m <= p) /\ (n <= q)) ==> ((m + n) <= (p + q)))))) ==> ((\n. (!p. (!q. (((m <= p) /\ (n <= q)) ==> ((m + n) <= (p + q)))))) n)) = ((\n. (!p. (!q. (((m <= p) /\ (n <= q)) ==> ((m + n) <= (p + q)))))) n))
+T c==> ! ! ! ! c==> c/\ c<= b0 b2 c<= b1 b3 c<= c+ b0 b1 c+ b2 b3 c= c==> ! ! ! c==> c/\ c<= f0 b1 c<= b0 b2 c<= c+ f0 b0 c+ b1 b2 * / ! ! c==> c/\ c<= f0 b1 c<= b0 b2 c<= c+ f0 b0 c+ b1 b2 f1 * / ! ! c==> c/\ c<= f0 b1 c<= b0 b2 c<= c+ f0 b0 c+ b1 b2 f1
+- |- ((?n'. t) = t)
+T c= c? / f0 f0
+- (!m. (!n. ((dist ((m * ((dest_nadd x) n)) , (n * ((dest_nadd x) m)))) <= (B1 * (m + n))))), (!m. (!n. ((dist ((m * ((dest_nadd y) n)) , (n * ((dest_nadd y) m)))) <= (B2 * (m + n))))), (?n. (?n'. (((~ (n' = (NUMERAL _0))) /\ ((((dest_nadd y) n') + (B1 + B2)) < ((dest_nadd x) n'))) /\ ((~ (n = (NUMERAL _0))) /\ ((((dest_nadd x) n) + (B1 + B2)) < ((dest_nadd y) n)))))) |- ((?n. (?n'. (((~ (n' = (NUMERAL _0))) /\ ((((dest_nadd y) n') + (B1 + B2)) < ((dest_nadd x) n'))) /\ ((~ (n = (NUMERAL _0))) /\ ((((dest_nadd x) n) + (B1 + B2)) < ((dest_nadd y) n)))))) /\ F)
+T c==> ! ! c<= cdist c, c* b0 cdest_nadd f0 b1 c* b1 cdest_nadd f0 b0 c* f1 c+ b0 b1 c==> ! ! c<= cdist c, c* b0 cdest_nadd f2 b1 c* b1 cdest_nadd f2 b0 c* f3 c+ b0 b1 c==> c? / c? / c/\ c/\ c~ c= b1 cNUMERAL c_0 c< c+ cdest_nadd f2 b1 c+ f1 f3 cdest_nadd f0 b1 c/\ c~ c= b0 cNUMERAL c_0 c< c+ cdest_nadd f0 b0 c+ f1 f3 cdest_nadd f2 b0 c/\ c? / c? / c/\ c/\ c~ c= b1 cNUMERAL c_0 c< c+ cdest_nadd f2 b1 c+ f1 f3 cdest_nadd f0 b1 c/\ c~ c= b0 cNUMERAL c_0 c< c+ cdest_nadd f0 b0 c+ f1 f3 cdest_nadd f2 b0 cF
+- (!m. (!n. ((dist ((m * ((dest_nadd x) n)) , (n * ((dest_nadd x) m)))) <= (B1 * (m + n))))), (!m. (!n. ((dist ((m * ((dest_nadd y) n)) , (n * ((dest_nadd y) m)))) <= (B2 * (m + n))))), (?n'. (((~ (n' = (NUMERAL _0))) /\ ((((dest_nadd y) n') + (B1 + B2)) < ((dest_nadd x) n'))) /\ ((~ (m = (NUMERAL _0))) /\ ((((dest_nadd x) m) + (B1 + B2)) < ((dest_nadd y) m))))) |- ((?n'. (((~ (n' = (NUMERAL _0))) /\ ((((dest_nadd y) n') + (B1 + B2)) < ((dest_nadd x) n'))) /\ ((~ (m = (NUMERAL _0))) /\ ((((dest_nadd x) m) + (B1 + B2)) < ((dest_nadd y) m))))) /\ F)
+T c==> ! ! c<= cdist c, c* b0 cdest_nadd f0 b1 c* b1 cdest_nadd f0 b0 c* f1 c+ b0 b1 c==> ! ! c<= cdist c, c* b0 cdest_nadd f2 b1 c* b1 cdest_nadd f2 b0 c* f3 c+ b0 b1 c==> c? / c/\ c/\ c~ c= b0 cNUMERAL c_0 c< c+ cdest_nadd f2 b0 c+ f1 f3 cdest_nadd f0 b0 c/\ c~ c= f4 cNUMERAL c_0 c< c+ cdest_nadd f0 f4 c+ f1 f3 cdest_nadd f2 f4 c/\ c? / c/\ c/\ c~ c= b0 cNUMERAL c_0 c< c+ cdest_nadd f2 b0 c+ f1 f3 cdest_nadd f0 b0 c/\ c~ c= f4 cNUMERAL c_0 c< c+ cdest_nadd f0 f4 c+ f1 f3 cdest_nadd f2 f4 cF
+- (!m. (!n. (!p. (!q. (((m <= p) /\ (n <= q)) ==> ((m + n) <= (p + q))))))) |- ((\q. (((m <= p) /\ (n <= q)) ==> ((m + n) <= (p + q)))) q)
+T c==> ! ! ! ! c==> c/\ c<= b0 b2 c<= b1 b3 c<= c+ b0 b1 c+ b2 b3 * / c==> c/\ c<= f0 f1 c<= f2 b0 c<= c+ f0 f2 c+ f1 b0 f3
+- |- ((!m. (!n. (!p. (!q. (((m <= p) /\ (n <= q)) ==> ((m + n) <= (p + q))))))) ==> (!m. (!n. (!p. (!q. (((m <= p) /\ (n <= q)) ==> ((m + n) <= (p + q))))))))
+T c==> ! ! ! ! c==> c/\ c<= b0 b2 c<= b1 b3 c<= c+ b0 b1 c+ b2 b3 ! ! ! ! c==> c/\ c<= b0 b2 c<= b1 b3 c<= c+ b0 b1 c+ b2 b3
+- (!m. (!n. (!p. (!q. (((m <= p) /\ (n <= q)) ==> ((m + n) <= (p + q))))))) |- (!p. (!q. (((m <= p) /\ (n <= q)) ==> ((m + n) <= (p + q)))))
+T c==> ! ! ! ! c==> c/\ c<= b0 b2 c<= b1 b3 c<= c+ b0 b1 c+ b2 b3 ! ! c==> c/\ c<= f0 b0 c<= f1 b1 c<= c+ f0 f1 c+ b0 b1
+- (!m. (!n. (!p. (!q. (((m <= p) /\ (n <= q)) ==> ((m + n) <= (p + q))))))) |- ((!p. (!q. (((m <= p) /\ (n <= q)) ==> ((m + n) <= (p + q))))) = T)
+T c==> ! ! ! ! c==> c/\ c<= b0 b2 c<= b1 b3 c<= c+ b0 b1 c+ b2 b3 c= ! ! c==> c/\ c<= f0 b0 c<= f1 b1 c<= c+ f0 f1 c+ b0 b1 cT
+- (!m. (!n. (!p. (!q. (((m <= p) /\ (n <= q)) ==> ((m + n) <= (p + q))))))) |- ((\p. (!q. (((m <= p) /\ (n <= q)) ==> ((m + n) <= (p + q))))) p)
+T c==> ! ! ! ! c==> c/\ c<= b0 b2 c<= b1 b3 c<= c+ b0 b1 c+ b2 b3 * / ! c==> c/\ c<= f0 b0 c<= f1 b1 c<= c+ f0 f1 c+ b0 b1 f2
+- |- ((m + n) = (n + m))
+T c= c+ f0 f1 c+ f1 f0
+- a, (((~ a) /\ b) /\ ((~ c) /\ d)) |- F
+T c==> f0 c==> c/\ c/\ c~ f0 f1 c/\ c~ f2 f3 cF
+- (!m. (!n. (!p. (!q. (((m <= p) /\ (n <= q)) ==> ((m + n) <= (p + q))))))) |- ((\n. (!p. (!q. (((m <= p) /\ (n <= q)) ==> ((m + n) <= (p + q)))))) n)
+T c==> ! ! ! ! c==> c/\ c<= b0 b2 c<= b1 b3 c<= c+ b0 b1 c+ b2 b3 * / ! ! c==> c/\ c<= f0 b1 c<= b0 b2 c<= c+ f0 b0 c+ b1 b2 f1
+- (!m. (!n. ((dist ((m * ((dest_nadd y) n)) , (n * ((dest_nadd y) m)))) <= (B2 * (m + n))))) |- (T = ((n * ((dest_nadd y) m)) <= ((m * ((dest_nadd y) n)) + (B2 * (m + n)))))
+T c==> ! ! c<= cdist c, c* b0 cdest_nadd f0 b1 c* b1 cdest_nadd f0 b0 c* f1 c+ b0 b1 c= cT c<= c* f2 cdest_nadd f0 f3 c+ c* f3 cdest_nadd f0 f2 c* f1 c+ f3 f2
+- |- ((~ (t1 /\ t2)) = ((~ t1) \/ (~ t2)))
+T c= c~ c/\ f0 f1 c\/ c~ f0 c~ f1
+- (!m. (!n. (!p. (!q. (((m <= p) /\ (n <= q)) ==> ((m + n) <= (p + q))))))) |- ((!q. (((m <= p) /\ (n <= q)) ==> ((m + n) <= (p + q)))) = T)
+T c==> ! ! ! ! c==> c/\ c<= b0 b2 c<= b1 b3 c<= c+ b0 b1 c+ b2 b3 c= ! c==> c/\ c<= f0 f1 c<= f2 b0 c<= c+ f0 f2 c+ f1 b0 cT
+- (!m. (!n. (!p. (!q. (((m <= p) /\ (n <= q)) ==> ((m + n) <= (p + q))))))) |- (((!p. (!q. (((m <= p) /\ (n <= q)) ==> ((m + n) <= (p + q))))) ==> ((\p. (!q. (((m <= p) /\ (n <= q)) ==> ((m + n) <= (p + q))))) p)) = ((\p. (!q. (((m <= p) /\ (n <= q)) ==> ((m + n) <= (p + q))))) p))
+T c==> ! ! ! ! c==> c/\ c<= b0 b2 c<= b1 b3 c<= c+ b0 b1 c+ b2 b3 c= c==> ! ! c==> c/\ c<= f0 b0 c<= f1 b1 c<= c+ f0 f1 c+ b0 b1 * / ! c==> c/\ c<= f0 b0 c<= f1 b1 c<= c+ f0 f1 c+ b0 b1 f2 * / ! c==> c/\ c<= f0 b0 c<= f1 b1 c<= c+ f0 f1 c+ b0 b1 f2
+- |- ((t /\ t) = t)
+T c= c/\ f0 f0 f0
+- (!m. (!n. (!p. (!q. (((m <= p) /\ (n <= q)) ==> ((m + n) <= (p + q))))))), ((m <= p) /\ (n <= q)) |- (((m <= p) /\ (n <= q)) /\ ((m + n) <= (p + q)))
+T c==> ! ! ! ! c==> c/\ c<= b0 b2 c<= b1 b3 c<= c+ b0 b1 c+ b2 b3 c==> c/\ c<= f0 f1 c<= f2 f3 c/\ c/\ c<= f0 f1 c<= f2 f3 c<= c+ f0 f2 c+ f1 f3
+- (!m. (!n. ((dist ((m * ((dest_nadd x) n)) , (n * ((dest_nadd x) m)))) <= (B1 * (m + n))))) |- (T = ((m * ((dest_nadd x) n)) <= ((n * ((dest_nadd x) m)) + (B1 * (m + n)))))
+T c==> ! ! c<= cdist c, c* b0 cdest_nadd f0 b1 c* b1 cdest_nadd f0 b0 c* f1 c+ b0 b1 c= cT c<= c* f2 cdest_nadd f0 f3 c+ c* f3 cdest_nadd f0 f2 c* f1 c+ f2 f3
+- (!m. (!n. (!p. (!q. (((m <= p) /\ (n <= q)) ==> ((m + n) <= (p + q))))))) |- ((\m. (!n. (!p. (!q. (((m <= p) /\ (n <= q)) ==> ((m + n) <= (p + q))))))) m)
+T c==> ! ! ! ! c==> c/\ c<= b0 b2 c<= b1 b3 c<= c+ b0 b1 c+ b2 b3 * / ! ! ! c==> c/\ c<= b0 b2 c<= b1 b3 c<= c+ b0 b1 c+ b2 b3 f0
+- (!m. (!n. (!p. (!q. (((m <= p) /\ (n <= q)) ==> ((m + n) <= (p + q))))))) |- (!n. (!p. (!q. (((m <= p) /\ (n <= q)) ==> ((m + n) <= (p + q))))))
+T c==> ! ! ! ! c==> c/\ c<= b0 b2 c<= b1 b3 c<= c+ b0 b1 c+ b2 b3 ! ! ! c==> c/\ c<= f0 b1 c<= b0 b2 c<= c+ f0 b0 c+ b1 b2
+- ((m <= p) /\ (n <= q)) |- ((!m. (!n. (!p. (!q. (((m <= p) /\ (n <= q)) ==> ((m + n) <= (p + q))))))) ==> ((m + n) <= (p + q)))
+T c==> c/\ c<= f0 f1 c<= f2 f3 c==> ! ! ! ! c==> c/\ c<= b0 b2 c<= b1 b3 c<= c+ b0 b1 c+ b2 b3 c<= c+ f0 f2 c+ f1 f3
+- c, (((~ a) /\ b) /\ ((~ c) /\ d)) |- F
+T c==> f0 c==> c/\ c/\ c~ f1 f2 c/\ c~ f0 f3 cF
+- |- (((!m. (!n. (!p. (!q. (((m <= p) /\ (n <= q)) ==> ((m + n) <= (p + q))))))) ==> (!m. (!n. (!p. (!q. (((m <= p) /\ (n <= q)) ==> ((m + n) <= (p + q)))))))) = (!m. (!n. (!p. (!q. (((m <= p) /\ (n <= q)) ==> ((m + n) <= (p + q))))))))
+T c= c==> ! ! ! ! c==> c/\ c<= b0 b2 c<= b1 b3 c<= c+ b0 b1 c+ b2 b3 ! ! ! ! c==> c/\ c<= b0 b2 c<= b1 b3 c<= c+ b0 b1 c+ b2 b3 ! ! ! ! c==> c/\ c<= b0 b2 c<= b1 b3 c<= c+ b0 b1 c+ b2 b3
+- (!m. (!n. (!p. (!q. (((m <= p) /\ (n <= q)) ==> ((m + n) <= (p + q))))))), ((m <= p) /\ (n <= q)) |- ((!m. (!n. (!p. (!q. (((m <= p) /\ (n <= q)) ==> ((m + n) <= (p + q))))))) /\ ((m + n) <= (p + q)))
+T c==> ! ! ! ! c==> c/\ c<= b0 b2 c<= b1 b3 c<= c+ b0 b1 c+ b2 b3 c==> c/\ c<= f0 f1 c<= f2 f3 c/\ ! ! ! ! c==> c/\ c<= b0 b2 c<= b1 b3 c<= c+ b0 b1 c+ b2 b3 c<= c+ f0 f2 c+ f1 f3
+- (!m. (!n. (!p. (!q. (((m <= p) /\ (n <= q)) ==> ((m + n) <= (p + q))))))) |- (!q. (((m <= p) /\ (n <= q)) ==> ((m + n) <= (p + q))))
+T c==> ! ! ! ! c==> c/\ c<= b0 b2 c<= b1 b3 c<= c+ b0 b1 c+ b2 b3 ! c==> c/\ c<= f0 f1 c<= f2 b0 c<= c+ f0 f2 c+ f1 b0

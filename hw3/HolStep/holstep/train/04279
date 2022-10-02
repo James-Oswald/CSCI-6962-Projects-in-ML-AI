@@ -1,0 +1,205 @@
+N List_hypermap.uniq_nodes_of_list
+C |- (!L. (uniq (nodes_of_list L)))
+T cuniq cnodes_of_list f0
+D TRUTH
+A |- T
+T cT
+D BOOL_CASES_AX
+A |- (!t. ((t = T) \/ (t = F)))
+T c\/ c= f0 cT c= f0 cF
+D IN_SET_OF_LIST
+A |- (!x. (!l. ((x IN (set_of_list l)) = ((MEM x) l))))
+T c= cIN f0 * part cset_of_list f1 cMEM f0 f1
+D Seq.map_MAP
+A |- (map = MAP)
+T c= part cmap part cMAP
+D Seq.map_inj_in_uniq
+A |- (!f. (!s. ((!x. (!y. (((MEM x) s) ==> (((MEM y) s) ==> (((f x) = (f y)) ==> (x = y)))))) ==> ((uniq ((map f) s)) = (uniq s)))))
+T c==> ! ! c==> cMEM b0 f0 c==> cMEM b1 f0 c==> c= * f1 b0 * f1 b1 c= b0 b1 c= cuniq cmap f1 f0 cuniq f0
+D List_hypermap.nodes_of_list
+A |- (!L. ((nodes_of_list L) = ((MAP set_of_list) (list_of_nodes L))))
+T c= cnodes_of_list f0 cMAP part cset_of_list clist_of_nodes f0
+D List_hypermap.uniq_list_of_nodes
+A |- (!L. (uniq (list_of_nodes L)))
+T cuniq clist_of_nodes f0
+D List_hypermap.mem_not_nil
+A |- (!s. ((~ (s = NIL)) = (?x. ((MEM x) s))))
+T c= c~ c= f0 cNIL c? / cMEM b0 f0
+D List_hypermap.node_of_list_not_nil
+A |- (!L. (!n. (((MEM n) (list_of_nodes L)) ==> (~ (n = NIL)))))
+T c==> cMEM f0 clist_of_nodes f1 c~ c= f0 cNIL
+D List_hypermap.nodes_of_list_eq
+A |- (!L. (!n1. (!n2. (!a. ((((MEM n1) (list_of_nodes L)) /\ (((MEM n2) (list_of_nodes L)) /\ (((MEM a) n1) /\ ((MEM a) n2)))) ==> (n1 = n2))))))
+T c==> c/\ cMEM f0 clist_of_nodes f1 c/\ cMEM f2 clist_of_nodes f1 c/\ cMEM f3 f0 cMEM f3 f2 c= f0 f2
+- |- ((t = F) = (~ t))
+T c= c= f0 cF c~ f0
+- ((MEM n1) (list_of_nodes L)) |- ((!a. ((T /\ (((MEM n2) (list_of_nodes L)) /\ (((MEM a) n1) /\ ((MEM a) n2)))) ==> (n1 = n2))) = T)
+T c==> cMEM f0 clist_of_nodes f1 c= ! c==> c/\ cT c/\ cMEM f2 clist_of_nodes f1 c/\ cMEM b0 f0 cMEM b0 f2 c= f0 f2 cT
+- |- ((A /\ T) = A)
+T c= c/\ f0 cT f0
++ ((MEM n1) (list_of_nodes L)) |- (?d. (d IN (set_of_list n1)))
+T c==> cMEM f0 clist_of_nodes f1 c? / cIN b0 * part cset_of_list f0
++ (!a. ((((MEM a) n1) /\ ((MEM a) n2)) ==> (n1 = n2))), (?a. (((MEM a) n1) /\ ((MEM a) n2))) |- ((?a. (((MEM a) n1) /\ ((MEM a) n2))) /\ (n1 = n2))
+T c==> ! c==> c/\ cMEM b0 f0 cMEM b0 f1 c= f0 f1 c==> c? / c/\ cMEM b0 f0 cMEM b0 f1 c/\ c? / c/\ cMEM b0 f0 cMEM b0 f1 c= f0 f1
++ |- ((\l. (((MEM x) l) = (x IN (set_of_list l)))) l)
+T * / c= cMEM f0 b0 cIN f0 * part cset_of_list b0 f1
++ |- (((!l. ((x IN (set_of_list l)) = ((MEM x) l))) ==> ((\l. ((x IN (set_of_list l)) = ((MEM x) l))) l)) = ((\l. ((x IN (set_of_list l)) = ((MEM x) l))) l))
+T c= c==> ! c= cIN f0 * part cset_of_list b0 cMEM f0 b0 * / c= cIN f0 * part cset_of_list b0 cMEM f0 b0 f1 * / c= cIN f0 * part cset_of_list b0 cMEM f0 b0 f1
++ |- ((uniq ((map set_of_list) (list_of_nodes L))) = (uniq ((MAP set_of_list) (list_of_nodes L))))
+T c= cuniq cmap part cset_of_list clist_of_nodes f0 cuniq cMAP part cset_of_list clist_of_nodes f0
+- ((!x. (P ==> (Q x))) = (P ==> (!x. (Q x)))) |- ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))
+T c==> c= ! c==> f0 * f1 b0 c==> f0 ! * f1 b0 c= c==> f0 ! * f1 b0 ! c==> f0 * f1 b0
++ ((set_of_list n1) = (set_of_list n2)), (d IN (set_of_list n1)) |- ((!a. ((((MEM a) n1) /\ ((MEM a) n2)) ==> (n1 = n2))) ==> (n1 = n2))
+T c==> c= * part cset_of_list f0 * part cset_of_list f1 c==> cIN f2 * part cset_of_list f0 c==> ! c==> c/\ cMEM b0 f0 cMEM b0 f1 c= f0 f1 c= f0 f1
++ |- (((!x. (!y. (((((MEM x) (list_of_nodes L)) /\ ((MEM y) (list_of_nodes L))) /\ ((set_of_list x) = (set_of_list y))) ==> (x = y)))) ==> ((uniq ((map set_of_list) (list_of_nodes L))) = (uniq (list_of_nodes L)))) ==> (uniq ((map set_of_list) (list_of_nodes L))))
+T c==> c==> ! ! c==> c/\ c/\ cMEM b0 clist_of_nodes f0 cMEM b1 clist_of_nodes f0 c= * part cset_of_list b0 * part cset_of_list b1 c= b0 b1 c= cuniq cmap part cset_of_list clist_of_nodes f0 cuniq clist_of_nodes f0 cuniq cmap part cset_of_list clist_of_nodes f0
++ |- (((?d. (d IN (set_of_list n1))) ==> (n1 = n2)) = (!d. ((d IN (set_of_list n1)) ==> (n1 = n2))))
+T c= c==> c? / cIN b0 * part cset_of_list f0 c= f0 f1 ! c==> cIN b0 * part cset_of_list f0 c= f0 f1
++ ((~ (s = NIL)) = (?x. ((MEM x) s))) |- ((?x. ((MEM x) s)) = (~ (s = NIL)))
+T c==> c= c~ c= f0 cNIL c? / cMEM b0 f0 c= c? / cMEM b0 f0 c~ c= f0 cNIL
++ ((set_of_list n1) = (set_of_list n2)), (d IN (set_of_list n1)) |- (((MEM d) n1) /\ ((MEM d) n2))
+T c==> c= * part cset_of_list f0 * part cset_of_list f1 c==> cIN f2 * part cset_of_list f0 c/\ cMEM f2 f0 cMEM f2 f1
+- |- ((\P. (!Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x)))))) P)
+T * / ! c= c==> b0 ! * b1 b2 ! c==> b0 * b1 b2 f0
++ ((MEM n1) (list_of_nodes L)), ((MEM n2) (list_of_nodes L)) |- (((T ==> ((((MEM a) n1) /\ ((MEM a) n2)) ==> (n1 = n2))) ==> ((T /\ (((MEM a) n1) /\ ((MEM a) n2))) ==> (n1 = n2))) = ((T /\ (((MEM a) n1) /\ ((MEM a) n2))) ==> (n1 = n2)))
+T c==> cMEM f0 clist_of_nodes f1 c==> cMEM f2 clist_of_nodes f1 c= c==> c==> cT c==> c/\ cMEM f3 f0 cMEM f3 f2 c= f0 f2 c==> c/\ cT c/\ cMEM f3 f0 cMEM f3 f2 c= f0 f2 c==> c/\ cT c/\ cMEM f3 f0 cMEM f3 f2 c= f0 f2
+- ((MEM n1) (list_of_nodes L)) |- ((\n2. (!a. ((((MEM n2) (list_of_nodes L)) /\ (((MEM a) n1) /\ ((MEM a) n2))) ==> (n1 = n2)))) n21)
+T c==> cMEM f0 clist_of_nodes f1 * / ! c==> c/\ cMEM b0 clist_of_nodes f1 c/\ cMEM b1 f0 cMEM b1 b0 c= f0 b0 f2
++ (((MEM a) n1) /\ ((MEM a) n2)) |- ((((MEM a) n1) /\ ((MEM a) n2)) /\ ((!a. ((((MEM a) n1) /\ ((MEM a) n2)) ==> (n1 = n2))) ==> (n1 = n2)))
+T c==> c/\ cMEM f0 f1 cMEM f0 f2 c/\ c/\ cMEM f0 f1 cMEM f0 f2 c==> ! c==> c/\ cMEM b0 f1 cMEM b0 f2 c= f1 f2 c= f1 f2
++ ((?x. ((MEM x) s)) = (~ (s = NIL))) |- ((~ (s = NIL)) = (?x. ((MEM x) s)))
+T c==> c= c? / cMEM b0 f0 c~ c= f0 cNIL c= c~ c= f0 cNIL c? / cMEM b0 f0
++ |- (((T /\ A) = A) /\ ((A /\ T) = A))
+T c/\ c= c/\ cT f0 f0 c= c/\ f0 cT f0
++ |- (((?d. (P d)) ==> Q) = (!d. ((P d) ==> Q)))
+T c= c==> c? / * f0 b0 f1 ! c==> * f0 b0 f1
++ |- (MAP = map)
+T c= part cMAP part cmap
++ |- (((!L. (!n. (((MEM n) (list_of_nodes L)) ==> (~ (n = NIL))))) ==> ((\L. (!n. (((MEM n) (list_of_nodes L)) ==> (~ (n = NIL))))) L)) = ((\L. (!n. (((MEM n) (list_of_nodes L)) ==> (~ (n = NIL))))) L))
+T c= c==> ! ! c==> cMEM b1 clist_of_nodes b0 c~ c= b1 cNIL * / ! c==> cMEM b1 clist_of_nodes b0 c~ c= b1 cNIL f0 * / ! c==> cMEM b1 clist_of_nodes b0 c~ c= b1 cNIL f0
++ (?d. (d IN (set_of_list n1))), ((set_of_list n1) = (set_of_list n2)), ((MEM n1) (list_of_nodes L)), ((MEM n2) (list_of_nodes L)) |- (n1 = n2)
+T c==> c? / cIN b0 * part cset_of_list f0 c==> c= * part cset_of_list f0 * part cset_of_list f1 c==> cMEM f0 clist_of_nodes f2 c==> cMEM f1 clist_of_nodes f2 c= f0 f1
+- |- ((t ==> t) = T)
+T c= c==> f0 f0 cT
+- ((MEM n2) (list_of_nodes L)) |- (((MEM n2) (list_of_nodes L)) = T)
+T c==> cMEM f0 clist_of_nodes f1 c= cMEM f0 clist_of_nodes f1 cT
++ |- ((\L. (!n. (((MEM n) (list_of_nodes L)) ==> (~ (n = NIL))))) L)
+T * / ! c==> cMEM b1 clist_of_nodes b0 c~ c= b1 cNIL f0
++ |- (uniq ((MAP set_of_list) (list_of_nodes L)))
+T cuniq cMAP part cset_of_list clist_of_nodes f0
++ |- (((!x. (((\a. (((MEM a) n1) /\ ((MEM a) n2))) x) ==> ((!a. ((((MEM a) n1) /\ ((MEM a) n2)) ==> (n1 = n2))) ==> (n1 = n2)))) ==> ((?a. (((MEM a) n1) /\ ((MEM a) n2))) ==> ((!a. ((((MEM a) n1) /\ ((MEM a) n2)) ==> (n1 = n2))) ==> (n1 = n2)))) = ((?a. (((MEM a) n1) /\ ((MEM a) n2))) ==> ((!a. ((((MEM a) n1) /\ ((MEM a) n2)) ==> (n1 = n2))) ==> (n1 = n2))))
+T c= c==> ! c==> * / c/\ cMEM b1 f0 cMEM b1 f1 b0 c==> ! c==> c/\ cMEM b1 f0 cMEM b1 f1 c= f0 f1 c= f0 f1 c==> c? / c/\ cMEM b0 f0 cMEM b0 f1 c==> ! c==> c/\ cMEM b0 f0 cMEM b0 f1 c= f0 f1 c= f0 f1 c==> c? / c/\ cMEM b0 f0 cMEM b0 f1 c==> ! c==> c/\ cMEM b0 f0 cMEM b0 f1 c= f0 f1 c= f0 f1
++ ((set_of_list n1) = (set_of_list n2)), (d IN (set_of_list n1)) |- ((d IN (set_of_list n1)) /\ ((MEM d) n2))
+T c==> c= * part cset_of_list f0 * part cset_of_list f1 c==> cIN f2 * part cset_of_list f0 c/\ cIN f2 * part cset_of_list f0 cMEM f2 f1
++ (!a. ((((MEM a) n1) /\ ((MEM a) n2)) ==> (n1 = n2))), ((set_of_list n1) = (set_of_list n2)), (d IN (set_of_list n1)) |- ((!a. ((((MEM a) n1) /\ ((MEM a) n2)) ==> (n1 = n2))) /\ (n1 = n2))
+T c==> ! c==> c/\ cMEM b0 f0 cMEM b0 f1 c= f0 f1 c==> c= * part cset_of_list f0 * part cset_of_list f1 c==> cIN f2 * part cset_of_list f0 c/\ ! c==> c/\ cMEM b0 f0 cMEM b0 f1 c= f0 f1 c= f0 f1
+- |- ((!y. t) = t)
+T c= ! f0 f0
++ |- ((\Q. (((?x. (P x)) ==> Q) = (!x. ((P x) ==> Q)))) Q)
+T * / c= c==> c? / * f0 b1 b0 ! c==> * f0 b1 b0 f1
++ ((MEM n1) (list_of_nodes L)), ((MEM n2) (list_of_nodes L)) |- (((T /\ (((MEM a) n1) /\ ((MEM a) n2))) ==> (n1 = n2)) = T)
+T c==> cMEM f0 clist_of_nodes f1 c==> cMEM f2 clist_of_nodes f1 c= c==> c/\ cT c/\ cMEM f3 f0 cMEM f3 f2 c= f0 f2 cT
++ |- (((!P. (!Q. (((?x. (P x)) ==> Q) = (!x. ((P x) ==> Q))))) ==> ((\P. (!Q. (((?x. (P x)) ==> Q) = (!x. ((P x) ==> Q))))) P)) = ((\P. (!Q. (((?x. (P x)) ==> Q) = (!x. ((P x) ==> Q))))) P))
+T c= c==> ! ! c= c==> c? / * b0 b2 b1 ! c==> * b0 b2 b1 * / ! c= c==> c? / * b0 b2 b1 ! c==> * b0 b2 b1 f0 * / ! c= c==> c? / * b0 b2 b1 ! c==> * b0 b2 b1 f0
++ |- (!a. (((\a. (((MEM a) n1) /\ ((MEM a) n2))) a) ==> ((!a. ((((MEM a) n1) /\ ((MEM a) n2)) ==> (n1 = n2))) ==> (n1 = n2))))
+T c==> * / c/\ cMEM b0 f0 cMEM b0 f1 f2 c==> ! c==> c/\ cMEM b0 f0 cMEM b0 f1 c= f0 f1 c= f0 f1
++ |- (((!x. (!l. (((MEM x) l) = (x IN (set_of_list l))))) ==> ((\x. (!l. (((MEM x) l) = (x IN (set_of_list l))))) x)) = ((\x. (!l. (((MEM x) l) = (x IN (set_of_list l))))) x))
+T c= c==> ! ! c= cMEM b0 b1 cIN b0 * part cset_of_list b1 * / ! c= cMEM b0 b1 cIN b0 * part cset_of_list b1 f0 * / ! c= cMEM b0 b1 cIN b0 * part cset_of_list b1 f0
++ ((set_of_list n1) = (set_of_list n2)), (d IN (set_of_list n1)) |- ((\a. (((MEM a) n1) /\ ((MEM a) n2))) d)
+T c==> c= * part cset_of_list f0 * part cset_of_list f1 c==> cIN f2 * part cset_of_list f0 * / c/\ cMEM b0 f0 cMEM b0 f1 f2
+- ((MEM n1) (list_of_nodes L)) |- (T ==> ((((MEM n2) (list_of_nodes L)) /\ (((MEM a) n1) /\ ((MEM a) n2))) ==> (n1 = n2)))
+T c==> cMEM f0 clist_of_nodes f1 c==> cT c==> c/\ cMEM f2 clist_of_nodes f1 c/\ cMEM f3 f0 cMEM f3 f2 c= f0 f2
++ |- ((uniq (list_of_nodes L)) = T)
+T c= cuniq clist_of_nodes f0 cT
++ |- ((uniq ((MAP set_of_list) (list_of_nodes L))) = (uniq (nodes_of_list L)))
+T c= cuniq cMAP part cset_of_list clist_of_nodes f0 cuniq cnodes_of_list f0
++ ((set_of_list n1) = (set_of_list n2)), ((MEM n1) (list_of_nodes L)), ((MEM n2) (list_of_nodes L)) |- (((set_of_list n1) = (set_of_list n2)) /\ (n1 = n2))
+T c==> c= * part cset_of_list f0 * part cset_of_list f1 c==> cMEM f0 clist_of_nodes f2 c==> cMEM f1 clist_of_nodes f2 c/\ c= * part cset_of_list f0 * part cset_of_list f1 c= f0 f1
++ |- (((!x. (!l. ((x IN (set_of_list l)) = ((MEM x) l)))) ==> ((\x. (!l. ((x IN (set_of_list l)) = ((MEM x) l)))) x)) = ((\x. (!l. ((x IN (set_of_list l)) = ((MEM x) l)))) x))
+T c= c==> ! ! c= cIN b0 * part cset_of_list b1 cMEM b0 b1 * / ! c= cIN b0 * part cset_of_list b1 cMEM b0 b1 f0 * / ! c= cIN b0 * part cset_of_list b1 cMEM b0 b1 f0
++ |- (((!l. (((MEM x) l) = (x IN (set_of_list l)))) ==> ((\l. (((MEM x) l) = (x IN (set_of_list l)))) l)) = ((\l. (((MEM x) l) = (x IN (set_of_list l)))) l))
+T c= c==> ! c= cMEM f0 b0 cIN f0 * part cset_of_list b0 * / c= cMEM f0 b0 cIN f0 * part cset_of_list b0 f1 * / c= cMEM f0 b0 cIN f0 * part cset_of_list b0 f1
+- |- ((T ==> A) = A)
+T c= c==> cT f0 f0
++ (map = MAP) |- (MAP = map)
+T c==> c= part cmap part cMAP c= part cMAP part cmap
++ |- ((\s. ((?x. ((MEM x) s)) = (~ (s = NIL)))) s)
+T * / c= c? / cMEM b1 b0 c~ c= b0 cNIL f0
+- (!x. (!y. (((((MEM x) s) /\ ((MEM y) s)) /\ ((f x) = (f y))) ==> (x = y)))) |- ((!x. (!y. (((((MEM x) s) /\ ((MEM y) s)) /\ ((f x) = (f y))) ==> (x = y)))) /\ ((uniq ((map f) s)) = (uniq s)))
+T c==> ! ! c==> c/\ c/\ cMEM b0 f0 cMEM b1 f0 c= * f1 b0 * f1 b1 c= b0 b1 c/\ ! ! c==> c/\ c/\ cMEM b0 f0 cMEM b1 f0 c= * f1 b0 * f1 b1 c= b0 b1 c= cuniq cmap f1 f0 cuniq f0
++ |- ((((!x. (!y. (((((MEM x) (list_of_nodes L)) /\ ((MEM y) (list_of_nodes L))) /\ ((set_of_list x) = (set_of_list y))) ==> (x = y)))) ==> ((uniq ((map set_of_list) (list_of_nodes L))) = (uniq (list_of_nodes L)))) ==> (uniq ((map set_of_list) (list_of_nodes L)))) = (uniq ((map set_of_list) (list_of_nodes L))))
+T c= c==> c==> ! ! c==> c/\ c/\ cMEM b0 clist_of_nodes f0 cMEM b1 clist_of_nodes f0 c= * part cset_of_list b0 * part cset_of_list b1 c= b0 b1 c= cuniq cmap part cset_of_list clist_of_nodes f0 cuniq clist_of_nodes f0 cuniq cmap part cset_of_list clist_of_nodes f0 cuniq cmap part cset_of_list clist_of_nodes f0
++ |- ((\x. (!l. (((MEM x) l) = (x IN (set_of_list l))))) x)
+T * / ! c= cMEM b0 b1 cIN b0 * part cset_of_list b1 f0
++ |- (((!L. ((nodes_of_list L) = ((MAP set_of_list) (list_of_nodes L)))) ==> ((\L. ((nodes_of_list L) = ((MAP set_of_list) (list_of_nodes L)))) L)) = ((\L. ((nodes_of_list L) = ((MAP set_of_list) (list_of_nodes L)))) L))
+T c= c==> ! c= cnodes_of_list b0 cMAP part cset_of_list clist_of_nodes b0 * / c= cnodes_of_list b0 cMAP part cset_of_list clist_of_nodes b0 f0 * / c= cnodes_of_list b0 cMAP part cset_of_list clist_of_nodes b0 f0
++ |- (((A /\ B) ==> C) ==> (A ==> (B ==> C)))
+T c==> c==> c/\ f0 f1 f2 c==> f0 c==> f1 f2
+- |- (T = ((~ P) = (P = F)))
+T c= cT c= c~ f0 c= f0 cF
++ |- (((!s. ((?x. ((MEM x) s)) = (~ (s = NIL)))) ==> ((\s. ((?x. ((MEM x) s)) = (~ (s = NIL)))) s)) = ((\s. ((?x. ((MEM x) s)) = (~ (s = NIL)))) s))
+T c= c==> ! c= c? / cMEM b1 b0 c~ c= b0 cNIL * / c= c? / cMEM b1 b0 c~ c= b0 cNIL f0 * / c= c? / cMEM b1 b0 c~ c= b0 cNIL f0
++ |- ((\x. (!l. ((x IN (set_of_list l)) = ((MEM x) l)))) x)
+T * / ! c= cIN b0 * part cset_of_list b1 cMEM b0 b1 f0
++ ((((MEM n1) (list_of_nodes L)) /\ ((MEM n2) (list_of_nodes L))) /\ ((set_of_list n1) = (set_of_list n2))) |- (((((MEM n1) (list_of_nodes L)) /\ ((MEM n2) (list_of_nodes L))) /\ ((set_of_list n1) = (set_of_list n2))) /\ (n1 = n2))
+T c==> c/\ c/\ cMEM f0 clist_of_nodes f1 cMEM f2 clist_of_nodes f1 c= * part cset_of_list f0 * part cset_of_list f2 c/\ c/\ c/\ cMEM f0 clist_of_nodes f1 cMEM f2 clist_of_nodes f1 c= * part cset_of_list f0 * part cset_of_list f2 c= f0 f2
+- ((MEM n1) (list_of_nodes L)) |- (((((MEM n2) (list_of_nodes L)) ==> ((((MEM a) n1) /\ ((MEM a) n2)) ==> (n1 = n2))) ==> ((((MEM n2) (list_of_nodes L)) /\ (((MEM a) n1) /\ ((MEM a) n2))) ==> (n1 = n2))) = ((((MEM n2) (list_of_nodes L)) /\ (((MEM a) n1) /\ ((MEM a) n2))) ==> (n1 = n2)))
+T c==> cMEM f0 clist_of_nodes f1 c= c==> c==> cMEM f2 clist_of_nodes f1 c==> c/\ cMEM f3 f0 cMEM f3 f2 c= f0 f2 c==> c/\ cMEM f2 clist_of_nodes f1 c/\ cMEM f3 f0 cMEM f3 f2 c= f0 f2 c==> c/\ cMEM f2 clist_of_nodes f1 c/\ cMEM f3 f0 cMEM f3 f2 c= f0 f2
+- ((MEM n1) (list_of_nodes L)) |- (((!a. ((((MEM n21) (list_of_nodes L)) /\ (((MEM a) n1) /\ ((MEM a) n21))) ==> (n1 = n21))) ==> ((\a. ((((MEM n21) (list_of_nodes L)) /\ (((MEM a) n1) /\ ((MEM a) n21))) ==> (n1 = n21))) a)) = ((\a. ((((MEM n21) (list_of_nodes L)) /\ (((MEM a) n1) /\ ((MEM a) n21))) ==> (n1 = n21))) a))
+T c==> cMEM f0 clist_of_nodes f1 c= c==> ! c==> c/\ cMEM f2 clist_of_nodes f1 c/\ cMEM b0 f0 cMEM b0 f2 c= f0 f2 * / c==> c/\ cMEM f2 clist_of_nodes f1 c/\ cMEM b0 f0 cMEM b0 f2 c= f0 f2 f3 * / c==> c/\ cMEM f2 clist_of_nodes f1 c/\ cMEM b0 f0 cMEM b0 f2 c= f0 f2 f3
+- ((MEM n1) (list_of_nodes L)) |- ((\a. ((((MEM n21) (list_of_nodes L)) /\ (((MEM a) n1) /\ ((MEM a) n21))) ==> (n1 = n21))) a)
+T c==> cMEM f0 clist_of_nodes f1 * / c==> c/\ cMEM f2 clist_of_nodes f1 c/\ cMEM b0 f0 cMEM b0 f2 c= f0 f2 f3
+- |- ((~ P) = (P = F))
+T c= c~ f0 c= f0 cF
+- |- ((x = x) = T)
+T c= c= f0 f0 cT
+- |- (T = (~ F))
+T c= cT c~ cF
+- |- ((\Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))) Q)
+T * / c= c==> f0 ! * b0 b1 ! c==> f0 * b0 b1 f1
+- ((MEM n1) (list_of_nodes L)) |- (((T ==> ((((MEM n2) (list_of_nodes L)) /\ (((MEM a) n1) /\ ((MEM a) n2))) ==> (n1 = n2))) ==> ((T /\ (((MEM n2) (list_of_nodes L)) /\ (((MEM a) n1) /\ ((MEM a) n2)))) ==> (n1 = n2))) = ((T /\ (((MEM n2) (list_of_nodes L)) /\ (((MEM a) n1) /\ ((MEM a) n2)))) ==> (n1 = n2)))
+T c==> cMEM f0 clist_of_nodes f1 c= c==> c==> cT c==> c/\ cMEM f2 clist_of_nodes f1 c/\ cMEM f3 f0 cMEM f3 f2 c= f0 f2 c==> c/\ cT c/\ cMEM f2 clist_of_nodes f1 c/\ cMEM f3 f0 cMEM f3 f2 c= f0 f2 c==> c/\ cT c/\ cMEM f2 clist_of_nodes f1 c/\ cMEM f3 f0 cMEM f3 f2 c= f0 f2
+- ((MEM n1) (list_of_nodes L)), ((MEM n2) (list_of_nodes L)) |- (((MEM n2) (list_of_nodes L)) /\ (((set_of_list n1) = (set_of_list n2)) ==> (n1 = n2)))
+T c==> cMEM f0 clist_of_nodes f1 c==> cMEM f2 clist_of_nodes f1 c/\ cMEM f2 clist_of_nodes f1 c==> c= * part cset_of_list f0 * part cset_of_list f2 c= f0 f2
+- T, ((MEM n1) (list_of_nodes L)) |- (T /\ ((((MEM n2) (list_of_nodes L)) /\ (((MEM a) n1) /\ ((MEM a) n2))) ==> (n1 = n2)))
+T c==> cT c==> cMEM f0 clist_of_nodes f1 c/\ cT c==> c/\ cMEM f2 clist_of_nodes f1 c/\ cMEM f3 f0 cMEM f3 f2 c= f0 f2
+- |- (((!P. (!Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x)))))) ==> ((\P. (!Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x)))))) P)) = ((\P. (!Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x)))))) P))
+T c= c==> ! ! c= c==> b0 ! * b1 b2 ! c==> b0 * b1 b2 * / ! c= c==> b0 ! * b1 b2 ! c==> b0 * b1 b2 f0 * / ! c= c==> b0 ! * b1 b2 ! c==> b0 * b1 b2 f0
+- (((?x. (P x)) ==> Q) = (!x. ((P x) ==> Q))) |- ((!x. ((P x) ==> Q)) = ((?x. (P x)) ==> Q))
+T c==> c= c==> c? / * f0 b0 f1 ! c==> * f0 b0 f1 c= ! c==> * f0 b0 f1 c==> c? / * f0 b0 f1
+- (((MEM n1) (list_of_nodes L)) /\ ((MEM n2) (list_of_nodes L))) |- ((((MEM n1) (list_of_nodes L)) /\ ((MEM n2) (list_of_nodes L))) /\ (((set_of_list n1) = (set_of_list n2)) ==> (n1 = n2)))
+T c==> c/\ cMEM f0 clist_of_nodes f1 cMEM f2 clist_of_nodes f1 c/\ c/\ cMEM f0 clist_of_nodes f1 cMEM f2 clist_of_nodes f1 c==> c= * part cset_of_list f0 * part cset_of_list f2 c= f0 f2
+- ((MEM n1) (list_of_nodes L)) |- (!n2. (!a. ((((MEM n2) (list_of_nodes L)) /\ (((MEM a) n1) /\ ((MEM a) n2))) ==> (n1 = n2))))
+T c==> cMEM f0 clist_of_nodes f1 ! ! c==> c/\ cMEM b0 clist_of_nodes f1 c/\ cMEM b1 f0 cMEM b1 b0 c= f0 b0
+- ((MEM n1) (list_of_nodes L)) |- ((~ F) = (~ (n1 = NIL)))
+T c==> cMEM f0 clist_of_nodes f1 c= c~ cF c~ c= f0 cNIL
+- ((MEM n1) (list_of_nodes L)) |- ((T /\ (((MEM n2) (list_of_nodes L)) /\ (((MEM a) n1) /\ ((MEM a) n2)))) ==> (n1 = n2))
+T c==> cMEM f0 clist_of_nodes f1 c==> c/\ cT c/\ cMEM f2 clist_of_nodes f1 c/\ cMEM f3 f0 cMEM f3 f2 c= f0 f2
+- ((MEM n1) (list_of_nodes L)) |- ((n1 = NIL) = F)
+T c==> cMEM f0 clist_of_nodes f1 c= c= f0 cNIL cF
+- ((!x. ((P x) ==> Q)) = ((?x. (P x)) ==> Q)) |- (((?x. (P x)) ==> Q) = (!x. ((P x) ==> Q)))
+T c==> c= ! c==> * f0 b0 f1 c==> c? / * f0 b0 f1 c= c==> c? / * f0 b0 f1 ! c==> * f0 b0 f1
+- ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x)))) |- ((!x. (P ==> (Q x))) = (P ==> (!x. (Q x))))
+T c==> c= c==> f0 ! * f1 b0 ! c==> f0 * f1 b0 c= ! c==> f0 * f1 b0 c==> f0 ! * f1 b0
+- ((MEM n1) (list_of_nodes L)) |- (((!n2. (!a. ((((MEM n2) (list_of_nodes L)) /\ (((MEM a) n1) /\ ((MEM a) n2))) ==> (n1 = n2)))) ==> ((\n2. (!a. ((((MEM n2) (list_of_nodes L)) /\ (((MEM a) n1) /\ ((MEM a) n2))) ==> (n1 = n2)))) n21)) = ((\n2. (!a. ((((MEM n2) (list_of_nodes L)) /\ (((MEM a) n1) /\ ((MEM a) n2))) ==> (n1 = n2)))) n21))
+T c==> cMEM f0 clist_of_nodes f1 c= c==> ! ! c==> c/\ cMEM b0 clist_of_nodes f1 c/\ cMEM b1 f0 cMEM b1 b0 c= f0 b0 * / ! c==> c/\ cMEM b0 clist_of_nodes f1 c/\ cMEM b1 f0 cMEM b1 b0 c= f0 b0 f2 * / ! c==> c/\ cMEM b0 clist_of_nodes f1 c/\ cMEM b1 f0 cMEM b1 b0 c= f0 b0 f2
+- |- ((~ F) = T)
+T c= c~ cF cT
+- ((MEM n1) (list_of_nodes L)) |- (((MEM n1) (list_of_nodes L)) /\ (((MEM n2) (list_of_nodes L)) ==> (((set_of_list n1) = (set_of_list n2)) ==> (n1 = n2))))
+T c==> cMEM f0 clist_of_nodes f1 c/\ cMEM f0 clist_of_nodes f1 c==> cMEM f2 clist_of_nodes f1 c==> c= * part cset_of_list f0 * part cset_of_list f2 c= f0 f2
+- ((MEM n1) (list_of_nodes L)) |- (((T /\ (((MEM n2) (list_of_nodes L)) /\ (((MEM a) n1) /\ ((MEM a) n2)))) ==> (n1 = n2)) = T)
+T c==> cMEM f0 clist_of_nodes f1 c= c==> c/\ cT c/\ cMEM f2 clist_of_nodes f1 c/\ cMEM f3 f0 cMEM f3 f2 c= f0 f2 cT
+- ((MEM n1) (list_of_nodes L)), ((MEM n2) (list_of_nodes L)) |- (((MEM n2) (list_of_nodes L)) /\ ((((MEM a) n1) /\ ((MEM a) n2)) ==> (n1 = n2)))
+T c==> cMEM f0 clist_of_nodes f1 c==> cMEM f2 clist_of_nodes f1 c/\ cMEM f2 clist_of_nodes f1 c==> c/\ cMEM f3 f0 cMEM f3 f2 c= f0 f2
+- |- ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))
+T c= c==> f0 ! * f1 b0 ! c==> f0 * f1 b0
+- ((MEM n1) (list_of_nodes L)) |- (!a. ((((MEM n21) (list_of_nodes L)) /\ (((MEM a) n1) /\ ((MEM a) n21))) ==> (n1 = n21)))
+T c==> cMEM f0 clist_of_nodes f1 ! c==> c/\ cMEM f2 clist_of_nodes f1 c/\ cMEM b0 f0 cMEM b0 f2 c= f0 f2
+- ((MEM n1) (list_of_nodes L)) |- (!n2. (!a. ((T /\ (((MEM n2) (list_of_nodes L)) /\ (((MEM a) n1) /\ ((MEM a) n2)))) ==> (n1 = n2))))
+T c==> cMEM f0 clist_of_nodes f1 ! ! c==> c/\ cT c/\ cMEM b0 clist_of_nodes f1 c/\ cMEM b1 f0 cMEM b1 b0 c= f0 b0
+- (!a. ((((MEM a) n1) /\ ((MEM a) n2)) ==> (n1 = n2))) |- ((!a. ((((MEM a) n1) /\ ((MEM a) n2)) ==> (n1 = n2))) /\ ((?a. (((MEM a) n1) /\ ((MEM a) n2))) ==> (n1 = n2)))
+T c==> ! c==> c/\ cMEM b0 f0 cMEM b0 f1 c= f0 f1 c/\ ! c==> c/\ cMEM b0 f0 cMEM b0 f1 c= f0 f1 c==> c? / c/\ cMEM b0 f0 cMEM b0 f1 c= f0 f1
+- |- (((!Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))) ==> ((\Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))) Q)) = ((\Q. ((P ==> (!x. (Q x))) = (!x. (P ==> (Q x))))) Q))
+T c= c==> ! c= c==> f0 ! * b0 b1 ! c==> f0 * b0 b1 * / c= c==> f0 ! * b0 b1 ! c==> f0 * b0 b1 f1 * / c= c==> f0 ! * b0 b1 ! c==> f0 * b0 b1 f1
+- ((MEM n1) (list_of_nodes L)) |- (!a. ((T /\ (((MEM n2) (list_of_nodes L)) /\ (((MEM a) n1) /\ ((MEM a) n2)))) ==> (n1 = n2)))
+T c==> cMEM f0 clist_of_nodes f1 ! c==> c/\ cT c/\ cMEM f2 clist_of_nodes f1 c/\ cMEM b0 f0 cMEM b0 f2 c= f0 f2
